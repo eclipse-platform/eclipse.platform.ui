@@ -518,19 +518,6 @@ protected Composite getClientComposite() {
 	return (Composite)getContents();
 }
 /**
- * Returns the menu bar manager for this window (if it has one).
- * <p>
- * [Issue: Could this be made a protected framework method?]
- * </p>
- *
- * @return the menu bar manager, or <code>null</code> if
- *   this window does not have a menu bar
- * @see #addMenuBar
- */
-public MenuManager getMenuBarManager() {
-	return super.getMenuBarManager();
-}
-/**
  * Answer the menu manager for this window.
  */
 public MenuManager getMenuManager() {
