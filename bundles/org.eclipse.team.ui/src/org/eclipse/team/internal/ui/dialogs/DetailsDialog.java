@@ -137,7 +137,11 @@ abstract public class DetailsDialog extends Dialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		// create image
-		Image image = JFaceResources.getImageRegistry().get(getImageKey());
+		String key = getImageKey();
+		Image image = null;
+		if (key != null) {
+			image = JFaceResources.getImageRegistry().get(key);
+		}
 		if (image != null) {
 			// create a composite to split the dialog area in two
 			Composite top = new Composite(composite, SWT.NONE);
