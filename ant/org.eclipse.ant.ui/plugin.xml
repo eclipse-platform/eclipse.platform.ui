@@ -267,7 +267,8 @@
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
             description="%antLaunchConfigurationTabGroup.description"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
-            id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
+            id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant"
+            bannerImage="icons/full/wizban/importbuildfile_wiz.gif">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntBuilderLaunchConfigurationType"
