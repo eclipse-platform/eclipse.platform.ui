@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tools.metadata;
 
+import java.io.*;
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import org.eclipse.core.runtime.Platform;
@@ -19,7 +20,7 @@ public class StateDumper extends AbstractDumper {
 
 	protected void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
 		PlatformAdmin admin = Platform.getPlatformAdmin();
-		State state = admin.getFactory().readState(input);
+		State state = admin.getFactory().readState(new DataInputStream(input));
 		contents.append("State resolved: ");
 		contents.append(state.isResolved());
 		contents.append("\n");
@@ -27,7 +28,6 @@ public class StateDumper extends AbstractDumper {
 		admin.getStateHelper().sortBundles(allBundles);
 		for (int i = 0; i < allBundles.length; i++)
 			dumpBundle(allBundles[i], contents);
-
 	}
 
 	private void dumpBundle(BundleDescription bundle, StringBuffer contents) {
@@ -52,23 +52,24 @@ public class StateDumper extends AbstractDumper {
 	private void dumpRequired(BundleSpecification required, StringBuffer contents) {
 		contents.append("\tRequired: ");
 		contents.append(required.getName());
+		contents.append(" - Version: ");
+		contents.append(required.getVersionRange());
 		contents.append(" (");
-		contents.append(required.isResolved() ? "resolved" : "unresolved");
+		contents.append(required.isResolved() ? ("actual: "+ required.getActualVersion().toString()) : "unresolved");
 		if (required.isOptional())
 			contents.append(", optional");
-		contents.append(") - Version: ");
-		contents.append(required.getVersionRange());
+		contents.append(')');		
 		contents.append('\n');
 	}
 
 	private void dumpHost(HostSpecification host, StringBuffer contents) {
 		contents.append("\tHost: ");
 		contents.append(host.getName());
-		contents.append(" (");
-		contents.append(host.isResolved() ? "resolved" : "unresolved");
-		contents.append(host.isResolved());
-		contents.append(") - Version: ");
+		contents.append(" - Version: ");
 		contents.append(host.getVersionRange());
+		contents.append(" (");
+		contents.append(host.isResolved() ? ("actual: "+ host.getActualVersion().toString()) : "unresolved");		
+		contents.append(')');
 		contents.append('\n');
 	}
 
