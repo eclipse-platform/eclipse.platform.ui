@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /** 
  * The Decoration builder is the object that builds
@@ -54,6 +55,19 @@ class DecorationBuilder implements IDecoration {
 		if (descriptors[quadrant] == null)
 			descriptors[quadrant] = overlay;
 		valueSet = true;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.viewers.IDecoration#addOverlay(org.eclipse.jface.resource.ImageDescriptor)
+	 */
+	public void addOverlay(ImageDescriptor overlay, int quadrant) {
+		if(quadrant >= 0 && quadrant <=  DECORATOR_ARRAY_SIZE) {
+			if (descriptors[quadrant] == null) 
+				descriptors[quadrant] = overlay;
+			valueSet = true;
+		} else {
+			WorkbenchPlugin.log("Unable to apply decoration for " + currentDefinition.getId() + " invalid quadrant: "  + quadrant); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/**

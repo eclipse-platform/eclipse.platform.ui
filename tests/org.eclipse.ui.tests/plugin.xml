@@ -87,8 +87,8 @@
             id="org.eclipse.ui.tests.api.MockViewPart4">
       </view>
       <view
-            allowMultiple="true"
             name="Mock View Mult"
+            allowMultiple="true"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPartMult">
@@ -152,54 +152,54 @@
          point="org.eclipse.ui.editors">
       <editor
             name="Mock Editor 1"
-            extensions="mock1"
             icon="icons\mockeditorpart1.gif"
+            extensions="mock1"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart1">
       </editor>
       <editor
             name="Mock Editor 2"
-            extensions="mock2"
             icon="icons\mockeditorpart2.gif"
+            extensions="mock2"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart2">
       </editor>
       <editor
             name="IEditorActionBarContributorTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.IEditorActionBarContributorTest">
       </editor>
       <editor
             name="IEditorActionDelegateTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.IEditorActionDelegateTest">
       </editor>
       <editor
             name="IEditorActionBarsTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.internal.EditorActionBarsTest">
       </editor>
       <editor
             name="ExtendedTextEditor"
-            extensions="exttxt"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
+            extensions="exttxt"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
             id="org.eclipse.ui.tests.ExtendedTextEditor">
       </editor>
       <editor
             name="Test Multi-Page Editor"
-            extensions="multi"
             icon="icons\mockeditorpart1.gif"
+            extensions="multi"
             class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
@@ -223,8 +223,8 @@
          <action
                label="Drag-Drop Snapshot"
                class="org.eclipse.ui.tests.dnd.GenerateDragSnapshotAction"
-               allowLabelUpdate="false"
                menubarPath="additions"
+               allowLabelUpdate="false"
                id="org.eclipse.ui.tests.action1">
          </action>
       </actionSet>
@@ -328,8 +328,8 @@
       </objectContribution>
 <!-- Adaptable test-->
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             id="org.eclipse.ui.tests.adaptable.ResourceContributions">
          <action
                label="Resource Action"
@@ -774,19 +774,19 @@
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             label="Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             state="false"
+            class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             id="org.eclipse.ui.tests.adaptable.decorator">
          <description>
             The test decorator
          </description>
       </decorator>
       <decorator
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             label="Null Decorator"
-            class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             state="false"
+            class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             id="org.eclipse.ui.tests.adaptable.nulldecorator">
          <description>
             A null test decorator
@@ -796,8 +796,8 @@
             lightweight="true"
             adaptable="true"
             label="Lightweight Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             state="false"
+            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             id="org.eclipse.ui.tests.navigator.lightweightdecorator">
          <enablement>
             <objectClass
@@ -810,8 +810,8 @@
       </decorator>
       <decorator
             lightweight="true"
-            quadrant="TOP_LEFT"
             adaptable="true"
+            quadrant="TOP_LEFT"
             label="Declarative Test Decorator"
             icon="icons/binary_co.gif"
             state="false"
@@ -845,6 +845,22 @@
             label="Bug 41545 Heavy Text"
             class="org.eclipse.ui.tests.navigator.HeavyNullTextDecorator"
             id="org.eclipse.ui.tests.heavyNullTextDecorator">
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            label="Lightweight Test Decorator Multiple Quadrant"
+            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorMultipleQuadrantContributor"
+            state="false"
+            id="org.eclipse.ui.tests.navigator.lightweightdecorator2">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+         <description>
+            A lightweight test decorator for multiple quadrants
+         </description>
       </decorator>
    </extension>
 <!-- Working set tests -->
@@ -1180,14 +1196,14 @@
             value="true">
       </data>
       <colorDefinition
+            label="rgbcolor"
             value="1,1,2"
-            id="rgbcolor"
-            label="rgbcolor">
+            id="rgbcolor">
       </colorDefinition>
       <colorDefinition
+            label="swtcolor"
             value="COLOR_DARK_BLUE"
-            id="swtcolor"
-            label="swtcolor">
+            id="swtcolor">
       </colorDefinition>
       <colorDefinition
             label="defaultedcolor"
@@ -1210,17 +1226,17 @@
             id="platformcolor">
          <colorValue
                ws="win32"
-               value="50,50,50"
-               os="win32">
+               os="win32"
+               value="50,50,50">
          </colorValue>
          <colorValue
                ws="gtk"
-               value="25,25,25"
-               os="linux">
+               os="linux"
+               value="25,25,25">
          </colorValue>
          <colorValue
-               value="75,75,75"
-               os="linux">
+               os="linux"
+               value="75,75,75">
          </colorValue>
       </colorDefinition>
       <colorDefinition
@@ -1243,8 +1259,8 @@
             id="platformfont">
          <fontValue
                ws="win32"
-               os="win32"
-               value="Courier New-regular-12">
+               value="Courier New-regular-12"
+               os="win32">
          </fontValue>
       </fontDefinition>
       <fontDefinition

@@ -20,6 +20,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * be provided to instances of <code>ILightweightLabelDecorator</code>.
  */
 public interface IDecoration {
+	
+	/**
+	 * Constants for placement of image decorations.
+	 */
+	public static final int TOP_LEFT = 0;
+	public static final int TOP_RIGHT = 1;
+	public static final int BOTTOM_LEFT = 2;
+	public static final int BOTTOM_RIGHT = 3;
+	public static final int UNDERLAY = 4;
 
 	/**
 	 * Adds a prefix to the element's label.
@@ -41,4 +50,11 @@ public interface IDecoration {
 	 * @param overlay the overlay image descriptor
 	 */
 	public void addOverlay(ImageDescriptor overlay);
+	
+	/**
+	 * Adds an overlay to the element's image.
+	 * 
+	 * @param overlay the overlay image descriptor
+	 */
+	public void addOverlay(ImageDescriptor overlay, int quadrant);
 }
