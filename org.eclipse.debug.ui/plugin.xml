@@ -2159,7 +2159,11 @@ M4 = Platform-specific fourth key
             defaultsTo="org.eclipse.jface.textfont"
             label="%ConsoleFont.label"
             categoryId="org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.consoleFont"/>
+            id="org.eclipse.debug.ui.consoleFont">
+          <description>
+	            %ConsoleFont.description
+          </description>
+		</fontDefinition>
    </extension>
 <!-- Renderings Definitions -->   
    <extension
