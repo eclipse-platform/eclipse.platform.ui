@@ -13,7 +13,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Common function for debug views. Provides access to underlying viewer and
+ * Common function for debug views. Provides access to the underlying viewer and
  * debug model presentation being used by a viewer. This allows clients to do
  * such things as add and remove filters to a viewer, and configure a debug
  * model presentation.
@@ -61,7 +61,7 @@ public interface IDebugView extends IViewPart {
 
 	/**
 	 * Action id for a view's find action. Any view
-	 * with a paste action that should be invoked when
+	 * with a find action that should be invoked when
 	 * ctrl+f is pressed should store their
 	 * copy action with this key.
 	 * 
@@ -134,7 +134,7 @@ public interface IDebugView extends IViewPart {
 	public void setAction(String actionID, IAction action);
 	
 	/**
-	 * Adds the given IUpdate to this views collection of updatable
+	 * Adds the given IUpdate to this view's collection of updatable
 	 * objects.  Allows the view to periodically update these registered
 	 * objects.  
 	 * Has no effect if an identical IUpdate is already registered.
@@ -144,7 +144,7 @@ public interface IDebugView extends IViewPart {
 	public void add(IUpdate updatable);
 	
 	/**
-	 * Removes the given IUpdate from this views collection of updatable
+	 * Removes the given IUpdate from this view's collection of updatable
 	 * objects.
  	 * Has no effect if an identical IUpdate was not already registered.
  	 * 

@@ -28,7 +28,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	public static final int LAUNCHED_BEFORE_OPENING = 2;
 			
 	/**
-	 * Adjusts the enable state of the Launch button
+	 * Adjusts the enable state of this dialog's buttons
 	 * to reflect the state of the active tab group.
 	 * <p>
 	 * This may be called by to force a button state
@@ -83,7 +83,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * Returns the mode in which this dialog was opened -
 	 * run or debug.
 	 * 
-	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code>
+	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code> defined in <code>ILaunchManager</code>
 	 * @see ILaunchManager
 	 */
 	public String getMode();		
