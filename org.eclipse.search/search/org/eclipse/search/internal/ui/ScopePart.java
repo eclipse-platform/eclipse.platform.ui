@@ -153,7 +153,7 @@ public class ScopePart {
 		Assert.isNotNull(fUseProject);
 		fScope= scope;
 		if (fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE && !fCanSearchEnclosingProjects) {
-			SearchPlugin.log(new Status(IStatus.WARNING, SearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null));
+			SearchPlugin.log(new Status(IStatus.WARNING, SearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null)); //$NON-NLS-1$
 			fScope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
 		switch (fScope) {
