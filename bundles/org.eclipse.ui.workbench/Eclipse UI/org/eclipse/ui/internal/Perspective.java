@@ -115,7 +115,7 @@ public class Perspective
 				pane.setBounds(bounds);
 				Float newRatio = new Float((float)bounds.width/(float)getClientComposite().getSize().x);
 				mapFastViewToWidthRatio.put(pane.getID(), newRatio);
-				fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
+				updateFastViewSashBounds(bounds);
 				fastViewSash.moveAbove(null);
 			}
 		}
@@ -1326,10 +1326,14 @@ void showFastView(IViewReference ref) {
 		fastViewSash.addSelectionListener(selectionListener);
 	}
 	pane.setFastViewSash(fastViewSash);
-	fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
+	updateFastViewSashBounds(bounds);
 	fastViewSash.moveAbove(null);
 	
 	setFastViewIconSelection(ref, true);
+}
+
+public void updateFastViewSashBounds(Rectangle partBounds) {
+	fastViewSash.setBounds(partBounds.x + partBounds.width - 1, partBounds.y + 1, SASH_SIZE, partBounds.height - 2);
 }
 /**
  * See IWorkbenchPage.
