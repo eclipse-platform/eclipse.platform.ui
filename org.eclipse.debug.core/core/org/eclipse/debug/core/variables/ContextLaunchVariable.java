@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
- * Abtract representation of launch configuration variables.
+ * Abstract representation of launch configuration variables.
  * @since 3.0
  */
 public class ContextLaunchVariable implements IContextLaunchVariable {
