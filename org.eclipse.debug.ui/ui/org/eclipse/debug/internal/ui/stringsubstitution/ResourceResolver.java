@@ -43,7 +43,9 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		}
 		if (resource != null && resource.exists()) {
 			resource = translateSelectedResource(resource);
-			return translateToValue(resource, variable);
+			if (resource != null && resource.exists()) {
+				return translateToValue(resource, variable);
+			}
 		}
 		abort(MessageFormat.format(StringSubstitutionMessages.getString("ResourceResolver.6"), new String[]{getReferenceExpression(variable, argument)}), null);				 //$NON-NLS-1$
 		return null;
