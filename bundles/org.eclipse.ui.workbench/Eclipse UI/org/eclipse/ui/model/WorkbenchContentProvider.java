@@ -1,13 +1,19 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.swt.widgets.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * Provides tree contents for objects that have the IWorkbenchAdapter
@@ -135,6 +141,10 @@ protected void processDelta(IResourceDelta delta) {
 		& (IResourceDelta.OPEN | IResourceDelta.SYNC))
 		!= 0) {
 		((StructuredViewer) viewer).update(resource, null);
+	}
+	// Replacing a resource may affect its label and its children
+	if ((changeFlags & IResourceDelta.REPLACED) != 0) {
+		((StructuredViewer) viewer).refresh(resource, true);
 	}
 
 	// Handle changed children .
