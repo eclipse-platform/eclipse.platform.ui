@@ -20,7 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.views.*;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -132,23 +132,6 @@ public class CheatSheetSaveHelper {
 		return returnList;
 	}
 
-	private ArrayList getParamList(NamedNodeMap nnm) {
-		ArrayList params = new ArrayList();
-
-		try {
-			String param = "param"; //$NON-NLS-1$
-			for (int j = 0; param != null; j++) {
-				String actionparam = nnm.getNamedItem(IParserTags.PARAM + j).getNodeValue();
-				param = actionparam;
-				if (param != null)
-					params.add(param);
-			}
-		} catch (Exception e) {
-		}
-
-		return params;
-	}
-
 	public Properties loadState(String csID) {
 		Properties returnProps = null;
 		Hashtable subskipped = null;
@@ -156,13 +139,15 @@ public class CheatSheetSaveHelper {
 
 		Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
 		Document doc = null;
+		URL readURL = null;
 
 		try {
-			URL readURL = filePath.toFile().toURL();
+			readURL = filePath.toFile().toURL();
 			doc = readXMLFile(readURL);
 		} catch (MalformedURLException mue) {
-			//TODO: NLS!
-			System.err.println("Could not create url of xml file to read in");
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_STATEFILE_URL, new Object[] {readURL});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, mue);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
 			return null;
 		}
 
@@ -197,14 +182,21 @@ public class CheatSheetSaveHelper {
 					subskipped.put(item, subItems);
 				} //end for nl
 			}
-//TODO: Need to fix/handle null data or keys more gracefully!
+
 			NodeList csmDatanl = doc.getElementsByTagName(IParserTags.MANAGERDATA);
 			if (csmDatanl != null) {
 				ht = new Hashtable(30);
 				for (int i = 0; i < csmDatanl.getLength(); i++) {
-					String key = getAttributeWithName(csmDatanl.item(i).getAttributes(), IParserTags.MANAGERDATAKEY);
-					String data = csmDatanl.item(i).getFirstChild().getNodeValue();
-					ht.put(key, data);
+					String key = null;
+					try {
+						key = getAttributeWithName(csmDatanl.item(i).getAttributes(), IParserTags.MANAGERDATAKEY);
+						String data = csmDatanl.item(i).getFirstChild().getNodeValue();
+						ht.put(key, data);
+					} catch(Exception e) {
+						String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_READING_MANAGERDATA_FROM_STATEFILE, new Object[] {key, currentID});
+						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+						CheatSheetPlugin.getPlugin().getLog().log(status);
+					}
 				}
 			}
 
@@ -255,7 +247,9 @@ public class CheatSheetSaveHelper {
 		return null;
 	}
 
-	private void saveState(Properties saveProperties, CheatSheetManager csm, ViewItem[] items) {
+	private void saveState(Properties saveProperties, CheatSheetManager csm) {
+
+		String csID = null;
 
 		try {
 			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -263,7 +257,7 @@ public class CheatSheetSaveHelper {
 			Document doc = documentBuilder.newDocument();
 
 			Properties myprop = saveProperties;
-			String csID = (String) myprop.get(IParserTags.ID); //$NON-NLS-1$
+			csID = (String) myprop.get(IParserTags.ID); //$NON-NLS-1$
 			String number = (String) myprop.get(IParserTags.CURRENT); //non nls //$NON-NLS-1$
 
 			Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
@@ -351,15 +345,15 @@ public class CheatSheetSaveHelper {
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.transform(domSource, streamResult);
 		} catch (Exception e) {
-			//TODO : log exception
-		} finally {
-			//TODO : need to close resources?
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_SAVING_STATEFILE_URL, new Object[] {csID});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 	}
 
 	public void saveState(int stateNum, ViewItem[] myitems, boolean buttonIsDown, ArrayList expandRestoreStates, String csID, CheatSheetManager csm) {
 		Properties prop = createProperties(stateNum, myitems, buttonIsDown, expandRestoreStates, csID);
-		saveState(prop, csm, myitems);
+		saveState(prop, csm);
 	}
 
 }

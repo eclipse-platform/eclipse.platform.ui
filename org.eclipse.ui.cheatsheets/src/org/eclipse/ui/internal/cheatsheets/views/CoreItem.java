@@ -286,7 +286,14 @@ public class CoreItem extends ViewItem {
 				String values = repeatedSubItem.getValues();
 				values = viewer.getManager().getVariableData(values);
 				if(values == null || values.length() <= 0) {
-					//TODO: throw exception, show warning to user
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_DATA_MISSING_LOG, new Object[] {repeatedSubItem.getValues()});
+					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+
+					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_DATA_MISSING), null);
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+					org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
+					break;
 				}
 
 				SubItem sub = (SubItem)repeatedSubItem.getSubItems().get(0);

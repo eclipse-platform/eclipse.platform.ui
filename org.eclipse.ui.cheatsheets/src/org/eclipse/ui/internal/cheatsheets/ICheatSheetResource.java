@@ -25,7 +25,6 @@ public interface ICheatSheetResource {
 	public static final String MEMENTO = "cheatSheetMemento"; //$NON-NLS-1$
 	public static final String MEMENTO_ID = "id"; //$NON-NLS-1$
 	public static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
-	//TODO: does this need to be changed?
 	public static final String MEMENTO_URL = "url"; //$NON-NLS-1$
 
 	//
@@ -56,6 +55,8 @@ public interface ICheatSheetResource {
 	public static final String RESTART_TASK_TOOLTIP = "%RESTART_TASK_TOOLTIP"; //$NON-NLS-1$
 	public static final String LESS_THAN_2_SUBITEMS = "%LESS_THAN_2_SUBITEMS";//$NON-NLS-1$
 	public static final String ERROR_FINDING_PLUGIN_FOR_ACTION = "%ERROR_FINDING_PLUGIN_FOR_ACTION"; //$NON-NLS-1$
+	public static final String ERROR_DATA_MISSING = "%ERROR_DATA_MISSING"; //$NON-NLS-1$
+	public static final String ERROR_DATA_MISSING_LOG = "%ERROR_DATA_MISSING_LOG"; //$NON-NLS-1$
 	// IntroItem
 	public static final String START_CHEATSHEET_TOOLTIP = "%START_CHEATSHEET_TOOLTIP"; //$NON-NLS-1$
 	public static final String RESTART_CHEATSHEET_TOOLTIP = "%RESTART_CHEATSHEET_TOOLTIP"; //$NON-NLS-1$
@@ -85,6 +86,11 @@ public interface ICheatSheetResource {
 
 	// actions.OpenPerspective
 	public static final String ERROR_OPENING_PERSPECTIVE = "%ERROR_OPENING_PERSPECTIVE"; //$NON-NLS-1$
+
+	// CheatSheetSaveHelper
+	public static final String ERROR_CREATING_STATEFILE_URL = "%ERROR_CREATING_STATEFILE_URL"; //$NON-NLS-1$
+	public static final String ERROR_SAVING_STATEFILE_URL = "%ERROR_SAVING_STATEFILE_URL"; //$NON-NLS-1$
+	public static final String ERROR_READING_MANAGERDATA_FROM_STATEFILE = "%ERROR_READING_MANAGERDATA_FROM_STATEFILE"; //$NON-NLS-1$
 
 
 	// CheatSheetParser, regaular messages
