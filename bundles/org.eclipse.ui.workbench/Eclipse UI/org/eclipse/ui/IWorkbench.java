@@ -111,23 +111,17 @@ public IPreferenceStore getPreferenceStore();
  */
 public ISharedImages getSharedImages();
 /**
- * Returns the marker help registry for the workbench.
- * 
- * @since 2.0
- * @return the marker help registry
- */
-public IMarkerHelpRegistry getMarkerHelpRegistry();
-/**
  * Returns the number of open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
  * 
  * @return the number of open windows
  * @since 3.0
+ * @issue Use getWorkbenchWindows().length?
  */
 public int getWorkbenchWindowCount();
 /**
- * Returns a list of the open main windows associated with this workbench.
+* Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
  *

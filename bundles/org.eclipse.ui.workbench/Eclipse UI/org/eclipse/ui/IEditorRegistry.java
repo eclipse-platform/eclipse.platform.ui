@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -70,9 +69,12 @@ public void addPropertyListener(IPropertyListener listener);
 public IEditorDescriptor findEditor(String editorId);
 /**
  * Returns the default editor used for all unmapped resource types.
- * There is always a default editor.
  *
- * @return the descriptor of the default editor
+ * @return the descriptor of the default editor, or <code>null</code> if not
+ *   found
+ * @issue contract was changed for 3.0 to allow the possibility of no editors
+ * @issue how does application control which editor is the default editor?
+ * @issue the other option is to delete this method
  */
 public IEditorDescriptor getDefaultEditor();
 /**
@@ -88,21 +90,6 @@ public IEditorDescriptor getDefaultEditor();
  */
 public IEditorDescriptor getDefaultEditor(String fileName) ;
 /**
- * Returns the default editor for a given file.
- * <p>
- * A default editor id may be registered for a specific file using
- * <code>setDefaultEditor</code>.  If the given file has a registered
- * default editor id the default editor will derived from it.  If not, 
- * the default editor is determined by taking the file extension for the 
- * file and obtaining the default editor for that extension.
- * </p>
- *
- * @param file the file
- * @return the descriptor of the default editor, or <code>null</code> if not
- *   found
- */
-public IEditorDescriptor getDefaultEditor(IFile file) ;
-/**
  * Returns the list of file editors registered to work against the file
  * with the given file name. 
  * <p>
@@ -114,20 +101,6 @@ public IEditorDescriptor getDefaultEditor(IFile file) ;
  * @return a list of editor descriptors
  */
 public IEditorDescriptor[] getEditors(String filename) ;
-/**
- * Returns the list of file editors registered to work against the given
- * file. 
- * <p>
- * Note: Use <code>getDefaultEditor</code> if you only the need the default
- * editor rather than all candidate editors.
- * </p><p>
- * This is a convenience method for use with <code>IFile</code>'s.
- * </p>
- *
- * @param file the file
- * @return a list of editor descriptors
- */
-public IEditorDescriptor[] getEditors(IFile file) ;
 /**
  * Returns a list of mappings from file type to editor.  The resulting list
  * is sorted in ascending order by file extension.
@@ -155,21 +128,6 @@ public IFileEditorMapping[] getFileEditorMappings();
  */
 public ImageDescriptor getImageDescriptor(String filename) ;
 /**
- * Returns the image descriptor associated with a given file.  This image
- * is usually displayed next to the given file.
- * <p>
- * The image is determined by taking the file extension of the file and 
- * obtaining the image for the default editor associated with that extension.
- * A default image is returned if no default editor is available.
- * </p><p>
- * This is a convenience method for use with <code>IFile</code>'s.
- * </p>
- *
- * @param file the file
- * @return the descriptor of the image to display next to the given file
- */
-public ImageDescriptor getImageDescriptor(IFile file);
-/**
  * Removes the given property listener from this registry.
  * Has no affect if an identical listener is not registered.
  * <p>
@@ -179,15 +137,6 @@ public ImageDescriptor getImageDescriptor(IFile file);
  * @param listener a property listener
  */
 public void removePropertyListener(IPropertyListener listener);
-/**
- * Sets the default editor id for a given file.  This value will be used
- * to determine the default editor descriptor for the file in future calls to
- * <code>getDefaultEditor(IFile)</code>.
- *
- * @param file the file
- * @param editorId the editor id
- */
-public void setDefaultEditor(IFile file, String editorId);
 /**
  * Sets the default editor id for a the files that match that
  * specified file name or extension. The specified editor must be

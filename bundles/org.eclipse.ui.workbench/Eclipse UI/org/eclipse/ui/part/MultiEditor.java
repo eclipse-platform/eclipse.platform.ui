@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -68,12 +67,6 @@ public abstract class MultiEditor extends EditorPart {
 	 * @see IEditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
-	}
-
-	/*
-	 * @see IEditorPart#gotoMarker(IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
 	}
 
 	/*
