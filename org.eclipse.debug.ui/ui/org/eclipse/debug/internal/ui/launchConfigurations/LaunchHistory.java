@@ -326,8 +326,21 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		if (DebugPlugin.getDefault().getLaunchManager().getMovedFrom(configuration) == null) {
+		ILaunchConfiguration movedFrom = DebugPlugin.getDefault().getLaunchManager().getMovedFrom(configuration);
+		if (movedFrom == null) {
 			checkIfFavorite(configuration);
+		} else {
+			String movedFromName= movedFrom.getName();
+			ILaunchConfiguration[] history = getHistory();
+			for (int i = 0; i < history.length; i++) {
+				if (history[i].getName().equals(movedFromName)) {
+					history[i]= configuration;
+					if (i == 0) {
+						fRecentLaunch= configuration;
+					}
+					setDirty();
+				}
+			}
 		}
 	}
 	
@@ -421,16 +434,16 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		}
 		if (changed) {
 			setDirty();
-			save();
 			if (configuration.equals(fRecentLaunch)) {
-				if (fHistory.isEmpty()) {
-					if (!fFavorites.isEmpty()) {
-						fRecentLaunch = (ILaunchConfiguration)fFavorites.get(0);
-					}
-				} else {
+				if (!fHistory.isEmpty()) {
 					fRecentLaunch = (ILaunchConfiguration)fHistory.get(0);
+				} else if (!fFavorites.isEmpty()) {
+					fRecentLaunch = (ILaunchConfiguration)fFavorites.get(0);
+				} else {
+					fRecentLaunch = null;
 				}
 			}
+			save();
 		}
 	}
 
