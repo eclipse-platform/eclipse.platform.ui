@@ -106,12 +106,16 @@ public class ExpressionView extends VariablesView {
 			if (ssel.size() == 1) {
 				Object input= ssel.getFirstElement();
 				if (input instanceof IStackFrame) {
+					getDetailViewer().setEditable(true);
 					frame= (IStackFrame)input;
 					setDebugModel(frame.getModelIdentifier());
-				}
+					return;
+				} 
 			}
 		}
-		getDetailViewer().setEditable(frame != null);
+				
+		getDetailViewer().setEditable(false);
+		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
 	
 	/**

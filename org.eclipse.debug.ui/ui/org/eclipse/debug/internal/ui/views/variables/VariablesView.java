@@ -759,8 +759,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 	protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
-		while (iterator.hasNext())
+		while (iterator.hasNext()) {
 			updateAction((String)iterator.next());		
+		}
 	}
 
 	protected void updateAction(String actionId) {
@@ -785,7 +786,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected void setDebugModel(String id) {
 		if (id != fDebugModelIdentifier) {
 			fDebugModelIdentifier = id;
-			configureDetailsViewer();
+			configureDetailsViewer();	
+		} else {
+			updateAction("ContentAssist"); //$NON-NLS-1$
 		}
 	}
 	
@@ -845,7 +848,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			setViewerInput((IStructuredSelection) selection);
+		} else {
+			getDetailViewer().setEditable(false);
 		}
+		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
 	
 	/**
