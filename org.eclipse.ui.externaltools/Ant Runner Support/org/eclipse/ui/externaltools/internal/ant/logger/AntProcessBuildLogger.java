@@ -71,6 +71,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		int linkAdjustment= 0;
 		if (event.getTask() != null && !fEmacsMode) {
 			linkAdjustment= getAdornedMessage(event, fullMessage);
+			if (linkAdjustment < 0) {
+				linkAdjustment= 0;
+			}
 		}
 		fullMessage.append(message);
 		message= fullMessage.toString();
