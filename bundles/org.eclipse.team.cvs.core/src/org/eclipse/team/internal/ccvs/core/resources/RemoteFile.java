@@ -153,9 +153,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public InputStream getContents(final IProgressMonitor monitor) {
 		try {
 			if (contents == null) {
+				monitor.beginTask(null, 100);
 				IStatus status;
 				Session s = new Session(getRepository(), parent, false);
-				s.open(monitor);
+				s.open(Policy.subMonitorFor(monitor, 10));
 				try {
 					status = Command.UPDATE.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
@@ -163,9 +164,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 						Update.IGNORE_LOCAL_CHANGES },
 					new String[] { getName() },
 					null,
-					monitor);
+					Policy.subMonitorFor(monitor, 90));
 				} finally {
 					s.close();
+					monitor.done();
 				}
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);

@@ -244,19 +244,27 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle"));
 		for (int i = 0; i < trees.length; i++) {
 			IRemoteSyncElement tree = trees[i];
-			IDiffElement localRoot = collectResourceChanges(null, tree, Policy.subMonitorFor(pm, 1000));
+			IProgressMonitor monitor = Policy.subMonitorFor(pm, 1000);
+			monitor.beginTask(null, 1000);
+			IDiffElement localRoot = collectResourceChanges(null, tree, monitor);
+			monitor.done();
 			makeParents(localRoot);
 		}
 	}
 	
+	/*
+	 * This method expects to be past a monitor that has already had it's beginTask invoked
+	 * and has enough ticks to allow 1 unit of work per resource in the tree and an additional
+	 * unit for each folder.
+	 */
 	IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
-		int type = tree.getSyncKind(getSyncGranularity(), pm);
+		int type = tree.getSyncKind(getSyncGranularity(), Policy.subMonitorFor(pm, 1));
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
 			IDiffContainer element = new ChangedTeamContainer(parent, mergeResource, type);
 			try {				
-				ILocalSyncElement[] children = tree.members(pm);
+				ILocalSyncElement[] children = tree.members(Policy.subMonitorFor(pm, 1));
 				for (int i = 0; i < children.length; i++) {
 					collectResourceChanges(element, (IRemoteSyncElement)children[i], pm);
 				}

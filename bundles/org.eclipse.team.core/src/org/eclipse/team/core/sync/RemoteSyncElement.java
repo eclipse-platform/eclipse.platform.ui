@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.internal.Policy;
 
 /**
  * A standard abstract class that provides implementations for interesting 
@@ -179,7 +180,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						description = INCOMING | ADDITION;
 					} else {
 						description = CONFLICTING | ADDITION;
-						if (compare(granularity, false, local, remote))
+						if (compare(granularity, false, local, remote, progress))
 							description |= PSEUDO_CONFLICT;
 					}
 				}
@@ -188,20 +189,21 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 					if (remote == null) {
 						description = CONFLICTING | DELETION | PSEUDO_CONFLICT;
 					} else {
-						if (compare(granularity, !isOutOfDate, base, remote))
+						if (compare(granularity, !isOutOfDate, base, remote, progress))
 							description = OUTGOING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					}
 				} else {
 					if (remote == null) {
-						if (compare(granularity, !isDirty, local, base))
+						if (compare(granularity, !isDirty, local, base, progress))
 							description = INCOMING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					} else {
-						boolean ay = compare(granularity, !isDirty, local, base);
-						boolean am = compare(granularity, !isOutOfDate, base, remote);
+						progress.beginTask(null, 90);
+						boolean ay = compare(granularity, !isDirty, local, base, Policy.subMonitorFor(progress, 30));
+						boolean am = compare(granularity, !isOutOfDate, base, remote, Policy.subMonitorFor(progress, 30));
 						if (ay && am) {
 							;
 						} else if (ay && !am) {
@@ -211,8 +213,9 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						} else {
 							description = CONFLICTING | CHANGE;
 						}
-						if (description != IN_SYNC && compare(granularity, false, local, remote))
+						if (description != IN_SYNC && compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 30)))
 							description |= PSEUDO_CONFLICT;
+						progress.done();
 					}
 				}
 			}
@@ -253,7 +256,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						description = CONFLICTING | CHANGE;
 					}
 					// if contents are the same, then mark as pseudo change
-					if (description != IN_SYNC && compare(granularity, false, local, remote))
+					if (description != IN_SYNC && compare(granularity, false, local, remote, progress))
 						description |= PSEUDO_CONFLICT;
 				}
 			}
@@ -267,23 +270,33 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * If timestampDiff is true then the timestamps don't differ and there's no point checking the
 	 * contents.
 	 */
-	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
+	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
 		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
-			return contentsEqual(getContents(e1), getContents(e2));
+			try {
+				monitor.beginTask(null, 100);
+				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
+			} finally {
+				monitor.done();
+			}
 		} else {
 			return timestampDiff;
 		}
 	}
 	
-	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
+	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
 		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
-			return contentsEqual(getContents(e1), getContents(e2));
+			try {
+				monitor.beginTask(null, 100);
+				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
+			} finally {
+				monitor.done();
+			}
 		} else {
 			return timestampDiff;
 		}
 	}
 	
-	private InputStream getContents(IResource resource) {
+	private InputStream getContents(IResource resource, IProgressMonitor monitor) {
 		try {
 			if (resource instanceof IStorage)
 				return new BufferedInputStream(((IStorage) resource).getContents());
@@ -293,10 +306,10 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		}
 	}
 	
-	private InputStream getContents(IRemoteResource remote) {
+	private InputStream getContents(IRemoteResource remote, IProgressMonitor monitor) {
 		try {
 			if (!remote.isContainer())
-				return new BufferedInputStream(remote.getContents(new NullProgressMonitor()));
+				return new BufferedInputStream(remote.getContents(monitor));
 			return null;
 		} catch (TeamException exception) {
 			// The remote node has gone away .
