@@ -8,12 +8,11 @@ package org.eclipse.help.internal.workingset;
 import java.io.*;
 import java.util.*;
 
-import org.apache.xerces.dom.*;
-import org.apache.xerces.parsers.*;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xerces.parsers.DOMParser;
 import org.apache.xml.serialize.*;
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.w3c.dom.*;
@@ -399,16 +398,7 @@ public class WorkingSetManager {
 	}
 	
 	public AdaptableToc getAdaptableToc(String href) {
-		IToc toc = HelpSystem.getTocManager().getToc(href, locale);
-		if (toc == null)
-			return null;
-		else {
-			IAdaptable[] tocs = getRoot().getChildren();
-			for (int i=0; i<tocs.length; i++)
-				if (tocs[i].getAdapter(IToc.class) == toc)
-					return (AdaptableToc)tocs[i];
-		}
-		return null;
+		return getRoot().getAdaptableToc(href);
 	}
 	
 	public AdaptableTopic getAdaptableTopic(String id) {

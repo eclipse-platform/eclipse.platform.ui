@@ -76,6 +76,11 @@ public abstract class AdaptableHelpResource implements IAdaptable, IHelpResource
 	}
 
 	/**
+	 * Returns a descendant topic with a specified href
+	 */
+	public abstract ITopic getTopic(String href);
+
+	/**
 	 * @see org.eclipse.help.IHelpResource#getHref()
 	 */
 	public String getHref() {

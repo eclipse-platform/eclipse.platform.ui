@@ -7,8 +7,8 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.help.IToc;
 
 /**
  * Makes help resources adaptable and persistable
@@ -17,6 +17,7 @@ public class AdaptableTocsArray implements IAdaptable {
 
 	IToc[] element;
 	AdaptableToc[] children;
+	HashMap map;
 
 	/**
 	 * This constructor will be called when wrapping help resources.
@@ -46,6 +47,16 @@ public class AdaptableTocsArray implements IAdaptable {
 		}
 		return children;
 
+	}
+	
+	public AdaptableToc getAdaptableToc(String href) {
+		if (map == null) {
+			getChildren(); // make sure children are initialized
+			map = new HashMap(children.length);
+			for (int i=0; i<children.length; i++)
+				map.put(children[i].getHref(), children[i]);
+		}
+		return (AdaptableToc)map.get(href);
 	}
 
 	IToc[] asArray() {
