@@ -299,12 +299,12 @@ private IEditorPart findReusableEditor(EditorDescriptor desc) {
 	
 	
 	IEditorPart dirtyEditor = null;
-	IWorkbenchPart activePart = page.getActivePart();
+//	IWorkbenchPart activePart = page.getActivePart();
 	//Find a editor to be reused
 	for(int i = 0;i < editors.length;i++) {
 		IEditorPart editor = editors[i];
-		if(editor == activePart)
-			continue;
+//		if(editor == activePart)
+//			continue;
 		EditorSite site = (EditorSite)editor.getEditorSite();
 		if(!site.getReuseEditor())
 			continue;
