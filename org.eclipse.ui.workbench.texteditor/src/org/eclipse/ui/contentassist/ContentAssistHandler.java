@@ -23,13 +23,12 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.contentassist.AbstractControlContentAssistSubjectAdapter;
+import org.eclipse.jface.contentassist.ComboContentAssistSubjectAdapter;
+import org.eclipse.jface.contentassist.ContentAssistant;
+import org.eclipse.jface.contentassist.TextContentAssistSubjectAdapter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-
-import org.eclipse.jface.text.contentassist.AbstractControlContentAssistSubjectAdapter;
-import org.eclipse.jface.text.contentassist.ComboContentAssistSubjectAdapter;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.TextContentAssistSubjectAdapter;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.AbstractHandler;
