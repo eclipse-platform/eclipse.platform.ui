@@ -391,7 +391,7 @@ public final class CommandManager implements ICommandManager {
 		return mutableCommandRegistry;
 	}
 
-	public Map getPartialMatches(KeySequence keySequence) {
+	public Map getPartialMatches(KeySequence keySequence, boolean dialogOnly) {
 		Map map = new HashMap();
 
 		for (Iterator iterator =
@@ -405,18 +405,23 @@ public final class CommandManager implements ICommandManager {
 			KeySequence keySequence2 = (KeySequence) entry.getKey();
 			Match match = (Match) entry.getValue();
 
-			if (keySequence2.startsWith(keySequence, false))
+			if ((keySequence2.startsWith(keySequence, false)) && (!dialogOnly || match.isAllowedInDialogs()))
 				map.put(keySequence2, match.getCommandId());
 		}
 
 		return Collections.unmodifiableMap(map);
 	}
 
-	public String getPerfectMatch(KeySequence keySequence) {
+	public String getPerfectMatch(KeySequence keySequence, boolean dialogOnly) {
 		Match match =
 			(Match) keySequenceBindingMachine.getMatchesByKeySequence().get(
 				keySequence);
-		return match != null ? match.getCommandId() : null;
+		
+		if ((match != null) && (!dialogOnly || match.isAllowedInDialogs())) {
+		    return match.getCommandId();
+		}
+		
+		return null;
 	}
 
 	private boolean isInContext(Collection contextBindings) {
@@ -436,7 +441,7 @@ public final class CommandManager implements ICommandManager {
 		return false;
 	}
 
-	public boolean isPartialMatch(KeySequence keySequence) {
+	public boolean isPartialMatch(KeySequence keySequence, boolean dialogOnly) {
 		for (Iterator iterator =
 			keySequenceBindingMachine
 				.getMatchesByKeySequence()
@@ -446,16 +451,17 @@ public final class CommandManager implements ICommandManager {
 			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			KeySequence keySequence2 = (KeySequence) entry.getKey();
+			Match match = (Match) entry.getValue();
 
-			if (keySequence2.startsWith(keySequence, false))
+			if ((keySequence2.startsWith(keySequence, false)) && (!dialogOnly || match.isAllowedInDialogs()))
 				return true;
 		}
 		
 		return false;
 	}
 
-	public boolean isPerfectMatch(KeySequence keySequence) {
-		return getPerfectMatch(keySequence) != null;
+	public boolean isPerfectMatch(KeySequence keySequence, boolean dialogOnly) {
+		return getPerfectMatch(keySequence, dialogOnly) != null;
 	}
 
 	private void notifyCategories(Map categoryEventsByCategoryId) {

@@ -826,7 +826,12 @@ final class KeySequenceBindingNode {
 															+ (keyConfiguration
 																<< 16)
 															+ (platform << 8)
-															+ locale);
+															+ locale,
+														commandIdMap.size() == 1
+															? ((Boolean) commandIdMap
+																.values().iterator()
+																.next()).booleanValue()
+															: false);
 										}
 								}
 						}

@@ -142,11 +142,9 @@ public final class WorkbenchKeyboard {
                 .convertEventToUnmodifiedAccelerator(event);
         keyStrokes.add(SWTKeySupport
                 .convertAcceleratorToKeyStroke(firstAccelerator));
-        
+
         // We shouldn't allow delete to undergo shift resolution.
-        if (event.character == SWT.DEL) {
-            return keyStrokes;
-        }
+        if (event.character == SWT.DEL) { return keyStrokes; }
 
         final int secondAccelerator = SWTKeySupport
                 .convertEventToUnshiftedModifiedAccelerator(event);
@@ -396,16 +394,24 @@ public final class WorkbenchKeyboard {
         managedShells.remove(shell);
     }
 
-	private static boolean isEnabled(ICommand command) {
-	    try {
-	        return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
-	    } catch (NotHandledException eNotHandled) {		        
-	        return false;
-	    } catch (NotDefinedException eNotDefined) {
-	        return true;
-	    }
-	}    
-    
+    /**
+     * Tests whether the given command is enabled.
+     * 
+     * @param command
+     *            The command to test; must not be <code>null</code>.
+     * @return <code>true</code> if the command is enabled or not defined;
+     *         <code>false</code> otherwise.
+     */
+    private static boolean isEnabled(ICommand command) {
+        try {
+            return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
+        } catch (NotHandledException eNotHandled) {
+            return false;
+        } catch (NotDefinedException eNotDefined) {
+            return true;
+        }
+    }
+
     /**
      * Performs the actual execution of the command by looking up the current
      * handler from the command manager. If there is a handler and it is
@@ -436,14 +442,20 @@ public final class WorkbenchKeyboard {
         ICommand command = commandManager.getCommand(commandId);
 
         if (DEBUG && DEBUG_VERBOSE) {
-            if (!command.isHandled()) {
+            if (!command.isDefined()) {
+                System.out.println("KEYS >>>     not defined"); //$NON-NLS-1$
+            } else if (!command.isHandled()) {
                 System.out.println("KEYS >>>     not handled"); //$NON-NLS-1$
+            } else if (!isEnabled(command)) {
+                System.out.println("KEYS >>>     not enabled"); //$NON-NLS-1$
             } else {
                 try {
-                    System.out.println("KEYS >>>     value for 'id' attribute = " //$NON-NLS-1$
-                            + command.getAttributeValue("id")); // $NON-NLS-1$
-                    System.out.println("KEYS >>>     value for 'enabled' attribute = " //$NON-NLS-1$
-                            + command.getAttributeValue("enabled")); // $NON-NLS-1$
+                    System.out
+                            .println("KEYS >>>     value for 'id' attribute = " //$NON-NLS-1$
+                                    + command.getAttributeValue("id")); //$NON-NLS-1$
+                    System.out
+                            .println("KEYS >>>     value for 'enabled' attribute = " //$NON-NLS-1$
+                                    + command.getAttributeValue("enabled")); //$NON-NLS-1$
                 } catch (CommandException eCommand) {
                     System.out.println(eCommand);
                 }
@@ -461,7 +473,9 @@ public final class WorkbenchKeyboard {
             }
         }
 
-        return command.isHandled(); // TODO what is the purpose of returning this expression? should isDefined be considered as well?
+        return command.isHandled(); // TODO what is the purpose of returning
+        // this expression? should isDefined be
+        // considered as well?
     }
 
     /**
@@ -573,11 +587,15 @@ public final class WorkbenchKeyboard {
      * 
      * @param keySequence
      *            The key sequence to check for a match; must never be <code>null</code>.
+     * @param allowInDialog
+     *            Whether the match should only occur with key bindings allowed
+     *            in dialogs.
      * @return The command identifier for the perfectly matching command;
      *         <code>null</code> if no command matches.
      */
-    private String getPerfectMatch(KeySequence keySequence) {
-        return commandManager.getPerfectMatch(keySequence);
+    private String getPerfectMatch(KeySequence keySequence,
+            boolean allowInDialog) {
+        return commandManager.getPerfectMatch(keySequence, allowInDialog);
     }
 
     /**
@@ -589,8 +607,11 @@ public final class WorkbenchKeyboard {
      * 
      * @param sequence
      *            The new key sequence for the state; should not be <code>null</code>.
+     * @param dialogOnly
+     *            Whether the state is only expecting to match on dialogs.
      */
-    private void incrementState(KeySequence sequence) {
+    private void incrementState(final KeySequence sequence,
+            final boolean dialogOnly) {
         // Record the starting time.
         startTime = System.currentTimeMillis();
         final long myStartTime = startTime;
@@ -611,7 +632,7 @@ public final class WorkbenchKeyboard {
                 public void run() {
                     if ((System.currentTimeMillis() > (myStartTime - delay))
                             && (startTime == myStartTime)) {
-                        openMultiKeyAssistShell(display);
+                        openMultiKeyAssistShell(display, dialogOnly);
                     }
                 }
             });
@@ -625,11 +646,14 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a partial match; must never be
      *            <code>null</code>.
+     * @param dialogOnly
+     *            Whether the match should only be allowed to occur on dialog
+     *            keys.
      * @return <code>true</code> if there is a partial match; <code>false</code>
      *         otherwise.
      */
-    private boolean isPartialMatch(KeySequence keySequence) {
-        return commandManager.isPartialMatch(keySequence);
+    private boolean isPartialMatch(KeySequence keySequence, boolean dialogOnly) {
+        return commandManager.isPartialMatch(keySequence, dialogOnly);
     }
 
     /**
@@ -639,11 +663,14 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a perfect match; must never be
      *            <code>null</code>.
+     * @param dialogOnly
+     *            Whether the match should only be allowed to occur on dialog
+     *            keys.
      * @return <code>true</code> if there is a perfect match; <code>false</code>
      *         otherwise.
      */
-    private boolean isPerfectMatch(KeySequence keySequence) {
-        return commandManager.isPerfectMatch(keySequence);
+    private boolean isPerfectMatch(KeySequence keySequence, boolean dialogOnly) {
+        return commandManager.isPerfectMatch(keySequence, dialogOnly);
     }
 
     /**
@@ -654,8 +681,12 @@ public final class WorkbenchKeyboard {
      * @param display
      *            The display on which the shell should be opened; must not be
      *            <code>null</code>.
+     * @param dialogOnly
+     *            Whether only the key bindings available in dialogs should be
+     *            listed.
      */
-    private void openMultiKeyAssistShell(final Display display) {
+    private void openMultiKeyAssistShell(final Display display,
+            final boolean dialogOnly) {
         // Safety check to close an already open shell, if there is one.
         if (multiKeyAssistShell != null) {
             multiKeyAssistShell.close();
@@ -686,14 +717,16 @@ public final class WorkbenchKeyboard {
             }
         });
         partialMatches.putAll(commandManager.getPartialMatches(state
-                .getCurrentSequence()));
+                .getCurrentSequence(), dialogOnly));
         Iterator partialMatchItr = partialMatches.entrySet().iterator();
         while (partialMatchItr.hasNext()) {
             Map.Entry entry = (Map.Entry) partialMatchItr.next();
             String commandId = (String) entry.getValue();
             ICommand command = commandManager.getCommand(commandId);
             // TODO The enabled property of ICommand is broken.
-            if (!command.isDefined() || !activityManager.getIdentifier(command.getId()).isEnabled() // ||
+            if (!command.isDefined()
+                    || !activityManager.getIdentifier(command.getId())
+                            .isEnabled() // ||
             // !command.isEnabled()
             ) {
                 partialMatchItr.remove();
@@ -826,20 +859,18 @@ public final class WorkbenchKeyboard {
                             + dialogOnly + ")"); //$NON-NLS-1$
         }
 
-        // TODO Add proper dialog support
-        if (dialogOnly) { return false; }
-
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
                 .hasNext();) {
             KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(
                     sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
-            if (isPartialMatch(sequenceAfterKeyStroke)) {
-                incrementState(sequenceAfterKeyStroke);
+            if (isPartialMatch(sequenceAfterKeyStroke, dialogOnly)) {
+                incrementState(sequenceAfterKeyStroke, dialogOnly);
                 return true;
 
-            } else if (isPerfectMatch(sequenceAfterKeyStroke)) {
-                String commandId = getPerfectMatch(sequenceAfterKeyStroke);
+            } else if (isPerfectMatch(sequenceAfterKeyStroke, dialogOnly)) {
+                String commandId = getPerfectMatch(sequenceAfterKeyStroke,
+                        dialogOnly);
                 return (executeCommand(commandId, event) || sequenceBeforeKeyStroke
                         .isEmpty());
 

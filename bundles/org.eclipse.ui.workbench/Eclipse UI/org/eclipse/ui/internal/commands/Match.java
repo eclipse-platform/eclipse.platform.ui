@@ -24,13 +24,15 @@ public final class Match {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	private int value;
+	private boolean allowedInDialogs;
 
-	Match(String commandId, int value) {
+	Match(String commandId, int value, boolean allowInDialogs) {
 		if (value < 0)
 			throw new IllegalArgumentException();
 
 		this.commandId = commandId;
 		this.value = value;
+		this.allowedInDialogs = allowInDialogs;
 	}
 
 	public int compareTo(Object object) {
@@ -72,6 +74,10 @@ public final class Match {
 
 		return hashCode;
 	}
+	
+	public boolean isAllowedInDialogs() {
+	    return allowedInDialogs;
+	}
 
 	public String toString() {
 		if (string == null) {
@@ -80,6 +86,8 @@ public final class Match {
 			stringBuffer.append(commandId);
 			stringBuffer.append(',');
 			stringBuffer.append(value);
+			stringBuffer.append(',');
+			stringBuffer.append(allowedInDialogs);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
