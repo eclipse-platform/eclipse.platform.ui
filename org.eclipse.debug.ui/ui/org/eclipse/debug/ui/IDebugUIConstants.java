@@ -866,7 +866,7 @@ public interface IDebugUIConstants {
 	public static final String ATTR_CAPTURE_IN_CONSOLE = PLUGIN_ID + ".ATTR_CONSOLE_OUTPUT_ON"; //$NON-NLS-1$
 	
 	/**
-	 * ProcessConsole attribute - if not null the <java.lang.String> value will be a file name. All
+	 * ProcessConsole attribute - if not <code>null</code> the <java.lang.String> value will be a file name. All
 	 * output from the launched process will be written to the file.
 	 * 
 	 * @since 3.1
