@@ -139,6 +139,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		tree.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		if (folder != null)
 			tree.setSelection(new StructuredSelection(folder), true);
+		validatePage();
 		setControl(container);
 	}
 
