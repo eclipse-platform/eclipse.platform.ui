@@ -8,7 +8,6 @@ package org.eclipse.team.examples.pessimistic;
  
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -568,7 +567,14 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		boolean change= preferences.getBoolean(IPessimisticFilesystemConstants.PREF_TOUCH_DURING_VALIDATE_EDIT);
 		if (change) {
 			try {
-				resource.touch(null);
+				if(resource.getType() == IResource.FILE) {
+					try {
+						appendText((IFile)resource, getRandomSnippet(), false);
+					} catch (IOException e1) {
+					}
+				} else {
+					resource.touch(null);
+				}
 			} catch (CoreException e) {
 				PessimisticFilesystemProviderPlugin.getInstance().logError(e, "Problems touching resource: " + resource);
 			}
@@ -576,6 +582,57 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		return change;
 	}
 
+	public void appendText(IFile file, String text, boolean prepend) throws CoreException, IOException {
+		String contents = getFileContents(file);
+		StringBuffer buffer = new StringBuffer();
+		if (prepend) {
+			buffer.append(text);
+		}
+		buffer.append(contents);
+		if (!prepend) {
+			buffer.append(System.getProperty("line.separator") + text);
+		}
+		file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), false, false, null);
+	}
+	
+	public static String getFileContents(IFile file) throws IOException, CoreException {
+		StringBuffer buf = new StringBuffer();
+		Reader reader = new InputStreamReader(new BufferedInputStream(file.getContents()));
+		try {
+			int c;
+			while ((c = reader.read()) != -1) buf.append((char)c);
+		} finally {
+			reader.close();
+		}
+		return buf.toString();		
+	}
+	
+	public static String getRandomSnippet() {
+		switch ((int) Math.round(Math.random() * 10)) {
+			case 0 :
+				return "este e' o meu conteudo (portuguese)";
+			case 1 :
+				return "Dann brauchen wir aber auch einen deutschen Satz!";
+			case 2 :
+				return "I'll be back";
+			case 3 :
+				return "don't worry, be happy";
+			case 4 :
+				return "there is no imagination for more sentences";
+			case 5 :
+				return "customize yours";
+			case 6 :
+				return "foo";
+			case 7 :
+				return "bar";
+			case 8 :
+				return "foobar";
+			case 9 :
+				return "case 9";
+			default :
+				return "these are my contents";
+		}
+	}
 
 	/*
 	 * Notifies listeners that the state of the resources has changed.

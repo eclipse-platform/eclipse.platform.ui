@@ -263,6 +263,9 @@ Platforms</font></b> </div>
 <li><a href="#perf00006.html">Team Data Structures</a>
 <ul>
 </ul>
+<li><a href="#perf00007.html">Scalability</a>
+<ul>
+</ul>
 </ul>
 <li><a href="#failures00001.html">Failure Cases</a>
 <ul>
@@ -285,6 +288,15 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 <li><a href="#ext_connection_method00001.html">EXT</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#validate_edit00001.html">Validate Edit</a>
+<ul>
+<li><a href="#validate_edit_editing_files00001.html">Editing Files</a>
+<ul>
+</ul>
+<li><a href="#validate_edit_refactoring00001.html">Refactoring</a>
 <ul>
 </ul>
 </ul>
@@ -1308,7 +1320,7 @@ your known_hosts file.
 <a name="00034.html">
 <h2>Show Annotation Action</h2>
 <p>Since: 3.0 M3<br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <p>Annotate a non-managed file, binary file, plugin.xml file... Be creative.</p>
 <p>Ensure that the annotate view, editor, and history view stay synched.</p>
@@ -1318,7 +1330,7 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <a name="00036.html">
 <h2>Enablement at startup</h2>
 <p>Since: 3.0 M7<br>
-Last Modified: $Date: 2004/06/02 16:07:33 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <p>The CVS decorators should not be enabled at start-up. Verify the label decorator preference page.</p>
 <p>When sharing or checking out a project, the decorators will be enabled automatically.</p>
@@ -1328,7 +1340,7 @@ Last Modified: $Date: 2004/06/02 16:07:33 $</p>
 <a name="00037.html">
 <h2>Customizations</h2>
 <p>Since: 2.0 <br>
-Last Modified: $Date: 2004/06/02 16:07:33 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <p>You should be able to customize the label decorations via the preference page. The customizations will
 take effect when apply is pressed. Resetting the defaults should work.
@@ -1339,7 +1351,7 @@ take effect when apply is pressed. Resetting the defaults should work.
 <a name="00038.html">
 <h2>Decorations in the Synchronize pages</h2>
 <p>Since: 3.0 M8<br>
-Last Modified: $Date: 2004/06/01 20:28:37 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 <p>
 CVS text label decorations should be visible in the CVS synchronize participants. We don't bother to show
 the images because the sync view already shows the state images. The labels should also update if the
@@ -1671,6 +1683,21 @@ size of these caches as well.
 </ul>
 
 
+<a name="perf00007.html">
+<h2>Scalability</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/06/04 19:44:24 $</p>
+
+The following scenario can be used to test a large number of incoming additions.
+
+<ol>
+<li>load org.eclipse.jdt.core.tests.model from dev.eclipse.org
+<li>Disconnect Formatter folder and delete it
+<li>Synchronize and the contents show up as incoming additions
+<li>Peform an Update in the project in the sync view.
+</ol>
+
+
 <h1>Failure Cases</h1>
 <a name="connections00001.html">
 <h2>Connections</h2>
@@ -1738,6 +1765,191 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Ext connection method</h3>
+
+
+<h1>Validate Edit</h1>
+<a name="validate_edit_editing_files00001.html">
+<h2>Editing Files</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+<p>
+These tests are to sanity check editors behavior relating to calling validateEdit. The tests will
+try to cover all cases where files are changed by the validateEdit handler and changes are made
+to the read-only bit.
+</p><p>
+These test cases outline the expected behavior of single file editors in terms
+of calling validateEdit and handling of error conditions. All scenarios assume
+that a repository provider is mapped to a project and has created a sandbox
+with files that are marked read-only.
+</p><p>
+The
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.team.examples.filesystem/">
+org.eclipse.team.example.filesystem</a> plugin is a repository provider
+that simulates a pessimistic workflow. You can use it to run these tests and validate (no pun intended) your validateEdit
+editor support. To use the pessimistic provider, share a project with the repository provider called "File
+System Pessimistic Example" and then you can add to control the files and
+checkin/checkout will toggle the read-only bit and touch the file. You can
+change the behavior of the validateEdit call via the pessimistic preference
+page. For example, you can force the operation to fail and update contents of the file
+when checked out.
+</p>
+<p>
+These tests should be run against the following combinations of tools:
+<ul>
+<li>Different repository providers
+<li>Single file editors (java, text)
+<li>Multiple file editors (manifest editor, ...)
+</il>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S1: Repository provider enabled and files are readable</h3>
+<ol>
+<li>Open a file that is not marked read-only in a project configured with a repository provider.
+<li>Start editing the file, validate edit should not be called.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S2: Validate edit called on first edit</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK, the users edit is accepted and shows up in the editor, and the file can be edited normally.
+<li>The user saves the file, and then can continue editing without validateEdit being called.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S2b: Validate edit cancelled</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit is cancelled, the users edit is not accepted and the file cannot be edited.
+<li>The user should still be able to browse the contents of the file and trying to edit it again
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S2b: Validate edit fails with an error</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit is cancelled, the users edit is not accepted and the file cannot be edited. User should
+be shown the error returned from the validateEdit provider.
+<li>The user should still be able to browse the contents of the file and trying to edit it again
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S3: Validate edit called on subsequent edits if file changes state</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK, the user's edit is accepted and the file can be edited normally.
+<li>The user saves the file, and then can continue editing without validateEdit being called.
+<li>The user saves the file and then checks in the file while the editor is still open.
+<li>After the checkin completes the user continues editing the file.
+<li>Validate edit should be called again.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S4: Validate edit not called after contents changed</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK, the user's edit is accepted and the file can be edited normally.
+<li>The user saves the file, and then can continue editing without validateEdit being called.
+<li>The user saves the file and keeps the editor opened.
+<li>The user then un-checks out the file and new file contents are retreived from the server.
+<li>The new file contents are loaded into the editor and validateEdit is not called.
+<li>
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S5: Validate edit changes file contents editor not-dirty</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK and brings in new content from the server.
+<li>The new content is loaded automatically because the editor isn't dirty yet.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S6: Validate edit changes file contents editor dirty</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK and the file on disk doesn't change.
+<li>The user continues editing the file and then checks it in.
+<li>The editor remains open and dirty, the user continues editing.
+<li>validateEdit is called because the file is now read-only and returns OK and brings in new content from the server.
+<li>The editor detects the timestamp change and prompts about the conflict and provides 
+<a href="#reload_options">options</a> to the user.
+<li>After the user selects his option and the user continues editing, the editor
+will call validateEdit.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S7: Read-only editors refreshing on checkout</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Checkout the file that brings in new content from the server.
+<li>The editor should update with the new content from the server.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S8: validate called on editor save</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK and the file on disk doesn't change.
+<li>The editor remains open and dirty, the user continues editing.
+<li>The user checks-n the file and then closes the editor.
+<li>The user is prompted to save the file, then validate edit is called, and 
+the file is checked-out then saved.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S9: validate called on editor save with new contents</h3>
+<ol>
+<li>Open a file that has been checked out as read-only from a repository provider.
+<li>Start editing the file, validateEdit should be called.
+<li>validateEdit returns OK and the file on disk doesn't change.
+<li>The editor remains open and dirty, the user continues editing.
+<li>The user checks-n the file and then closes the editor.
+<li>The user is prompted to save the file, then validate edit is called, and 
+the file is checked-out then saved.
+</ol>
+</p>
+<!--
+<hr>
+
+<a name="reload_options"><h3>Conflict Resolution Options for Editors</h3>
+<pre>
+Assumptions:  
+    1. Editors currently maintain a "dirty bit" indicating that the in-memory
+       buffer has been modified and not yet written to disk.  Editors call
+       validateEdit() the if the file is read-only and the dirty bit is going
+       from the clean state to the dirty state.
+    2. Editors can detect when the timestamp of the file has changed on disk
+       and prompt the user for the appropriate action.
+
+Suggestion:
+    Editors should maintain a separate bit, "must call validateEdit()".  Any
+    modification of the buffer calls validateEdit() first if this bit is set.
+    It is initially set when the file is opened if the file is read-only.  It
+    is cleared after a successful call to validateEdit().  It is set again
+    when the editor notices that a file has gone from read/write to read-only.
+
+    If the "must call validateEdit()" bit ever goes from the cleared state to
+    the set state (except for when the file is initially opened), a later
+    successful call to validateEdit(), should should result in the following
+    actions:
+
+    +-----------+------------------+----------------------------------------+
+    | Dirty Bit | Timestamp Change | Editor Action                          |
+    |   State   |     Detected     |                                        |
+    +-----------+------------------+----------------------------------------+
+    |     0     |        no        | No action required                     |
+    +-----------+------------------+----------------------------------------+
+    |     1     |        no        | No action required                     |
+    +-----------+------------------+----------------------------------------+
+    |     0     |        yes       | Prompt user for reload/no-reload/merge |
+    +-----------+------------------+----------------------------------------+
+    |     1     |        yes       | Prompt user for reload/no-reload/merge |
+    +-----------+------------------+----------------------------------------+
+</pre>
+-->
+
+<a name="validate_edit_refactoring00001.html">
+
+
+Answer comes here.
 
 
 </body></html>
