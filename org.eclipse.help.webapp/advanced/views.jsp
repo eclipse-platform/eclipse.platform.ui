@@ -107,7 +107,7 @@ function showView(view)
 	}
 %>	
 
- <iframe frameborder="0" class="hidden" tabindex="-1" name="temp" id="temp"></iframe>
+ <iframe frameborder="0" style="visibility:hidden" tabindex="-1" name="temp" id="temp"></iframe>
  
 </body>
 </html>

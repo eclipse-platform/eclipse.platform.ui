@@ -245,8 +245,14 @@ if(buttons.length > 0){
 	</tr>
 </table>
 
+<%// special case for content toolbar - internally used live help frame
+if ("content".equals(request.getParameter("toolbar"))) {
+%>
     <iframe name="liveHelpFrame" style="visibility:hidden" tabindex="-1" frameborder="no" width="0" height="0" scrolling="no">
     </iframe>
+<%
+}
+%>
 
 </body>     
 </html>
