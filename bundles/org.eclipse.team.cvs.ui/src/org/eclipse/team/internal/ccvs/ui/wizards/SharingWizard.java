@@ -148,13 +148,25 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							// Validate the connection if the user wants to
 							boolean validate = autoconnectPage.getValidate();					
 							if (validate) {
-								// Do the validation right now
+								// Do the validation
 								try {
 									location.validateConnection(new SubProgressMonitor(monitor, 50));
 								} catch (TeamException e) {
-									if (created)
-										CVSProviderPlugin.getProvider().disposeRepository(location);
-									throw e;
+									// Exception validating. We can continue if the user wishes.
+									boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
+										Policy.bind("SharingWizard.validationFailedTitle"),
+										Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
+									if (!keep) {
+										// Remove the root
+										try {
+											CVSProviderPlugin.getProvider().disposeRepository(location);
+										} catch (TeamException e1) {
+											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
+										}
+										result[0] = false;
+										return;
+									}
+									// They want to keep the connection anyway. Fall through.
 								}
 							}
 							

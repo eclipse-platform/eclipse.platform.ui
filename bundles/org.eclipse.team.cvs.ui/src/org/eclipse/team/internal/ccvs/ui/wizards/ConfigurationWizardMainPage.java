@@ -166,7 +166,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			GridData data = new GridData();
 			data.horizontalSpan = 2;
 			validateButton.setLayoutData(data);
-			validateButton.setText("Validate repository location on finish");
+			validateButton.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate"));
 			validateButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
 					validate = validateButton.getSelection();

@@ -13,6 +13,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -51,19 +53,41 @@ public class NewLocationWizard extends Wizard {
 	public boolean performFinish() {
 		mainPage.finish(new NullProgressMonitor());
 		Properties properties = mainPage.getProperties();
+		ICVSRepositoryLocation root = null;
+		ICVSProvider provider = CVSProviderPlugin.getProvider();
 		try {
-			ICVSRepositoryLocation root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
+			// See if it already exists
+			root = provider.getRepository(properties);
+			if (root != null) {
+				MessageDialog.openInformation(getContainer().getShell(), Policy.bind("NewLocationWizard.alreadyExistsTitle"), Policy.bind("NewLocationWizard.alreadyExists"));
+				return false;
+			}
+			root = provider.createRepository(properties);
 			if (mainPage.getValidate()) {
 				root.validateConnection(new NullProgressMonitor());
 			}
 		} catch (TeamException e) {
 			IStatus error = e.getStatus();
-			if (error.getSeverity() == IStatus.INFO) {
-				MessageDialog.openInformation(getContainer().getShell(), Policy.bind("information"), error.getMessage());
-			} else {
+			if (root == null) {
+				// Exception creating the root, we cannot continue
 				ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, error);
+				return false;
+			} else {
+				// Exception validating. We can continue if the user wishes.
+				boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
+					Policy.bind("NewLocationWizard.validationFailedTitle"),
+					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
+				if (!keep) {
+					// Remove the root
+					try {
+						provider.disposeRepository(root);
+					} catch (TeamException e1) {
+						ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
+						return false;
+					}
+				}
+				return keep;
 			}
-			return false;
 		}
 		return true;	
 	}
