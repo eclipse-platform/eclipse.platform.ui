@@ -259,4 +259,21 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		}
 	}		
 	
+	public void testParseValid10() throws Exception {
+
+		SiteModel remoteSite= null;
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/site10.xml");
+			DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);		
+			remoteSite = parser.parse(resolvedURL.openStream());
+			remoteSite.resolve(remoteURL, null);
+		} catch (SAXParseException e) {
+			fail("Exception should not be thrown"+e.getMessage());			
+		}
+		FeatureReferenceModel[] models = remoteSite.getFeatureReferenceModels();
+		assertEquals("Invalid versioned identifier",models[0].getFeatureIdentifier(),"org.eclipse.test.feature");
+	}			
+	
 }

@@ -552,14 +552,12 @@ public class DefaultSiteParser extends DefaultHandler {
 		String id = attributes.getValue("id"); //$NON-NLS-1$
 		String ver = attributes.getValue("version"); //$NON-NLS-1$
 
-		if (id == null
-			|| id.trim().equals("") //$NON-NLS-1$
-			|| ver == null
-			|| ver.trim().equals("")) { //$NON-NLS-1$
-			UpdateManagerPlugin.warn(Policy.bind(
-					"DefaultFeatureParser.IdOrVersionInvalid",
-					new String[] { id, ver, getState(currentState)}));
-			//$NON-NLS-1$
+		// if one is null, and not the other
+		if ((id == null || id.trim().equals("")) //$NON-NLS-1$
+			^ (ver == null || ver.trim().equals(""))) { //$NON-NLS-1$
+				String[] values = new String[] { id, ver, getState(currentState)};
+				UpdateManagerPlugin.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid",values));
+				//$NON-NLS-1$
 		} else {
 			feature.setFeatureIdentifier(id);
 			feature.setFeatureVersion(ver);

@@ -415,3 +415,5 @@ OLD Feature Code
 	
 	System.getProperty("java.io.tmpdir")(java.lang.String) /tmp
 	
+	true^false
+	true^true

@@ -111,7 +111,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
-		assertTrue("No Configured features found",configSite2.getConfiguredFeatures().length>0);
+		assertTrue("No Configured features found",configSite.getConfiguredFeatures().length>0);
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		//String configuredFeature = feature2.getLabel();
