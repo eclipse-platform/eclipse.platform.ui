@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -27,22 +29,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The ProgressFloatingWindow is a window that opens next to an animation item.
  */
 class ProgressFloatingWindow extends AssociatedWindow {
-	TableViewer viewer;
+	ProgressViewer viewer;
 	WorkbenchWindow window;
 	final int borderSize = 1;
 	/**
@@ -94,7 +90,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	protected Control createContents(Composite root) {
 		Control buttonBar = createButtons(root);
-		viewer = new TableViewer(root, SWT.MULTI) {
+		viewer = new ProgressViewer(root, SWT.NONE) {
 			/*
 			 * * (non-Javadoc)
 			 * 
@@ -110,28 +106,21 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
-		setBackground(viewer.getControl());
+		Control control = viewer.getControl();
+		setBackground(control);
 		FormData tableData = new FormData();
 		tableData.left = new FormAttachment(0);
 		tableData.right = new FormAttachment(buttonBar, 0);
 		tableData.top = new FormAttachment(0);
-		viewer.getTable().setLayoutData(tableData);
+		tableData.bottom = new FormAttachment(100);
+		viewer.getControl().setLayoutData(tableData);
 		initContentProvider();
+		viewer.setInput(this);
 		viewer.setLabelProvider(viewerLabelProvider());
 		root.addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event event) {
 				if (event.detail == SWT.TRAVERSE_ESCAPE) {
 					event.doit = false;
-				}
-			}
-		});
-		viewer.getTable().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL) {
-					TableItem[] tableItem = viewer.getTable().getSelection();
-					for (int index = 0; index < tableItem.length; index++)
-						((JobTreeElement) tableItem[index].getData()).cancel();
-					viewer.refresh();
 				}
 			}
 		});
@@ -209,7 +198,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		int maxWidth = display.getBounds().width / 6;
 		int maxHeight = display.getBounds().height / 6;
 		int fontWidth = charWidth * 34;
-		int fontHeight = charHeight * 4;
+		int fontHeight = charHeight * 3;
 		if (maxWidth < fontWidth)
 			fontWidth = maxWidth;
 		if (maxHeight < fontHeight)
@@ -246,6 +235,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		}
 		constrainShellSize();
 		getShell().setVisible(true);
+		moveShell(getShell(), AssociatedWindow.ALWAYS_VISIBLE);
 		return getReturnCode();
 	}
 	/**

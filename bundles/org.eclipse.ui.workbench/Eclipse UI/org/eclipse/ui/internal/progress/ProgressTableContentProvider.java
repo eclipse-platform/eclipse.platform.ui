@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 /**
  * The ProgressTableContentProvider is the content provider for tables that are
  * showing jobs.
@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 public class ProgressTableContentProvider extends ProgressContentProvider
 		implements
 			IStructuredContentProvider {
-	TableViewer viewer;
+	StructuredViewer viewer;
 	HashSet jobsToShow;
 	final static int numShowItems = 2;
 	/**
@@ -29,8 +29,8 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 * @param table
 	 *            the table viewer.
 	 */
-	public ProgressTableContentProvider(TableViewer table) {
-		viewer = table;
+	public ProgressTableContentProvider(StructuredViewer structured) {
+		viewer = structured;
 		jobsToShow = new HashSet();
 	}
 	/*
