@@ -42,6 +42,7 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextViewer;
 
 
 /**
@@ -285,11 +286,24 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			return;
 
 		int topLeft= getInclusiveTopIndexStartOffset();
-		int bottomRight= fCachedTextViewer.getBottomIndexEndOffset();
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=22487
-		final String delimiter= fCachedTextWidget.getLineDelimiter();
-		int viewPort= bottomRight + (delimiter != null ? delimiter.length() : 1) - topLeft;
+		int bottomRight;
+		
+		if (fCachedTextViewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
+			IRegion coverage= extension.getModelCoverage();
+			bottomRight= coverage.getOffset() + coverage.getLength();
+		} else if (fCachedTextViewer instanceof TextViewer) {
+			// TODO remove once TextViewer implements ITextViewerExtension3
+			TextViewer extension= (TextViewer) fCachedTextViewer;
+			IRegion coverage= extension.getModelCoverage();
+			bottomRight= coverage.getOffset() + coverage.getLength();
+		} else {
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=22487
+			// add 1 as getBottomIndexEndOffset returns the inclusive offset, but we want the exclusive offset (right after the last character)
+			bottomRight= fCachedTextViewer.getBottomIndexEndOffset() + 1;
+		}
+		int viewPort= bottomRight - topLeft;
 		
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int lineheight= fCachedTextWidget.getLineHeight();
@@ -324,8 +338,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 				Position position= fModel.getPosition(annotation);
 				if (position == null)
 					continue;
-					
-				if (!position.overlapsWith(topLeft, viewPort))
+				
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=20284
+				// Position.overlapsWith returns false if the position just starts at the end
+				// of the specified range. If the position has zero length, we want to include it anyhow
+				int viewPortSize= position.getLength() == 0 ? viewPort + 1 : viewPort;
+				if (!position.overlapsWith(topLeft, viewPortSize))
 					continue;
 					
 				try {
