@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.List; // disambiguate from SWT List
 
@@ -520,9 +521,24 @@ protected void okPressed() {
 	Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 	while (nodes.hasNext()) {
 		IPreferenceNode node = (IPreferenceNode) nodes.next();
-		if (node.getPage() != null) {
-			if(!node.getPage().performOk())
+		IPreferencePage page = node.getPage();
+		if (page != null) {
+			if(!page.performOk())
 				return;
+			if (page instanceof PreferencePage) {
+				// Save now in case tbe workbench does not shutdown cleanly
+				IPreferenceStore store =  ((PreferencePage)page).getPreferenceStore();	
+				if (store != null 
+					&& store.needsSaving()
+					&& store instanceof PreferenceStore) {
+						try {
+							((PreferenceStore)store).save();
+						} catch(IOException e) {
+							// Just ignore this exception.
+							// We will try again on workbench shutdown.
+						}
+				}
+			}
 		}
 	}
 
