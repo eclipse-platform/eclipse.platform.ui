@@ -504,6 +504,7 @@ private void busyResetPerspective() {
  * @param persp identifies the new perspective.
  */
 private void busySetPerspective(IPerspectiveDescriptor desc) {
+
 	// Create new layout.
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
 	Perspective newPersp = findPerspective(realDesc);
@@ -1671,6 +1672,13 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	
 //	getClientComposite().setRedraw(true);
 
+	// This code will not be reached if an exception occurs
+	// when attempting to open an editor.
+	if(file != null) {
+		// Update the default editor for this file.
+		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
+			file, editorID);
+	}
 	return editor;
 }
 /**

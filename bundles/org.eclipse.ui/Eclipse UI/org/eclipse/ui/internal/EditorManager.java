@@ -387,16 +387,7 @@ public class EditorManager {
 			if (desc == null) {
 				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
 			}
-			IEditorReference result = openEditorFromDescriptor(new Editor(),desc, input);
-			if(input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput)input).getFile();
-				if(file != null) {
-					// Update the default editor for this file.
-					String editorID = desc.getId();
-					WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(file, editorID);
-				}
-			}
-			return result;			
+			return openEditorFromDescriptor(new Editor(),desc, input);
 		}
 	}
 	/*
