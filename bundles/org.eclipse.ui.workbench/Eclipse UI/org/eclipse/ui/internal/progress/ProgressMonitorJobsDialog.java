@@ -300,16 +300,23 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return;
 				if((System.currentTimeMillis() - watchTime) > ProgressManager.getInstance().getLongOperationTime()){
 					watchTime = -1;
-					getParentShell().getDisplay().syncExec(new Runnable(){
-						/* (non-Javadoc)
-						 * @see java.lang.Runnable#run()
-						 */
-						public void run() {
-							if(!alreadyClosed)
-								open();
-						}
-					});
+					openDialog();
 				}
+			}
+
+			/**
+			 * Open the dialog in the ui Thread
+			 */
+			private void openDialog() {
+				getParentShell().getDisplay().syncExec(new Runnable(){
+					/* (non-Javadoc)
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						if(!alreadyClosed)
+							open();
+					}
+				});
 			}
 
 			/*
@@ -401,8 +408,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 			 */
 			public void setBlocked(IStatus reason) {
-				//Just open if we get blocked
-				open();
+				openDialog();
 				if (superMonitor instanceof IProgressMonitorWithBlocking)
 					((IProgressMonitorWithBlocking) superMonitor)
 							.setBlocked(reason);
