@@ -25,17 +25,13 @@
 		</jar>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/externaltoolssrc.zip">
-			<fileset dir="Ant Runner Support"/>
-			<fileset dir="Ant Tools Support"/>
 			<fileset dir="External Tools Base"/>
 			<fileset dir="Program Tools Support"/>
-			<fileset dir="Ant Editor"/>
 		</zip>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
 		<copy file=".classpath" todir="${dest}"/>
 		<copy file=".options" todir="${dest}"/>
-		<copy file="lib/antrunner.jar" todir="${dest}/lib"/>
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />
 		</copy>		
