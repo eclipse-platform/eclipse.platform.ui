@@ -1370,7 +1370,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void partClosed(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part = partRef.getPart(false);
-		if (part.equals(fEditor)) {
+		if (part != null && part.equals(fEditor)) {
 			fEditor = null;
 		}
 	}
