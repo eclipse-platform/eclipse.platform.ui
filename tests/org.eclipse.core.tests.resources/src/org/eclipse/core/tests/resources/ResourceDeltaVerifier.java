@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.Path;
  * <code>
  * ResourceDeltaVerifier verifier = new ResourceDeltaComparer();
  * IResourceChangeListener listener = (IResourceChangeListener)verifier;
- * ISolution soln = workspace.getSolution("MySolution");
- * IProject proj = soln.getProject("MyProject");
- * // Assume the solution and project are accessible
- * soln.getNotificationManager().addListener("verifier", listener);
+ * IWorkspace workspace = ResourcesPlugin.getWorkspace();
+ * IProject proj = workspace.getRoot().getProject("MyProject");
+ * // Assume the project is accessible
+ * workspace.addResourceChangeListener(listener);
  * verifier.addExpectedChange(proj, REMOVED, 0);
  * try {
  * 		proj.delete(true, true, null);

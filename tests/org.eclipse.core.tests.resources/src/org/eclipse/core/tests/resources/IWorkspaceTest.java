@@ -951,9 +951,19 @@ public void testValidateProjectLocation() {
 	} catch (CoreException e) {
 		fail("7.99", e);
 	}
-	
-	assertTrue("7.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
-	assertTrue("7.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
+	try {
+		assertTrue("7.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
+		assertTrue("7.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
+	} finally {
+		//make sure we clean up project directories
+		try {
+			open.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+			open.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+		} catch (CoreException e) {
+		}
+		ensureDoesNotExistInFileSystem(openProjectLocation.toFile());
+		ensureDoesNotExistInFileSystem(closedProjectLocation.toFile());
+	}
 
 	// FIXME: Should this be valid?
 	assertTrue("23.1", workspace.validateProjectLocation(project, new Path("/asf")).isOK());

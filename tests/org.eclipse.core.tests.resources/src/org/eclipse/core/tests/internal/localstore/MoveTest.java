@@ -60,11 +60,12 @@ public void testMoveFileAcrossVolumes() {
 	// create common objects
 	IProject source = getWorkspace().getRoot().getProject("SourceProject");
 	IProject destination = getWorkspace().getRoot().getProject("DestinationProject");
+	IPath destinationLocation = new Path("d:/temp/destination");
 	try {
 		source.create(getMonitor());
 		source.open(getMonitor());
 		IProjectDescription description = getWorkspace().newProjectDescription("DestinationProject");
-		description.setLocation(new Path("d:/temp/destination"));
+		description.setLocation(destinationLocation);
 		destination.create(description, getMonitor());
 		destination.open(getMonitor());
 	} catch (CoreException e) {
@@ -127,6 +128,7 @@ public void testMoveFileAcrossVolumes() {
 	} catch (CoreException e) {
 		fail("20.0", e);
 	}
+	ensureDoesNotExistInFileSystem(destinationLocation.toFile());
 }
 /**
  * Move one file from one project to another.

@@ -36,20 +36,26 @@ public void test_1GH2B0N() {
 	IPath path = new Path("c:/temp");
 	IProject project = getWorkspace().getRoot().getProject("MyProject");
 	IProjectDescription description = getWorkspace().newProjectDescription("MyProject");
-	description.setLocation(path.append(project.getName()));
+	IPath projectLocation = path.append(project.getName());
+	description.setLocation(projectLocation);
 	try {
-		project.create(description, getMonitor());
-	} catch (CoreException e) {
-		fail("1.0", e);
+		try {
+			project.create(description, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		try {
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		
+		IProject project2 = getWorkspace().getRoot().getProject("MyProject2");
+		IStatus status = getWorkspace().validateProjectLocation(project2, project.getLocation().append(project2.getName()));
+		assertTrue("2.0", !status.isOK());
+	} finally {
+		ensureDoesNotExistInWorkspace(project);
+		ensureDoesNotExistInFileSystem(projectLocation.toFile());
 	}
-	try {
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("1.1", e);
-	}
-	
-	IProject project2 = getWorkspace().getRoot().getProject("MyProject2");
-	IStatus status = getWorkspace().validateProjectLocation(project2, project.getLocation().append(project2.getName()));
-	assertTrue("2.0", !status.isOK());
 }
 }
