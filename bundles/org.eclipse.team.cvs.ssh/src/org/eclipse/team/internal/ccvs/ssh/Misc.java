@@ -317,17 +317,18 @@ static public byte[] readMpInt(InputStream is) throws IOException {
 
 	return result;
 }
-public static byte[] md5(byte[] b) {
+public static byte[] md5(byte[] b) throws IOException {
 	if (md5 == null) {
 		try {
 			md5 = MessageDigest.getInstance("MD5");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
+			throw new IOException(Policy.bind("Misc.missingMD5", e.getMessage()));
 		}
 	}
 
 	return md5.digest(b);
 }
-public static byte[] md5(String s) {
+public static byte[] md5(String s) throws IOException {
 	return md5(s.getBytes());
 }
 public static void readFully(InputStream is, byte[] b) throws IOException {
@@ -411,6 +412,8 @@ static public void random(byte[] b, int off, int len, boolean allowZeroBytes) {
 		try {
 			random = SecureRandom.getInstance("SHA1PRNG");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
+			// If SHA1PRNG is not available, just use the default
+			random = new SecureRandom();
 		}
 	}
 

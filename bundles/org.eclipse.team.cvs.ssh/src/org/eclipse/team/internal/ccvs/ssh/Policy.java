@@ -44,7 +44,15 @@ public class Policy {
 			return "!" + key + "!"; //$NON-NLS-1$  //$NON-NLS-2$
 		}
 	}
-	
+
+	/**
+	 * Lookup the message with the given ID in this catalog and bind its
+	 * substitution locations with the given string.
+	 */
+	public static String bind(String id, String binding) {
+		return bind(id, new String[] { binding });
+	}
+		
 	/**
 	 * Gets a string from the resource bundle and binds it with the given arguments. If the key is 
 	 * not found, return the key.
