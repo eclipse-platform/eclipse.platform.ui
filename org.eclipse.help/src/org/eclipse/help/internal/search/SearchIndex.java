@@ -32,7 +32,7 @@ public class SearchIndex {
 	public SearchIndex(String locale) {
 		super();
 		this.locale = locale;
-		analyzer=HelpSystem.getSearchManager().getAnalyzer(locale);
+		analyzer = HelpSystem.getSearchManager().getAnalyzer(locale);
 		String helpStatePath = HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
 			helpStatePath + File.separator + "nl" + File.separator + locale;
@@ -62,7 +62,8 @@ public class SearchIndex {
 				title = parser.getTitle();
 			} catch (InterruptedException ie) {
 			}
-			doc.add(Field.Keyword("title", title));
+			doc.add(Field.UnStored("title", title));
+			doc.add(Field.UnIndexed("raw_title", title));
 			// doc.add(Field.UnIndexed("summary", parser.getSummary()));
 			iw.addDocument(doc);
 			indexedDocs.put(name, "0");
@@ -217,10 +218,11 @@ public class SearchIndex {
 	}
 	public String getLocale() {
 		return locale;
-	} /**
-			 * Returns the list of all the plugins in this session
-			 * that have declared a help contribution.
-			 */
+	}
+	/**
+	 * Returns the list of all the plugins in this session
+	 * that have declared a help contribution.
+	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
 			Iterator docPluginsIterator =

@@ -57,7 +57,7 @@ public class SearchResult {
 			// Set document href
 			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
 			// Set the document label
-			String label = doc.get("title");
+			String label = doc.get("raw_title");
 			if ("".equals(label)) {
 				label = topic.getLabel();
 			}
