@@ -28,7 +28,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 	 * A comparator that guarantees that modifier keys will be sorted the same
 	 * across different platforms.
 	 */
-	private static final Comparator EMACS_NATURAL_MODIFIER_KEY_COMPARATOR =
+	private static final Comparator EMACS_MODIFIER_KEY_COMPARATOR =
 		new AlphabeticModifierKeyComparator();
 
 	/**
@@ -92,7 +92,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getModifierKeyComparator()
 	 */
 	protected Comparator getModifierKeyComparator() {
-		return EMACS_NATURAL_MODIFIER_KEY_COMPARATOR;
+		return EMACS_MODIFIER_KEY_COMPARATOR;
 	}
 
 }
