@@ -20,7 +20,7 @@
       point="org.eclipse.ui.editors">
    <editor
          name="%javaEditorName"
-         icon="icons/basic/obj16/java.gif"
+         icon="icons/obj16/java.gif"
          extensions="jav"
          contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
          class="org.eclipse.ui.examples.javaeditor.JavaEditor"
