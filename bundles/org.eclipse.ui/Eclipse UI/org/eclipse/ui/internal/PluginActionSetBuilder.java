@@ -166,7 +166,7 @@ public static IContributionItem findSubInsertionPoint(String startId, String sor
 	// assumes action set contributions are done in alphabetical order.
 	for (int nX = insertIndex + 1; nX < items.length; nX ++) {
 		CoolBarContributionItem item = (CoolBarContributionItem)items[nX];
-		if (items.length == 0) break;
+		if (item.getItems().length == 0) break;
 		IContributionItem subItem = item.getItems()[0];
 		if (subItem instanceof IActionSetContributionItem) {
 			if (sortId != null) {
