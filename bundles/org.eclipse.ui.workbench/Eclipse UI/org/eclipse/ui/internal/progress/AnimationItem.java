@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlListener;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -30,8 +33,7 @@ public class AnimationItem {
 	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_VIEW_NAME =
-		"org.eclipse.ui.views.ProgressView";  //$NON-NLS-1$
+	private static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
@@ -152,22 +154,6 @@ public class AnimationItem {
 			}
 		});
 
-		imageCanvas.addKeyListener(new KeyListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-			 */
-			public void keyPressed(KeyEvent arg0) {
-				openProgressView();
-
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-			 */
-			public void keyReleased(KeyEvent arg0) {
-
-			}
-		});
-
 		imageCanvas.addMouseListener(new MouseListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
@@ -185,6 +171,18 @@ public class AnimationItem {
 			 */
 			public void mouseUp(MouseEvent arg0) {
 
+			}
+		});
+		
+		imageCanvas.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
+			 */
+			public void getValue(AccessibleControlEvent arg0) {
+				if(animated)
+					arg0.result =  "In progress";
+				else
+					arg0.result =  "Nothing running";
 			}
 		});
 
