@@ -68,7 +68,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  Specifies a user-presentable name for this breakpoint type. For example, &quot;Java Line Breakpoint&quot;.
+                  specifies a user-presentable name for this breakpoint type. For example, &quot;Java Line Breakpoint&quot;. This attribute was added in 3.1 to support automatic grouping of breakpoints by breakpoint type. When this attribute is unspecified, breakpoints of this type cannot be automatically grouped by type.
                </documentation>
             </annotation>
          </attribute>
