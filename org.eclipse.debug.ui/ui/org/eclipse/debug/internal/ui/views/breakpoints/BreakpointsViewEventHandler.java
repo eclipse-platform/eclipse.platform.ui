@@ -24,7 +24,7 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManagerEvent;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.Workbench;
 
@@ -154,7 +154,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	 * When new activities are added or enabled, refresh the view contents to add/remove
 	 * breakpoints related to the affected activities.
 	 */
-	public void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
+	public void activityManagerChanged(final ActivityManagerEvent activityManagerEvent) {
 		if (fView.isAvailable() & fView.isVisible() && activityManagerEvent.haveEnabledActivityIdsChanged()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
