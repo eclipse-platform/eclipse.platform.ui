@@ -18,10 +18,10 @@ public class CombinedLabel {
 	/**
 	 * Create a new <code>CombinedLabel</code> with the given text and image.
 	 * 
-	 * @param initialText the initial text for the label
-	 * @param initialImage the initial image for the label
+	 * @param text the text for the label
+	 * @param image the image for the label
 	 */
-	public CombinedLabel(String initialText, Image initialImage) {
+	public CombinedLabel(String text, Image image) {
 		this.text = text;
 		this.image = image;
 	}
@@ -47,18 +47,18 @@ public class CombinedLabel {
 	/**
 	 * Sets the label's text.
 	 * 
-	 * @param newText the new text for the label
+	 * @param text the text for the label
 	 */
-	public void setText(String newText) {
-		text = newText;
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	/**
 	 * Sets the label's image.
 	 * 
-	 * @param newImage the new image for the label
+	 * @param image the image for the label
 	 */
-	public void setImage(Image newImage) {
-		image = newImage;
+	public void setImage(Image image) {
+		this.image = image;
 	}
 }
