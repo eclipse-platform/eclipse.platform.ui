@@ -151,6 +151,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		userText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				connectionInfoChanged = true;
+				updateWidgetEnablements();
 			}
 		});
 		methodType.addListener(SWT.Modify, new Listener() {
@@ -516,6 +517,13 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				return;
 			}
 		}
+		String user = userText.getText();
+		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
+			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidUserName")); //$NON-NLS-1$
+			setValid(false);
+			return;
+		}
+		setErrorMessage(null);
 		setValid(true);
 	}
 	
