@@ -237,6 +237,7 @@ public class Feature extends FeatureModel implements IFeature {
 		IFeatureContentProvider provider = getFeatureContentProvider();
 		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
+		IFeatureReference alreadyInstalledFeature = null;
 		IFeatureContentConsumer consumer = null;
 		IPluginEntry[] targetSitePluginEntries = null;
 
@@ -366,7 +367,9 @@ public class Feature extends FeatureModel implements IFeature {
 			// check if we need to install feature files [16718]	
 			// store will throw CoreException if another feature is already
 			// installed in the same place
-			if (!featureAlreadyInstalled(targetSite)){
+			alreadyInstalledFeature = 
+				featureAlreadyInstalled(targetSite); // 18867
+			if (alreadyInstalledFeature == null){
 				//Install feature files
 				references = provider.getFeatureEntryContentReferences(monitor);
 				
@@ -407,6 +410,8 @@ public class Feature extends FeatureModel implements IFeature {
 				if (consumer != null) {
 					if (success) {
 						result = consumer.close();
+						if (result == null)
+							result = alreadyInstalledFeature; // 18867
 						// close the log
 						recoveryLog.close(recoveryLog.END_INSTALL_LOG);
 					} else {
@@ -858,9 +863,10 @@ public class Feature extends FeatureModel implements IFeature {
 	 }
 	 
 	 /*
-	  * returns true f the same feature is installed on the site
+	  * returns reference if the same feature is installed on the site
+	  * [18867]
 	  */
-	private boolean featureAlreadyInstalled(ISite targetSite){
+	private IFeatureReference featureAlreadyInstalled(ISite targetSite){
 		
 		IFeatureReference[] references = targetSite.getFeatureReferences();
 		IFeatureReference currentReference = null;
@@ -869,13 +875,13 @@ public class Feature extends FeatureModel implements IFeature {
 			// do not compare URL
 			try {
 				if (this.equals(currentReference.getFeature()))
-					return true;
+					return currentReference; // 18867
 			} catch (CoreException e){
 				UpdateManagerPlugin.warn(null,e);
 			}
 		}
 		
 		UpdateManagerPlugin.warn("ValidateAlreadyInstalled:Feature "+this+" not found on site"+this.getURL());
-		return false;
+		return null;
 	}
 }

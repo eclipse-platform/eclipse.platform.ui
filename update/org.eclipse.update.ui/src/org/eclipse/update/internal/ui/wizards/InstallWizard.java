@@ -154,8 +154,10 @@ public class InstallWizard extends Wizard {
 			IFeature oldFeature = job.getOldFeature();
 			if (oldFeature!=null) {
 				boolean oldSuccess = unconfigure(oldFeature);
-				if (!oldSuccess)
-					throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+				if (!oldSuccess) {
+					if (!isNestedChild(oldFeature)) // "eat" the error if nested child
+						throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+				}
 			}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());
@@ -207,5 +209,26 @@ public class InstallWizard extends Wizard {
 
 	private IVerificationListener getVerificationListener() {
 		return new JarVerificationService(this.getShell());
+	}
+	
+	private boolean isNestedChild(IFeature feature) {
+		IConfiguredSite[] csites = config.getConfiguredSites();
+		try {
+			for (int i=0; csites!=null && i<csites.length; i++) {
+				IFeatureReference[] refs = csites[i].getConfiguredFeatures();
+				for (int j=0; refs!=null && j<refs.length; j++) {
+					IFeature parent = refs[j].getFeature();
+					IFeatureReference[] children = parent.getIncludedFeatureReferences();
+					for (int k=0; children!=null && k<children.length; k++) {
+						IFeature child = children[k].getFeature();
+						if (feature.equals(child))
+							return true;
+					}
+				}
+			}
+		} catch(CoreException e) {
+			// will return false
+		}
+		return false;
 	}
 }
