@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.*;
 /**
  * Represents the Ant Core plug-in's preferences providing utilities for
  * extracting, changing and updating the underlying preferences.
+ * @since 2.1
  */
 public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener {
 
@@ -63,6 +64,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/**
 	 * When a preference changes, update the in-memory cache of the preference.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @since 2.1
 	 */
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
@@ -468,15 +470,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Return the list of urls added to the classpath by the extra classpath
+	 * Returns the list of urls added to the classpath by the extra classpath
 	 * entries extension point.
 	 * 
-	 * @return URL[]
+	 * @return the list of extra classpath URLs
 	 */
 	public URL[] getExtraClasspathURLs() {
 		return (URL[])extraClasspathURLs.toArray(new URL[extraClasspathURLs.size()]);
 	}
 	
+	/**
+	 * Returns the entire set of URLs that define the Ant runtime classpath.
+	 * Includes the Ant URLs, the custom URLs and extra classpath URLs.
+	 * 
+	 * @return the entire runtime classpath of URLs
+	 */
 	public URL[] getURLs() {
 		List result = new ArrayList(20);
 		if (antURLs != null) {
@@ -936,10 +944,24 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTY_FILES, files.toString());
 	}
 	
+	/**
+	 * Sets the string that defines the Ant home set by the user.
+	 * May be set to <code>null</code>.
+	 * 
+	 * @param the fully qualified path to Ant home
+	 * @since 2.1
+	 */
 	public void setAntHome(String antHome) {
 		this.antHome= antHome;
 	}
 	
+	/**
+	 * Returns the string that defines the Ant home set by the user.
+	 * May be <code>null</code> if Ant home has not been set.
+	 * 
+	 * @return the fully qualified path to Ant home
+	 * @since 2.1
+	 */
 	public String getAntHome() {
 		return antHome;
 	}
