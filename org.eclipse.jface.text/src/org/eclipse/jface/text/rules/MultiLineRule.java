@@ -21,7 +21,7 @@ public class MultiLineRule extends PatternRule {
 	 * @param token the token to be returned on success
 	 */
 	public MultiLineRule(String startSequence, String endSequence, IToken token) {
-		this(startSequence, endSequence, token, (char)0);
+		this(startSequence, endSequence, token, (char) 0);
 	}
 
 	/**
@@ -35,6 +35,21 @@ public class MultiLineRule extends PatternRule {
 	 * @param escapeCharacter the escape character
 	 */
 	public MultiLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter) {
-		super(startSequence, endSequence, token, escapeCharacter, false);
+		this(startSequence, endSequence, token, escapeCharacter, false);
+	}
+	
+	/**
+	 * Creates a rule for the given starting and ending sequence
+	 * which, if detected, will return the specific token.
+	 * Any character which follows the given escape character will be ignored.
+	 *
+	 * @param startSequence the pattern's start sequence
+	 * @param endSequence the pattern's end sequence
+	 * @param token the token to be returned on success
+	 * @param escapeCharacter the escape character
+	 * @param breaksOnEOF indicates whether the end of the file terminates this rule successfully
+	 */
+	public MultiLineRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOF) {
+		super(startSequence, endSequence, token, escapeCharacter, false, breaksOnEOF);
 	}
 }

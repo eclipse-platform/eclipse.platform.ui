@@ -88,8 +88,8 @@ public class JavaPartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new WordPredicateRule(comment));
 
 		// Add rules for multi-line comments and javadoc.
-		rules.add(new MultiLineRule("/**", "*/", javaDoc)); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new MultiLineRule("/*", "*/", comment)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("/**", "*/", javaDoc, (char) 0, true)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("/*", "*/", comment, (char) 0, true)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPredicateRule[] result= new IPredicateRule[rules.size()];
 		rules.toArray(result);

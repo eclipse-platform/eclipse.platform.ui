@@ -28,7 +28,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	
 	private int fStart;
 	private int fEnd;
-	private int	fDocumentLength;
+	private int fDocumentLength;
 	
 	
 	/**
@@ -107,7 +107,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 				
 		if (fOffset == fEnd)
 			shiftBuffer(fEnd);
-		else if (fOffset > fEnd)
+		else if (fOffset < fStart || fEnd < fOffset)
 			shiftBuffer(fOffset);
 			
 		return fBuffer[fOffset++ - fStart];			

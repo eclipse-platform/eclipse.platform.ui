@@ -39,8 +39,10 @@ public class PatternRule implements IPredicateRule {
 	protected int fColumn= UNDEFINED;
 	/** The pattern's escape character */
 	protected char fEscapeCharacter;
-	/** Indicates whether end of line termines the pattern */
+	/** Indicates whether end of line terminates the pattern */
 	protected boolean fBreaksOnEOL;
+	/** Indicates whether end of file terminates the pattern */
+	protected boolean fBreaksOnEOF;
 
 	/**
 	 * Creates a rule for the given starting and ending sequence.
@@ -52,7 +54,7 @@ public class PatternRule implements IPredicateRule {
 	 * @param endSequence the pattern's end sequence, <code>null</code> is a legal value
 	 * @param token the token which will be returned on success
 	 * @param escapeCharacter any character following this one will be ignored
-	 * @param indicates whether the end of the line also termines the pattern
+	 * @param breaksOnEOL indicates whether the end of the line also terminates the pattern
 	 */
 	public PatternRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOL) {
 		Assert.isTrue(startSequence != null && startSequence.length() > 0);
@@ -64,6 +66,24 @@ public class PatternRule implements IPredicateRule {
 		fToken= token;
 		fEscapeCharacter= escapeCharacter;
 		fBreaksOnEOL= breaksOnEOL;
+	}
+	
+	/**
+	 * Creates a rule for the given starting and ending sequence.
+	 * When these sequences are detected the rule will return the specified token.
+	 * Alternatively, the sequence can also be ended by the end of the line.
+	 * Any character which follows the given escapeCharacter will be ignored.
+	 *
+	 * @param startSequence the pattern's start sequence
+	 * @param endSequence the pattern's end sequence, <code>null</code> is a legal value
+	 * @param token the token which will be returned on success
+	 * @param escapeCharacter any character following this one will be ignored
+	 * @param breaksOnEOL indicates whether the end of the line also terminates the pattern
+	 * @param breaksOnEOF indicates whether the end of the file also terminates the pattern
+	 */
+	public PatternRule(String startSequence, String endSequence, IToken token, char escapeCharacter, boolean breaksOnEOL, boolean breaksOnEOF) {
+		this(startSequence, endSequence, token, escapeCharacter, breaksOnEOL);
+		fBreaksOnEOF= breaksOnEOF;
 	}
 	
 	/**
@@ -152,11 +172,12 @@ public class PatternRule implements IPredicateRule {
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
 				for (int i= 0; i < delimiters.length; i++) {
-					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], false))
+					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true))
 						return true;
 				}
 			}
 		}
+		if (fBreaksOnEOF) return true;
 		scanner.unread();
 		return false;
 	}

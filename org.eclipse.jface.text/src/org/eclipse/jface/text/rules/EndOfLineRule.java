@@ -34,6 +34,6 @@ public class EndOfLineRule extends SingleLineRule {
 	 * @param escapeCharacter the escape character
 	 */
 	public EndOfLineRule(String startSequence, IToken token, char escapeCharacter) {
-		super(startSequence, null, token, escapeCharacter);
+		super(startSequence, null, token, escapeCharacter, true);
 	}
 }
