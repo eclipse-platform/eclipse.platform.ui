@@ -161,7 +161,7 @@ public class StandaloneHelp extends EclipseController {
 		System.out.println("where:");
 		System.out.println(" href is the URL of the help resource to display,");
 		System.out.println(
-			" eclipseInstallPath specifies Eclipse installation directory; it must be provided, when current directory is not the same as Eclipse installation directory,");
+			" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,");
 		System.out.println(
 			" helpServerHost specifies host name of the interface that help server will use,");
 		System.out.println(

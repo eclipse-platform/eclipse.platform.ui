@@ -26,9 +26,10 @@ public class Infocenter {
 	* @param options array of String options and their values
 	* <p>
 	*  Option <code>-eclipseHome dir</code> specifies Eclipse
-	*  installation directory.
-	*  It must be provided, when current directory is not the same
-	*  as Eclipse installation directory.
+	*  installation directory. This directory is a parent to "plugins" directory
+	*  and eclipse executable.  The option must be provided, when current directory
+	*  from which infocenter is launched, is
+	*  not the same as Eclipse installation directory.
 	* <p>
 	*  Option <code>-host helpServerHost</code> specifies host name
 	*  of the interface that help server will use.
