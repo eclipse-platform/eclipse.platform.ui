@@ -11,7 +11,7 @@
 package org.eclipse.core.tools.runtime;
 
 import java.io.*;
-import org.eclipse.core.tools.*;
+import org.eclipse.core.tools.BaseTextView;
 
 public class StackTraceView extends BaseTextView {
 

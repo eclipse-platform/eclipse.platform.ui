@@ -109,10 +109,10 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * Returns a string representation of the object.
 	 * 
 	 * @see java.lang.Object#toString()
-	 */	
+	 */
 	public String toString() {
 		if (name == null)
-			return value.toString();		
+			return value.toString();
 		if (value == null)
 			return name;
 		return name + " = " + value; //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	public TreeContentProviderNode getRoot() {
 		return this.getParent() == null ? this : this.getParent().getRoot();
 	}
-	
+
 	/**
 	 * Returns this node's immediate child that has the given value.
 	 * 
@@ -224,7 +224,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 				return found;
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * Returns this node's name.
@@ -232,9 +232,9 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	public String getName() {
 		return name;
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		return value instanceof IAdaptable ? ((IAdaptable) value).getAdapter(adapter) : null;
 	}
-	
+
 }

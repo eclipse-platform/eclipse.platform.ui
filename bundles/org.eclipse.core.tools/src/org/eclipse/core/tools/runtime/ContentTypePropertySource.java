@@ -115,10 +115,10 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	public String toString() {
 		return type.getId();
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySource.class)
 			return this;
 		return null;
-	}	
+	}
 }

@@ -11,13 +11,14 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.File;
+import org.eclipse.core.runtime.IPlatformRunnable;
 
 /**
  * A command-line interface for running dumpers on metadata files.
  * This application requires the name of the file to be dumped as its unique
  * argument.  
  */
-public class DumpTool {
+public class DumpTool implements IPlatformRunnable {
 
 	/**
 	 * Dumps a given file using the associated dumper, sending its contents to the 
@@ -25,22 +26,26 @@ public class DumpTool {
 	 * 
 	 * @param args the command-line arguments
 	 * @see DumperFactory#getDumper(String)
-	 */
-	public void run(String[] args) {
-
-		if (args.length < 1) {
-			System.err.println("Usage:\tDumpTool <filename>"); //$NON-NLS-1$
-			System.exit(0);
+	 */	
+	public Object run(Object args) throws Exception {		
+		String fileName = System.getProperty("dump.file");
+		if (fileName == null) {
+			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$			
+			return new Integer(0);
 		}
 
-		String fileName = args[0];
+		File toDump = new File(fileName);
+		if (!toDump.isFile()) {
+			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist or is not a file"); //$NON-NLS-1$			
+			return new Integer(1);
+		}
 
 		IDumper dumper = null;
 		try {
 			dumper = DumperFactory.getInstance().getDumper(fileName);
 		} catch (DumpException de) {
 			System.err.println("Error: \n" + de); //$NON-NLS-1$
-			System.exit(1);
+			return new Integer(1);
 		}
 		IDump dump = dumper.dump(new File(fileName));
 		System.out.print("Dump for file: "); //$NON-NLS-1$
@@ -57,15 +62,6 @@ public class DumpTool {
 		System.out.print(dump.getOffset());
 		System.out.print(" / Total: "); //$NON-NLS-1$
 		System.out.println(dump.getFile().length());
-	}
-
-	/**
-	 * Command-line entry point. Just instantiates DumpTool and invokes its 
-	 * <code>run()</code> method passing arguments provided in the command-line.
-	 * 
-	 * @param args the command-line arguments
-	 */
-	public static void main(String[] args) {
-		new DumpTool().run(args);
+		return new Integer(0);
 	}
 }

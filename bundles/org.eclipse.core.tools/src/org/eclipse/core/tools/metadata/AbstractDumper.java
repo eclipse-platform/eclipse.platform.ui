@@ -14,8 +14,7 @@ import java.io.*;
 
 /**
  * An abstract implementation for dumpers that generate bare text dumps by 
- * sequentially reading input streams. Subclasses must provide a concrete 
- * implementation for <code>getStringDumpingStrategy(InputStream)</code> method.
+ * sequentially reading input streams.
  */
 public abstract class AbstractDumper implements IDumper {
 
@@ -43,33 +42,16 @@ public abstract class AbstractDumper implements IDumper {
 	 * @see IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 * @see #openInputStream(File)
 	 */
-	public final IDump dump(File file) {
-
+	public IDump dump(File file) {
 		DataInputStream dataInput = null;
 		MeteredInputStream meteredInput = null;
 		Dump dump = new Dump();
-
 		dump.setFile(file);
-		IStringDumpingStrategy strategy;
 		StringBuffer contents = new StringBuffer(40);
 		try {
 			//uses a metered input stream in order to count the number of bytes read
 			meteredInput = new MeteredInputStream(openInputStream(file));
-			dataInput = new DataInputStream(meteredInput);
-
-			int c;
-			while ((c = meteredInput.read()) != -1) {
-				meteredInput.unread(c);
-				strategy = getStringDumpingStrategy(dataInput);
-				contents.append("Format: "); //$NON-NLS-1$
-				contents.append(strategy.getFormatDescription());
-				contents.append("\n\n"); //$NON-NLS-1$
-				contents.append(strategy.dumpStringContents(dataInput));
-				contents.append("\n"); //$NON-NLS-1$                          
-			}
-
-			if (contents.length() == 0)
-				contents.append("No contents\n"); //$NON-NLS-1$
+			dumpContents(meteredInput, contents); //$NON-NLS-1$
 		} catch (PartialDumpException pde) {
 			// ensure we remember any partial contents
 			if (pde.getPartialContents() != null)
@@ -93,17 +75,17 @@ public abstract class AbstractDumper implements IDumper {
 	}
 
 	/**
-	 * Returns a <code>IStringDumpingStrategy</code> object. Subclasses must provide 
-	 * a concrete implementation for this method. The input stream is connected to 
-	 * the file being dumped. If needed, implementations may consume the input 
-	 * stream in order to choose a strategy.
-	 * 
-	 * @param input the input stream being read
-	 * @return  a <code>IStringDumpingStrategy</code> object
-	 * @throws Exception any exceptions occurred during input stream reading must 
-	 * NOT be caught
+	 * Does the actual  work. Subclasses must implement this method to define
+	 * dumping behavior. The results are added to the <code>contents</code>
+	 * string buffer.
+	 *  
+	 * @param input
+	 * @param contents
+	 * @throws IOException
+	 * @throws Exception
+	 * @throws DumpException
 	 */
-	protected abstract IStringDumpingStrategy getStringDumpingStrategy(DataInputStream input) throws Exception;
+	protected abstract void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException;
 
 	/**
 	 * Opens an input stream connected to the file object provided. Provides an 

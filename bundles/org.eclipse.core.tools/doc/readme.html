@@ -26,8 +26,8 @@
     and listeners as well as the structure of the workspace, resources and resource 
     deltas.</dd>
   <dt><b>Metadata tools</b></dt>
-  <dd>The metadata tools enable users to investigate the metadata files used to 
-    maintain the resource model. Point these tools at a workspace and browse...</dd>
+  <dd>The metadata tools enable users to investigate the metadata files used in 
+    Eclipse. Point these tools at a metadata location and browse...</dd>
 </dl>
 
   
@@ -199,21 +199,21 @@ it shows the following information:
  
 <h3>Metadata Tools</h3>
 <p>The metadata tooling contributes a Metadata perspective. The individual views 
-  are not particularly useful on their own but are accessed via the Workspace-&gt;Show 
+  are not particularly useful on their own but are accessed via the Window-&gt;Show 
   View-&gt;Metadata Tools menu.</p>
 <h4></h4>
 <h4>The Metadata Perspective</h4>
-This perspective contains three views which allows the user to select a workspace 
-metadata directory, browse its structure and see supported files contents and 
-integrity status. 
+This perspective contains three views which allows the user to select a directory, 
+browse any metadata found in it and see contents and integrity status of supported 
+files. 
 <h4></h4>
 <dl> 
-  <dt><b>Workspace Files Spy</b></dt>
-  <dd>This view allows the user to select a given workspace .metadata directory 
-    and uses a tree view to show a directory hierarchy (having .metadata as root) 
-    containing all known metadata files as leaf nodes. If the user double-clicks 
-    one of these leaf nodes, the Dump Contents view will be opened having this 
-    file as its current selected file. </dd>
+  <dt><b>Metadata Spy</b></dt>
+  <dd>This view allows the user to select a given metadata directory and uses 
+    a tree view to show a directory hierarchy containing all known metadata files 
+    as leaf nodes. If the user double-clicks one of these leaf nodes, the Dump 
+    Contents view will be opened having this file as its current selected file. 
+  </dd>
   <dt><b>Dump Contents</b></dt>
   <dd>This view presents to the user the contents of a selected metadata file 
     in a human-readable format. It provides an action for selecting a new file 
@@ -227,10 +227,10 @@ integrity status.
     along with the number of bytes read. This view will only be updated if it 
     is open when a file is being dumped. </dd>
 </dl>
-<p>Note: the dumping functionality is also available through a command-line tool: 
-  <code>org.eclipse.core.tools.dumper.DumpTool</code>. To run it, you need to 
-  provide the file to be dumped as an argument. Beware the classpath must include 
-  both Spy and Resources plug-ins' JARs. </p>
+<p>Note: the dumping functionality is also available as a headless Eclipse application: 
+  <tt>org.eclipse.core.tools.dumptool</tt>. To run it, you need to pass the file 
+  to be dumped using the <tt>dump.file</tt> system property. For instance:</p>
+<pre>eclipse -application org.eclipse.core.tools.dumptool -vmargs -Ddump.file=d:\eclipse\configuration\org.eclipse.osgi\.state</pre>
 <h4><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002.  All Rights Reserved." BORDER=0 height=14 width=324></a></h4>
   </body>
 </html>
