@@ -4823,7 +4823,7 @@ public class TextViewer extends Viewer implements
 	 * @return the corresponding widget range, or <code>null</code>
 	 * @since 3.1
 	 */
-	private IRegion modelRange2ClosestWidgetRange(IRegion modelRange) {
+	protected IRegion modelRange2ClosestWidgetRange(IRegion modelRange) {
 		if (!(fInformationMapping instanceof IDocumentInformationMappingExtension2))
 			return modelRange2WidgetRange(modelRange);
 			

@@ -1580,37 +1580,30 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			return super.widgetSelection2ModelSelection(widgetSelection);
 		
 		/*
-		 * There are a number of ambiguities to resolve with projection regions.
-		 * A projected region P has a widget-length of zero. Its widget offset
-		 * may interact with the selection S in various ways:
-		 * 
-		 * A) P.widget_offset lies at the caret, S.widget_length is zero. Since 
-		 * it is counter intuitive to make a zero-length widget selection have 
-		 * any model-length, P is not included. S is *behind* P (done so by
-		 * widgetRange2ModelRange).
-		 * 
-		 * B) P.widget_offset lies inside the widget selection. This case is 
-		 * easy: P is included in S, which is automatically done so by 
-		 * widgetRange2ModelRange.
-		 * 
-		 * C) P.widget_offset lies at S.widget_offset + S.widget_length: This is
-		 * arguable - our policy is say that S includes P iff P.widget_offset is
-		 * at a line start.
-		 * 
-		 * D) P.widget_offset lies at S.widget_offset: Arguable - our policy is
-		 * to include P in S iff P.widget_offset is at a line start.
-		 * 
-		 * There are also three rules that govern preservation of logical
+		 * There is one requirement that governs preservation of logical
 		 * positions:
 		 * 
 		 * 1) a selection with widget_length == 0 should never expand to have
 		 * model_length > 0.
 		 * 
-		 * 2) a selection that covers the entire visible document should cover
-		 * the entire model document (Ctrl+A case).
+		 * There are a number of ambiguities to resolve with projection regions.
+		 * A projected region P has a widget-length of zero. Its widget offset
+		 * may interact with the selection S in various ways:
 		 * 
-		 * 3) widget_(end)offsets at zero or visibledocument.length transform to
-		 * zero / document.length 
+		 * A) P.widget_offset lies at the caret, S.widget_length is zero.
+		 * Requirement 1 applies. S is *behind* P (done so by widgetRange2ModelRange).
+		 * 
+		 * B) P.widget_offset lies inside the widget selection. This case is 
+		 * easy: P is included in S, which is automatically done so by 
+		 * widgetRange2ModelRange.
+		 * 
+		 * C) P.widget_offset lies at S.widget_end: This is
+		 * arguable - our policy is to include P if it belongs to a projection 
+		 * annotation that overlaps with the widget selection.
+		 * 
+		 * D) P.widget_offset lies at S.widget_offset: Arguable - our policy 
+		 * is to include P if it belongs to a projection annotation that
+		 * overlaps with the widget selection
 		 */
 		IRegion modelSelection= widgetRange2ModelRange(new Region(widgetSelection.x, widgetSelection.y));
 		if (modelSelection == null)
@@ -1618,51 +1611,52 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		
 		int modelOffset= modelSelection.getOffset();
 		int modelEndOffset= modelOffset + modelSelection.getLength();
-		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
-		
-		/* Rule 3: */
-		if (widgetSelectionExclusiveEnd == getVisibleDocument().getLength())
-			modelEndOffset= getDocument().getLength();
 
 		/* Case A: never expand a zero-length selection. S is *behind* P. */
 		if (widgetSelection.y == 0)
 			return new Point(modelEndOffset, 0);
 		
-		
-		/* Case C: S includes P at S.widget_offset + S.widget_length if at a
-		 * line start. */
-		int modelExclusiveEnd= widgetOffset2ModelOffset(widgetSelectionExclusiveEnd);
-		if (modelEndOffset < modelExclusiveEnd) {
-			IDocument document= getDocument();
-			try {
-				IRegion nextModelLine= document.getLineInformationOfOffset(modelExclusiveEnd);
-				if (nextModelLine.getOffset() == modelExclusiveEnd)
-					modelEndOffset= modelExclusiveEnd;
-			} catch (BadLocationException e) {
-				// ignore
-			}
-		}
-		
-		/* Case D: S includes P at S.widget_offset if at a line start. */
-		if (widgetSelection.x == 0) {
-			modelOffset= 0; // Rule 3 
-		} else {
-			int modelExclusiveStart= widgetOffset2ModelOffset(widgetSelection.x - 1);
-			if (modelExclusiveStart < modelOffset - 1) {
-				IDocument document= getDocument();
-				try {
-					IRegion modelLine= document.getLineInformationOfOffset(modelOffset);
-					if (modelLine.getOffset() == modelOffset)
-						modelOffset= modelExclusiveStart + 1;
-				} catch (BadLocationException e) {
-					// ignore
+		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
+		Position[] annotationPositions= computeOverlappingAnnotationPositions(modelSelection);
+		for (int i= 0; i < annotationPositions.length; i++) {
+			IRegion[] regions= computeCollapsedRegions(annotationPositions[i]);
+			for (int j= 0; j < regions.length; j++) {
+				IRegion modelRange= regions[j];
+				IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
+				// only take collapsed ranges, i.e. widget length is 0
+				if (widgetRange != null && widgetRange.getLength() == 0) {
+					int widgetOffset= widgetRange.getOffset();
+					// D) region is collapsed at S.widget_offset
+					if (widgetOffset == widgetSelection.x)
+						modelOffset= Math.min(modelOffset, modelRange.getOffset());
+					// C) region is collapsed at S.widget_end
+					else if (widgetOffset == widgetSelectionExclusiveEnd)
+						modelEndOffset= Math.max(modelEndOffset, modelRange.getOffset() + modelRange.getLength());
 				}
 			}
 		}
-		
 		return new Point(modelOffset, modelEndOffset - modelOffset);
 	}
 	
+	/**
+	 * Returns the positions of all annotations that intersect with
+	 * <code>modelSelection</code> and that are at least partly visible.
+	 * @param modelSelection a model range
+	 * @return the positions of all annotations that intersect with
+	 *         <code>modelSelection</code>
+	 * @since 3.1
+	 */
+	private Position[] computeOverlappingAnnotationPositions(IRegion modelSelection) {
+		List positions= new ArrayList();
+		for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
+			Position position= fProjectionAnnotationModel.getPosition(annotation);
+			if (position != null && position.overlapsWith(modelSelection.getOffset(), modelSelection.getLength()) && modelRange2WidgetRange(position) != null)
+				positions.add(position);
+		}
+		return (Position[]) positions.toArray(new Position[positions.size()]);
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#getFindReplaceDocumentAdapter()
 	 */
