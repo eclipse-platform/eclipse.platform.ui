@@ -2981,9 +2981,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			return;
 
 		PartPane pane = ((WorkbenchPartReference) ref).getPane();
-		// If target part is detached ignore.
-		if (pane.getWindow() instanceof DetachedWindow)
+
+		// If target part is detached fire the zoom event.  Note this doesn't 
+		// actually cause any changes in size and is required to support 
+		// intro state changes.  We may want to introduce the notion of a zoomed
+		// (fullscreen) detached view at a later time.
+		if (pane.getWindow() instanceof DetachedWindow) {
+		    pane.setZoomed(!pane.isZoomed());
 			return;
+		}
 
 		if (ref instanceof IViewReference && persp.isFastView((IViewReference)ref)) {
 			persp.toggleFastViewZoom();

@@ -89,10 +89,12 @@ public class FastViewPane {
 					currentPane.getPage().hideFastView();
 					break;
 				case IStackPresentationSite.STATE_MAXIMIZED:
+				    pane.setZoomed(true);
 					sash.setVisible(false);
 					getPresentation().setBounds(getBounds());
 					break;
 				case IStackPresentationSite.STATE_RESTORED:
+				    pane.setZoomed(false);
 					sash.setVisible(true);
 					getPresentation().setBounds(getBounds());
 					break;
@@ -476,6 +478,9 @@ public class FastViewPane {
 			return;
 		}
 		
+		//unzoom before hiding
+		currentPane.setZoomed(false);
+			
 		if (sash != null) {
 			sash.dispose();
 			sash = null;	
