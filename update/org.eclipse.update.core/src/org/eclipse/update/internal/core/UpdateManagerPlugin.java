@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  */
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +34,9 @@ public class UpdateManagerPlugin extends Plugin {
 
 	//The shared instance.
 	private static UpdateManagerPlugin plugin;
-	private static DateFormat formatter = DateFormat.getTimeInstance(DateFormat.FULL);
+	private static SimpleDateFormat formatter = new SimpleDateFormat ("mm:ss:SSS");
+
+
 	// web install
 	private static String appServerHost =null;
 	private static int appServerPort = 0;
