@@ -379,10 +379,10 @@ public final class InternalPlatform implements IPlatform {
 				}
 				getLog(bundle).log(status);
 			}
-			code.handleException(e);
 		} catch (Throwable th) {
 			th.printStackTrace();
 		}
+		code.handleException(e);
 	}
 
 	public IExtensionRegistry getRegistry() {
