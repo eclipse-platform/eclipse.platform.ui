@@ -45,28 +45,28 @@ public boolean equals(Object o) {
  * Returns null if the image data cannot be read.
  */
 public ImageData getImageData() {
+	ImageData result = null;
 	InputStream in = getStream();
 	if (in != null) {
 		try {
-			return new ImageData(in);
+			result = new ImageData(in);
 		}
 		catch (SWTException e) {
-			if (e.code == SWT.ERROR_INVALID_IMAGE)
-				return null;
-			else
+			if (e.code != SWT.ERROR_INVALID_IMAGE)
 				throw e;
+			// fall through otherwise
 		}
 		finally {
 			try {
 				in.close();
 			}
 			catch (IOException e) {
-				return null;
+				//System.err.println(getClass().getName()+".getImageData(): "+
+				//  "Exception while closing InputStream : "+e);
 			}
 		}
-	} else {
-		return null;
 	}
+	return result;
 }
 /**
  * Returns a stream on the image contents.  Returns

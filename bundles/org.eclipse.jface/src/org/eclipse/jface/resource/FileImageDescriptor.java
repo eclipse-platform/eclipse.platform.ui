@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 
 /**
@@ -77,7 +82,11 @@ public ImageData getImageData() {
 	if (in != null) {
 		try {
 			result= new ImageData(in);
-		}finally {
+		} catch (SWTException e) {
+			if (e.code != SWT.ERROR_INVALID_IMAGE)
+					throw e;
+				// fall through otherwise
+		} finally {
 			try {
 				in.close();
 			}catch (IOException e) {

@@ -13,7 +13,11 @@ package org.eclipse.jface.resource;
 import java.net.URL;
 
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -44,11 +48,14 @@ public abstract class ImageDescriptor {
 	 * <p>
 	 */
 	protected static final ImageData DEFAULT_IMAGE_DATA= new ImageData(6, 6, 1, new PaletteData(new RGB[] { new RGB(255, 0, 0) }));
+	
 /**
  * Constructs an image descriptor.
  */
 protected ImageDescriptor() {
+	// do nothing
 }
+
 /**
  * Creates and returns a new image descriptor from a file.
  * Convenience method for
@@ -61,6 +68,7 @@ protected ImageDescriptor() {
 public static ImageDescriptor createFromFile(Class location, String filename) {
 	return new FileImageDescriptor(location, filename);
 }
+
 /**
  * Creates and returns a new image descriptor from a URL.
  *
@@ -73,44 +81,70 @@ public static ImageDescriptor createFromURL(URL url) {
 	}
 	return new URLImageDescriptor(url);
 }
+
 /**
  * Creates and returns a new SWT image for this image descriptor.
  * Note that each call returns a new SWT image object.
+ * A default image is returned in the event of an error.
+ * <p>
+ * Note: it is still possible for this method to return <code>null</code> in extreme cases,
+ * for example if SWT runs out of image handles.
+ * </p>
  *
- * @return a new image
+ * @return a new image or <code>null</code> if the image could not be created
  */
 public Image createImage() {
 	return createImage(true);
 }
+
 /**
  * Creates and returns a new SWT image for this image descriptor.
- * Note that if returnMissingImageOnError is true a default image
- * is returned
+ * In the even of an error, a default image is returned if 
+ * <code>returnMissingImageOnError</code> is true, otherwise <code>null</code>
+ * is returned.  
+ * <p>
+ * Note: Even if <code>returnMissingImageOnError</code> is true, 
+ * it is still possible for this method to return <code>null</code> in extreme cases,
+ * for example if SWT runs out of image handles.
+ * </p>
  *
- * @param returnMissingImageOnError The flag that determines if a default image is returned on error
- * @return a new image or null if the image could not be created
+ * @param returnMissingImageOnError flag that determines if a default image is returned on error
+ * @return a new image or <code>null</code> if the image could not be created
  */
 public Image createImage(boolean returnMissingImageOnError) {
 	return createImage(returnMissingImageOnError, Display.getCurrent());	
 }
+
 /**
  * Creates and returns a new SWT image for this image descriptor.
+ * A default image is returned in the event of an error.
+ * <p>
+ * Note: it is still possible for this method to return <code>null</code> in extreme cases,
+ * for example if SWT runs out of image handles.
+ * </p>
  *
  * @param device the device on which to create the image
- * @return a new image or null if the image could not be created
+ * @return a new image or <code>null</code> if the image could not be created
  * @since 2.0
  */
 public Image createImage(Device device) {
 	return createImage(true, device);
 }
+
 /**
  * Creates and returns a new SWT image for this image descriptor.
- * Note that if returnMissingImageOnError is true a default image
- * is returned
+ * In the even of an error, a default image is returned if 
+ * <code>returnMissingImageOnError</code> is true, otherwise <code>null</code>
+ * is returned.  
+ * <p>
+ * Note: Even if <code>returnMissingImageOnError</code> is true, 
+ * it is still possible for this method to return <code>null</code> in extreme cases,
+ * for example if SWT runs out of image handles.
+ * </p>
  *
- * @param returnMissingImageOnError The flag that determines if a default image is returned on error
+ * @param returnMissingImageOnError flag that determines if a default image is returned on error
  * @param device the device on which to create the image
- * @return a new image or null if the image could not be created
+ * @return a new image or <code>null</code> if the image could not be created
  * @since 2.0
  */
 public Image createImage(boolean returnMissingImageOnError, Device device) {
@@ -146,6 +180,7 @@ public Image createImage(boolean returnMissingImageOnError, Device device) {
 			return null;
 	}
 }
+
 /**
  * Creates and returns a new SWT <code>ImageData</code> object
  * for this image descriptor.
@@ -155,10 +190,14 @@ public Image createImage(boolean returnMissingImageOnError, Device device) {
  * possible to request an image descriptor's image data without
  * creating an SWT image object.
  * </p>
+ * <p>
+ * Returns <code>null</code> if the image data could not be created.
+ * </p>
  *
- * @return a new image data
+ * @return a new image data or <code>null</code>
  */
 public abstract ImageData getImageData();
+
 /**
  * Returns the shared image descriptor for a missing image.
  *
