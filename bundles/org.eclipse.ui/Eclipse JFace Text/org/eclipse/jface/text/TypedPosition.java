@@ -25,6 +25,7 @@ public class TypedPosition extends Position {
 		super(offset, length);
 		fType= type;
 	}
+	
 	/**
 	 * Creates a position based on the typed region.
 	 *
@@ -34,6 +35,16 @@ public class TypedPosition extends Position {
 		super(region.getOffset(), region.getLength());
 		fType= region.getType();
 	}
+	
+	/**
+	 * Returns the type of the position
+	 *
+	 * @return the type of this position
+	 */	
+	public String getType() {
+		return fType;
+	}
+	
 	/*
 	 * @see Object#equals
 	 */
@@ -46,14 +57,7 @@ public class TypedPosition extends Position {
 		}
 		return false;
 	}
-	/**
-	 * Returns the type of the position
-	 *
-	 * @return the type of this position
-	 */	
-	public String getType() {
-		return fType;
-	}
+	
 	/*
 	 * @see Object#hashCode
 	 */

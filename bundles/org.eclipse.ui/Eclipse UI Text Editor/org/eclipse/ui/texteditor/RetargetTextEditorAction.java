@@ -50,13 +50,22 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		super(bundle, prefix);
 		fDefaultText= getText();
 	}
-	/*
-	 * @see Action#run()
+	
+	/**
+	 * Updates to the changes of the underlying action.
+	 *
+	 * @param event the change event describing the state change
 	 */
-	public void run() {
-		if (fAction != null)
-			fAction.run();
+	private void update(PropertyChangeEvent event) {
+		if (ENABLED.equals(event.getProperty())) {
+			Boolean bool= (Boolean) event.getNewValue();
+			setEnabled(bool.booleanValue());
+		} else if (TEXT.equals(event.getProperty()))
+			setText((String) event.getNewValue());
+		else if (TOOL_TIP_TEXT.equals(event.getProperty()))
+			setToolTipText((String) event.getNewValue());
 	}
+	
 	/**
 	 * Sets the underlying action.
 	 *
@@ -75,7 +84,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			
 			setEnabled(false);
 			setText(fDefaultText);
-			setToolTipText("");
+			setToolTipText(""); //$NON-NLS-1$
 		
 		} else {
 						
@@ -85,18 +94,12 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			fAction.addPropertyChangeListener(fListener);
 		}
 	}
-	/**
-	 * Updates to the changes of the underlying action.
-	 *
-	 * @param event the change event describing the state change
+
+	/*
+	 * @see Action#run()
 	 */
-	private void update(PropertyChangeEvent event) {
-		if (ENABLED.equals(event.getProperty())) {
-			Boolean bool= (Boolean) event.getNewValue();
-			setEnabled(bool.booleanValue());
-		} else if (TEXT.equals(event.getProperty()))
-			setText((String) event.getNewValue());
-		else if (TOOL_TIP_TEXT.equals(event.getProperty()))
-			setToolTipText((String) event.getNewValue());
+	public void run() {
+		if (fAction != null)
+			fAction.run();
 	}
 }

@@ -114,21 +114,81 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 	 */
 	protected AbstractDocumentProvider() {
 	}
+	
 	/**
-	 * The <code>AbstractDocumentProvider</code> implementation of this 
-	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
-	 * reimplement.
+	 * Creates a textual representation for the given element, i.e. the
+	 * document for the given element.<p>
+	 * Subclasses must implement this method.
+	 *
+	 * @param element the element
+	 * @return the document
+	 * @exception CoreException if the document could not be created
 	 */
-	public void aboutToChange(Object element) {
-	}
-	/*
-	 * @see IDocumentProvider#addElementStateListener(IElementStateListener)
+	protected abstract IDocument createDocument(Object element) throws CoreException;
+	
+	/**
+	 * Creates an annotation model for the given element. <p>
+	 * Subclasses must implement this method.
+	 *
+	 * @param element the element
+	 * @return the annotation model
+	 * @exception CoreException if the annotation model could not be created
 	 */
-	public void addElementStateListener(IElementStateListener listener) {
-		Assert.isNotNull(listener);
-		if (!fElementStateListeners.contains(listener))
-			fElementStateListeners.add(listener);
+	protected abstract IAnnotationModel createAnnotationModel(Object element) throws CoreException;
+	
+	/**
+	 * Performs the actual work of saving the given document provided for the 
+	 * given element. <p>
+	 * Subclasses must implement this method.
+	 *
+	 * @param monitor a progress monitor to report progress and request cancelation
+	 * @param element the element
+	 * @param document the document
+	 * @param overwrite indicates whether an overwrite should happen if necessary
+	 * @exception CoreException if document could not be stored to the given element
+	 */
+	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
+	
+	
+	/**
+	 * Returns the element info object for the given element.
+	 *
+	 * @param element the element
+	 * @return the element info object, or <code>null</code> if none
+	 */
+	protected ElementInfo getElementInfo(Object element) {
+		return (ElementInfo) fElementInfoMap.get(element);
 	}
+	
+	/**
+	 * Creates a new element info object for the given element.<p>
+	 * This method is called from <code>connect</code> when an element info needs
+	 * to be created. The <code>AbstractDocumentProvider</code> implementation 
+	 * of this method returns a new element info object whose document and 
+	 * annotation model are the values of <code>createDocument(element)</code> 
+	 * and  <code>createAnnotationModel(element)</code>, respectively. Subclasses 
+	 * may override.
+	 *
+	 * @param element the element
+	 * @return a new element info object
+	 * @exception CoreException if the document or annotation model could not be created
+	 */
+	protected ElementInfo createElementInfo(Object element) throws CoreException {
+		return new ElementInfo(createDocument(element), createAnnotationModel(element));
+	}
+	
+	/**
+	 * Disposes of the given element info object. <p>
+	 * This method is called when an element info is disposed. The 
+	 * <code>AbstractDocumentProvider</code> implementation of this
+	 * method does nothing. Subclasses may reimplement.
+	 *
+	 * @param element the element
+	 * @param info the element info object
+	 */
+	protected void disposeElementInfo(Object element, ElementInfo info) {
+	}
+	
 	/**
 	 * Called on initial creation and when the dirty state of the element
 	 * changes to <code>false</code>. Adds all listeners which must be 
@@ -144,24 +204,35 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		if (info.fDocument != null)
 			info.fDocument.addDocumentListener(info);
 	}
-	/*
-	 * @see IDocumentProvider#canSaveDocument(Object)
-	 */
-	public boolean canSaveDocument(Object element) {
-		
-		if (element == null)
-			return false;
-			
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		return (info != null ? info.fCanBeSaved : false);
-	}
+	
 	/**
-	 * The <code>AbstractDocumentProvider</code> implementation of this 
-	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
-	 * reimplement.
+	 * Called when the given element gets dirty. Removes all listeners
+	 * which must be active only when the element is not dirty. This 
+	 * method is called before <code>fireElementDirtyStateChanged</code>
+	 * or <code>fireElementContentReplaced</code> is called.
+	 * Subclasses may extend.
+	 * 
+	 * @param element the element
+	 * @param info the element info object
 	 */
-	public void changed(Object element) {
+	protected void removeUnchangedElementListeners(Object element, ElementInfo info) {
+		if (info.fDocument != null)
+			info.fDocument.removeDocumentListener(info);
 	}
+	
+	/**
+	 * Enumerates the elements connected via this document provider.	
+	 *
+	 * @return the list of elements (element type: <code>Object</code>)
+	 */
+	protected Iterator getConnectedElements() {
+		Set s= new HashSet();
+		Set keys= fElementInfoMap.keySet();
+		if (keys != null)
+			s.addAll(keys);
+		return s.iterator();
+	}
+	
 	/*
 	 * @see IDocumentProvider#connect
 	 */
@@ -181,41 +252,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		}	
 		++ info.fCount;		
 	}
-	/**
-	 * Creates an annotation model for the given element. <p>
-	 * Subclasses must implement this method.
-	 *
-	 * @param element the element
-	 * @return the annotation model
-	 * @exception CoreException if the annotation model could not be created
-	 */
-	protected abstract IAnnotationModel createAnnotationModel(Object element) throws CoreException;
-	/**
-	 * Creates a textual representation for the given element, i.e. the
-	 * document for the given element.<p>
-	 * Subclasses must implement this method.
-	 *
-	 * @param element the element
-	 * @return the document
-	 * @exception CoreException if the document could not be created
-	 */
-	protected abstract IDocument createDocument(Object element) throws CoreException;
-	/**
-	 * Creates a new element info object for the given element.<p>
-	 * This method is called from <code>connect</code> when an element info needs
-	 * to be created. The <code>AbstractDocumentProvider</code> implementation 
-	 * of this method returns a new element info object whose document and 
-	 * annotation model are the values of <code>createDocument(element)</code> 
-	 * and  <code>createAnnotationModel(element)</code>, respectively. Subclasses 
-	 * may override.
-	 *
-	 * @param element the element
-	 * @return a new element info object
-	 * @exception CoreException if the document or annotation model could not be created
-	 */
-	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		return new ElementInfo(createDocument(element), createAnnotationModel(element));
-	}
+	
 	/*
 	 * @see IDocumentProvider#disconnect
 	 */
@@ -235,124 +272,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			
 		} else
 		 	-- info.fCount;
-	}
-	/**
-	 * Disposes of the given element info object. <p>
-	 * This method is called when an element info is disposed. The 
-	 * <code>AbstractDocumentProvider</code> implementation of this
-	 * method does nothing. Subclasses may reimplement.
-	 *
-	 * @param element the element
-	 * @param info the element info object
-	 */
-	protected void disposeElementInfo(Object element, ElementInfo info) {
-	}
-	/**
-	 * Performs the actual work of saving the given document provided for the 
-	 * given element. <p>
-	 * Subclasses must implement this method.
-	 *
-	 * @param monitor a progress monitor to report progress and request cancelation
-	 * @param element the element
-	 * @param document the document
-	 * @param overwrite indicates whether an overwrite should happen if necessary
-	 * @exception CoreException if document could not be stored to the given element
-	 */
-	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
-	/**
-	 * Informs all registered element state listeners about an impending 
-	 * replace of the given element's content.
-	 *
-	 * @param element the element
-	 * @see IElementStateListener#elementContentAboutToBeReplaced
-	 */
-	protected void fireElementContentAboutToBeReplaced(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
-		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
-			l.elementContentAboutToBeReplaced(element);
-		}
-	}
-	/**
-	 * Informs all registered element state listeners about the just-completed
-	 * replace of the given element's content.
-	 *
-	 * @param element the element
-	 * @see IElementStateListener#elementContentReplaced
-	 */
-	protected void fireElementContentReplaced(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
-		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
-			l.elementContentReplaced(element);
-		}
-	}
-	/**
-	 * Informs all registered element state listeners about the deletion
-	 * of the given element.
-	 *
-	 * @param element the element
-	 * @see IElementStateListener#elementDeleted
-	 */
-	protected void fireElementDeleted(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
-		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
-			l.elementDeleted(element);
-		}
-	}
-	/**
-	 * Informs all registered element state listeners about a change in the
-	 * dirty state of the given element.
-	 *
-	 * @param element the element
-	 * @param isDirty the new dirty state
-	 * @see IElementStateListener#elementDirtyStateChanged
-	 */
-	protected void fireElementDirtyStateChanged(Object element, boolean isDirty) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
-		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
-			l.elementDirtyStateChanged(element, isDirty);
-		}
-	}
-	/**
-	 * Informs all registered element state listeners about a move.
-	 *
-	 * @param originalElement the element before the move
-	 * @param movedElement the element after the move
-	 * @see IElementStateListener#elementMoved
-	 */
-	protected void fireElementMoved(Object originalElement, Object movedElement) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
-		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
-			l.elementMoved(originalElement, movedElement);
-		}
-	}
-	/*
-	 * @see IDocumentProvider#getAnnotationModel
-	 */
-	public IAnnotationModel getAnnotationModel(Object element) {
-		
-		if (element == null)
-			return null;
-			
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		return (info != null ? info.fModel : null);
-	}
-	/**
-	 * Enumerates the elements connected via this document provider.	
-	 *
-	 * @return the list of elements (element type: <code>Object</code>)
-	 */
-	protected Iterator getConnectedElements() {
-		Set s= new HashSet();
-		Set keys= fElementInfoMap.keySet();
-		if (keys != null)
-			s.addAll(keys);
-		return s.iterator();
-	}
+	}		
+	
+	
 	/*
 	 * @see IDocumentProvider#getDocument
 	 */
@@ -364,15 +286,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fDocument : null);
 	}
-	/**
-	 * Returns the element info object for the given element.
-	 *
-	 * @param element the element
-	 * @return the element info object, or <code>null</code> if none
-	 */
-	protected ElementInfo getElementInfo(Object element) {
-		return (ElementInfo) fElementInfoMap.get(element);
-	}
+	
 	/*
 	 * @see IDocumentProvider#mustSaveDocument
 	 */
@@ -383,28 +297,32 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fCount == 1 && info.fCanBeSaved : false);
-	}
+	}	
+	
 	/*
-	 * @see IDocumentProvider#removeElementStateListener(IElementStateListener)
+	 * @see IDocumentProvider#getAnnotationModel
 	 */
-	public void removeElementStateListener(IElementStateListener listener) {
-		Assert.isNotNull(listener);
-		fElementStateListeners.remove(listener);
+	public IAnnotationModel getAnnotationModel(Object element) {
+		
+		if (element == null)
+			return null;
+			
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		return (info != null ? info.fModel : null);
 	}
-	/**
-	 * Called when the given element gets dirty. Removes all listeners
-	 * which must be active only when the element is not dirty. This 
-	 * method is called before <code>fireElementDirtyStateChanged</code>
-	 * or <code>fireElementContentReplaced</code> is called.
-	 * Subclasses may extend.
-	 * 
-	 * @param element the element
-	 * @param info the element info object
+	
+	/*
+	 * @see IDocumentProvider#canSaveDocument(Object)
 	 */
-	protected void removeUnchangedElementListeners(Object element, ElementInfo info) {
-		if (info.fDocument != null)
-			info.fDocument.removeDocumentListener(info);
+	public boolean canSaveDocument(Object element) {
+		
+		if (element == null)
+			return false;
+			
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		return (info != null ? info.fCanBeSaved : false);
 	}
+	
 	/*
 	 * @see IDocumentProvider#resetDocument(Object)
 	 */
@@ -424,6 +342,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			}
 		}
 	}
+	
 	/*
 	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
@@ -443,5 +362,114 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		} else {
 			doSaveDocument(monitor, element, document, overwrite);
 		}	
+	}
+	
+	/**
+	 * The <code>AbstractDocumentProvider</code> implementation of this 
+	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
+	 * reimplement.
+	 */
+	public void aboutToChange(Object element) {
+	}
+	
+	/**
+	 * The <code>AbstractDocumentProvider</code> implementation of this 
+	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
+	 * reimplement.
+	 */
+	public void changed(Object element) {
+	}
+	
+	/*
+	 * @see IDocumentProvider#addElementStateListener(IElementStateListener)
+	 */
+	public void addElementStateListener(IElementStateListener listener) {
+		Assert.isNotNull(listener);
+		if (!fElementStateListeners.contains(listener))
+			fElementStateListeners.add(listener);
+	}
+	
+	/*
+	 * @see IDocumentProvider#removeElementStateListener(IElementStateListener)
+	 */
+	public void removeElementStateListener(IElementStateListener listener) {
+		Assert.isNotNull(listener);
+		fElementStateListeners.remove(listener);
+	}
+		
+	/**
+	 * Informs all registered element state listeners about a change in the
+	 * dirty state of the given element.
+	 *
+	 * @param element the element
+	 * @param isDirty the new dirty state
+	 * @see IElementStateListener#elementDirtyStateChanged
+	 */
+	protected void fireElementDirtyStateChanged(Object element, boolean isDirty) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			IElementStateListener l= (IElementStateListener) e.next();
+			l.elementDirtyStateChanged(element, isDirty);
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about an impending 
+	 * replace of the given element's content.
+	 *
+	 * @param element the element
+	 * @see IElementStateListener#elementContentAboutToBeReplaced
+	 */
+	protected void fireElementContentAboutToBeReplaced(Object element) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			IElementStateListener l= (IElementStateListener) e.next();
+			l.elementContentAboutToBeReplaced(element);
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about the just-completed
+	 * replace of the given element's content.
+	 *
+	 * @param element the element
+	 * @see IElementStateListener#elementContentReplaced
+	 */
+	protected void fireElementContentReplaced(Object element) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			IElementStateListener l= (IElementStateListener) e.next();
+			l.elementContentReplaced(element);
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about the deletion
+	 * of the given element.
+	 *
+	 * @param element the element
+	 * @see IElementStateListener#elementDeleted
+	 */
+	protected void fireElementDeleted(Object element) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			IElementStateListener l= (IElementStateListener) e.next();
+			l.elementDeleted(element);
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about a move.
+	 *
+	 * @param originalElement the element before the move
+	 * @param movedElement the element after the move
+	 * @see IElementStateListener#elementMoved
+	 */
+	protected void fireElementMoved(Object originalElement, Object movedElement) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			IElementStateListener l= (IElementStateListener) e.next();
+			l.elementMoved(originalElement, movedElement);
+		}
 	}
 }

@@ -31,18 +31,21 @@ public class BasicMarkerUpdater implements IMarkerUpdater {
 	public BasicMarkerUpdater() {
 		super();
 	}
+		
 	/*
 	 * @see IMarkerUpdater#getAttribute()
 	 */
 	public String[] getAttribute() {
 		return ATTRIBUTES;
 	}
+	
 	/*
 	 * @see IMarkerUpdater#getMarkerType()
 	 */
 	public String getMarkerType() {
 		return null;
 	}
+	
 	/*
 	 * @see IMarkerUpdater#updateMarker(IMarker, IDocument, Position)
 	 */

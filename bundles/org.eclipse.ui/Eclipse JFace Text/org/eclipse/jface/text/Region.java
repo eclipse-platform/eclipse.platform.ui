@@ -26,6 +26,21 @@ public class Region implements IRegion {
 		fOffset= offset;
 		fLength= length;
 	}
+	
+	/*
+	 * @see IRegion#getLength
+	 */
+	public int getLength() {
+		return fLength;
+	}
+	
+	/*
+	 * @see IRegion#getOffset
+	 */
+	public int getOffset() {
+		return fOffset;
+	}
+	
 	/**
 	 * Two regions are equal if they have the same offset and length.
 	 *
@@ -38,18 +53,7 @@ public class Region implements IRegion {
 	 	}
 	 	return false;
 	}
-	/*
-	 * @see IRegion#getLength
-	 */
-	public int getLength() {
-		return fLength;
-	}
-	/*
-	 * @see IRegion#getOffset
-	 */
-	public int getOffset() {
-		return fOffset;
-	}
+	 
 	/*
 	 * @see Object#hashCode
 	 */

@@ -30,6 +30,7 @@ public interface IContentAssistProcessor {
 	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
 	 */
 	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset);
+
 	/**
 	 * Returns information about possible contexts based on the
 	 * specified location within the document that corresponds
@@ -40,6 +41,7 @@ public interface IContentAssistProcessor {
 	 * @return an array of context information objects or <code>null</code> if no context could be found
 	 */
 	IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset);
+
 	/**
 	 * Returns the characters which when entered by the user should
 	 * automatically trigger the presentation of possible completions.
@@ -48,6 +50,7 @@ public interface IContentAssistProcessor {
 	 *		if no auto activation is desired
 	 */
 	char[] getCompletionProposalAutoActivationCharacters();
+
 	/**
 	 * Returns the characters which when entered by the user should
 	 * automatically trigger the presentation of context information.
@@ -56,6 +59,15 @@ public interface IContentAssistProcessor {
 	 *		or <code>null</code> if no auto activation is desired
 	 */
 	char[] getContextInformationAutoActivationCharacters();
+
+	/**
+	 * Returns the reason why this content assist processor
+	 * was unable to produce any completion proposals or context information.
+	 *
+	 * @return an error message or <code>null</code> if no error occurred
+	 */
+	String getErrorMessage();
+
 	/**
 	 * Returns a validator used to determine when displayed context information
 	 * should be dismissed. May only return <code>null</code> if the processor is
@@ -65,11 +77,4 @@ public interface IContentAssistProcessor {
 	 * 			is incapable of computing context information
 	 */
 	IContextInformationValidator getContextInformationValidator();
-	/**
-	 * Returns the reason why this content assist processor
-	 * was unable to produce any completion proposals or context information.
-	 *
-	 * @return an error message or <code>null</code> if no error occurred
-	 */
-	String getErrorMessage();
 }

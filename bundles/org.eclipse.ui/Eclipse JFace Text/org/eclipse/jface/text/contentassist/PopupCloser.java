@@ -27,19 +27,6 @@ class PopupCloser implements FocusListener, SelectionListener {
 	private ScrollBar fScrollbar;
 	private boolean fScrollbarClicked= false;
 	
-	// FocusListener
-	public void focusGained(FocusEvent e) {
-	}
-	public void focusLost(final FocusEvent e) {
-		fScrollbarClicked= false;
-		Display d= fTable.getDisplay();
-		d.asyncExec(new Runnable() {
-			public void run() {
-				if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked)
-					fContentAssistant.popupFocusLost(e);
-			}
-		});
-	}
 	public void install(ContentAssistant contentAssistant, Table table) {
 		fContentAssistant= contentAssistant;
 		fTable= table;
@@ -50,6 +37,7 @@ class PopupCloser implements FocusListener, SelectionListener {
 				fScrollbar.addSelectionListener(this);
 		}
 	}
+	
 	public void uninstall() {
 		if (Helper.okToUse(fTable)) {
 			fTable.removeFocusListener(this);
@@ -57,11 +45,28 @@ class PopupCloser implements FocusListener, SelectionListener {
 				fScrollbar.removeSelectionListener(this);
 		}
 	}
-	public void widgetDefaultSelected(SelectionEvent e) {
-		fScrollbarClicked= true;
-	}
+	
 	// SelectionListener
 	public void widgetSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
+	}
+	
+	public void widgetDefaultSelected(SelectionEvent e) {
+		fScrollbarClicked= true;
+	}
+	
+	// FocusListener
+	public void focusGained(FocusEvent e) {
+	}
+	
+	public void focusLost(final FocusEvent e) {
+		fScrollbarClicked= false;
+		Display d= fTable.getDisplay();
+		d.asyncExec(new Runnable() {
+			public void run() {
+				if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked)
+					fContentAssistant.popupFocusLost(e);
+			}
+		});
 	}
 }

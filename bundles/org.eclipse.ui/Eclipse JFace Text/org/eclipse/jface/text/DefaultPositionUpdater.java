@@ -53,6 +53,16 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	public DefaultPositionUpdater(String category) {
 		fCategory= category;
 	}
+	
+	/**
+	 * Returns the category this updater is resonsible for.
+	 *
+	 * @return the category this updater is resonsible for
+	 */
+	protected String getCategory() {
+		return fCategory;
+	}
+	
 	/**
 	 * Adapts the currently investigated position to an insertion.
 	 */
@@ -84,6 +94,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 				fPosition.offset += fReplaceLength;
 		}
 	}
+	
 	/**
 	 * Adapts the currently investigated position to a deletion.
 	 */
@@ -125,6 +136,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		if (fPosition.length < 0)
 			fPosition.length= 0;
 	}
+	
 	/**
 	 * Adapts the currently investigated position to the replace operation. 
 	 * First it checks whether the change replaces the whole range of the position.
@@ -151,14 +163,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 				adaptToInsert();
 		}
 	}
-	/**
-	 * Returns the category this updater is resonsible for.
-	 *
-	 * @return the category this updater is resonsible for
-	 */
-	protected String getCategory() {
-		return fCategory;
-	}
+		
 	/**
 	 * Determines whether the currently investigated position has been deleted by 
 	 * the replace operation specified in the current event. If so, it deletes 
@@ -182,6 +187,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 
 		return true;
 	}
+	
 	/*
 	 * @see IPositionUpdater#update(DocumentEvent event)
 	 */

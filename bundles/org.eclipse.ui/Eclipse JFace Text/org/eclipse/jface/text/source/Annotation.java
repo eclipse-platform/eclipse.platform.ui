@@ -31,18 +31,16 @@ public abstract class Annotation {
 	 */
 	protected Annotation() {
 	}
+	
 	/**
-	 * Convenience method for drawing an image aligned inside a rectangle.
+	 * Sets the layer of this annotation.
 	 *
-	 * @param image the image to be drawn
-	 * @param GC the drawing GC
-	 * @param canvas the canvas on which to draw
-	 * @param r the clipping rectangle
-	 * @param align the alignment of the image to be drawn
+	 * @param layer the layer of this annotation
 	 */
-	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
-		drawImage(image, gc, canvas, r, align, SWT.CENTER);
-	}
+	protected void setLayer(int layer) {
+		fLayer= layer;
+	}	
+	
 	/**
 	 * Convenience method for drawing an image aligned inside a rectangle.
 	 *
@@ -85,6 +83,20 @@ public abstract class Annotation {
 			gc.drawImage(image, r.x+x, r.y+y);
 		}
 	}
+	
+	/**
+	 * Convenience method for drawing an image aligned inside a rectangle.
+	 *
+	 * @param image the image to be drawn
+	 * @param GC the drawing GC
+	 * @param canvas the canvas on which to draw
+	 * @param r the clipping rectangle
+	 * @param align the alignment of the image to be drawn
+	 */
+	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
+		drawImage(image, gc, canvas, r, align, SWT.CENTER);
+	}
+	
 	/*
 	 * Returns the annotations drawing layer.
 	 *
@@ -93,6 +105,7 @@ public abstract class Annotation {
 	public int getLayer() {
 		return fLayer;
 	}
+	
 	/**
 	 * Implement this method to draw a graphical representation 
 	 * of this annotation within the given bounds.
@@ -102,12 +115,4 @@ public abstract class Annotation {
 	 * @param bounds the bounds inside the canvas to draw on
 	 */
 	public abstract void paint(GC gc, Canvas canvas, Rectangle bounds);
-	/**
-	 * Sets the layer of this annotation.
-	 *
-	 * @param layer the layer of this annotation
-	 */
-	protected void setLayer(int layer) {
-		fLayer= layer;
-	}
 }

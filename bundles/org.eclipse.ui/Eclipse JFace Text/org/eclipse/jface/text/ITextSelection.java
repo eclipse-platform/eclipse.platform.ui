@@ -30,26 +30,19 @@ import org.eclipse.jface.viewers.ISelection;
 public interface ITextSelection extends ISelection {
 	
 	/**
-	 * Returns the number of the line containing the last character of the selected text.
-	 * If the underlying text has been changed between the creation of this 
-	 * selection object and the call of this method, the value returned might
-	 * differ from what it would have been at the point of creation.
+	 * Returns the offset of the selected text.
 	 *
-	 * @return the end line of this selection or -1 if there is no valid line information
+	 * @return the offset of the selected text
 	 */
-	int getEndLine();
+	int getOffset();
+	
 	/**
 	 * Returns the length of the selected text.
 	 *
 	 * @return the length of the selected text
 	 */
 	int getLength();
-	/**
-	 * Returns the offset of the selected text.
-	 *
-	 * @return the offset of the selected text
-	 */
-	int getOffset();
+	
 	/**
 	 * Returns number of the line containing the offset of the selected text.
 	 * If the underlying text has been changed between the creation of this 
@@ -59,6 +52,17 @@ public interface ITextSelection extends ISelection {
 	 * @return the start line of this selection or -1 if there is no valid line information
 	 */
 	int getStartLine();
+	
+	/**
+	 * Returns the number of the line containing the last character of the selected text.
+	 * If the underlying text has been changed between the creation of this 
+	 * selection object and the call of this method, the value returned might
+	 * differ from what it would have been at the point of creation.
+	 *
+	 * @return the end line of this selection or -1 if there is no valid line information
+	 */
+	int getEndLine();
+	
 	/**
 	 * Returns the selected text.
 	 * If the underlying text has been changed between the creation of this 
@@ -69,3 +73,4 @@ public interface ITextSelection extends ISelection {
 	 */
 	String getText();
 }
+

@@ -28,12 +28,14 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	 */
 	public DefaultLineTracker() {
 	}
+	
 	/*
 	 * @see ILineDelimiter@getLegalLineDelimiters
 	 */
 	public String[] getLegalLineDelimiters() {
 		return DELIMITERS;
 	}
+
 	/*
 	 * @see AbstractLineTracker#nextDelimiterInfo(String, int)
 	 */

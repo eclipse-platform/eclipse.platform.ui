@@ -27,47 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public abstract class ResourceAction extends Action {
 	
 	/**
-	 * Creates a new action that configures itself from the given resource
-	 * bundle.
-	 * <p>
-	 * The following keys, prepended by the given option prefix,
-	 * are used for retrieving resources from the given bundle:
-	 * <ul>
-	 *   <li><code>"label"</code> - <code>setText</code></li>
-	 *   <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
-	 *   <li><code>"image"</code> - <code>setImageDescriptor</code></li>
-	 *   <li><code>"description"</code> - <code>setDescription</code></li>
-	 * </ul>
-	 * </p>
-	 *
-	 * @param bundle the resource bundle
-	 * @param prefix a prefix to be prepended to the various resource keys, or 
-	 *   <code>null</code> if none
-	 */
-	public ResourceAction(ResourceBundle bundle, String prefix) {
-		super();
-		
-		String labelKey= "label";
-		String tooltipKey= "tooltip";
-		String imageKey= "image";
-		String descriptionKey= "description";
-		
-		if (prefix != null && prefix.length() > 0) {
-			labelKey= prefix + labelKey;
-			tooltipKey= prefix + tooltipKey;
-			imageKey= prefix + imageKey;
-			descriptionKey= prefix + descriptionKey;
-		}
-		
-		setText(getString(bundle, labelKey, labelKey));
-		setToolTipText(getString(bundle, tooltipKey, null));
-		setDescription(getString(bundle, descriptionKey, null));
-		
-		String file= getString(bundle, imageKey, null);
-		if (file != null && file.trim().length() > 0)
-			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
-	}
-	/**
 	 * Retrieves and returns the value with the given key from the given resource 
 	 * bundle, or returns the given default value if there is no such resource.
 	 * Convenience method for dealing gracefully with missing resources.
@@ -88,6 +47,49 @@ public abstract class ResourceAction extends Action {
 		
 		return value;
 	}
+	
+	/**
+	 * Creates a new action that configures itself from the given resource
+	 * bundle.
+	 * <p>
+	 * The following keys, prepended by the given option prefix,
+	 * are used for retrieving resources from the given bundle:
+	 * <ul>
+	 *   <li><code>"label"</code> - <code>setText</code></li>
+	 *   <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
+	 *   <li><code>"image"</code> - <code>setImageDescriptor</code></li>
+	 *   <li><code>"description"</code> - <code>setDescription</code></li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys, or 
+	 *   <code>null</code> if none
+	 */
+	public ResourceAction(ResourceBundle bundle, String prefix) {
+		super();
+		
+		String labelKey= "label"; //$NON-NLS-1$
+		String tooltipKey= "tooltip"; //$NON-NLS-1$
+		String imageKey= "image"; //$NON-NLS-1$
+		String descriptionKey= "description"; //$NON-NLS-1$
+		
+		if (prefix != null && prefix.length() > 0) {
+			labelKey= prefix + labelKey;
+			tooltipKey= prefix + tooltipKey;
+			imageKey= prefix + imageKey;
+			descriptionKey= prefix + descriptionKey;
+		}
+		
+		setText(getString(bundle, labelKey, labelKey));
+		setToolTipText(getString(bundle, tooltipKey, null));
+		setDescription(getString(bundle, descriptionKey, null));
+		
+		String file= getString(bundle, imageKey, null);
+		if (file != null && file.trim().length() > 0)
+			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
+	}
+	
 	/**
 	 * Sets the action's help context id.
 	 * 
@@ -95,5 +97,5 @@ public abstract class ResourceAction extends Action {
 	 */
 	public final void setHelpContextId(String contextId) {
 		WorkbenchHelp.setHelp(this, new Object[] { contextId });
-	}
+	}	
 }

@@ -5,28 +5,8 @@ package org.eclipse.ui.editors.text;
  * All Rights Reserved.
  */
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FontFieldEditor;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.DialogPageContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Plugin;import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.jface.preference.FieldEditorPreferencePage;import org.eclipse.jface.preference.FontFieldEditor;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.help.DialogPageContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.plugin.AbstractUIPlugin;import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A preference page to set the font used in the default text editor.
@@ -46,42 +26,29 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	public TextEditorPreferencePage() {
 		super(GRID);
 		
-		setDescription(getResourceString("PreferencePage.description"));		
+		setDescription(TextEditorMessages.getString("PreferencePage.description"));		 //$NON-NLS-1$
 		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		if (plugin instanceof AbstractUIPlugin) {
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
 			setPreferenceStore(uiPlugin.getPreferenceStore());
 		}
 	}
+	
 	/*
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE));
-	}
+	}	
+	
 	/*
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	public void createFieldEditors() {
-		addField(new FontFieldEditor(AbstractTextEditor.PREFERENCE_FONT, getResourceString("PreferencePage.fontEditor"), getFieldEditorParent()));
+		addField(new FontFieldEditor(AbstractTextEditor.PREFERENCE_FONT, TextEditorMessages.getString("PreferencePage.fontEditor"), getFieldEditorParent())); //$NON-NLS-1$
 	}
-	/**
-	 * Returns the resource string for the given key.
-	 * 
-	 * @param key the key to be used
-	 */
-	private String getResourceString(String key) {
-		
-		try {
-			if (fBundle == null)
-				fBundle= ResourceBundle.getBundle("org.eclipse.ui.editors.text.TextEditorResources");
-			return fBundle.getString(key);
-		} catch (MissingResourceException x) {
-		}
-		
-		return key;
-	}
+
 	/*
 	 * @see IWorkbenchPreferencePage#init
 	 */

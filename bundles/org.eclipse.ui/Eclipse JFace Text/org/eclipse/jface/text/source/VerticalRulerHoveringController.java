@@ -173,22 +173,7 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 		fWindowShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		fWindowLabel.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
-	/**
-	 * Determines graphical area covered by the given line.
-	 *
-	 * @param line the number of the line in the viewer whose 
-	 *			graphical extend in the vertical ruler must be computed
-	 * @return the graphical extend of the given line
-	 */
-	private Rectangle computeCoveredArea(int visibleLine) {
-		StyledText text= fSourceViewer.getTextWidget();
-		int lineHeight= text.getLineHeight();
-		
-		int y= visibleLine * lineHeight - text.getTopPixel();
-		Point size= fVerticalRuler.getControl().getSize();
-				
-		return new Rectangle(0, y, size.x, lineHeight);
-	}
+	
 	/**
 	 * Returns the location of the popup window based on given
 	 * coordinates of the vertical ruler's control.
@@ -208,15 +193,24 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 		
 		return control.toDisplay(new Point(x, height));
 	}
+	
 	/**
-	 * Disposes this hovering controller.
+	 * Determines graphical area covered by the given line.
+	 *
+	 * @param line the number of the line in the viewer whose 
+	 *			graphical extend in the vertical ruler must be computed
+	 * @return the graphical extend of the given line
 	 */
-	public void dispose() {
-		if (fWindowShell != null && !fWindowShell.isDisposed()) {
-			fWindowShell.dispose();
-			fWindowShell= null;
-		}
+	private Rectangle computeCoveredArea(int visibleLine) {
+		StyledText text= fSourceViewer.getTextWidget();
+		int lineHeight= text.getLineHeight();
+		
+		int y= visibleLine * lineHeight - text.getTopPixel();
+		Point size= fVerticalRuler.getControl().getSize();
+				
+		return new Rectangle(0, y, size.x, lineHeight);
 	}
+	
 	/**
 	 * Returns for a given absolute line number the corresponding line
 	 * number relative to the viewer's visible region.
@@ -234,12 +228,7 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 		}
 		return line;
 	}
-	/**
-	 * Enables this hovering controller on its vertical ruler.
-	 */	
-	public void install() {
-		fVerticalRuler.getControl().addMouseTrackListener(this);
-	}
+	
 	/*
 	 * @see MouseTrackAdapter#mouseHover
 	 */
@@ -253,6 +242,7 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 			showWindow(computeCoveredArea(relativeLine), computeWindowLocation(relativeLine, event.x, event.y));
 		}
 	}
+	
 	/**
 	 * Opens the popup window at the specified location. The window closes
 	 * if the mouse pointer leaves the popup window.
@@ -272,4 +262,22 @@ class VerticalRulerHoveringController extends MouseTrackAdapter {
 		new WindowCloser(coverArea).start();
 		fWindowShell.setVisible(true);
 	}
+	
+	/**
+	 * Enables this hovering controller on its vertical ruler.
+	 */	
+	public void install() {
+		fVerticalRuler.getControl().addMouseTrackListener(this);
+	}
+	
+	/**
+	 * Disposes this hovering controller.
+	 */
+	public void dispose() {
+		if (fWindowShell != null && !fWindowShell.isDisposed()) {
+			fWindowShell.dispose();
+			fWindowShell= null;
+		}
+	}
 }
+	

@@ -31,23 +31,7 @@ public final class DocumentCommand {
 	 */
 	DocumentCommand() {
 	}
-	/**
-	 * Fills the given verify event with the replace text and the doit
-	 * flag of this document command. Returns whether the document command
-	 * covers the same range as the verify event considering the given offset.
-	 *
-	 * @param event the event to be changed
-	 * @param offset to be considered for range comparison
-	 * @return <code>true</code> if this command and the event cover the same range
-	 */
-	boolean fillEvent(VerifyEvent event, int offset) {
-		
-		int start= this.offset - offset;
-		
-		event.text= text;
-		event.doit= (start == event.start && start + length == event.end);
-		return event.doit;
-	}
+	
 	/**
 	 * Translates a verify event into a document replace command using the given offset.
 	 *
@@ -70,4 +54,24 @@ public final class DocumentCommand {
 		
 		this.offset += offset;
 	}
+	
+	/**
+	 * Fills the given verify event with the replace text and the doit
+	 * flag of this document command. Returns whether the document command
+	 * covers the same range as the verify event considering the given offset.
+	 *
+	 * @param event the event to be changed
+	 * @param offset to be considered for range comparison
+	 * @return <code>true</code> if this command and the event cover the same range
+	 */
+	boolean fillEvent(VerifyEvent event, int offset) {
+		
+		int start= this.offset - offset;
+		
+		event.text= text;
+		event.doit= (start == event.start && start + length == event.end);
+		return event.doit;
+	}
 }
+
+

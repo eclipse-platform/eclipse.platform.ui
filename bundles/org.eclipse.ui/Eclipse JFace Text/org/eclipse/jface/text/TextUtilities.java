@@ -27,32 +27,7 @@ class TextUtilities {
 		}
 		return hint;
 	}
-	/**
-	 * Returns the longest search string with which the given text ends.
-	 */
-	public static int endsWith(String[] searchStrings, String text) {
-		
-		int index= -1;
-		
-		for (int i= 0; i < searchStrings.length; i++) {
-			if (text.endsWith(searchStrings[i])) {
-				if (index == -1 || searchStrings[i].length() > searchStrings[index].length())
-					index= i;
-			}
-		}
-		
-		return index;
-	}
-	/**
-	 * Returns whether the text equals one of the given compare strings.
-	 */
-	public static int equals(String[] compareStrings, String text) {
-		for (int i= 0; i < compareStrings.length; i++) {
-			if (text.equals(compareStrings[i]))
-				return i;
-		}
-		return -1;
-	}
+	
 	/**
 	 * Returns the position in the string greater than offset
 	 * of the longest matching search string.
@@ -81,6 +56,24 @@ class TextUtilities {
 		return result;
 		
 	}
+	
+	/**
+	 * Returns the longest search string with which the given text ends.
+	 */
+	public static int endsWith(String[] searchStrings, String text) {
+		
+		int index= -1;
+		
+		for (int i= 0; i < searchStrings.length; i++) {
+			if (text.endsWith(searchStrings[i])) {
+				if (index == -1 || searchStrings[i].length() > searchStrings[index].length())
+					index= i;
+			}
+		}
+		
+		return index;
+	}
+	
 	/**
 	 * Returns the longest search string with which the given text starts.
 	 */
@@ -97,4 +90,15 @@ class TextUtilities {
 		
 		return index;
 	}
+	
+	/**
+	 * Returns whether the text equals one of the given compare strings.
+	 */
+	public static int equals(String[] compareStrings, String text) {
+		for (int i= 0; i < compareStrings.length; i++) {
+			if (text.equals(compareStrings[i]))
+				return i;
+		}
+		return -1;
+	}	
 }

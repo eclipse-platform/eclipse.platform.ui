@@ -34,6 +34,7 @@ public class WordPatternRule extends SingleLineRule {
 	public WordPatternRule(IWordDetector detector, String startSequence, String endSequence, IToken token) {
 		this(detector, startSequence, endSequence, token, (char)0);
 	}
+
 	/**
 	/**
 	 * Creates a rule for the given starting and ending word
@@ -52,6 +53,7 @@ public class WordPatternRule extends SingleLineRule {
 		Assert.isNotNull(detector);
 		fDetector= detector;
 	}
+
 	/**
 	 * Returns whether the end sequence was detected.
 	 * The rule acquires the rest of the word, using the
@@ -83,6 +85,7 @@ public class WordPatternRule extends SingleLineRule {
 		unreadBuffer(scanner);
 		return false;
 	}
+	
 	/**
 	 * Returns the characters in the buffer to the scanner.
 	 * Note that the rule must also return the characters

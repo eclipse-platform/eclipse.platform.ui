@@ -20,14 +20,6 @@ import org.eclipse.swt.graphics.Image;
 public interface IContextInformation {
 	
 	/**
-	 * Compares the given object with this receiver. Two context informations are 
-	 * equal if there information display strings and their context display strings 
-	 * are equal.
-	 *
-	 * @see Object#equals
-	 */
-	boolean equals(Object object);
-	/**
 	 * Returns the string to be displayed in the list of contexts.
 	 * This method is used to supply a unique presentation for 
 	 * situations where the context is ambiguous. These strings are 
@@ -36,6 +28,7 @@ public interface IContextInformation {
 	 * @return the string to be displayed for the context
 	 */
 	String getContextDisplayString();
+
 	/**
 	 * Returns the image for this context information.
 	 * The image will be shown to the left of the display string.
@@ -43,10 +36,22 @@ public interface IContextInformation {
 	 * @return the image to be shown or <code>null</code> if no image is desired
 	 */
 	Image getImage();
+	
 	/**
 	 * Returns the string to be displayed in the tooltip like information popup.
 	 *
 	 * @return the string to be displayed
 	 */
 	String getInformationDisplayString();
+	
+	/**
+	 * Compares the given object with this receiver. Two context informations are 
+	 * equal if there information display strings and their context display strings 
+	 * are equal.
+	 *
+	 * @see Object#equals
+	 */
+	boolean equals(Object object);	
 }
+
+

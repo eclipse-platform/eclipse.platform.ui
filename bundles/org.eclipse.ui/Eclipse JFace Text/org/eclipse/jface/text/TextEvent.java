@@ -43,22 +43,7 @@ public class TextEvent {
 		fReplacedText= replacedText;
 		fDocumentEvent= event;
 	}
-	/**
-	 * Returns the corresponding document event that caused the viewer change
-	 *
-	 * @return the corresponding document event, <code>null</code> if a visual change only
-	 */
-	public DocumentEvent getDocumentEvent() {
-		return fDocumentEvent;
-	}
-	/**
-	 * Returns the length of the event.
-	 *
-	 * @return the length of the event
-	 */
-	public int getLength() {
-		return fLength;
-	}
+		
 	/**
 	 * Returns the offset of the event.
 	 *
@@ -67,6 +52,25 @@ public class TextEvent {
 	public int getOffset() {
 		return fOffset;
 	}
+		
+	/**
+	 * Returns the length of the event.
+	 *
+	 * @return the length of the event
+	 */
+	public int getLength() {
+		return fLength;
+	}
+	
+	/**
+	 * Returns the text of the event.
+	 *
+	 * @return the text of the event
+	 */
+	public String getText() {
+		return fText;
+	}
+	
 	/**
 	 * Returns the text replaced by this event.
 	 *
@@ -75,12 +79,13 @@ public class TextEvent {
 	public String getReplacedText() {
 		return fReplacedText;
 	}
+	
 	/**
-	 * Returns the text of the event.
+	 * Returns the corresponding document event that caused the viewer change
 	 *
-	 * @return the text of the event
+	 * @return the corresponding document event, <code>null</code> if a visual change only
 	 */
-	public String getText() {
-		return fText;
+	public DocumentEvent getDocumentEvent() {
+		return fDocumentEvent;
 	}
 }

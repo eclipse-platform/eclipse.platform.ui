@@ -317,6 +317,23 @@ public class DefaultUndoManager implements IUndoManager {
 	public DefaultUndoManager(int undoLevel) {
 		setMaximalUndoLevel(undoLevel);
 	}
+	
+	/*
+	 * @see IUndoManager#beginCompoundChange
+	 */
+	public void beginCompoundChange() {
+		fFoldingIntoCompoundChange= true;
+		commit();
+	}
+	
+	/*
+	 * @see IUndoManager#endCompoundChange
+	 */
+	public void endCompoundChange() {
+		fFoldingIntoCompoundChange= false;
+		commit();
+	}
+		
 	/**
 	 * Registers all necessary listeners with the text viewer.
 	 */
@@ -329,13 +346,34 @@ public class DefaultUndoManager implements IUndoManager {
 			listenToTextChanges(true);
 		}
 	}
-	/*
-	 * @see IUndoManager#beginCompoundChange
+	
+	/**
+	 * Deregister all previously installed listeners from the text viewer.
 	 */
-	public void beginCompoundChange() {
-		fFoldingIntoCompoundChange= true;
-		commit();
+	private void removeListeners() {
+		StyledText text= fTextViewer.getTextWidget();
+		if (text != null && fKeyAndMouseListener != null) {
+			text.removeMouseListener(fKeyAndMouseListener);
+			text.removeKeyListener(fKeyAndMouseListener);
+			listenToTextChanges(false);
+		}
 	}
+	
+	/**
+	 * Switches the state of whether there is a text listener or not.
+	 *
+	 * @param listen the state which should be established
+	 */
+	private void listenToTextChanges(boolean listen) {
+		if (listen && fTextListener == null) {
+			fTextListener= new TextListener();
+			fTextViewer.addTextListener(fTextListener);
+		} else if (!listen && fTextListener != null) {
+			fTextViewer.removeTextListener(fTextListener);
+			fTextListener= null;
+		}
+	}
+	
 	/**
 	 * Closes the current editing command and opens a new one.
 	 */
@@ -348,43 +386,7 @@ public class DefaultUndoManager implements IUndoManager {
 		
 		fCurrent.commit();
 	}
-	/*
-	 * @see IUndoManager#connect
-	 */
-	public void connect(ITextViewer textViewer) {
-		if (fTextViewer == null) {
-			fTextViewer= textViewer;	
-			fCommandStack= new ArrayList();
-			fCurrent= new TextCommand();
-			fPreviousDelete= new TextCommand();
-			addListeners();
-		}
-	}
-	/*
-	 * @see IUndoManager#disconnect
-	 */
-	public void disconnect() {
-		if (fTextViewer != null) {
-			
-			removeListeners();
-			
-			fCurrent= null;
-			if (fCommandStack != null) {
-				fCommandStack.clear();
-				fCommandStack= null;
-			}
-			fTextBuffer= null;
-			fPreservedTextBuffer= null;
-			fTextViewer= null;
-		}
-	}
-	/*
-	 * @see IUndoManager#endCompoundChange
-	 */
-	public void endCompoundChange() {
-		fFoldingIntoCompoundChange= false;
-		commit();
-	}
+	
 	/**
 	 * Does redo the previously undone editing command.
 	 */
@@ -402,6 +404,7 @@ public class DefaultUndoManager implements IUndoManager {
 			fCurrent= new TextCommand();
 		}
 	}
+	
 	/**
 	 * Does undo the last editing command.
 	 */
@@ -419,6 +422,7 @@ public class DefaultUndoManager implements IUndoManager {
 			fCurrent= new TextCommand();
 		}
 	}
+	
 	/**
 	 * Checks whether the given text starts with a line delimiter and
 	 * subsequently contains a white space only.
@@ -444,20 +448,7 @@ public class DefaultUndoManager implements IUndoManager {
 		
 		return true;
 	}
-	/**
-	 * Switches the state of whether there is a text listener or not.
-	 *
-	 * @param listen the state which should be established
-	 */
-	private void listenToTextChanges(boolean listen) {
-		if (listen && fTextListener == null) {
-			fTextListener= new TextListener();
-			fTextViewer.addTextListener(fTextListener);
-		} else if (!listen && fTextListener != null) {
-			fTextViewer.removeTextListener(fTextListener);
-			fTextListener= null;
-		}
-	}
+	
 	/**
 	 * Returns the state the would result if the current editing command would be closed.
 	 *
@@ -476,6 +467,7 @@ public class DefaultUndoManager implements IUndoManager {
 		}
 		return fPretendedState;	
 	}
+				
 	/**
 	 * Processes the given text event in order to determine editor command.
 	 *
@@ -606,36 +598,46 @@ public class DefaultUndoManager implements IUndoManager {
 			}
 		}
 	}
+	
 	/*
-	 * @see IUndoManager#redo
+	 * @see IUndoManager#setMaximalUndoLevel
 	 */
-	public void redo() {
-		if (redoable()) {
-			commit();
-			internalRedo();
-		}
+	public void setMaximalUndoLevel(int undoLevel) {
+		fUndoLevel= undoLevel;
 	}
+
 	/*
-	 * @see IUndoManager#redoable
+	 * @see IUndoManager#connect
 	 */
-	public boolean redoable() {
-		if (fCommandStack != null)  {
-			PretendedUndoManagerState s= pretendCommit();
-			return (0 <= s.cmdCounter + 1) && (s.cmdCounter + 1 < s.stackSize);
-		}
-		return false;
-	}
-	/**
-	 * Deregister all previously installed listeners from the text viewer.
-	 */
-	private void removeListeners() {
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null && fKeyAndMouseListener != null) {
-			text.removeMouseListener(fKeyAndMouseListener);
-			text.removeKeyListener(fKeyAndMouseListener);
-			listenToTextChanges(false);
+	public void connect(ITextViewer textViewer) {
+		if (fTextViewer == null) {
+			fTextViewer= textViewer;	
+			fCommandStack= new ArrayList();
+			fCurrent= new TextCommand();
+			fPreviousDelete= new TextCommand();
+			addListeners();
 		}
 	}
+	
+	/*
+	 * @see IUndoManager#disconnect
+	 */
+	public void disconnect() {
+		if (fTextViewer != null) {
+			
+			removeListeners();
+			
+			fCurrent= null;
+			if (fCommandStack != null) {
+				fCommandStack.clear();
+				fCommandStack= null;
+			}
+			fTextBuffer= null;
+			fPreservedTextBuffer= null;
+			fTextViewer= null;
+		}
+	}
+	
 	/*
 	 * @see IUndoManager#reset
 	 */
@@ -652,21 +654,18 @@ public class DefaultUndoManager implements IUndoManager {
 		fTextBuffer.setLength(0);
 		fPreservedTextBuffer.setLength(0);		
 	}
+	
 	/*
-	 * @see IUndoManager#setMaximalUndoLevel
+	 * @see IUndoManager#redoable
 	 */
-	public void setMaximalUndoLevel(int undoLevel) {
-		fUndoLevel= undoLevel;
-	}
-	/*
-	 * @see IUndoManager#undo
-	 */
-	public void undo() {
-		if (undoable()) {
-			commit();
-			internalUndo();
+	public boolean redoable() {
+		if (fCommandStack != null)  {
+			PretendedUndoManagerState s= pretendCommit();
+			return (0 <= s.cmdCounter + 1) && (s.cmdCounter + 1 < s.stackSize);
 		}
+		return false;
 	}
+	
 	/*
 	 * @see IUndoManager#undoable
 	 */
@@ -676,5 +675,25 @@ public class DefaultUndoManager implements IUndoManager {
 			return (0 <= s.cmdCounter) && (s.cmdCounter < s.stackSize);
 		}
 		return false;
+	}
+	
+	/*
+	 * @see IUndoManager#redo
+	 */
+	public void redo() {
+		if (redoable()) {
+			commit();
+			internalRedo();
+		}
+	}
+	
+	/*
+	 * @see IUndoManager#undo
+	 */
+	public void undo() {
+		if (undoable()) {
+			commit();
+			internalUndo();
+		}
 	}
 }

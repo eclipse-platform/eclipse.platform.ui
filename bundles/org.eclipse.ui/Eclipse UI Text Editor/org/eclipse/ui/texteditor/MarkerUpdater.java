@@ -25,12 +25,14 @@ class MarkerUpdater implements IMarkerUpdater {
 	public String[] getAttribute() {
 		return ATTRIBUTES;
 	}
+
 	/*
 	 * @see IMarkerUpdater#getMarkerType()
 	 */
 	public String getMarkerType() {
 		return null;
 	}
+
 	/*
 	 * @see IMarkerUpdater#updateMarker(IMarker, IDocument, Position)
 	 */
@@ -53,4 +55,5 @@ class MarkerUpdater implements IMarkerUpdater {
 
 		return true;
 	}
+
 }

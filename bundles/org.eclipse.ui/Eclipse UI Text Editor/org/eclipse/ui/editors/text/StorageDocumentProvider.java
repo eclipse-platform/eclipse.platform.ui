@@ -32,50 +32,6 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider {	
 	
-	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
-	 */
-	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
-		return null;
-	}
-	/*
-	 * @see AbstractDocumentProvider#createDocument(Object)
-	 */
-	protected IDocument createDocument(Object element) throws CoreException {
-		
-		if (element instanceof IStorageEditorInput) {
-			IStorage storage= ((IStorageEditorInput) element).getStorage();
-			
-			Document document= new Document();
-			setDocumentContent(document, storage.getContents());
-			return document;
-		}
-		
-		return null;
-	}
-	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
-	 */
-	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
-	}
-	/*
-	 * @see IDocumentProvider#getModificationStamp(Object)
-	 */
-	public long getModificationStamp(Object element) {
-		return 0;
-	}
-	/*
-	 * @see IDocumentProvider#getSynchronizationStamp(Object)
-	 */
-	public long getSynchronizationStamp(Object element) {
-		return 0;
-	}
-	/*
-	 * @see IDocumentProvider#isDeleted(Object)
-	 */
-	public boolean isDeleted(Object element) {
-		return false;
-	}
 	/**
 	 * Intitializes the given document with the given stream.
 	 *
@@ -111,5 +67,55 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 				}
 			}
 		}	
+	}
+	
+	/*
+	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
+	 */
+	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+		return null;
+	}
+	
+	/*
+	 * @see AbstractDocumentProvider#createDocument(Object)
+	 */
+	protected IDocument createDocument(Object element) throws CoreException {
+		
+		if (element instanceof IStorageEditorInput) {
+			IStorage storage= ((IStorageEditorInput) element).getStorage();
+			
+			Document document= new Document();
+			setDocumentContent(document, storage.getContents());
+			return document;
+		}
+		
+		return null;
+	}
+
+	/*
+	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
+	 */
+	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
+	}
+	
+	/*
+	 * @see IDocumentProvider#getModificationStamp(Object)
+	 */
+	public long getModificationStamp(Object element) {
+		return 0;
+	}
+	
+	/*
+	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 */
+	public long getSynchronizationStamp(Object element) {
+		return 0;
+	}
+	
+	/*
+	 * @see IDocumentProvider#isDeleted(Object)
+	 */
+	public boolean isDeleted(Object element) {
+		return false;
 	}
 }

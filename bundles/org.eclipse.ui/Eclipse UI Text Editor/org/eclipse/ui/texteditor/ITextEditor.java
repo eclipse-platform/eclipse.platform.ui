@@ -34,45 +34,20 @@ import org.eclipse.ui.IEditorPart;
 public interface ITextEditor extends IEditorPart {
 		
 	/**
+	 * Returns this text editor's document provider.
+	 *
+	 * @return the document provider
+	 */
+	IDocumentProvider getDocumentProvider();
+	
+	/**
 	 * Closes this text editor after optionally saving changes.
 	 *
 	 * @param save <code>true</code> if unsaved changed should be saved, and
 	 *   <code>false</code> if unsaved changed should be discarded
 	 */
 	void close(boolean save);
-	/**
-	 * Abandons all modifications applied to this text editor's input element's 
-	 * textual presentation since the last save operation.
-	 */
-	void doRevertToSaved();
-	/**
-	 * Returns the action installed under the given action id.
-	 *
-	 * @param actionId the action id
-	 * @return the action, or <code>null</code> if none
-	 * @see #setAction
-	 */
-	IAction getAction(String actionId);
-	/**
-	 * Returns this text editor's document provider.
-	 *
-	 * @return the document provider
-	 */
-	IDocumentProvider getDocumentProvider();
-	/**
-	 * Returns the highlighted range of this text editor.
-	 *
-	 * @return the highlighted range
-	 * @see #setHighlightRange
-	 */
-	IRegion getHighlightRange();
-	/**
-	 * Returns this text editor's selection provider. Repeated calls to this
-	 * method return the same selection provider.
-	 *
-	 * @return the selection provider
-	 */
-	ISelectionProvider getSelectionProvider();
+				
 	/**
 	 * Returns whether the text in this text editor can be changed by the user.
 	 *
@@ -80,25 +55,13 @@ public interface ITextEditor extends IEditorPart {
 	 *   if it is read-only
 	 */
 	boolean isEditable();
+		
 	/**
-	 * Removes any installed activation code for the specified action.
-	 * If no activation code is installed, this method does not have
-	 * any effect.
-	 * 
-	 * @param actionId the action id
+	 * Abandons all modifications applied to this text editor's input element's 
+	 * textual presentation since the last save operation.
 	 */
-	void removeActionActivationCode(String actionId);
-	/**
-	 * Resets the highlighted range of this text editor.
-	 */
-	void resetHighlightRange();
-	/**
-	 * Selects and reveals the specified range in this text editor.
-	 *
-	 * @param offset the offset of the selection
-	 * @param length the length of the selection
-	 */
-	void selectAndReveal(int offset, int length);
+	void doRevertToSaved();
+	
 	/**
 	 * Installs the given action under the given action id.
 	 *
@@ -107,6 +70,16 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #getAction
 	 */
 	void setAction(String actionID, IAction action);
+	
+	/**
+	 * Returns the action installed under the given action id.
+	 *
+	 * @param actionId the action id
+	 * @return the action, or <code>null</code> if none
+	 * @see #setAction
+	 */
+	IAction getAction(String actionId);
+	
 	/**
 	 * Sets the given activation code for the specified action. If
 	 * there is an activation code already registered, it is replaced.
@@ -124,6 +97,37 @@ public interface ITextEditor extends IEditorPart {
 	 * @param stateMask the activation code state mask
 	 */
 	void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask);
+	
+	/**
+	 * Removes any installed activation code for the specified action.
+	 * If no activation code is installed, this method does not have
+	 * any effect.
+	 * 
+	 * @param actionId the action id
+	 */
+	void removeActionActivationCode(String actionId);
+	
+	/**
+	 * Returns whether this text editor is configured to show only the 
+	 * highlighted range of the text.
+	 *
+	 * @return <code>true</code> if only the highlighted range is shown, and
+	 *   <code>false</code> if this editor shows the entire text of the document
+	 * @see #showHighlightRangeOnly
+	 */
+	boolean showsHighlightRangeOnly();
+	
+	/**
+	 * Configures this text editor to show only the highlighted range of the
+	 * text.
+	 *
+	 * @param showHighlightRangeOnly <code>true</code> if only the highlighted
+	 *   range is shown, and <code>false</code> if this editor shows the entire
+	 *   text of the document
+	 * @see #showsHighlightRangeOnly
+	 */
+	void showHighlightRangeOnly(boolean showHighlightRangeOnly);
+	
 	/**
 	 * Sets the highlighted range of this text editor to the specified region.
 	 *
@@ -135,23 +139,33 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #getHighlightRange
 	 */
 	void setHighlightRange(int offset, int length, boolean moveCursor);
+	
 	/**
-	 * Configures this text editor to show only the highlighted range of the
-	 * text.
+	 * Returns the highlighted range of this text editor.
 	 *
-	 * @param showHighlightRangeOnly <code>true</code> if only the highlighted
-	 *   range is shown, and <code>false</code> if this editor shows the entire
-	 *   text of the document
-	 * @see #showsHighlightRangeOnly
+	 * @return the highlighted range
+	 * @see #setHighlightRange
 	 */
-	void showHighlightRangeOnly(boolean showHighlightRangeOnly);
+	IRegion getHighlightRange();
+	
 	/**
-	 * Returns whether this text editor is configured to show only the 
-	 * highlighted range of the text.
-	 *
-	 * @return <code>true</code> if only the highlighted range is shown, and
-	 *   <code>false</code> if this editor shows the entire text of the document
-	 * @see #showHighlightRangeOnly
+	 * Resets the highlighted range of this text editor.
 	 */
-	boolean showsHighlightRangeOnly();
+	void resetHighlightRange();	
+	
+	/**
+	 * Returns this text editor's selection provider. Repeated calls to this
+	 * method return the same selection provider.
+	 *
+	 * @return the selection provider
+	 */
+	ISelectionProvider getSelectionProvider();
+		
+	/**
+	 * Selects and reveals the specified range in this text editor.
+	 *
+	 * @param offset the offset of the selection
+	 * @param length the length of the selection
+	 */
+	void selectAndReveal(int offset, int length);
 }

@@ -35,6 +35,186 @@ public final class MarkerUtilities {
 	 */
 	private MarkerUtilities() {
 	}
+	
+	/**
+	 * Returns the ending character offset of the given marker.
+	 *
+	 * @param marker the marker
+	 * @return the ending character offset, or <code>-1</code> if not set
+	 * @see IMarker#CHAR_END
+	 * @see IMarker#getAttribute(java.lang.String,int)
+	 */
+	public static int getCharEnd(IMarker marker) {
+		return getIntAttribute(marker, IMarker.CHAR_END, -1);
+	}
+	
+	/**
+	 * Returns the starting character offset of the given marker.
+	 *
+	 * @param marker the marker
+	 * @return the starting character offset, or <code>-1</code> if not set
+	 * @see IMarker#CHAR_START
+	 * @see IMarker#getAttribute(java.lang.String,int)
+	 */
+	public static int getCharStart(IMarker marker) {
+		return getIntAttribute(marker, IMarker.CHAR_START, -1);
+	}
+	
+	/**
+	 * Returns the specified attribute of the given marker as an integer.
+	 * Returns the given default if the attribute value is not an integer.
+	 */
+	private static int getIntAttribute(IMarker marker, String attributeName, int defaultValue) {
+		return marker.getAttribute(attributeName, defaultValue);
+	}
+	
+	/**
+	 * Returns the line number of the given marker.
+	 *
+	 * @param marker the marker
+	 * @return the line number, or <code>-1</code> if not set
+	 * @see IMarker#LINE_NUMBER
+	 * @see IMarker#getAttribute(java.lang.String,int)
+	 */
+	public static int getLineNumber(IMarker marker) {
+		return getIntAttribute(marker, IMarker.LINE_NUMBER, -1);
+	}
+	
+	/**
+	 * Returns the priority of the given marker.
+	 *
+	 * @param marker the marker
+	 * @return the priority, or <code>IMarker.PRIORITY_NORMAL</code> if not set
+	 * @see IMarker#PRIORITY
+	 * @see IMarker#PRIORITY_NORMAL
+	 * @see IMarker#getAttribute(java.lang.String,int)
+	 */
+	public static int getPriority(IMarker marker) {
+		return getIntAttribute(marker, IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+	}
+	
+	/**
+	 * Handles a core exception which occurs when accessing marker attributes.
+	 */
+	private static void handleCoreException(CoreException e) {
+		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(e.getStatus());
+	}
+	
+	/**
+	 * Returns whether the given marker is of the given type (either directly or indirectly).
+	 *
+	 * @param marker the marker to be checked
+	 * @param type the reference type
+	 * @return <code>true</code>if maker is an instance of the reference type
+	 */
+	public static boolean isMarkerType(IMarker marker, String type) {
+		try {
+			return marker.isSubtypeOf(type);
+		} catch (CoreException e) {
+			handleCoreException(e);
+			return false;
+		}
+	}
+	
+	/**
+	 * Sets the ending character offset of the given marker.
+	 *
+	 * @param marker the marker
+	 * @param charEnd the ending character offset
+	 * @see IMarker#CHAR_END
+	 * @see IMarker#setAttribute(java.lang.String,int)
+	 */
+	public static void setCharEnd(IMarker marker, int charEnd) {
+		setIntAttribute(marker, IMarker.CHAR_END, charEnd);
+	}
+	
+	/**
+	 * Sets the ending character offset in the given map using the standard 
+	 * marker attribute name as the key.
+	 *
+	 * @param map the map (key type: <code>String</code>, value type:
+	 *   <code>Object</code>)
+	 * @param charEnd the ending character offset
+	 * @see IMarker#CHAR_END
+	 */
+	public static void setCharEnd(Map map, int charEnd) {
+		map.put(IMarker.CHAR_END, new Integer(charEnd));
+	}
+	
+	/**
+	 * Sets the starting character offset of the given marker.
+	 *
+	 * @param marker the marker
+	 * @param charStart the starting character offset
+	 * @see IMarker#CHAR_START
+	 * @see IMarker#setAttribute(java.lang.String,int)
+	 */
+	public static void setCharStart(IMarker marker, int charStart) {
+		setIntAttribute(marker, IMarker.CHAR_START, charStart);
+	}
+	
+	/**
+	 * Sets the starting character offset in the given map using the standard 
+	 * marker attribute name as the key.
+	 *
+	 * @param map the map (key type: <code>String</code>, value type:
+	 *   <code>Object</code>)
+	 * @param charStart the starting character offset
+	 * @see IMarker#CHAR_START
+	 */
+	public static void setCharStart(Map map, int charStart) {
+		map.put(IMarker.CHAR_START, new Integer(charStart));
+	}
+	
+	/**
+	 * Sets the specified attribute of the given marker as an integer.
+	 */
+	private static void setIntAttribute(IMarker marker, String attributeName, int value) {
+		try {
+			marker.setAttribute(attributeName, value);
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+	
+	/**
+	 * Sets the line number of the given marker.
+	 *
+	 * @param marker the marker
+	 * @param lineNum the line number
+	 * @see IMarker#LINE_NUMBER
+	 * @see IMarker#setAttribute(java.lang.String,int)
+	 */
+	public static void setLineNumber(IMarker marker, int lineNum) {
+		setIntAttribute(marker, IMarker.LINE_NUMBER, lineNum);
+	}
+	
+	/**
+	 * Sets the line number in the given map using the standard marker attribute
+	 * name as the key.
+	 *
+	 * @param map the map (key type: <code>String</code>, value type:
+	 *   <code>Object</code>)
+	 * @param lineNum the line number
+	 * @see IMarker#LINE_NUMBER
+	 */
+	public static void setLineNumber(Map map, int lineNum) {
+		map.put(IMarker.LINE_NUMBER, new Integer(lineNum));
+	}
+	
+	/**
+	 * Sets the message in the given map using the standard marker attribute name
+	 * as the key.
+	 *
+	 * @param map the map (key type: <code>String</code>, value type:
+	 *   <code>Object</code>)
+	 * @param message the message
+	 * @see IMarker#MESSAGE
+	 */
+	public static void setMessage(Map map, String message) {
+		map.put(IMarker.MESSAGE, message);
+	}
+	
 	/**
 	 * Creates a marker on the given resource with the given type and attributes.
 	 * <p>
@@ -58,169 +238,5 @@ public final class MarkerUtilities {
 		};
 			
 		resource.getWorkspace().run(r, null);
-	}
-	/**
-	 * Returns the ending character offset of the given marker.
-	 *
-	 * @param marker the marker
-	 * @return the ending character offset, or <code>-1</code> if not set
-	 * @see IMarker#CHAR_END
-	 * @see IMarker#getAttribute(java.lang.String,int)
-	 */
-	public static int getCharEnd(IMarker marker) {
-		return getIntAttribute(marker, IMarker.CHAR_END, -1);
-	}
-	/**
-	 * Returns the starting character offset of the given marker.
-	 *
-	 * @param marker the marker
-	 * @return the starting character offset, or <code>-1</code> if not set
-	 * @see IMarker#CHAR_START
-	 * @see IMarker#getAttribute(java.lang.String,int)
-	 */
-	public static int getCharStart(IMarker marker) {
-		return getIntAttribute(marker, IMarker.CHAR_START, -1);
-	}
-	/**
-	 * Returns the specified attribute of the given marker as an integer.
-	 * Returns the given default if the attribute value is not an integer.
-	 */
-	private static int getIntAttribute(IMarker marker, String attributeName, int defaultValue) {
-		return marker.getAttribute(attributeName, defaultValue);
-	}
-	/**
-	 * Returns the line number of the given marker.
-	 *
-	 * @param marker the marker
-	 * @return the line number, or <code>-1</code> if not set
-	 * @see IMarker#LINE_NUMBER
-	 * @see IMarker#getAttribute(java.lang.String,int)
-	 */
-	public static int getLineNumber(IMarker marker) {
-		return getIntAttribute(marker, IMarker.LINE_NUMBER, -1);
-	}
-	/**
-	 * Returns the priority of the given marker.
-	 *
-	 * @param marker the marker
-	 * @return the priority, or <code>IMarker.PRIORITY_NORMAL</code> if not set
-	 * @see IMarker#PRIORITY
-	 * @see IMarker#PRIORITY_NORMAL
-	 * @see IMarker#getAttribute(java.lang.String,int)
-	 */
-	public static int getPriority(IMarker marker) {
-		return getIntAttribute(marker, IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-	}
-	/**
-	 * Handles a core exception which occurs when accessing marker attributes.
-	 */
-	private static void handleCoreException(CoreException e) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(e.getStatus());
-	}
-	/**
-	 * Returns whether the given marker is of the given type (either directly or indirectly).
-	 *
-	 * @param marker the marker to be checked
-	 * @param type the reference type
-	 * @return <code>true</code>if maker is an instance of the reference type
-	 */
-	public static boolean isMarkerType(IMarker marker, String type) {
-		try {
-			return marker.isSubtypeOf(type);
-		} catch (CoreException e) {
-			handleCoreException(e);
-			return false;
-		}
-	}
-	/**
-	 * Sets the ending character offset in the given map using the standard 
-	 * marker attribute name as the key.
-	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
-	 * @param charEnd the ending character offset
-	 * @see IMarker#CHAR_END
-	 */
-	public static void setCharEnd(Map map, int charEnd) {
-		map.put(IMarker.CHAR_END, new Integer(charEnd));
-	}
-	/**
-	 * Sets the ending character offset of the given marker.
-	 *
-	 * @param marker the marker
-	 * @param charEnd the ending character offset
-	 * @see IMarker#CHAR_END
-	 * @see IMarker#setAttribute(java.lang.String,int)
-	 */
-	public static void setCharEnd(IMarker marker, int charEnd) {
-		setIntAttribute(marker, IMarker.CHAR_END, charEnd);
-	}
-	/**
-	 * Sets the starting character offset in the given map using the standard 
-	 * marker attribute name as the key.
-	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
-	 * @param charStart the starting character offset
-	 * @see IMarker#CHAR_START
-	 */
-	public static void setCharStart(Map map, int charStart) {
-		map.put(IMarker.CHAR_START, new Integer(charStart));
-	}
-	/**
-	 * Sets the starting character offset of the given marker.
-	 *
-	 * @param marker the marker
-	 * @param charStart the starting character offset
-	 * @see IMarker#CHAR_START
-	 * @see IMarker#setAttribute(java.lang.String,int)
-	 */
-	public static void setCharStart(IMarker marker, int charStart) {
-		setIntAttribute(marker, IMarker.CHAR_START, charStart);
-	}
-	/**
-	 * Sets the specified attribute of the given marker as an integer.
-	 */
-	private static void setIntAttribute(IMarker marker, String attributeName, int value) {
-		try {
-			marker.setAttribute(attributeName, value);
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-	/**
-	 * Sets the line number in the given map using the standard marker attribute
-	 * name as the key.
-	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
-	 * @param lineNum the line number
-	 * @see IMarker#LINE_NUMBER
-	 */
-	public static void setLineNumber(Map map, int lineNum) {
-		map.put(IMarker.LINE_NUMBER, new Integer(lineNum));
-	}
-	/**
-	 * Sets the line number of the given marker.
-	 *
-	 * @param marker the marker
-	 * @param lineNum the line number
-	 * @see IMarker#LINE_NUMBER
-	 * @see IMarker#setAttribute(java.lang.String,int)
-	 */
-	public static void setLineNumber(IMarker marker, int lineNum) {
-		setIntAttribute(marker, IMarker.LINE_NUMBER, lineNum);
-	}
-	/**
-	 * Sets the message in the given map using the standard marker attribute name
-	 * as the key.
-	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
-	 * @param message the message
-	 * @see IMarker#MESSAGE
-	 */
-	public static void setMessage(Map map, String message) {
-		map.put(IMarker.MESSAGE, message);
 	}
 }

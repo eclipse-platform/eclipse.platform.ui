@@ -251,6 +251,97 @@ public class Reconciler implements IReconciler {
 	public Reconciler() {
 		super();
 	}
+		
+	/**
+	 * Tells the reconciler how long it should collect text changes before
+	 * it activates the appropriate reconciling strategies.
+	 *
+	 * @param delay the duration in milli seconds of a change collection period.
+	 */
+	public void setDelay(int delay) {
+		fDelay= delay;
+	}
+	
+	/**
+	 * Tells the reconciler whether any of the available reconciling strategies
+	 * is interested in getting detailed dirty region information or just in the
+	 * fact the the document has been changed. In the second case, the reconciling 
+	 * can not incrementally be pursued.
+	 *
+	 * @param isIncremental indicates whether this reconciler will be configured with
+	 *		incremental reconciling strategies
+	 *
+	 * @see DirtyRegion
+	 * @see IReconcilingStrategy
+	 */
+	public void setIsIncrementalReconciler(boolean isIncremental) {
+		fIsIncrementalReconciler= isIncremental;
+	}
+	
+	/**
+	 * Registers a given reconciling strategy for a particular content type.
+	 * If there is already a strategy registered for this type, the new strategy 
+	 * is registered instead of the old one.
+	 *
+	 * @param strategy the reconciling strategy to register, or <code>null</code> to remove an existing one
+	 * @param contentType the content type under which to register
+	 */
+	public void setReconcilingStrategy(IReconcilingStrategy strategy, String contentType) {
+		
+		Assert.isNotNull(contentType);
+					
+		if (fStrategies == null)
+			fStrategies= new HashMap();
+		
+		if (strategy == null)
+			fStrategies.remove(contentType);
+		else
+			fStrategies.put(contentType, strategy);
+	}
+	
+	/*
+	 * @see IReconciler#install
+	 */
+	public void install(ITextViewer textViewer) {
+		
+		Assert.isNotNull(textViewer);
+		
+		fViewer= textViewer;
+		
+		fListener= new Listener();
+		fViewer.addTextInputListener(fListener);
+		
+		fDirtyRegionQueue= new DirtyRegionQueue();
+		fThread= new BackgroundThread(getClass().getName());
+		fThread.start();
+	}
+	
+	/*
+	 * @see IReconciler#uninstall
+	 */
+	public void uninstall() {
+		if (fListener != null) {
+			fViewer.removeTextInputListener(fListener);
+			fListener= null;
+			fThread.cancel();
+			fThread= null;
+		}
+	}
+	
+	/*
+	 * @see IReconciler#getReconcilingStrategy
+	 */
+	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
+		
+		Assert.isNotNull(contentType);
+		
+		if (fStrategies == null)
+			return null;
+						
+		return (IReconcilingStrategy) fStrategies.get(contentType);
+	}
+	
+		
 	/*
 	 * Creates a dirty region for a document event and adds it to the queue.
 	 *
@@ -272,6 +363,7 @@ public class Reconciler implements IReconciler {
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
 		}
 	}
+		
 	/**
 	 * Flushs the dirty-region queue to sync up any background activity.
 	 */
@@ -283,34 +375,7 @@ public class Reconciler implements IReconciler {
 			Thread.currentThread().yield();
 		}
 	}
-	/*
-	 * @see IReconciler#getReconcilingStrategy
-	 */
-	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
-		
-		Assert.isNotNull(contentType);
-		
-		if (fStrategies == null)
-			return null;
-						
-		return (IReconcilingStrategy) fStrategies.get(contentType);
-	}
-	/*
-	 * @see IReconciler#install
-	 */
-	public void install(ITextViewer textViewer) {
-		
-		Assert.isNotNull(textViewer);
-		
-		fViewer= textViewer;
-		
-		fListener= new Listener();
-		fViewer.addTextInputListener(fListener);
-		
-		fDirtyRegionQueue= new DirtyRegionQueue();
-		fThread= new BackgroundThread(getClass().getName());
-		fThread.start();
-	}
+	
 	/**
 	 * Processes a dirty region. If the dirty region is <code>null</code> the whole
 	 * document is consider being dirty. The dirty region is partitioned by the
@@ -345,15 +410,7 @@ public class Reconciler implements IReconciler {
 				s.reconcile(r);
 		}
 	}
-	/**
-	 * Tells the reconciler how long it should collect text changes before
-	 * it activates the appropriate reconciling strategies.
-	 *
-	 * @param delay the duration in milli seconds of a change collection period.
-	 */
-	public void setDelay(int delay) {
-		fDelay= delay;
-	}
+	
 	/**
 	 * Informs all registed reconciling strategies about the new document
 	 * they are supoosed to work on.
@@ -368,51 +425,5 @@ public class Reconciler implements IReconciler {
 				strategy.setDocument(document);
 			}
 		}
-	}
-	/**
-	 * Tells the reconciler whether any of the available reconciling strategies
-	 * is interested in getting detailed dirty region information or just in the
-	 * fact the the document has been changed. In the second case, the reconciling 
-	 * can not incrementally be pursued.
-	 *
-	 * @param isIncremental indicates whether this reconciler will be configured with
-	 *		incremental reconciling strategies
-	 *
-	 * @see DirtyRegion
-	 * @see IReconcilingStrategy
-	 */
-	public void setIsIncrementalReconciler(boolean isIncremental) {
-		fIsIncrementalReconciler= isIncremental;
-	}
-	/**
-	 * Registers a given reconciling strategy for a particular content type.
-	 * If there is already a strategy registered for this type, the new strategy 
-	 * is registered instead of the old one.
-	 *
-	 * @param strategy the reconciling strategy to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register
-	 */
-	public void setReconcilingStrategy(IReconcilingStrategy strategy, String contentType) {
-		
-		Assert.isNotNull(contentType);
-					
-		if (fStrategies == null)
-			fStrategies= new HashMap();
-		
-		if (strategy == null)
-			fStrategies.remove(contentType);
-		else
-			fStrategies.put(contentType, strategy);
-	}
-	/*
-	 * @see IReconciler#uninstall
-	 */
-	public void uninstall() {
-		if (fListener != null) {
-			fViewer.removeTextInputListener(fListener);
-			fListener= null;
-			fThread.cancel();
-			fThread= null;
-		}
-	}
+	}	
 }

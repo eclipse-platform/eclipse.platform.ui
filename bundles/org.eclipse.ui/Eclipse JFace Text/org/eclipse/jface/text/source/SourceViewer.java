@@ -117,37 +117,41 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		fVerticalRuler= ruler;
 		createControl(parent, styles);
 	}
+	
 	/*
-	 * @see TextViewer#activatePlugins
+	 * @see TextViewer#createControl
 	 */
-	public void activatePlugins() {
+	protected void createControl(Composite parent, int styles) {
 		
-		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null) {
-			fVerticalRulerHoveringController= new VerticalRulerHoveringController(this, fVerticalRuler, fAnnotationHover);
-			fVerticalRulerHoveringController.install();
+		if (fVerticalRuler != null) {
+			styles= (styles & ~SWT.BORDER);
+			fComposite= new Canvas(parent, SWT.NONE);
+			fComposite.setLayout(new RulerLayout(GAP_SIZE));
+			parent= fComposite;
 		}
 		
-		super.activatePlugins();
+		super.createControl(parent, styles);
+					
+		if (fComposite != null)
+			fVerticalRuler.createControl(fComposite, this);
 	}
+	
 	/*
-	 * @see ITextOperationTarget#canDoOperation
+	 * @see TextViewer#getControl
 	 */
-	public boolean canDoOperation(int operation) {
-		
-		if (getTextWidget() == null)
-			return false;
-		
-		if (operation == CONTENTASSIST_PROPOSALS || operation == CONTENTASSIST_CONTEXT_INFORMATION)
-			return fContentAssistant != null;
-		
-		if (operation == FORMAT) {
-			Point p= getSelectedRange();
-			int length= (p == null ? -1 : p.y);
-			return (fContentFormatter != null && (length == 0 || isBlockSelected()));
-		}
-		
-		return super.canDoOperation(operation);
+	public Control getControl() {
+		if (fComposite != null)
+			return fComposite;
+		return super.getControl();
 	}
+	
+	/*
+	 * @see ISourceViewer#setAnnotationHover
+	 */
+	public void setAnnotationHover(IAnnotationHover annotationHover) {
+		fAnnotationHover= annotationHover;
+	}
+	
 	/*
 	 * @see ISourceViewer#configure
 	 */
@@ -198,48 +202,74 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		
 		activatePlugins();
 	}
+	
 	/*
-	 * @see TextViewer#createControl
+	 * @see TextViewer#activatePlugins
 	 */
-	protected void createControl(Composite parent, int styles) {
+	public void activatePlugins() {
 		
-		if (fVerticalRuler != null) {
-			styles= (styles & ~SWT.BORDER);
-			fComposite= new Canvas(parent, SWT.NONE);
-			fComposite.setLayout(new RulerLayout(GAP_SIZE));
-			parent= fComposite;
+		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null) {
+			fVerticalRulerHoveringController= new VerticalRulerHoveringController(this, fVerticalRuler, fAnnotationHover);
+			fVerticalRulerHoveringController.install();
 		}
 		
-		super.createControl(parent, styles);
-					
-		if (fComposite != null)
-			fVerticalRuler.createControl(fComposite, this);
+		super.activatePlugins();
 	}
+	
 	/*
-	 * @see ITextOperationTarget#doOperation
+	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel)
 	 */
-	public void doOperation(int operation) {
+	public void setDocument(IDocument document) {
+		setDocument(document, null, -1, -1);		
+	}
+	
+	/*
+	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
+	 */
+	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
+		setDocument(document, null, visibleRegionOffset, visibleRegionLength);
+	}
+	
+	/*
+	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel)
+	 */
+	public void setDocument(IDocument document, IAnnotationModel annotationModel) {
+		setDocument(document, annotationModel, -1, -1);		
+	}
+	
+	/*
+	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
+	 */
+	public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
 		
-		if (getTextWidget() == null)
-			return;
+		if (fVerticalRuler == null) {
+			
+			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
+				super.setDocument(document);
+			else
+				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
 		
-		switch (operation) {
-			case CONTENTASSIST_PROPOSALS:
-				fContentAssistant.showPossibleCompletions();
-				return;
-			case CONTENTASSIST_CONTEXT_INFORMATION:
-				fContentAssistant.showContextInformation();
-				return;
-			case FORMAT: {
-				Point s= getSelectedRange();
-				IRegion r= (s.y == 0 ? getVisibleRegion() : new Region(s.x, s.y));
-				fContentFormatter.format(getDocument(), r);
-				return;
+		} else {
+			
+			if (fVisualAnnotationModel != null && getDocument() != null)
+				fVisualAnnotationModel.disconnect(getDocument());
+			
+			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
+				super.setDocument(document);
+			else
+				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
+			
+			if (annotationModel != null && document != null) {
+				fVisualAnnotationModel= new VisualAnnotationModel(annotationModel);
+				fVisualAnnotationModel.connect(document);
+			} else {
+				fVisualAnnotationModel= null;
 			}
-			default:
-				super.doOperation(operation);
+			
+			fVerticalRuler.setModel(fVisualAnnotationModel);
 		}
 	}
+	
 	/*
 	 * @see ISourceViewer#getAnnotationModel
 	 */
@@ -248,26 +278,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			return fVisualAnnotationModel.getModelAnnotationModel();
 		return null;
 	}
-	/*
-	 * @see TextViewer#getControl
-	 */
-	public Control getControl() {
-		if (fComposite != null)
-			return fComposite;
-		return super.getControl();
-	}
-	/*
-	 * @see ISourceViewer#getRangeIndication
-	 */
-	public IRegion getRangeIndication() {
-		if (fRangeIndicator != null && fVisualAnnotationModel != null) {
-			Position position= fVisualAnnotationModel.getPosition(fRangeIndicator);
-			if (position != null)
-				return new Region(position.getOffset(), position.getLength());
-		}
-		
-		return null;
-	}
+	
 	/*
 	 * @see TextViewer#handleDispose
 	 */
@@ -304,69 +315,60 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		
 		super.handleDispose();
 	}
+	
 	/*
-	 * @see ISourceViewer#removeRangeIndication
+	 * @see ITextOperationTarget#canDoOperation
 	 */
-	public void removeRangeIndication() {
-		if (fRangeIndicator != null && fVisualAnnotationModel != null)
-			fVisualAnnotationModel.modifyAnnotation(fRangeIndicator, null);
-	}
-	/*
-	 * @see ISourceViewer#setAnnotationHover
-	 */
-	public void setAnnotationHover(IAnnotationHover annotationHover) {
-		fAnnotationHover= annotationHover;
-	}
-	/*
-	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel)
-	 */
-	public void setDocument(IDocument document) {
-		setDocument(document, null, -1, -1);		
-	}
-	/*
-	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
-	 */
-	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
-		setDocument(document, null, visibleRegionOffset, visibleRegionLength);
-	}
-	/*
-	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel)
-	 */
-	public void setDocument(IDocument document, IAnnotationModel annotationModel) {
-		setDocument(document, annotationModel, -1, -1);		
-	}
-	/*
-	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
-	 */
-	public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
+	public boolean canDoOperation(int operation) {
 		
-		if (fVerticalRuler == null) {
-			
-			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
-				super.setDocument(document);
-			else
-				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
+		if (getTextWidget() == null)
+			return false;
 		
-		} else {
-			
-			if (fVisualAnnotationModel != null && getDocument() != null)
-				fVisualAnnotationModel.disconnect(getDocument());
-			
-			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
-				super.setDocument(document);
-			else
-				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
-			
-			if (annotationModel != null && document != null) {
-				fVisualAnnotationModel= new VisualAnnotationModel(annotationModel);
-				fVisualAnnotationModel.connect(document);
-			} else {
-				fVisualAnnotationModel= null;
-			}
-			
-			fVerticalRuler.setModel(fVisualAnnotationModel);
+		if (operation == CONTENTASSIST_PROPOSALS || operation == CONTENTASSIST_CONTEXT_INFORMATION)
+			return fContentAssistant != null;
+		
+		if (operation == FORMAT) {
+			Point p= getSelectedRange();
+			int length= (p == null ? -1 : p.y);
+			return (fContentFormatter != null && (length == 0 || isBlockSelected()));
 		}
+		
+		return super.canDoOperation(operation);
 	}
+	
+	/*
+	 * @see ITextOperationTarget#doOperation
+	 */
+	public void doOperation(int operation) {
+		
+		if (getTextWidget() == null)
+			return;
+		
+		switch (operation) {
+			case CONTENTASSIST_PROPOSALS:
+				fContentAssistant.showPossibleCompletions();
+				return;
+			case CONTENTASSIST_CONTEXT_INFORMATION:
+				fContentAssistant.showContextInformation();
+				return;
+			case FORMAT: {
+				Point s= getSelectedRange();
+				IRegion r= (s.y == 0 ? getVisibleRegion() : new Region(s.x, s.y));
+				fContentFormatter.format(getDocument(), r);
+				return;
+			}
+			default:
+				super.doOperation(operation);
+		}
+	}		
+		
+	/*
+	 * @see ISourceViewer#setRangeIndicator
+	 */
+	public void setRangeIndicator(Annotation rangeIndicator) {
+		fRangeIndicator= rangeIndicator;
+	}
+		
 	/*
 	 * @see ISourceViewer#setRangeIndication 	 
 	 */
@@ -380,12 +382,28 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		if (fRangeIndicator != null && fVisualAnnotationModel != null)
 			fVisualAnnotationModel.modifyAnnotation(fRangeIndicator, new Position(start, length));
 	}
+	
 	/*
-	 * @see ISourceViewer#setRangeIndicator
+	 * @see ISourceViewer#getRangeIndication
 	 */
-	public void setRangeIndicator(Annotation rangeIndicator) {
-		fRangeIndicator= rangeIndicator;
+	public IRegion getRangeIndication() {
+		if (fRangeIndicator != null && fVisualAnnotationModel != null) {
+			Position position= fVisualAnnotationModel.getPosition(fRangeIndicator);
+			if (position != null)
+				return new Region(position.getOffset(), position.getLength());
+		}
+		
+		return null;
 	}
+	
+	/*
+	 * @see ISourceViewer#removeRangeIndication
+	 */
+	public void removeRangeIndication() {
+		if (fRangeIndicator != null && fVisualAnnotationModel != null)
+			fVisualAnnotationModel.modifyAnnotation(fRangeIndicator, null);
+	}
+	
 	/*
 	 * @see ISourceViewer#showAnnotations
 	 */
@@ -394,5 +412,5 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		fIsVerticalRulerVisible= show;
 		if (old != fIsVerticalRulerVisible)
 			fComposite.layout();
-	}
+	}		
 }

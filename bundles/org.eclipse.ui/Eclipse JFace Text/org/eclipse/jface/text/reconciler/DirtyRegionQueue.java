@@ -27,6 +27,7 @@ class DirtyRegionQueue {
 	public DirtyRegionQueue() {
 		super();
 	}
+	
 	/**
 	 * Adds a dirty region to the end of the dirty-region queue.
 	 *
@@ -55,6 +56,7 @@ class DirtyRegionQueue {
 			// Don't merge- just add the new one onto the queue.
 			fDirtyRegions.add(dr);
 	}
+	
 	/**
 	 * Returns the last dirty region that was added to the queue.
 	 *
@@ -64,6 +66,7 @@ class DirtyRegionQueue {
 		int size= fDirtyRegions.size();
 		return (size == 0 ? null : (DirtyRegion) fDirtyRegions.get(size - 1));
 	}
+
 	/**
 	 * Returns the number of regions in the queue.
 	 *
@@ -72,12 +75,14 @@ class DirtyRegionQueue {
 	public int getSize() {
 		return fDirtyRegions.size();
 	}
+
 	/**
 	 * Throws away all entries in the queue.
 	 */
 	public void purgeQueue() {
 		fDirtyRegions.clear();
 	}
+
 	/**
 	 * Removes and returns the first dirty region in the queue
 	 *

@@ -45,7 +45,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 				if (delta != null)
 					delta.accept(fResourceDeltaVisitor);
 			} catch (CoreException x) {
-				handleCoreException(x, "ResourceMarkerAnnotationModel.resourceChanged");
+				handleCoreException(x, EditorMessages.getString("ResourceMarkerAnnotationModel.resourceChanged")); //$NON-NLS-1$
 			}
 		}
 	};
@@ -87,39 +87,14 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		fResource= resource;
 		fWorkspace= resource.getWorkspace();
 	}
-	/*
-	 * @see AbstractMarkerAnnotationModel#deleteMarkers(IMarker[])
-	 */
-	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
-		fWorkspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i= 0; i < markers.length; ++i) {
-					markers[i].delete();
-				}
-			}
-		}, null);
-	}
+
 	/*
 	 * @see AnnotationModel#isAcceptable
 	 */
 	protected boolean isAcceptable(IMarker marker) {
 		return marker != null && fResource.equals(marker.getResource());
 	}
-	/*
-	 * @see AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
-	 */
-	protected void listenToMarkerChanges(boolean listen) {
-		if (listen)
-			fWorkspace.addResourceChangeListener(fResourceChangeListener);
-		else
-			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
-	}
-	/*
-	 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
-	 */
-	protected IMarker[] retrieveMarkers() throws CoreException {
-		return fResource.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
-	}
+
 	/**
 	 * Updates this model to the given marker deltas.
 	 *
@@ -142,5 +117,35 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		}
 		
 		fireModelChanged();
+	}
+			
+	/*
+	 * @see AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
+	 */
+	protected void listenToMarkerChanges(boolean listen) {
+		if (listen)
+			fWorkspace.addResourceChangeListener(fResourceChangeListener);
+		else
+			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
+	}
+	
+	/*
+	 * @see AbstractMarkerAnnotationModel#deleteMarkers(IMarker[])
+	 */
+	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
+		fWorkspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i= 0; i < markers.length; ++i) {
+					markers[i].delete();
+				}
+			}
+		}, null);
+	}
+	
+	/*
+	 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
+	 */
+	protected IMarker[] retrieveMarkers() throws CoreException {
+		return fResource.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
 	}
 }

@@ -201,6 +201,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		fWindowShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		fWindowLabel.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
+	
 	/**
 	 * Determines graphical area covered by the given text region.
 	 *
@@ -225,6 +226,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		
 		return new Rectangle(x, y, width, height);
 	}
+	
 	/**
 	 * Computes the document offset underlying the given text widget coordinates.
 	 *
@@ -271,6 +273,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		
 		return -1;
 	}
+	
 	/**
 	 * Determines the location of the popup window depending on
 	 * the size of the covered area and the coordinates at which 
@@ -285,21 +288,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		y= coveredArea.y + coveredArea.height + 5;
 		return fTextViewer.getTextWidget().toDisplay(new Point(x, y));
 	}
-	/**
-	 * Disposes this hovering controller	 
-	 */
-	public void dispose() {
-		if (fWindowShell != null && !fWindowShell.isDisposed()) {
-			fWindowShell.dispose();
-			fWindowShell= null;
-		}
-	}
-	/**
-	 * Installs this hovering controller on its text viewer.
-	 */
-	public void install() {
-		fTextViewer.getTextWidget().addMouseTrackListener(this);
-	}
+	
 	/**
 	 * Returns whether the given event ocurred within a cicle of <code>EPSILON</code>
 	 * pixels of the previous mouse hover location. In addition, the location of
@@ -321,6 +310,7 @@ class TextHoveringController extends MouseTrackAdapter {
 		fHoverLocation.y= event.y;
 		return tooClose;
 	}
+		
 	/*
 	 * @see MouseTrackAdapter#mouseHover
 	 */
@@ -350,6 +340,7 @@ class TextHoveringController extends MouseTrackAdapter {
 			}
 		}
 	}
+	
 	/**
 	 * Opens the hover popup window at the specified location. The window closes if the
 	 * mouse pointer leaves the specified area.
@@ -372,10 +363,28 @@ class TextHoveringController extends MouseTrackAdapter {
 		
 		fWindowShell.setVisible(true);
 	}
+	
+	/**
+	 * Installs this hovering controller on its text viewer.
+	 */
+	public void install() {
+		fTextViewer.getTextWidget().addMouseTrackListener(this);
+	}
+	
 	/**
 	 * Uninstalls this hovering controller from its text viewer.
 	 */
 	public void uninstall() {
 		fTextViewer.getTextWidget().removeMouseTrackListener(this);
+	}
+	
+	/**
+	 * Disposes this hovering controller	 
+	 */
+	public void dispose() {
+		if (fWindowShell != null && !fWindowShell.isDisposed()) {
+			fWindowShell.dispose();
+			fWindowShell= null;
+		}
 	}
 }

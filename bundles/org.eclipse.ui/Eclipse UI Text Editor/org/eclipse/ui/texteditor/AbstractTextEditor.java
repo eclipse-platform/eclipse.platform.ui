@@ -6,85 +6,8 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.source.VerticalRuler;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.EditorPart;
+import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -348,11 +271,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/** Key used to look up font preference */
-	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font";
+	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font"; //$NON-NLS-1$
 	/** Menu id for the editor context menu. */
-	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext";
+	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
-	public final static String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext";
+	public final static String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext"; //$NON-NLS-1$
 	/** The width of the vertical ruler */
 	protected final static int VERTICAL_RULER_WIDTH= 12;
 	
@@ -361,10 +284,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private IDocumentProvider fInternalDocumentProvider;
 	/** The editor's external document provider */
 	private IDocumentProvider fExternalDocumentProvider;
-	/** The editor's resource bundle */
-	private ResourceBundle fResourceBundle;
-	/** The prefix used for looking up keys in the resource bundle */
-	private String fResourceKeyPrefix;
 	/** The editor's preference store */
 	private IPreferenceStore fPreferenceStore;
 	/** The editor's range indicator */
@@ -429,160 +348,327 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
 		fHelpContextId= null;
 	}
-	/**
-	 * Convenience method to add the action installed under the given action id
-	 * to the given menu.
+	
+	/*
+	 * @see ITextEditor#getDocumentProvider
 	 */
-	protected final void addAction(IMenuManager menu, String actionId) {
-		IAction action= getAction(actionId);
-		if (action != null) {
-			if (action instanceof IUpdate)
-				((IUpdate) action).update();
-			menu.add(action);
+	public IDocumentProvider getDocumentProvider() {
+		if (fInternalDocumentProvider != null)
+			return fInternalDocumentProvider;
+		return fExternalDocumentProvider;
+	}
+		
+	/** 
+	 * Returns the editor's range indicator. 
+	 *
+	 * @return the editor's range indicator
+	 */
+	protected final Annotation getRangeIndicator() {
+		return fRangeIndicator;
+	}
+	
+	/** 
+	 * Returns the editor's source viewer configuration.
+	 *
+	 * @return the editor's source viewer configuration
+	 */
+	protected final SourceViewerConfiguration getSourceViewerConfiguration() {
+		return fConfiguration;
+	}
+	
+	/** 
+	 * Returns the editor's source viewer.
+	 *
+	 * @return the editor's source viewer
+	 */
+	protected final ISourceViewer getSourceViewer() {
+		return fSourceViewer;
+	}
+	
+	/** 
+	 * Returns the editor's vertical ruler.
+	 * 
+	 * @return the editor's vertical ruler
+	 */
+	protected final IVerticalRuler getVerticalRuler() {
+		return fVerticalRuler;
+	}
+	
+	/** 
+	 * Returns the editor's context menu id.
+	 *
+	 * @return the editor's context menu id
+	 */
+	protected final String getEditorContextMenuId() {
+		return fEditorContextMenuId;
+	}
+	
+	/** 
+	 * Returns the ruler's context menu id.
+	 *
+	 * @return the ruler's context menu id
+	 */
+	protected final String getRulerContextMenuId() {
+		return fRulerContextMenuId;
+	}
+	
+	/** 
+	 * Returns the editor's help context id.
+	 *
+	 * @return the editor's help context id
+	 */
+	protected final String getHelpContextId() {
+		return fHelpContextId;
+	}
+	
+	/**
+	 * Returns this editor's preference store.
+	 * 
+	 * @return this editor's preference store
+	 */
+	protected final IPreferenceStore getPreferenceStore() {
+		return fPreferenceStore;
+	}
+	
+	/**
+	 * Sets this editor's document provider. This method must be 
+	 * called before the editor's control is created.
+	 *
+	 * @param provider the document provider
+	 */
+	protected void setDocumentProvider(IDocumentProvider provider) {
+		Assert.isNotNull(provider);
+		fInternalDocumentProvider= provider;
+	}
+		
+	/**
+	 * Sets this editor's source viewer configuration used to configure its
+	 * internal source viewer. This method must be called before the editor's
+	 * control is created. If not, this editor uses a <code>SourceViewerConfiguration</code>.
+	 *
+	 * @param configuration the source viewer configuration object
+	 */
+	protected void setSourceViewerConfiguration(SourceViewerConfiguration configuration) {
+		Assert.isNotNull(configuration);
+		fConfiguration= configuration;
+	}
+	
+	/**
+	 * Sets the annotation which this editor uses to represent the highlight
+	 * range if the editor is configured to show the entire document. If the
+	 * range indicator is not set, this editor uses a <code>DefaultRangeIndicator</code>.
+	 *
+	 * @param rangeIndicator the annotation
+	 */
+	protected void setRangeIndicator(Annotation rangeIndicator) {
+		Assert.isNotNull(rangeIndicator);
+		fRangeIndicator= rangeIndicator;
+	}
+	
+	/**
+	 * Sets this editor's context menu id.
+	 *
+	 * @param contextMenuId the context menu id
+	 */
+	protected void setEditorContextMenuId(String contextMenuId) {
+		Assert.isNotNull(contextMenuId);
+		fEditorContextMenuId= contextMenuId;
+	}
+	
+	/**
+	 * Sets the ruler's context menu id.
+	 *
+	 * @param contextMenuId the context menu id
+	 */
+	protected void setRulerContextMenuId(String contextMenuId) {
+		Assert.isNotNull(contextMenuId);
+		fRulerContextMenuId= contextMenuId;
+	}
+	
+	/**
+	 * Sets the editor's help context id.
+	 *
+	 * @param helpContextId the help context id
+	 */
+	protected void setHelpContextId(String helpContextId) {
+		Assert.isNotNull(helpContextId);
+		fHelpContextId= helpContextId;
+	}
+	
+	/**
+	 * Sets this editor's preference store. This method must be
+	 * called before the editor's control is created.
+	 * 
+	 * @param store the new preference store
+	 */
+	protected void setPreferenceStore(IPreferenceStore store) {
+		if (fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+			
+		fPreferenceStore= store;
+		
+		if (fPreferenceStore != null)
+			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
+	}
+		
+	/*
+	 * @see ITextEditor#isEditable
+	 */
+	public boolean isEditable() {
+		
+		/*
+		 * 1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in the repositories?
+		 * Checks the editor input whether it is editable. This is a layer breaker, as only the
+		 * concrete document providers know about the various kinds of editor input.
+		 * Should be something like: getDocumentProvider().isEditable(getEditorInput());
+		 */
+		IEditorInput input= getEditorInput();
+		if (input instanceof IStorageEditorInput) {
+			IStorageEditorInput storageInput= (IStorageEditorInput) input;
+			try {
+				
+				/*
+				 * Change to always allow editing of files even when it is read only.
+				 * ClearCase request.
+				 */
+				IStorage storage= storageInput.getStorage();
+				return (storage != null && (storageInput instanceof IFileEditorInput || !storage.isReadOnly()));
+				
+			} catch (CoreException x) {
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				log.log(x.getStatus());
+			}
 		}
+		
+		return true;
 	}
-	/**
-	 * Convenience method to add the action installed under the given action id
-	 * to the specified group of the menu.
+	
+	/*
+	 * @see ITextEditor#getSelectionProvider
 	 */
-	protected final void addAction(IMenuManager menu, String group, String actionId) {
-	 	IAction action= getAction(actionId);
-	 	if (action != null) {
-	 		if (action instanceof IUpdate)
-	 			((IUpdate) action).update();
-	 			
-	 		IMenuManager subMenu= menu.findMenuUsingPath(group);
-	 		if (subMenu != null)
-	 			subMenu.add(action);
-	 		else
-	 			menu.appendToGroup(group, action);
-	 	}
+	public ISelectionProvider getSelectionProvider() {
+		return (fSourceViewer != null ? fSourceViewer.getSelectionProvider() : null);
 	}
+	
 	/**
-	 * Convenience method to add a new group after the specified group.
+	 * Creates and returns the listener on this editor's context menus.
+	 *
+	 * @return the menu listener
 	 */
-	protected final void addGroup(IMenuManager menu, String existingGroup, String newGroup) {
- 		IMenuManager subMenu= menu.findMenuUsingPath(existingGroup);
- 		if (subMenu != null)
- 			subMenu.add(new Separator(newGroup));
- 		else
- 			menu.appendToGroup(existingGroup, new Separator(newGroup));
+	protected final IMenuListener getContextMenuListener() {
+		if (fMenuListener == null) {
+			fMenuListener= new IMenuListener() {
+				
+				public void menuAboutToShow(IMenuManager menu) {
+					String id= menu.getId();
+					if (getRulerContextMenuId().equals(id)) {
+						setFocus();
+						rulerContextMenuAboutToShow(menu);
+					} else if (getEditorContextMenuId().equals(id)) {
+						setFocus();
+						editorContextMenuAboutToShow(menu);
+					}
+				}
+			};
+		}
+		return fMenuListener;
 	}
+	
 	/**
-	 * Adjusts the highlight range so that at least the specified range 
-	 * is highlighted. <p>
+	 * Creates and returns the listener on this editor's vertical ruler.
+	 *
+	 * @return the mouse listener
+	 */
+	protected final MouseListener getRulerMouseListener() {
+		if (fMouseListener == null) {
+			fMouseListener= new MouseListener() {
+				
+				public void mouseDown(MouseEvent e) {}
+				
+				public void mouseUp(MouseEvent e) {}
+				
+				public void mouseDoubleClick(MouseEvent e) {
+					IAction action= getAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
+					if (action != null) {
+						if (action instanceof IUpdate)
+							((IUpdate) action).update();
+						action.run();
+					}
+				}
+			};
+		}
+		return fMouseListener;
+	}
+
+	/**
+	 * Returns this editor's the selection changed listener to be installed
+	 * on the editor's source viewer.
+	 *
+	 * @return the listener
+	 */
+	protected final ISelectionChangedListener getSelectionChangedListener() {
+		if (fSelectionChangedListener == null) {
+			fSelectionChangedListener= new ISelectionChangedListener() {
+				
+				private Runnable fRunnable= new Runnable() {
+					public void run() {
+						updateSelectionDependentActions();
+					}
+				};
+				
+				private Display fDisplay;
+				
+				public void selectionChanged(SelectionChangedEvent event) {
+					if (fDisplay == null)
+						fDisplay= getSite().getShell().getDisplay();
+						
+					fDisplay.asyncExec(fRunnable);	
+				}
+			};
+		}
+		
+		return fSelectionChangedListener;
+	}
+
+	/*
+	 * @see IEditorPart#init
+	 */
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		
+		setSite(site);
+		
+		try {
+			doSetInput(input);
+		} catch (CoreException x) {
+			throw new PartInitException(x.getMessage());
+		}
+		
+		getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
+	}
+	
+	/**
+	 * Creates the vertical ruler to be used by this editor.
 	 * Subclasses may re-implement this method.
 	 *
-	 * @param offset the offset of the range which at least should be highlighted
-	 * @param length the length of the range which at least should be highlighted 
+	 * @return the vertical ruler
 	 */
-	protected void adjustHighlightRange(int offset, int length) {
-		if (fSourceViewer == null)
-			return;
-		
-		if (!fSourceViewer.overlapsWithVisibleRegion(offset, length))
-			fSourceViewer.resetVisibleRegion();
+	protected IVerticalRuler createVerticalRuler() {
+		return new VerticalRuler(VERTICAL_RULER_WIDTH);
 	}
-	/*
-	 * @see ITextEditor#close
-	 */
-	public void close(final boolean save) {
-		
-		Display display= getSite().getShell().getDisplay();
-		
-		display.asyncExec(new Runnable() {
-			public void run() {
-				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
-			}
-		});
-	}
+	
 	/**
-	 * Creates this editor's standard actions and connects them with the global
-	 * workbench actions.
-	 * <p>
-	 * Subclasses may extend.
-	 * </p>
+	 * Creates the source viewer to be used by this editor.
+	 * Subclasses may re-implement this method.
+	 *
+	 * @param parent the parent control
+	 * @param ruler the vertical ruler
+	 * @param styles style bits
+	 * @return the source viewer
 	 */
-	protected void createActions() {
-		
-		ResourceAction action;
-		
-		action= new TextOperationAction(getResourceBundle(), "Undo.", this, ITextOperationTarget.UNDO);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-		setAction(ITextEditorActionConstants.UNDO, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Redo.", this, ITextOperationTarget.REDO);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
-		setAction(ITextEditorActionConstants.REDO, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Cut.", this, ITextOperationTarget.CUT);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
-		setAction(ITextEditorActionConstants.CUT, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Copy.", this, ITextOperationTarget.COPY);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
-		setAction(ITextEditorActionConstants.COPY, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Paste.", this, ITextOperationTarget.PASTE);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
-		setAction(ITextEditorActionConstants.PASTE, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Delete.", this, ITextOperationTarget.DELETE);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
-		setAction(ITextEditorActionConstants.DELETE, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "SelectAll.", this, ITextOperationTarget.SELECT_ALL);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
-		setAction(ITextEditorActionConstants.SELECT_ALL, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
-		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
-		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
-		
-		action= new FindReplaceAction(getResourceBundle(), "FindReplace.", this);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
-		setAction(ITextEditorActionConstants.FIND, action);
-		
-		action= new AddMarkerAction(getResourceBundle(), "AddBookmark.", this, IMarker.BOOKMARK, true);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
-		setAction(ITextEditorActionConstants.BOOKMARK, action);
-		
-		action= new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
-		setAction(ITextEditorActionConstants.ADD_TASK, action);
-		
-		action= new SaveAction(getResourceBundle(), "Save.", this);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		setAction(ITextEditorActionConstants.SAVE, action);
-		
-		action= new RevertToSavedAction(getResourceBundle(), "Revert.", this);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
-		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
-		
-		action= new GotoLineAction(getResourceBundle(), "GotoLine.", this);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
-		setAction(ITextEditorActionConstants.GOTO_LINE, action);
-		
-		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(getResourceBundle(), "ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true));
-		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(getResourceBundle(), "ManageTasks.", fVerticalRuler, this, IMarker.TASK, true));
-		setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
-		
-		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
-		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
-		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
-		
-		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
-		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
-		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
-		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
-		
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		return new SourceViewer(parent, ruler, styles);
 	}
+	
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
@@ -633,43 +719,169 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		initializeSourceViewer(getEditorInput());
 	}
-	/**
-	 * Creates a workspace modify operation which saves the content of the editor
-	 * to the editor's input element. <code>overwrite</code> indicates whether
-	 * the editor input element may be overwritten if necessary. Clients may
-	 * reimplement this method.
+	
+	/*
+	 * Initializes the given widget's font.
 	 * 
-	 * @param overwrite indicates whether or not overwrititng is allowed
-	 * @return the save operation
+	 * @param styledText the widget to be initialized
 	 */
-	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
-		return new WorkspaceModifyOperation() {
-			public void execute(final IProgressMonitor monitor) throws CoreException {
-				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()), overwrite);
+	private void initializeWidgetFont(StyledText styledText) {
+		
+		IPreferenceStore store= getPreferenceStore();
+		if (store != null) {
+			
+			FontData data= null;
+			
+			if (store.contains(PREFERENCE_FONT) && !store.isDefault(PREFERENCE_FONT))
+				data= PreferenceConverter.getFontData(store, PREFERENCE_FONT);
+			else
+				data= PreferenceConverter.getDefaultFontData(store, PREFERENCE_FONT);
+			
+			if (data != null) {
+				
+				Font font= new Font(styledText.getDisplay(), data);
+				styledText.setFont(font);
+				
+				if (fFont != null)
+					fFont.dispose();
+					
+				fFont= font;
+				return;
 			}
-		};
+		}
+		
+		// if all the preferences failed
+		styledText.setFont(JFaceResources.getTextFont());
 	}
+	
 	/**
-	 * Creates the source viewer to be used by this editor.
-	 * Subclasses may re-implement this method.
+	 * Initializes the editor's source viewer based on the given editor input.
 	 *
-	 * @param parent the parent control
-	 * @param ruler the vertical ruler
-	 * @param styles style bits
-	 * @return the source viewer
+	 * @param input the editor input to be used to initialize the source viewer
 	 */
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return new SourceViewer(parent, ruler, styles);
+	private void initializeSourceViewer(IEditorInput input) {
+		
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(input);
+		IDocument document= getDocumentProvider().getDocument(input);
+		
+		if (document != null) {
+			fSourceViewer.setDocument(document, model);
+			fSourceViewer.setEditable(isEditable());
+			fSourceViewer.showAnnotations(model != null);			
+		}
 	}
+	
 	/**
-	 * Creates the vertical ruler to be used by this editor.
-	 * Subclasses may re-implement this method.
+	 * Initializes the editor's title based on the given editor input.
 	 *
-	 * @return the vertical ruler
+	 * @param input the editor input to be used
 	 */
-	protected IVerticalRuler createVerticalRuler() {
-		return new VerticalRuler(VERTICAL_RULER_WIDTH);
+	private void initializeTitle(IEditorInput input) {
+		
+		Image oldImage= fTitleImage;
+		fTitleImage= null;
+		String title= ""; //$NON-NLS-1$
+		
+		if (input != null) {
+			ImageDescriptor imageDesc= input.getImageDescriptor();
+			fTitleImage= imageDesc != null ? imageDesc.createImage() : null;
+			title= input.getName();
+		}
+		
+		setTitleImage(fTitleImage);
+		setTitle(title);
+		
+		firePropertyChange(PROP_DIRTY);
+		
+		if (oldImage != null && !oldImage.isDisposed())
+			oldImage.dispose();
 	}
+	
+	/**
+	 * If there is no implicit document provider set, the external one is
+	 * re-initialized based on the given editor input.
+	 *
+	 * @param input the editor input.
+	 */
+	private void updateDocumentProvider(IEditorInput input) {
+		if (getDocumentProvider() != null)
+			getDocumentProvider().removeElementStateListener(fElementStateListener);
+			
+		if (fInternalDocumentProvider == null)
+			fExternalDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+			
+		if (getDocumentProvider() != null)
+			getDocumentProvider().addElementStateListener(fElementStateListener);
+	}
+	
+	/**
+	 * Internal <code>setInput</code> method.
+	 *
+	 * @param input the input to be set
+	 * @exception CoreException if input cannot be connected to the document provider
+	 */
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		
+		if (input == null)
+			
+			close(isSaveOnCloseNeeded());
+		
+		else {
+			
+			IEditorInput oldInput= getEditorInput();
+			if (oldInput != null)
+				getDocumentProvider().disconnect(oldInput);
+			
+				
+			super.setInput(input);
+			
+			updateDocumentProvider(input);
+			
+			IDocumentProvider provider= getDocumentProvider();
+			if (provider == null) {
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.no_provider"), null); //$NON-NLS-1$
+				throw new CoreException(s);
+			}
+			
+			provider.connect(input);
+			
+			initializeTitle(input);
+			if (fSourceViewer != null)
+				initializeSourceViewer(input);
+		}
+	}
+	
+	/*
+	 * @see EditorPart#setInput
+	 */
+	public final void setInput(IEditorInput input) {
+		
+		try {
+			
+			doSetInput(input);
+				
+		} catch (CoreException x) {
+			String title= EditorMessages.getString("Editor.error.setinput.title"); //$NON-NLS-1$
+			String msg= EditorMessages.getString("Editor.error.setinput.message"); //$NON-NLS-1$
+			Shell shell= getSite().getShell();
+			ErrorDialog.openError(shell, title, msg, x.getStatus());
+		}				
+	}
+	
+	/*
+	 * @see ITextEditor#close
+	 */
+	public void close(final boolean save) {
+		
+		Display display= getSite().getShell().getDisplay();
+		
+		display.asyncExec(new Runnable() {
+			public void run() {
+				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
+			}
+		});
+	}
+	
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IWorkbenchPart</code> method may be extended by subclasses.
@@ -747,35 +959,102 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		super.dispose();
 	}
+	
 	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>ITextEditor</code> method may be extended by subclasses.
+	 * Handles a property change event describing a change
+	 * of the editor's preference store and updates the preference
+	 * related editor properties.
+	 * 
+	 * @param event the property change event
 	 */
-	public void doRevertToSaved() {
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		
-		IDocumentProvider p= getDocumentProvider();
-		if (p == null)
+		if (fSourceViewer == null)
 			return;
 			
-		try {
+		if (PREFERENCE_FONT.equals(event.getProperty()))
+			initializeWidgetFont(fSourceViewer.getTextWidget());
+	}
+	
+	/**
+	 * Handles an external change of the editor's input element.
+	 */
+	protected void handleEditorInputChanged() {
+		
+		String title;
+		String msg;
+		Shell shell= getSite().getShell();
+		
+		if (getDocumentProvider().isDeleted(getEditorInput())) {
 			
-			p.resetDocument(getEditorInput());
+			if (isSaveAsAllowed()) {
 			
-			IAnnotationModel model= p.getAnnotationModel(getEditorInput());
-			if (model instanceof AbstractMarkerAnnotationModel) {
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-				markerModel.resetMarkers();
+				title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
+				msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
+				
+				String[] buttons= {
+					EditorMessages.getString("Editor.error.activated.deleted.save.button.save"), //$NON-NLS-1$
+					EditorMessages.getString("Editor.error.activated.deleted.save.button.close"), //$NON-NLS-1$
+				};
+					
+				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
+				
+				if (dialog.open() == 0) {
+					NullProgressMonitor pm= new NullProgressMonitor();
+					performSaveAs(pm);
+					if (pm.isCanceled())
+						handleEditorInputChanged();
+				} else {
+					close(false);
+				}
+				
+			} else {
+				
+				title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
+				msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
+				MessageDialog.openConfirm(shell, title, msg);
 			}
-						
-			firePropertyChange(PROP_DIRTY);
 			
-		} catch (CoreException x) {
-			String title= getResourceString("Error.revert.title");
-			String msg= getResourceString("Error.revert.message");
-			Shell shell= getSite().getShell();
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
+		} else {
+			
+			title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
+			msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
+				
+			if (MessageDialog.openQuestion(shell, title, msg)) {
+				try {
+					doSetInput(getEditorInput());
+				} catch (CoreException x) {
+					title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
+					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
+					ErrorDialog.openError(shell, title, msg, x.getStatus());
+				}
+			}
 		}
 	}
+			
+	/**
+	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * <code>IEditorPart</code> method does nothing. Subclasses may reimplement.
+	 */
+	public void doSaveAs() {
+		/*
+		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+		 * Changed Behavior to make sure that if called inside a regular save (because
+		 * of deletion of input element) there is a way to report back to the caller.
+		 */
+		performSaveAs(null);
+	}
+	
+	/**
+	 * Performs a save as and reports the result state back to the 
+	 * given progress monitor. This default implementation does nothing.
+	 * Subclasses may reimplement.
+	 * 
+	 * @param progressMonitor the progress monitor for communicating result state or <code>null</code>
+	 */
+	protected void performSaveAs(IProgressMonitor progressMonitor) {
+	}
+		
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IEditorPart</code> method may be extended by subclasses.
@@ -800,8 +1079,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else {
 				
 				Shell shell= getSite().getShell();
-				String title= getResourceString("Error.save.deleted.title");
-				String msg= getResourceString("Error.save.deleted.message");
+				String title= EditorMessages.getString("Editor.error.save.deleted.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.save.deleted.message"); //$NON-NLS-1$
 				MessageDialog.openError(shell, title, msg);
 			}
 			
@@ -810,54 +1089,457 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			performSaveOperation(createSaveOperation(false), progressMonitor);
 		}
 	}
+	
 	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method does nothing. Subclasses may reimplement.
+	 * Creates a workspace modify operation which saves the content of the editor
+	 * to the editor's input element. <code>overwrite</code> indicates whether
+	 * the editor input element may be overwritten if necessary. Clients may
+	 * reimplement this method.
+	 * 
+	 * @param overwrite indicates whether or not overwrititng is allowed
+	 * @return the save operation
 	 */
-	public void doSaveAs() {
-		/*
-		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
-		 * Changed Behavior to make sure that if called inside a regular save (because
-		 * of deletion of input element) there is a way to report back to the caller.
-		 */
-		performSaveAs(null);
-	}
-	/**
-	 * Internal <code>setInput</code> method.
-	 *
-	 * @param input the input to be set
-	 * @exception CoreException if input cannot be connected to the document provider
-	 */
-	protected void doSetInput(IEditorInput input) throws CoreException {
-		
-		if (input == null)
-			
-			close(isSaveOnCloseNeeded());
-		
-		else {
-			
-			IEditorInput oldInput= getEditorInput();
-			if (oldInput != null)
-				getDocumentProvider().disconnect(oldInput);
-			
-				
-			super.setInput(input);
-			
-			updateDocumentProvider(input);
-			
-			IDocumentProvider provider= getDocumentProvider();
-			if (provider == null) {
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, getResourceString("Error.no_provider"), null);
-				throw new CoreException(s);
+	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
+		return new WorkspaceModifyOperation() {
+			public void execute(final IProgressMonitor monitor) throws CoreException {
+				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()), overwrite);
 			}
+		};
+	}
+	
+	/**
+	 * Performs the given save operation and handles errors appropriatly.
+	 * 
+	 * @param operation the operation to be performed
+	 * @param progressMonitor the monitor in which to run the operation
+	 */
+	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
+		
+		IDocumentProvider provider= getDocumentProvider();
+		
+		try {
+		
+			provider.aboutToChange(getEditorInput());
+			operation.run(progressMonitor);
+		
+		} catch (InterruptedException x) {
+		} catch (InvocationTargetException x) {
 			
-			provider.connect(input);
-			
-			initializeTitle(input);
-			if (fSourceViewer != null)
-				initializeSourceViewer(input);
+			Throwable t= x.getTargetException();
+			if (t instanceof CoreException)
+				handleExceptionOnSave((CoreException) t, progressMonitor);
+			else {
+				Shell shell= getSite().getShell();
+				String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
+				MessageDialog.openError(shell, title, msg + t.getMessage());
+			}
+		
+		} finally {
+			provider.changed(getEditorInput());
 		}
 	}
+	
+	/**
+	 * Handles the given exception. If the exception reports a out-of-sync
+	 * situation, this is reported to the user. Otherwise, the exception
+	 * is generically reported.
+	 * 
+	 * @param exception the exception to handle
+	 * @param progressMonitor the progress monitor
+	 */
+	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
+		
+		Shell shell= getSite().getShell();
+		
+		IDocumentProvider p= getDocumentProvider();
+		long modifiedStamp= p.getModificationStamp(getEditorInput());
+		long synchStamp= p.getSynchronizationStamp(getEditorInput());
+		
+		if (modifiedStamp != synchStamp) {
+			
+			String title= EditorMessages.getString("Editor.error.save.outofsync.title"); //$NON-NLS-1$
+			String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
+			
+			if (MessageDialog.openQuestion(shell, title, msg))
+				performSaveOperation(createSaveOperation(true), progressMonitor);
+			else {
+				/*
+				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
+				 * Set progress monitor to canceled in order to report back 
+				 * to enclosing operations. 
+				 */
+				progressMonitor.setCanceled(true);
+			}
+		} else {
+			
+			String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
+			String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
+			ErrorDialog.openError(shell, title, msg, exception.getStatus());
+			
+			/*
+			 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
+			 * Set progress monitor to canceled in order to report back 
+			 * to enclosing operations. 
+			 */
+			progressMonitor.setCanceled(true);
+		}
+	}
+	
+	/**
+	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * <code>IEditorPart</code> method returns <code>false</code>. Subclasses
+	 * may override.
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+	
+	/*
+	 * @see IEditorPart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		IDocumentProvider p= getDocumentProvider();
+		return p == null ? false : p.mustSaveDocument(getEditorInput());
+	}
+	
+	/*
+	 * @see IEditorPart#isDirty
+	 */
+	public boolean isDirty() {
+		IDocumentProvider p= getDocumentProvider();
+		return p == null ? false : p.canSaveDocument(getEditorInput());
+	}
+	
+	/**
+	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * <code>ITextEditor</code> method may be extended by subclasses.
+	 */
+	public void doRevertToSaved() {
+		
+		IDocumentProvider p= getDocumentProvider();
+		if (p == null)
+			return;
+			
+		try {
+			
+			p.resetDocument(getEditorInput());
+			
+			IAnnotationModel model= p.getAnnotationModel(getEditorInput());
+			if (model instanceof AbstractMarkerAnnotationModel) {
+				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+				markerModel.resetMarkers();
+			}
+						
+			firePropertyChange(PROP_DIRTY);
+			
+		} catch (CoreException x) {
+			String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
+			String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
+			Shell shell= getSite().getShell();
+			ErrorDialog.openError(shell, title, msg, x.getStatus());
+		}
+	}
+	
+	/*
+	 * @see ITextEditor#setAction
+	 */
+	public void setAction(String actionID, IAction action) {
+		Assert.isNotNull(actionID);
+		if (action == null)
+			fActions.remove(actionID);
+		else
+			fActions.put(actionID, action);
+	}
+	
+	/*
+	 * @see ITextEditor#setActionActivationCode(String, char, int, int)
+	 */
+	public void setActionActivationCode(String actionID, char activationCharacter, int activationKeyCode, int activationStateMask) {
+		
+		Assert.isNotNull(actionID);
+		
+		ActionActivationCode found= findActionActivationCode(actionID);
+		if (found == null) {
+			found= new ActionActivationCode(actionID);
+			fActivationCodes.add(found);
+		}
+		
+		found.fCharacter= activationCharacter;
+		found.fKeyCode= activationKeyCode;
+		found.fStateMask= activationStateMask;
+		
+		setupActionActivationCodes();
+	}
+	
+	/**
+	 * Returns the activation code registered for the specified action.
+	 * 
+	 * @param actionID the action id
+	 * @return the registered activation code or <code>null</code> if no
+	 * 			code has been installed
+	 */
+	private ActionActivationCode findActionActivationCode(String actionID) {
+		int size= fActivationCodes.size();
+		for (int i= 0; i < size; i++) {
+			ActionActivationCode code= (ActionActivationCode) fActivationCodes.get(i);
+			if (actionID.equals(code.fActionId))
+				return code;
+		}
+		return null;
+	}
+	
+	/*
+	 * @see ITextEditor#removeActionActivationCode(String)
+	 */
+	public void removeActionActivationCode(String actionID) {
+		Assert.isNotNull(actionID);
+		
+		ActionActivationCode code= findActionActivationCode(actionID);
+		if (code != null) {
+			fActivationCodes.remove(code);
+			setupActionActivationCodes();
+		}
+	}
+	
+	/**
+	 * Deals with the installation/deinstallation of a 
+	 * key verify listener depending on the number of 
+	 * registered action activation codes.
+	 */
+	private void setupActionActivationCodes() {
+		if (fActivationCodes.isEmpty() && fActivationCodeTrigger.fIsInstalled) {
+			StyledText text= fSourceViewer.getTextWidget();
+			text.removeVerifyKeyListener(fActivationCodeTrigger);
+			fActivationCodeTrigger.fIsInstalled= false;
+		} else if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
+			StyledText text= fSourceViewer.getTextWidget();
+			text.addVerifyKeyListener(fActivationCodeTrigger);
+			fActivationCodeTrigger.fIsInstalled= true;
+		}
+	}
+	
+	/*
+	 * @see ITextEditor#getAction
+	 */
+	public IAction getAction(String actionID) {
+		Assert.isNotNull(actionID);
+		return (IAction) fActions.get(actionID);
+	}
+	
+	/**
+	 * Updates the specified action by calling <code>IUpdate.update</code>
+	 * if applicable.
+	 *
+	 * @param actionId the action id
+	 */
+	private void updateAction(String actionId) {
+		Assert.isNotNull(actionId);
+		if (fActions != null) {
+			IAction action= (IAction) fActions.get(actionId);
+			if (action instanceof IUpdate)
+				((IUpdate) action).update();
+		}
+	}
+	
+	/**
+	 * Marks or unmarks the given action to be updated on text selection changes.
+	 *
+	 * @param actionId the action id
+	 * @param mark <code>true</code> if the action is selection dependent
+	 */
+	public void markAsSelectionDependentAction(String actionId, boolean mark) {
+		Assert.isNotNull(actionId);
+		if (mark) {
+			if (!fSelectionActions.contains(actionId))
+				fSelectionActions.add(actionId);
+		} else
+			fSelectionActions.remove(actionId);
+	}
+		
+	/**
+	 * Marks or unmarks the given action to be updated on content changes.
+	 *
+	 * @param actionId the action id
+	 * @param mark <code>true</code> if the action is content dependent
+	 */
+	public void markAsContentDependentAction(String actionId, boolean mark) {
+		Assert.isNotNull(actionId);
+		if (mark) {
+			if (!fContentActions.contains(actionId))
+				fContentActions.add(actionId);
+		} else
+			fContentActions.remove(actionId);
+	}
+	
+	/**
+	 * Updates all selection dependent actions.
+	 */
+	protected void updateSelectionDependentActions() {
+		if (fSelectionActions != null) {
+			Iterator e= fSelectionActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
+	}
+	
+	/**
+	 * Updates all content dependent actions.
+	 */
+	protected void updateContentDependentActions() {
+		if (fContentActions != null) {
+			Iterator e= fContentActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
+	}
+	
+	/**
+	 * Creates this editor's standard actions and connects them with the global
+	 * workbench actions.
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
+	 */
+	protected void createActions() {
+		
+		ResourceAction action;
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+		setAction(ITextEditorActionConstants.UNDO, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
+		setAction(ITextEditorActionConstants.REDO, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
+		setAction(ITextEditorActionConstants.CUT, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Copy.", this, ITextOperationTarget.COPY); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
+		setAction(ITextEditorActionConstants.COPY, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
+		setAction(ITextEditorActionConstants.PASTE, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
+		setAction(ITextEditorActionConstants.DELETE, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
+		setAction(ITextEditorActionConstants.SELECT_ALL, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
+		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
+		
+		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
+		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
+		
+		action= new FindReplaceAction(EditorMessages.getResourceBundle(), "Editor.FindReplace.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		setAction(ITextEditorActionConstants.FIND, action);
+		
+		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
+		setAction(ITextEditorActionConstants.BOOKMARK, action);
+		
+		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this, IMarker.TASK, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
+		setAction(ITextEditorActionConstants.ADD_TASK, action);
+		
+		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
+		setAction(ITextEditorActionConstants.SAVE, action);
+		
+		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
+		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
+		
+		action= new GotoLineAction(EditorMessages.getResourceBundle(), "Editor.GotoLine.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
+		setAction(ITextEditorActionConstants.GOTO_LINE, action);
+		
+		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true)); //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageTasks.", fVerticalRuler, this, IMarker.TASK, true)); //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
+		
+		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
+		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
+		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
+		
+		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
+		
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
+	}
+	
+	/**
+	 * Convenience method to add the action installed under the given action id
+	 * to the given menu.
+	 */
+	protected final void addAction(IMenuManager menu, String actionId) {
+		IAction action= getAction(actionId);
+		if (action != null) {
+			if (action instanceof IUpdate)
+				((IUpdate) action).update();
+			menu.add(action);
+		}
+	}
+	
+	/**
+	 * Convenience method to add the action installed under the given action id
+	 * to the specified group of the menu.
+	 */
+	protected final void addAction(IMenuManager menu, String group, String actionId) {
+	 	IAction action= getAction(actionId);
+	 	if (action != null) {
+	 		if (action instanceof IUpdate)
+	 			((IUpdate) action).update();
+	 			
+	 		IMenuManager subMenu= menu.findMenuUsingPath(group);
+	 		if (subMenu != null)
+	 			subMenu.add(action);
+	 		else
+	 			menu.appendToGroup(group, action);
+	 	}
+	}
+	 
+	/**
+	 * Convenience method to add a new group after the specified group.
+	 */
+	protected final void addGroup(IMenuManager menu, String existingGroup, String newGroup) {
+ 		IMenuManager subMenu= menu.findMenuUsingPath(existingGroup);
+ 		if (subMenu != null)
+ 			subMenu.add(new Separator(newGroup));
+ 		else
+ 			menu.appendToGroup(existingGroup, new Separator(newGroup));
+	}
+		
+	/**
+	 * Sets up the ruler context menu before it is made visible.
+	 * <p>
+	 * Subclasses may extend to add other actions.
+	 * </p>
+	 *
+	 * @param menu the menu
+	 */
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
+		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
+		
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+	}
+	
 	/**
 	 * Sets up this editor's context menu before it is made visible.
 	 * <p>
@@ -894,7 +1576,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		addAction(menu, ITextEditorActionConstants.FIND);
 		addAction(menu, ITextEditorActionConstants.GOTO_LINE);
 		
-		String label= getResourceString("AddMenu.label", "A&dd");
+		String label= EditorMessages.getString("Editor.AddMenu.label"); //$NON-NLS-1$
 		MenuManager submenu= new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
 		addAction(submenu, ITextEditorActionConstants.BOOKMARK);
 		addAction(submenu, ITextEditorActionConstants.ADD_TASK);
@@ -907,35 +1589,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 	}
-	/**
-	 * Returns the activation code registered for the specified action.
-	 * 
-	 * @param actionID the action id
-	 * @return the registered activation code or <code>null</code> if no
-	 * 			code has been installed
-	 */
-	private ActionActivationCode findActionActivationCode(String actionID) {
-		int size= fActivationCodes.size();
-		for (int i= 0; i < size; i++) {
-			ActionActivationCode code= (ActionActivationCode) fActivationCodes.get(i);
-			if (actionID.equals(code.fActionId))
-				return code;
-		}
-		return null;
-	}
-	/*
-	 * @see EditorPart#firePropertyChange
-	 */
-	protected void firePropertyChange(int property) {
-		super.firePropertyChange(property);
-	}
-	/*
-	 * @see ITextEditor#getAction
-	 */
-	public IAction getAction(String actionID) {
-		Assert.isNotNull(actionID);
-		return (IAction) fActions.get(actionID);
-	}
+		
 	/*
 	 * @see IAdaptable#getAdapter(Class)
 	 */
@@ -946,200 +1600,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return (fSourceViewer == null ? null : fSourceViewer.getTextOperationTarget());
 		return super.getAdapter(required);
 	}
-	/**
-	 * Creates and returns the listener on this editor's context menus.
-	 *
-	 * @return the menu listener
-	 */
-	protected final IMenuListener getContextMenuListener() {
-		if (fMenuListener == null) {
-			fMenuListener= new IMenuListener() {
-				
-				public void menuAboutToShow(IMenuManager menu) {
-					String id= menu.getId();
-					if (getRulerContextMenuId().equals(id)) {
-						setFocus();
-						rulerContextMenuAboutToShow(menu);
-					} else if (getEditorContextMenuId().equals(id)) {
-						setFocus();
-						editorContextMenuAboutToShow(menu);
-					}
-				}
-			};
-		}
-		return fMenuListener;
-	}
-	/*
-	 * @see ITextEditor#getDocumentProvider
-	 */
-	public IDocumentProvider getDocumentProvider() {
-		if (fInternalDocumentProvider != null)
-			return fInternalDocumentProvider;
-		return fExternalDocumentProvider;
-	}
-	/** 
-	 * Returns the editor's context menu id.
-	 *
-	 * @return the editor's context menu id
-	 */
-	protected final String getEditorContextMenuId() {
-		return fEditorContextMenuId;
-	}
-	/** 
-	 * Returns the editor's help context id.
-	 *
-	 * @return the editor's help context id
-	 */
-	protected final String getHelpContextId() {
-		return fHelpContextId;
-	}
-	/*
-	 * @see ITextEditor#getHighlightRange
-	 */
-	public IRegion getHighlightRange() {
-		if (fSourceViewer == null)
-			return null;
-			
-		if (fShowHighlightRangeOnly)
-			return fSourceViewer.getVisibleRegion();
-			
-		return fSourceViewer.getRangeIndication();
-	}
-	/**
-	 * Returns this editor's preference store.
-	 * 
-	 * @return this editor's preference store
-	 */
-	protected final IPreferenceStore getPreferenceStore() {
-		return fPreferenceStore;
-	}
-	/** 
-	 * Returns the editor's range indicator. 
-	 *
-	 * @return the editor's range indicator
-	 */
-	protected final Annotation getRangeIndicator() {
-		return fRangeIndicator;
-	}
-	/** 
-	 * Returns the editor's resource bundle.
-	 *
-	 * @return the editor's resource bundle
-	 */
-	private ResourceBundle getResourceBundle() {
-		if (fResourceBundle == null)
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		return fResourceBundle;
-	}
-	/**
-	 * Convenience method for safely accessing resources.
-	 */
-	private String getResourceString(String key) {
-		return getResourceString(key, "");
-	}
-	/**
-	 * Convenience method for safely accessing resources.
-	 */
-	private String getResourceString(String key, String dfltValue) {
-		try {
-			if (getResourceBundle() != null && key != null)
-				return getResourceBundle().getString(key);
-		} catch (MissingResourceException x) {
-		}
-		return dfltValue;
-	}
-	/** 
-	 * Returns the ruler's context menu id.
-	 *
-	 * @return the ruler's context menu id
-	 */
-	protected final String getRulerContextMenuId() {
-		return fRulerContextMenuId;
-	}
-	/**
-	 * Creates and returns the listener on this editor's vertical ruler.
-	 *
-	 * @return the mouse listener
-	 */
-	protected final MouseListener getRulerMouseListener() {
-		if (fMouseListener == null) {
-			fMouseListener= new MouseListener() {
-				
-				public void mouseDown(MouseEvent e) {}
-				
-				public void mouseUp(MouseEvent e) {}
-				
-				public void mouseDoubleClick(MouseEvent e) {
-					IAction action= getAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
-					if (action != null) {
-						if (action instanceof IUpdate)
-							((IUpdate) action).update();
-						action.run();
-					}
-				}
-			};
-		}
-		return fMouseListener;
-	}
-	/**
-	 * Returns this editor's the selection changed listener to be installed
-	 * on the editor's source viewer.
-	 *
-	 * @return the listener
-	 */
-	protected final ISelectionChangedListener getSelectionChangedListener() {
-		if (fSelectionChangedListener == null) {
-			fSelectionChangedListener= new ISelectionChangedListener() {
-				
-				private Runnable fRunnable= new Runnable() {
-					public void run() {
-						updateSelectionDependentActions();
-					}
-				};
-				
-				private Display fDisplay;
-				
-				public void selectionChanged(SelectionChangedEvent event) {
-					if (fDisplay == null)
-						fDisplay= getSite().getShell().getDisplay();
-						
-					fDisplay.asyncExec(fRunnable);	
-				}
-			};
-		}
 		
-		return fSelectionChangedListener;
-	}
 	/*
-	 * @see ITextEditor#getSelectionProvider
+	 * @see IDesktopPart#setFocus()
 	 */
-	public ISelectionProvider getSelectionProvider() {
-		return (fSourceViewer != null ? fSourceViewer.getSelectionProvider() : null);
+	public void setFocus() {
+		if (fSourceViewer != null)
+			fSourceViewer.getTextWidget().setFocus();
 	}
-	/** 
-	 * Returns the editor's source viewer.
-	 *
-	 * @return the editor's source viewer
-	 */
-	protected final ISourceViewer getSourceViewer() {
-		return fSourceViewer;
-	}
-	/** 
-	 * Returns the editor's source viewer configuration.
-	 *
-	 * @return the editor's source viewer configuration
-	 */
-	protected final SourceViewerConfiguration getSourceViewerConfiguration() {
-		return fConfiguration;
-	}
-	/** 
-	 * Returns the editor's vertical ruler.
-	 * 
-	 * @return the editor's vertical ruler
-	 */
-	protected final IVerticalRuler getVerticalRuler() {
-		return fVerticalRuler;
-	}
+	
 	/**
 	 * If the editor can be saved all marker ranges have been changed according to
 	 * the text manipulations. However, those changes are not yet propagated to the
@@ -1197,338 +1666,48 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				selectAndReveal(start, end - start);
 		}
 	}
-	/**
-	 * Handles an external change of the editor's input element.
+		
+	/*
+	 * @see ITextEditor#showsHighlightRangeOnly
 	 */
-	protected void handleEditorInputChanged() {
-		
-		String title;
-		String msg;
-		Shell shell= getSite().getShell();
-		
-		if (getDocumentProvider().isDeleted(getEditorInput())) {
-			
-			if (isSaveAsAllowed()) {
-			
-				title= getResourceString("Error.activated.deleted.save.title");
-				msg= getResourceString("Error.activated.deleted.save.message");
-				
-				String[] buttons= {
-					getResourceString("Error.activated.deleted.save.button.save"),
-					getResourceString("Error.activated.deleted.save.button.close"),
-				};
-					
-				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
-				
-				if (dialog.open() == 0) {
-					NullProgressMonitor pm= new NullProgressMonitor();
-					performSaveAs(pm);
-					if (pm.isCanceled())
-						handleEditorInputChanged();
-				} else {
-					close(false);
-				}
-				
-			} else {
-				
-				title= getResourceString("Error.activated.deleted.close.title");
-				msg= getResourceString("Error.activated.deleted.close.message");
-				MessageDialog.openConfirm(shell, title, msg);
-			}
-			
-		} else {
-			
-			title= getResourceString("Error.activated.outofsync.title");
-			msg= getResourceString("Error.activated.outofsync.message");
-				
-			if (MessageDialog.openQuestion(shell, title, msg)) {
-				try {
-					doSetInput(getEditorInput());
-				} catch (CoreException x) {
-					title= getResourceString("Error.refresh.outofsync.title");
-					msg= getResourceString("Error.refresh.outofsync.message");
-					ErrorDialog.openError(shell, title, msg, x.getStatus());
-				}
-			}
-		}
+	public boolean showsHighlightRangeOnly() {
+		return fShowHighlightRangeOnly;
 	}
-	/**
-	 * Handles the given exception. If the exception reports a out-of-sync
-	 * situation, this is reported to the user. Otherwise, the exception
-	 * is generically reported.
-	 * 
-	 * @param exception the exception to handle
-	 * @param progressMonitor the progress monitor
+	
+	/*
+	 * @see ITextEditor#showHighlightRangeOnly
 	 */
-	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
-		
-		Shell shell= getSite().getShell();
-		
-		IDocumentProvider p= getDocumentProvider();
-		long modifiedStamp= p.getModificationStamp(getEditorInput());
-		long synchStamp= p.getSynchronizationStamp(getEditorInput());
-		
-		if (modifiedStamp != synchStamp) {
-			
-			String title= getResourceString("Error.save.outofsync.title");
-			String msg= getResourceString("Error.save.outofsync.message");
-			
-			if (MessageDialog.openQuestion(shell, title, msg))
-				performSaveOperation(createSaveOperation(true), progressMonitor);
-			else {
-				/*
-				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
-				 * Set progress monitor to canceled in order to report back 
-				 * to enclosing operations. 
-				 */
-				progressMonitor.setCanceled(true);
-			}
-		} else {
-			
-			String title= getResourceString("Error.save.title");
-			String msg= getResourceString("Error.save.message");
-			ErrorDialog.openError(shell, title, msg, exception.getStatus());
-			
-			/*
-			 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
-			 * Set progress monitor to canceled in order to report back 
-			 * to enclosing operations. 
-			 */
-			progressMonitor.setCanceled(true);
-		}
+	public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
+		fShowHighlightRangeOnly= showHighlightRangeOnly;
 	}
-	/**
-	 * Handles a property change event describing a change
-	 * of the editor's preference store and updates the preference
-	 * related editor properties.
-	 * 
-	 * @param event the property change event
+	
+	/*
+	 * @see ITextEditor#setHighlightRange
 	 */
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		
+	public void setHighlightRange(int start, int length, boolean moveCursor) {
 		if (fSourceViewer == null)
 			return;
 			
-		if (PREFERENCE_FONT.equals(event.getProperty()))
-			initializeWidgetFont(fSourceViewer.getTextWidget());
-	}
-	/*
-	 * @see IEditorPart#init
-	 */
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		
-		setSite(site);
-		
-		try {
-			doSetInput(input);
-		} catch (CoreException x) {
-			throw new PartInitException(x.getMessage());
-		}
-		
-		getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
-	}
-	/**
-	 * Initializes the editor's source viewer based on the given editor input.
-	 *
-	 * @param input the editor input to be used to initialize the source viewer
-	 */
-	private void initializeSourceViewer(IEditorInput input) {
-		
-		IAnnotationModel model= getDocumentProvider().getAnnotationModel(input);
-		IDocument document= getDocumentProvider().getDocument(input);
-		
-		if (document != null) {
-			fSourceViewer.setDocument(document, model);
-			fSourceViewer.setEditable(isEditable());
-			fSourceViewer.showAnnotations(model != null);			
-		}
-	}
-	/**
-	 * Initializes the editor's title based on the given editor input.
-	 *
-	 * @param input the editor input to be used
-	 */
-	private void initializeTitle(IEditorInput input) {
-		
-		Image oldImage= fTitleImage;
-		fTitleImage= null;
-		String title= "";
-		
-		if (input != null) {
-			ImageDescriptor imageDesc= input.getImageDescriptor();
-			fTitleImage= imageDesc != null ? imageDesc.createImage() : null;
-			title= input.getName();
-		}
-		
-		setTitleImage(fTitleImage);
-		setTitle(title);
-		
-		firePropertyChange(PROP_DIRTY);
-		
-		if (oldImage != null && !oldImage.isDisposed())
-			oldImage.dispose();
-	}
-	/*
-	 * Initializes the given widget's font.
-	 * 
-	 * @param styledText the widget to be initialized
-	 */
-	private void initializeWidgetFont(StyledText styledText) {
-		
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			
-			FontData data= null;
-			
-			if (store.contains(PREFERENCE_FONT) && !store.isDefault(PREFERENCE_FONT))
-				data= PreferenceConverter.getFontData(store, PREFERENCE_FONT);
-			else
-				data= PreferenceConverter.getDefaultFontData(store, PREFERENCE_FONT);
-			
-			if (data != null) {
-				
-				Font font= new Font(styledText.getDisplay(), data);
-				styledText.setFont(font);
-				
-				if (fFont != null)
-					fFont.dispose();
-					
-				fFont= font;
-				return;
-			}
-		}
-		
-		// if all the preferences failed
-		styledText.setFont(JFaceResources.getTextFont());
-	}
-	/*
-	 * @see IEditorPart#isDirty
-	 */
-	public boolean isDirty() {
-		IDocumentProvider p= getDocumentProvider();
-		return p == null ? false : p.canSaveDocument(getEditorInput());
-	}
-	/*
-	 * @see ITextEditor#isEditable
-	 */
-	public boolean isEditable() {
-		
-		/*
-		 * 1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in the repositories?
-		 * Checks the editor input whether it is editable. This is a layer breaker, as only the
-		 * concrete document providers know about the various kinds of editor input.
-		 * Should be something like: getDocumentProvider().isEditable(getEditorInput());
-		 */
-		IEditorInput input= getEditorInput();
-		if (input instanceof IStorageEditorInput) {
-			IStorageEditorInput storageInput= (IStorageEditorInput) input;
-			try {
-				IStorage storage= storageInput.getStorage();
-				return (storage != null && !storage.isReadOnly());
-			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
-				log.log(x.getStatus());
-			}
-		}
-		
-		return true;
-	}
-	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method returns <code>false</code>. Subclasses
-	 * may override.
-	 */
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	/*
-	 * @see IEditorPart#isSaveOnCloseNeeded()
-	 */
-	public boolean isSaveOnCloseNeeded() {
-		IDocumentProvider p= getDocumentProvider();
-		return p == null ? false : p.mustSaveDocument(getEditorInput());
-	}
-	/**
-	 * Marks or unmarks the given action to be updated on content changes.
-	 *
-	 * @param actionId the action id
-	 * @param mark <code>true</code> if the action is content dependent
-	 */
-	public void markAsContentDependentAction(String actionId, boolean mark) {
-		Assert.isNotNull(actionId);
-		if (mark) {
-			if (!fContentActions.contains(actionId))
-				fContentActions.add(actionId);
+		if (fShowHighlightRangeOnly) {
+			if (moveCursor)
+				fSourceViewer.setVisibleRegion(start, length);
 		} else
-			fContentActions.remove(actionId);
+			fSourceViewer.setRangeIndication(start, length, moveCursor);
 	}
-	/**
-	 * Marks or unmarks the given action to be updated on text selection changes.
-	 *
-	 * @param actionId the action id
-	 * @param mark <code>true</code> if the action is selection dependent
-	 */
-	public void markAsSelectionDependentAction(String actionId, boolean mark) {
-		Assert.isNotNull(actionId);
-		if (mark) {
-			if (!fSelectionActions.contains(actionId))
-				fSelectionActions.add(actionId);
-		} else
-			fSelectionActions.remove(actionId);
-	}
-	/**
-	 * Performs a save as and reports the result state back to the 
-	 * given progress monitor. This default implementation does nothing.
-	 * Subclasses may reimplement.
-	 * 
-	 * @param progressMonitor the progress monitor for communicating result state or <code>null</code>
-	 */
-	protected void performSaveAs(IProgressMonitor progressMonitor) {
-	}
-	/**
-	 * Performs the given save operation and handles errors appropriatly.
-	 * 
-	 * @param operation the operation to be performed
-	 * @param progressMonitor the monitor in which to run the operation
-	 */
-	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
-		
-		IDocumentProvider provider= getDocumentProvider();
-		
-		try {
-		
-			provider.aboutToChange(getEditorInput());
-			operation.run(progressMonitor);
-		
-		} catch (InterruptedException x) {
-		} catch (InvocationTargetException x) {
-			
-			Throwable t= x.getTargetException();
-			if (t instanceof CoreException)
-				handleExceptionOnSave((CoreException) t, progressMonitor);
-			else {
-				Shell shell= getSite().getShell();
-				String title= getResourceString("Error.save.title");
-				String msg= getResourceString("Error.save.message");
-				MessageDialog.openError(shell, title, msg + t.getMessage());
-			}
-		
-		} finally {
-			provider.changed(getEditorInput());
-		}
-	}
+	
 	/*
-	 * @see ITextEditor#removeActionActivationCode(String)
+	 * @see ITextEditor#getHighlightRange
 	 */
-	public void removeActionActivationCode(String actionID) {
-		Assert.isNotNull(actionID);
-		
-		ActionActivationCode code= findActionActivationCode(actionID);
-		if (code != null) {
-			fActivationCodes.remove(code);
-			setupActionActivationCodes();
-		}
+	public IRegion getHighlightRange() {
+		if (fSourceViewer == null)
+			return null;
+			
+		if (fShowHighlightRangeOnly)
+			return fSourceViewer.getVisibleRegion();
+			
+		return fSourceViewer.getRangeIndication();
 	}
+	
 	/*
 	 * @see ITextEditor#resetHighlightRange	 
 	 */
@@ -1541,21 +1720,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		else
 			fSourceViewer.removeRangeIndication();
 	}
+	
 	/**
-	 * Sets up the ruler context menu before it is made visible.
-	 * <p>
-	 * Subclasses may extend to add other actions.
-	 * </p>
+	 * Adjusts the highlight range so that at least the specified range 
+	 * is highlighted. <p>
+	 * Subclasses may re-implement this method.
 	 *
-	 * @param menu the menu
+	 * @param offset the offset of the range which at least should be highlighted
+	 * @param length the length of the range which at least should be highlighted 
 	 */
-	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
-		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
-		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
+	protected void adjustHighlightRange(int offset, int length) {
+		if (fSourceViewer == null)
+			return;
 		
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
-		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+		if (!fSourceViewer.overlapsWithVisibleRegion(offset, length))
+			fSourceViewer.resetVisibleRegion();
 	}
+	
 	/*
 	 * @see ITextEditor#selectAndReveal
 	 */
@@ -1574,221 +1755,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		widget.setRedraw(true);
 	}
+	
 	/*
-	 * @see ITextEditor#setAction
+	 * @see EditorPart#firePropertyChange
 	 */
-	public void setAction(String actionID, IAction action) {
-		Assert.isNotNull(actionID);
-		if (action == null)
-			fActions.remove(actionID);
-		else
-			fActions.put(actionID, action);
-	}
-	/*
-	 * @see ITextEditor#setActionActivationCode(String, char, int, int)
-	 */
-	public void setActionActivationCode(String actionID, char activationCharacter, int activationKeyCode, int activationStateMask) {
-		
-		Assert.isNotNull(actionID);
-		
-		ActionActivationCode found= findActionActivationCode(actionID);
-		if (found == null) {
-			found= new ActionActivationCode(actionID);
-			fActivationCodes.add(found);
-		}
-		
-		found.fCharacter= activationCharacter;
-		found.fKeyCode= activationKeyCode;
-		found.fStateMask= activationStateMask;
-		
-		setupActionActivationCodes();
-	}
-	/**
-	 * Sets this editor's document provider. This method must be 
-	 * called before the editor's control is created.
-	 *
-	 * @param provider the document provider
-	 */
-	protected void setDocumentProvider(IDocumentProvider provider) {
-		Assert.isNotNull(provider);
-		fInternalDocumentProvider= provider;
-	}
-	/**
-	 * Sets this editor's context menu id.
-	 *
-	 * @param contextMenuId the context menu id
-	 */
-	protected void setEditorContextMenuId(String contextMenuId) {
-		Assert.isNotNull(contextMenuId);
-		fEditorContextMenuId= contextMenuId;
-	}
-	/*
-	 * @see IDesktopPart#setFocus()
-	 */
-	public void setFocus() {
-		if (fSourceViewer != null)
-			fSourceViewer.getTextWidget().setFocus();
-	}
-	/**
-	 * Sets the editor's help context id.
-	 *
-	 * @param helpContextId the help context id
-	 */
-	protected void setHelpContextId(String helpContextId) {
-		Assert.isNotNull(helpContextId);
-		fHelpContextId= helpContextId;
-	}
-	/*
-	 * @see ITextEditor#setHighlightRange
-	 */
-	public void setHighlightRange(int start, int length, boolean moveCursor) {
-		if (fSourceViewer == null)
-			return;
-			
-		if (fShowHighlightRangeOnly) {
-			if (moveCursor)
-				fSourceViewer.setVisibleRegion(start, length);
-		} else
-			fSourceViewer.setRangeIndication(start, length, moveCursor);
-	}
-	/*
-	 * @see EditorPart#setInput
-	 */
-	public final void setInput(IEditorInput input) {
-		
-		try {
-			
-			doSetInput(input);
-				
-		} catch (CoreException x) {
-			String title= getResourceString("Error.setinput.title");
-			String msg= getResourceString("Error.setinput.message");
-			Shell shell= getSite().getShell();
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
-		}				
-	}
-	/**
-	 * Sets this editor's preference store. This method must be
-	 * called before the editor's control is created.
-	 * 
-	 * @param store the new preference store
-	 */
-	protected void setPreferenceStore(IPreferenceStore store) {
-		if (fPreferenceStore != null)
-			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-			
-		fPreferenceStore= store;
-		
-		if (fPreferenceStore != null)
-			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
-	}
-	/**
-	 * Sets the annotation which this editor uses to represent the highlight
-	 * range if the editor is configured to show the entire document. If the
-	 * range indicator is not set, this editor uses a <code>DefaultRangeIndicator</code>.
-	 *
-	 * @param rangeIndicator the annotation
-	 */
-	protected void setRangeIndicator(Annotation rangeIndicator) {
-		Assert.isNotNull(rangeIndicator);
-		fRangeIndicator= rangeIndicator;
-	}
-	/**
-	 * Sets the ruler's context menu id.
-	 *
-	 * @param contextMenuId the context menu id
-	 */
-	protected void setRulerContextMenuId(String contextMenuId) {
-		Assert.isNotNull(contextMenuId);
-		fRulerContextMenuId= contextMenuId;
-	}
-	/**
-	 * Sets this editor's source viewer configuration used to configure its
-	 * internal source viewer. This method must be called before the editor's
-	 * control is created. If not, this editor uses a <code>SourceViewerConfiguration</code>.
-	 *
-	 * @param configuration the source viewer configuration object
-	 */
-	protected void setSourceViewerConfiguration(SourceViewerConfiguration configuration) {
-		Assert.isNotNull(configuration);
-		fConfiguration= configuration;
-	}
-	/**
-	 * Deals with the installation/deinstallation of a 
-	 * key verify listener depending on the number of 
-	 * registered action activation codes.
-	 */
-	private void setupActionActivationCodes() {
-		if (fActivationCodes.isEmpty() && fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
-			text.removeVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= false;
-		} else if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
-			text.addVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= true;
-		}
-	}
-	/*
-	 * @see ITextEditor#showHighlightRangeOnly
-	 */
-	public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
-		fShowHighlightRangeOnly= showHighlightRangeOnly;
-	}
-	/*
-	 * @see ITextEditor#showsHighlightRangeOnly
-	 */
-	public boolean showsHighlightRangeOnly() {
-		return fShowHighlightRangeOnly;
-	}
-	/**
-	 * Updates the specified action by calling <code>IUpdate.update</code>
-	 * if applicable.
-	 *
-	 * @param actionId the action id
-	 */
-	private void updateAction(String actionId) {
-		Assert.isNotNull(actionId);
-		if (fActions != null) {
-			IAction action= (IAction) fActions.get(actionId);
-			if (action instanceof IUpdate)
-				((IUpdate) action).update();
-		}
-	}
-	/**
-	 * Updates all content dependent actions.
-	 */
-	protected void updateContentDependentActions() {
-		if (fContentActions != null) {
-			Iterator e= fContentActions.iterator();
-			while (e.hasNext())
-				updateAction((String) e.next());
-		}
-	}
-	/**
-	 * If there is no implicit document provider set, the external one is
-	 * re-initialized based on the given editor input.
-	 *
-	 * @param input the editor input.
-	 */
-	private void updateDocumentProvider(IEditorInput input) {
-		if (getDocumentProvider() != null)
-			getDocumentProvider().removeElementStateListener(fElementStateListener);
-			
-		if (fInternalDocumentProvider == null)
-			fExternalDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-			
-		if (getDocumentProvider() != null)
-			getDocumentProvider().addElementStateListener(fElementStateListener);
-	}
-	/**
-	 * Updates all selection dependent actions.
-	 */
-	protected void updateSelectionDependentActions() {
-		if (fSelectionActions != null) {
-			Iterator e= fSelectionActions.iterator();
-			while (e.hasNext())
-				updateAction((String) e.next());
-		}
+	protected void firePropertyChange(int property) {
+		super.firePropertyChange(property);
 	}
 }

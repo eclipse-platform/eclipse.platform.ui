@@ -28,6 +28,7 @@ public interface ITextHover {
 	 * @return the hover popup display information	 	  
 	 */
 	String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
+		
 	/**
 	 * Returns the text region which should serve as the source of information 
 	 * to compute the hover popup display information. The popup has been requested

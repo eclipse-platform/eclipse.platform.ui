@@ -22,6 +22,7 @@ public interface IRegion {
 	 * @return the length of the region
 	 */
 	int getLength();
+	
 	/**
 	 * Returns the offset of the region.
 	 *

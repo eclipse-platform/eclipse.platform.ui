@@ -32,6 +32,13 @@ public interface IPresentationRepairer {
 	
 	
 	/**
+	 * Tells the presentation repairer on which document it will work.
+	 *
+	 * @param document the damager's working document
+	 */
+	void setDocument(IDocument document);
+	
+	/**
 	 * Fills the given presentation with the style ranges which when applied to the 
 	 * presentation reconciler's text viewer repair the  presentational damage described by
 	 * the given region.
@@ -40,10 +47,4 @@ public interface IPresentationRepairer {
 	 * @param damage the damage to be repaired
 	 */
 	void createPresentation(TextPresentation presentation, ITypedRegion damage);
-	/**
-	 * Tells the presentation repairer on which document it will work.
-	 *
-	 * @param document the damager's working document
-	 */
-	void setDocument(IDocument document);
 }

@@ -52,20 +52,207 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 */
 	protected AbstractLineTracker() {
 	}
+			
 	/**
-	 * Adapts the offset of all lines with line numbers greater than the specified
-	 * one to the given delta.
+	 * Binary search for the line at a given offset.
 	 *
-	 * @param lineNumber the line number after which to start
-	 * @param delta the offset delta to be applied
+	 * @param offset the offset whose line should be found
+	 * @return the line of the offset
 	 */
-	private void adaptLineOffsets(int lineNumber, int delta) {
-		int size= fLines.size();
-		for (int i= lineNumber + 1; i < size; i++) {
-			Line l= (Line) fLines.get(i);
-			l.offset += delta;
+	private int findLine(int offset) {
+		
+		if (fLines.size() == 0)
+			return -1;
+			
+		int left= 0;
+		int right= fLines.size() -1;
+		int mid= 0;
+		Line line= null;
+		
+		while (left < right) {
+			
+			mid= (left + right) / 2;
+				
+			line= (Line) fLines.get(mid);
+			if (offset < line.offset) {
+				if (left == mid)
+					right= left;
+				else
+					right= mid -1;
+			} else if (offset > line.offset) {
+				if (right == mid)
+					left= right;
+				else
+					left= mid  +1;
+			} else if (offset == line.offset) {
+				left= right= mid;
+			}
 		}
+		
+		line= (Line) fLines.get(left);
+		if (line.offset > offset)
+			-- left;		
+		return left;
 	}
+	
+	/**
+	 * Returns the number of lines covered by the specified text range.
+	 *
+	 * @param startLine the line where the text range starts
+	 * @param offset the start offset of the text range
+	 * @param length the length of the text range
+	 * @return the number of lines covered by this text range
+	 * @exception BadLocationException if range is undefined in this tracker
+	 */
+	private int getNumberOfLines(int startLine, int offset, int length) throws BadLocationException {
+		
+		if (length == 0)
+			return 1;
+			
+		int target= offset + length;
+		
+		Line l= (Line) fLines.get(startLine);
+		
+		if (l.delimiter == null)
+			return 1;
+		
+		if (l.offset + l.length > target)
+			return 1;
+		
+		if (l.offset + l.length == target)
+			return 2;
+			
+		return getLineNumberOfOffset(target) - startLine + 1;
+	}
+	
+	/*
+	 * @see ILineTracker#getLineLength
+	 */
+	public int getLineLength(int line) throws BadLocationException {
+		
+		int lines= fLines.size();
+		
+		if (line < 0 || line > lines)
+			throw new BadLocationException();
+		
+		if (lines == 0 || lines == line)
+			return 0;
+				
+		Line l= (Line) fLines.get(line);
+		return l.length;
+	}
+		
+	/*
+	 * @see ILineTracker#getLineNumberOfOffset
+	 */
+	public int getLineNumberOfOffset(int position) throws BadLocationException {
+				
+		if (position > fTextLength)
+			throw new BadLocationException();
+			
+		if (position == fTextLength) {
+			
+			int lastLine= fLines.size() - 1;
+			if (lastLine < 0)
+				return 0;
+							
+			Line l= (Line) fLines.get(lastLine);
+			return (l.delimiter != null ? lastLine + 1 : lastLine);
+		}
+		
+		return findLine(position);
+	}
+	
+	/*
+	 * @see ILineTracker#getLineInformationOfOffset
+	 */
+	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
+		if (position > fTextLength)
+			throw new BadLocationException();
+			
+		if (position == fTextLength) {
+			int size= fLines.size();
+			if (size == 0)
+				return new Region(0, 0);
+			Line l= (Line) fLines.get(size - 1);
+			return (l.delimiter != null ? new Line(fTextLength, 0) : new Line(fTextLength - l.length, l.length));
+		}	
+		
+		return getLineInformation(findLine(position));
+	}
+	
+	/*
+	 * @see ILineTracker#getLineInformation
+	 */
+	public IRegion getLineInformation(int line) throws BadLocationException {
+		
+		int lines= fLines.size();
+		
+		if (line < 0 || line > lines)
+			throw new BadLocationException();
+			
+		if (lines == 0)
+			return new Line(0, 0);
+			
+		if (line == lines) {
+			Line l= (Line) fLines.get(line - 1);
+			return new Line(l.offset + l.length, 0);
+		}
+		
+		Line l= (Line) fLines.get(line);
+		return (l.delimiter != null ? new Line(l.offset, l.length - l.delimiter.length()) : l);
+	}
+		
+	/*
+	 * @see ILineTracker#getLineOffset
+	 */
+	public int getLineOffset(int line) throws BadLocationException {
+		
+		int lines= fLines.size();
+		
+		if (line < 0 || line > lines)
+			throw new BadLocationException();
+		
+		if (lines == 0)
+			return 0;
+			
+		if (line == lines) {
+			Line l= (Line) fLines.get(line - 1);
+			return l.offset + l.length;
+		}
+		
+		Line l= (Line) fLines.get(line);
+		return l.offset;
+	}
+		
+	/*
+	 * @see ILineTracker#getNumberOfLines
+	 */
+	public int getNumberOfLines() {
+		
+		int lines= fLines.size();
+		
+		if (lines == 0)
+			return 1;
+			
+		Line l= (Line) fLines.get(lines - 1);
+		return (l.delimiter != null ? lines + 1 : lines);
+	}
+		
+	/*
+	 * @see ILineTracker#getNumberOfLines(int, int)
+	 */
+	public int getNumberOfLines(int position, int length) throws BadLocationException {
+		
+		if (position < 0 || position + length > fTextLength)
+			throw new BadLocationException();
+			
+		if (length == 0) // optimization
+			return 1;
+			
+		return getNumberOfLines(getLineNumberOfOffset(position), position, length);
+	}
+	
 	/*
 	 * @see ILineTracker#computeNumberOfLines(String)
 	 */
@@ -80,6 +267,23 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		}
 		return count;	
 	}
+	
+	
+	/* ----------------- manipulation ------------------------------ */
+	
+	
+	/**
+	 * Returns the info of the first delimiter found in the given
+	 * text starting at the given offset.
+	 *
+	 * @param text the text to be searched
+	 * @param offset the offset in the given text
+	 * @return the info of the first found delimiter or <code>null</code> if 
+	 *		there is no such info
+	 */
+	protected abstract DelimiterInfo nextDelimiterInfo(String text, int offset);
+	
+	
 	/**
 	 * Creates the line structure for the given text. Newly created lines
 	 * are inserted into the line structure starting at the given
@@ -127,213 +331,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		
 		return count;
 	}
-	/**
-	 * Binary search for the line at a given offset.
-	 *
-	 * @param offset the offset whose line should be found
-	 * @return the line of the offset
-	 */
-	private int findLine(int offset) {
-		
-		if (fLines.size() == 0)
-			return -1;
-			
-		int left= 0;
-		int right= fLines.size() -1;
-		int mid= 0;
-		Line line= null;
-		
-		while (left < right) {
-			
-			mid= (left + right) / 2;
-				
-			line= (Line) fLines.get(mid);
-			if (offset < line.offset) {
-				if (left == mid)
-					right= left;
-				else
-					right= mid -1;
-			} else if (offset > line.offset) {
-				if (right == mid)
-					left= right;
-				else
-					left= mid  +1;
-			} else if (offset == line.offset) {
-				left= right= mid;
-			}
-		}
-		
-		line= (Line) fLines.get(left);
-		if (line.offset > offset)
-			-- left;		
-		return left;
-	}
-	/*
-	 * @see ILineTracker#getLineDelimiter
-	 */
-	public String getLineDelimiter(int line) throws BadLocationException {
-		
-		int lines= fLines.size();
-		
-		if (line < 0 || line >= lines)
-			throw new BadLocationException();
-			
-		if (lines == 0)
-			return null;
-					
-		Line l= (Line) fLines.get(line);
-		return l.delimiter;
-	}
-	/*
-	 * @see ILineTracker#getLineInformation
-	 */
-	public IRegion getLineInformation(int line) throws BadLocationException {
-		
-		int lines= fLines.size();
-		
-		if (line < 0 || line > lines)
-			throw new BadLocationException();
-			
-		if (lines == 0)
-			return new Line(0, 0);
-			
-		if (line == lines) {
-			Line l= (Line) fLines.get(line - 1);
-			return new Line(l.offset + l.length, 0);
-		}
-		
-		Line l= (Line) fLines.get(line);
-		return (l.delimiter != null ? new Line(l.offset, l.length - l.delimiter.length()) : l);
-	}
-	/*
-	 * @see ILineTracker#getLineInformationOfOffset
-	 */
-	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
-		if (position > fTextLength)
-			throw new BadLocationException();
-			
-		if (position == fTextLength) {
-			int size= fLines.size();
-			if (size == 0)
-				return new Region(0, 0);
-			Line l= (Line) fLines.get(size - 1);
-			return (l.delimiter != null ? new Line(fTextLength, 0) : new Line(fTextLength - l.length, l.length));
-		}	
-		
-		return getLineInformation(findLine(position));
-	}
-	/*
-	 * @see ILineTracker#getLineLength
-	 */
-	public int getLineLength(int line) throws BadLocationException {
-		
-		int lines= fLines.size();
-		
-		if (line < 0 || line > lines)
-			throw new BadLocationException();
-		
-		if (lines == 0 || lines == line)
-			return 0;
-				
-		Line l= (Line) fLines.get(line);
-		return l.length;
-	}
-	/*
-	 * @see ILineTracker#getLineNumberOfOffset
-	 */
-	public int getLineNumberOfOffset(int position) throws BadLocationException {
-				
-		if (position > fTextLength)
-			throw new BadLocationException();
-			
-		if (position == fTextLength) {
-			
-			int lastLine= fLines.size() - 1;
-			if (lastLine < 0)
-				return 0;
-							
-			Line l= (Line) fLines.get(lastLine);
-			return (l.delimiter != null ? lastLine + 1 : lastLine);
-		}
-		
-		return findLine(position);
-	}
-	/*
-	 * @see ILineTracker#getLineOffset
-	 */
-	public int getLineOffset(int line) throws BadLocationException {
-		
-		int lines= fLines.size();
-		
-		if (line < 0 || line > lines)
-			throw new BadLocationException();
-		
-		if (lines == 0)
-			return 0;
-			
-		if (line == lines) {
-			Line l= (Line) fLines.get(line - 1);
-			return l.offset + l.length;
-		}
-		
-		Line l= (Line) fLines.get(line);
-		return l.offset;
-	}
-	/*
-	 * @see ILineTracker#getNumberOfLines
-	 */
-	public int getNumberOfLines() {
-		
-		int lines= fLines.size();
-		
-		if (lines == 0)
-			return 1;
-			
-		Line l= (Line) fLines.get(lines - 1);
-		return (l.delimiter != null ? lines + 1 : lines);
-	}
-	/*
-	 * @see ILineTracker#getNumberOfLines(int, int)
-	 */
-	public int getNumberOfLines(int position, int length) throws BadLocationException {
-		
-		if (position < 0 || position + length > fTextLength)
-			throw new BadLocationException();
-			
-		if (length == 0) // optimization
-			return 1;
-			
-		return getNumberOfLines(getLineNumberOfOffset(position), position, length);
-	}
-	/**
-	 * Returns the number of lines covered by the specified text range.
-	 *
-	 * @param startLine the line where the text range starts
-	 * @param offset the start offset of the text range
-	 * @param length the length of the text range
-	 * @return the number of lines covered by this text range
-	 * @exception BadLocationException if range is undefined in this tracker
-	 */
-	private int getNumberOfLines(int startLine, int offset, int length) throws BadLocationException {
-		
-		if (length == 0)
-			return 1;
-			
-		int target= offset + length;
-		
-		Line l= (Line) fLines.get(startLine);
-		
-		if (l.delimiter == null)
-			return 1;
-		
-		if (l.offset + l.length > target)
-			return 1;
-		
-		if (l.offset + l.length == target)
-			return 2;
-			
-		return getLineNumberOfOffset(target) - startLine + 1;
-	}
+	
 	/**
 	 * Keeps track of the line information when text is inserted.
 	 * Returns the number of inserted lines.
@@ -385,19 +383,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		text= text.substring(delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength);
 		return createLines(text, lineNumber + 1, nextStart) + 1;
 	}
-	/* ----------------- manipulation ------------------------------ */
-	
-	
-	/**
-	 * Returns the info of the first delimiter found in the given
-	 * text starting at the given offset.
-	 *
-	 * @param text the text to be searched
-	 * @param offset the offset in the given text
-	 * @return the info of the first found delimiter or <code>null</code> if 
-	 *		there is no such info
-	 */
-	protected abstract DelimiterInfo nextDelimiterInfo(String text, int offset);
+		
 	/**
 	 * Keeps track of the line information when text is removed. Returns 
 	 * whether the line at which the deletion start will thereby be deleted.
@@ -446,6 +432,22 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		
 		return false;	
 	}
+	
+	/**
+	 * Adapts the offset of all lines with line numbers greater than the specified
+	 * one to the given delta.
+	 *
+	 * @param lineNumber the line number after which to start
+	 * @param delta the offset delta to be applied
+	 */
+	private void adaptLineOffsets(int lineNumber, int delta) {
+		int size= fLines.size();
+		for (int i= lineNumber + 1; i < size; i++) {
+			Line l= (Line) fLines.get(i);
+			l.offset += delta;
+		}
+	}
+	
 	/*
 	 * @see ILineTracker#replace
 	 */
@@ -466,6 +468,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		if (delta != 0)
 			adaptLineOffsets(lineNumber, delta);
 	}
+	
 	/*
 	 * @see ILineTracker#set
 	 */
@@ -475,5 +478,22 @@ public abstract class AbstractLineTracker implements ILineTracker {
 			fTextLength= text.length();
 			createLines(text, 0, 0);
 		}
+	}
+	
+	/*
+	 * @see ILineTracker#getLineDelimiter
+	 */
+	public String getLineDelimiter(int line) throws BadLocationException {
+		
+		int lines= fLines.size();
+		
+		if (line < 0 || line >= lines)
+			throw new BadLocationException();
+			
+		if (lines == 0)
+			return null;
+					
+		Line l= (Line) fLines.get(line);
+		return l.delimiter;
 	}
 }

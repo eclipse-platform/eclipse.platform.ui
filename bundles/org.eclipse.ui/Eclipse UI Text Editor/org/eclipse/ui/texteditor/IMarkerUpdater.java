@@ -22,14 +22,6 @@ import org.eclipse.core.resources.IMarker;
 public interface IMarkerUpdater {
 	
 	/**
-	 * Returns the attributes for which this updater is responsible. If the
-	 * result is <code>null</code>, the updater assumes responsibility for
-	 * any attributes.
-	 *
-	 * @return the attributes or <code>null</code> for any attribute
-	 */
-	String[] getAttribute();
-	/**
 	 * Returns the marker type for which this updater is responsible. If
 	 * the result is <code>null</code>, the updater assumes responsibility
 	 * for any marker type.
@@ -37,6 +29,16 @@ public interface IMarkerUpdater {
 	 * @return the marker type or <code>null</code> for any marker type
 	 */
 	String getMarkerType();
+	
+	/**
+	 * Returns the attributes for which this updater is responsible. If the
+	 * result is <code>null</code>, the updater assumes responsibility for
+	 * any attributes.
+	 *
+	 * @return the attributes or <code>null</code> for any attribute
+	 */
+	String[] getAttribute();
+	
 	/**
 	 * Updates the given marker according to the position of the given document.
 	 * If the updater recognizes that the marker should be deleted, it returns

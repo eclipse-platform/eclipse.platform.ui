@@ -33,6 +33,13 @@ import org.eclipse.jface.text.ITypedRegion;
 public interface IPresentationDamager {
 	
 	/**
+	 * Tells the presentation damager on which document it will work.
+	 *
+	 * @param document the damager's working document
+	 */
+	void setDocument(IDocument document);
+	
+	/**
 	 * Returns the damage in the document's presentation caused by the given document change.
 	 * The damage is restricted to the specified partition for which the presentation damager is
 	 * responsible. The damage may also depend on whether the document change also caused changes
@@ -44,10 +51,4 @@ public interface IPresentationDamager {
 	 * @return the computed damage
 	 */
 	IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event, boolean documentPartitioningChanged);
-	/**
-	 * Tells the presentation damager on which document it will work.
-	 *
-	 * @param document the damager's working document
-	 */
-	void setDocument(IDocument document);
 }

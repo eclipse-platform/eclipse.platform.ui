@@ -5,16 +5,7 @@ package org.eclipse.jface.text;
  * All Rights Reserved.
  */
  
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TextChangeListener;
-import org.eclipse.swt.custom.TextChangedEvent;
-import org.eclipse.swt.custom.TextChangingEvent;
-
-import org.eclipse.jface.util.Assert;
+import java.util.ArrayList;import java.util.Iterator;import java.util.List;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TextChangeListener;import org.eclipse.swt.custom.TextChangedEvent;import org.eclipse.swt.custom.TextChangingEvent;import org.eclipse.jface.util.Assert;
 
 
 /**
@@ -109,6 +100,24 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	 */
 	public DocumentAdapter() {
 	}
+	
+	/**
+	 * Sets the given document as the document to be adapted.
+	 *
+	 * @param document the document to be adapted or <code>null</code> if there is no document
+	 */
+	public void setDocument(IDocument document) {
+		
+		if (fDocument != null)
+			fDocument.removePrenotifiedDocumentListener(this);
+		
+		fDocument= document;
+		fLineDelimiter= null;
+		
+		if (fDocument != null)
+			fDocument.addPrenotifiedDocumentListener(this);
+	}
+	
 	/*
 	 * @see StyledTextContent#addTextChangeListener
 	 */
@@ -117,73 +126,15 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 		if (! fTextChangeListeners.contains(listener))
 			fTextChangeListeners.add(listener);
 	}
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
-	public void documentAboutToBeChanged(DocumentEvent event) {
-		fEventInfo.setEvent(event);
-		fireTextChanging();
-	}
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
-	public void documentChanged(DocumentEvent event) {
-		if (fEventInfo.refersTo(event)) {
-			if (fEventInfo.isTextSet())
-				fireTextSet();
-			else
-				fireTextChanged();
-		}
-	}
-	/**
-	 * Sends a text changed event to all registered listeners.
-	 */
-	private void fireTextChanged() {
-		TextChangedEvent event= new TextChangedEvent(this);
-				
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				((TextChangeListener) e.next()).textChanged(event);
-		}
-	}
-	/**
-	 * Sends the text changing event to all registered listeners.
-	 */
-	private void fireTextChanging() {
-		TextChangingEvent event= new TextChangingEvent(this);
-
-		event.start= fEventInfo.fEvent.fOffset;
-		event.replaceCharCount= fEventInfo.fEvent.fLength;
-		event.newCharCount= (fEventInfo.fEvent.fText == null ? 0 : fEventInfo.fEvent.fText.length());
-		event.replaceLineCount= fEventInfo.fReplacedLines;
-		event.newText= fEventInfo.fEvent.fText;
-		event.newLineCount= fEventInfo.fInsertedLines;
 		
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				 ((TextChangeListener) e.next()).textChanging(event);
-		}
-	}
-	/**
-	 * Sends a text set event to all registered listeners.
-	 */
-	private void fireTextSet() {
-		TextChangedEvent event = new TextChangedEvent(this);
-		
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				((TextChangeListener) e.next()).textSet(event);
-		}
-	}
 	/*
-	 * @see StyledTextContent#getCharCount()
+	 * @see StyledTextContent#removeTextChangeListener
 	 */
-	public int getCharCount() {
-		return fDocument.getLength();
+	public void removeTextChangeListener(TextChangeListener listener) {
+		Assert.isNotNull(listener);
+		fTextChangeListeners.remove(listener);
 	}
+	
 	/*
 	 * @see StyledTextContent#getLine(int)
 	 */
@@ -196,6 +147,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 			return null;
 		}
 	}
+	
 	/*
 	 * @see StyledTextContent#getLineAtOffset(int)
 	 */
@@ -207,12 +159,63 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 			return -1;
 		}
 	}
+	
 	/*
 	 * @see StyledTextContent#getLineCount()
 	 */
 	public int getLineCount() {
 		return fDocument.getNumberOfLines();
 	}
+	
+	/*
+	 * @see StyledTextContent#getOffsetAtLine(int)
+	 */
+	public int getOffsetAtLine(int line) {
+		try {
+			return fDocument.getLineOffset(line);
+		} catch (BadLocationException x) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+			return -1;
+		}
+	}
+	
+	/*
+	 * @see StyledTextContent#getTextRange(int, int)
+	 */
+	public String getTextRange(int offset, int length) {
+		try {
+			return fDocument.get(offset, length);
+		} catch (BadLocationException x) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+			return null;
+		}
+	}
+	
+	/*
+	 * @see StyledTextContent#replaceTextRange(int, int, String)
+	 */
+	public void replaceTextRange(int pos, int length, String text) {
+		try {
+			fDocument.replace(pos, length, text); 			
+		} catch (BadLocationException x) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+	}
+	
+	/*
+	 * @see StyledTextContent#setText
+	 */
+	public void setText(String text) {
+		fDocument.set(text);
+	}
+	
+	/*
+	 * @see StyledTextContent#getCharCount()
+	 */
+	public int getCharCount() {
+		return fDocument.getLength();
+	}
+	
 	/*
 	 * @see StyledTextContent#getLineDelimiter
 	 */
@@ -249,65 +252,70 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 		
 		return fLineDelimiter;
 	}
+	
 	/*
-	 * @see StyledTextContent#getOffsetAtLine(int)
+	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
-	public int getOffsetAtLine(int line) {
-		try {
-			return fDocument.getLineOffset(line);
-		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			return -1;
+	public void documentChanged(DocumentEvent event) {
+		if (fEventInfo.refersTo(event)) {
+			if (fEventInfo.isTextSet())
+				fireTextSet();
+			else
+				fireTextChanged();
 		}
 	}
+	
 	/*
-	 * @see StyledTextContent#getTextRange(int, int)
+	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
-	public String getTextRange(int offset, int length) {
-		try {
-			return fDocument.get(offset, length);
-		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			return null;
-		}
+	public void documentAboutToBeChanged(DocumentEvent event) {
+		fEventInfo.setEvent(event);
+		fireTextChanging();
 	}
-	/*
-	 * @see StyledTextContent#removeTextChangeListener
-	 */
-	public void removeTextChangeListener(TextChangeListener listener) {
-		Assert.isNotNull(listener);
-		fTextChangeListeners.remove(listener);
-	}
-	/*
-	 * @see StyledTextContent#replaceTextRange(int, int, String)
-	 */
-	public void replaceTextRange(int pos, int length, String text) {
-		try {
-			fDocument.replace(pos, length, text); 			
-		} catch (BadLocationException x) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		}
-	}
+	
 	/**
-	 * Sets the given document as the document to be adapted.
-	 *
-	 * @param document the document to be adapted or <code>null</code> if there is no document
+	 * Sends a text changed event to all registered listeners.
 	 */
-	public void setDocument(IDocument document) {
-		
-		if (fDocument != null)
-			fDocument.removePrenotifiedDocumentListener(this);
-		
-		fDocument= document;
-		fLineDelimiter= null;
-		
-		if (fDocument != null)
-			fDocument.addPrenotifiedDocumentListener(this);
+	private void fireTextChanged() {
+		TextChangedEvent event= new TextChangedEvent(this);
+				
+		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+			Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			while (e.hasNext())
+				((TextChangeListener) e.next()).textChanged(event);
+		}
 	}
-	/*
-	 * @see StyledTextContent#setText
+	
+	/**
+	 * Sends a text set event to all registered listeners.
 	 */
-	public void setText(String text) {
-		fDocument.set(text);
+	private void fireTextSet() {
+		TextChangedEvent event = new TextChangedEvent(this);
+		
+		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+			Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			while (e.hasNext())
+				((TextChangeListener) e.next()).textSet(event);
+		}
 	}
+	
+	/**
+	 * Sends the text changing event to all registered listeners.
+	 */
+	private void fireTextChanging() {
+		TextChangingEvent event= new TextChangingEvent(this);
+
+		event.start= fEventInfo.fEvent.fOffset;
+		event.replaceCharCount= fEventInfo.fEvent.fLength;
+		event.newCharCount= (fEventInfo.fEvent.fText == null ? 0 : fEventInfo.fEvent.fText.length());
+		event.replaceLineCount= fEventInfo.fReplacedLines;
+		event.newText= fEventInfo.fEvent.fText;
+		event.newLineCount= fEventInfo.fInsertedLines;
+		
+		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+			Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			while (e.hasNext())
+				 ((TextChangeListener) e.next()).textChanging(event);
+		}
+	}	
 }

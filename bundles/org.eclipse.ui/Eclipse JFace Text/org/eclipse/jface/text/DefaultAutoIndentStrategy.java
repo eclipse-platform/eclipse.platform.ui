@@ -19,6 +19,29 @@ public class DefaultAutoIndentStrategy implements IAutoIndentStrategy {
 	 */
 	public DefaultAutoIndentStrategy() {
 	}
+		
+	/**
+	 * Returns the first offset greater than <code>offset</code> and smaller than 
+	 * <code>end</code> whose character is not a space or tab character. If no such
+	 * offset is found, <code>end</code> is returned.
+	 *
+	 * @param document the document to search in
+	 * @param offset the offset at which searching start
+	 * @param end the offset at which searching stops
+	 * @return the offset in the specifed range whose character is not a space or tab
+	 * @exception BadLocationException if position is an invalid range in the given document
+	 */
+	protected int findEndOfWhiteSpace(IDocument document, int offset, int end) throws BadLocationException {
+		while (offset < end) {
+			char c= document.getChar(offset);
+			if (c != ' ' && c != '\t') {
+				return offset;
+			}
+			offset++;
+		}
+		return end;
+	} 
+	
 	/**
 	 * Copies the indentation of the previous line.
 	 *
@@ -51,32 +74,12 @@ public class DefaultAutoIndentStrategy implements IAutoIndentStrategy {
 			// stop work
 		}	
 	}
+	
 	/*
 	 * @see IAutoIndentStrategy#customizeDocumentCommand
 	 */
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1)
 			autoIndentAfterNewLine(d, c);
-	}
-	/**
-	 * Returns the first offset greater than <code>offset</code> and smaller than 
-	 * <code>end</code> whose character is not a space or tab character. If no such
-	 * offset is found, <code>end</code> is returned.
-	 *
-	 * @param document the document to search in
-	 * @param offset the offset at which searching start
-	 * @param end the offset at which searching stops
-	 * @return the offset in the specifed range whose character is not a space or tab
-	 * @exception BadLocationException if position is an invalid range in the given document
-	 */
-	protected int findEndOfWhiteSpace(IDocument document, int offset, int end) throws BadLocationException {
-		while (offset < end) {
-			char c= document.getChar(offset);
-			if (c != ' ' && c != '\t') {
-				return offset;
-			}
-			offset++;
-		}
-		return end;
 	}
 }

@@ -1,5 +1,6 @@
 package org.eclipse.jface.text;
 
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -17,6 +18,13 @@ public class TextSelection implements ITextSelection {
 	
 	private final static ITextSelection NULL= new TextSelection();
 	
+	/**
+	 * Returns a shared instance of an empty text selection.
+	 */
+	public static ITextSelection emptySelection() {
+		return NULL;
+	}
+	
 	/** Document which delivers the data of the selection */
 	private IDocument fDocument;
 	/** Offset of the selection */
@@ -31,6 +39,7 @@ public class TextSelection implements ITextSelection {
 	private TextSelection() {
 		this(null, -1, -1);
 	}
+	
 	/**
 	 * Creates a text selection for the given range. This
 	 * selection object describes generically a text range and
@@ -43,6 +52,7 @@ public class TextSelection implements ITextSelection {
 	public TextSelection(int offset, int length) {
 		this(null, offset, length);
 	}
+	
 	/**
 	 * Creates a text selection for the given range of the given document.
 	 * This selection object is created by selection providers in responds
@@ -57,36 +67,33 @@ public class TextSelection implements ITextSelection {
 		fOffset= offset;
 		fLength= length;
 	}
+
 	/**
-	 * Returns a shared instance of an empty text selection.
+	 * Returns true if the offset and length are smaller than 0. 
+	 * A selection of length 0, is a valid text selection as it 
+	 * describes, e.g., the cursor position in a viewer.
 	 */
-	public static ITextSelection emptySelection() {
-		return NULL;
-	}
 	/*
-	 * @see ITextSelection#getEndLine
+	 * @see ISelection#isEmpty
 	 */
-	public int getEndLine() {
-		try {
-			if (fDocument != null)
-				return fDocument.getLineOfOffset(fOffset + fLength - 1);
-		} catch (BadLocationException x) {
-		}
-		
-		return -1;
+	public boolean isEmpty() {
+		return fOffset < 0 || fLength < 0;
 	}
-	/*
-	 * @see ITextSelection#getLength
-	 */
-	public int getLength() {
-		return fLength;
-	}
+	
 	/*
 	 * @see ITextSelection#getOffset
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
+	
+	/*
+	 * @see ITextSelection#getLength
+	 */
+	public int getLength() {
+		return fLength;
+	}
+	
 	/*
 	 * @see ITextSelection#getStartLine
 	 */
@@ -100,6 +107,20 @@ public class TextSelection implements ITextSelection {
 		
 		return -1;
 	}
+	
+	/*
+	 * @see ITextSelection#getEndLine
+	 */
+	public int getEndLine() {
+		try {
+			if (fDocument != null)
+				return fDocument.getLineOfOffset(fOffset + fLength - 1);
+		} catch (BadLocationException x) {
+		}
+		
+		return -1;
+	}
+	
 	/*
 	 * @see ITextSelection#getText
 	 */
@@ -112,15 +133,5 @@ public class TextSelection implements ITextSelection {
 		
 		return null;
 	}
-	/**
-	 * Returns true if the offset and length are smaller than 0. 
-	 * A selection of length 0, is a valid text selection as it 
-	 * describes, e.g., the cursor position in a viewer.
-	 */
-	/*
-	 * @see ISelection#isEmpty
-	 */
-	public boolean isEmpty() {
-		return fOffset < 0 || fLength < 0;
-	}
 }
+

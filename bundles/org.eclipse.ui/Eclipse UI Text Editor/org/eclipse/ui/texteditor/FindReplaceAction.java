@@ -6,19 +6,7 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.ResourceBundle;
-
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.text.IFindReplaceTarget;
-
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
+import java.util.ResourceBundle;import org.eclipse.swt.events.DisposeEvent;import org.eclipse.swt.events.DisposeListener;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.ui.IPartListener;import org.eclipse.ui.IPartService;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.IWorkbenchPartSite;import org.eclipse.ui.IWorkbenchWindow;
 
 
 /**
@@ -54,7 +42,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			
 			fWindow= site.getWorkbenchWindow();
 			
-			fDialog= new FindReplaceDialog(site.getShell(), "Find/Replace", null);			
+			fDialog= new FindReplaceDialog(site.getShell());			
 			fDialog.create();
 			fDialog.getShell().addDisposeListener(this);
 			
@@ -138,6 +126,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		fWorkbenchPart= workbenchPart;
 		update();
 	}
+	
 	/**
 	 * Creates a new find/replace action for the given text editor. 
 	 * The action configures its visual representation from the given 
@@ -157,6 +146,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		fWorkbenchWindow= workbenchWindow;
 		update();
 	}
+	
 	/*
 	 *	@see IAction#run
 	 */
@@ -180,6 +170,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			dialog.open();
 		}
 	}
+	
 	/*
 	 * @see IUpdate#update()
 	 */

@@ -22,5 +22,5 @@ public interface IAutoIndentStrategy {
 	 * @param document the document that will be changed
 	 * @param command the document command describing the indented change
 	 */
-	void customizeDocumentCommand(IDocument document, DocumentCommand command);
+	void customizeDocumentCommand(IDocument document, DocumentCommand command);	
 }

@@ -107,6 +107,40 @@ public class TextPresentation {
 	 */
 	public TextPresentation() {
 	}
+		
+	/**
+	 * Sets the result window for this presentation. When dealing with
+	 * this presentation all ranges which are outside the result window 
+	 * are ignored. For example, the size of the presentation is 0
+	 * when there is no range inside the window even if there are ranges
+	 * outside the window. All methods are aware of the result window. 
+	 *
+	 * @param resultWindow the result window
+	 */
+	public void setResultWindow(IRegion resultWindow) {
+		fResultWindow= resultWindow;
+	}
+	
+	/**
+	 * Set the default style range of this presentation. 
+	 * The default style range defines the overall area covered
+	 * by this presentation and its style information.
+	 *
+	 * @param range the range decribing the default region
+	 */
+	public void setDefaultStyleRange(StyleRange range) {
+		fDefaultRange= range;
+	}
+	
+	/**
+	 * Returns this presentation's default style range.
+	 *
+	 * @return this presentation's default style range
+	 */
+	public StyleRange getDefaultStyleRange() {
+		return createWindowRelativeRange(fResultWindow, fDefaultRange);
+	}
+	
 	/**
 	 * Add the given range to the presentation. The range must be a 
 	 * subrange of the presentation's default range.
@@ -117,6 +151,7 @@ public class TextPresentation {
 		checkConsistency(range);
 		fRanges.add(range);
 	}
+	
 	/**
 	 * Checks whether the given range is a subrange of the presentation's
 	 * default style range.
@@ -140,6 +175,51 @@ public class TextPresentation {
 				range.length -= (defaultEnd - end);
 		}
 	}
+	
+	/**
+	 * Returns the index of the first range which overlaps with the 
+	 * specified window.
+	 *
+	 * @param window the window to be used for searching
+	 * @return the index of the first range overlapping with the window
+	 */
+	private int getFirstIndexInWindow(IRegion window) {
+		int i= 0;
+		if (window != null) {
+			int start= window.getOffset();	
+			while (i < fRanges.size()) {
+				StyleRange r= (StyleRange) fRanges.get(i++);
+				if (r.start + r.length > start) {
+					-- i;
+					break;
+				}
+			}
+		}
+		return i;
+	}
+	
+	/**
+	 * Returns the index of the first range which comes after the specified window and does
+	 * not overlap with this window.
+	 *
+	 * @param window the window to be used for searching
+	 * @return the index of the first range behind the window and not overlapping with the window
+	 */
+	private int getFirstIndexAfterWindow(IRegion window) {
+		int i= fRanges.size();
+		if (window != null) {
+			int end= window.getOffset() + window.getLength();	
+			while (i > 0) {
+				StyleRange r= (StyleRange) fRanges.get(--i);
+				if (r.start < end) {
+					++ i;
+					break;
+				}
+			}
+		}
+		return i;
+	}
+	
 	/**
 	 * Returns a style range which is relative to the specified window and
 	 * appropriately clipped if necessary. The original style range is not
@@ -167,6 +247,19 @@ public class TextPresentation {
 		newRange.length= end - start;
 		return newRange;
 	}
+		
+	
+	/**
+	 * Returns an iterator which enumerates all style ranged which define a style 
+	 * different from the presentation's default style range. The default style range
+	 * is not enumerated.
+	 *
+	 * @return a style range interator
+	 */
+	public Iterator getNonDefaultStyleRangeIterator() {
+		return new FilterIterator(fDefaultRange != null);
+	}
+	
 	/**
 	 * Returns an iterator which enumerates all style ranges of this presentation 
 	 * except the default style range.
@@ -176,6 +269,55 @@ public class TextPresentation {
 	public Iterator getAllStyleRangeIterator() {
 		return new FilterIterator(false);
 	}
+	
+	/**
+	 * Returns whether this collection contains any style range including
+	 * the default style range.
+	 *
+	 * @return <code>true</code> if there is no style range in this presentation
+	 */
+	public boolean isEmpty() {
+		return (fDefaultRange == null && getDenumerableRanges() == 0);
+	}
+	
+	/**
+	 * Returns the number of style ranges in the presentation not counting the default
+	 * style range.
+	 *
+	 * @return the number of style ranges in the presentation excluding the default style range
+	 */
+	public int getDenumerableRanges() {
+		int size= getFirstIndexAfterWindow(fResultWindow) - getFirstIndexInWindow(fResultWindow);
+		return (size < 0 ? 0 : size);
+	}
+		
+	/**
+	 * Returns the style range with the smallest offset ignoring the default style range or null
+	 * if the presentation is empty.
+	 *
+	 * @return the style range with the smalled offset different from the default style range
+	 */
+	public StyleRange getFirstStyleRange() {
+		try {
+			return (StyleRange) fRanges.get(getFirstIndexInWindow(fResultWindow));
+		} catch (NoSuchElementException x) {
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the style range with the highest offset ignoring the default style range.
+	 *
+	 * @return the style range with the highest offset different from the default style range
+	 */
+	public StyleRange getLastStyleRange() {
+		try {
+			return (StyleRange) fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
+		} catch (NoSuchElementException x) {
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns the coverage of this presentation.
 	 *
@@ -192,131 +334,5 @@ public class TextPresentation {
 			return null;
 					
 		return new Region(first.start, last.start - first. start + last.length);
-	}
-	/**
-	 * Returns this presentation's default style range.
-	 *
-	 * @return this presentation's default style range
-	 */
-	public StyleRange getDefaultStyleRange() {
-		return createWindowRelativeRange(fResultWindow, fDefaultRange);
-	}
-	/**
-	 * Returns the number of style ranges in the presentation not counting the default
-	 * style range.
-	 *
-	 * @return the number of style ranges in the presentation excluding the default style range
-	 */
-	public int getDenumerableRanges() {
-		int size= getFirstIndexAfterWindow(fResultWindow) - getFirstIndexInWindow(fResultWindow);
-		return (size < 0 ? 0 : size);
-	}
-	/**
-	 * Returns the index of the first range which comes after the specified window and does
-	 * not overlap with this window.
-	 *
-	 * @param window the window to be used for searching
-	 * @return the index of the first range behind the window and not overlapping with the window
-	 */
-	private int getFirstIndexAfterWindow(IRegion window) {
-		int i= fRanges.size();
-		if (window != null) {
-			int end= window.getOffset() + window.getLength();	
-			while (i > 0) {
-				StyleRange r= (StyleRange) fRanges.get(--i);
-				if (r.start < end) {
-					++ i;
-					break;
-				}
-			}
-		}
-		return i;
-	}
-	/**
-	 * Returns the index of the first range which overlaps with the 
-	 * specified window.
-	 *
-	 * @param window the window to be used for searching
-	 * @return the index of the first range overlapping with the window
-	 */
-	private int getFirstIndexInWindow(IRegion window) {
-		int i= 0;
-		if (window != null) {
-			int start= window.getOffset();	
-			while (i < fRanges.size()) {
-				StyleRange r= (StyleRange) fRanges.get(i++);
-				if (r.start + r.length > start) {
-					-- i;
-					break;
-				}
-			}
-		}
-		return i;
-	}
-	/**
-	 * Returns the style range with the smallest offset ignoring the default style range or null
-	 * if the presentation is empty.
-	 *
-	 * @return the style range with the smalled offset different from the default style range
-	 */
-	public StyleRange getFirstStyleRange() {
-		try {
-			return (StyleRange) fRanges.get(getFirstIndexInWindow(fResultWindow));
-		} catch (NoSuchElementException x) {
-		}
-		return null;
-	}
-	/**
-	 * Returns the style range with the highest offset ignoring the default style range.
-	 *
-	 * @return the style range with the highest offset different from the default style range
-	 */
-	public StyleRange getLastStyleRange() {
-		try {
-			return (StyleRange) fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
-		} catch (NoSuchElementException x) {
-		}
-		return null;
-	}
-	/**
-	 * Returns an iterator which enumerates all style ranged which define a style 
-	 * different from the presentation's default style range. The default style range
-	 * is not enumerated.
-	 *
-	 * @return a style range interator
-	 */
-	public Iterator getNonDefaultStyleRangeIterator() {
-		return new FilterIterator(fDefaultRange != null);
-	}
-	/**
-	 * Returns whether this collection contains any style range including
-	 * the default style range.
-	 *
-	 * @return <code>true</code> if there is no style range in this presentation
-	 */
-	public boolean isEmpty() {
-		return (fDefaultRange == null && getDenumerableRanges() == 0);
-	}
-	/**
-	 * Set the default style range of this presentation. 
-	 * The default style range defines the overall area covered
-	 * by this presentation and its style information.
-	 *
-	 * @param range the range decribing the default region
-	 */
-	public void setDefaultStyleRange(StyleRange range) {
-		fDefaultRange= range;
-	}
-	/**
-	 * Sets the result window for this presentation. When dealing with
-	 * this presentation all ranges which are outside the result window 
-	 * are ignored. For example, the size of the presentation is 0
-	 * when there is no range inside the window even if there are ranges
-	 * outside the window. All methods are aware of the result window. 
-	 *
-	 * @param resultWindow the result window
-	 */
-	public void setResultWindow(IRegion resultWindow) {
-		fResultWindow= resultWindow;
-	}
+	}	
 }

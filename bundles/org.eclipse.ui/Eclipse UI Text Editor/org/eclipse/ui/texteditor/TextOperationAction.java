@@ -50,6 +50,7 @@ public final class TextOperationAction extends TextEditorAction {
 		fOperationCode= operationCode;
 		update();
 	}
+	
 	/**
 	 * The <code>TextOperationAction</code> implementation of this 
 	 * <code>IAction</code> method runs the operation with the current
@@ -59,13 +60,7 @@ public final class TextOperationAction extends TextEditorAction {
 		if (fOperationCode != -1 && fOperationTarget != null)
 			fOperationTarget.doOperation(fOperationCode);
 	}
-	/*
-	 * @see TextEditorAction#setEditor(ITextEditor)
-	 */
-	public void setEditor(ITextEditor editor) {
-		super.setEditor(editor);
-		fOperationTarget= null;
-	}
+	
 	/**
 	 * The <code>TextOperationAction</code> implementation of this 
 	 * <code>IUpdate</code> method discovers the operation through the current
@@ -78,5 +73,13 @@ public final class TextOperationAction extends TextEditorAction {
 			
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 		setEnabled(isEnabled);
+	}
+	
+	/*
+	 * @see TextEditorAction#setEditor(ITextEditor)
+	 */
+	public void setEditor(ITextEditor editor) {
+		super.setEditor(editor);
+		fOperationTarget= null;
 	}
 }

@@ -40,18 +40,28 @@ public class DirtyRegion implements ITypedRegion {
 		fType= type;
 		fText= text;
 	}
-	/*
-	 * @see ITypedRegion#getLength()
-	 */
-	public int getLength() {
-		return fLength;
-	}
+
 	/*
 	 * @see ITypedRegion#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
+	
+	/*
+	 * @see ITypedRegion#getLength()
+	 */
+	public int getLength() {
+		return fLength;
+	}
+	
+	/*
+	 * @see ITypedRegion#getType
+	 */
+	public String getType() {
+		return fType;
+	}
+	
 	/**
 	 * Returns the text that changed as part of the region change.
 	 * 
@@ -60,12 +70,7 @@ public class DirtyRegion implements ITypedRegion {
 	public String getText() {
 		return fText;
 	}
-	/*
-	 * @see ITypedRegion#getType
-	 */
-	public String getType() {
-		return fType;
-	}
+	
 	/**
 	 * Modify the receiver so that it encompasses the region specified by the dirty region.
 	 * 

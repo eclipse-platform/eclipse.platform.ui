@@ -29,6 +29,21 @@ public class NumberRule implements IRule {
 		Assert.isNotNull(token);
 		fToken= token;
 	}
+
+	/**
+	 * Sets a column constraint for this rule. If set, the rule's token
+	 * will only be returned if the pattern is detected starting at the 
+	 * specified column. If the column is smaller then 0, the column
+	 * constraint is considered removed.
+	 *
+	 * @param column the column in which the pattern starts
+	 */
+	public void setColumnConstraint(int column) {
+		if (column < 0)
+			column= UNDEFINED;
+		fColumn= column;
+	}
+
 	/*
 	 * @see IRule#evaluate
 	 */
@@ -46,18 +61,5 @@ public class NumberRule implements IRule {
 		
 		scanner.unread();
 		return Token.UNDEFINED;
-	}
-	/**
-	 * Sets a column constraint for this rule. If set, the rule's token
-	 * will only be returned if the pattern is detected starting at the 
-	 * specified column. If the column is smaller then 0, the column
-	 * constraint is considered removed.
-	 *
-	 * @param column the column in which the pattern starts
-	 */
-	public void setColumnConstraint(int column) {
-		if (column < 0)
-			column= UNDEFINED;
-		fColumn= column;
 	}
 }

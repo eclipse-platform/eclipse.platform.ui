@@ -26,18 +26,6 @@ public class Token implements IToken {
 	private Object fData;
 	
 	/**
-	 * Creates a new token which represents neither undefined, whitespace, nor EOF.
-	 * The newly created token has the given data attached to it.
-	 *
-	 * @param data the data attached to the newly created token
-	 */
-	public Token(Object data) {
-		fIsUndefined= false;
-		fIsEOF= false;
-		fIsWhitespace= false;
-		fData= data;
-	}
-	/**
 	 * Creates a new token according to the given specification which does not
 	 * have any data attached to it.
 	 *
@@ -51,34 +39,52 @@ public class Token implements IToken {
 		fIsWhitespace= isWhitespace;
 		fData= null;
 	}
+	
+	/**
+	 * Creates a new token which represents neither undefined, whitespace, nor EOF.
+	 * The newly created token has the given data attached to it.
+	 *
+	 * @param data the data attached to the newly created token
+	 */
+	public Token(Object data) {
+		fIsUndefined= false;
+		fIsEOF= false;
+		fIsWhitespace= false;
+		fData= data;
+	}
+	
 	/*
 	 * @see IToken#getData()
 	 */
 	public Object getData() {
 		return fData;
 	}
-	/*
-	 * @see IToken#isEOF()
-	 */
-	public boolean isEOF() {
-		return fIsEOF;
-	}
+	
 	/*
 	 * @see IToken#isOther()
 	 */
 	public boolean isOther() {
 		return ! (fIsUndefined || fIsEOF || fIsWhitespace);
 	}
+	
 	/*
-	 * @see IToken#isUndefined()
+	 * @see IToken#isEOF()
 	 */
-	public boolean isUndefined() {
-		return fIsUndefined;
+	public boolean isEOF() {
+		return fIsEOF;
 	}
+	
 	/*
 	 * @see IToken#isWhitespace()
 	 */
 	public boolean isWhitespace() {
 		return fIsWhitespace;
 	}
+	
+	/*
+	 * @see IToken#isUndefined()
+	 */
+	public boolean isUndefined() {
+		return fIsUndefined;
+	}	
 }

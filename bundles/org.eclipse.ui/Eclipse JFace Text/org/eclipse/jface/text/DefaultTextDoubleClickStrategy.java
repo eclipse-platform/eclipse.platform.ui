@@ -23,6 +23,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	public DefaultTextDoubleClickStrategy() {
 		super();
 	}
+	
 	/**
 	 * Returns
 	 */
@@ -40,16 +41,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		if (matchWord(text.getDocument(), position))
 			text.setSelectedRange(fOffset, fLength);
 	}
-	/**
-	 * Answers whether the given character is consider a
-	 * regular part of a word.
-	 *
-	 * @param c the character to be checked
-	 * @return <code>true</code> if character is a valid word character
-	 */
-	private boolean isWordCharacter(char c) {
-		return Character.isLetterOrDigit(c);
-	}
+	
 	/**
 	 * Determines the word underlying or touching the given offset in the
 	 * given document.
@@ -92,5 +84,16 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Answers whether the given character is consider a
+	 * regular part of a word.
+	 *
+	 * @param c the character to be checked
+	 * @return <code>true</code> if character is a valid word character
+	 */
+	private boolean isWordCharacter(char c) {
+		return Character.isLetterOrDigit(c);
 	}
 }

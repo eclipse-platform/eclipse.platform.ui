@@ -20,6 +20,7 @@ public class BadPositionCategoryException extends Exception {
 	public BadPositionCategoryException() {
 		super();
 	}
+	
 	/**
 	 * Creates a new bad position category exception.
 	 *

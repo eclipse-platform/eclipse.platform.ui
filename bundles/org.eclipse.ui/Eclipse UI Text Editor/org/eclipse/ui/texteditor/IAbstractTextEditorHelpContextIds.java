@@ -17,10 +17,10 @@ import org.eclipse.ui.PlatformUI;
 public interface IAbstractTextEditorHelpContextIds {
 	
 	/** The string with which action, dialog, etc. ids are prefixed to construct help context ids. */
-	public static final String PREFIX= PlatformUI.PLUGIN_ID + ".";
+	public static final String PREFIX= PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 	
 	/** The string which is appended to action ids to construct help context ids. */
-	public static final String ACTION_POSTFIX= "_action_context";
+	public static final String ACTION_POSTFIX= "_action_context"; //$NON-NLS-1$
 
 	/* Actions */
 	public static final String UNDO_ACTION= PREFIX + ITextEditorActionConstants.UNDO + ACTION_POSTFIX;
@@ -40,5 +40,5 @@ public interface IAbstractTextEditorHelpContextIds {
 	public static final String GOTO_LINE_ACTION= PREFIX + ITextEditorActionConstants.GOTO_LINE + ACTION_POSTFIX;
 	
 	/* Dialogs */
-	public static final String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context";
+	public static final String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context"; //$NON-NLS-1$
 }

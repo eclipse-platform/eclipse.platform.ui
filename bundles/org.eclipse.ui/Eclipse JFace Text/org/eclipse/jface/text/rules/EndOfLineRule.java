@@ -22,6 +22,7 @@ public class EndOfLineRule extends SingleLineRule {
 	public EndOfLineRule(String startSequence, IToken token) {
 		this(startSequence, token, (char) 0);
 	}
+
 	/**
 	 * Creates a rule for the given starting sequence
 	 * which, if detected, will return the specified token.

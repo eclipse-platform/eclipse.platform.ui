@@ -54,25 +54,7 @@ public interface ISourceViewer extends ITextViewer {
 	 * @param configuration the source viewer configuration to be used
 	 */
 	void configure(SourceViewerConfiguration configuration);
-	/**
-	 * Returns this viewer's annotation model.
-	 *
-	 * @return this viewer's annotation model
-	 */
-	IAnnotationModel getAnnotationModel();
-	/**
-	 * Returns the viewer's range indication.
-	 *
-	 * @return the viewer's range indication.
-	 */
-	IRegion getRangeIndication();
-	/**
-	 * Removes the viewer's range indication. There is no visible range indication
-	 * after this method completed.
-	 *
-	 * @return the viewer's range indication
-	 */
-	void removeRangeIndication();
+	
 	/**
 	 * Sets the annotation hover of this source viewer. The annotation hover
 	 * provides the information to be displayed in a hover popup window
@@ -82,6 +64,7 @@ public interface ISourceViewer extends ITextViewer {
 	 * @param annotationHover the hover to be used, <code>null</code> is a valid argument
 	 */
 	void setAnnotationHover(IAnnotationHover annotationHover);
+	
 	/**
 	 * Sets the given document as this viewer's text model and the 
 	 * given annotation model as the model for this viewer's visual
@@ -95,6 +78,7 @@ public interface ISourceViewer extends ITextViewer {
 	 * @see ITextViewer#setDocument(IDocument)
 	 */
 	void setDocument(IDocument document, IAnnotationModel annotationModel);
+	 
 	/**
 	 * Sets the given document as this viewer's text model and the 
 	 * given annotation model as the model for this viewer's visual
@@ -112,6 +96,22 @@ public interface ISourceViewer extends ITextViewer {
 	 * @see ITextViewer#setDocument(IDocument, int, int)
 	 */
 	void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength);
+	
+	/**
+	 * Returns this viewer's annotation model.
+	 *
+	 * @return this viewer's annotation model
+	 */
+	IAnnotationModel getAnnotationModel();
+		
+	/**
+	 * Sets the annotation used by this viewer as range indicator. The 
+	 * range covered by this annotation is referred to as range indication.
+	 *
+	 * @param rangeIndicator the annotation to be used as this viewer's range indicator
+	 */
+	void setRangeIndicator(Annotation rangeIndicator);
+	
 	/**
 	 * Sets the viewers's range indication to the specified range. Its is indicated
 	 * whether the cursor should also be moved to the beginning of the specified range.
@@ -121,13 +121,22 @@ public interface ISourceViewer extends ITextViewer {
 	 * @param moveCursor indicates whether the cursor should be moved to the given offset
 	 */
 	void setRangeIndication(int offset, int length, boolean moveCursor);
+	
 	/**
-	 * Sets the annotation used by this viewer as range indicator. The 
-	 * range covered by this annotation is referred to as range indication.
+	 * Returns the viewer's range indication.
 	 *
-	 * @param rangeIndicator the annotation to be used as this viewer's range indicator
+	 * @return the viewer's range indication.
 	 */
-	void setRangeIndicator(Annotation rangeIndicator);
+	IRegion getRangeIndication();
+		
+	/**
+	 * Removes the viewer's range indication. There is no visible range indication
+	 * after this method completed.
+	 *
+	 * @return the viewer's range indication
+	 */
+	void removeRangeIndication();
+	
 	/**
 	 * Controls the visibility of annotations and in the case of separate
 	 * presentation areas of text and annotations, the visibility of the 

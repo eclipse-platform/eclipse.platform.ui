@@ -38,11 +38,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+
 
 
 /**
@@ -88,7 +88,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				} catch (BadLocationException x) {
 					preservedText= null;
 					if (TRACE_ERRORS)
-						System.out.println("TextViewer.WidgetCommand.setEvent: BadLocationException"); //$NON-NLS-1$
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.WidgetCommand.setEvent")); //$NON-NLS-1$
 				}
 			} else
 				preservedText= null;
@@ -252,7 +252,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			if (e.getDocument() == getVisibleDocument()) {
 				fWidgetCommand.setEvent(e);
 				if (fTextHoveringController != null && (fThread == null || !fThread.isAlive())) {
-					fThread= new Thread(this, "hover reset timer"); //$NON-NLS-1$
+					fThread= new Thread(this, JFaceTextMessages.getString("TextViewer.timer.name")); //$NON-NLS-1$
 					fThread.start();
 				}
 			}
@@ -470,6 +470,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 */
 	protected TextViewer() {
 	}
+		
 	/**
 	 * Create a new text viewer with the given SWT style bits.
 	 * The viewer is ready to use but does not have any plug-in installed.
@@ -480,150 +481,25 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	public TextViewer(Composite parent, int styles) {
 		createControl(parent, styles);
 	}
-	/*
-	 * @see ITextViewer#activatePlugin
-	 */
-	public void activatePlugins() {
 		
-		if (fDoubleClickStrategies != null && !fDoubleClickStrategies.isEmpty() && fDoubleClickStrategyConnector == null) {
-			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
-			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
-		}
-		
-		if (fTextHovers != null && !fTextHovers.isEmpty() && fTextHoveringController == null) {
-			fTextHoveringController= new TextHoveringController(this);
-			fTextHoveringController.install();
-		}
-		
-		if (fUndoManager != null) {
-			fUndoManager.connect(this);
-			fUndoManager.reset();
-		}
-	}
 	/**
-	 * Adds the given presentation to the viewer's style information.
-	 *
-	 * @param presentation the presentation to be added
+	 * Factory method to create the text widget to be used as the viewer's text widget.
+	 * 
+	 * @return the text widget to be used
 	 */
-	private void addPresentation(TextPresentation presentation) {
-				
-		Iterator e= null;
-		StyleRange dfltRange= presentation.getDefaultStyleRange();
-		if (dfltRange != null) {
-			fTextWidget.setStyleRange(dfltRange);
-			e= presentation.getNonDefaultStyleRangeIterator();
-		} else {
-			e= presentation.getAllStyleRangeIterator();
-		}
-		
-		while (e.hasNext()) {
-			StyleRange r= (StyleRange) e.next();
-			fTextWidget.setStyleRange(r);
-		}
+	protected StyledText createTextWidget(Composite parent, int styles) {
+		return new StyledText(parent, styles);
 	}
-	//---- Text input listeners
-	
-	/*
-	 * @see ITextViewer#addTextInputListener
-	 */
-	public void addTextInputListener(ITextInputListener listener) {
-		if (fTextInputListeners == null)
-			fTextInputListeners= new ArrayList();
-	
-		if (!fTextInputListeners.contains(listener))
-			fTextInputListeners.add(listener);
-	}
-	//---- Text listeners
-	
-	/*
-	 * @see ITextViewer#addTextListener
-	 */
-	public void addTextListener(ITextListener listener) {
-		if (fTextListeners == null)
-			fTextListeners= new ArrayList();
-	
-		if (!fTextListeners.contains(listener))
-			fTextListeners.add(listener);
-	}
-	/*
-	 * @see ITextViewer#addViewportListener
-	 */
-	public void addViewportListener(IViewportListener listener) {
-		
-		if (fViewportListeners == null) {
-			fViewportListeners= new ArrayList();
-			initializeViewportUpdate();
-		}
-	
-		if (!fViewportListeners.contains(listener))
-			fViewportListeners.add(listener);
-	}
-	//---- text manipulation
-	
-	/*
-	 * @see ITextViewer#canDoOperation
-	 */
-	public boolean canDoOperation(int operation) {
-		
-		if (fTextWidget == null)
-			return false;
-
-		switch (operation) {
-			case CUT:
-				return isEditable() && fTextWidget.getSelectionCount() > 0;
-			case COPY:
-				return fTextWidget.getSelectionCount() > 0;
-			case DELETE:
-			case PASTE:
-				return isEditable();
-			case SELECT_ALL:
-				return true;
-			case SHIFT_RIGHT:
-			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null && isBlockSelected();
-			case PREFIX:
-			case STRIP_PREFIX:
-				return isEditable() && fDefaultPrefixChars != null && isBlockSelected();
-			case UNDO:
-				return fUndoManager != null && fUndoManager.undoable();
-			case REDO:
-				return fUndoManager != null && fUndoManager.redoable();
-		}
-		
-		return false;
-	}
-	//------ find support
 	
 	/**
-	 * @see IFindReplaceTarget#canPerformFind
+	 * Factory method to create the document adapter to be used by this viewer.
+	 * 
+	 * @return the document adapter to be used
 	 */
-	protected boolean canPerformFind() {
-		IDocument d= getVisibleDocument();
-		return (fTextWidget != null && d != null && d.getLength() > 0);
+	protected IDocumentAdapter createDocumentAdapter() {
+		return new DocumentAdapter();
 	}
-	/*
-	 * @see ITextViewer#changeTextPresentation
-	 */
-	public void changeTextPresentation(TextPresentation presentation, boolean controlRedraw) {
-				
-		if (presentation == null)
-			return;
-			
-		presentation.setResultWindow(internalGetVisibleRegion());
-		if (presentation.isEmpty() || fTextWidget == null)
-			return;
-					
-		if (controlRedraw)
-			fTextWidget.setRedraw(false);
-		
-		if (fReplaceTextPresentation)
-			replacePresentation(presentation);
-		else
-			addPresentation(presentation);
-		
-		if (controlRedraw)
-			fTextWidget.setRedraw(true);
-	}
+	
 	/**
 	 * Creates the viewer's SWT control. The viewer's text widget either is
 	 * the control or is a child of the control.
@@ -674,235 +550,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		initializeViewportUpdate();
 	}
-	/**
-	 * Factory method to create the document adapter to be used by this viewer.
-	 * 
-	 * @return the document adapter to be used
-	 */
-	protected IDocumentAdapter createDocumentAdapter() {
-		return new DocumentAdapter();
-	}
-	/**
-	 * Factory method to create the text widget to be used as the viewer's text widget.
-	 * 
-	 * @return the text widget to be used
-	 */
-	protected StyledText createTextWidget(Composite parent, int styles) {
-		return new StyledText(parent, styles);
-	}
-	/**
-	 * Hook called on receipt of a <code>VerifyEvent</code>. The event has
-	 * been translated into a <code>DocumentCommand</code> which can now be
-	 * manipulated by interested parties. By default, the hook forwards the command
-	 * to the installed <code>IAutoIndentStrategy</code>.
-	 *
-	 * @param command the document command representing the varify event
-	 */
-	protected void customizeDocumentCommand(DocumentCommand command) {
-		if (!fIgnoreAutoIndent) {
-			IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
-			if (s != null)
-				s.customizeDocumentCommand(getDocument(), command);
-		}
-		fIgnoreAutoIndent= false;
-	}
-	/**
-	 * Deletes the current selection. If the selection has the length 0
-	 * the selection is automatically extended to the right - either by 1
-	 * or by the length of line delimiter if at the end of a line.
-	 */
-	protected void deleteText() {
-		
-		Point p= getSelectedRange();
-		if (p.y == 0) {
-			
-			int length= getVisibleDocument().getLength();			
-			if (p.x < length) {
-				IDocument document= getDocument();
-				try {
-					IRegion line= document.getLineInformationOfOffset(p.x);
-					if (p.x == line.getOffset() + line.getLength()) {
-						int lineNumber= document.getLineOfOffset(p.x);
-						String delimiter= document.getLineDelimiter(lineNumber);
-						if (delimiter != null) {
-							if (p.x + delimiter.length() <= length)
-								p.y= delimiter.length();
-						}
-					} else
-						p.y= 1;
-						
-					fTextWidget.replaceTextRange(p.x, p.y, ""); //$NON-NLS-1$
-					
-				} catch (BadLocationException x) {
-					// ignore
-				}
-			}
-			
-		} else if (p.x >= 0)
-			fTextWidget.replaceTextRange(p.x, p.y, "");	 //$NON-NLS-1$
-	}
-	/*
-	 * @see ITextViewer#doOperation
-	 */
-	public void doOperation(int operation) {
-		
-		if (fTextWidget == null)
-			return;
-
-		switch (operation) {
-
-			case UNDO:
-				if (fUndoManager != null) {
-					fIgnoreAutoIndent= true;
-					fUndoManager.undo();
-				}
-				break;
-			case REDO:
-				if (fUndoManager != null) {
-					fIgnoreAutoIndent= true;
-					fUndoManager.redo();
-				}
-				break;
-			case CUT:
-				fTextWidget.cut();
-				break;
-			case COPY:
-				fTextWidget.copy();
-				break;
-			case PASTE:
-				fIgnoreAutoIndent= true;
-				fTextWidget.paste();
-				break;
-			case DELETE:
-				deleteText();
-				break;
-			case SELECT_ALL:
-				/*
-				 * 1GETDON: ITPJUI:WIN2000 - Select All doesn't work in segmented view
-				 * setSelectedRange(0, getVisibleDocument().getLength());
-				 */
-				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
-				break;
-			case SHIFT_RIGHT:
-				shift(false, true);
-				break;
-			case SHIFT_LEFT:
-				shift(false, false);
-				break;
-			case PREFIX:
-				shift(true, true);
-				break;
-			case STRIP_PREFIX:
-				shift(true, false);
-				break;
-		}
-	}
-	/**
-	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
-	 */
-	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
-		if (fTextWidget == null)
-			return -1;
-			
-		try {
-			int offset= (startPosition == -1 ? startPosition : startPosition - getVisibleRegionOffset());
-			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
-			if (pos > -1) {
-				fTextWidget.setSelectionRange(pos, findString.length());
-				internalRevealRange(pos, pos + findString.length());
-			}
-			return pos;
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.findAndSelect: BadLocationException"); //$NON-NLS-1$
-		}
-		
-		return -1;
-	}
-	/**
-	 * Informs all registered text input listeners about the forthcoming input change,
-	 * This method does not use a robust iterator.
-	 *
-	 * @param oldInput the old input document
-	 * @param newInput the new input document
-	 */
-	protected void fireInputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-		if (fTextInputListeners != null) {
-			for (int i= 0; i < fTextInputListeners.size(); i++) {
-				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
-				l.inputDocumentAboutToBeChanged(oldInput, newInput);
-			}
-		}
-	}
-	/**
-	 * Informs all registered text input listeners about the sucessful input change,
-	 * This method does not use a robust iterator.
-	 *
-	 * @param oldInput the old input document
-	 * @param newInput the new input document
-	 */
-	protected void fireInputDocumentChanged(IDocument oldInput, IDocument newInput) {		
-		if (fTextInputListeners != null) {
-			for (int i= 0; i < fTextInputListeners.size(); i++) {
-				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
-				l.inputDocumentChanged(oldInput, newInput);
-			}
-		}
-	}
-	/*
-	 * @see ITextViewer#getBottomIndex
-	 */
-	public int getBottomIndex() {
-		
-		if (fTextWidget == null)
-			return -1;
-		
-		IRegion r= getVisibleRegion();
-		
-		try {
-			
-			IDocument d= getDocument();
-			int startLine= d.getLineOfOffset(r.getOffset());
-			int endLine= d.getLineOfOffset(r.getOffset()  + r.getLength() - 1);
-			int lines= getVisibleLinesInViewport();
-			
-			if (startLine + lines < endLine)
-				return getTopIndex() + lines - 1;
-				
-			return endLine - getTopIndex();
-			
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getBottomIndex: BadLocationException"); //$NON-NLS-1$
-		}
-		
-		return -1;
-	}
-	/*
-	 * @see ITextViewer#getBottomIndexEndOffset
-	 */
-	public int getBottomIndexEndOffset() {
-		try {
-			IRegion line= getDocument().getLineInformation(getBottomIndex());
-			return line.getOffset() + line.getLength() - 1;
-		} catch (BadLocationException ex) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getBottomIndexEndOffset: BadLocationException"); //$NON-NLS-1$
-			return getDocument().getLength() - 1;
-		}
-	}
-	//---- visible range support
 	
-	/**
-	 * Returns the child document manager
-	 *
-	 * @return the child document manager
-	 */
-	private ChildDocumentManager getChildDocumentManager() {
-		if (fChildDocumentManager == null)
-			fChildDocumentManager= new ChildDocumentManager();
-		return fChildDocumentManager;
-	}
 	/*
 	 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
 	 * Removed:
@@ -920,218 +568,36 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	public Control getControl() {
 		return fTextWidget;
 	}
-	/*
-	 * @see ITextViewer#getDocument
-	 */
-	public IDocument getDocument() {
-		return fDocument;
-	}
-	/*
-	 * @see ITextViewer#getFindReplaceTarget()
-	 */
-	public IFindReplaceTarget getFindReplaceTarget() {
-		if (fFindReplaceTarget == null)
-			fFindReplaceTarget= new FindReplaceTarget();
-		return fFindReplaceTarget;
-	}
-	/**
-	 * Returns the index of the first line whose start offset is in the given text range.
-	 *
-	 * @param region the text range in characters where to find the line
-	 * @return the first line whose start index is in the given range, -1 if there is no such line
-	 */
-	private int getFirstCompleteLineOfRegion(IRegion region) {
-		
-		try {
-			
-			IDocument d= getDocument();
-			
-			int startLine= d.getLineOfOffset(region.getOffset());
-			
-			int offset= d.getLineOffset(startLine);
-			if (offset >= region.getOffset())
-				return startLine;
-				
-			offset= d.getLineOffset(startLine + 1);
-			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
-		
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.getFirstCompleteLineOfRegion: BadLocationException"); //$NON-NLS-1$
-		}
-		
-		return -1;
-	}
-	private int getIncrementInPixels() {
-		GC gc= new GC(fTextWidget);
-		int increment= gc.getFontMetrics().getAverageCharWidth();
-		gc.dispose();
-		return increment;
-	}
-	//---- Document
 	
 	/*
-	 * @see Viewer#getInput
+	 * @see ITextViewer#activatePlugin
 	 */
-	public Object getInput() {
-		return getDocument();
+	public void activatePlugins() {
+		
+		if (fDoubleClickStrategies != null && !fDoubleClickStrategies.isEmpty() && fDoubleClickStrategyConnector == null) {
+			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
+			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
+		}
+		
+		if (fTextHovers != null && !fTextHovers.isEmpty() && fTextHoveringController == null) {
+			fTextHoveringController= new TextHoveringController(this);
+			fTextHoveringController.install();
+		}
+		
+		if (fUndoManager != null) {
+			fUndoManager.connect(this);
+			fUndoManager.reset();
+		}
 	}
-	//---- Selection
 	
 	/*
-	 * @see ITextViewer#getSelectedRange
+	 * @see ITextViewer#resetPlugins()
 	 */
-	public Point getSelectedRange() {
-		if (fTextWidget != null) {
-			Point p= fTextWidget.getSelectionRange();
-			int offset= getVisibleRegionOffset();			
-			return new Point(p.x + offset, p.y);
-		}
-		return new Point(-1, -1);
+	public void resetPlugins() {
+		if (fUndoManager != null)
+			fUndoManager.reset();
 	}
-	/*
-	 * @see Viewer#getSelection()
-	 */
-	public ISelection getSelection() {
-		Point p= getSelectedRange();
-		if (p.x == -1 || p.y == -1)
-			return TextSelection.emptySelection();
-			
-		return new TextSelection(getDocument(), p.x, p.y);
-	}
-	/*
-	 * @see ITextViewer#getSelectionProvider
-	 */
-	public ISelectionProvider getSelectionProvider() {
-		return this;
-	}
-	/*
-	 * Returns the text hover for a given offset.
-	 */
-	ITextHover getTextHover(int offset) {
-		return (ITextHover) selectContentTypePlugin(offset, fTextHovers);
-	}
-	/*
-	 * @see ITextViewer#getTextOperationTarget()
-	 */
-	public ITextOperationTarget getTextOperationTarget() {
-		return this;
-	}
-	//---- simple getters and setters
-			
-	/**
-	 * Returns viewer's text widget.
-	 */
-	public StyledText getTextWidget() {
-		return fTextWidget;
-	}
-	//---- scrolling and revealing
 	
-	/*
-	 * @see ITextViewer#getTopIndex
-	 */
-	public int getTopIndex() {
-		
-		if (fTextWidget != null) {
-			
-			int top= fTextWidget.getTopIndex();
-			
-			int offset= getVisibleRegionOffset();
-			if (offset > 0) {
-				try {
-					top += getDocument().getLineOfOffset(offset);
-				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
-						System.out.println("TextViewer.getTopIndex: BadLocationException"); //$NON-NLS-1$
-					return -1;
-				}
-			}
-			
-			return top;
-		}
-					
-		return -1;
-	}
-	/*
-	 * @see ITextViewer#getTopIndexStartOffset
-	 */
-	public int getTopIndexStartOffset() {
-		
-		if (fTextWidget != null) {	
-			int top= fTextWidget.getTopIndex();
-			try {
-				top= getVisibleDocument().getLineOffset(top);
-				return top + getVisibleRegionOffset();
-			} catch (BadLocationException ex) {
-				if (TRACE_ERRORS)
-					System.out.println("TextViewer.getTopIndexStartOffset: BadLocationException"); //$NON-NLS-1$
-			}
-		}
-		
-		return -1;
-	}
-	/*
-	 * @see ITextViewer#getTopInset
-	 */
-	public int getTopInset() {
-		return fTopInset;
-	}
-	/**
-	 * Returns the viewer's visible document.
-	 *
-	 * @return the viewer's visible document
-	 */
-	protected IDocument getVisibleDocument() {
-		return fVisibleDocument;
-	}
-	/**
-	 * Returns the viewport height in lines.
-	 * The actual visible lines can be fewer if the document is shorter than the viewport.
-	 *
-	 * @return the viewport height in lines
-	 */
-	protected int getVisibleLinesInViewport() {
-		if (fTextWidget != null) {
-			Rectangle clArea= fTextWidget.getClientArea();
-			if (!clArea.isEmpty())
-				return clArea.height / fTextWidget.getLineHeight();
-		}
-		return -1;
-	}
-	/*
-	 * @see ITextViewer#getVisibleRegion
-	 */
-	public IRegion getVisibleRegion() {
-		
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			Position p= ((ChildDocument) document).getParentDocumentRange();
-			return new Region(p.getOffset(), p.getLength());
-		}		
-		
-		return new Region(0, document.getLength());
-	}
-	/**
-	 * Returns the offset of the visible region.
-	 *
-	 * @return the offset of the visible region
-	 */
-	protected int getVisibleRegionOffset() {
-		
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			ChildDocument cdoc= (ChildDocument) document;
-			return cdoc.getParentDocumentRange().getOffset();
-		}
-		
-		return 0;
-	}
-	private int getWidthInPixels(String text) {
-		GC gc= new GC(fTextWidget);
-		Point extent= gc.textExtent(text);
-		gc.dispose();
-		return extent.x;
-	}
 	/**
 	 * Frees all resources allocated by this viewer. Internally called when the viewer's control
 	 * has been disposed.
@@ -1198,32 +664,390 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		fChildDocumentManager= null;
 		fScroller= null;
 	}
+	
+			
+	//---- simple getters and setters
+			
 	/**
-	 * @see VerifyListener#verifyText
+	 * Returns viewer's text widget.
 	 */
-	protected void handleVerifyEvent(VerifyEvent e) {
+	public StyledText getTextWidget() {
+		return fTextWidget;
+	}
+			
+	/*
+	 * @see ITextViewer#setAutoIndentStrategy
+	 */
+	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
+		
+		if (strategy != null) {
+			if (fAutoIndentStrategies == null)
+				fAutoIndentStrategies= new HashMap();
+			fAutoIndentStrategies.put(contentType, strategy);
+		} else if (fAutoIndentStrategies != null)
+			fAutoIndentStrategies.remove(contentType);
+	}
+	
+	/*
+	 * @see ITextViewer#setEventConsumer
+	 */
+	public void setEventConsumer(IEventConsumer consumer) {
+		fEventConsumer= consumer;
+	}
+		
+	/*
+	 * @see ITextViewer#setIndentPrefixes 
+	 */
+	public void setIndentPrefixes(String[] indentPrefixes, String contentType) {
+					
+		int i= -1;
+		boolean ok= (indentPrefixes != null);
+		while (ok &&  ++i < indentPrefixes.length)
+			ok= (indentPrefixes[i] != null);
+		
+		if (ok) {
+			
+			if (fIndentChars == null)
+				fIndentChars= new HashMap();
+			
+			fIndentChars.put(contentType, indentPrefixes);
+		
+		} else if (fIndentChars != null)
+			fIndentChars.remove(contentType);
+	}
 				
-		if (fEventConsumer != null) {
-			fEventConsumer.processEvent(e);
-			if (!e.doit)
-				return;
+	/*
+	 * @see ITextViewer#getTopInset
+	 */
+	public int getTopInset() {
+		return fTopInset;
+	}
+	
+	/*
+	 * @see ITextViewer#isEditable
+	 */
+	public boolean isEditable() {
+		if (fTextWidget == null)
+			return false;
+		return fTextWidget.getEditable();
+	}
+	
+	/*
+	 * @see ITextViewer#setEditable
+	 */
+	public void setEditable(boolean editable) {
+		if (fTextWidget != null)
+			fTextWidget.setEditable(editable);
+	}
+			
+	/*
+	 * @see ITextViewer#setDefaultPrefix
+	 */
+	public void setDefaultPrefix(String defaultPrefix, String contentType) {
+				
+		if (defaultPrefix != null && defaultPrefix.length() > 0) {
+			if (fDefaultPrefixChars == null)
+				fDefaultPrefixChars= new HashMap();
+			fDefaultPrefixChars.put(contentType, new String[] { defaultPrefix });
+		} else if (fDefaultPrefixChars != null)
+			fDefaultPrefixChars.remove(contentType);
+	}
+			
+	/*
+	 * @see ITextViewer#setUndoManager
+	 */
+	public void setUndoManager(IUndoManager undoManager) {
+		fUndoManager= undoManager;
+	}
+		
+	/*
+	 * @see ITextViewer#setTextHover
+	 */
+	public void setTextHover(ITextHover hover, String contentType) {
+		
+		if (hover != null) {
+			if (fTextHovers == null)
+				fTextHovers= new HashMap();
+			fTextHovers.put(contentType, hover);
+		} else if (fTextHovers != null)
+			fTextHovers.remove(contentType);
+	}
+	
+	/*
+	 * Returns the text hover for a given offset.
+	 */
+	ITextHover getTextHover(int offset) {
+		return (ITextHover) selectContentTypePlugin(offset, fTextHovers);
+	}
+	
+	
+	//---- Selection
+	
+	/*
+	 * @see ITextViewer#getSelectedRange
+	 */
+	public Point getSelectedRange() {
+		if (fTextWidget != null) {
+			Point p= fTextWidget.getSelectionRange();
+			int offset= getVisibleRegionOffset();			
+			return new Point(p.x + offset, p.y);
+		}
+		return new Point(-1, -1);
+	}
+	
+	/*
+	 * @see ITextViewer#setSelectedRange
+	 */
+	public void setSelectedRange(int offset, int length) {
+		
+		if (fTextWidget == null)
+			return;
+			
+		int end= offset + length;
+		
+		IDocument doc= getVisibleDocument();
+		if (doc instanceof ChildDocument) {
+			Position p= ((ChildDocument) doc).getParentDocumentRange();
+			if (p.overlapsWith(offset, length)) {
+				
+				if (offset < p.getOffset())
+					offset= p.getOffset();
+				offset -= p.getOffset();	
+				
+				int e= p.getOffset() + p.getLength();
+				if (end > e)
+					end= e;
+				end -= p.getOffset();
+				
+			} else
+				return; 
+		}			
+		
+		length= end - offset;
+		fTextWidget.setSelectionRange(offset, length);
+		selectionChanged(offset, length);
+	}
+
+	/*
+	 * @see Viewer#setSelection(ISelection)
+	 */
+	public void setSelection(ISelection selection, boolean reveal) {
+		if (selection instanceof ITextSelection) {
+			ITextSelection s= (ITextSelection) selection;
+			setSelectedRange(s.getOffset(), s.getLength());
+			if (reveal)
+				revealRange(s.getOffset(), s.getLength());
+		}
+	}
+	
+	/*
+	 * @see Viewer#getSelection()
+	 */
+	public ISelection getSelection() {
+		Point p= getSelectedRange();
+		if (p.x == -1 || p.y == -1)
+			return TextSelection.emptySelection();
+			
+		return new TextSelection(getDocument(), p.x, p.y);
+	}
+	
+	/*
+	 * @see ITextViewer#getSelectionProvider
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		return this;
+	}
+	
+	/**
+	 * Sends out a selection changed event to all registered listeners.
+	 *
+	 * @param offset the offset of the newly selected range
+	 * @param length the length of the newly selected range
+	 */
+	protected void selectionChanged(int offset, int length) {
+		ISelection selection= new TextSelection(getDocument(), offset, length);
+		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+		fireSelectionChanged(event);
+	}
+	
+	
+	
+	//---- Text listeners
+	
+	/*
+	 * @see ITextViewer#addTextListener
+	 */
+	public void addTextListener(ITextListener listener) {
+		if (fTextListeners == null)
+			fTextListeners= new ArrayList();
+	
+		if (!fTextListeners.contains(listener))
+			fTextListeners.add(listener);
+	}
+	
+	/*
+	 * @see ITextViewer#removeTextListener
+	 */
+	public void removeTextListener(ITextListener listener) {
+		if (fTextListeners != null) {
+			fTextListeners.remove(listener);
+			if (fTextListeners.size() == 0)
+				fTextListeners= null;
+		}
+	}
+	
+	/**
+	 * Informs all registered text listeners about the change specified by the
+	 * widget command. This method does not use a robust iterator.
+	 *
+	 * @param cmd the widget command translated into a text event and sent to all text listeners
+	 */
+	protected void updateTextListeners(WidgetCommand cmd) {
+		
+		if (fTextListeners != null) {
+			
+			DocumentEvent event= cmd.event;
+			if (event instanceof ChildDocumentEvent)
+				event= ((ChildDocumentEvent) event).getParentEvent();
+				
+			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event);
+			for (int i= 0; i < fTextListeners.size(); i++) {
+				ITextListener l= (ITextListener) fTextListeners.get(i);
+				l.textChanged(e);
+			}
+		}
+	}
+	
+	
+	//---- Text input listeners
+	
+	/*
+	 * @see ITextViewer#addTextInputListener
+	 */
+	public void addTextInputListener(ITextInputListener listener) {
+		if (fTextInputListeners == null)
+			fTextInputListeners= new ArrayList();
+	
+		if (!fTextInputListeners.contains(listener))
+			fTextInputListeners.add(listener);
+	}
+	
+	/*
+	 * @see ITextViewer#removeTextInputListener
+	 */
+	public void removeTextInputListener(ITextInputListener listener) {
+		if (fTextInputListeners != null) {
+			fTextInputListeners.remove(listener);
+			if (fTextInputListeners.size() == 0)
+				fTextInputListeners= null;
+		}
+	}
+	
+	/**
+	 * Informs all registered text input listeners about the forthcoming input change,
+	 * This method does not use a robust iterator.
+	 *
+	 * @param oldInput the old input document
+	 * @param newInput the new input document
+	 */
+	protected void fireInputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+		if (fTextInputListeners != null) {
+			for (int i= 0; i < fTextInputListeners.size(); i++) {
+				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
+				l.inputDocumentAboutToBeChanged(oldInput, newInput);
+			}
+		}
+	}
+	
+	/**
+	 * Informs all registered text input listeners about the sucessful input change,
+	 * This method does not use a robust iterator.
+	 *
+	 * @param oldInput the old input document
+	 * @param newInput the new input document
+	 */
+	protected void fireInputDocumentChanged(IDocument oldInput, IDocument newInput) {		
+		if (fTextInputListeners != null) {
+			for (int i= 0; i < fTextInputListeners.size(); i++) {
+				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
+				l.inputDocumentChanged(oldInput, newInput);
+			}
+		}
+	}
+	
+	//---- Document
+	
+	/*
+	 * @see Viewer#getInput
+	 */
+	public Object getInput() {
+		return getDocument();
+	}
+	
+	/*
+	 * @see ITextViewer#getDocument
+	 */
+	public IDocument getDocument() {
+		return fDocument;
+	}
+	
+	/*
+	 * @see Viewer#setInput
+	 */
+	public void setInput(Object input) {
+		
+		IDocument document= null;
+		if (input instanceof IDocument)
+			document= (IDocument) input;
+		
+		setDocument(document);
+	}
+	
+	/*
+	 * @see ITextViewer#setDocument(IDocument)
+	 */
+	public void setDocument(IDocument document) {
+		
+		fReplaceTextPresentation= true;
+		fireInputDocumentAboutToBeChanged(fDocument, document);
+				
+		IDocument oldDocument= fDocument;
+		fDocument= document;
+		
+		setVisibleDocument(fDocument);
+		
+		inputChanged(fDocument, oldDocument);
+		
+		fireInputDocumentChanged(oldDocument, fDocument);
+		fReplaceTextPresentation= false;
+	}
+	
+	/*
+	 * @see ITextViewer#setDocument(IDocument, int int)
+	 */
+	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
+		
+		fReplaceTextPresentation= true;
+		fireInputDocumentAboutToBeChanged(fDocument, document);
+				
+		IDocument oldDocument= fDocument;
+		fDocument= document;
+		
+		try {
+			int line= fDocument.getLineOfOffset(visibleRegionOffset);
+			int offset= fDocument.getLineOffset(line);
+			int length= (visibleRegionOffset - offset) + visibleRegionLength;
+			setVisibleDocument(getChildDocumentManager().createChildDocument(fDocument, offset, length));
+		} catch (BadLocationException x) {
+			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_1")); //$NON-NLS-1$
 		}
 		
-		int offset= getVisibleRegionOffset();
-		fDocumentCommand.setEvent(e, offset);
-		customizeDocumentCommand(fDocumentCommand);
-		if (!fDocumentCommand.fillEvent(e, offset)) {
-			try {
-				fTextWidget.removeVerifyListener(fVerifyListener);
-				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
-			} catch (BadLocationException x) {
-				if (TRACE_ERRORS)
-					System.out.println("TextViewer.verifyText: BadLocationException"); //$NON-NLS-1$
-			} finally {
-				fTextWidget.addVerifyListener(fVerifyListener);
-			}
-		}	
-	}
+		inputChanged(fDocument, oldDocument);
+		
+		fireInputDocumentChanged(oldDocument, fDocument);
+		fReplaceTextPresentation= false;
+	}		
+	
 	//---- Viewports	
 	
 	/**
@@ -1247,45 +1071,248 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				fScroller.addSelectionListener(fViewportGuard);
 		}
 	}
+	
 	/**
-	 * Initializes the text widget with the visual document. Informs
-	 * all text listeners about this initialization.
+	 * Removes all listeners and structures required to set up viewport listeners.
 	 */
-	private void initializeWidgetContents() {
+	private void removeViewPortUpdate() {
 		
-		if (fTextWidget != null && fVisibleDocument != null) {
-		
-			// set widget content
-			if (fDocumentAdapter == null)
-				fDocumentAdapter= createDocumentAdapter();
-				
-			fDocumentAdapter.setDocument(fVisibleDocument);
-			fTextWidget.setContent(fDocumentAdapter);
-								
-			// sent out appropriate widget change event				
-			fWidgetCommand.start= 0;
-			fWidgetCommand.length= 0;
-			fWidgetCommand.text= fVisibleDocument.get();
-			fWidgetCommand.event= null;
-			updateTextListeners(fWidgetCommand);
+		if (fTextWidget != null) {
+			
+			fTextWidget.removeKeyListener(fViewportGuard);
+			fTextWidget.removeMouseListener(fViewportGuard);
+
+			if (fScroller != null && !fScroller.isDisposed()) {
+				fScroller.removeSelectionListener(fViewportGuard);
+				fScroller= null;
+			}
+
+			fViewportGuard= null;
 		}
 	}
-	/**
-	 * Returns the visible region if it is not equal to the whole document.
-	 * Otherwise returns <code>null</code>.
-	 *
-	 * @return the viewer's visible region if smaller than input document, otherwise <code>null</code>
+	
+	/*
+	 * @see ITextViewer#addViewportListener
 	 */
-	protected IRegion internalGetVisibleRegion() {
+	public void addViewportListener(IViewportListener listener) {
 		
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			Position p= ((ChildDocument) document).getParentDocumentRange();
-			return new Region(p.getOffset(), p.getLength());
-		}		
-		
-		return null;
+		if (fViewportListeners == null) {
+			fViewportListeners= new ArrayList();
+			initializeViewportUpdate();
+		}
+	
+		if (!fViewportListeners.contains(listener))
+			fViewportListeners.add(listener);
 	}
+	
+	/*
+	 * @see ITextViewer#removeViewportListener
+	 */
+	public void removeViewportListener(IViewportListener listener) {
+		if (fViewportListeners != null)
+			fViewportListeners.remove(listener);
+	}
+		
+	/**
+	 * Checks whether the viewport changed and if so informs all registered 
+	 * listeners about the change.
+	 *
+	 * @param origin describes under which circumstances this method has been called.
+	 *
+	 * @see IViewportListener
+	 */
+	protected void updateViewportListeners(int origin) {
+		
+		int topPixel= fTextWidget.getTopPixel();
+		if (topPixel >= 0 && topPixel != fLastTopPixel) {
+			if (fViewportListeners != null) {
+				for (int i= 0; i < fViewportListeners.size(); i++) {
+					IViewportListener l= (IViewportListener) fViewportListeners.get(i);
+					l.viewportChanged(topPixel);
+				}
+			}
+			fLastTopPixel= topPixel;
+		}
+	}
+	
+	//---- scrolling and revealing
+	
+	/*
+	 * @see ITextViewer#getTopIndex
+	 */
+	public int getTopIndex() {
+		
+		if (fTextWidget != null) {
+			
+			int top= fTextWidget.getTopIndex();
+			
+			int offset= getVisibleRegionOffset();
+			if (offset > 0) {
+				try {
+					top += getDocument().getLineOfOffset(offset);
+				} catch (BadLocationException x) {
+					if (TRACE_ERRORS)
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndex")); //$NON-NLS-1$
+					return -1;
+				}
+			}
+			
+			return top;
+		}
+					
+		return -1;
+	}
+		
+	/*
+	 * @see ITextViewer#setTopIndex
+	 */
+	public void setTopIndex(int index) {
+		
+		if (fTextWidget != null) {
+			
+			int offset= getVisibleRegionOffset();
+			if (offset > 0) {
+				try {
+					index -= getDocument().getLineOfOffset(offset);
+				} catch (BadLocationException x) {
+					if (TRACE_ERRORS)
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.setTopIndex_1")); //$NON-NLS-1$
+					return;
+				}
+			}
+			
+			if (index >= 0) {
+				
+				int lines= getVisibleLinesInViewport();
+				if (lines > -1 ) {					
+					IDocument d= getVisibleDocument();
+					try {
+						int last= d.getLineOfOffset(d.getLength()) - lines;
+						if (last > 0 && index  > last)
+							index= last;
+					} catch (BadLocationException x) {
+						if (TRACE_ERRORS)
+							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.setTopIndex_2")); //$NON-NLS-1$
+					}
+					
+					fTextWidget.setTopIndex(index);
+					updateViewportListeners(INTERNAL);
+				
+				} else
+					fTextWidget.setTopIndex(index);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the viewport height in lines.
+	 * The actual visible lines can be fewer if the document is shorter than the viewport.
+	 *
+	 * @return the viewport height in lines
+	 */
+	protected int getVisibleLinesInViewport() {
+		if (fTextWidget != null) {
+			Rectangle clArea= fTextWidget.getClientArea();
+			if (!clArea.isEmpty())
+				return clArea.height / fTextWidget.getLineHeight();
+		}
+		return -1;
+	}
+	
+	/*
+	 * @see ITextViewer#getBottomIndex
+	 */
+	public int getBottomIndex() {
+		
+		if (fTextWidget == null)
+			return -1;
+		
+		IRegion r= getVisibleRegion();
+		
+		try {
+			
+			IDocument d= getDocument();
+			int startLine= d.getLineOfOffset(r.getOffset());
+			int endLine= d.getLineOfOffset(r.getOffset()  + r.getLength() - 1);
+			int lines= getVisibleLinesInViewport();
+			
+			if (startLine + lines < endLine)
+				return getTopIndex() + lines - 1;
+				
+			return endLine - getTopIndex();
+			
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getBottomIndex")); //$NON-NLS-1$
+		}
+		
+		return -1;
+	}
+	
+	/*
+	 * @see ITextViewer#getTopIndexStartOffset
+	 */
+	public int getTopIndexStartOffset() {
+		
+		if (fTextWidget != null) {	
+			int top= fTextWidget.getTopIndex();
+			try {
+				top= getVisibleDocument().getLineOffset(top);
+				return top + getVisibleRegionOffset();
+			} catch (BadLocationException ex) {
+				if (TRACE_ERRORS)
+					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndexStartOffset")); //$NON-NLS-1$
+			}
+		}
+		
+		return -1;
+	}
+	
+	/*
+	 * @see ITextViewer#getBottomIndexEndOffset
+	 */
+	public int getBottomIndexEndOffset() {
+		try {
+			IRegion line= getDocument().getLineInformation(getBottomIndex());
+			return line.getOffset() + line.getLength() - 1;
+		} catch (BadLocationException ex) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getBottomIndexEndOffset")); //$NON-NLS-1$
+			return getDocument().getLength() - 1;
+		}
+	}
+	
+	/*
+	 * @see ITextViewer#revealRange
+	 */
+	public void revealRange(int start, int length) {
+		
+		if (fTextWidget == null)
+			return;
+		
+		int end= start + length;
+
+		IDocument doc= getVisibleDocument();
+		if (doc instanceof ChildDocument) {
+			Position p= ((ChildDocument) doc).getParentDocumentRange();
+			if (p.overlapsWith(start, length)) {
+				
+				if (start < p.getOffset())
+					start= p.getOffset();
+				start -= p.getOffset();	
+				
+				int e= p.getOffset() + p.getLength();				
+				if (end > e)
+					end= e;
+				end -= p.getOffset();
+				
+			} else
+				return; 
+		}
+		
+		internalRevealRange(start, end);
+	}
+	
 	/**
 	 * Reveals the given range of the visible document.
 	 *
@@ -1337,466 +1364,68 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				
 			}
 		} catch (BadLocationException e) {
-			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidRangeArg")); //$NON-NLS-1$
+			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_range")); //$NON-NLS-1$
 		}
 	}
-	/**
-	 * A block is selected if the character preceding the start of the 
-	 * selection is a new line character.
-	 *
-	 * @return <code>true</code> if a block is selected
-	 */
-	protected boolean isBlockSelected() {
-		
-		Point s= getSelectedRange();
-		if (s.y == 0)
-			return false;
-		
-		try {
-			
-			IDocument document= getDocument();
-			int line= document.getLineOfOffset(s.x);
-			int start= document.getLineOffset(line);
-			return (s.x == start);
-			
-		} catch (BadLocationException x) {
-		}
-		
-		return false;
+	
+	private int getWidthInPixels(String text) {
+		GC gc= new GC(fTextWidget);
+		Point extent= gc.textExtent(text);
+		gc.dispose();
+		return extent.x;
 	}
-	/*
-	 * @see ITextViewer#isEditable
-	 */
-	public boolean isEditable() {
-		if (fTextWidget == null)
-			return false;
-		return fTextWidget.getEditable();
+	
+	private int getIncrementInPixels() {
+		GC gc= new GC(fTextWidget);
+		int increment= gc.getFontMetrics().getAverageCharWidth();
+		gc.dispose();
+		return increment;
 	}
-	/*
-	 * @see ITextViewer#overlapsWithVisibleRegion
-	 */
-	public boolean overlapsWithVisibleRegion(int start, int length) {
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			ChildDocument cdoc= (ChildDocument) document;
-			return cdoc.getParentDocumentRange().overlapsWith(start, length);
-		} else if (document != null) {
-			int size= document.getLength();
-			return (start >= 0 && length >= 0 && start + length <= size);
-		}
-		return false;
-	}
+	
 	/*
 	 * @see Viewer#refresh
 	 */
 	public void refresh() {
 		setDocument(getDocument());
 	}
-	/*
-	 * @see ITextViewer#removeTextInputListener
-	 */
-	public void removeTextInputListener(ITextInputListener listener) {
-		if (fTextInputListeners != null) {
-			fTextInputListeners.remove(listener);
-			if (fTextInputListeners.size() == 0)
-				fTextInputListeners= null;
-		}
-	}
-	/*
-	 * @see ITextViewer#removeTextListener
-	 */
-	public void removeTextListener(ITextListener listener) {
-		if (fTextListeners != null) {
-			fTextListeners.remove(listener);
-			if (fTextListeners.size() == 0)
-				fTextListeners= null;
-		}
-	}
-	/*
-	 * @see ITextViewer#removeViewportListener
-	 */
-	public void removeViewportListener(IViewportListener listener) {
-		if (fViewportListeners != null)
-			fViewportListeners.remove(listener);
-	}
-	/**
-	 * Removes all listeners and structures required to set up viewport listeners.
-	 */
-	private void removeViewPortUpdate() {
-		
-		if (fTextWidget != null) {
-			
-			fTextWidget.removeKeyListener(fViewportGuard);
-			fTextWidget.removeMouseListener(fViewportGuard);
-
-			if (fScroller != null && !fScroller.isDisposed()) {
-				fScroller.removeSelectionListener(fViewportGuard);
-				fScroller= null;
-			}
-
-			fViewportGuard= null;
-		}
-	}
-	/**
-	 * Replaces the viewer's style information with the given presentation.
-	 *
-	 * @param presentation the viewer's new style information
-	 */
-	private void replacePresentation(TextPresentation presentation) {
-		
-		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];				
-		
-		int i= 0;
-		Iterator e= presentation.getAllStyleRangeIterator();
-		while (e.hasNext()) {
-			ranges[i++]= (StyleRange) e.next();
-		}
-		
-		fTextWidget.setStyleRanges(ranges);
-	}
-	/*
-	 * @see ITextViewer#resetPlugins()
-	 */
-	public void resetPlugins() {
-		if (fUndoManager != null)
-			fUndoManager.reset();
-	}
-	/*
-	 * @see ITextViewer#resetVisibleRegion
-	 */
-	public void resetVisibleRegion() {
-		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {			
-			ChildDocument child = (ChildDocument) document;
-			setVisibleDocument(child.getParentDocument());
-			getChildDocumentManager().freeChildDocument(child);
-		}
-	}
-	/*
-	 * @see ITextViewer#revealRange
-	 */
-	public void revealRange(int start, int length) {
-		
-		if (fTextWidget == null)
-			return;
-		
-		int end= start + length;
-
-		IDocument doc= getVisibleDocument();
-		if (doc instanceof ChildDocument) {
-			Position p= ((ChildDocument) doc).getParentDocumentRange();
-			if (p.overlapsWith(start, length)) {
-				
-				if (start < p.getOffset())
-					start= p.getOffset();
-				start -= p.getOffset();	
-				
-				int e= p.getOffset() + p.getLength();				
-				if (end > e)
-					end= e;
-				end -= p.getOffset();
-				
-			} else
-				return; 
-		}
-		
-		internalRevealRange(start, end);
-	}
-	/**
-	 * Selects from the given map the one which is registered under
-	 * the content type of the partition in which the given offset is located.
-	 *
-	 * @param plugins the map from which to choose
-	 * @param offset the offset for which to find the plugin
-	 * @return the plugin registered under the offset's content type 
-	 */
-	protected Object selectContentTypePlugin(int offset, Map plugins) {
-		try {
-			return selectContentTypePlugin(getDocument().getContentType(offset), plugins);
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.selectContentTypePlugin: BadLocationException"); //$NON-NLS-1$
-		}
-		return null;
-	}
-	/**
-	 * Selects from the given <code>plugins</code> this one which is registered for
-	 * the given content <code>type</code>.
-	 */
-	private Object selectContentTypePlugin(String type, Map plugins) {
-		
-		if (plugins == null)
-			return null;
-		
-		return plugins.get(type);
-	}
-	/**
-	 * Sends out a selection changed event to all registered listeners.
-	 *
-	 * @param offset the offset of the newly selected range
-	 * @param length the length of the newly selected range
-	 */
-	protected void selectionChanged(int offset, int length) {
-		ISelection selection= new TextSelection(getDocument(), offset, length);
-		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-		fireSelectionChanged(event);
-	}
-	/*
-	 * @see ITextViewer#setAutoIndentStrategy
-	 */
-	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
-		
-		if (strategy != null) {
-			if (fAutoIndentStrategies == null)
-				fAutoIndentStrategies= new HashMap();
-			fAutoIndentStrategies.put(contentType, strategy);
-		} else if (fAutoIndentStrategies != null)
-			fAutoIndentStrategies.remove(contentType);
-	}
-	/*
-	 * @see ITextViewer#setDefaultPrefix
-	 */
-	public void setDefaultPrefix(String defaultPrefix, String contentType) {
-				
-		if (defaultPrefix != null && defaultPrefix.length() > 0) {
-			if (fDefaultPrefixChars == null)
-				fDefaultPrefixChars= new HashMap();
-			fDefaultPrefixChars.put(contentType, new String[] { defaultPrefix });
-		} else if (fDefaultPrefixChars != null)
-			fDefaultPrefixChars.remove(contentType);
-	}
-	/*
-	 * @see ITextViewer#setDocument(IDocument)
-	 */
-	public void setDocument(IDocument document) {
-		
-		fReplaceTextPresentation= true;
-		fireInputDocumentAboutToBeChanged(fDocument, document);
-				
-		IDocument oldDocument= fDocument;
-		fDocument= document;
-		
-		setVisibleDocument(fDocument);
-		
-		inputChanged(fDocument, oldDocument);
-		
-		fireInputDocumentChanged(oldDocument, fDocument);
-		fReplaceTextPresentation= false;
-	}
-	/*
-	 * @see ITextViewer#setDocument(IDocument, int int)
-	 */
-	public void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength) {
-		
-		fReplaceTextPresentation= true;
-		fireInputDocumentAboutToBeChanged(fDocument, document);
-				
-		IDocument oldDocument= fDocument;
-		fDocument= document;
-		
-		try {
-			int line= fDocument.getLineOfOffset(visibleRegionOffset);
-			int offset= fDocument.getLineOffset(line);
-			int length= (visibleRegionOffset - offset) + visibleRegionLength;
-			setVisibleDocument(getChildDocumentManager().createChildDocument(fDocument, offset, length));
-		} catch (BadLocationException x) {
-			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidVisibleRegionArg")); //$NON-NLS-1$
-		}
-		
-		inputChanged(fDocument, oldDocument);
-		
-		fireInputDocumentChanged(oldDocument, fDocument);
-		fReplaceTextPresentation= false;
-	}
-	/*
-	 * @see ITextViewer#setEditable
-	 */
-	public void setEditable(boolean editable) {
-		if (fTextWidget != null)
-			fTextWidget.setEditable(editable);
-	}
-	/*
-	 * @see ITextViewer#setEventConsumer
-	 */
-	public void setEventConsumer(IEventConsumer consumer) {
-		fEventConsumer= consumer;
-	}
-	/*
-	 * @see ITextViewer#setIndentPrefixes 
-	 */
-	public void setIndentPrefixes(String[] indentPrefixes, String contentType) {
-					
-		int i= -1;
-		boolean ok= (indentPrefixes != null);
-		while (ok &&  ++i < indentPrefixes.length)
-			ok= (indentPrefixes[i] != null);
-		
-		if (ok) {
-			
-			if (fIndentChars == null)
-				fIndentChars= new HashMap();
-			
-			fIndentChars.put(contentType, indentPrefixes);
-		
-		} else if (fIndentChars != null)
-			fIndentChars.remove(contentType);
-	}
-	/*
-	 * @see Viewer#setInput
-	 */
-	public void setInput(Object input) {
-		
-		IDocument document= null;
-		if (input instanceof IDocument)
-			document= (IDocument) input;
-		
-		setDocument(document);
-	}
-	/*
-	 * @see ITextViewer#setSelectedRange
-	 */
-	public void setSelectedRange(int offset, int length) {
-		
-		if (fTextWidget == null)
-			return;
-			
-		int end= offset + length;
-		
-		IDocument doc= getVisibleDocument();
-		if (doc instanceof ChildDocument) {
-			Position p= ((ChildDocument) doc).getParentDocumentRange();
-			if (p.overlapsWith(offset, length)) {
-				
-				if (offset < p.getOffset())
-					offset= p.getOffset();
-				offset -= p.getOffset();	
-				
-				int e= p.getOffset() + p.getLength();
-				if (end > e)
-					end= e;
-				end -= p.getOffset();
-				
-			} else
-				return; 
-		}			
-		
-		length= end - offset;
-		fTextWidget.setSelectionRange(offset, length);
-		selectionChanged(offset, length);
-	}
-	/*
-	 * @see Viewer#setSelection(ISelection)
-	 */
-	public void setSelection(ISelection selection, boolean reveal) {
-		if (selection instanceof ITextSelection) {
-			ITextSelection s= (ITextSelection) selection;
-			setSelectedRange(s.getOffset(), s.getLength());
-			if (reveal)
-				revealRange(s.getOffset(), s.getLength());
-		}
-	}
-	//---------- text presentation support
 	
-	/*
-	 * @see ITextViewer#setTextColor
-	 */
-	public void setTextColor(Color color) {
-		if (color != null)
-			setTextColor(color, 0, getDocument().getLength(), true);
-	}
-	/*
-	 * @see ITextViewer#setTextColor 	 
-	 */
-	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {		
-		
-		if (fTextWidget != null) {
-									
-			if (controlRedraw)
-				fTextWidget.setRedraw(false); 
-			
-			StyleRange s= new StyleRange();
-			s.foreground= color;
-			s.start= start;
-			s.length= length;
-			
-			fTextWidget.setStyleRange(s);
-			
-			if (controlRedraw)
-				fTextWidget.setRedraw(true);
-		}
-	}
-	//--------------------------------------
+	//---- visible range support
 	
-	/*
-	 * @see ITextViewer#setTextDoubleClickStrategy
+	/**
+	 * Returns the child document manager
+	 *
+	 * @return the child document manager
 	 */
-	public void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType) {		
-		
-		if (strategy != null) {
-			if (fDoubleClickStrategies == null)
-				fDoubleClickStrategies= new HashMap();
-			fDoubleClickStrategies.put(contentType, strategy);
-		} else if (fDoubleClickStrategies != null)
-			fDoubleClickStrategies.remove(contentType);
+	private ChildDocumentManager getChildDocumentManager() {
+		if (fChildDocumentManager == null)
+			fChildDocumentManager= new ChildDocumentManager();
+		return fChildDocumentManager;
 	}
-	/*
-	 * @see ITextViewer#setTextHover
+	
+	/**
+	 * Initializes the text widget with the visual document. Informs
+	 * all text listeners about this initialization.
 	 */
-	public void setTextHover(ITextHover hover, String contentType) {
+	private void initializeWidgetContents() {
 		
-		if (hover != null) {
-			if (fTextHovers == null)
-				fTextHovers= new HashMap();
-			fTextHovers.put(contentType, hover);
-		} else if (fTextHovers != null)
-			fTextHovers.remove(contentType);
-	}
-	/*
-	 * @see ITextViewer#setTopIndex
-	 */
-	public void setTopIndex(int index) {
+		if (fTextWidget != null && fVisibleDocument != null) {
 		
-		if (fTextWidget != null) {
-			
-			int offset= getVisibleRegionOffset();
-			if (offset > 0) {
-				try {
-					index -= getDocument().getLineOfOffset(offset);
-				} catch (BadLocationException x) {
-					if (TRACE_ERRORS)
-						System.out.println("TextViewer.setTopIndex: BadLocationException"); //$NON-NLS-1$
-					return;
-				}
-			}
-			
-			if (index >= 0) {
+			// set widget content
+			if (fDocumentAdapter == null)
+				fDocumentAdapter= createDocumentAdapter();
 				
-				int lines= getVisibleLinesInViewport();
-				if (lines > -1 ) {					
-					IDocument d= getVisibleDocument();
-					try {
-						int last= d.getLineOfOffset(d.getLength()) - lines;
-						if (last > 0 && index  > last)
-							index= last;
-					} catch (BadLocationException x) {
-						if (TRACE_ERRORS)
-							System.out.println("TextViewer.setTopIndex: BadLocationException"); //$NON-NLS-1$
-					}
-					
-					fTextWidget.setTopIndex(index);
-					updateViewportListeners(INTERNAL);
-				
-				} else
-					fTextWidget.setTopIndex(index);
-			}
+			fDocumentAdapter.setDocument(fVisibleDocument);
+			fTextWidget.setContent(fDocumentAdapter);
+								
+			// sent out appropriate widget change event				
+			fWidgetCommand.start= 0;
+			fWidgetCommand.length= 0;
+			fWidgetCommand.text= fVisibleDocument.get();
+			fWidgetCommand.event= null;
+			updateTextListeners(fWidgetCommand);
 		}
 	}
-	/*
-	 * @see ITextViewer#setUndoManager
-	 */
-	public void setUndoManager(IUndoManager undoManager) {
-		fUndoManager= undoManager;
-	}
+	
 	/**
 	 * Sets this viewer's visible document. The visible document represents the 
 	 * visible region of the viewer's input document.
@@ -1816,6 +1445,46 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		if (fVisibleDocument != null)
 			fVisibleDocument.addDocumentListener(fDocumentListener);
 	}
+	
+	/**
+	 * Returns the viewer's visible document.
+	 *
+	 * @return the viewer's visible document
+	 */
+	protected IDocument getVisibleDocument() {
+		return fVisibleDocument;
+	}
+	
+	/**
+	 * Returns the offset of the visible region.
+	 *
+	 * @return the offset of the visible region
+	 */
+	protected int getVisibleRegionOffset() {
+		
+		IDocument document= getVisibleDocument();
+		if (document instanceof ChildDocument) {
+			ChildDocument cdoc= (ChildDocument) document;
+			return cdoc.getParentDocumentRange().getOffset();
+		}
+		
+		return 0;
+	}
+	
+	/*
+	 * @see ITextViewer#getVisibleRegion
+	 */
+	public IRegion getVisibleRegion() {
+		
+		IDocument document= getVisibleDocument();
+		if (document instanceof ChildDocument) {
+			Position p= ((ChildDocument) document).getParentDocumentRange();
+			return new Region(p.getOffset(), p.getLength());
+		}		
+		
+		return new Region(0, document.getLength());
+	}
+		
 	/*
 	 * @see ITextViewer#setVisibleRegion
 	 */
@@ -1850,73 +1519,311 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			setVisibleDocument(child);
 							
 		} catch (BadLocationException x) {
-			throw new IllegalArgumentException(JFaceResources.getString("TextViewer.invalidVisibleRegionArg")); //$NON-NLS-1$
+			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
 		}
 	}
-	/**
-	 * Shifts the specified lines to the right or to the left. On shifting to the right
-	 * it insert <code>prefixes[0]</code> at the beginning of each line. On shifting to the
-	 * left it tests whether each of the specified lines starts with one of the specified 
-	 * prefixes and if so, removes the prefix.
-	 *
-	 * @param prefixes the prefixes to be used for shifting
-	 * @param right if <code>true</code> shift to the right otherwise to the left
-	 * @param startLine the first line to shift
-	 * @param endLine the last line to shift
+				
+	/*
+	 * @see ITextViewer#resetVisibleRegion
 	 */
-	private void shift(String[] prefixes, boolean right, int startLine, int endLine) {
-				
-		IDocument d= getDocument();
+	public void resetVisibleRegion() {
+		IDocument document= getVisibleDocument();
+		if (document instanceof ChildDocument) {			
+			ChildDocument child = (ChildDocument) document;
+			setVisibleDocument(child.getParentDocument());
+			getChildDocumentManager().freeChildDocument(child);
+		}
+	}
+	
+	/*
+	 * @see ITextViewer#overlapsWithVisibleRegion
+	 */
+	public boolean overlapsWithVisibleRegion(int start, int length) {
+		IDocument document= getVisibleDocument();
+		if (document instanceof ChildDocument) {
+			ChildDocument cdoc= (ChildDocument) document;
+			return cdoc.getParentDocumentRange().overlapsWith(start, length);
+		} else if (document != null) {
+			int size= document.getLength();
+			return (start >= 0 && length >= 0 && start + length <= size);
+		}
+		return false;
+	}
 		
+	
+	
+	//--------------------------------------
+	
+	/*
+	 * @see ITextViewer#setTextDoubleClickStrategy
+	 */
+	public void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType) {		
+		
+		if (strategy != null) {
+			if (fDoubleClickStrategies == null)
+				fDoubleClickStrategies= new HashMap();
+			fDoubleClickStrategies.put(contentType, strategy);
+		} else if (fDoubleClickStrategies != null)
+			fDoubleClickStrategies.remove(contentType);
+	}
+	
+	/**
+	 * Selects from the given map the one which is registered under
+	 * the content type of the partition in which the given offset is located.
+	 *
+	 * @param plugins the map from which to choose
+	 * @param offset the offset for which to find the plugin
+	 * @return the plugin registered under the offset's content type 
+	 */
+	protected Object selectContentTypePlugin(int offset, Map plugins) {
 		try {
-						
-			int lineNumber= startLine;
-			int lineCount= 0;
-			int lines= endLine - startLine;
-			String[] linePrefixes= null;
-
-			if (!right) {
-				
-				linePrefixes= new String[lines + 1];
-				
-				// check whether stripping is possible
-				while (lineNumber <= endLine) {
-					for (int i= 0; i < prefixes.length; i++) {
-						IRegion line= d.getLineInformation(lineNumber);
-						int delimiterLength= Math.min(prefixes[i].length(), line.getLength());
-						String s= d.get(line.getOffset(), delimiterLength);
-						if (prefixes[i].equals(s)) {
-							linePrefixes[lineCount]= s;
-							break;
-						}
-					}
-					
-					if (linePrefixes[lineCount] == null) {
-						// found a line which does not start with one of the prefixes
-						return;
-					}
-					
-					++ lineNumber;						
-					++ lineCount;
-				}
-			}
-
-			// ok - change the document
-			lineNumber= startLine;
-			
-			lineCount= 0;
-			while (lineNumber <= endLine) {
-				if (right)
-					d.replace(d.getLineOffset(lineNumber++), 0, prefixes[0]);
-				else
-					d.replace(d.getLineOffset(lineNumber++), linePrefixes[lineCount++].length(), null);
-			}
-
+			return selectContentTypePlugin(getDocument().getContentType(offset), plugins);
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shift: BadLocationException"); //$NON-NLS-1$
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
+		}
+		return null;
+	}
+	
+	/**
+	 * Selects from the given <code>plugins</code> this one which is registered for
+	 * the given content <code>type</code>.
+	 */
+	private Object selectContentTypePlugin(String type, Map plugins) {
+		
+		if (plugins == null)
+			return null;
+		
+		return plugins.get(type);
+	}
+	
+	/**
+	 * Hook called on receipt of a <code>VerifyEvent</code>. The event has
+	 * been translated into a <code>DocumentCommand</code> which can now be
+	 * manipulated by interested parties. By default, the hook forwards the command
+	 * to the installed <code>IAutoIndentStrategy</code>.
+	 *
+	 * @param command the document command representing the varify event
+	 */
+	protected void customizeDocumentCommand(DocumentCommand command) {
+		if (!fIgnoreAutoIndent) {
+			IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
+			if (s != null)
+				s.customizeDocumentCommand(getDocument(), command);
+		}
+		fIgnoreAutoIndent= false;
+	}
+	
+	/**
+	 * @see VerifyListener#verifyText
+	 */
+	protected void handleVerifyEvent(VerifyEvent e) {
+				
+		if (fEventConsumer != null) {
+			fEventConsumer.processEvent(e);
+			if (!e.doit)
+				return;
+		}
+		
+		int offset= getVisibleRegionOffset();
+		fDocumentCommand.setEvent(e, offset);
+		customizeDocumentCommand(fDocumentCommand);
+		if (!fDocumentCommand.fillEvent(e, offset)) {
+			try {
+				fTextWidget.removeVerifyListener(fVerifyListener);
+				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
+			} catch (BadLocationException x) {
+				if (TRACE_ERRORS)
+					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+			} finally {
+				fTextWidget.addVerifyListener(fVerifyListener);
+			}
+		}	
+	}
+	
+	//---- text manipulation
+	
+	/*
+	 * @see ITextViewer#canDoOperation
+	 */
+	public boolean canDoOperation(int operation) {
+		
+		if (fTextWidget == null)
+			return false;
+
+		switch (operation) {
+			case CUT:
+				return isEditable() && fTextWidget.getSelectionCount() > 0;
+			case COPY:
+				return fTextWidget.getSelectionCount() > 0;
+			case DELETE:
+			case PASTE:
+				return isEditable();
+			case SELECT_ALL:
+				return true;
+			case SHIFT_RIGHT:
+			case SHIFT_LEFT:
+				return isEditable() && fIndentChars != null && isBlockSelected();
+			case PREFIX:
+			case STRIP_PREFIX:
+				return isEditable() && fDefaultPrefixChars != null && isBlockSelected();
+			case UNDO:
+				return fUndoManager != null && fUndoManager.undoable();
+			case REDO:
+				return fUndoManager != null && fUndoManager.redoable();
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * @see ITextViewer#doOperation
+	 */
+	public void doOperation(int operation) {
+		
+		if (fTextWidget == null)
+			return;
+
+		switch (operation) {
+
+			case UNDO:
+				if (fUndoManager != null) {
+					fIgnoreAutoIndent= true;
+					fUndoManager.undo();
+				}
+				break;
+			case REDO:
+				if (fUndoManager != null) {
+					fIgnoreAutoIndent= true;
+					fUndoManager.redo();
+				}
+				break;
+			case CUT:
+				fTextWidget.cut();
+				break;
+			case COPY:
+				fTextWidget.copy();
+				break;
+			case PASTE:
+				fIgnoreAutoIndent= true;
+				fTextWidget.paste();
+				break;
+			case DELETE:
+				deleteText();
+				break;
+			case SELECT_ALL:
+				/*
+				 * 1GETDON: ITPJUI:WIN2000 - Select All doesn't work in segmented view
+				 * setSelectedRange(0, getVisibleDocument().getLength());
+				 */
+				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
+				break;
+			case SHIFT_RIGHT:
+				shift(false, true);
+				break;
+			case SHIFT_LEFT:
+				shift(false, false);
+				break;
+			case PREFIX:
+				shift(true, true);
+				break;
+			case STRIP_PREFIX:
+				shift(true, false);
+				break;
 		}
 	}
+	
+	/**
+	 * Deletes the current selection. If the selection has the length 0
+	 * the selection is automatically extended to the right - either by 1
+	 * or by the length of line delimiter if at the end of a line.
+	 */
+	protected void deleteText() {
+		
+		Point p= getSelectedRange();
+		if (p.y == 0) {
+			
+			int length= getVisibleDocument().getLength();			
+			if (p.x < length) {
+				IDocument document= getDocument();
+				try {
+					IRegion line= document.getLineInformationOfOffset(p.x);
+					if (p.x == line.getOffset() + line.getLength()) {
+						int lineNumber= document.getLineOfOffset(p.x);
+						String delimiter= document.getLineDelimiter(lineNumber);
+						if (delimiter != null) {
+							if (p.x + delimiter.length() <= length)
+								p.y= delimiter.length();
+						}
+					} else
+						p.y= 1;
+						
+					fTextWidget.replaceTextRange(p.x, p.y, ""); //$NON-NLS-1$
+					
+				} catch (BadLocationException x) {
+					// ignore
+				}
+			}
+			
+		} else if (p.x >= 0)
+			fTextWidget.replaceTextRange(p.x, p.y, "");	 //$NON-NLS-1$
+	}
+		
+	/**
+	 * A block is selected if the character preceding the start of the 
+	 * selection is a new line character.
+	 *
+	 * @return <code>true</code> if a block is selected
+	 */
+	protected boolean isBlockSelected() {
+		
+		Point s= getSelectedRange();
+		if (s.y == 0)
+			return false;
+		
+		try {
+			
+			IDocument document= getDocument();
+			int line= document.getLineOfOffset(s.x);
+			int start= document.getLineOffset(line);
+			return (s.x == start);
+			
+		} catch (BadLocationException x) {
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns the index of the first line whose start offset is in the given text range.
+	 *
+	 * @param region the text range in characters where to find the line
+	 * @return the first line whose start index is in the given range, -1 if there is no such line
+	 */
+	private int getFirstCompleteLineOfRegion(IRegion region) {
+		
+		try {
+			
+			IDocument d= getDocument();
+			
+			int startLine= d.getLineOfOffset(region.getOffset());
+			
+			int offset= d.getLineOffset(startLine);
+			if (offset >= region.getOffset())
+				return startLine;
+				
+			offset= d.getLineOffset(startLine + 1);
+			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
+		
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getFirstCompleteLineOfRegion")); //$NON-NLS-1$
+		}
+		
+		return -1;
+	}
+		
+
 	/**
 	 * Shifts a block selection to the right or left using the specified set of prefix characters.
 	 *
@@ -1978,52 +1885,238 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shift: BadLocationException"); //$NON-NLS-1$
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_1")); //$NON-NLS-1$
 		} finally {
 			if (fUndoManager != null)
 				fUndoManager.endCompoundChange();
 		}
 	}
+	
 	/**
-	 * Informs all registered text listeners about the change specified by the
-	 * widget command. This method does not use a robust iterator.
+	 * Shifts the specified lines to the right or to the left. On shifting to the right
+	 * it insert <code>prefixes[0]</code> at the beginning of each line. On shifting to the
+	 * left it tests whether each of the specified lines starts with one of the specified 
+	 * prefixes and if so, removes the prefix.
 	 *
-	 * @param cmd the widget command translated into a text event and sent to all text listeners
+	 * @param prefixes the prefixes to be used for shifting
+	 * @param right if <code>true</code> shift to the right otherwise to the left
+	 * @param startLine the first line to shift
+	 * @param endLine the last line to shift
 	 */
-	protected void updateTextListeners(WidgetCommand cmd) {
-		
-		if (fTextListeners != null) {
-			
-			DocumentEvent event= cmd.event;
-			if (event instanceof ChildDocumentEvent)
-				event= ((ChildDocumentEvent) event).getParentEvent();
+	private void shift(String[] prefixes, boolean right, int startLine, int endLine) {
 				
-			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event);
-			for (int i= 0; i < fTextListeners.size(); i++) {
-				ITextListener l= (ITextListener) fTextListeners.get(i);
-				l.textChanged(e);
-			}
-		}
-	}
-	/**
-	 * Checks whether the viewport changed and if so informs all registered 
-	 * listeners about the change.
-	 *
-	 * @param origin describes under which circumstances this method has been called.
-	 *
-	 * @see IViewportListener
-	 */
-	protected void updateViewportListeners(int origin) {
+		IDocument d= getDocument();
 		
-		int topPixel= fTextWidget.getTopPixel();
-		if (topPixel >= 0 && topPixel != fLastTopPixel) {
-			if (fViewportListeners != null) {
-				for (int i= 0; i < fViewportListeners.size(); i++) {
-					IViewportListener l= (IViewportListener) fViewportListeners.get(i);
-					l.viewportChanged(topPixel);
+		try {
+						
+			int lineNumber= startLine;
+			int lineCount= 0;
+			int lines= endLine - startLine;
+			String[] linePrefixes= null;
+
+			if (!right) {
+				
+				linePrefixes= new String[lines + 1];
+				
+				// check whether stripping is possible
+				while (lineNumber <= endLine) {
+					for (int i= 0; i < prefixes.length; i++) {
+						IRegion line= d.getLineInformation(lineNumber);
+						int delimiterLength= Math.min(prefixes[i].length(), line.getLength());
+						String s= d.get(line.getOffset(), delimiterLength);
+						if (prefixes[i].equals(s)) {
+							linePrefixes[lineCount]= s;
+							break;
+						}
+					}
+					
+					if (linePrefixes[lineCount] == null) {
+						// found a line which does not start with one of the prefixes
+						return;
+					}
+					
+					++ lineNumber;						
+					++ lineCount;
 				}
 			}
-			fLastTopPixel= topPixel;
+
+			// ok - change the document
+			lineNumber= startLine;
+			
+			lineCount= 0;
+			while (lineNumber <= endLine) {
+				if (right)
+					d.replace(d.getLineOffset(lineNumber++), 0, prefixes[0]);
+				else
+					d.replace(d.getLineOffset(lineNumber++), linePrefixes[lineCount++].length(), null);
+			}
+
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_2")); //$NON-NLS-1$
 		}
+	}
+	
+	
+	//------ find support
+	
+	/**
+	 * @see IFindReplaceTarget#canPerformFind
+	 */
+	protected boolean canPerformFind() {
+		IDocument d= getVisibleDocument();
+		return (fTextWidget != null && d != null && d.getLength() > 0);
+	}
+	
+	/**
+	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
+	 */
+	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
+		if (fTextWidget == null)
+			return -1;
+			
+		try {
+			int offset= (startPosition == -1 ? startPosition : startPosition - getVisibleRegionOffset());
+			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
+			if (pos > -1) {
+				fTextWidget.setSelectionRange(pos, findString.length());
+				internalRevealRange(pos, pos + findString.length());
+			}
+			return pos;
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
+		}
+		
+		return -1;
+	}	
+	
+	//---------- text presentation support
+	
+	/*
+	 * @see ITextViewer#setTextColor
+	 */
+	public void setTextColor(Color color) {
+		if (color != null)
+			setTextColor(color, 0, getDocument().getLength(), true);
+	}
+	
+	/*
+	 * @see ITextViewer#setTextColor 	 
+	 */
+	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {		
+		
+		if (fTextWidget != null) {
+									
+			if (controlRedraw)
+				fTextWidget.setRedraw(false); 
+			
+			StyleRange s= new StyleRange();
+			s.foreground= color;
+			s.start= start;
+			s.length= length;
+			
+			fTextWidget.setStyleRange(s);
+			
+			if (controlRedraw)
+				fTextWidget.setRedraw(true);
+		}
+	}
+	
+	/**
+	 * Adds the given presentation to the viewer's style information.
+	 *
+	 * @param presentation the presentation to be added
+	 */
+	private void addPresentation(TextPresentation presentation) {
+				
+		Iterator e= null;
+		StyleRange dfltRange= presentation.getDefaultStyleRange();
+		if (dfltRange != null) {
+			fTextWidget.setStyleRange(dfltRange);
+			e= presentation.getNonDefaultStyleRangeIterator();
+		} else {
+			e= presentation.getAllStyleRangeIterator();
+		}
+		
+		while (e.hasNext()) {
+			StyleRange r= (StyleRange) e.next();
+			fTextWidget.setStyleRange(r);
+		}
+	}
+	
+	/**
+	 * Replaces the viewer's style information with the given presentation.
+	 *
+	 * @param presentation the viewer's new style information
+	 */
+	private void replacePresentation(TextPresentation presentation) {
+		
+		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];				
+		
+		int i= 0;
+		Iterator e= presentation.getAllStyleRangeIterator();
+		while (e.hasNext()) {
+			ranges[i++]= (StyleRange) e.next();
+		}
+		
+		fTextWidget.setStyleRanges(ranges);
+	}
+	
+	/**
+	 * Returns the visible region if it is not equal to the whole document.
+	 * Otherwise returns <code>null</code>.
+	 *
+	 * @return the viewer's visible region if smaller than input document, otherwise <code>null</code>
+	 */
+	protected IRegion internalGetVisibleRegion() {
+		
+		IDocument document= getVisibleDocument();
+		if (document instanceof ChildDocument) {
+			Position p= ((ChildDocument) document).getParentDocumentRange();
+			return new Region(p.getOffset(), p.getLength());
+		}		
+		
+		return null;
+	}
+	
+	/*
+	 * @see ITextViewer#changeTextPresentation
+	 */
+	public void changeTextPresentation(TextPresentation presentation, boolean controlRedraw) {
+				
+		if (presentation == null)
+			return;
+			
+		presentation.setResultWindow(internalGetVisibleRegion());
+		if (presentation.isEmpty() || fTextWidget == null)
+			return;
+					
+		if (controlRedraw)
+			fTextWidget.setRedraw(false);
+		
+		if (fReplaceTextPresentation)
+			replacePresentation(presentation);
+		else
+			addPresentation(presentation);
+		
+		if (controlRedraw)
+			fTextWidget.setRedraw(true);
+	}
+
+	/*
+	 * @see ITextViewer#getFindReplaceTarget()
+	 */
+	public IFindReplaceTarget getFindReplaceTarget() {
+		if (fFindReplaceTarget == null)
+			fFindReplaceTarget= new FindReplaceTarget();
+		return fFindReplaceTarget;
+	}
+
+	/*
+	 * @see ITextViewer#getTextOperationTarget()
+	 */
+	public ITextOperationTarget getTextOperationTarget() {
+		return this;
 	}
 }

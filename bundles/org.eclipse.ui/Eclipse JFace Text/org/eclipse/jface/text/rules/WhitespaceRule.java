@@ -30,6 +30,7 @@ public class WhitespaceRule implements IRule {
 		Assert.isNotNull(detector);
 		fDetector= detector;
 	}
+
 	/*
 	 * @see IRule#evaluate
 	 */

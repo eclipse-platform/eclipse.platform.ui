@@ -202,6 +202,17 @@ public final class ChildDocumentManager implements IDocumentListener {
 	
 	
 	/**
+	 * Returns the child position updater. If necessary, it is dynamically created.
+	 *
+	 * @return the child position updater
+	 */
+	protected IPositionUpdater getChildPositionUpdater() {
+		if (fChildPositionUpdater == null)
+			fChildPositionUpdater= new ChildPositionUpdater();
+		return fChildPositionUpdater;
+	}
+	
+	/**
 	 * Creates and returns a new child document for the specified range of the given parent document.
 	 * The created child document is initialized with a child document partitioner.
 	 *
@@ -234,43 +245,7 @@ public final class ChildDocumentManager implements IDocumentListener {
 		
 		return child;
 	}
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
-	public void documentAboutToBeChanged(DocumentEvent event) {
-		fireDocumentEvent(true, event);
-	}
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
-	public void documentChanged(DocumentEvent event) {
-		fireDocumentEvent(false, event);
-	}
-	/**
-	 * Informs all child documents of the document which issued this document event.
-	 *
-	 * @param about indicates whether the change is about to happen or alread happend
-	 * @param event the document event which will be processed to inform child documents
-	 */
-	protected void fireDocumentEvent(boolean about, DocumentEvent event) {
-		try {
-			
-			IDocument parent= event.getDocument();
-			Position[] children= parent.getPositions(CHILDDOCUMENTS);
-			for (int i= 0; i < children.length; i++) {
-				Object o= children[i];
-				if (o instanceof ChildPosition) {
-					ChildPosition pos= (ChildPosition) o;
-					if (about)
-						pos.fChildDocument.parentDocumentAboutToBeChanged(event);
-					else
-						pos.fChildDocument.parentDocumentChanged(event);
-				}
-			}
-		} catch (BadPositionCategoryException x) {
-			// cannot happen
-		}
-	}
+	
 	/**
 	 * Disconnects the given child document from it's parent document and frees 
 	 * all resources which are no longer needed.
@@ -296,14 +271,44 @@ public final class ChildDocumentManager implements IDocumentListener {
 			// cannot happen
 		}
 	}
+	
 	/**
-	 * Returns the child position updater. If necessary, it is dynamically created.
+	 * Informs all child documents of the document which issued this document event.
 	 *
-	 * @return the child position updater
+	 * @param about indicates whether the change is about to happen or alread happend
+	 * @param event the document event which will be processed to inform child documents
 	 */
-	protected IPositionUpdater getChildPositionUpdater() {
-		if (fChildPositionUpdater == null)
-			fChildPositionUpdater= new ChildPositionUpdater();
-		return fChildPositionUpdater;
+	protected void fireDocumentEvent(boolean about, DocumentEvent event) {
+		try {
+			
+			IDocument parent= event.getDocument();
+			Position[] children= parent.getPositions(CHILDDOCUMENTS);
+			for (int i= 0; i < children.length; i++) {
+				Object o= children[i];
+				if (o instanceof ChildPosition) {
+					ChildPosition pos= (ChildPosition) o;
+					if (about)
+						pos.fChildDocument.parentDocumentAboutToBeChanged(event);
+					else
+						pos.fChildDocument.parentDocumentChanged(event);
+				}
+			}
+		} catch (BadPositionCategoryException x) {
+			// cannot happen
+		}
+	}
+
+	/*
+	 * @see IDocumentListener#documentChanged(DocumentEvent)
+	 */
+	public void documentChanged(DocumentEvent event) {
+		fireDocumentEvent(false, event);
+	}
+
+	/*
+	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
+	 */
+	public void documentAboutToBeChanged(DocumentEvent event) {
+		fireDocumentEvent(true, event);
 	}
 }

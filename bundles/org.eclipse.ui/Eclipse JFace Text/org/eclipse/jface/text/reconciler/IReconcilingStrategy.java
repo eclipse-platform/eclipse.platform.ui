@@ -21,13 +21,16 @@ import org.eclipse.jface.text.IRegion;
 public interface IReconcilingStrategy {
 	
 	/**
-	 * Activates non-incremental reconciling. The reconciling strategy is just told
-	 * that there are changes and that it should reconcile the given partition of the
-	 * document most recently passed into <code>setDocument</code>.
+	 * Tells this reconciling strategy on which document it will
+	 * work. This method will be called before any other method 
+	 * and can be called multiple times. The regions passed to the
+	 * other methods always refer to the most recent document 
+	 * passed into this method.
 	 *
-	 * @param partition the document partition to be reconciled
+	 * @param document the document on which this strategy will work
 	 */
-	void reconcile(IRegion partition);
+	void setDocument(IDocument document);
+	
 	/**
 	 * Activates incremental reconciling of the specified dirty region.
 	 * As a dirty region might span multiple content types, the segment of the
@@ -39,14 +42,13 @@ public interface IReconcilingStrategy {
 	 * @param subRegion the sub region in the dirty region which should be reconciled 
 	 */
 	void reconcile(DirtyRegion dirtyRegion, IRegion subRegion);
+
 	/**
-	 * Tells this reconciling strategy on which document it will
-	 * work. This method will be called before any other method 
-	 * and can be called multiple times. The regions passed to the
-	 * other methods always refer to the most recent document 
-	 * passed into this method.
+	 * Activates non-incremental reconciling. The reconciling strategy is just told
+	 * that there are changes and that it should reconcile the given partition of the
+	 * document most recently passed into <code>setDocument</code>.
 	 *
-	 * @param document the document on which this strategy will work
+	 * @param partition the document partition to be reconciled
 	 */
-	void setDocument(IDocument document);
+	void reconcile(IRegion partition);
 }

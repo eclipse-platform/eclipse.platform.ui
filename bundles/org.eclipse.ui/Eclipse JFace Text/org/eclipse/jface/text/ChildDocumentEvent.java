@@ -28,6 +28,7 @@ class ChildDocumentEvent extends DocumentEvent {
 		super(doc, offset, length, text);
 		fParentEvent= parentEvent;
 	}
+	
 	/**
 	 * Returns this event's parent event.
 	 *

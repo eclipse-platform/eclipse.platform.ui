@@ -29,6 +29,7 @@ public final class ContextInformationValidator implements IContextInformationVal
 	public ContextInformationValidator(IContentAssistProcessor processor) {
 		fProcessor= processor;
 	}
+
 	/*
 	 * @see IContextInformationValidator#install
 	 */
@@ -36,6 +37,7 @@ public final class ContextInformationValidator implements IContextInformationVal
 		fContextInformation= contextInformation;
 		fViewer= viewer;
 	}
+
 	/*
 	 * @see IContentAssistTipCloser#isContextInformationValid
 	 */

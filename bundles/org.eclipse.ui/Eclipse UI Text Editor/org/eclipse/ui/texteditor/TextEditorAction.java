@@ -36,6 +36,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 		setEditor(editor);
 		update();
 	}
+	
 	/**
 	 * Returns the action's text editor.
 	 *
@@ -44,6 +45,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	protected ITextEditor getTextEditor() {
 		return fTextEditor;
 	}
+	
 	/**
 	 * Retargets this action to the given editor.
 	 *
@@ -52,6 +54,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	public void setEditor(ITextEditor editor) {
 		fTextEditor= editor;
 	}
+	
 	/**
 	 * Always enables this action if it is connected to a text editor.
 	 * If the asocciated editor is <code>null</code>, the action is disabled.
@@ -59,5 +62,5 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 */
 	public void update() {
 		setEnabled(getTextEditor() != null);
-	}
+	}	
 }

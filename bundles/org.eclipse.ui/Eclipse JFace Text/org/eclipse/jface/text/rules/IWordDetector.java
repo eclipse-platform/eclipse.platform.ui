@@ -14,12 +14,13 @@ public interface IWordDetector {
 
 	/**
 	 * Returns whether the specified character is
-	 * valid as a subsequent character in a word.
-	 */
-	boolean isWordPart(char c);
-	/**
-	 * Returns whether the specified character is
 	 * valid as the first character in a word.
 	 */
 	boolean isWordStart(char c);
+	
+	/**
+	 * Returns whether the specified character is
+	 * valid as a subsequent character in a word.
+	 */
+	boolean isWordPart(char c);
 }

@@ -99,6 +99,21 @@ public final class VerticalRuler implements IVerticalRuler {
 	public VerticalRuler(int width) {
 		fWidth= width;
 	}
+	
+	/*
+	 * @see IVerticalRuler#getControl
+	 */
+	public Control getControl() {
+		return fCanvas;
+	}
+	
+	/*
+	 * @see IVerticalRuler#getWidth
+	 */
+	public int getWidth() {
+		return fWidth;
+	}
+	
 	/*
 	 * @see IVerticalRuler#createControl
 	 */
@@ -142,6 +157,61 @@ public final class VerticalRuler implements IVerticalRuler {
 		
 		return fCanvas;
 	}
+	
+	/**
+	 * Disposes the ruler's resources.
+	 */
+	private void handleDispose() {
+		
+		if (fTextViewer != null) {
+			fTextViewer.removeViewportListener(fInternalListener);
+			fTextViewer.removeTextListener(fInternalListener);
+			fTextViewer= null;
+		}
+		
+		if (fModel != null)
+			fModel.removeAnnotationModelListener(fInternalListener);
+		
+		if (fBuffer != null) {
+			fBuffer.dispose();
+			fBuffer= null;
+		}
+	}
+	
+	
+	/**
+	 * Double buffer drawing.
+	 */
+	private void doubleBufferPaint(GC dest) {
+		
+		Point size= fCanvas.getSize();
+		
+		if (size.x <= 0 || size.y <= 0)
+			return;
+		
+		if (fBuffer != null) {
+			Rectangle r= fBuffer.getBounds();
+			if (r.width != size.x || r.height != size.y) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		}
+		if (fBuffer == null)
+			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+			
+		GC gc= new GC(fBuffer);
+		try {
+			gc.setBackground(fCanvas.getBackground());
+			gc.fillRectangle(0, 0, size.x, size.y);
+			doPaint(gc);
+		} finally {
+			gc.dispose();
+		}
+		
+		dest.drawImage(fBuffer, 0, 0);
+	}
+	
+	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
 	 */
@@ -227,126 +297,7 @@ public final class VerticalRuler implements IVerticalRuler {
 			}
 		}
 	}
-	/**
-	 * Double buffer drawing.
-	 */
-	private void doubleBufferPaint(GC dest) {
 		
-		Point size= fCanvas.getSize();
-		
-		if (size.x <= 0 || size.y <= 0)
-			return;
-		
-		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
-		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-			
-		GC gc= new GC(fBuffer);
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-			doPaint(gc);
-		} finally {
-			gc.dispose();
-		}
-		
-		dest.drawImage(fBuffer, 0, 0);
-	}
-	/*
-	 * @see IVerticalRuler#getControl
-	 */
-	public Control getControl() {
-		return fCanvas;
-	}
-	/*
-	 * @see IVerticalRuler#getLineOfLastMouseButtonActivity()
-	 */
-	public int getLineOfLastMouseButtonActivity() {
-		return fLastMouseButtonActivityLine;
-	}
-	/*
-	 * @see IVerticalRuler#getModel
-	 */
-	public IAnnotationModel getModel() {
-		return fModel;
-	}
-	/*
-	 * @see IVerticalRuler#getWidth
-	 */
-	public int getWidth() {
-		return fWidth;
-	}
-	/**
-	 * Disposes the ruler's resources.
-	 */
-	private void handleDispose() {
-		
-		if (fTextViewer != null) {
-			fTextViewer.removeViewportListener(fInternalListener);
-			fTextViewer.removeTextListener(fInternalListener);
-			fTextViewer= null;
-		}
-		
-		if (fModel != null)
-			fModel.removeAnnotationModelListener(fInternalListener);
-		
-		if (fBuffer != null) {
-			fBuffer.dispose();
-			fBuffer= null;
-		}
-	}
-	/**
-	 * Redraws the vertical ruler.
-	 */
-	private void redraw() {
-		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
-			doubleBufferPaint(gc);
-			gc.dispose();
-		}
-	}
-	/*
-	 * @see IVerticalRuler#setModel
-	 */
-	public void setModel(IAnnotationModel model) {
-		if (model != fModel) {
-			
-			if (fModel != null)
-				fModel.removeAnnotationModelListener(fInternalListener);
-			
-			fModel= model;
-			
-			if (fModel != null)
-				fModel.addAnnotationModelListener(fInternalListener);
-			
-			update();
-		}
-	}
-	/*
-	 * @see IVerticalRuler#toDocumentLineNumber
-	 */
-	public int toDocumentLineNumber(int y_coordinate) {
-		
-		if (fTextViewer == null)
-			return -1;
-			
-		StyledText text= fTextViewer.getTextWidget();
-		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());				
-		try {
-			IRegion r= fTextViewer.getVisibleRegion();
-			IDocument d= fTextViewer.getDocument(); 
-			line += d.getLineOfOffset(r.getOffset());
-		} catch (BadLocationException x) {
-		}
-		
-		return line;
-	}
 	/**
 	 * Thread-safe implementation.
 	 * Can be called from any thread.
@@ -365,5 +316,69 @@ public final class VerticalRuler implements IVerticalRuler {
 				});
 			}	
 		}
+	}
+	
+		
+	/**
+	 * Redraws the vertical ruler.
+	 */
+	private void redraw() {
+		if (fCanvas != null && !fCanvas.isDisposed()) {
+			GC gc= new GC(fCanvas);
+			doubleBufferPaint(gc);
+			gc.dispose();
+		}
+	}
+	
+	/*
+	 * @see IVerticalRuler#setModel
+	 */
+	public void setModel(IAnnotationModel model) {
+		if (model != fModel) {
+			
+			if (fModel != null)
+				fModel.removeAnnotationModelListener(fInternalListener);
+			
+			fModel= model;
+			
+			if (fModel != null)
+				fModel.addAnnotationModelListener(fInternalListener);
+			
+			update();
+		}
+	}
+		
+	/*
+	 * @see IVerticalRuler#getModel
+	 */
+	public IAnnotationModel getModel() {
+		return fModel;
+	}
+	
+	/*
+	 * @see IVerticalRuler#getLineOfLastMouseButtonActivity()
+	 */
+	public int getLineOfLastMouseButtonActivity() {
+		return fLastMouseButtonActivityLine;
+	}
+		
+	/*
+	 * @see IVerticalRuler#toDocumentLineNumber
+	 */
+	public int toDocumentLineNumber(int y_coordinate) {
+		
+		if (fTextViewer == null)
+			return -1;
+			
+		StyledText text= fTextViewer.getTextWidget();
+		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());				
+		try {
+			IRegion r= fTextViewer.getVisibleRegion();
+			IDocument d= fTextViewer.getDocument(); 
+			line += d.getLineOfOffset(r.getOffset());
+		} catch (BadLocationException x) {
+		}
+		
+		return line;
 	}
 }

@@ -26,6 +26,7 @@ public interface IContextInformationValidator {
 	 * @param documentPosition the document position for which the information has been computed
 	 */
 	void install(IContextInformation info, ITextViewer viewer, int documentPosition);
+
 	/**
 	 * Returns whether the information this validator is installed on is still valid
 	 * at the given document position.

@@ -47,6 +47,33 @@ import org.eclipse.jface.text.ITextViewer;
 	
 	
 	/**
+	 * Installs content assist support on the given text viewer.
+	 *
+	 * @param textViewer the text viewer on which content assist will work
+	 */
+	void install(ITextViewer textViewer);
+	
+	/**
+	 * Uninstalls content assist support from the text viewer it has 
+	 * previously be installed on.
+	 */
+	void uninstall();
+	
+	/**
+	 * Shows all possible completions of the content at the viewer's cursor position.
+	 *
+	 * @return an optional error message if no proposals can be computed
+	 */
+	String showPossibleCompletions();
+	
+	/**
+	 * Shows context information for the content at the viewer's cursor position.
+	 *
+	 * @return an optional error message if no context information can be computed
+	 */
+	String showContextInformation();	
+	
+	/**
 	 * Returns the content assist processor to be used for the given content type.
 	 *
 	 * @param contentType the type of the content for which this
@@ -55,27 +82,4 @@ import org.eclipse.jface.text.ITextViewer;
 	 *         <code>null</code> if none exists for the specified content type
 	 */
 	IContentAssistProcessor getContentAssistProcessor(String contentType);
-	/**
-	 * Installs content assist support on the given text viewer.
-	 *
-	 * @param textViewer the text viewer on which content assist will work
-	 */
-	void install(ITextViewer textViewer);
-	/**
-	 * Shows context information for the content at the viewer's cursor position.
-	 *
-	 * @return an optional error message if no context information can be computed
-	 */
-	String showContextInformation();
-	/**
-	 * Shows all possible completions of the content at the viewer's cursor position.
-	 *
-	 * @return an optional error message if no proposals can be computed
-	 */
-	String showPossibleCompletions();
-	/**
-	 * Uninstalls content assist support from the text viewer it has 
-	 * previously be installed on.
-	 */
-	void uninstall();
 }

@@ -17,8 +17,8 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContextIds {
 	
 	/* Preference pages */
-	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context";
+	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
 
 	/* Editors */
-	public static final String TEXT_EDITOR= PREFIX + "text_editor_context";
+	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
 }

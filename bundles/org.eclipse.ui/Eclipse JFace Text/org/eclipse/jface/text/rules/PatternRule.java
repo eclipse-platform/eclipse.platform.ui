@@ -56,6 +56,22 @@ public class PatternRule implements IRule {
 		fEscapeCharacter= escapeCharacter;
 		fBreaksOnEOL= breaksOnEOL;
 	}
+	
+	/**
+	 * Sets a column constraint for this rule. If set, the rule's token
+	 * will only be returned if the pattern is detected starting at the 
+	 * specified column. If the column is smaller then 0, the column
+	 * constraint is considered removed.
+	 *
+	 * @param column the column in which the pattern starts
+	 */
+	public void setColumnConstraint(int column) {
+		if (column < 0)
+			column= UNDEFINED;
+		fColumn= column;
+	}
+	
+	
 	/**
 	 * Evaluates this rules without considering any column constraints.
 	 *
@@ -76,6 +92,23 @@ public class PatternRule implements IRule {
 		scanner.unread();
 		return Token.UNDEFINED;
 	}
+	
+	/*
+	 * @see IRule#evaluate
+	 */
+	public IToken evaluate(ICharacterScanner scanner) {
+		
+		if (fColumn == UNDEFINED)
+			return doEvaluate(scanner);
+		
+		int c= scanner.read();
+		scanner.unread();
+		if (c == fStartSequence[0])
+			return (fColumn == scanner.getColumn() ? doEvaluate(scanner) : Token.UNDEFINED);
+		else
+			return Token.UNDEFINED;
+	}	
+	
 	/**
 	 * Returns whether the end sequence was detected. As the pattern can be considered 
 	 * ended by a line delimiter, the result of this method is <code>true</code> if the 
@@ -106,21 +139,7 @@ public class PatternRule implements IRule {
 		scanner.unread();
 		return true;
 	}
-	/*
-	 * @see IRule#evaluate
-	 */
-	public IToken evaluate(ICharacterScanner scanner) {
-		
-		if (fColumn == UNDEFINED)
-			return doEvaluate(scanner);
-		
-		int c= scanner.read();
-		scanner.unread();
-		if (c == fStartSequence[0])
-			return (fColumn == scanner.getColumn() ? doEvaluate(scanner) : Token.UNDEFINED);
-		else
-			return Token.UNDEFINED;
-	}
+	
 	/**
 	 * Returns whether the next characters to be read by the character scanner
 	 * are an exact match with the given sequence. No escape characters are allowed 
@@ -147,18 +166,5 @@ public class PatternRule implements IRule {
 		}
 		
 		return true;
-	}
-	/**
-	 * Sets a column constraint for this rule. If set, the rule's token
-	 * will only be returned if the pattern is detected starting at the 
-	 * specified column. If the column is smaller then 0, the column
-	 * constraint is considered removed.
-	 *
-	 * @param column the column in which the pattern starts
-	 */
-	public void setColumnConstraint(int column) {
-		if (column < 0)
-			column= UNDEFINED;
-		fColumn= column;
 	}
 }

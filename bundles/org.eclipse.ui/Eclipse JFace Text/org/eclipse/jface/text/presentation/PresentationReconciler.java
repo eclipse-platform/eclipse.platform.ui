@@ -169,15 +169,118 @@ public class PresentationReconciler implements IPresentationReconciler {
 		fPositionCategory= TRACKED_PARTITION + hashCode();
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
+	
 	/**
-	 * Applies the given text presentation to the text viewer the presentation
-	 * reconciler is installed on.
+	 * Registers a given presentation damager for a particular content type.
+	 * If there is already a damager registered for this type, the new damager 
+	 * is registered instead of the old one.
 	 *
-	 * @param presentation the text presentation to be applied to the text viewer
+	 * @param damager the presentation damager to register, or <code>null</code> to remove an existing one
+	 * @param contentType the content type under which to register
 	 */
-	private void applyTextRegionCollection(TextPresentation presentation) {
-		fViewer.changeTextPresentation(presentation, false);
+	public void setDamager(IPresentationDamager damager, String contentType) {
+		
+		Assert.isNotNull(contentType);
+		
+		if (fDamagers == null) 
+			fDamagers= new HashMap();
+			
+		if (damager == null)
+			fDamagers.remove(contentType);
+		else
+			fDamagers.put(contentType, damager);
 	}
+	
+	/**
+	 * Registers a given presentation repairer for a particular content type.
+	 * If there is already a repairer registered for this type, the new repairer 
+	 * is registered instead of the old one.
+	 *
+	 * @param repairer the presentation repairer to register, or <code>null</code> to remove an existing one
+	 * @param contentType the content type under which to register
+	 */
+	public void setRepairer(IPresentationRepairer repairer, String contentType) {
+		
+		Assert.isNotNull(contentType);
+					
+		if (fRepairers == null)
+			fRepairers= new HashMap();
+		
+		if (repairer == null)
+			fRepairers.remove(contentType);
+		else
+			fRepairers.put(contentType, repairer);
+	}
+		
+	/*
+	 * @see IPresentationReconciler#install
+	 */
+	public void install(ITextViewer viewer) {
+		Assert.isNotNull(viewer);
+		
+		fViewer= viewer;
+		fViewer.addTextInputListener(fInternalListener);
+	}
+	
+	/*
+	 * @see IPresentationReconciler#uninstall
+	 */
+	public void uninstall() {
+		fViewer.removeTextInputListener(fInternalListener);
+	}
+	 
+	/*
+	 * @see IPresentationReconciler#getDamager
+	 */
+	public IPresentationDamager getDamager(String contentType) {
+		
+		if (fDamagers == null)
+			return null;
+						
+		return (IPresentationDamager) fDamagers.get(contentType);
+	}
+	
+	/*
+	 * @see IPresentationReconciler#getRepairer
+	 */
+	public IPresentationRepairer getRepairer(String contentType) {
+		
+		if (fRepairers == null)
+			return null;
+						
+		return (IPresentationRepairer) fRepairers.get(contentType);
+	}
+	
+	/**
+	 * Informs all registed damagers about the document on which they will work. 
+	 *
+	 * @param document the document on which to work
+	 */
+	private void setDocumentToDamagers(IDocument document) {
+		if (fDamagers != null) {
+			Iterator e= fDamagers.values().iterator();
+			while (e.hasNext()) {
+				IPresentationDamager damager= (IPresentationDamager) e.next();
+				damager.setDocument(document);
+			}
+		}
+	}
+	
+	/**
+	 * Informs all registed repairers about the document on which they will work.
+	 *
+	 * @param document the document on which to work
+	 */
+	private void setDocumentToRepairers(IDocument document) {
+		if (fRepairers != null) {
+			Iterator e= fRepairers.values().iterator();
+			while (e.hasNext()) {
+				IPresentationRepairer repairer= (IPresentationRepairer) e.next();
+				repairer.setDocument(document);
+			}
+		}
+	}
+	
 	/**
 	 * Constructs a "repair description" for the given damage and returns 
 	 * this description as a text presentation. For this, it queries the 
@@ -209,6 +312,8 @@ public class PresentationReconciler implements IPresentationReconciler {
 		
 		return null;
 	}
+	
+		
 	/**
 	 * Checks for the first and the last affected partition and calls their damagers.
 	 * Invalidates everything from the start of the damage for the first partition
@@ -242,6 +347,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		
 		return damage;
 	}
+	
 	/**
 	 * Returns the end offset of the damage. If a partition has been splitted by
 	 * the given document event also the second half of the original
@@ -280,35 +386,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		
 		return r.getOffset() + r.getLength();
 	}
-	/*
-	 * @see IPresentationReconciler#getDamager
-	 */
-	public IPresentationDamager getDamager(String contentType) {
 		
-		if (fDamagers == null)
-			return null;
-						
-		return (IPresentationDamager) fDamagers.get(contentType);
-	}
-	/*
-	 * @see IPresentationReconciler#getRepairer
-	 */
-	public IPresentationRepairer getRepairer(String contentType) {
-		
-		if (fRepairers == null)
-			return null;
-						
-		return (IPresentationRepairer) fRepairers.get(contentType);
-	}
-	/*
-	 * @see IPresentationReconciler#install
-	 */
-	public void install(ITextViewer viewer) {
-		Assert.isNotNull(viewer);
-		
-		fViewer= viewer;
-		fViewer.addTextInputListener(fInternalListener);
-	}
 	/**
 	 * Processes the given damage.
 	 * @param damage the damage to be repaired
@@ -321,78 +399,14 @@ public class PresentationReconciler implements IPresentationReconciler {
 				applyTextRegionCollection(p);
 		}
 	}
+	
 	/**
-	 * Registers a given presentation damager for a particular content type.
-	 * If there is already a damager registered for this type, the new damager 
-	 * is registered instead of the old one.
+	 * Applies the given text presentation to the text viewer the presentation
+	 * reconciler is installed on.
 	 *
-	 * @param damager the presentation damager to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register
+	 * @param presentation the text presentation to be applied to the text viewer
 	 */
-	public void setDamager(IPresentationDamager damager, String contentType) {
-		
-		Assert.isNotNull(contentType);
-		
-		if (fDamagers == null) 
-			fDamagers= new HashMap();
-			
-		if (damager == null)
-			fDamagers.remove(contentType);
-		else
-			fDamagers.put(contentType, damager);
-	}
-	/**
-	 * Informs all registed damagers about the document on which they will work. 
-	 *
-	 * @param document the document on which to work
-	 */
-	private void setDocumentToDamagers(IDocument document) {
-		if (fDamagers != null) {
-			Iterator e= fDamagers.values().iterator();
-			while (e.hasNext()) {
-				IPresentationDamager damager= (IPresentationDamager) e.next();
-				damager.setDocument(document);
-			}
-		}
-	}
-	/**
-	 * Informs all registed repairers about the document on which they will work.
-	 *
-	 * @param document the document on which to work
-	 */
-	private void setDocumentToRepairers(IDocument document) {
-		if (fRepairers != null) {
-			Iterator e= fRepairers.values().iterator();
-			while (e.hasNext()) {
-				IPresentationRepairer repairer= (IPresentationRepairer) e.next();
-				repairer.setDocument(document);
-			}
-		}
-	}
-	/**
-	 * Registers a given presentation repairer for a particular content type.
-	 * If there is already a repairer registered for this type, the new repairer 
-	 * is registered instead of the old one.
-	 *
-	 * @param repairer the presentation repairer to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register
-	 */
-	public void setRepairer(IPresentationRepairer repairer, String contentType) {
-		
-		Assert.isNotNull(contentType);
-					
-		if (fRepairers == null)
-			fRepairers= new HashMap();
-		
-		if (repairer == null)
-			fRepairers.remove(contentType);
-		else
-			fRepairers.put(contentType, repairer);
-	}
-	/*
-	 * @see IPresentationReconciler#uninstall
-	 */
-	public void uninstall() {
-		fViewer.removeTextInputListener(fInternalListener);
-	}
+	private void applyTextRegionCollection(TextPresentation presentation) {
+		fViewer.changeTextPresentation(presentation, false);
+	}	
 }

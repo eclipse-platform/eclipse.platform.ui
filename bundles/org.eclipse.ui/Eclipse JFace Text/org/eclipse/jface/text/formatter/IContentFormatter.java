@@ -37,6 +37,7 @@ public interface IContentFormatter {
 	 * @param region the region within the document to be formatted
 	 */
 	void format(IDocument document, IRegion region);
+	
 	/**
 	 * Returns the formatting strategy registered for the given content type.
 	 *

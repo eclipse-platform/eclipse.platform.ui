@@ -14,6 +14,8 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -49,7 +51,7 @@ public class ContentAssistant implements IContentAssistant {
 	 * content-assist should be terminated and all
 	 * associated windows closed.
 	 */
-	class Closer implements ControlListener, MouseListener, FocusListener, IViewportListener {
+	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
 
 		protected void install() {
 			Control w= fViewer.getTextWidget();
@@ -60,6 +62,11 @@ public class ContentAssistant implements IContentAssistant {
 					
 				w.addMouseListener(this);
 				w.addFocusListener(this);
+				
+				/*
+				 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
+				 */
+				w.addDisposeListener(this);
 			}
 			
 			fViewer.addViewportListener(this);
@@ -74,6 +81,11 @@ public class ContentAssistant implements IContentAssistant {
 				
 				w.removeMouseListener(this);
 				w.removeFocusListener(this);
+				
+				/*
+				 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
+				 */
+				w.removeDisposeListener(this);
 			}
 			
 			fViewer.removeViewportListener(this);
@@ -114,6 +126,14 @@ public class ContentAssistant implements IContentAssistant {
 					}
 				}
 			});
+		}
+		
+		// DisposeListener
+		public void widgetDisposed(DisposeEvent e) {
+			/*
+			 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
+			 */
+			hide();
 		}
 
 		// IViewPortListener
@@ -156,7 +176,7 @@ public class ContentAssistant implements IContentAssistant {
 
 		protected void start(int showStyle) {
 			fShowStyle= showStyle;
-			fThread= new Thread(this, "AutoAssist Delay"); //$NON-NLS-1$
+			fThread= new Thread(this, JFaceTextMessages.getString("ContentAssistant.assist_delay_timer_name")); //$NON-NLS-1$
 			fThread.start();
 		}
 
@@ -543,6 +563,168 @@ public class ContentAssistant implements IContentAssistant {
 	 */	
 	public ContentAssistant() {
 	}
+		
+	/**
+	 * Registers a given content assist processor for a particular content type.
+	 * If there is already a processor registered for this type, the new processor 
+	 * is registered instead of the old one.
+	 *
+	 * @param processor the content assist processor to register, or <code>null</code> to remove an existing one
+	 * @param contentType the content type under which to register
+	 */	
+	 public void setContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
+		
+		Assert.isNotNull(contentType);
+					
+		if (fProcessors == null)
+			fProcessors= new HashMap();
+			
+		if (processor == null)
+			fProcessors.remove(contentType);
+		else
+			fProcessors.put(contentType, processor);
+	}
+	
+	/*
+	 * @see IContentAssistant#getContentAssistProcessor 	 
+	 */
+	public IContentAssistProcessor getContentAssistProcessor(String contentType) {
+		if (fProcessors == null)
+			return null;
+						
+		return (IContentAssistProcessor) fProcessors.get(contentType);
+	}
+	
+	/**
+	 * Sets the content assistant's auto activation state.
+	 *
+	 * @param enabled indicates whether auto activation is enabled or not
+	 */
+	public void enableAutoActivation(boolean enabled) {
+		fIsAutoActivated= enabled;
+	}
+	
+	/**
+	 * Sets the delay after which the content assistant is automatically invoked
+	 * if the cursor is behind an auto activation character. 
+	 *
+	 * @param delay the auto activation delay
+	 */
+	public void setAutoActivationDelay(int delay) {
+		fAutoActivationDelay= delay;
+	}
+	
+	/**
+	 * Sets the proposal popups' orientation
+	 * The following values may be used:
+	 * <ul>
+	 *   <li>PROPOSAL_OVERLAY<p>
+	 *     proposal popup windows should overlay each other
+	 *   </li>
+	 *   <li>PROPOSAL_REMOVE<p>
+	 *     any currently shown proposal popup should be closed
+	 *   </li>
+	 *   <li>PROPOSAL_STACKED<p>
+	 *     proposal popup windows should be vertical stacked, with no overlap,
+	 *     beneath the line containing the current cursor location
+	 *   </li>
+	 * </ul>
+	 *
+	 * @param orientation the popup's orientation
+	 */	 
+	public void setProposalPopupOrientation(int orientation) {
+		fProposalPopupOrientation= orientation;
+	}
+	
+	/**
+	 * Sets the context information popup's orientation
+	 * The following values may be used:
+	 * <ul>
+	 *   <li>CONTEXT_ABOVE<p>
+	 *     context information popup should always appear above the line containing
+	 *     the current cursor location
+	 *   </li>
+	 *   <li>CONTEXT_BELOW<p>
+	 *     context information popup should always appear below the line containing
+	 *     the current cursor location
+	 *   </li>
+	 * </ul>
+	 *
+	 * @param orientation the popup's orientation
+	 */	
+	public void setContextInformationPopupOrientation(int orientation) {
+		fContextInfoPopupOrientation= orientation;
+	}
+	
+	/**
+	 * Sets the context information popup's background color.
+	 *
+	 * @param background the background color
+	 */
+	public void setContextInformationPopupBackground(Color background) {
+		fContextInfoPopupBackground= background;
+	}
+	
+	/**
+	 * Returns the background of the context information popup.
+	 *
+	 * @return the background of the context information popup
+	 */
+	Color getContextInfoPopupBackground() {
+		return fContextInfoPopupBackground;
+	}
+	
+	/*
+	 * @see IContentAssist#install
+	 */
+	public void install(ITextViewer textViewer) {
+		Assert.isNotNull(textViewer);
+		
+		fViewer= textViewer;
+		
+		fLayoutManager= new LayoutManager();
+		fInternalListener= new InternalListener();
+		
+		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
+		fProposalPopup= new CompletionProposalPopup(this, fViewer, new AdditionalInfoPopup(fAutoActivationDelay));
+		
+		if (fIsAutoActivated) {
+			fAutoAssistListener= new AutoAssistListener(fAutoActivationDelay);
+			addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
+		}
+	}
+	
+	/*
+	 * @see IContentAssist#uninstall
+	 */
+	public void uninstall() {
+		if (fAutoAssistListener != null) {
+			removeContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
+			fAutoAssistListener= null;
+		}
+	}
+
+	/**
+	 * Adds the given shell of the specified type to the layout.
+	 * Valid types are defined by <code>LayoutManager</code>.
+	 *
+	 * @param popup a content assist popup
+	 * @param shell the shell of the content-assist popup
+	 * @param type the type of popup
+	 */
+	void addToLayout(Object popup, Shell shell, int type) {
+		fLayoutManager.add(popup, shell, type);
+	}
+
+	/**
+	 * Notifies the controller that a popup has lost focus.
+	 *
+	 * @param e the focus event
+	 */
+	void popupFocusLost(FocusEvent e) {
+		fCloser.focusLost(e);
+	}
+
 	/**
 	 * Registers a content assist listener.
 	 * The following are valid listener types:
@@ -568,17 +750,135 @@ public class ContentAssistant implements IContentAssistant {
 			installKeyListener();
 		}
 	}
+	
 	/**
-	 * Adds the given shell of the specified type to the layout.
-	 * Valid types are defined by <code>LayoutManager</code>.
-	 *
-	 * @param popup a content assist popup
-	 * @param shell the shell of the content-assist popup
-	 * @param type the type of popup
+	 * Installs a key listener on the text viewer's widget.
 	 */
-	void addToLayout(Object popup, Shell shell, int type) {
-		fLayoutManager.add(popup, shell, type);
+	private void installKeyListener() {
+		if (!fKeyListenerHooked) {
+			StyledText text= fViewer.getTextWidget();
+			if (Helper.okToUse(text)) {
+				text.addVerifyKeyListener(fInternalListener);
+				fKeyListenerHooked= true;
+			}
+		}
 	}
+	
+	/**
+	 * Unregisters a content assist listener.
+	 *
+	 * @param listener the listener to unregister
+	 * @param type the type of listener
+	 *
+	 * @see #addContentAssistListener
+	 */
+	void removeContentAssistListener(IContentAssistListener listener, int type) {
+		fListeners[type]= null;
+		
+		if (fCloser != null && !isCloserNeeded()) {
+			fCloser.uninstall();
+			fCloser= null;
+		}
+		if (!isListenerHookNeeded()) {
+			uninstallKeyListener();
+			fViewer.setEventConsumer(null);
+		}
+	}
+	
+	/**
+	 * Uninstall the key listener from the text viewer's widget.
+	 */
+	private void uninstallKeyListener() {
+		if (fKeyListenerHooked) {
+			StyledText text= fViewer.getTextWidget();
+			if (Helper.okToUse(text)) {
+				text.removeVerifyKeyListener(fInternalListener);
+				fKeyListenerHooked= false;
+			}
+		}
+	}
+	
+	/**
+	 * Returns whether a closer should be installed.
+	 * A single, shared closer is used to monitor for events
+	 * that should result in any open popups being closed.
+	 *
+	 * @return <code>true</code> if a closer is needed
+	 */
+	private boolean isCloserNeeded() {
+		// Do not include AUTO_ASSIST as it doesn't need a closer.
+		for (int i= CONTEXT_SELECTOR; i <= CONTEXT_INFO_POPUP; i++) {
+			if (fListeners[i] != null)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether a listener hook should be installed.
+	 * A single, shared listener is used to monitor for events
+	 * that are to be propagated to the registered listeners.
+	 *
+	 * @return <code>true</code> if a listener hook is needed
+	 */
+	private boolean isListenerHookNeeded() {
+		for (int i= AUTO_ASSIST; i <= CONTEXT_INFO_POPUP; i++) {
+			if (fListeners[i] != null)
+				return true;
+		}
+		return false;
+	}
+		
+	/*
+	 * @see IContentAssist#showPossibleCompletions
+	 */
+	public String showPossibleCompletions() {
+		return fProposalPopup.showProposals(true);
+	}
+	
+	/*
+	 * @see IContentAssist#showContextInformation
+	 */
+	public String showContextInformation() {
+		return fContextInfoPopup.showContextProposals(true);
+	}
+	
+	/**
+	 * Requests that the specified context information to be shown.
+	 *
+	 * @param contextInformation the context information to be shown
+	 */
+	void showContextInformation(IContextInformation contextInformation) {
+		fContextInfoPopup.showContextInformation(contextInformation);
+	}
+	
+	/**
+	 * Returns the current content assist error message.
+	 *
+	 * @return an error message or <code>null</code> if no error has occurred
+	 */
+	String getErrorMessage() {
+		return fLastErrorMessage;
+	}
+	
+	/**
+	 * Returns the content assist processor for the content
+	 * type of the specified document position.
+	 *
+	 * @param document the document
+	 * @param position a position within the document
+	 * @return a content-assist processor or <code>null</code> if none exists
+	 */
+	private IContentAssistProcessor getProcessor(IDocument document, int position) {
+		try {
+			String type= document.getContentType(position);
+			return getContentAssistProcessor(type);
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+		
 	/**
 	 * Returns an array of completion proposals computed based on 
 	 * the specified document position. The position is used to 
@@ -603,6 +903,7 @@ public class ContentAssistant implements IContentAssistant {
 		
 		return result;
 	}
+	
 	/**
 	 * Returns an array of context information objects computed based
 	 * on the specified document position. The position is used to determine 
@@ -627,65 +928,7 @@ public class ContentAssistant implements IContentAssistant {
 		
 		return result;
 	}
-	/**
-	 * Sets the content assistant's auto activation state.
-	 *
-	 * @param enabled indicates whether auto activation is enabled or not
-	 */
-	public void enableAutoActivation(boolean enabled) {
-		fIsAutoActivated= enabled;
-	}
-	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate proposing completions. The position is used to determine the 
-	 * appropriate content assist processor to invoke.
-	 *
-	 * @param document the document
-	 * @param position a document position
-	 * @return the auto activation characters
-	 *
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
-	 */
-	private char[] getCompletionProposalAutoActivationCharacters(IDocument document, int position) {
-		IContentAssistProcessor p= getProcessor(document, position);
-		if (p != null)
-			return p.getCompletionProposalAutoActivationCharacters();
-		return null;
-	}
-	/*
-	 * @see IContentAssistant#getContentAssistProcessor 	 
-	 */
-	public IContentAssistProcessor getContentAssistProcessor(String contentType) {
-		if (fProcessors == null)
-			return null;
-						
-		return (IContentAssistProcessor) fProcessors.get(contentType);
-	}
-	/**
-	 * Returns the background of the context information popup.
-	 *
-	 * @return the background of the context information popup
-	 */
-	Color getContextInfoPopupBackground() {
-		return fContextInfoPopupBackground;
-	}
-	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate the presenation of context information. The position is used
-	 * to determine the appropriate content assist processor to invoke.
-	 *
-	 * @param document the document
-	 * @param position a document position
-	 * @return the auto activation characters
-	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
-	 */
-	private char[] getContextInformationAutoActivationCharacters(IDocument document, int position) {
-		IContentAssistProcessor p= getProcessor(document, position);
-		if (p != null)
-			return p.getContextInformationAutoActivationCharacters();
-		return null;
-	}
+	
 	/**
 	 * Returns the context information validator that should be used to 
 	 * determine when the currently displayed context information should
@@ -704,235 +947,41 @@ public class ContentAssistant implements IContentAssistant {
 			return p.getContextInformationValidator();
 		return null;
 	}
+	
 	/**
-	 * Returns the current content assist error message.
-	 *
-	 * @return an error message or <code>null</code> if no error has occurred
-	 */
-	String getErrorMessage() {
-		return fLastErrorMessage;
-	}
-	/**
-	 * Returns the content assist processor for the content
-	 * type of the specified document position.
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate proposing completions. The position is used to determine the 
+	 * appropriate content assist processor to invoke.
 	 *
 	 * @param document the document
-	 * @param position a position within the document
-	 * @return a content-assist processor or <code>null</code> if none exists
+	 * @param position a document position
+	 * @return the auto activation characters
+	 *
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
 	 */
-	private IContentAssistProcessor getProcessor(IDocument document, int position) {
-		try {
-			String type= document.getContentType(position);
-			return getContentAssistProcessor(type);
-		} catch (BadLocationException x) {
-		}
-		
+	private char[] getCompletionProposalAutoActivationCharacters(IDocument document, int position) {
+		IContentAssistProcessor p= getProcessor(document, position);
+		if (p != null)
+			return p.getCompletionProposalAutoActivationCharacters();
 		return null;
 	}
-	/*
-	 * @see IContentAssist#install
-	 */
-	public void install(ITextViewer textViewer) {
-		Assert.isNotNull(textViewer);
-		
-		fViewer= textViewer;
-		
-		fLayoutManager= new LayoutManager();
-		fInternalListener= new InternalListener();
-		
-		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
-		fProposalPopup= new CompletionProposalPopup(this, fViewer, new AdditionalInfoPopup(fAutoActivationDelay));
-		
-		if (fIsAutoActivated) {
-			fAutoAssistListener= new AutoAssistListener(fAutoActivationDelay);
-			addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
-		}
-	}
+	
 	/**
-	 * Installs a key listener on the text viewer's widget.
-	 */
-	private void installKeyListener() {
-		if (!fKeyListenerHooked) {
-			StyledText text= fViewer.getTextWidget();
-			if (Helper.okToUse(text)) {
-				text.addVerifyKeyListener(fInternalListener);
-				fKeyListenerHooked= true;
-			}
-		}
-	}
-	/**
-	 * Returns whether a closer should be installed.
-	 * A single, shared closer is used to monitor for events
-	 * that should result in any open popups being closed.
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate the presenation of context information. The position is used
+	 * to determine the appropriate content assist processor to invoke.
 	 *
-	 * @return <code>true</code> if a closer is needed
-	 */
-	private boolean isCloserNeeded() {
-		// Do not include AUTO_ASSIST as it doesn't need a closer.
-		for (int i= CONTEXT_SELECTOR; i <= CONTEXT_INFO_POPUP; i++) {
-			if (fListeners[i] != null)
-				return true;
-		}
-		return false;
-	}
-	/**
-	 * Returns whether a listener hook should be installed.
-	 * A single, shared listener is used to monitor for events
-	 * that are to be propagated to the registered listeners.
+	 * @param document the document
+	 * @param position a document position
+	 * @return the auto activation characters
 	 *
-	 * @return <code>true</code> if a listener hook is needed
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
 	 */
-	private boolean isListenerHookNeeded() {
-		for (int i= AUTO_ASSIST; i <= CONTEXT_INFO_POPUP; i++) {
-			if (fListeners[i] != null)
-				return true;
-		}
-		return false;
-	}
-	/**
-	 * Notifies the controller that a popup has lost focus.
-	 *
-	 * @param e the focus event
-	 */
-	void popupFocusLost(FocusEvent e) {
-		fCloser.focusLost(e);
-	}
-	/**
-	 * Unregisters a content assist listener.
-	 *
-	 * @param listener the listener to unregister
-	 * @param type the type of listener
-	 *
-	 * @see #addContentAssistListener
-	 */
-	void removeContentAssistListener(IContentAssistListener listener, int type) {
-		fListeners[type]= null;
-		
-		if (fCloser != null && !isCloserNeeded()) {
-			fCloser.uninstall();
-			fCloser= null;
-		}
-		if (!isListenerHookNeeded()) {
-			uninstallKeyListener();
-			fViewer.setEventConsumer(null);
-		}
-	}
-	/**
-	 * Sets the delay after which the content assistant is automatically invoked
-	 * if the cursor is behind an auto activation character. 
-	 *
-	 * @param delay the auto activation delay
-	 */
-	public void setAutoActivationDelay(int delay) {
-		fAutoActivationDelay= delay;
-	}
-	/**
-	 * Registers a given content assist processor for a particular content type.
-	 * If there is already a processor registered for this type, the new processor 
-	 * is registered instead of the old one.
-	 *
-	 * @param processor the content assist processor to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register
-	 */	
-	 public void setContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
-		
-		Assert.isNotNull(contentType);
-					
-		if (fProcessors == null)
-			fProcessors= new HashMap();
-			
-		if (processor == null)
-			fProcessors.remove(contentType);
-		else
-			fProcessors.put(contentType, processor);
-	}
-	/**
-	 * Sets the context information popup's background color.
-	 *
-	 * @param background the background color
-	 */
-	public void setContextInformationPopupBackground(Color background) {
-		fContextInfoPopupBackground= background;
-	}
-	/**
-	 * Sets the context information popup's orientation
-	 * The following values may be used:
-	 * <ul>
-	 *   <li>CONTEXT_ABOVE<p>
-	 *     context information popup should always appear above the line containing
-	 *     the current cursor location
-	 *   </li>
-	 *   <li>CONTEXT_BELOW<p>
-	 *     context information popup should always appear below the line containing
-	 *     the current cursor location
-	 *   </li>
-	 * </ul>
-	 *
-	 * @param orientation the popup's orientation
-	 */	
-	public void setContextInformationPopupOrientation(int orientation) {
-		fContextInfoPopupOrientation= orientation;
-	}
-	/**
-	 * Sets the proposal popups' orientation
-	 * The following values may be used:
-	 * <ul>
-	 *   <li>PROPOSAL_OVERLAY<p>
-	 *     proposal popup windows should overlay each other
-	 *   </li>
-	 *   <li>PROPOSAL_REMOVE<p>
-	 *     any currently shown proposal popup should be closed
-	 *   </li>
-	 *   <li>PROPOSAL_STACKED<p>
-	 *     proposal popup windows should be vertical stacked, with no overlap,
-	 *     beneath the line containing the current cursor location
-	 *   </li>
-	 * </ul>
-	 *
-	 * @param orientation the popup's orientation
-	 */	 
-	public void setProposalPopupOrientation(int orientation) {
-		fProposalPopupOrientation= orientation;
-	}
-	/*
-	 * @see IContentAssist#showContextInformation
-	 */
-	public String showContextInformation() {
-		return fContextInfoPopup.showContextProposals(true);
-	}
-	/**
-	 * Requests that the specified context information to be shown.
-	 *
-	 * @param contextInformation the context information to be shown
-	 */
-	void showContextInformation(IContextInformation contextInformation) {
-		fContextInfoPopup.showContextInformation(contextInformation);
-	}
-	/*
-	 * @see IContentAssist#showPossibleCompletions
-	 */
-	public String showPossibleCompletions() {
-		return fProposalPopup.showProposals(true);
-	}
-	/*
-	 * @see IContentAssist#uninstall
-	 */
-	public void uninstall() {
-		if (fAutoAssistListener != null) {
-			removeContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
-			fAutoAssistListener= null;
-		}
-	}
-	/**
-	 * Uninstall the key listener from the text viewer's widget.
-	 */
-	private void uninstallKeyListener() {
-		if (fKeyListenerHooked) {
-			StyledText text= fViewer.getTextWidget();
-			if (Helper.okToUse(text)) {
-				text.removeVerifyKeyListener(fInternalListener);
-				fKeyListenerHooked= false;
-			}
-		}
+	private char[] getContextInformationAutoActivationCharacters(IDocument document, int position) {
+		IContentAssistProcessor p= getProcessor(document, position);
+		if (p != null)
+			return p.getContextInformationAutoActivationCharacters();
+		return null;
 	}
 }
+

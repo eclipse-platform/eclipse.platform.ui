@@ -40,6 +40,106 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IDocumentProvider {
 	
 	/**
+	 * Connects the given element to this document provider.
+	 * The given element must not be <code>null</code>.
+	 *
+	 * @param element the element
+	 * @exception CoreException if the textual representation or the annotation model
+	 *		of the element could not be created
+	 */
+	void connect(Object element) throws CoreException;
+	
+	/**
+	 * Disconnects the given element from this document provider.
+	 * The given element must not be <code>null</code>.
+	 *
+	 * @param element the element
+	 */
+	void disconnect(Object element);
+	
+	/**
+	 * Returns the document for the given element. Usually the document contains
+	 * a textual presentation of the content of the element, or is the element itself.
+	 *
+	 * @param element the element, or <code>null</code>
+	 * @return the document, or <code>null</code> if none
+	 */
+	IDocument getDocument(Object element);
+	
+	/**
+	 * Resets the given element's document to its last saved state.
+	 * Element state listeners are notified both before (<code>elementContentAboutToBeReplaced</code>)
+	 * and after (<code>elementContentReplaced</code>) the content is changed.
+	 *
+	 * @param element the element, or <code>null</code>
+	 */
+	void resetDocument(Object element) throws CoreException;
+	
+	/**
+	 * Saves the given document provided for the given element.
+	 *
+	 * @param monitor a progress monitor to report progress and request cancelation
+	 * @param element the element, or <code>null</code>
+	 * @param document the document
+	 * @param overwrite indicates whether overwrite should be performed 
+	 * 			while saving the given element if necessary
+	 * @exception CoreException if document could not be stored to the given element
+	 */
+	void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
+	
+	/**
+	 * Returns the modification stamp of the given element.
+	 * 
+	 * @param element the element
+	 * @return the modification stamp of the given element
+	 */
+	long getModificationStamp(Object element);
+	
+	/**
+	 * Returns the time stamp of the last synchronization of
+	 * the given element and it's provided document.
+	 * 
+	 * @param element the element
+	 * @return the sysnchronization stamp of the given element
+	 */
+	long getSynchronizationStamp(Object element);
+	
+	/**
+	 * Returns whether the given element has been deleted.
+	 * 
+	 * @param element the element
+	 * @return <code>true</code> if the element has been deleted
+	 */
+	boolean isDeleted(Object element);
+	
+	/**
+	 * Returns whether the document provided for the given element must be saved.
+	 *
+	 * @param element the element, or <code>null</code>
+	 * @return <code>true</code> if the document must be saved, and
+	 *   <code>false</code> otherwise (including the element is <code>null</code>)
+	 */
+	boolean mustSaveDocument(Object element);
+	
+	/**
+	 * Returns whether the document provided for the given element differs from
+	 * its original state which would required that it be saved.
+	 *
+	 * @param element the element, or <code>null</code>
+	 * @return <code>true</code> if the document can be saved, and
+	 *   <code>false</code> otherwise (including the element is <code>null</code>)
+	 */
+	boolean canSaveDocument(Object element);
+	
+	/**
+	 * Returns the annotation model for the given element.
+	 *
+	 * @param element the element, or <code>null</code>
+	 * @return the annotation model, or <code>null</code> if none
+	 */
+	IAnnotationModel getAnnotationModel(Object element);
+	
+	/**
 	 * Informs this document provider about upcoming changes of the given element.
 	 * The changes might cause change notifications specific for the type of the given element.
 	 * If this provider manages a document for the given element, the document provider 
@@ -54,22 +154,7 @@ public interface IDocumentProvider {
 	 * @param element the element, or <code>null</code>
 	 */
 	void aboutToChange(Object element);
-	/**
-	 * Adds the given element state listener to this document provider.
-	 * Has no effect if an identical listener is already registered.
-	 *
-	 * @param listener the listener
-	 */
-	void addElementStateListener(IElementStateListener listener);
-	/**
-	 * Returns whether the document provided for the given element differs from
-	 * its original state which would required that it be saved.
-	 *
-	 * @param element the element, or <code>null</code>
-	 * @return <code>true</code> if the document can be saved, and
-	 *   <code>false</code> otherwise (including the element is <code>null</code>)
-	 */
-	boolean canSaveDocument(Object element);
+	
 	/**
 	 * Informs this document provider that the given element has been changed.
 	 * All notifications have been sent out. If this provider manages a document 
@@ -81,67 +166,15 @@ public interface IDocumentProvider {
 	 * @param element the element, or <code>null</code>
 	 */
 	void changed(Object element);
+	
 	/**
-	 * Connects the given element to this document provider.
-	 * The given element must not be <code>null</code>.
+	 * Adds the given element state listener to this document provider.
+	 * Has no effect if an identical listener is already registered.
 	 *
-	 * @param element the element
-	 * @exception CoreException if the textual representation or the annotation model
-	 *		of the element could not be created
+	 * @param listener the listener
 	 */
-	void connect(Object element) throws CoreException;
-	/**
-	 * Disconnects the given element from this document provider.
-	 * The given element must not be <code>null</code>.
-	 *
-	 * @param element the element
-	 */
-	void disconnect(Object element);
-	/**
-	 * Returns the annotation model for the given element.
-	 *
-	 * @param element the element, or <code>null</code>
-	 * @return the annotation model, or <code>null</code> if none
-	 */
-	IAnnotationModel getAnnotationModel(Object element);
-	/**
-	 * Returns the document for the given element. Usually the document contains
-	 * a textual presentation of the content of the element, or is the element itself.
-	 *
-	 * @param element the element, or <code>null</code>
-	 * @return the document, or <code>null</code> if none
-	 */
-	IDocument getDocument(Object element);
-	/**
-	 * Returns the modification stamp of the given element.
-	 * 
-	 * @param element the element
-	 * @return the modification stamp of the given element
-	 */
-	long getModificationStamp(Object element);
-	/**
-	 * Returns the time stamp of the last synchronization of
-	 * the given element and it's provided document.
-	 * 
-	 * @param element the element
-	 * @return the sysnchronization stamp of the given element
-	 */
-	long getSynchronizationStamp(Object element);
-	/**
-	 * Returns whether the given element has been deleted.
-	 * 
-	 * @param element the element
-	 * @return <code>true</code> if the element has been deleted
-	 */
-	boolean isDeleted(Object element);
-	/**
-	 * Returns whether the document provided for the given element must be saved.
-	 *
-	 * @param element the element, or <code>null</code>
-	 * @return <code>true</code> if the document must be saved, and
-	 *   <code>false</code> otherwise (including the element is <code>null</code>)
-	 */
-	boolean mustSaveDocument(Object element);
+	void addElementStateListener(IElementStateListener listener);
+	
 	/**
 	 * Removes the given element state listener from this document provider.
 	 * Has no affect if an identical listener is not registered.
@@ -149,23 +182,4 @@ public interface IDocumentProvider {
 	 * @param listener the listener
 	 */
 	void removeElementStateListener(IElementStateListener listener);
-	/**
-	 * Resets the given element's document to its last saved state.
-	 * Element state listeners are notified both before (<code>elementContentAboutToBeReplaced</code>)
-	 * and after (<code>elementContentReplaced</code>) the content is changed.
-	 *
-	 * @param element the element, or <code>null</code>
-	 */
-	void resetDocument(Object element) throws CoreException;
-	/**
-	 * Saves the given document provided for the given element.
-	 *
-	 * @param monitor a progress monitor to report progress and request cancelation
-	 * @param element the element, or <code>null</code>
-	 * @param document the document
-	 * @param overwrite indicates whether overwrite should be performed 
-	 * 			while saving the given element if necessary
-	 * @exception CoreException if document could not be stored to the given element
-	 */
-	void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
 }

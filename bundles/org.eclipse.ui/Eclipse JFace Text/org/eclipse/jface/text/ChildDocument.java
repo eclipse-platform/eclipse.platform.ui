@@ -117,28 +117,24 @@ public final class ChildDocument extends AbstractDocument {
 		
 		completeInitialization();
 	}
+	
 	/**
-	 * Fires the child document event as about-to-be-changed event to all
-	 * registed listeners.
-	 */
-	private void delayedFireDocumentAboutToBeChanged() {
-		super.fireDocumentAboutToBeChanged(fEvent);
-	}
-	/*
-	 * @see AbstractDocument#fireDocumentAboutToBeChanged
-	 */
-	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
-		// delay it until there is a notification from the parent document
-		// otherwise there it is expensive to construct the parent document information
-	}
-	/**
-	 * Ignores the given event and sends the similar child document event instead.
+	 * Sets the child document's parent document range.
 	 *
-	 * @param event the event to be ignored
+	 * @param offset the offset of the parent document range
+	 * @param length the length of the parent document range
 	 */
-	protected void fireDocumentChanged(DocumentEvent event) {
-		super.fireDocumentChanged(fEvent);
+	public void setParentDocumentRange(int offset, int length) throws BadLocationException {
+		
+		if (offset < 0 || length < 0 || offset + length > fParentDocument.getLength())
+			throw new BadLocationException();
+								
+		fRange.setOffset(offset);
+		fRange.setLength(length);
+		
+		getTracker().set(fParentDocument.get(offset, length));
 	}
+	
 	/**
 	 * Returns parent document
 	 *
@@ -147,6 +143,7 @@ public final class ChildDocument extends AbstractDocument {
 	public IDocument getParentDocument() {
 		return fParentDocument;
 	}
+	
 	/**
 	 * Returns the range of the parent document covered by this child document.
 	 *
@@ -155,6 +152,17 @@ public final class ChildDocument extends AbstractDocument {
 	public Position getParentDocumentRange() {
 		return fRange;
 	}
+	
+	/**
+	 * Marks whether a parent document update has been initialized
+	 * by this child document or not.
+	 *
+	 * @param updating the mark
+	 */
+	private void update(boolean updating) {
+		fIsUpdating= updating;
+	}
+	
 	/**
 	 * Transforms a document event of the parent document into a child document
 	 * based document event.
@@ -172,6 +180,7 @@ public final class ChildDocument extends AbstractDocument {
 			
 		return new ChildDocumentEvent(this, offset, length, e.fText, e); 
 	}
+	
 	/**
 	 * When called this child document is informed about a forthcoming change
 	 * of its parent document. This child document checks whether the parent
@@ -189,6 +198,7 @@ public final class ChildDocument extends AbstractDocument {
 		} else
 			fEvent= null;
 	}
+		
 	/**
 	 * When called this child document is informed about a change of its parent document.
 	 * If this child document is affected it informs all of its document listeners.
@@ -205,29 +215,29 @@ public final class ChildDocument extends AbstractDocument {
 			}
 		}
 	}
-	/**
-	 * Sets the child document's parent document range.
-	 *
-	 * @param offset the offset of the parent document range
-	 * @param length the length of the parent document range
+	
+	/*
+	 * @see AbstractDocument#fireDocumentAboutToBeChanged
 	 */
-	public void setParentDocumentRange(int offset, int length) throws BadLocationException {
-		
-		if (offset < 0 || length < 0 || offset + length > fParentDocument.getLength())
-			throw new BadLocationException();
-								
-		fRange.setOffset(offset);
-		fRange.setLength(length);
-		
-		getTracker().set(fParentDocument.get(offset, length));
+	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
+		// delay it until there is a notification from the parent document
+		// otherwise there it is expensive to construct the parent document information
 	}
+	
 	/**
-	 * Marks whether a parent document update has been initialized
-	 * by this child document or not.
-	 *
-	 * @param updating the mark
+	 * Fires the child document event as about-to-be-changed event to all
+	 * registed listeners.
 	 */
-	private void update(boolean updating) {
-		fIsUpdating= updating;
+	private void delayedFireDocumentAboutToBeChanged() {
+		super.fireDocumentAboutToBeChanged(fEvent);
+	}
+	
+	/**
+	 * Ignores the given event and sends the similar child document event instead.
+	 *
+	 * @param event the event to be ignored
+	 */
+	protected void fireDocumentChanged(DocumentEvent event) {
+		super.fireDocumentChanged(fEvent);
 	}
 }

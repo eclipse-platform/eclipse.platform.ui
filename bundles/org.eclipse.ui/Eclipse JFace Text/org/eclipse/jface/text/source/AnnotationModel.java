@@ -41,12 +41,14 @@ public class AnnotationModel implements IAnnotationModel {
 		fAnnotations= new HashMap(10);
 		fAnnotationModelListeners= new ArrayList(2);
 	}
+
 	/*
 	 * @see IAnnotationModel#addAnnotation
 	 */
 	public void addAnnotation(Annotation annotation, Position position) {
 		addAnnotation(annotation, position, true);
 	}
+
 	/**
 	 * Adds the given annotation to this model. Associates the 
 	 * annotation with the given position. If requested, all annotation
@@ -67,6 +69,7 @@ public class AnnotationModel implements IAnnotationModel {
 				fireModelChanged();
 		}
 	}
+
 	/*
 	 * @see IAnnotationModel#addAnnotationModelListener
 	 */
@@ -76,6 +79,7 @@ public class AnnotationModel implements IAnnotationModel {
 			listener.modelChanged(this);
 		}
 	}
+
 	/**
 	 * Adds the given position to the default position category of the
 	 * given document.
@@ -91,24 +95,7 @@ public class AnnotationModel implements IAnnotationModel {
 			}
 		}
 	}
-	/**
-	 * Removes all annotations from the model whose associated positions have been
-	 * deleted. If requested inform all model listeners about the change.
-	 *
-	 * @param fireModelChanged indicates whether to notify all model listeners
-	 */
-	protected void cleanup(boolean fireModelChanged) {
-		ArrayList deleted= new ArrayList();
-		Iterator e= fAnnotations.keySet().iterator();
-		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
-			Position p= (Position) fAnnotations.get(a);
-			if (p == null || p.isDeleted())
-				deleted.add(a);
-		}
-		
-		removeAnnotations(deleted, fireModelChanged, false);
-	}
+	
 	/**
 	 * @see IAnnotationModel#connect
 	 */
@@ -126,11 +113,19 @@ public class AnnotationModel implements IAnnotationModel {
 		if (fOpenConnections == 1)
 			connected();
 	}
+	
 	/**
 	 * Hook method. Is called as soon as this model becomes connected to a document.
 	 */
 	protected void connected() {
 	}
+	
+	/**
+	 * Hook method. Is called as soon as this model becomes diconnected from its document.
+	 */
+	protected void disconnected() {
+	}
+	
 	/*
 	 * @see IAnnotationModel#disconnect
 	 */
@@ -153,11 +148,7 @@ public class AnnotationModel implements IAnnotationModel {
 			}
 		}
 	}
-	/**
-	 * Hook method. Is called as soon as this model becomes diconnected from its document.
-	 */
-	protected void disconnected() {
-	}
+	
 	/**
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
@@ -169,12 +160,54 @@ public class AnnotationModel implements IAnnotationModel {
 			l.modelChanged(this);
 		}
 	}
+	
+	/**
+	 * Removes the given annotations from this model. If requested all
+	 * annotation model listeners will be informed about this change. 
+	 * <code>modelInitiated</code> indicates whether the deletion has 
+	 * been initiated by this model or by one of its clients.
+	 * 
+	 * @param annotations the annotations to be removed
+	 * @param fireModelChanged indicates whether to notify all model listeners
+	 * @param modelInitiated indicates whether this changes has been initiated by this model
+	 */
+	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
+		if (annotations.size() > 0) {
+			Iterator e= annotations.iterator();
+			while (e.hasNext())
+				removeAnnotation((Annotation) e.next(), false);
+				
+			if (fireModelChanged)
+				fireModelChanged();
+		}
+	}
+	
+	/**
+	 * Removes all annotations from the model whose associated positions have been
+	 * deleted. If requested inform all model listeners about the change.
+	 *
+	 * @param fireModelChanged indicates whether to notify all model listeners
+	 */
+	protected void cleanup(boolean fireModelChanged) {
+		ArrayList deleted= new ArrayList();
+		Iterator e= fAnnotations.keySet().iterator();
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			Position p= (Position) fAnnotations.get(a);
+			if (p == null || p.isDeleted())
+				deleted.add(a);
+		}
+		
+		removeAnnotations(deleted, fireModelChanged, false);
+	}
+	
 	/*
 	 * @see IAnnotationModel#getAnnotationsIterator
 	 */
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true);
 	}
+	
 	/**
 	 * Returns all annotations managed by this model. <code>cleanup</code>
 	 * indicates whether all annotations whose associated positions are 
@@ -188,12 +221,14 @@ public class AnnotationModel implements IAnnotationModel {
 			cleanup(false);
 		return fAnnotations.keySet().iterator();
 	}
+	
 	/*
 	 * @see IAnnotationModel#getPosition
 	 */
 	public Position getPosition(Annotation annotation) {
 		return (Position) fAnnotations.get(annotation);
 	}
+	
 	/**
 	 * Removes all annotations from the annotation model and
 	 * informs all model listeners about this change.
@@ -201,6 +236,7 @@ public class AnnotationModel implements IAnnotationModel {
 	public void removeAllAnnotations() {
 		removeAllAnnotations(true);
 	}
+
 	/**
 	 * Removes all annotations from the annotation model. If requested
 	 * inform all model change listeners about this change.
@@ -222,12 +258,14 @@ public class AnnotationModel implements IAnnotationModel {
 		if (fireModelChanged)
 			fireModelChanged();
 	}
+	
 	/*
 	 * @see IAnnotationModel#removeAnnotation
 	 */
 	public void removeAnnotation(Annotation annotation) {
 		removeAnnotation(annotation, true);
 	}
+		
 	/**
 	 * Removes the given annotation from the annotation model. 
 	 * If requested inform all model change listeners about this change.
@@ -249,30 +287,11 @@ public class AnnotationModel implements IAnnotationModel {
 				fireModelChanged();
 		}
 	}
+	
 	/*
 	 * @see IAnnotationModel#removeAnnotationModelListener
 	 */
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.remove(listener);
-	}
-	/**
-	 * Removes the given annotations from this model. If requested all
-	 * annotation model listeners will be informed about this change. 
-	 * <code>modelInitiated</code> indicates whether the deletion has 
-	 * been initiated by this model or by one of its clients.
-	 * 
-	 * @param annotations the annotations to be removed
-	 * @param fireModelChanged indicates whether to notify all model listeners
-	 * @param modelInitiated indicates whether this changes has been initiated by this model
-	 */
-	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
-		if (annotations.size() > 0) {
-			Iterator e= annotations.iterator();
-			while (e.hasNext())
-				removeAnnotation((Annotation) e.next(), false);
-				
-			if (fireModelChanged)
-				fireModelChanged();
-		}
 	}
 }

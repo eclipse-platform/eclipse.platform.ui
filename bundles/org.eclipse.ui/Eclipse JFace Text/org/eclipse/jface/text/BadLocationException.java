@@ -18,6 +18,7 @@ public class BadLocationException extends Exception {
 	public BadLocationException() {
 		super();
 	}
+	
 	/**
 	 * Creates a new bad location exception.
 	 *

@@ -6,26 +6,7 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.Window;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PlatformUI;
+import java.util.HashMap;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
 
 
 
@@ -81,6 +62,59 @@ public class AddMarkerAction extends TextEditorAction {
 		fMarkerType= markerType;
 		fAskForLabel= askForLabel;
 	}
+	
+	/**
+	 * Returns this action's resource bundle.
+	 *
+	 * @return this action's resource bundle
+	 */
+	protected ResourceBundle getResourceBundle() {
+		return fBundle;
+	}
+	
+	/**
+	 * Returns this action's resource key prefix.
+	 *
+	 * @return this action's resource key prefix
+	 */
+	protected String getResourceKeyPrefix() {
+		return fPrefix;
+	}
+	
+	/*
+	 * @see IAction#run()
+	 */
+	public void run() {
+		IResource resource= getResource();
+		if (resource == null)
+			return;
+		Map attributes= getInitialAttributes();
+		if (fAskForLabel) {
+			if (!askForLabel(attributes))
+				return;
+		}
+		
+		try {
+			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
+		} catch (CoreException x) {
+			
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(x.getStatus());
+			
+			Shell shell= getTextEditor().getSite().getShell();
+			String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
+			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
+			
+			ErrorDialog.openError(shell, title, msg, x.getStatus());
+		}
+	}
+	
+	/*
+	 * @see TextEditorAction#update()
+	 */
+	public void update() {
+		setEnabled(true);
+	}
+	
 	/**
 	 * Asks the user for a marker label. Returns <code>true</code> if a label
 	 * is entered, <code>false</code> if the user cancels the input dialog.
@@ -92,13 +126,13 @@ public class AddMarkerAction extends TextEditorAction {
 	 */
 	protected boolean askForLabel(Map attributes) {
 		
-		Object o= attributes.get("message");
-		String proposal= (o instanceof String) ? (String) o : "";
+		Object o= attributes.get("message"); //$NON-NLS-1$
+		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
 		if (proposal == null)
-			proposal= "";
+			proposal= ""; //$NON-NLS-1$
 			
-		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title");
-		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message");
+		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
+		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, null);
 		
 		String label= null;
@@ -112,9 +146,10 @@ public class AddMarkerAction extends TextEditorAction {
 		if (label.length() == 0)
 			return false;
 			
-		attributes.put("message", label);
+		attributes.put("message", label); //$NON-NLS-1$
 		return true;
 	}
+	
 	/**
 	 * Returns the attributes the new marker will be initialized with.
 	 * Subclasses may extend or replace this method.
@@ -150,6 +185,7 @@ public class AddMarkerAction extends TextEditorAction {
 		
 		return attributes;
 	}
+	
 	/**
 	 * Returns the initial label for the marker.
 	 *
@@ -217,6 +253,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 		return null;
 	}
+	
 	/** 
 	 * Returns the resource on which to create the marker, 
 	 * or <code>null</code> if there is no applicable resource. This
@@ -228,53 +265,5 @@ public class AddMarkerAction extends TextEditorAction {
 	protected IResource getResource() {
 		IEditorInput input= getTextEditor().getEditorInput();
 		return (IResource) ((IAdaptable) input).getAdapter(IResource.class);
-	}
-	/**
-	 * Returns this action's resource bundle.
-	 *
-	 * @return this action's resource bundle
-	 */
-	protected ResourceBundle getResourceBundle() {
-		return fBundle;
-	}
-	/**
-	 * Returns this action's resource key prefix.
-	 *
-	 * @return this action's resource key prefix
-	 */
-	protected String getResourceKeyPrefix() {
-		return fPrefix;
-	}
-	/*
-	 * @see IAction#run()
-	 */
-	public void run() {
-		IResource resource= getResource();
-		if (resource == null)
-			return;
-		Map attributes= getInitialAttributes();
-		if (fAskForLabel) {
-			if (!askForLabel(attributes))
-				return;
-		}
-		
-		try {
-			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
-		} catch (CoreException x) {
-			
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(x.getStatus());
-			
-			Shell shell= getTextEditor().getSite().getShell();
-			String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title");
-			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message");
-			
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
-		}
-	}
-	/*
-	 * @see TextEditorAction#update()
-	 */
-	public void update() {
-		setEnabled(true);
 	}
 }

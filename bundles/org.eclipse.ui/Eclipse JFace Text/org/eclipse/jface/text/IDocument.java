@@ -85,6 +85,68 @@ public interface IDocument {
 	
 	
 	
+	/* --------------- text access and manipulation --------------------------- */
+	
+	/**
+	 * Returns the character at the given document offset in this document.
+	 *
+	 * @param offset a document offset
+	 * @return the character at the offset
+	 * @exception BadLocationException if the offset is invalid in this document
+	 */
+	char getChar(int offset) throws BadLocationException;
+	
+	/**
+	 * Returns the number of characters in this document.
+	 *
+	 * @return the number of characters in this document
+	 */
+	int getLength();
+	
+	/**
+	 * Returns this document's complete text.
+	 *
+	 * @return the document's complete text
+	 */
+	String get();
+	
+	/**
+	 * Returns this document's text for the specified range.
+	 *
+	 * @param offset the document offset
+	 * @param length the length of the specified range
+	 * @return the document's text for the specified range
+	 * @exception BadLocationException if the range is invalid in this document
+	 */
+	String get(int offset, int length) throws BadLocationException;
+	
+	/**
+	 * Replaces the content of the document with the given text.
+	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
+	 * This method is a convenience method for <code>
+	 * replace(0, getLength(), text)</code>.
+	 *
+	 * @param text the new content of the document
+	 *
+	 * @see DocumentEvent
+	 * @see IDocumentListener
+	 */
+	void set(String text);
+		
+	/**
+	 * Subsitutes the given text for the specified document range.
+	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
+	 *
+	 * @param offset the document offset
+	 * @param length the length of the specified range
+	 * @param text the substitution text
+	 * @exception BadLocationException if the offset is invalid in this document
+	 *
+	 * @see DocumentEvent
+	 * @see IDocumentListener
+	 */
+	void replace(int offset, int length, String text) throws BadLocationException;
+		
 	/**
 	 * Registers the document listener with the document. After registration
 	 * the IDocumentListener is informed about each change of this document.
@@ -93,6 +155,237 @@ public interface IDocument {
 	 * @param listener the listener to be registered
 	 */
 	void addDocumentListener(IDocumentListener listener);
+	
+	/**
+	 * Removes the listener from the document's list of document listeners.
+	 * If the listener is not registered with the document nothing happens.
+	 *
+	 * @param listener the listener to be removed
+	 */
+	void removeDocumentListener(IDocumentListener listener);
+	
+	/**
+	 * Adds the given document listener as one which is notified before
+	 * those document listeners added with <code>addDocumentListener</code>
+	 * are notified. If the given listener is also registered using
+	 * <code>addDocumentListener</code> it will be notified twice.
+	 * If the listener is already registered nothing happens.<p>
+	 * 
+	 * This method is not for public use, it may only be called by
+	 * implementers of <code>IDocumentAdapter</code> and only if those 
+	 * implementers need to implement <code>IDocumentListener</code>.
+	 * 
+	 * @param documentAdapter the listener to be added as prenotified document listener
+	 */
+	void addPrenotifiedDocumentListener(IDocumentListener documentAdapter);
+	
+	/**
+	 * Removes the given document listener from teh document's list of
+	 * prenotified document listeners. If the listener is not registered
+	 * with the document nothing happens. <p>
+	 * 
+	 * This method is not for public use, it may only be called by
+	 * implementers of <code>IDocumentAdapter</code> and only if those 
+	 * implementers need to implement <code>IDocumentListener</code>.
+	 * 
+	 * @param documentAdapter the listener to be removed
+	 * 
+	 * @see #addPrenotifiedDocumentListener(IDocumentListener)
+	 */
+	void removePrenotifiedDocumentListener(IDocumentListener documentAdapter);
+	
+	
+	
+	/* -------------------------- positions ----------------------------------- */
+	
+	/**
+	 * Adds a new position category to the document. If the position category
+	 * already exists nothing happens.
+	 *
+	 * @param category the category to be added
+	 */
+	void addPositionCategory(String category);
+	
+	/**
+	 * Deletes the position category from the document. All positions
+	 * in this category are thus deleted as well.
+	 *
+	 * @param category the category to be removed
+	 * @exception BadPositionCategoryException if category is undefined in this document
+	 */
+	void removePositionCategory(String category) throws BadPositionCategoryException;
+	
+	/**
+	 * Returns all position categories of this document. This
+	 * includes the default position category.
+	 *
+	 * @return the document's position categories
+	 */
+	String[] getPositionCategories();
+	
+	/**
+	 * Checks the presence of the specified position category.
+	 *
+	 * @param category the category to check
+	 * @return <code>true</code> if category is defined
+	 */
+	boolean containsPositionCategory(String category);
+	
+	/**
+	 * Adds the position to the document's default position category.
+	 * This is a convenience method for <code>addPosition(DEFAULT_CATEGORY, position)</code>.
+	 *
+	 * @param position the position to be added
+	 * @exception BadLocationException if position describes an invalid range in this document
+	 */
+	void addPosition(Position position) throws BadLocationException;
+	
+	/**
+	 * Removes the given position from the document's default position category.
+	 * This is a convenience method for <code>removePosition(DEFAULT_CATEGORY, position)</code>.
+	 *
+	 * @param position the position to be removed
+	 */
+	void removePosition(Position position);
+	
+	/**
+	 * Adds the position to the specified position category of the document.
+	 * A position that has been added to a position category is updated on each
+	 * change applied to the document. Positions may be added multiple times.
+	 * The order of the category is maintained.
+	 *
+	 * @param category the category to which to add
+	 * @param position the position to be added
+	 * @exception BadLocationException if position describes an invalid range in this document
+	 * @exception BadPositionCategoryException if the category is undefined in this document
+	 */
+	void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException;
+	
+	/**
+	 * Removes the given position from the specified position category. 
+	 * If the position is not part of the specified category nothing happens.
+	 * If the position has been added multiple times, only the first occurence is deleted.
+	 *
+	 * @param category the category from which to delete
+	 * @param position the position to be deleted
+	 * @exception BadPositionCategoryException if category is undefined in this document
+	 */
+	void removePosition(String category, Position position) throws BadPositionCategoryException;
+	
+	/**
+	 * Returns all positions of the given position category.
+	 * The positions are ordered according to the category's order.
+	 * Manipulating this list does not affect the document, but manipulating the
+	 * position does affect the document.
+	 *
+	 * @param category the category
+	 * @return the list of all positions
+	 * @exception BadPositionCategoryException if category is undefined in this document
+	 */
+	Position[] getPositions(String category) throws BadPositionCategoryException;
+	
+	/**
+	 * Determines whether a position described by the parameters is managed by this document.
+	 *
+	 * @param category the category to check
+	 * @param offset the offset of the position to find
+	 * @param length the length of the position to find
+	 * @return <code>true</code> if position is found
+	 */
+	boolean containsPosition(String category, int offset, int length);
+		
+	/**
+	 * Computes the index at which a <code>Position</code> with the
+	 * specified offset would be inserted into the given category. As the
+	 * ordering inside a category only depends on the offset, the index must be
+	 * choosen to be the first of all positions with the same offset.
+	 *
+	 * @param category the category in which would be added
+	 * @param offset the position offset to be considered
+	 * @return the index into the category
+	 * @exception BadLocationException if offset is invalid in this document
+	 * @exception BadPositionCategoryException if category is undefined in this document
+	 */
+	int computeIndexInCategory(String category, int offset) throws BadLocationException, BadPositionCategoryException;
+		
+	/**
+	 * Appends a new position updater to the document's list of position updaters.
+	 * Position updaters may be added multiple times.
+	 *
+	 * @param updater the updater to be added
+	 */
+	void addPositionUpdater(IPositionUpdater updater);
+	
+	/**
+	 * Removes the position updater from the document's list of position updaters.
+	 * If the position updater has multiple occurences only the first occurence is
+	 * removed. If the position updater is not registered with this document, nothing
+	 * happens.
+	 *
+	 * @param updater the updater to be removed
+	 */
+	void removePositionUpdater(IPositionUpdater updater);
+	
+	/**
+	 * Inserts the position updater at the specified index in the document's 
+	 * list of position updaters. Positions updaters may be inserted multiple times.
+	 *
+	 * @param updater the updater to be inserted
+	 * @param index the index in the document's updater list
+	 */
+	void insertPositionUpdater(IPositionUpdater updater, int index);
+	
+	/**
+	 * Returns the list of position updaters attached to the document.
+	 *
+	 * @return the list of position updaters
+	 */
+	IPositionUpdater[] getPositionUpdaters();
+	
+	
+	
+	
+	/* -------------------------- partitions ---------------------------------- */
+	
+	/**
+	 * Returns the set of legal content types of document partitions.
+	 * This set can be empty. The set can contain more content types than 
+	 * contained by the result of <code>getPartitioning(0, getLength())</code>.
+	 *
+	 * @return the set of legal content types
+	 */
+	String[] getLegalContentTypes();
+	
+	/**
+	 * Returns the type of the document partition containing the given offset.
+	 * This is a convenience method for <code>getPartition(offset).getType()</code>.
+	 *
+	 * @param offset the document offset
+	 * @return the partition type
+	 * @exception BadLocationException if offset is invalid in this document
+	 */
+	String getContentType(int offset) throws BadLocationException;
+	
+	/**
+	 * Returns the document partition in which the position is located.
+	 *
+	 * @param offset the document offset
+	 * @return a specification of the partition
+	 * @exception BadLocationException if offset is invalid in this document
+	 */
+	ITypedRegion getPartition(int offset) throws BadLocationException;
+	
+	/**
+	 * Computes the partitioning of the given document range using the 
+	 * document's partitioner.
+	 *
+	 * @param offset the document offset at which the range starts
+	 * @param length the length of the document range
+	 * @return a specification of the range's partitioning
+	 * @exception BadLocationException if the range is invalid in this document
+	 */
+	ITypedRegion[] computePartitioning(int offset, int length) throws BadLocationException;
+	
 	/**
 	 * Registers the document partitioning listener with the document. After registration
 	 * the document partitioning listener is informed about each partition change
@@ -110,195 +403,37 @@ public interface IDocument {
 	 * @param listener the listener to be added
 	 */
 	void addDocumentPartitioningListener(IDocumentPartitioningListener listener);
-	/**
-	 * Adds the position to the specified position category of the document.
-	 * A position that has been added to a position category is updated on each
-	 * change applied to the document. Positions may be added multiple times.
-	 * The order of the category is maintained.
-	 *
-	 * @param category the category to which to add
-	 * @param position the position to be added
-	 * @exception BadLocationException if position describes an invalid range in this document
-	 * @exception BadPositionCategoryException if the category is undefined in this document
-	 */
-	void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException;
-	/**
-	 * Adds the position to the document's default position category.
-	 * This is a convenience method for <code>addPosition(DEFAULT_CATEGORY, position)</code>.
-	 *
-	 * @param position the position to be added
-	 * @exception BadLocationException if position describes an invalid range in this document
-	 */
-	void addPosition(Position position) throws BadLocationException;
-	/* -------------------------- positions ----------------------------------- */
 	
 	/**
-	 * Adds a new position category to the document. If the position category
-	 * already exists nothing happens.
+	 * Removes the listener from this document's list of document partitioning
+	 * listeners. If the listener is not registered with the document nothing
+	 * happens.
 	 *
-	 * @param category the category to be added
+	 * @param listener the listener to be removed
 	 */
-	void addPositionCategory(String category);
-	/**
-	 * Appends a new position updater to the document's list of position updaters.
-	 * Position updaters may be added multiple times.
-	 *
-	 * @param updater the updater to be added
-	 */
-	void addPositionUpdater(IPositionUpdater updater);
-	/**
-	 * Adds the given document listener as one which is notified before
-	 * those document listeners added with <code>addDocumentListener</code>
-	 * are notified. If the given listener is also registered using
-	 * <code>addDocumentListener</code> it will be notified twice.
-	 * If the listener is already registered nothing happens.<p>
-	 * 
-	 * This method is not for public use, it may only be called by
-	 * implementers of <code>IDocumentAdapter</code> and only if those 
-	 * implementers need to implement <code>IDocumentListener</code>.
-	 * 
-	 * @param documentAdapter the listener to be added as prenotified document listener
-	 */
-	void addPrenotifiedDocumentListener(IDocumentListener documentAdapter);
-	/**
-	 * Computes the index at which a <code>Position</code> with the
-	 * specified offset would be inserted into the given category. As the
-	 * ordering inside a category only depends on the offset, the index must be
-	 * choosen to be the first of all positions with the same offset.
-	 *
-	 * @param category the category in which would be added
-	 * @param offset the position offset to be considered
-	 * @return the index into the category
-	 * @exception BadLocationException if offset is invalid in this document
-	 * @exception BadPositionCategoryException if category is undefined in this document
-	 */
-	int computeIndexInCategory(String category, int offset) throws BadLocationException, BadPositionCategoryException;
-	/**
-	 * Computes the number of lines in the given text. For a given
-	 * implementer of this interface this method returns the same
-	 * result as <code>set(text); getNumberOfLines()</code>.
-	 * 
-	 * @param text the text whose number of lines should be computed
-	 * @return the number of lines in the given text
-	 */
-	int computeNumberOfLines(String text);
-	/**
-	 * Computes the partitioning of the given document range using the 
-	 * document's partitioner.
-	 *
-	 * @param offset the document offset at which the range starts
-	 * @param length the length of the document range
-	 * @return a specification of the range's partitioning
-	 * @exception BadLocationException if the range is invalid in this document
-	 */
-	ITypedRegion[] computePartitioning(int offset, int length) throws BadLocationException;
-	/**
-	 * Determines whether a position described by the parameters is managed by this document.
-	 *
-	 * @param category the category to check
-	 * @param offset the offset of the position to find
-	 * @param length the length of the position to find
-	 * @return <code>true</code> if position is found
-	 */
-	boolean containsPosition(String category, int offset, int length);
-	/**
-	 * Checks the presence of the specified position category.
-	 *
-	 * @param category the category to check
-	 * @return <code>true</code> if category is defined
-	 */
-	boolean containsPositionCategory(String category);
-	/**
-	 * Returns this document's complete text.
-	 *
-	 * @return the document's complete text
-	 */
-	String get();
-	/**
-	 * Returns this document's text for the specified range.
-	 *
-	 * @param offset the document offset
-	 * @param length the length of the specified range
-	 * @return the document's text for the specified range
-	 * @exception BadLocationException if the range is invalid in this document
-	 */
-	String get(int offset, int length) throws BadLocationException;
-	/* --------------- text access and manipulation --------------------------- */
+	void removeDocumentPartitioningListener(IDocumentPartitioningListener listener);
 	
 	/**
-	 * Returns the character at the given document offset in this document.
+	 * Sets this document's partitioner. The caller of this method is responsible for
+	 * disconnecting the document's old partitioner from the document and to
+	 * connect the new partitioner to the document. Informs all document partitioning
+	 * listeners about this change.
 	 *
-	 * @param offset a document offset
-	 * @return the character at the offset
-	 * @exception BadLocationException if the offset is invalid in this document
-	 */
-	char getChar(int offset) throws BadLocationException;
-	/**
-	 * Returns the type of the document partition containing the given offset.
-	 * This is a convenience method for <code>getPartition(offset).getType()</code>.
+	 * @param the document's new partitioner
 	 *
-	 * @param offset the document offset
-	 * @return the partition type
-	 * @exception BadLocationException if offset is invalid in this document
+	 * @see IDocumentPartitioningListener
 	 */
-	String getContentType(int offset) throws BadLocationException;
+	void setDocumentPartitioner(IDocumentPartitioner partitioner);	
+	
 	/**
 	 * Returns this document's partitioner.
 	 *
 	 * @return this document's partitioner
 	 */
 	IDocumentPartitioner getDocumentPartitioner();
-	/* -------------------------- partitions ---------------------------------- */
 	
-	/**
-	 * Returns the set of legal content types of document partitions.
-	 * This set can be empty. The set can contain more content types than 
-	 * contained by the result of <code>getPartitioning(0, getLength())</code>.
-	 *
-	 * @return the set of legal content types
-	 */
-	String[] getLegalContentTypes();
-	/* ------------------ line delimiter conversion --------------------------- */
 	
-	/**
-	 * Returns the document's legal line delimiters.
-	 *
-	 * @return the document's legal line delimiters
-	 */
-	String[] getLegalLineDelimiters();
-	/**
-	 * Returns the number of characters in this document.
-	 *
-	 * @return the number of characters in this document
-	 */
-	int getLength();
-	/**
-	 * Returns the line delimiter of that line.
-	 *
-	 * @param line the line of interest
-	 * @return the line delimiter of that line
-	 * @exception BadLocationException if the line number is invalid in this document
-	 */
-	String getLineDelimiter(int line) throws BadLocationException;
-	/**
-	 * Returns a description of the specified line. The line is described by its
-	 * offset and its length excluding the line's delimiter.
-	 *
-	 * @param line the line of interest
-	 * @return a line description
-	 * @exception BadLocationException if the line number is invalid in this document
-	 */
-	IRegion getLineInformation(int line) throws BadLocationException;
-	/**
-	 * Returns a description of the line at the given offset.
-	 * The description contains the offset and the length of the line
-	 * excluding the line's delimiter.
-	 *
-	 * @param offset the offset whose line should be described
-	 * @return a region describing the line
-	 * @exception BadLocationException if offset is invalid in this document
-	 */
-	IRegion getLineInformationOfOffset(int offset) throws BadLocationException;
+	
 	/* ---------------------- line information -------------------------------- */
 	
 	/**
@@ -309,14 +444,7 @@ public interface IDocument {
 	 * @exception BadLocationException if the line number is invalid in this document
 	 */
 	int getLineLength(int line) throws BadLocationException;
-	/**
-	 * Determines the offset of the first character of the given line.
-	 *
-	 * @param line the line of interest
-	 * @return the document offset
-	 * @exception BadLocationException if the line number is invalid in this document
-	 */
-	int getLineOffset(int line) throws BadLocationException;
+	
 	/**
 	 * Returns the number of the line at which the character of the specified position is located. 
 	 * The first line has the line number 0. A new line starts directly after a line
@@ -328,12 +456,44 @@ public interface IDocument {
 	 * @exception BadLocationException if the offset is invalid in this document
 	 */
 	int getLineOfOffset(int offset) throws BadLocationException;
+	
+	/**
+	 * Determines the offset of the first character of the given line.
+	 *
+	 * @param line the line of interest
+	 * @return the document offset
+	 * @exception BadLocationException if the line number is invalid in this document
+	 */
+	int getLineOffset(int line) throws BadLocationException;
+	
+	/**
+	 * Returns a description of the specified line. The line is described by its
+	 * offset and its length excluding the line's delimiter.
+	 *
+	 * @param line the line of interest
+	 * @return a line description
+	 * @exception BadLocationException if the line number is invalid in this document
+	 */
+	IRegion getLineInformation(int line) throws BadLocationException;
+	
+	/**
+	 * Returns a description of the line at the given offset.
+	 * The description contains the offset and the length of the line
+	 * excluding the line's delimiter.
+	 *
+	 * @param offset the offset whose line should be described
+	 * @return a region describing the line
+	 * @exception BadLocationException if offset is invalid in this document
+	 */
+	IRegion getLineInformationOfOffset(int offset) throws BadLocationException;
+	
 	/**
 	 * Returns the number of lines in this document
 	 *
 	 * @return the number of lines in this document
 	 */
 	int getNumberOfLines();
+	
 	/**
 	 * Returns the number of lines which are occupied by a given text range.
 	 *
@@ -343,122 +503,38 @@ public interface IDocument {
 	 * @exception BadLocationException if specified range is invalid in this tracker
 	 */
 	int getNumberOfLines(int offset, int length) throws BadLocationException;
+	
 	/**
-	 * Returns the document partition in which the position is located.
-	 *
-	 * @param offset the document offset
-	 * @return a specification of the partition
-	 * @exception BadLocationException if offset is invalid in this document
-	 */
-	ITypedRegion getPartition(int offset) throws BadLocationException;
-	/**
-	 * Returns all position categories of this document. This
-	 * includes the default position category.
-	 *
-	 * @return the document's position categories
-	 */
-	String[] getPositionCategories();
-	/**
-	 * Returns all positions of the given position category.
-	 * The positions are ordered according to the category's order.
-	 * Manipulating this list does not affect the document, but manipulating the
-	 * position does affect the document.
-	 *
-	 * @param category the category
-	 * @return the list of all positions
-	 * @exception BadPositionCategoryException if category is undefined in this document
-	 */
-	Position[] getPositions(String category) throws BadPositionCategoryException;
-	/**
-	 * Returns the list of position updaters attached to the document.
-	 *
-	 * @return the list of position updaters
-	 */
-	IPositionUpdater[] getPositionUpdaters();
-	/**
-	 * Inserts the position updater at the specified index in the document's 
-	 * list of position updaters. Positions updaters may be inserted multiple times.
-	 *
-	 * @param updater the updater to be inserted
-	 * @param index the index in the document's updater list
-	 */
-	void insertPositionUpdater(IPositionUpdater updater, int index);
-	/**
-	 * Removes the listener from the document's list of document listeners.
-	 * If the listener is not registered with the document nothing happens.
-	 *
-	 * @param listener the listener to be removed
-	 */
-	void removeDocumentListener(IDocumentListener listener);
-	/**
-	 * Removes the listener from this document's list of document partitioning
-	 * listeners. If the listener is not registered with the document nothing
-	 * happens.
-	 *
-	 * @param listener the listener to be removed
-	 */
-	void removeDocumentPartitioningListener(IDocumentPartitioningListener listener);
-	/**
-	 * Removes the given position from the specified position category. 
-	 * If the position is not part of the specified category nothing happens.
-	 * If the position has been added multiple times, only the first occurence is deleted.
-	 *
-	 * @param category the category from which to delete
-	 * @param position the position to be deleted
-	 * @exception BadPositionCategoryException if category is undefined in this document
-	 */
-	void removePosition(String category, Position position) throws BadPositionCategoryException;
-	/**
-	 * Removes the given position from the document's default position category.
-	 * This is a convenience method for <code>removePosition(DEFAULT_CATEGORY, position)</code>.
-	 *
-	 * @param position the position to be removed
-	 */
-	void removePosition(Position position);
-	/**
-	 * Deletes the position category from the document. All positions
-	 * in this category are thus deleted as well.
-	 *
-	 * @param category the category to be removed
-	 * @exception BadPositionCategoryException if category is undefined in this document
-	 */
-	void removePositionCategory(String category) throws BadPositionCategoryException;
-	/**
-	 * Removes the position updater from the document's list of position updaters.
-	 * If the position updater has multiple occurences only the first occurence is
-	 * removed. If the position updater is not registered with this document, nothing
-	 * happens.
-	 *
-	 * @param updater the updater to be removed
-	 */
-	void removePositionUpdater(IPositionUpdater updater);
-	/**
-	 * Removes the given document listener from teh document's list of
-	 * prenotified document listeners. If the listener is not registered
-	 * with the document nothing happens. <p>
+	 * Computes the number of lines in the given text. For a given
+	 * implementer of this interface this method returns the same
+	 * result as <code>set(text); getNumberOfLines()</code>.
 	 * 
-	 * This method is not for public use, it may only be called by
-	 * implementers of <code>IDocumentAdapter</code> and only if those 
-	 * implementers need to implement <code>IDocumentListener</code>.
-	 * 
-	 * @param documentAdapter the listener to be removed
-	 * 
-	 * @see #addPrenotifiedDocumentListener(IDocumentListener)
+	 * @param text the text whose number of lines should be computed
+	 * @return the number of lines in the given text
 	 */
-	void removePrenotifiedDocumentListener(IDocumentListener documentAdapter);
+	int computeNumberOfLines(String text);
+	
+	
+	/* ------------------ line delimiter conversion --------------------------- */
+	
 	/**
-	 * Subsitutes the given text for the specified document range.
-	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
+	 * Returns the document's legal line delimiters.
 	 *
-	 * @param offset the document offset
-	 * @param length the length of the specified range
-	 * @param text the substitution text
-	 * @exception BadLocationException if the offset is invalid in this document
-	 *
-	 * @see DocumentEvent
-	 * @see IDocumentListener
+	 * @return the document's legal line delimiters
 	 */
-	void replace(int offset, int length, String text) throws BadLocationException;
+	String[] getLegalLineDelimiters();
+	
+	/**
+	 * Returns the line delimiter of that line.
+	 *
+	 * @param line the line of interest
+	 * @return the line delimiter of that line
+	 * @exception BadLocationException if the line number is invalid in this document
+	 */
+	String getLineDelimiter(int line) throws BadLocationException;
+		
+	
+	
 	/* ---------------------------- search ------------------------------------ */
 	
 	/**
@@ -474,27 +550,4 @@ public interface IDocument {
 	 * @exception BadLocationException if startOffset is an invalid document offset
 	 */
 	int search(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException;
-	/**
-	 * Replaces the content of the document with the given text.
-	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
-	 * This method is a convenience method for <code>
-	 * replace(0, getLength(), text)</code>.
-	 *
-	 * @param text the new content of the document
-	 *
-	 * @see DocumentEvent
-	 * @see IDocumentListener
-	 */
-	void set(String text);
-	/**
-	 * Sets this document's partitioner. The caller of this method is responsible for
-	 * disconnecting the document's old partitioner from the document and to
-	 * connect the new partitioner to the document. Informs all document partitioning
-	 * listeners about this change.
-	 *
-	 * @param the document's new partitioner
-	 *
-	 * @see IDocumentPartitioningListener
-	 */
-	void setDocumentPartitioner(IDocumentPartitioner partitioner);
 }

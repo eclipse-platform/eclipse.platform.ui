@@ -16,23 +16,26 @@ public interface ICharacterScanner {
 	public static final int EOF= -1;
 
 	/**
-	 * Returns the column of the character scanner.
-	 *
-	 * @return the column of the character scanner
-	 */
-	int getColumn();
-	/**
 	 * Provides rules access to the legal line delimiters.
 	 *
 	 * @return the legal line delimiters
 	 */
 	char[][] getLegalLineDelimiters();
+	
+	/**
+	 * Returns the column of the character scanner.
+	 *
+	 * @return the column of the character scanner
+	 */
+	int getColumn();
+	
 	/**
 	 * Returns the next character or EOF if end of file has been reached
 	 *
 	 * @return the next character or EOF
 	 */
 	int read();
+	
 	/**
 	 * Rewinds the scanner before the last read character.
 	 */

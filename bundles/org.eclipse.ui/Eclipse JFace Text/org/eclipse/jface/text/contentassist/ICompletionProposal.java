@@ -30,35 +30,7 @@ public interface ICompletionProposal {
 	 * @param document the document into which to insert the proposed completion
 	 */
 	void apply(IDocument document);
-	/**
-	 * Returns optional additional information about the proposal.
-	 * The additional information will be presented to assist the user
-	 * in deciding if the selected proposal is the desired choice.
-	 *
-	 * @return the additional information or <code>null</code>
-	 */
-	String getAdditionalProposalInfo();
-	/**
-	 * Returns optional context information associated with this proposal.
-	 * The context information will automatically be shown if the proposal
-	 * has been applied.
-	 *
-	 * @return the context information for this proposal or <code>null</code>
-	 */
-	IContextInformation getContextInformation();
-	/**
-	 * Returns the string to be displayed in the list of completion proposals.
-	 *
-	 * @return the string to be displayed
-	 */
-	String getDisplayString();
-	/**
-	 * Returns the image to be displayed in the list of completion proposals.
-	 * The image would typically be shown to the left of the display string.
-	 *
-	 * @return the image to be shown or <code>null</code> if no image is desired
-	 */
-	Image getImage();
+	
 	/**
 	 * Returns the new selection after the proposal has been applied to 
 	 * the given document in absolute document coordinates.
@@ -67,4 +39,37 @@ public interface ICompletionProposal {
 	 * @return the new selection in absolute document coordinates
 	 */
 	Point getSelection(IDocument document);
+
+	/**
+	 * Returns optional additional information about the proposal.
+	 * The additional information will be presented to assist the user
+	 * in deciding if the selected proposal is the desired choice.
+	 *
+	 * @return the additional information or <code>null</code>
+	 */
+	String getAdditionalProposalInfo();
+
+	/**
+	 * Returns the string to be displayed in the list of completion proposals.
+	 *
+	 * @return the string to be displayed
+	 */
+	String getDisplayString();
+
+	/**
+	 * Returns the image to be displayed in the list of completion proposals.
+	 * The image would typically be shown to the left of the display string.
+	 *
+	 * @return the image to be shown or <code>null</code> if no image is desired
+	 */
+	Image getImage();
+
+	/**
+	 * Returns optional context information associated with this proposal.
+	 * The context information will automatically be shown if the proposal
+	 * has been applied.
+	 *
+	 * @return the context information for this proposal or <code>null</code>
+	 */
+	IContextInformation getContextInformation();
 }

@@ -39,6 +39,7 @@ public class DefaultRangeIndicator extends Annotation {
 		super();
 		setLayer(0);
 	}
+	
 	/**
 	 * Creates the pattern that fills the source line range.
 	 *
@@ -52,6 +53,7 @@ public class DefaultRangeIndicator extends Annotation {
 				if (x % 2 == y % 2)
 					fgData.setPixel(x, y, 1);
 	}
+	
 	/*
 	 * @see Annotation#paint
 	 */

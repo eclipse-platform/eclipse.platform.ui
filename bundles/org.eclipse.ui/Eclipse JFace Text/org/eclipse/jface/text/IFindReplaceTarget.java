@@ -20,6 +20,7 @@ public interface IFindReplaceTarget {
 	 * @return whether a find operation can be performed
 	 */
 	boolean canPerformFind();
+	
  	/**
  	 * Finds and selects a string starting at the given offset using the specified search
  	 * directives.
@@ -32,24 +33,28 @@ public interface IFindReplaceTarget {
   	 * @return the position of the specified string, or -1 if the string has not been found
 	 */
 	int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord);
+	
 	/**
 	 * Returns the currently selected range of characters as a offset and length.
 	 *
 	 * @return the currently selected character range
 	 */
 	Point getSelection();
+	
 	/**
 	 * Returns the currently selected characters as a string.
 	 *
 	 * @ return the currently selected characters
 	 */
 	String getSelectionText();
+	
 	/**
 	 * Returns whether this target can be modified.
 	 *
 	 * @return <code>true</code> if target can be modified
 	 */
 	boolean isEditable();
+	
 	/**
 	 * Replaces the currently selected range of characters with the given text.
 	 * This target must be editable. Otherwise nothing happens.

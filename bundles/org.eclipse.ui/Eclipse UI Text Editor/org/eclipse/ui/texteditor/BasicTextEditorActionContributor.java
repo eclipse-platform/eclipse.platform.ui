@@ -6,15 +6,7 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.ResourceBundle;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.EditorActionBarContributor;
+import java.util.ResourceBundle;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuManager;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 
@@ -53,10 +45,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	/** The active editor part */
 	private IEditorPart fActiveEditorPart;
 	/** The go to line action */
-	private RetargetTextEditorAction fGotoLine;
-	/** The contributor's resource bundle */
-	private ResourceBundle fResourceBundle;
-	
+	private RetargetTextEditorAction fGotoLine;	
 	
 	/**
 	 * Creates an empty editor action bar contributor. The action bars are
@@ -65,17 +54,18 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @see org.eclipse.ui.IEditorActionBarContributor#init
 	 */
 	public BasicTextEditorActionContributor() {
-		fGotoLine= new RetargetTextEditorAction(getResourceBundle(), "GotoLine.");
+		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "GotoLine."); //$NON-NLS-1$
 	}
+	
 	/**
-	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
+	 * Returns the active editor part.
+	 *
+	 * @return the active editor part
 	 */
-	public void contributeToMenu(IMenuManager menu) {
-		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) {
-			editMenu.add(fGotoLine);
-		}
+	protected final IEditorPart getActiveEditorPart() {
+		return fActiveEditorPart;
 	}
+	
 	/**
 	 * Returns the action registered with the given text editor.
 	 *
@@ -86,24 +76,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	protected final IAction getAction(ITextEditor editor, String actionId) {
 		return (editor == null ? null : editor.getAction(actionId));
 	}
-	/**
-	 * Returns the active editor part.
-	 *
-	 * @return the active editor part
-	 */
-	protected final IEditorPart getActiveEditorPart() {
-		return fActiveEditorPart;
-	}
-	/** 
-	 * Returns the contributor's resource bundle.
-	 *
-	 * @return the contributor's resource bundle
-	 */
-	private ResourceBundle getResourceBundle() {
-		if (fResourceBundle == null)
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		return fResourceBundle;
-	}
+	
 	/**
 	 * The <code>BasicTextEditorActionContributor</code> implementation of this 
 	 * <code>IEditorActionBarContributor</code> method installs the global 
@@ -124,5 +97,15 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		}
 		
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
+	}
+	
+	/**
+	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
+	 */
+	public void contributeToMenu(IMenuManager menu) {
+		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null) {
+			editMenu.add(fGotoLine);
+		}
 	}
 }

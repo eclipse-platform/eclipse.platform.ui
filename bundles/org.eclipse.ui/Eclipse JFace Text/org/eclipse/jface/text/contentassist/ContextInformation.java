@@ -29,6 +29,7 @@ public final class ContextInformation implements IContextInformation {
 	public ContextInformation(String contextDisplayString, String informationDisplayString) {
 		this(null, contextDisplayString, informationDisplayString);
 	}
+
 	/**
 	 * Creates a new context information with an image.
 	 *
@@ -45,6 +46,7 @@ public final class ContextInformation implements IContextInformation {
 		fContextDisplayString= contextDisplayString;
 		fInformationDisplayString= informationDisplayString;
 	}
+
 	/*
 	 * @see IContextInformation#equals
 	 */
@@ -58,24 +60,27 @@ public final class ContextInformation implements IContextInformation {
 		}
 		return false;
 	}
+	
 	/*
-	 * @see IContextInformation#getContextDisplayString()
+	 * @see IContextInformation#getInformationDisplayString()
 	 */
-	public String getContextDisplayString() {
-		if (fContextDisplayString != null)
-			return fContextDisplayString;
+	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
+	
 	/*
 	 * @see IContextInformation#getImage()
 	 */
 	public Image getImage() {
 		return fImage;
 	}
+	
 	/*
-	 * @see IContextInformation#getInformationDisplayString()
+	 * @see IContextInformation#getContextDisplayString()
 	 */
-	public String getInformationDisplayString() {
+	public String getContextDisplayString() {
+		if (fContextDisplayString != null)
+			return fContextDisplayString;
 		return fInformationDisplayString;
 	}
 }

@@ -23,18 +23,12 @@ import java.util.Iterator;
 public interface ILineTracker {
 		
 	/**
-	 * Computes the number of lines in the given text.
-	 * 
-	 * @param text the text whose number of lines should be computed
-	 * @return the number of lines in the given text
-	 */
-	int computeNumberOfLines(String text);
-	/**
 	 * Returns the strings this tracker considers as legal line delimiters.
 	 *
 	 * @return the legal line delimiters
 	 */
 	String[] getLegalLineDelimiters();
+			
 	/**
 	 * Returns the line delimiter of the specified line. Returns null if the
 	 * line is not closed with a line delimiter.
@@ -44,16 +38,59 @@ public interface ILineTracker {
 	 * @exception BadLocationException if the line number is invalid in this tracker's line structure
 	 */
 	String getLineDelimiter(int line) throws BadLocationException;
+	
 	/**
-	 * Returns a line description of the given line. The description
-	 * contains the start offset and the length of the line excluding the line's
-	 * delimiter.
+	 * Computes the number of lines in the given text.
+	 * 
+	 * @param text the text whose number of lines should be computed
+	 * @return the number of lines in the given text
+	 */
+	int computeNumberOfLines(String text);
+	
+	/**
+	 * Returns the number of lines.
 	 *
-	 * @param line the line that should be described
-	 * @return a region describing the line
+	 * @return the number of lines in this tracker's line structure
+	 */
+	int getNumberOfLines();
+	
+	/**
+	 * Returns the number of lines which are occupied by a given text range.
+	 *
+	 * @param offset the offset of the specified text range
+	 * @param length the length of the specified text range
+	 * @return the number of lines occupied by the specified range
+	 * @exception BadLocationException if specified range is unknown to this tracker
+	 */
+	int getNumberOfLines(int offset, int length) throws BadLocationException;
+	
+	/**
+	 * Returns the position of the first character of the specified line.
+	 *
+	 * @param line the line of interest
+	 * @return offset of the first character of the line
+	 * @exception BadLocationException if the line is unknown to this tracker
+	 */
+	int getLineOffset(int line) throws BadLocationException;
+	
+	/**
+	 * Returns length of the specified line including the line's delimiter.
+	 *
+	 * @param line the line of interest
+	 * @return the length of the line
 	 * @exception BadLocationException if line is unknown to this tracker
 	 */
-	IRegion getLineInformation(int line) throws BadLocationException;
+	int getLineLength(int line) throws BadLocationException;
+	
+	/**
+	 * Returns the line number the character at the given offset belongs to.
+	 *
+	 * @param offset the offset whose line number to be determined
+	 * @return the number of the line the offset is on
+	 * @exception BadLocationException if the offset is invalid in this tracker
+	 */
+	int getLineNumberOfOffset(int offset) throws BadLocationException;
+	
 	/**
 	 * Returns a line description of the line at the given offset.
 	 * The description contains the start offset and the length of the line
@@ -64,45 +101,18 @@ public interface ILineTracker {
 	 * @exception BadLocationException if offset is invalid in this tracker
 	 */
 	IRegion getLineInformationOfOffset(int offset) throws BadLocationException;
+	
 	/**
-	 * Returns length of the specified line including the line's delimiter.
+	 * Returns a line description of the given line. The description
+	 * contains the start offset and the length of the line excluding the line's
+	 * delimiter.
 	 *
-	 * @param line the line of interest
-	 * @return the length of the line
+	 * @param line the line that should be described
+	 * @return a region describing the line
 	 * @exception BadLocationException if line is unknown to this tracker
 	 */
-	int getLineLength(int line) throws BadLocationException;
-	/**
-	 * Returns the line number the character at the given offset belongs to.
-	 *
-	 * @param offset the offset whose line number to be determined
-	 * @return the number of the line the offset is on
-	 * @exception BadLocationException if the offset is invalid in this tracker
-	 */
-	int getLineNumberOfOffset(int offset) throws BadLocationException;
-	/**
-	 * Returns the position of the first character of the specified line.
-	 *
-	 * @param line the line of interest
-	 * @return offset of the first character of the line
-	 * @exception BadLocationException if the line is unknown to this tracker
-	 */
-	int getLineOffset(int line) throws BadLocationException;
-	/**
-	 * Returns the number of lines.
-	 *
-	 * @return the number of lines in this tracker's line structure
-	 */
-	int getNumberOfLines();
-	/**
-	 * Returns the number of lines which are occupied by a given text range.
-	 *
-	 * @param offset the offset of the specified text range
-	 * @param length the length of the specified text range
-	 * @return the number of lines occupied by the specified range
-	 * @exception BadLocationException if specified range is unknown to this tracker
-	 */
-	int getNumberOfLines(int offset, int length) throws BadLocationException;
+	IRegion getLineInformation(int line) throws BadLocationException;
+		
 	/**
 	 * Informs the line tracker about the specified change in the tracked text.
 	 *
@@ -112,6 +122,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if specified range is unknown to this tracker
 	 */
 	void replace(int offset, int length, String text) throws BadLocationException;
+	
 	/**
 	 * Sets the tracked text to the specified text.
 	 *

@@ -49,25 +49,66 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 public interface ITextViewer {
 	
 	
+	/* ---------- widget --------- */
+	
+	/**
+	 * Returns this viewer's SWT control
+	 * 
+	 * @return the SWT control
+	 */
+	StyledText getTextWidget();
+	
+		
+	/* --------- plugins --------- */
+		
+	/**
+	 * Sets this viewer's undo manager.
+	 * 
+	 * @param undoManager the new undo manager. <code>null</code> is a valid argument.
+	 */
+	void setUndoManager(IUndoManager undoManager);	
+		
+	/**
+	 * Sets this viewer's text double click strategy for the given content type.
+	 *
+	 * @param strategy the new double click strategy. <code>null</code> is a valid argument.
+	 * @param contentType the type for which the strategy is registered
+	 */
+	void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType);
+	
+	/**
+	 * Sets this viewer's auto indent strategy for the given content type.
+	 *
+	 * @param strategy the new auto indent strategy. <code>null</code> is a valid argument.
+	 * @param contentType the type for which the strategy is registered
+	 */
+	void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType);
+		
+	/**
+	 * Sets this viewer's text hover for the given content type. 
+	 *
+	 * @param textViewerHover the new hover. <code>null</code> is a valid argument.
+	 * @param contentType the type for which the hover is registered
+	 */
+	void setTextHover(ITextHover textViewerHover, String contentType);
+	
 	/**
 	 * Activates the installed plug-ins. If the plug-ins are already activated 
 	 * this call has no effect.
 	 */
 	void activatePlugins();
+	
 	/**
-	 * Adds a text input listener to this viewer. If the listener is already registered
-	 * with this viewer, this call has no effect.
-	 *
-	 * @param listener the listener to be added
+	 * Resets the installed plug-ins. If plug-ins change their state or 
+	 * behavior over the course of time, this method causes them to be set
+	 * back to their initial state and behavior. E.g., if an <code>IUndoManager</code>
+	 * has been installed on this text viewer, the manager's list of remembered 
+     * text editing operations is removed.
 	 */
-	void addTextInputListener(ITextInputListener listener);
-	/**
-	 * Adds a text listener to this viewer. If the listener is already registered
-	 * with this viewer, this call has no effect.
-	 *
-	 * @param listener the listener to be added
-	 */
-	void addTextListener(ITextListener listener);
+	void resetPlugins();
+	
+	
+	
 	/* ---------- listeners ------------- */
 		
 	/**
@@ -79,129 +120,7 @@ public interface ITextViewer {
 	 * @param listener the listener to be added
 	 */
 	void addViewportListener(IViewportListener listener);
-	/* ------------- presentation manipulation ----------- */
 	
-	/**
-	 * Applies the color information encoded in the given text presentation.
-	 * <code>controlRedraw</code> tells this viewer whether it should take care of 
-	 * redraw management or not. If, e.g., this call is one in a sequence of multiple
-	 * coloring calls, it is more appropriate to explicitly control redrawing at the
-	 * beginning and the end of the sequence.
-	 *
-	 * @param presentation the presentation to be applied to this viewer
-	 * @param controlRedraw indicates whether this viewer should manage redraws
-	 */
-	void changeTextPresentation(TextPresentation presentation, boolean controlRedraw);
-	/**
-	 * Returns the visible line with the highest line number.
-	 *
-	 * @return the number of the bottom most line
-	 */
-	int getBottomIndex();
-	/**
-	 * Returns the document offset of the lower right 
-	 * corner of this viewer's viewport, i.e. the visible character
-	 * with the highest character position. If the content of this viewer
-	 * is shorter, the position of the last character of the content is returned.
-	 *
-	 * @return the lower right corner offset
-	 */
-	int getBottomIndexEndOffset();
-	/**
-	 * Returns the text viewer's input document.
-	 *
-	 * @return the viewer's input document
-	 */
-	IDocument getDocument();
-	/**
-	 * Returns the find/replace operation target of this viewer.
-	 * 
-	 * @return the find/replace operation target of this viewer
-	 */
-	IFindReplaceTarget getFindReplaceTarget();
-	/**
-	 * Returns the range of the current selection in coordinates of this viewer's document.
-	 *
-	 * @return the current selection
-	 */
-	Point getSelectedRange();
-	/**
-	 * Returns a selection provider dedicated to this viewer. Subsequent
-	 * calls to this method return always the same selection provider.
-	 *
-	 * @return this viewer's selection provider
-	 */
-	ISelectionProvider getSelectionProvider();
-	/* --------- target handling and configuration ------------ */
-	
-	/**
-	 * Returns the text operation target of this viewer.
-	 *
-	 * @return the text operation target of this viewer
-	 */
-	ITextOperationTarget getTextOperationTarget();
-	/* ---------- widget --------- */
-	
-	/**
-	 * Returns this viewer's SWT control
-	 * 
-	 * @return the SWT control
-	 */
-	StyledText getTextWidget();
-	/**
-	 * Returns the visible line with the smallest line number.
-	 *
-	 * @return the number of the top most visible line
-	 */
-	int getTopIndex();
-	/**
-	 * Returns the document offset of the upper left corner of this viewer's viewport.
-	 *
-	 * @return the upper left corner offset
-	 */
-	int getTopIndexStartOffset();
-	/**
-	 * Returns the vertical offset of the first visible line.
-	 *
-	 * @return the vertical offset of the first visible line
-	 */
-	int getTopInset();
-	/**
-	 * Returns the current visible region of this viewer's document.
-	 * The result may differ from the argument passed to <code>setVisibleRegion</code>
-	 * if the document has been modified since then.
-	 *
-	 * @return this viewer's current visible region
-	 */
-	IRegion getVisibleRegion();
-	/**
-	 * Returns whether the shown text can be manipulated.
-	 *
-	 * @return the viewer's editable mode
-	 */
-	boolean isEditable();
-	/**
-	 * Returns whether a given range overlaps with the visible region of this viewer's document.
-	 *
-	 * @return <code>true</code> if the specified range overlaps with the visible region
-	 */
-	boolean overlapsWithVisibleRegion(int offset, int length);
-	/**
-	 * Removes the given listener from this viewer's set of text input listeners.
-	 * If the listener is not registered with this viewer, this call has
-	 * no effect.
-	 *
-	 * @param listener the listener to be removed
-	 */
-	void removeTextInputListener(ITextInputListener listener);
-	/**
-	 * Removes the given listener from this viewer's set of text listeners.
-	 * If the listener is not registered with this viewer, this call has
-	 * no effect.
-	 *
-	 * @param listener the listener to be removed
-	 */
-	void removeTextListener(ITextListener listener);
 	/**
 	 * Removes the given listener from this viewer's set of viewport listeners.
 	 * If the listener is not registered with this viewer, this call has
@@ -210,43 +129,43 @@ public interface ITextViewer {
 	 * @param listener the listener to be removed
 	 */
 	void removeViewportListener(IViewportListener listener);
-	/**
-	 * Resets the installed plug-ins. If plug-ins change their state or 
-	 * behavior over the course of time, this method causes them to be set
-	 * back to their initial state and behavior. E.g., if an <code>IUndoManager</code>
-	 * has been installed on this text viewer, the manager's list of remembered 
-	 * text editing operations is removed.
-	 */
-	void resetPlugins();
-	/**
-	 * Resets the region of this viewer's document which is visible in the presentation.
-	 * Afterwards, the whole document is presented again.
-	 */
-	void resetVisibleRegion();
-	/* ------------- appearance manipulation --------------- */
 		
 	/**
-	 * Ensures that the given range is visible.
+	 * Adds a text listener to this viewer. If the listener is already registered
+	 * with this viewer, this call has no effect.
 	 *
-	 * @param offset the offset of the range to be revealed
-	 * @param length the length of the range to be revealed 
+	 * @param listener the listener to be added
 	 */
-	void revealRange(int offset, int length);
+	void addTextListener(ITextListener listener);
+	
 	/**
-	 * Sets this viewer's auto indent strategy for the given content type.
+	 * Removes the given listener from this viewer's set of text listeners.
+	 * If the listener is not registered with this viewer, this call has
+	 * no effect.
 	 *
-	 * @param strategy the new auto indent strategy. <code>null</code> is a valid argument.
-	 * @param contentType the type for which the strategy is registered
+	 * @param listener the listener to be removed
 	 */
-	void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType);
+	void removeTextListener(ITextListener listener);
+	
 	/**
-	 * Sets the string that is used as prefix when lines of the given 
-	 * content type are prefixed by the prefix text operation.
+	 * Adds a text input listener to this viewer. If the listener is already registered
+	 * with this viewer, this call has no effect.
 	 *
-	 * @param defaultPrefix the prefix to be used
-	 * @param contentType the content type for which the prefix is specified
+	 * @param listener the listener to be added
 	 */
-	void setDefaultPrefix(String defaultPrefix, String contentType);
+	void addTextInputListener(ITextInputListener listener);
+	
+	/**
+	 * Removes the given listener from this viewer's set of text input listeners.
+	 * If the listener is not registered with this viewer, this call has
+	 * no effect.
+	 *
+	 * @param listener the listener to be removed
+	 */
+	void removeTextInputListener(ITextInputListener listener);
+	
+	
+	
 	/* -------------- model manipulation ------------- */
 		
 	/**
@@ -257,6 +176,39 @@ public interface ITextViewer {
 	 * @param document the viewer's new input document
 	 */
 	void setDocument(IDocument document);
+	
+	/**
+	 * Returns the text viewer's input document.
+	 *
+	 * @return the viewer's input document
+	 */
+	IDocument getDocument();
+		
+	
+	/* -------------- event handling ----------------- */
+	
+	/**
+	 * Registers an event consumer with this viewer.
+	 *
+	 * @param consumer the viewer's event consumer. <code>null</code> is a valid argument.
+	 */
+	void setEventConsumer(IEventConsumer consumer);
+		
+	/**
+	 * Sets the editable mode.
+	 *
+	 * @param editable the editable mode
+	 */
+	void setEditable(boolean editable);
+
+	/**
+	 * Returns whether the shown text can be manipulated.
+	 *
+	 * @return the viewer's editable mode
+	 */
+	boolean isEditable();
+	
+	
 	/* ----------- visible region support ------------- */
 	
 	/**
@@ -271,46 +223,60 @@ public interface ITextViewer {
 	 * @param visibleRegionLength the length of the visible region
 	 */
 	void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength);
-	/**
-	 * Sets the editable mode.
-	 *
-	 * @param editable the editable mode
-	 */
-	void setEditable(boolean editable);
-	/* -------------- event handling ----------------- */
 	
 	/**
-	 * Registers an event consumer with this viewer.
+	 * Sets the region of this viewer's document which will be visible in the presentation.
 	 *
-	 * @param consumer the viewer's event consumer. <code>null</code> is a valid argument.
+	 * @param offset the offset of the visible region
+	 * @param length the length of the visible region
 	 */
-	void setEventConsumer(IEventConsumer consumer);
-	/**
-	 * Sets the strings that are used as prefixes when lines of the given content type 
-	 * are shifted using the shift text operation. The prefixes are considered equivalent.
-	 * Thus "\t" and "    " can both be used as prefix characters.
-	 * Shift right always inserts the indentPrefixes[0].
-	 * Shift left removes all of the specified prefixes.
-	 *
-	 * @param indentPrefixes the prefixes to be used
-	 * @param contentType the content type for which the prefixes are specified
-	 */
-	void setIndentPrefixes(String[] indentPrefixes, String contentType);
-	/* --------- selection handling -------------- */
+	void setVisibleRegion(int offset, int length);
 	
 	/**
-	 * Sets the selection to the specified range.
-	 *
-	 * @param offset the offset of the selection range
-	 * @param length the length of the selection range
+	 * Resets the region of this viewer's document which is visible in the presentation.
+	 * Afterwards, the whole document is presented again.
 	 */
-	void setSelectedRange(int offset, int length);
+	void resetVisibleRegion();
+	
+	/**
+	 * Returns the current visible region of this viewer's document.
+	 * The result may differ from the argument passed to <code>setVisibleRegion</code>
+	 * if the document has been modified since then.
+	 *
+	 * @return this viewer's current visible region
+	 */
+	IRegion getVisibleRegion();
+	
+	/**
+	 * Returns whether a given range overlaps with the visible region of this viewer's document.
+	 *
+	 * @return <code>true</code> if the specified range overlaps with the visible region
+	 */
+	boolean overlapsWithVisibleRegion(int offset, int length);	
+	
+	
+	
+	/* ------------- presentation manipulation ----------- */
+	
+	/**
+	 * Applies the color information encoded in the given text presentation.
+	 * <code>controlRedraw</code> tells this viewer whether it should take care of 
+	 * redraw management or not. If, e.g., this call is one in a sequence of multiple
+	 * coloring calls, it is more appropriate to explicitly control redrawing at the
+	 * beginning and the end of the sequence.
+	 *
+	 * @param presentation the presentation to be applied to this viewer
+	 * @param controlRedraw indicates whether this viewer should manage redraws
+	 */
+	void changeTextPresentation(TextPresentation presentation, boolean controlRedraw);
+		
 	/**
 	 * Applies the given color to this viewer's selection.
 	 *
 	 * @param color the color to be applied
 	 */
 	void setTextColor(Color color);
+	
 	/**
 	 * Applies the given color to the specified section of this viewer. 
 	 * <code>controlRedraw</code> tells this viewer whether it should take care of
@@ -322,20 +288,83 @@ public interface ITextViewer {
 	 * @param controlRedraw indicates whether this viewer should manage redraws
 	 */
 	void setTextColor(Color color, int offset, int length, boolean controlRedraw);
+	
+	
+	/* --------- target handling and configuration ------------ */
+	
 	/**
-	 * Sets this viewer's text double click strategy for the given content type.
+	 * Returns the text operation target of this viewer.
 	 *
-	 * @param strategy the new double click strategy. <code>null</code> is a valid argument.
-	 * @param contentType the type for which the strategy is registered
+	 * @return the text operation target of this viewer
 	 */
-	void setTextDoubleClickStrategy(ITextDoubleClickStrategy strategy, String contentType);
+	ITextOperationTarget getTextOperationTarget();
+	
 	/**
-	 * Sets this viewer's text hover for the given content type. 
-	 *
-	 * @param textViewerHover the new hover. <code>null</code> is a valid argument.
-	 * @param contentType the type for which the hover is registered
+	 * Returns the find/replace operation target of this viewer.
+	 * 
+	 * @return the find/replace operation target of this viewer
 	 */
-	void setTextHover(ITextHover textViewerHover, String contentType);
+	IFindReplaceTarget getFindReplaceTarget();
+	
+	/**
+	 * Sets the string that is used as prefix when lines of the given 
+	 * content type are prefixed by the prefix text operation.
+	 *
+	 * @param defaultPrefix the prefix to be used
+	 * @param contentType the content type for which the prefix is specified
+	 */
+	void setDefaultPrefix(String defaultPrefix, String contentType);
+	
+	/**
+	 * Sets the strings that are used as prefixes when lines of the given content type 
+	 * are shifted using the shift text operation. The prefixes are considered equivalent.
+	 * Thus "\t" and "    " can both be used as prefix characters.
+	 * Shift right always inserts the indentPrefixes[0].
+	 * Shift left removes all of the specified prefixes.
+	 *
+	 * @param indentPrefixes the prefixes to be used
+	 * @param contentType the content type for which the prefixes are specified
+	 */
+	void setIndentPrefixes(String[] indentPrefixes, String contentType);
+	
+	
+	
+	/* --------- selection handling -------------- */
+	
+	/**
+	 * Sets the selection to the specified range.
+	 *
+	 * @param offset the offset of the selection range
+	 * @param length the length of the selection range
+	 */
+	void setSelectedRange(int offset, int length);
+	
+	/**
+	 * Returns the range of the current selection in coordinates of this viewer's document.
+	 *
+	 * @return the current selection
+	 */
+	Point getSelectedRange();
+	
+	/**
+	 * Returns a selection provider dedicated to this viewer. Subsequent
+	 * calls to this method return always the same selection provider.
+	 *
+	 * @return this viewer's selection provider
+	 */
+	ISelectionProvider getSelectionProvider();
+	
+	
+	/* ------------- appearance manipulation --------------- */
+		
+	/**
+	 * Ensures that the given range is visible.
+	 *
+	 * @param offset the offset of the range to be revealed
+	 * @param length the length of the range to be revealed 
+	 */
+	void revealRange(int offset, int length);
+	
 	/**
 	 * Scrolls the widget so the the given index is the line
 	 * with the smallest line number of all visible lines.
@@ -343,19 +372,42 @@ public interface ITextViewer {
 	 * @param index the line which should become the top most line
 	 */
 	void setTopIndex(int index);
-	/* --------- plugins --------- */
-		
+	
 	/**
-	 * Sets this viewer's undo manager.
-	 * 
-	 * @param undoManager the new undo manager. <code>null</code> is a valid argument.
-	 */
-	void setUndoManager(IUndoManager undoManager);
-	/**
-	 * Sets the region of this viewer's document which will be visible in the presentation.
+	 * Returns the visible line with the smallest line number.
 	 *
-	 * @param offset the offset of the visible region
-	 * @param length the length of the visible region
+	 * @return the number of the top most visible line
 	 */
-	void setVisibleRegion(int offset, int length);
+	int getTopIndex();
+	
+	/**
+	 * Returns the document offset of the upper left corner of this viewer's viewport.
+	 *
+	 * @return the upper left corner offset
+	 */
+	int getTopIndexStartOffset();
+	
+	/**
+	 * Returns the visible line with the highest line number.
+	 *
+	 * @return the number of the bottom most line
+	 */
+	int getBottomIndex();
+	
+	/**
+	 * Returns the document offset of the lower right 
+	 * corner of this viewer's viewport, i.e. the visible character
+	 * with the highest character position. If the content of this viewer
+	 * is shorter, the position of the last character of the content is returned.
+	 *
+	 * @return the lower right corner offset
+	 */
+	int getBottomIndexEndOffset();
+	
+	/**
+	 * Returns the vertical offset of the first visible line.
+	 *
+	 * @return the vertical offset of the first visible line
+	 */
+	int getTopInset();
 }

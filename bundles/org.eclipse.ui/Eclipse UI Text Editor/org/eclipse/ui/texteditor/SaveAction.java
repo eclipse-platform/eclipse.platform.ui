@@ -33,12 +33,14 @@ public class SaveAction extends TextEditorAction {
 	public SaveAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
+	
 	/*
 	 * @see IAction#run
 	 */
 	public void run() {
 		getTextEditor().getSite().getPage().saveEditor(getTextEditor(), false);
 	}
+	
 	/*
 	 * @see TextEditorAction#update
 	 */

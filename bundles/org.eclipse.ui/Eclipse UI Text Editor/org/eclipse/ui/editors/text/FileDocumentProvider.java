@@ -21,8 +21,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IResourceStatus;import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
@@ -39,8 +38,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
+import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
 /**
@@ -103,7 +101,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (delta != null)
 					delta.accept(this);
 			} catch (CoreException x) {
-				handleCoreException(x, "FileDocumentProvider.resourceChanged");
+				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.resourceChanged")); //$NON-NLS-1$
 			}
 		}
 		
@@ -202,6 +200,19 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	public FileDocumentProvider() {
 		super();
 	}
+		
+	/*
+	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
+	 */
+	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			return new ResourceMarkerAnnotationModel(input.getFile());
+		}
+		
+		return super.createAnnotationModel(element);
+	}
+	
 	/**
 	 * Checks whether the given resource has been changed on the 
 	 * local file system by comparing the actual time stamp with the 
@@ -214,10 +225,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected void checkSynchronizationState(long cachedModificationStamp, IResource resource) throws CoreException {
 		if (cachedModificationStamp != computeModificationStamp(resource)) {
-			Status status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, "Has been changed on the file system", null);
+			Status status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, TextEditorMessages.getString("FileDocumentProvider.error.out_of_sync"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}
+	
 	/**
 	 * Computes the initial modification stamp for the given resource.
 	 * 
@@ -234,56 +246,53 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		modificationStamp= path.toFile().lastModified();
 		return modificationStamp;
 	}
+	
 	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
+	 * @see IDocumentProvider#getModificationStamp(Object)
 	 */
-	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+	public long getModificationStamp(Object element) {
+		
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
-			return new ResourceMarkerAnnotationModel(input.getFile());
+			FileInfo info= (FileInfo) getElementInfo(element);
+			return computeModificationStamp(input.getFile());
 		}
 		
-		return super.createAnnotationModel(element);
+		return super.getModificationStamp(element);
 	}
+	
 	/*
-	 * @see AbstractDocumentProvider#createElementInfo(Object)
+	 * @see IDocumentProvider#getSynchronizationStamp(Object)
 	 */
-	protected ElementInfo createElementInfo(Object element) throws CoreException {
+	public long getSynchronizationStamp(Object element) {
+		
 		if (element instanceof IFileEditorInput) {
-			
+			IFileEditorInput input= (IFileEditorInput) element;
+			FileInfo info= (FileInfo) getElementInfo(element);
+			return info.fModificationStamp;
+		}
+		
+		return super.getSynchronizationStamp(element);
+	}
+	
+	/*
+	 * @see IDocumentProvider#isDeleted(Object)
+	 */
+	public boolean isDeleted(Object element) {
+		
+		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			
-			try {
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (CoreException x) {
-				handleCoreException(x,"FileDocumentProvider.createElementInfo");
-			}
-			
-			IDocument d= createDocument(element);
-			IAnnotationModel m= createAnnotationModel(element);
-			FileSynchronizer f= new FileSynchronizer(input);
-			f.install();
-			
-			FileInfo info= new FileInfo(d, m, f);
-			info.fModificationStamp= computeModificationStamp(input.getFile());
-			
-			return info;
+			IPath path= input.getFile().getLocation();
+			if (path == null)
+				return true;
+				
+			return !path.toFile().exists();
 		}
 		
-		return super.createElementInfo(element);
+		return super.isDeleted(element);
 	}
-	/*
-	 * @see AbstractDocumentProvider#disposeElementInfo(Object, ElementInfo)
-	 */
-	protected void disposeElementInfo(Object element, ElementInfo info) {
-		if (info instanceof FileInfo) {
-			FileInfo fileInfo= (FileInfo) info;
-			if (fileInfo.fFileSynchronizer != null)
-				fileInfo.fFileSynchronizer.uninstall();
-		}
-		
-		super.disposeElementInfo(element, info);
-	}
+	
 	/*
 	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
@@ -314,7 +323,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				
 			} else {
 				try {
-					monitor.beginTask("Saving", 2000);
+					monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
 					ContainerGenerator generator = new ContainerGenerator(file.getParent().getFullPath());
 					generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 					file.create(stream, false, new SubProgressMonitor(monitor, 1000));
@@ -327,54 +336,48 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			super.doSaveDocument(monitor, element, document, overwrite);
 		}
 	}
+	
 	/*
-	 * @see AbstractDocumentProvider#getElementInfo(Object)
-	 * It's only here to circumvent visibility issues with 
-	 * certain compilers.
+	 * @see AbstractDocumentProvider#createElementInfo(Object)
 	 */
-	protected ElementInfo getElementInfo(Object element) {
-		return super.getElementInfo(element);
-	}
-	/*
-	 * @see IDocumentProvider#getModificationStamp(Object)
-	 */
-	public long getModificationStamp(Object element) {
-		
+	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		if (element instanceof IFileEditorInput) {
+			
 			IFileEditorInput input= (IFileEditorInput) element;
-			FileInfo info= (FileInfo) getElementInfo(element);
-			return computeModificationStamp(input.getFile());
+			
+			try {
+				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException x) {
+				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
+			}
+			
+			IDocument d= createDocument(element);
+			IAnnotationModel m= createAnnotationModel(element);
+			FileSynchronizer f= new FileSynchronizer(input);
+			f.install();
+			
+			FileInfo info= new FileInfo(d, m, f);
+			info.fModificationStamp= computeModificationStamp(input.getFile());
+			
+			return info;
 		}
 		
-		return super.getModificationStamp(element);
+		return super.createElementInfo(element);
 	}
+	
 	/*
-	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 * @see AbstractDocumentProvider#disposeElementInfo(Object, ElementInfo)
 	 */
-	public long getSynchronizationStamp(Object element) {
-		
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			FileInfo info= (FileInfo) getElementInfo(element);
-			return info.fModificationStamp;
+	protected void disposeElementInfo(Object element, ElementInfo info) {
+		if (info instanceof FileInfo) {
+			FileInfo fileInfo= (FileInfo) info;
+			if (fileInfo.fFileSynchronizer != null)
+				fileInfo.fFileSynchronizer.uninstall();
 		}
 		
-		return super.getSynchronizationStamp(element);
-	}
-	/**
-	 * Defines the standard procedure to handle CoreExceptions.
-	 *
-	 * @param exception the exception to be logged
-	 * @param message the message to be logged
-	 */
-	protected void handleCoreException(CoreException exception, String message) {
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
-		
-		if (message != null)
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null));
-		
-		log.log(exception.getStatus());
-	}
+		super.disposeElementInfo(element, info);
+	}	
+	
 	/**
 	 * Updates the element info to a change of the file content and sends out
 	 * appropriate notifications.
@@ -421,17 +424,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 			
 		} catch (CoreException x) {
-			handleCoreException(x, "FileDocumentProvider.updateContent");
+			handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.updateContent")); //$NON-NLS-1$
 		}
 	}
-	/**
-	 * Sends out the notification that the file serving as document input has been deleted.
-	 *
-	 * @param fileEditorInput the input of an text editor
-	 */
-	protected void handleElementDeleted(IFileEditorInput fileEditorInput) {
-		fireElementDeleted(fileEditorInput);
-	}
+		
 	/**
 	 * Sends out the notification that the file serving as document input has been moved.
 	 * 
@@ -443,21 +439,37 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		IFile newFile= workspace.getRoot().getFile(path);
 		fireElementMoved(fileEditorInput, newFile == null ? null : new FileEditorInput(newFile));
 	}
-	/*
-	 * @see IDocumentProvider#isDeleted(Object)
+	
+	/**
+	 * Sends out the notification that the file serving as document input has been deleted.
+	 *
+	 * @param fileEditorInput the input of an text editor
 	 */
-	public boolean isDeleted(Object element) {
+	protected void handleElementDeleted(IFileEditorInput fileEditorInput) {
+		fireElementDeleted(fileEditorInput);
+	}
 		
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			
-			IPath path= input.getFile().getLocation();
-			if (path == null)
-				return true;
-				
-			return !path.toFile().exists();
-		}
+	/**
+	 * Defines the standard procedure to handle CoreExceptions.
+	 *
+	 * @param exception the exception to be logged
+	 * @param message the message to be logged
+	 */
+	protected void handleCoreException(CoreException exception, String message) {
+		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
 		
-		return super.isDeleted(element);
+		if (message != null)
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null));
+		
+		log.log(exception.getStatus());
+	}
+	
+	/*
+	 * @see AbstractDocumentProvider#getElementInfo(Object)
+	 * It's only here to circumvent visibility issues with 
+	 * certain compilers.
+	 */
+	protected ElementInfo getElementInfo(Object element) {
+		return super.getElementInfo(element);
 	}
 }

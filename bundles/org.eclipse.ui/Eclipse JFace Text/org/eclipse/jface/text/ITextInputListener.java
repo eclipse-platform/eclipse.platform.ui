@@ -23,6 +23,7 @@ public interface ITextInputListener {
 	 * @param newInput the text viewer's new input document
 	 */
 	void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput);
+	
 	/**
 	 * Called after the input document has been replaced.
 	 * 

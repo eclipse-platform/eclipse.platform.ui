@@ -23,6 +23,7 @@ public class MultiLineRule extends PatternRule {
 	public MultiLineRule(String startSequence, String endSequence, IToken token) {
 		this(startSequence, endSequence, token, (char)0);
 	}
+
 	/**
 	 * Creates a rule for the given starting and ending sequence
 	 * which, if detected, will return the specific token.

@@ -23,6 +23,7 @@ public class SingleLineRule extends PatternRule {
 	public SingleLineRule(String startSequence, String endSequence, IToken token) {
 		this(startSequence, endSequence, token, (char) 0);
 	}
+
 	/**
 	 * Creates a rule for the given starting and ending sequence
 	 * which, if detected, will return the specified token.

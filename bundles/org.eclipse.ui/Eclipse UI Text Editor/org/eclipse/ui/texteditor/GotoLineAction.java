@@ -48,13 +48,13 @@ public class GotoLineAction extends TextEditorAction {
 			try {
 				int i= Integer.parseInt(input);
 				if (i <= 0 || fLastLine < i)
-					return fBundle.getString(fPrefix + "dialog.invalid_range");
+					return fBundle.getString(fPrefix + "dialog.invalid_range"); //$NON-NLS-1$
 					
 			} catch (NumberFormatException x) {
-				return fBundle.getString(fPrefix + "dialog.invalid_input");
+				return fBundle.getString(fPrefix + "dialog.invalid_input"); //$NON-NLS-1$
 			}
 			
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	};
 	
@@ -81,6 +81,7 @@ public class GotoLineAction extends TextEditorAction {
 		fBundle= bundle;
 		fPrefix= prefix;
 	}
+	
 	/**
 	 * Jumps to the given line.
 	 *
@@ -104,6 +105,7 @@ public class GotoLineAction extends TextEditorAction {
 			// ignore
 		}
 	}
+	
 	/*
 	 * @see Action#run()
 	 */
@@ -120,8 +122,8 @@ public class GotoLineAction extends TextEditorAction {
 			IDocument document= docProvider.getDocument(editor.getEditorInput());
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 		
-			String title= fBundle.getString(fPrefix + "dialog.title");
-			String message= fBundle.getString(fPrefix + "dialog.message");
+			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
+			String message= fBundle.getString(fPrefix + "dialog.message"); //$NON-NLS-1$
 			String value= Integer.toString(selection.getStartLine() + 1);
 			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, value, new NumberValidator());
 			d.open();

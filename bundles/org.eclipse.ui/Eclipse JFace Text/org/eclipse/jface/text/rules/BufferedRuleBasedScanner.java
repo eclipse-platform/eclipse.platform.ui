@@ -31,6 +31,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	protected BufferedRuleBasedScanner() {
 		super();
 	}
+	
 	/**
 	 * Creates a new buffered rule based scanner which does 
 	 * not have any rule. The buffer size is set to the given
@@ -42,21 +43,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		super();
 		setBufferSize(size);
 	}
-	/*
-	 * @see RuleBasedScanner#read
-	 */
-	public int read() {
-		
-		if (fOffset >= fRangeEnd) {
-			++ fOffset;
-			return EOF;
-		}
-				
-		if (fOffset == fEnd)
-			shiftBuffer(fEnd);
-			
-		return fBuffer[fOffset++ - fStart];			
-	}
+	
 	/**
 	 * Sets the buffer to the given number of characters.
 	 *
@@ -66,16 +53,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		Assert.isTrue(size > 0);
 		fBufferSize= size;
 	}
-	/*
-	 * @see RuleBasedScanner#setRange
-	 */
-	public void setRange(IDocument document, int offset, int length) {
-		
-		super.setRange(document, offset, length);
-		
-		fDocumentLength= document.getLength();
-		shiftBuffer(offset);
-	}
+	
 	/**
 	 * Shifts the buffer so that the buffer starts at the 
 	 * given document offset.
@@ -97,6 +75,34 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		} catch (BadLocationException x) {
 		}
 	}
+	
+	/*
+	 * @see RuleBasedScanner#setRange
+	 */
+	public void setRange(IDocument document, int offset, int length) {
+		
+		super.setRange(document, offset, length);
+		
+		fDocumentLength= document.getLength();
+		shiftBuffer(offset);
+	}
+	
+	/*
+	 * @see RuleBasedScanner#read
+	 */
+	public int read() {
+		
+		if (fOffset >= fRangeEnd) {
+			++ fOffset;
+			return EOF;
+		}
+				
+		if (fOffset == fEnd)
+			shiftBuffer(fEnd);
+			
+		return fBuffer[fOffset++ - fStart];			
+	}
+	
 	/*
 	 * @see RuleBasedScanner#unread
 	 */
@@ -108,3 +114,5 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		-- fOffset;
 	}
 }
+
+

@@ -1,5 +1,6 @@
 package org.eclipse.jface.text.source;
 
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -39,6 +40,16 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	public VisualAnnotationModel(IAnnotationModel modelAnnotationModel) {
 		fModel= modelAnnotationModel;
 	}
+	
+	/**
+	 * Returns the visual annotation model's wrapped model based annotation model.
+	 *
+	 * @return the model based annotation model
+	 */
+	public IAnnotationModel getModelAnnotationModel() {
+		return fModel;
+	}
+	
 	/*
 	 * @see IAnnotationModel#addAnnotationModelListener
 	 */
@@ -49,6 +60,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 
 		super.addAnnotationModelListener(listener);
 	}
+	
 	/*
 	 * @see IAnnotationModel#connect
 	 */
@@ -57,6 +69,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 		if (fModel != null)
 			fModel.connect(document);
 	}
+	
 	/*
 	 * @see IAnnotationModel#disconnect
 	 */
@@ -65,6 +78,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 		if (fModel != null)
 			fModel.disconnect(document);
 	}
+	
 	/*
 	 * @see IAnnotationModel#getAnnotationIterator
 	 */
@@ -85,14 +99,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 
 		return a.iterator();
 	}
-	/**
-	 * Returns the visual annotation model's wrapped model based annotation model.
-	 *
-	 * @return the model based annotation model
-	 */
-	public IAnnotationModel getModelAnnotationModel() {
-		return fModel;
-	}
+	
 	/*
 	 * @see IAnnotationModel#getPosition
 	 */
@@ -107,6 +114,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 			
 		return null;
 	}
+		
 	/*
 	 * @see IAnnotationModelListener#modelChanged
 	 */
@@ -119,6 +127,8 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 			}
 		}
 	}
+	
+	
 	/**
 	 * Modifies associated position of the given annotation to the given position.
 	 * If the annotation is not yet managed by this annotation model, the annotation
@@ -130,6 +140,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	public void modifyAnnotation(Annotation annotation, Position position) {
 		modifyAnnotation(annotation, position, true);
 	}
+	
 	/**
 	 * Modifies the associated position of the given annotation to the given position.
 	 * If the annotation is not yet managed by this annotation model, the annotation
@@ -155,6 +166,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 			}
 		}
 	}
+	
 	/*
 	 * @see IAnnotationModel#removeAnnotationModelListener
 	 */

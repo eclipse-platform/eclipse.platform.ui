@@ -33,6 +33,22 @@ import org.eclipse.jface.text.ITextViewer;
 public interface IPresentationReconciler {
 			
 	/**
+	 * Installs this presentation reconciler on the given text viewer. After 
+	 * this method has been finished, the reconciler is operational. I.e., it 
+	 * works without requesting further client actions until <code>uninstall</code> 
+	 * is called.
+	 * 
+	 * @param textViewer the viewer on which this presentation reconciler is installed
+	 */
+	void install(ITextViewer viewer);
+	
+	/**
+	 * Removes the reconciler from the text viewer it has previously been
+	 * installed on. 
+	 */
+	void uninstall();
+	
+	/**
 	 * Returns the presentation damager registered with this presentation reconciler
 	 * for the specified content type.
 	 *
@@ -41,6 +57,7 @@ public interface IPresentationReconciler {
 	 *		<code>null</code> if there is no such strategy
 	 */
 	IPresentationDamager getDamager(String contentType);
+	
 	/**
 	 * Returns the presentation repairer registered with this presentation reconciler
 	 * for the specified content type.
@@ -50,18 +67,4 @@ public interface IPresentationReconciler {
 	 *		<code>null</code> if there is no such strategy
 	 */
 	IPresentationRepairer getRepairer(String contentType);
-	/**
-	 * Installs this presentation reconciler on the given text viewer. After 
-	 * this method has been finished, the reconciler is operational. I.e., it 
-	 * works without requesting further client actions until <code>uninstall</code> 
-	 * is called.
-	 * 
-	 * @param textViewer the viewer on which this presentation reconciler is installed
-	 */
-	void install(ITextViewer viewer);
-	/**
-	 * Removes the reconciler from the text viewer it has previously been
-	 * installed on. 
-	 */
-	void uninstall();
 }

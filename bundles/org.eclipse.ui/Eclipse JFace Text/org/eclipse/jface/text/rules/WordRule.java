@@ -48,6 +48,7 @@ public class WordRule implements IRule {
 	public WordRule(IWordDetector detector) {
 		this(detector, Token.UNDEFINED);
 	}
+
 	/**
 	 * Creates a rule which, with the help of an word detector, will return the token
 	 * associated with the detected word. If no token has been associated, the
@@ -67,6 +68,7 @@ public class WordRule implements IRule {
 		fDetector= detector;
 		fDefaultToken= defaultToken;
 	}
+
 	/**
 	 * Adds a word and the token to be returned if it is detected.
 	 *
@@ -79,6 +81,21 @@ public class WordRule implements IRule {
 	
 		fWords.put(word, token);
 	}
+	
+	/**
+	 * Sets a column constraint for this rule. If set, the rule's token
+	 * will only be returned if the pattern is detected starting at the 
+	 * specified column. If the column is smaller then 0, the column
+	 * constraint is considered removed.
+	 *
+	 * @param column the column in which the pattern starts
+	 */
+	public void setColumnConstraint(int column) {
+		if (column < 0)
+			column= UNDEFINED;
+		fColumn= column;
+	}
+	
 	/*
 	 * @see IRule#evaluate
 	 */
@@ -108,19 +125,7 @@ public class WordRule implements IRule {
 		scanner.unread();
 		return Token.UNDEFINED;
 	}
-	/**
-	 * Sets a column constraint for this rule. If set, the rule's token
-	 * will only be returned if the pattern is detected starting at the 
-	 * specified column. If the column is smaller then 0, the column
-	 * constraint is considered removed.
-	 *
-	 * @param column the column in which the pattern starts
-	 */
-	public void setColumnConstraint(int column) {
-		if (column < 0)
-			column= UNDEFINED;
-		fColumn= column;
-	}
+	
 	/**
 	 * Returns the characters in the buffer to the scanner.
 	 *

@@ -26,15 +26,6 @@ public class TextAttribute {
 	int style;
 	
 	/**
-	 * Creates a text attribute for the given foreground color, no background color and
-	 * with the SWT normal style.
-	 *
-	 * @param foreground the foreground color
-	 */
-	public TextAttribute(Color foreground) {
-		this(foreground, null, SWT.NORMAL);
-	}
-	/**
 	 * Creates a text attribute with the given colors and style.
 	 *
 	 * @param foreground the foreground color
@@ -46,6 +37,17 @@ public class TextAttribute {
 		this.background= background;
 		this.style= style;
 	}
+	
+	/**
+	 * Creates a text attribute for the given foreground color, no background color and
+	 * with the SWT normal style.
+	 *
+	 * @param foreground the foreground color
+	 */
+	public TextAttribute(Color foreground) {
+		this(foreground, null, SWT.NORMAL);
+	}
+	
 	/**
 	 * 
 	 * @see Object#equals
@@ -61,30 +63,7 @@ public class TextAttribute {
 		TextAttribute a= (TextAttribute) object;			
 		return (a.style == style && a.foreground == foreground && a.background == background);
 	}
-	/**
-	 * Returns the attribute's background color.
-	 *
-	 * @return the attribute's background color
-	 */
-	public Color getBackground() {
-		return background;
-	}
-	/**
-	 * Returns the attribute's foreground color.
-	 *
-	 * @return the attribute's foreground color
-	 */
-	public Color getForeground() {
-		return foreground;
-	}
-	/**
-	 * Returns the attribute's style.
-	 *
-	 * @return the attribute's style
-	 */
-	public int getStyle() {
-		return style;
-	}
+	
 	/*
 	 * @see Object#hashCode
 	 */
@@ -93,4 +72,31 @@ public class TextAttribute {
 	 	int backgroundHash= background == null ? 0 : background.hashCode();
 	 	return (foregroundHash << 24) | (backgroundHash << 16) | style;
 	 }
+	
+	/**
+	 * Returns the attribute's foreground color.
+	 *
+	 * @return the attribute's foreground color
+	 */
+	public Color getForeground() {
+		return foreground;
+	}
+	
+	/**
+	 * Returns the attribute's background color.
+	 *
+	 * @return the attribute's background color
+	 */
+	public Color getBackground() {
+		return background;
+	}
+	
+	/**
+	 * Returns the attribute's style.
+	 *
+	 * @return the attribute's style
+	 */
+	public int getStyle() {
+		return style;
+	}
 }

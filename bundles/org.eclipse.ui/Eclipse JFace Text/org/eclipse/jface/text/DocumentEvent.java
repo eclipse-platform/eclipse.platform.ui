@@ -47,6 +47,7 @@ public class DocumentEvent {
 		fLength= length;
 		fText= text;
 	}
+
 	/**
 	 * Returns the changed document.
 	 *
@@ -55,14 +56,7 @@ public class DocumentEvent {
 	public IDocument getDocument() {
 		return fDocument;
 	}
-	/**
-	 * Returns the length of the replaced text.
-	 *
-	 * @return the length of the replaced text
-	 */
-	public int getLength() {
-		return fLength;
-	}
+	
 	/**
 	 * Returns the offset of the change
 	 * 
@@ -71,6 +65,16 @@ public class DocumentEvent {
 	public int getOffset() {
 		return fOffset;
 	}
+
+	/**
+	 * Returns the length of the replaced text.
+	 *
+	 * @return the length of the replaced text
+	 */
+	public int getLength() {
+		return fLength;
+	}
+			
 	/**
 	 * Returns the text that has been inserted.
 	 *

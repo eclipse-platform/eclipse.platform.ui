@@ -40,6 +40,7 @@ public class Position {
 	public Position(int offset) {
 		this(offset, 0);
 	}
+	
 	/**
 	 * Creates a new position with the given offset and length.
 	 *
@@ -52,12 +53,22 @@ public class Position {
 		this.offset= offset;
 		this.length= length;
 	}
+	
+	/*
+	 * @see Object#hashCode
+	 */
+	 public int hashCode() {
+	 	int deleted= isDeleted ? 0 : 1;
+	 	return (offset << 24) | (length << 16) | deleted;
+	 }
+	
 	/**
 	 * Marks this posiiton as deleted.
 	 */
 	public void delete() {
 		isDeleted= true;
 	}
+	
 	/*
 	 * @see Object#equals
 	 */
@@ -68,6 +79,7 @@ public class Position {
 		}
 		return super.equals(other);
 	}
+		
 	/**
 	 * Returns the length of this position.
 	 *
@@ -76,6 +88,7 @@ public class Position {
 	public int getLength() {
 		return length;
 	}
+	
 	/**
 	 * Returns the offset of this position.
 	 *
@@ -84,13 +97,7 @@ public class Position {
 	public int getOffset() {
 		return offset;
 	}
-	/*
-	 * @see Object#hashCode
-	 */
-	 public int hashCode() {
-	 	int deleted= isDeleted ? 0 : 1;
-	 	return (offset << 24) | (length << 16) | deleted;
-	 }
+	
 	/**
 	 * Checks whetherthe given offset is inside
 	 * of this position's text range.
@@ -105,14 +112,7 @@ public class Position {
 			
 		return (this.offset <= offset) && (offset < this.offset + length);
 	}
-	/**
-	 * Returns whether this position has been deleted or not.
-	 *
-	 * @return <code>true</code> if position has been deleted
-	 */
-	public boolean isDeleted() {
-		return isDeleted;
-	}
+	
 	/**
 	 * Checks whether the intersection of the given text range
 	 * and the text range represented by this position is empty
@@ -135,6 +135,16 @@ public class Position {
 		
 		return this.offset <= offset && offset < myEnd;
 	}
+	
+	/**
+	 * Returns whether this position has been deleted or not.
+	 *
+	 * @return <code>true</code> if position has been deleted
+	 */
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+	
 	/**
 	 * Changes the length of this position to the given length.
 	 *
@@ -143,6 +153,7 @@ public class Position {
 	public void setLength(int length) {
 		this.length= length;
 	}
+	
 	/**
 	 * Changes the offset of this position to the given offset.
 	 *

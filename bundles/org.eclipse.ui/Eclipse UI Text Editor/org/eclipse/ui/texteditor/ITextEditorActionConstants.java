@@ -22,64 +22,64 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/** 
 	 * Context menu group for undo/redo related actions. 
 	 */
-	static final String GROUP_UNDO= "group.undo";
+	static final String GROUP_UNDO= "group.undo"; //$NON-NLS-1$
 	/** 
 	 * Context menu group for copy/paste related actions. 
 	 */
-	static final String GROUP_COPY= "group.copy";
+	static final String GROUP_COPY= "group.copy"; //$NON-NLS-1$
 	/** 
 	 * Context menu group for text manipulation actions. 
 	 */
-	static final String GROUP_EDIT= "group.edit";
+	static final String GROUP_EDIT= "group.edit"; //$NON-NLS-1$
 	/** 
 	 * Context menu group for find/replace related actions. 
 	 */
-	static final String GROUP_FIND= "group.find";
+	static final String GROUP_FIND= "group.find"; //$NON-NLS-1$
 	/** 
 	 * Context menu group for save related actions. 
 	 */
-	static final String GROUP_SAVE= "group.save";
+	static final String GROUP_SAVE= "group.save"; //$NON-NLS-1$
 	/** 
 	 * Context menu group for actions which do not fit
 	 * in one of the other categories. 
 	 */
-	static final String GROUP_REST= "group.rest";
+	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$
 	
 	
 	
 	/** 
 	 * Name of the action for shifting text blocks to the right. 
 	 */
-	static final String SHIFT_RIGHT= "ShiftRight";
+	static final String SHIFT_RIGHT= "ShiftRight"; //$NON-NLS-1$
 	/** 
 	 * Name of the action for shifting text blocks to the left. 
 	 */
-	static final String SHIFT_LEFT= "ShiftLeft";
+	static final String SHIFT_LEFT= "ShiftLeft"; //$NON-NLS-1$
 	/** 
 	 * Name of the action for creating tasks based on the text selection. 
 	 */
-	static final String ADD_TASK= "AddTask";
+	static final String ADD_TASK= "AddTask"; //$NON-NLS-1$
 	/** 
 	 * Name of the action for re-establishing the state after the 
 	 * most recent save operation. 
 	 */
-	static final String REVERT_TO_SAVED= "Revert";
+	static final String REVERT_TO_SAVED= "Revert"; //$NON-NLS-1$
 	/** 
 	 * Name of the action to jump to a certain text line. 
 	 */
-	static final String GOTO_LINE= "GotoLine";
+	static final String GOTO_LINE= "GotoLine"; //$NON-NLS-1$
 	
 	
 	/** 
 	 * Name of the ruler action performed when double clicking the editor's vertical ruler. 
 	 */
-	static final String RULER_DOUBLE_CLICK= "RulerDoubleClick";
+	static final String RULER_DOUBLE_CLICK= "RulerDoubleClick"; //$NON-NLS-1$
 	/** 
 	 * Name of the ruler action to manage tasks.
 	 */
-	static final String RULER_MANAGE_TASKS= "ManageTasks";
+	static final String RULER_MANAGE_TASKS= "ManageTasks"; //$NON-NLS-1$
 	/** 
 	 * Name of the ruler action to manage bookmarks. 
 	 */
-	static final String RULER_MANAGE_BOOKMARKS= "ManageBookmarks";
+	static final String RULER_MANAGE_BOOKMARKS= "ManageBookmarks"; //$NON-NLS-1$
 }

@@ -7,8 +7,9 @@ package org.eclipse.ui.editors.text;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.text.MessageFormat;
+
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -18,8 +19,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -49,10 +48,7 @@ import org.eclipse.ui.texteditor.DefaultRangeIndicator;
  * </p>
  */
 public class TextEditor extends AbstractTextEditor {
-	
-	/** The resource bundle for text editors */
-	private ResourceBundle fResourceBundle;
-	
+		
 	/**
 	 * Creates a new text editor.
 	 */
@@ -60,38 +56,14 @@ public class TextEditor extends AbstractTextEditor {
 		super();
 		initializeEditor();
 	}
-	/** 
-	 * Returns the editor's resource bundle.
-	 *
-	 * @return the editor's resource bundle
-	 */
-	private ResourceBundle getResourceBundle() {
-		if (fResourceBundle == null)
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.editors.text.TextEditorResources");
-		return fResourceBundle;
-	}
-	/**
-	 * Convenience method for safely accessing resources.
-	 */
-	private String getResourceString(String key, String dfltValue) {
-		try {
-			/*
-			 * 1GEYOA9: ITPUI:ALL - Problem with externalized strings in save error dialog
-			 * Changed fResourceBundle to getResourceBundle to ensure initialization
-			 */
-			if (getResourceBundle() != null && key != null)
-				return getResourceBundle().getString(key);
-		} catch (MissingResourceException x) {
-		}
-		return dfltValue;
-	}
+	
 	/**
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
 		setRangeIndicator(new DefaultRangeIndicator());
-		setEditorContextMenuId("#TextEditorContext");
-		setRulerContextMenuId("#TextRulerContext");
+		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
 		
 		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
@@ -100,13 +72,7 @@ public class TextEditor extends AbstractTextEditor {
 			setPreferenceStore(uiPlugin.getPreferenceStore());
 		}
 	}
-	/**
-	 * The <code>TextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method returns <code>true</code>.
-	 */
-	public boolean isSaveAsAllowed() {
-		return true;
-	}
+		
 	/**
 	 * The <code>TextEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method asks the user for the workspace path
@@ -154,9 +120,9 @@ public class TextEditor extends AbstractTextEditor {
 			
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
-			String title= getResourceString("Error.save_as.title", "Error.save_as.title");
-			String msg= getResourceString("Error.save_as.message", "Error.save_as.message");
-			MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());
+			String title= TextEditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
+			String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { x.getTargetException().getMessage() }); //$NON-NLS-1$
+			MessageDialog.openError(shell, title, msg);
 		} finally {
 			getDocumentProvider().changed(newInput);
 			if (success)
@@ -165,5 +131,13 @@ public class TextEditor extends AbstractTextEditor {
 		
 		if (progressMonitor != null)
 			progressMonitor.setCanceled(!success);
+	}
+	
+	/**
+	 * The <code>TextEditor</code> implementation of this 
+	 * <code>IEditorPart</code> method returns <code>true</code>.
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
 	}
 }

@@ -23,6 +23,7 @@ public interface IDocumentListener {
 	 * @param event the document event describing the document change 
 	 */
 	void documentAboutToBeChanged(DocumentEvent event);
+
 	/**
 	 * The manipulation described by the document event has been performed.
 	 *

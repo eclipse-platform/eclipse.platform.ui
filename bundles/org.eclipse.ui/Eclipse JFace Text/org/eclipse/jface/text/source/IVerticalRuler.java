@@ -34,40 +34,6 @@ import org.eclipse.jface.text.ITextViewer;
 public interface IVerticalRuler {
 
 	/**
-	 * Creates the ruler's SWT control.
-	 *
-	 * @param parent the parent control of the ruler's control
-	 * @param textViewer the text viewer to which this ruler belongs
-	 * @return the ruler's SWT control
-	 */
-	Control createControl(Composite parent, ITextViewer textViewer);
-	/**
-	 * Returns the ruler's SWT control.
-	 *
-	 * @return the ruler's SWT control
-	 */
-	Control getControl();
-	/**
-	 * Returns the line number of the last mouse button activity.
-	 * Based on the input document of the connected text viewer.
-	 *
-	 * @return the line number of the last mouse button activity
-	 */
-	int getLineOfLastMouseButtonActivity();
-	/**
-	 * Returns the current annotation model of this ruler or <code>null</code>
-	 * if the ruler has no model.
-	 *
-	 * @return this ruler's annotation model or <code>null</code> if there is no model
-	 */
-	IAnnotationModel getModel();
-	/**
-	 * Returns the width of this ruler's control.
-	 *
-	 * @return the width of this ruler's control
-	 */
-	int getWidth();
-	/**
 	 * Associates an annotation model with this ruler.
 	 * If the ruler is visible it must display those annotions
 	 * of the annotation model whose visual representation overlaps
@@ -77,6 +43,45 @@ public interface IVerticalRuler {
 	 * @param model the new annotation model, may be <code>null</code>
 	 */
 	void setModel(IAnnotationModel model);
+		
+	/**
+	 * Returns the current annotation model of this ruler or <code>null</code>
+	 * if the ruler has no model.
+	 *
+	 * @return this ruler's annotation model or <code>null</code> if there is no model
+	 */
+	IAnnotationModel getModel();
+		
+	/**
+	 * Forces the vertical ruler to synchronize itself with its 
+	 * annotation model and its viewer's viewport.
+	 */
+	void update();
+	
+	/**
+	 * Returns the ruler's SWT control.
+	 *
+	 * @return the ruler's SWT control
+	 */
+	Control getControl();
+	
+	/**
+	 * Creates the ruler's SWT control.
+	 *
+	 * @param parent the parent control of the ruler's control
+	 * @param textViewer the text viewer to which this ruler belongs
+	 * @return the ruler's SWT control
+	 */
+	Control createControl(Composite parent, ITextViewer textViewer);
+	
+	/**
+	 * Returns the line number of the last mouse button activity.
+	 * Based on the input document of the connected text viewer.
+	 *
+	 * @return the line number of the last mouse button activity
+	 */
+	int getLineOfLastMouseButtonActivity();
+	
 	/**
 	 * Translates a y-coordinate of the ruler's SWT control into
 	 * the according line number of the document of the connected text viewer.
@@ -85,9 +90,11 @@ public interface IVerticalRuler {
 	 * @return the line number of that coordinate 
 	 */
 	int toDocumentLineNumber(int y_coordinate);
+	
 	/**
-	 * Forces the vertical ruler to synchronize itself with its 
-	 * annotation model and its viewer's viewport.
+	 * Returns the width of this ruler's control.
+	 *
+	 * @return the width of this ruler's control
 	 */
-	void update();
+	int getWidth();
 }

@@ -30,6 +30,21 @@ import org.eclipse.jface.text.ITextViewer;
 public interface IReconciler {
 		
 	/**
+	 * Installs the reconciler on the given text viewer. After this method has been
+	 * finished, the reconciler is operational. I.e., it works without requesting 
+	 * further client actions until <code>uninstall</code> is called.
+	 * 
+	 * @param textViewer the viewer on which the reconciler is installed
+	 */
+	void install(ITextViewer textViewer);
+	
+	/**
+	 * Removes the reconciler from the text viewer it has previously been
+	 * installed on. 
+	 */
+	void uninstall();
+	
+	/**
 	 * Returns the reconciling strategy registered with the reconciler
 	 * for the specified content type.
 	 *
@@ -38,17 +53,4 @@ public interface IReconciler {
 	 *		<code>null</code> if there is no such strategy
 	 */
 	IReconcilingStrategy getReconcilingStrategy(String contentType);
-	/**
-	 * Installs the reconciler on the given text viewer. After this method has been
-	 * finished, the reconciler is operational. I.e., it works without requesting 
-	 * further client actions until <code>uninstall</code> is called.
-	 * 
-	 * @param textViewer the viewer on which the reconciler is installed
-	 */
-	void install(ITextViewer textViewer);
-	/**
-	 * Removes the reconciler from the text viewer it has previously been
-	 * installed on. 
-	 */
-	void uninstall();
 }

@@ -36,12 +36,14 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 		Assert.isTrue(legalLineDelimiters != null && legalLineDelimiters.length > 0);
 		fDelimiters= legalLineDelimiters;
 	}
+	
 	/*
 	 * @see ILineDelimiter@getLegalLineDelimiters
 	 */
 	public String[] getLegalLineDelimiters() {
 		return fDelimiters;
 	}
+
 	/*
 	 * @see AbstractLineTracker#nextDelimiterInfo(String, int)
 	 */

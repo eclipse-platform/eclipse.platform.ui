@@ -1,5 +1,6 @@
 package org.eclipse.jface.text.formatter;
 
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -22,6 +23,15 @@ import java.util.List;
 public interface IFormattingStrategy {
 	
 	/**
+	 * Informs the strategy about the start of a formatting process in which it will
+	 * participate. 
+	 *
+	 * @param initialIndentation the indent string of the first line at which the 
+	 *		overall formatting process starts.
+	 */
+	void formatterStarts(String initialIndentation);
+	
+	/**
 	 * Formats the given string. During the formatting process this strategy must update
 	 * the given character positions according to the changes applied to the given string.
 	 *
@@ -32,14 +42,7 @@ public interface IFormattingStrategy {
 	 * @return the formatted string
 	 */
 	String format(String content, boolean isLineStart, String indentation, int[] positions);
-	/**
-	 * Informs the strategy about the start of a formatting process in which it will
-	 * participate. 
-	 *
-	 * @param initialIndentation the indent string of the first line at which the 
-	 *		overall formatting process starts.
-	 */
-	void formatterStarts(String initialIndentation);
+	
 	/**
 	 * Informs the strategy that the formatting process in which it has participated
 	 * has been finished.

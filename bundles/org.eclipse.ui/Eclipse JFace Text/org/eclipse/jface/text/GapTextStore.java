@@ -41,6 +41,7 @@ public class GapTextStore implements ITextStore {
 		fLowWatermark= lowWatermark;
 		fHighWatermark= highWatermark;
 	}
+
 	/**
 	 * Adjusts the gap so that is at the right offset and capable of handling
 	 * the addition of a specified number of characters without having to be shifted.
@@ -61,74 +62,7 @@ public class GapTextStore implements ITextStore {
 		
 		moveAndResizeGap(offset, sizeHint);
 	}
-	/*
-	 * @see ITextStore#get
-	 */
-	public char get(int offset) {
-		
-		if (offset < fGapStart)
-			return fContent[offset];
-
-		int gapLength= fGapEnd - fGapStart;
-		return fContent[offset + gapLength];
-	}
-	/*
-	 * @see ITextStore#get
-	 */
-	public String get(int offset, int length) {
-
-		int end= offset + length;
-
-		if (fContent == null)
-			return ""; //$NON-NLS-1$
-		
-		if (end < fGapStart)
-			return new String(fContent, offset, length);
-
-		if (fGapStart < offset) {
-			int gapLength= fGapEnd - fGapStart;
-			return new String(fContent, offset + gapLength , length);
-		}
-
-		StringBuffer buf= new StringBuffer();
-		buf.append(fContent, offset, fGapStart - offset);
-		buf.append(fContent, fGapEnd, end - fGapStart);
-		return buf.toString();
-	}
-	/**
-	 * Returns a copy of the content of this text store.
-	 * For internal use only.
-	 *
-	 * @return a copy of the content of this text store 
-	 */
-	protected String getContentAsString() {
-		return new String(fContent);
-	}
-	/**
-	 * Returns the end index of the gap managed by this text store.
-	 * For internal use only.
-	 *
-	 * @returns the end index of the gap managed by this text store
-	 */
-	protected int getGapEndIndex() {
-		return fGapEnd;
-	}
-	/**
-	 * Returns the start index of the gap managed by this text store.
-	 * For internal use only.
-	 *
-	 * @returns the start index of the gap managed by this text store
-	 */
-	protected int getGapStartIndex() {
-		return fGapStart;
-	}
-	/*
-	 * @see ITextStore#getLength
-	 */
-	public int getLength() {
-		int length= fGapEnd - fGapStart;
-		return (fContent.length - length);
-	}
+	
 	/**
 	 * Moves the gap to the specified offset and adjust its size to the
 	 * anticipated change size. The given size represents the expected 
@@ -189,6 +123,52 @@ public class GapTextStore implements ITextStore {
 		fGapStart= newGapStart;
 		fGapEnd= newGapEnd;
 	}
+	
+	/*
+	 * @see ITextStore#get
+	 */
+	public char get(int offset) {
+		
+		if (offset < fGapStart)
+			return fContent[offset];
+
+		int gapLength= fGapEnd - fGapStart;
+		return fContent[offset + gapLength];
+	}
+	
+	/*
+	 * @see ITextStore#get
+	 */
+	public String get(int offset, int length) {
+
+		int end= offset + length;
+
+		if (fContent == null)
+			return ""; //$NON-NLS-1$
+		
+		if (end < fGapStart)
+			return new String(fContent, offset, length);
+
+		if (fGapStart < offset) {
+			int gapLength= fGapEnd - fGapStart;
+			return new String(fContent, offset + gapLength , length);
+		}
+
+		StringBuffer buf= new StringBuffer();
+		buf.append(fContent, offset, fGapStart - offset);
+		buf.append(fContent, fGapEnd, end - fGapStart);
+		return buf.toString();
+	}
+	
+	/*
+	 * @see ITextStore#getLength
+	 */
+	public int getLength() {
+		int length= fGapEnd - fGapStart;
+		return (fContent.length - length);
+	}
+	
+	
 	/*
 	 * @see ITextStore#replace
 	 */
@@ -215,6 +195,7 @@ public class GapTextStore implements ITextStore {
 				fContent[offset + i]= text.charAt(i);
 		}	
 	}
+	
 	/**
 	 * Sets the content to <code>text</code> and removes the gap
 	 * since there are no sensible predictions about 
@@ -230,5 +211,35 @@ public class GapTextStore implements ITextStore {
 
 		fGapStart= -1;
 		fGapEnd=   -1;
+	}
+	
+	/**
+	 * Returns a copy of the content of this text store.
+	 * For internal use only.
+	 *
+	 * @return a copy of the content of this text store 
+	 */
+	protected String getContentAsString() {
+		return new String(fContent);
+	}
+	
+	/**
+	 * Returns the start index of the gap managed by this text store.
+	 * For internal use only.
+	 *
+	 * @returns the start index of the gap managed by this text store
+	 */
+	protected int getGapStartIndex() {
+		return fGapStart;
+	}
+	
+	/**
+	 * Returns the end index of the gap managed by this text store.
+	 * For internal use only.
+	 *
+	 * @returns the end index of the gap managed by this text store
+	 */
+	protected int getGapEndIndex() {
+		return fGapEnd;
 	}
 }

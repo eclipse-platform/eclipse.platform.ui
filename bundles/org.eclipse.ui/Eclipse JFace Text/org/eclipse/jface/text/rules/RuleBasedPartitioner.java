@@ -62,64 +62,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		fScanner= scanner;
 		fLegalContentTypes= legalContentTypes;
 	}
-	/*
-	 * @see IDocumentPartitioner#computePartitioning
-	 */
-	public ITypedRegion[] computePartitioning(int offset, int length) {
-		
-		List list= new ArrayList();
-		
-		try {
-			
-			int endOffset= offset + length;
-			
-			Position[] category= fDocument.getPositions(CONTENT_TYPES_CATEGORY);
-			
-			TypedPosition previous= null, current= null;
-			int start, end, gapOffset;
-			Position gap= null;
-			
-			for (int i= 0; i < category.length; i++) {
 				
-				current= (TypedPosition) category[i];
-				
-				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
-				gap= new Position(gapOffset, current.getOffset() - gapOffset);
-				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
-					start= Math.max(offset, gapOffset);
-					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
-					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
-				}
-				
-				if (current.overlapsWith(offset, length)) {
-					start= Math.max(offset, current.getOffset());
-					end= Math.min(endOffset, current.getOffset() + current.getLength());
-					list.add(new TypedRegion(start, end - start, current.getType()));
-				}
-				
-				previous= current;
-			}
-			
-			if (previous != null) {
-				gapOffset= previous.getOffset() + previous.getLength();
-				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
-				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
-					start= Math.max(offset, gapOffset);
-					end= Math.min(endOffset, fDocument.getLength());
-					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
-				}
-			}
-			
-			if (list.isEmpty())
-				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
-				
-		} catch (BadPositionCategoryException x) {
-		}
-		
-		TypedRegion[] result= new TypedRegion[list.size()];
-		list.toArray(result);
-		return result;
-	}
 	/*
 	 * @see IDocumentPartitioner#connect
 	 */
@@ -132,6 +75,34 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		
 		initialize();
 	}
+	
+	/**
+	 * Performs the initial partitioning of the partitioner's document.
+	 */
+	protected void initialize() {
+		
+		fScanner.setRange(fDocument, 0, fDocument.getLength());
+		
+		try {
+			IToken token= fScanner.nextToken();
+			while (!token.isEOF()) {
+				
+				String contentType= getTokenContentType(token);
+				
+				if (isSupportedContentType(contentType)) {
+					TypedPosition p= new TypedPosition(fScanner.getTokenOffset(), fScanner.getTokenLength(), contentType);
+					fDocument.addPosition(CONTENT_TYPES_CATEGORY, p);
+				}
+								
+				token= fScanner.nextToken();
+			}
+		} catch (BadLocationException x) {
+			// cannot happen as offsets come from scanner
+		} catch (BadPositionCategoryException x) {
+			// cannot happen if document has been connected before
+		}
+	}	
+	
 	/*
 	 * @see IDocumentPartitioner#disconnect
 	 */
@@ -145,6 +116,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 			// can not happen because of Assert
 		}
 	}
+	
 	/*
 	 * @see IDocumentPartitioner#documentAboutToBeChanged
 	 */
@@ -154,6 +126,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		
 		fPreviousDocumentLength= e.getDocument().getLength();
 	}
+	
 	/*
 	 * @see IDocumentPartitioner#documentChanged
 	 */
@@ -266,6 +239,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		
 		return changed;
 	}
+	
 	/**
 	 * Returns the position in the partitoner's position category which is
 	 * close to the given offset. This is, the position has either an offset which
@@ -302,6 +276,8 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		
 		return null;
 	}
+	
+	
 	/*
 	 * @see IDocumentPartitioner#getContentType
 	 */
@@ -313,12 +289,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 			
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
-	/*
-	 * @see IDocumentPartitioner#getLegalContentTypes
-	 */
-	public String[] getLegalContentTypes() {
-		return fLegalContentTypes;
-	}
+	
 	/*
 	 * @see IDocumentPartitioner#getPartition
 	 */
@@ -364,46 +335,73 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		
 		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 	}
-	/**
-	 * Returns a content type encoded in the given token. If the token's
-	 * data is not <code>null</code> and a string it is assumed that
-	 * it is the encoded content type.
-	 *
-	 * @param token the token whose content type is to be determined
-	 * @return the token's content type
+	
+	/*
+	 * @see IDocumentPartitioner#computePartitioning
 	 */
-	protected String getTokenContentType(IToken token) {
-		Object data= token.getData();
-		if (data instanceof String) 
-			return (String) data;
-		return null;
-	}
-	/**
-	 * Performs the initial partitioning of the partitioner's document.
-	 */
-	protected void initialize() {
+	public ITypedRegion[] computePartitioning(int offset, int length) {
 		
-		fScanner.setRange(fDocument, 0, fDocument.getLength());
+		List list= new ArrayList();
 		
 		try {
-			IToken token= fScanner.nextToken();
-			while (!token.isEOF()) {
+			
+			int endOffset= offset + length;
+			
+			Position[] category= fDocument.getPositions(CONTENT_TYPES_CATEGORY);
+			
+			TypedPosition previous= null, current= null;
+			int start, end, gapOffset;
+			Position gap= null;
+			
+			for (int i= 0; i < category.length; i++) {
 				
-				String contentType= getTokenContentType(token);
+				current= (TypedPosition) category[i];
 				
-				if (isSupportedContentType(contentType)) {
-					TypedPosition p= new TypedPosition(fScanner.getTokenOffset(), fScanner.getTokenLength(), contentType);
-					fDocument.addPosition(CONTENT_TYPES_CATEGORY, p);
+				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
+				gap= new Position(gapOffset, current.getOffset() - gapOffset);
+				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
+					start= Math.max(offset, gapOffset);
+					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
+					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
 				}
-								
-				token= fScanner.nextToken();
+				
+				if (current.overlapsWith(offset, length)) {
+					start= Math.max(offset, current.getOffset());
+					end= Math.min(endOffset, current.getOffset() + current.getLength());
+					list.add(new TypedRegion(start, end - start, current.getType()));
+				}
+				
+				previous= current;
 			}
-		} catch (BadLocationException x) {
-			// cannot happen as offsets come from scanner
+			
+			if (previous != null) {
+				gapOffset= previous.getOffset() + previous.getLength();
+				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
+				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
+					start= Math.max(offset, gapOffset);
+					end= Math.min(endOffset, fDocument.getLength());
+					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
+				}
+			}
+			
+			if (list.isEmpty())
+				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
+				
 		} catch (BadPositionCategoryException x) {
-			// cannot happen if document has been connected before
 		}
+		
+		TypedRegion[] result= new TypedRegion[list.size()];
+		list.toArray(result);
+		return result;
 	}
+	
+	/*
+	 * @see IDocumentPartitioner#getLegalContentTypes
+	 */
+	public String[] getLegalContentTypes() {
+		return fLegalContentTypes;
+	}
+	
 	/**
 	 * Returns whether the given type is one of the legal content types.
 	 *
@@ -419,5 +417,20 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Returns a content type encoded in the given token. If the token's
+	 * data is not <code>null</code> and a string it is assumed that
+	 * it is the encoded content type.
+	 *
+	 * @param token the token whose content type is to be determined
+	 * @return the token's content type
+	 */
+	protected String getTokenContentType(IToken token) {
+		Object data= token.getData();
+		if (data instanceof String) 
+			return (String) data;
+		return null;
 	}
 }

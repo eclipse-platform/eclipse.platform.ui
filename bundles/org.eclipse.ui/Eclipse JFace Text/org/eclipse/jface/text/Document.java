@@ -26,6 +26,7 @@ public class Document extends AbstractDocument {
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}
+	
 	/**
 	 * Creates a new document with the given initial content.
 	 *

@@ -79,6 +79,7 @@ public interface ITextOperationTarget {
 	 * @return <code>true</code> if the specified operation can be performed
 	 */
 	boolean canDoOperation(int operation);
+	
 	/**
 	 * Performs the operation specified by the operation code on the target.
 	 * <code>doOperation</code> must only be called if <code>canDoOperation</code>

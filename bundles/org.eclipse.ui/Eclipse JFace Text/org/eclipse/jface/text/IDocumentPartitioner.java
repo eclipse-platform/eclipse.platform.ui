@@ -21,15 +21,6 @@ package org.eclipse.jface.text;
 public interface IDocumentPartitioner {
 	
 	/**
-	 * Returns the partitioning of the given range of the connected
-	 * document. There must be a document connected to this partitioner.
-	 *
-	 * @param offset the offset of the range of interest
-	 * @param length the length of the range of interest
-	 * @return the partitioning of the range
-	 */
-	ITypedRegion[] computePartitioning(int offset, int length);
-	/**
 	 * Connects the partitioner to a document.
 	 * Connect indicates the begin of the usage of the receiver 
 	 * as partitioner of the given document. Thus, resources the partitioner
@@ -40,6 +31,7 @@ public interface IDocumentPartitioner {
 	 * @param document the document to be connected to
 	 */
 	void connect(IDocument document);
+	
 	/**
 	 * Disconnects the partitioner from the document it is connected to.
 	 * Disconnect indicates the end of the usage of the receiver as 
@@ -49,6 +41,7 @@ public interface IDocumentPartitioner {
 	 * no longer the document's partitioner.
 	 */
 	void disconnect();
+	
 	/**
 	 * Informs about a forthcoming document change. Will be called by the
 	 * connected document and is not intended to be used by clients
@@ -56,7 +49,8 @@ public interface IDocumentPartitioner {
 	 *
 	 * @param event the event describing the forthcoming change
 	 */
-	void documentAboutToBeChanged(DocumentEvent event);
+	void documentAboutToBeChanged(DocumentEvent event); 
+	
 	/**
 	 * The document has been changed. The partitioner updates 
 	 * the document's partitioning and returns whether the structure of the
@@ -68,6 +62,16 @@ public interface IDocumentPartitioner {
 	 * @return <code>true</code> if partitioning changed
 	 */
 	boolean documentChanged(DocumentEvent event);
+	
+	/**
+	 * Returns the set of all legal content types of this partitioner.
+	 * I.e. any result delivered by this partitioner may not contain a content type
+	 * which would not be included in this method's result.
+	 *
+	 * @return the set of legal content types
+	 */
+	String[] getLegalContentTypes();
+		
 	/**
 	 * Returns the content type of the partition containing the
 	 * given offset in the connected document. There must be a
@@ -77,14 +81,17 @@ public interface IDocumentPartitioner {
 	 * @return the content type of the offset's partition
 	 */
 	String getContentType(int offset);
+	
 	/**
-	 * Returns the set of all legal content types of this partitioner.
-	 * I.e. any result delivered by this partitioner may not contain a content type
-	 * which would not be included in this method's result.
+	 * Returns the partitioning of the given range of the connected
+	 * document. There must be a document connected to this partitioner.
 	 *
-	 * @return the set of legal content types
+	 * @param offset the offset of the range of interest
+	 * @param length the length of the range of interest
+	 * @return the partitioning of the range
 	 */
-	String[] getLegalContentTypes();
+	ITypedRegion[] computePartitioning(int offset, int length);
+	
 	/**
 	 * Returns the partition containing the given offset of
 	 * the connected document. There must be a document connected to this

@@ -40,6 +40,60 @@ public class RuleBasedScanner implements ICharacterScanner {
 	 */
 	public RuleBasedScanner() {
 	}
+	
+	/**
+	 * Configures the scanner with the given sequence of rules.
+	 *
+	 * @param rules the sequence of rules controlling this scanner
+	 */
+	public void setRules(IRule[] rules) {
+		fRules= rules;
+	}
+		
+	/**
+	 * Configures the scanner by providing access to the document range over which to scan.
+	 *
+	 * @param document the document to scan
+	 * @paran offset the offset of the document range to scan
+	 * @param length the length of the document range to scan
+	 */
+	public void setRange(IDocument document, int offset, int length) {
+		
+		fDocument= document;
+		fOffset= offset;
+		fRangeEnd= Math.min(fDocument.getLength(), offset + length);
+		
+		String[] delimiters= fDocument.getLegalLineDelimiters();
+		fDelimiters= new char[delimiters.length][];
+		for (int i= 0; i < delimiters.length; i++)
+			fDelimiters[i]= delimiters[i].toCharArray();
+	}
+	
+	/**
+	 * Returns the offset of the last token read by this scanner.
+	 *
+	 * @return the offset of the last token read by this scanner
+	 */
+	public int getTokenOffset() {
+		return fTokenOffset;
+	}
+	
+	/**
+	 * Returns the length of the last token read by this scanner.
+	 *
+	 * @return the length of the last token read by this scanner
+	 */
+	public int getTokenLength() {
+		/*
+		 * 1GEUXEA: ITPUI:WIN2000 - IllegalArgumentException: Manifest Editor
+		 * Ensure that token length never extends the range to be scanned.
+		 * return fOffset - fTokenOffset;
+		 */
+		if (fOffset < fRangeEnd)
+			return fOffset - fTokenOffset;
+		return fRangeEnd - fTokenOffset;
+	}
+	
 	/**
 	 * Returns the current column of the scanner.
 	 */
@@ -56,35 +110,14 @@ public class RuleBasedScanner implements ICharacterScanner {
 		}
 		return fColumn;
 	}
+	
 	/*
 	 * @see ICharacterScanner#getLegalLineDelimiters
 	 */
 	public char[][] getLegalLineDelimiters() {
 		return fDelimiters;
 	}
-	/**
-	 * Returns the length of the last token read by this scanner.
-	 *
-	 * @return the length of the last token read by this scanner
-	 */
-	public int getTokenLength() {
-		/*
-		 * 1GEUXEA: ITPUI:WIN2000 - IllegalArgumentException: Manifest Editor
-		 * Ensure that token length never extends the range to be scanned.
-		 * return fOffset - fTokenOffset;
-		 */
-		if (fOffset < fRangeEnd)
-			return fOffset - fTokenOffset;
-		return fRangeEnd - fTokenOffset;
-	}
-	/**
-	 * Returns the offset of the last token read by this scanner.
-	 *
-	 * @return the offset of the last token read by this scanner
-	 */
-	public int getTokenOffset() {
-		return fTokenOffset;
-	}
+	
 	/**
 	 * Returns the next token in the document.
 	 *
@@ -110,6 +143,7 @@ public class RuleBasedScanner implements ICharacterScanner {
 				return Token.OTHER;
 		}
 	}
+	
 	/*
 	 * @see ICharacterScanner#read
 	 */
@@ -130,32 +164,7 @@ public class RuleBasedScanner implements ICharacterScanner {
 			++ fOffset;
 		}
 	}
-	/**
-	 * Configures the scanner by providing access to the document range over which to scan.
-	 *
-	 * @param document the document to scan
-	 * @paran offset the offset of the document range to scan
-	 * @param length the length of the document range to scan
-	 */
-	public void setRange(IDocument document, int offset, int length) {
-		
-		fDocument= document;
-		fOffset= offset;
-		fRangeEnd= Math.min(fDocument.getLength(), offset + length);
-		
-		String[] delimiters= fDocument.getLegalLineDelimiters();
-		fDelimiters= new char[delimiters.length][];
-		for (int i= 0; i < delimiters.length; i++)
-			fDelimiters[i]= delimiters[i].toCharArray();
-	}
-	/**
-	 * Configures the scanner with the given sequence of rules.
-	 *
-	 * @param rules the sequence of rules controlling this scanner
-	 */
-	public void setRules(IRule[] rules) {
-		fRules= rules;
-	}
+	
 	/*
 	 * @see ICharacterScanner#unread
 	 */
@@ -163,3 +172,5 @@ public class RuleBasedScanner implements ICharacterScanner {
 	    	--fOffset;
 	}
 }
+
+

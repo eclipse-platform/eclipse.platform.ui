@@ -41,6 +41,7 @@ public final class CompletionProposal implements ICompletionProposal {
 	public CompletionProposal(String replacementString, int replacementOffset, int replacementLength, int cursorPosition) {
 		this(replacementString, replacementOffset, replacementLength, cursorPosition, null, null, null, null);
 	}
+
 	/**
 	 * Creates a new completion proposal. All fields are initialized based on the provided information.
 	 *
@@ -68,6 +69,7 @@ public final class CompletionProposal implements ICompletionProposal {
 		fContextInformation= contextInformation;
 		fAdditionalProposalInfo= additionalProposalInfo;
 	}
+
 	/*
 	 * @see ICompletionProposal#apply
 	 */
@@ -78,18 +80,28 @@ public final class CompletionProposal implements ICompletionProposal {
 			// ignore
 		}
 	}
+	
 	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
+	 * @see ICompletionProposal#getSelection
 	 */
-	public String getAdditionalProposalInfo() {
-		return fAdditionalProposalInfo;
+	public Point getSelection(IDocument document) {
+		return new Point(fReplacementOffset + fCursorPosition, 0);
 	}
+
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
+
+	/*
+	 * @see ICompletionProposal#getImage()
+	 */
+	public Image getImage() {
+		return fImage;
+	}
+
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
@@ -98,16 +110,11 @@ public final class CompletionProposal implements ICompletionProposal {
 			return fDisplayString;
 		return fReplacementString;
 	}
+
 	/*
-	 * @see ICompletionProposal#getImage()
+	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
-	public Image getImage() {
-		return fImage;
-	}
-	/*
-	 * @see ICompletionProposal#getSelection
-	 */
-	public Point getSelection(IDocument document) {
-		return new Point(fReplacementOffset + fCursorPosition, 0);
+	public String getAdditionalProposalInfo() {
+		return fAdditionalProposalInfo;
 	}
 }

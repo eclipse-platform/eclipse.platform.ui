@@ -51,10 +51,41 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fViewer= viewer;
 		fAdditionalInfoPopup= presenter;
 	}
+
+	public String showProposals(final boolean beep) {
+		final StyledText styledText= fViewer.getTextWidget();
+		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
+			public void run() {
+				ICompletionProposal[] proposals= computeProposals();
+				int count= (proposals == null ? 0 : proposals.length);
+				if (count > 0) {
+					
+					if (fLineDelimiter == null)
+						fLineDelimiter= styledText.getLineDelimiter();
+					
+					createProposalSelector();
+					setProposals(proposals);
+					displayProposals();
+					
+					fAdditionalInfoPopup.install(fProposalInput, fViewer, fProposalShell, fProposalTable);
+				
+				} else if (beep) 
+					styledText.getDisplay().beep();
+			}
+		});
+		
+		return getErrorMessage();
+	}
+	
 	private ICompletionProposal[] computeProposals() {
 		int pos= fViewer.getSelectedRange().x;
 		return fContentAssistant.computeCompletionProposals(fViewer, pos);
 	}
+	
+	private String getErrorMessage() {
+		return fContentAssistant.getErrorMessage();
+	}
+
 	private void createProposalSelector() {
 		if (Helper.okToUse(fProposalShell))
 			return;
@@ -81,50 +112,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR);
 	}
-	private void displayProposals() {
-		fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
-		fProposalShell.setVisible(true);
-	}
-	private void filterProposal() {
-		Control control= fViewer.getTextWidget();
-		Display d= control.getDisplay();
-		d.asyncExec(new Runnable() {
-			public void run() {
-				ICompletionProposal[] proposals= computeProposals();
-				if (proposals != null && proposals.length > 0)
-					setProposals(proposals);
-				else
-					hide();
-			}
-		});
-	}
-	private String getErrorMessage() {
-		return fContentAssistant.getErrorMessage();
-	}
-	private Point getLocation() {
-		StyledText text= fViewer.getTextWidget();
-		int caret= text.getCaretOffset();
-		Point p= text.getLocationAtOffset(caret);
-		p= new Point(p.x, p.y + text.getLineHeight());
-		return text.toDisplay(p);
-	}
-	public boolean hasFocus() {
-		if (Helper.okToUse(fProposalShell))
-			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
-
-		return false;
-	}
-	public void hide() {
-		if (Helper.okToUse(fProposalShell)) {
-			
-			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
-			
-			fPopupCloser.uninstall();
-			fProposalShell.setVisible(false);
-			fProposalShell.dispose();
-			fProposalShell= null;
-		}
-	}
+	
 	private void insertSelectedProposal() {
 		int i= fProposalTable.getSelectionIndex();
 
@@ -147,13 +135,79 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (info != null)
 			fContentAssistant.showContextInformation(info);
 	}
+	
+	public boolean hasFocus() {
+		if (Helper.okToUse(fProposalShell))
+			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
+
+		return false;
+	}
+	
+	public void hide() {
+		if (Helper.okToUse(fProposalShell)) {
+			
+			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
+			
+			fPopupCloser.uninstall();
+			fProposalShell.setVisible(false);
+			fProposalShell.dispose();
+			fProposalShell= null;
+		}
+	}
+	
 	public boolean isActive() {
 		return fProposalShell != null && !fProposalShell.isDisposed();
 	}
-	public void processEvent(VerifyEvent event) {
-		if (Helper.okToUse(fProposalShell))
-			proposalProcessEvent(event);
+	
+	private void setProposals(ICompletionProposal[] proposals) {
+		if (Helper.okToUse(fProposalTable)) {
+
+			fProposalInput= proposals;
+
+			fProposalTable.setRedraw(false);
+			fProposalTable.removeAll();
+
+			Display display= fProposalTable.getDisplay();
+
+			TableItem item;
+			ICompletionProposal p;
+			for (int i= 0; i < proposals.length; i++) {
+				p= proposals[i];
+				item= new TableItem(fProposalTable, SWT.NULL);
+				if (p.getImage() != null)
+					item.setImage(p.getImage());
+				item.setText(p.getDisplayString());
+			}
+
+			Point currentLocation= fProposalShell.getLocation();
+			Point newLocation= getLocation();
+			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) 
+				fProposalShell.setLocation(newLocation);
+
+			fProposalTable.select(0);
+			fProposalTable.setRedraw(true);
+		}
 	}
+	
+	private Point getLocation() {
+		StyledText text= fViewer.getTextWidget();
+		int caret= text.getCaretOffset();
+		Point p= text.getLocationAtOffset(caret);
+		p= new Point(p.x, p.y + text.getLineHeight());
+		return text.toDisplay(p);
+	}
+
+	private void displayProposals() {
+		fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
+		fProposalShell.setVisible(true);
+	}
+	
+	public boolean verifyKey(VerifyEvent e) {
+		if (Helper.okToUse(fProposalShell))
+			return proposalKeyPressed(e);
+		return true;
+	}
+	
 	private boolean proposalKeyPressed(VerifyEvent e) {
 
 		char key= e.character;
@@ -216,6 +270,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 		return true;
 	}
+	
+	public void processEvent(VerifyEvent event) {
+		if (Helper.okToUse(fProposalShell))
+			proposalProcessEvent(event);
+	}
+
 	private void proposalProcessEvent(VerifyEvent e) {
 
 		if (fIgnoreConsumedEvents)
@@ -231,62 +291,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (e.start != e.end && (e.text == null || e.text.length() == 0))
 			filterProposal();
 	}
-	private void setProposals(ICompletionProposal[] proposals) {
-		if (Helper.okToUse(fProposalTable)) {
 
-			fProposalInput= proposals;
-
-			fProposalTable.setRedraw(false);
-			fProposalTable.removeAll();
-
-			Display display= fProposalTable.getDisplay();
-
-			TableItem item;
-			ICompletionProposal p;
-			for (int i= 0; i < proposals.length; i++) {
-				p= proposals[i];
-				item= new TableItem(fProposalTable, SWT.NULL);
-				if (p.getImage() != null)
-					item.setImage(p.getImage());
-				item.setText(p.getDisplayString());
-			}
-
-			Point currentLocation= fProposalShell.getLocation();
-			Point newLocation= getLocation();
-			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) 
-				fProposalShell.setLocation(newLocation);
-
-			fProposalTable.select(0);
-			fProposalTable.setRedraw(true);
-		}
-	}
-	public String showProposals(final boolean beep) {
-		final StyledText styledText= fViewer.getTextWidget();
-		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
+	private void filterProposal() {
+		Control control= fViewer.getTextWidget();
+		Display d= control.getDisplay();
+		d.asyncExec(new Runnable() {
 			public void run() {
 				ICompletionProposal[] proposals= computeProposals();
-				int count= (proposals == null ? 0 : proposals.length);
-				if (count > 0) {
-					
-					if (fLineDelimiter == null)
-						fLineDelimiter= styledText.getLineDelimiter();
-					
-					createProposalSelector();
+				if (proposals != null && proposals.length > 0)
 					setProposals(proposals);
-					displayProposals();
-					
-					fAdditionalInfoPopup.install(fProposalInput, fViewer, fProposalShell, fProposalTable);
-				
-				} else if (beep) 
-					styledText.getDisplay().beep();
+				else
+					hide();
 			}
 		});
-		
-		return getErrorMessage();
-	}
-	public boolean verifyKey(VerifyEvent e) {
-		if (Helper.okToUse(fProposalShell))
-			return proposalKeyPressed(e);
-		return true;
 	}
 }
+
+

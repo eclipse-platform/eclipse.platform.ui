@@ -25,6 +25,14 @@ public class TypedRegion extends Region implements ITypedRegion {
 		super(offset, length);
 		fType= type;
 	}
+	
+	/*
+	 * @see ITypedRegion#getType()
+	 */
+	public String getType() {
+		return fType;
+	}
+	
 	/**
 	 * Two typed positions are equal if they have the same offset, length, and type.
 	 *
@@ -37,17 +45,12 @@ public class TypedRegion extends Region implements ITypedRegion {
 		}
 		return false;
 	}
-	/*
-	 * @see ITypedRegion#getType()
-	 */
-	public String getType() {
-		return fType;
-	}
+	
 	/*
 	 * @see Object#hashCode
 	 */
 	 public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
-	 }
+	 }	
 }

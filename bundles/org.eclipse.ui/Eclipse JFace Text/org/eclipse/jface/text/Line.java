@@ -24,17 +24,6 @@ class Line implements IRegion {
 	 * Creates a new Line.
 	 *
 	 * @param offset the offset of the line
-	 * @param length the length of the line
-	 */
-	public Line(int offset, int length) {
-		this.offset= offset;
-		this.length= length;
-		this.delimiter= null;
-	}
-	/**
-	 * Creates a new Line.
-	 *
-	 * @param offset the offset of the line
 	 * @param end the last including character offset of the line
 	 * @param delimiter the line's delimiter
 	 */
@@ -43,16 +32,32 @@ class Line implements IRegion {
 		this.length= (end - offset) +1;
 		this.delimiter= delimiter;
 	}
-	/*
-	 * @see IRegion#getLength()
+	
+	/**
+	 * Creates a new Line.
+	 *
+	 * @param offset the offset of the line
+	 * @param length the length of the line
 	 */
-	public int getLength() {
-		return length;
+	public Line(int offset, int length) {
+		this.offset= offset;
+		this.length= length;
+		this.delimiter= null;
 	}
+		
 	/*
 	 * @see IRegion#getOffset()
 	 */
 	public int getOffset() {
 		return offset;
 	}
+	
+	/*
+	 * @see IRegion#getLength()
+	 */
+	public int getLength() {
+		return length;
+	}
 }
+	
+	

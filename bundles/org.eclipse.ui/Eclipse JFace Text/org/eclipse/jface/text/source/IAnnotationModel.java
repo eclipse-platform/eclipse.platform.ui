@@ -28,19 +28,6 @@ import org.eclipse.jface.text.Position;
 public interface IAnnotationModel {
 	
 	/**
-	 * Adds a annotation to this annotation model. The annotation is associated with
-	 * with the given position which desscribes the range covered by the annotation. 
-	 * All registered annotation model listeners are informed about the change.
-	 * If the model is connected to a document, the position is automatically
-	 * updated on document changes. If the annotation is already managed by
-	 * this annotation model nothing happens.
-	 *
-	 * @param annotation the annotation to add, may not be <code>null</code>
-	 * @param position the position describing the range covered by this annotation,
-	 *		may not be <code>null</code>	 
-	 */
-	void addAnnotation(Annotation annotation, Position position);
-	/**
 	 * Registers the annotation model listener with this annotation model.
 	 * After registration listener is informed about each change of this model.
 	 * If the listener is already registered nothing happens.
@@ -48,6 +35,15 @@ public interface IAnnotationModel {
 	 * @param listener the listener to be registered, may not be <code>null</code>
 	 */
 	void addAnnotationModelListener(IAnnotationModelListener listener);
+	
+	/**
+	 * Removes the listener from the model's list of annotation model listeners.
+	 * If the listener is not registered with the model nothing happens.
+	 *
+	 * @param listener the listener to be removed, may not be <code>null</code>
+	 */
+	void removeAnnotationModelListener(IAnnotationModelListener listener);
+	
 	/**
 	 * Connects the annotation model to a document. The annotations managed 
 	 * by this model must subsequently update according to the changes applied 
@@ -64,6 +60,7 @@ public interface IAnnotationModel {
 	 * @see #disconnect
 	 */
 	void connect(IDocument document);
+	 
 	/**
 	 * Disconnects this model from a document, i.e. document changes no longer matter.
 	 * An annotation model may only be disconnected from a document to which it has been
@@ -77,20 +74,21 @@ public interface IAnnotationModel {
 	 * @see #connect for further specification details
 	 */
 	void disconnect(IDocument document);
+	
 	/**
-	 * Returns all annotations managed by this model.
+	 * Adds a annotation to this annotation model. The annotation is associated with
+	 * with the given position which desscribes the range covered by the annotation. 
+	 * All registered annotation model listeners are informed about the change.
+	 * If the model is connected to a document, the position is automatically
+	 * updated on document changes. If the annotation is already managed by
+	 * this annotation model nothing happens.
 	 *
-	 * @return all annotations managed by this model
+	 * @param annotation the annotation to add, may not be <code>null</code>
+	 * @param position the position describing the range covered by this annotation,
+	 *		may not be <code>null</code>	 
 	 */
-	Iterator getAnnotationIterator();
-	/**
-	 * Returns the position associated with the given annotation.
-	 *
-	 * @param annotation the annotation whose position should be returned
-	 * @return the position of the given annotation or <code>null</code> if no
-	 *		associated annotation exists
-	 */
-	Position getPosition(Annotation annotation);
+	void addAnnotation(Annotation annotation, Position position);
+	
 	/**
 	 * Removes the given annotation from the model. I.e. the annotation is no 
 	 * longer managed by this model. The position associated with the annotation
@@ -101,11 +99,21 @@ public interface IAnnotationModel {
 	 *		may not be <code>null</code>
 	 */
 	void removeAnnotation(Annotation annotation);
+			
 	/**
-	 * Removes the listener from the model's list of annotation model listeners.
-	 * If the listener is not registered with the model nothing happens.
+	 * Returns all annotations managed by this model.
 	 *
-	 * @param listener the listener to be removed, may not be <code>null</code>
+	 * @return all annotations managed by this model
 	 */
-	void removeAnnotationModelListener(IAnnotationModelListener listener);
-}
+	Iterator getAnnotationIterator();
+		
+	/**
+	 * Returns the position associated with the given annotation.
+	 *
+	 * @param annotation the annotation whose position should be returned
+	 * @return the position of the given annotation or <code>null</code> if no
+	 *		associated annotation exists
+	 */
+	Position getPosition(Annotation annotation);
+}	 
+
