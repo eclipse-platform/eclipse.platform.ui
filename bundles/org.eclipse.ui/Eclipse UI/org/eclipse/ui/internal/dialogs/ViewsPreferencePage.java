@@ -110,7 +110,7 @@ protected Control createContents(Composite parent) {
 	fontListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-				noteLabel.setFont(JFaceResources.getFont(JFaceResources.VIEWER_FONT));
+				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
 			}
 		}
 	};
