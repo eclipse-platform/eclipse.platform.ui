@@ -84,10 +84,10 @@ public abstract class IDEActionFactory extends ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
+			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addBookmark")); //$NON-NLS-1$ //$NON-NLS-2$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addBookmarkToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.edit.addBookMark"); //$NON-NLS-1$
+			action.setActionDefinitionId("org.eclipse.ui.edit.addBookmark"); //$NON-NLS-1$
 			return action;
 		}
 	};
