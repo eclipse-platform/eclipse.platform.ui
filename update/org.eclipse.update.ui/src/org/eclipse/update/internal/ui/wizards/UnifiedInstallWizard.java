@@ -14,7 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.configuration.*;
@@ -22,7 +21,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class UnifiedInstallWizard extends Wizard {
@@ -33,15 +31,14 @@ public class UnifiedInstallWizard extends Wizard {
 	private static final String KEY_INSTALLING =
 		"MultiInstallWizard.installing";
 	private ModeSelectionPage modePage;
+	private SitePage sitePage;
 	private UnifiedReviewPage reviewPage;
 	private LicensePage licensePage;
 	private MultiOptionalFeaturesPage optionalFeaturesPage;
 	private MultiTargetPage targetPage;
-	private PendingChange[] jobs;
 	private IInstallConfiguration config;
 	private int installCount = 0;
-	private SearchObject searchObject;
-	private ISearchCategory category;
+	private SearchRunner searchRunner;
 	private boolean updateMode = true;
 
 	public UnifiedInstallWizard() {
@@ -52,7 +49,7 @@ public class UnifiedInstallWizard extends Wizard {
 		setWindowTitle(
 			UpdateUI.getString("MultiInstallWizard.wtitle"));
 	}
-
+	
 	public boolean isSuccessfulInstall() {
 		return installCount > 0;
 	}
@@ -119,7 +116,7 @@ public class UnifiedInstallWizard extends Wizard {
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
 			UpdateUI.getString(KEY_INSTALLING),
-			jobs.length);
+			selectedJobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];
 			SubProgressMonitor subMonitor =
@@ -135,9 +132,12 @@ public class UnifiedInstallWizard extends Wizard {
 	}
 
 	public void addPages() {
-		modePage = new ModeSelectionPage();
+		searchRunner = new SearchRunner(getShell(), getContainer());
+		modePage = new ModeSelectionPage(searchRunner);
 		addPage(modePage);
-		reviewPage = new UnifiedReviewPage(jobs);
+		sitePage = new SitePage(searchRunner);
+		addPage(sitePage);
+		reviewPage = new UnifiedReviewPage(searchRunner);
 		addPage(reviewPage);
 
 		config = createInstallConfiguration();
@@ -170,17 +170,13 @@ public class UnifiedInstallWizard extends Wizard {
 		
 		if (page.equals(modePage)) {
 			boolean update = modePage.isUpdateMode();
-			if (update) {
-				PendingChange [] jobs = searchForUpdates();
-				if (jobs!=null) {
-					reviewPage.setJobs(jobs);
-					return reviewPage;
-				}
-				else
-					return modePage;
-			}
-			return reviewPage;
+			if (update)
+				return reviewPage;
+			else
+				return sitePage;
 		}
+		if (page.equals(sitePage))
+			return reviewPage;
 
 		if (page.equals(reviewPage)) {
 			updateDynamicPages();
@@ -216,76 +212,6 @@ public class UnifiedInstallWizard extends Wizard {
 		}
 	}
 	
-	private void initializeSearch() {
-		searchObject = new DefaultUpdatesSearchObject();
-		String categoryId = searchObject.getCategoryId();
-		SearchCategoryDescriptor desc =
-			SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
-		category = desc.createCategory();
-	}
-	
-	private PendingChange [] searchForUpdates() {
-		initializeSearch();
-		try {
-			getContainer().run(true, true, getSearchOperation());
-			return createPendingChanges(searchObject);
-		} catch (InterruptedException e) {
-			UpdateUI.logException(e);
-			return null;
-		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				CoreException ce = (CoreException)t;
-				IStatus status = ce.getStatus();
-				if (status!=null &&
-					status.getCode()==ISite.SITE_ACCESS_EXCEPTION) {
-					// Just show this but do not throw exception
-					// because there may be results anyway.
-					ErrorDialog.openError(getShell(),
-						UpdateUI.getString("Connection Error"),
-						null, 
-						status);
-					return null;
-				}
-			}
-			UpdateUI.logException(e);
-			return null;
-		}
-	}
-	private PendingChange [] createPendingChanges(SearchObject searchObject) {
-		ArrayList result = new ArrayList();
-		Object[] sites = searchObject.getChildren(null);
-		for (int i = 0; i < sites.length; i++) {
-			SearchResultSite site = (SearchResultSite) sites[i];
-			createPendingChanges(site, result);
-		}
-		return (PendingChange[]) result.toArray(new PendingChange[result.size()]);
-	}
-
-	private void createPendingChanges(
-		SearchResultSite site,
-		ArrayList result) {
-		Object[] candidates = site.getChildren(null);
-		for (int i = 0; i < candidates.length; i++) {
-			SimpleFeatureAdapter adapter = (SimpleFeatureAdapter) candidates[i];
-			try {
-				IFeature feature = adapter.getFeature(null);
-				IFeature[] installed =
-					UpdateUI.getInstalledFeatures(feature);
-				PendingChange change = new PendingChange(installed[0], feature);
-				result.add(change);
-			} catch (CoreException e) {
-				UpdateUI.logException(e);
-			}
-		}
-	}
-	
-	private IRunnableWithProgress getSearchOperation() {
-		return searchObject.getSearchOperation(
-			getShell().getDisplay(),
-			category.getQueries());
-	}
-
 	public static IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();

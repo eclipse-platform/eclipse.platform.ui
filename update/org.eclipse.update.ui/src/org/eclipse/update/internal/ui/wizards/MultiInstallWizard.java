@@ -120,7 +120,7 @@ public class MultiInstallWizard extends Wizard {
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
 			UpdateUI.getString(KEY_INSTALLING),
-			jobs.length);
+			selectedJobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];
 			SubProgressMonitor subMonitor =

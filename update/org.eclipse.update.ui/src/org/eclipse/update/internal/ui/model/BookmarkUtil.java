@@ -123,7 +123,11 @@ public class BookmarkUtil {
 		String web = getAttribute(child, "web");
 		if (web!=null && web.equals("true"))
 			webBookmark = true;
-		return new SiteBookmark(name, url, webBookmark);
+		boolean selected = false;
+		String sel = getAttribute(child, "selected");
+		if (sel!=null && sel.equals("true"))
+			selected = true;
+		return new SiteBookmark(name, url, webBookmark, selected);
 	}
 
 	private static BookmarkFolder createFolder(Node child) {
@@ -187,7 +191,8 @@ public class BookmarkUtil {
 			String name = bookmark.getName();
 			String url = bookmark.getURL().toString();
 			String web = bookmark.isWebBookmark()?"true":"false";
-			writer.println(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\"/>");
+			String sel = bookmark.isSelected()?"true":"false";
+			writer.println(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\"/>");
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();

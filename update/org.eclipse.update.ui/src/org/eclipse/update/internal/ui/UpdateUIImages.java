@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
+import java.io.IOException;
 import java.net.*;
 
+import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
@@ -47,7 +49,7 @@ public class UpdateUIImages {
 	private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/";
-	private static final String PATH_FORMS = ICONS_PATH + "forms/";
+	public static final String PATH_FORMS = ICONS_PATH + "forms/";
 
 
 	/**
@@ -218,6 +220,16 @@ public static Image manage(String key, ImageDescriptor desc) {
 	Image image = desc.createImage();
 	PLUGIN_REGISTRY.put(key, image);
 	return image;
+}
+
+public static URL getDefaultProviderImageURL() {
+	URL url = makeImageURL(PATH_FORMS, "def_provider.jpg");
+	try {
+		url = InternalBootLoader.resolve(url);
+	}
+	catch (IOException e) {
+	}
+	return url; 
 }
 
 }

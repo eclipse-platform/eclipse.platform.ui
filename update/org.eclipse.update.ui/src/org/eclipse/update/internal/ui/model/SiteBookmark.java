@@ -31,16 +31,28 @@ public class SiteBookmark extends NamedModelObject
 	transient private SiteCategory otherCategory;
 	private int type;
 	private boolean webBookmark;
+	private boolean selected;
 
-
-	
 	public SiteBookmark() {
 	}
 	
 	public SiteBookmark(String name, URL url, boolean webBookmark) {
+		this(name, url, webBookmark, false);
+	}
+	
+	public SiteBookmark(String name, URL url, boolean webBookmark, boolean selected) {
 		super(name);
 		this.url = url;
 		this.webBookmark = webBookmark;
+		this.selected = selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	public boolean isSelected() {
+		return selected;
 	}
 	
 	public void setType(int type) {

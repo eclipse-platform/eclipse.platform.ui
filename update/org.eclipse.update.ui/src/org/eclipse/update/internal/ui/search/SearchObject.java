@@ -66,7 +66,7 @@ public class SearchObject extends NamedModelObject {
 		SearchCategoryDescriptor descriptor,
 		boolean categoryFixed) {
 		super(name);
-		this.categoryId = descriptor.getId();
+		if (descriptor!=null) this.categoryId = descriptor.getId();
 		this.categoryFixed = categoryFixed;
 		backgroundProgress = new BackgroundProgressMonitor();
 		backgroundProgress.addProgressMonitor(new SearchAdapter());
@@ -262,7 +262,12 @@ public class SearchObject extends NamedModelObject {
 		ArrayList statusList = new ArrayList();
 		if (!monitor.isCanceled()) {
 			computeSearchSources(candidates);
-			int ntasks = queries.length * (1 + candidates.size());
+			int nsearchsites = 0;
+			for (int i=0; i< queries.length; i++) {
+				if (queries[i].getSearchSite()!=null)
+					nsearchsites++;
+			}
+			int ntasks = nsearchsites + queries.length * candidates.size();
 
 			monitor.beginTask(
 				UpdateUI.getString(KEY_BEGIN),
@@ -297,7 +302,7 @@ public class SearchObject extends NamedModelObject {
 							subMonitor);
 					if (status != null)
 						statusList.add(status);
-					monitor.worked(1);
+					//monitor.worked(1);
 				}
 				if (monitor.isCanceled())
 					break;
@@ -330,6 +335,7 @@ public class SearchObject extends NamedModelObject {
 		String text =
 			UpdateUI.getFormattedMessage(KEY_CONTACTING, siteAdapter.getLabel());
 		monitor.subTask(text);
+		monitor.beginTask("", 3);
 		URL siteURL = siteAdapter.getURL();
 
 		ISite site;
@@ -346,16 +352,18 @@ public class SearchObject extends NamedModelObject {
 			if (status == null
 				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
 				throw e;
-			monitor.worked(1);
+			monitor.worked(3);
 			return status;
 		}
 		// If frozen connection was canceled, there will be no site.
-		if (site==null) return null;
+		if (site==null) {
+			monitor.worked(2);
+			return null;
+		}
+
 		text = UpdateUI.getFormattedMessage(KEY_CHECKING, 
 					siteAdapter.getLabel());
 		monitor.getWrappedProgressMonitor().subTask(text);
-
-		monitor.beginTask("", 2); //$NON-NLS-1$
 
 		IFeature[] matches =
 			query.getMatchingFeatures(site, new SubProgressMonitor(monitor, 1));
