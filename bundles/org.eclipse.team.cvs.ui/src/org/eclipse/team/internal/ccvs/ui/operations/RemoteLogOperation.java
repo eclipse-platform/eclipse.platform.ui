@@ -11,8 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,6 +61,11 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 */
 	public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
 		return (ILogEntry[])allEntries.get(resource);
+	}
+	
+	public void clearEntriesFor(ICVSRemoteResource resource) {
+		entries.remove(resource);
+		allEntries.remove(resource);
 	}
 
 	/* (non-Javadoc)

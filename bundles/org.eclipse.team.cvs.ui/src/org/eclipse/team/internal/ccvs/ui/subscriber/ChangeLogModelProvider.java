@@ -440,6 +440,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		try {
 			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
 			ICVSRemoteResource local = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
+			if(local == null) {
+				local = (ICVSRemoteResource)info.getBase();
+			}
 
 			String remoteRevision = getRevisionString(remote);
 			String localRevision = getRevisionString(local);
@@ -550,5 +553,22 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		for (int i = 0; i < removedResources.length; i++) {
 			removeFromViewer(removedResources[i]);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider#removeFromViewer(org.eclipse.core.resources.IResource)
+	 */
+	protected void removeFromViewer(IResource resource) {
+		// First clear the log history cache for the remote element
+		ISynchronizeModelElement element = getModelObject(resource);
+		if(element instanceof FullPathSyncInfoElement) {
+			CVSSyncInfo info = (CVSSyncInfo)((FullPathSyncInfoElement)element).getSyncInfo();
+			if(info != null) {
+				ICVSRemoteResource remote = getRemoteResource(info);
+				logOperation.clearEntriesFor(remote);
+			}
+		}
+		// Remove the object now
+		super.removeFromViewer(resource);
 	}
 }
