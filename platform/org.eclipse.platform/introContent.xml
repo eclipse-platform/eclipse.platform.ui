@@ -19,9 +19,6 @@
         <link label="What&apos;s New" url="http://org.eclipse.ui.intro/showPage?id=news" id="news" style-id="right">
           <text>Find out what is new in this release</text>
         </link>
-<link label="home" url="http://org.eclipse.ui.intro/navigate?direction=home">
-          <text>Back</text>
-        </link>
       </group>
     </group>
     <group id="action-links">

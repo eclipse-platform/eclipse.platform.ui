@@ -39,7 +39,7 @@
             id="org.eclipse.platform.introConfig"
             content="$nl$/introContent.xml">
          <presentation
-               home-page-id="root">
+               home-page-id="root" standby-page-id="standby">
             <implementation
                   ws="win32"
                   style="css/shared.css"
