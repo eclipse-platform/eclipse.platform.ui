@@ -41,10 +41,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.RowLayouter;
@@ -252,6 +252,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setControl(result);
+		
+		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
+		WorkbenchHelp.setHelp(result, new Object[] { ISearchHelpContextIds.TEXT_SEARCH_PAGE });		
 	}
 
 	private void initializePatternControl() {

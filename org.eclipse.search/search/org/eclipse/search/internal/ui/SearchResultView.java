@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
@@ -46,6 +46,9 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
+		
+		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
+		WorkbenchHelp.setHelp(fViewer.getControl(), new ViewContextComputer(this, ISearchHelpContextIds.SEARCH_VIEW));
 	}
 	
 	/**

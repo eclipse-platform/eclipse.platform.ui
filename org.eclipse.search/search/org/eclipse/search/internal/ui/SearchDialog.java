@@ -33,7 +33,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
@@ -99,6 +99,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		super.configureShell(shell);
 		shell.setText(SearchPlugin.getResourceString("SearchDialog.title"));
 		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
+		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
+		WorkbenchHelp.setHelp(shell, new Object[] { ISearchHelpContextIds.SEARCH_DIALOG });		
 	}
 
 	public IWorkspace getWorkspace() {
