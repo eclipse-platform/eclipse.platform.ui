@@ -29,7 +29,6 @@ public AntAction(IFile file) {
 	}
 	else
 		setText(Policy.bind("launcher.noFile"));
-	setImageDescriptor(AntUIPlugin.getPlugin().getAntIconImageDescriptor());
 }
 
 public void run() {
