@@ -174,6 +174,10 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 			}	
 			// Only interested in projects mapped to the provider
 			if (!isVisibleProject((IProject)resource)) {
+				// If the project has any entries in the sync set, remove them
+				if (getSubscriberSyncSet().hasMembers(resource)) {
+					eventHandler.remove(resource);
+				}
 				return;
 			}
 		}
@@ -206,7 +210,7 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 	}
 
 	private boolean isVisibleProject(IProject project) {
-		IResource[] roots = getSubscriber().roots();
+		IResource[] roots = subscriberRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource resource = roots[i];
 			if (project.getFullPath().isPrefixOf(resource.getFullPath())) {

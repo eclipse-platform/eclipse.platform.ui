@@ -51,9 +51,6 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		static final int REMOVAL = 1;
 		static final int CHANGE = 2;
 		static final int INITIALIZE = 3;
-		IResource resource;
-		int type;
-		int depth;
 		SyncInfo result;
 
 		SubscriberEvent(IResource resource, int type, int depth) {
@@ -69,6 +66,18 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		}
 		public SyncInfo getResult() {
 			return result;
+		}
+		protected String getTypeString() {
+			switch (getType()) {
+				case REMOVAL :
+					return "REMOVAL"; //$NON-NLS-1$
+				case CHANGE :
+					return "CHANGE"; //$NON-NLS-1$
+				case INITIALIZE :
+					return "INITIALIZE"; //$NON-NLS-1$
+				default :
+					return "INVALID"; //$NON-NLS-1$
+			}
 		}
 	}
 	

@@ -331,4 +331,18 @@ public class SyncSet {
 	public SyncInfoStatistics getStatistics() {
 		return statistics;
 	}
+
+	/**
+	 * Return wether the given resource has any children in the sync set
+	 * @param resource
+	 * @return
+	 */
+	public boolean hasMembers(IResource resource) {
+		if (resource.getType() == IResource.FILE) return false;
+		IContainer parent = (IContainer)resource;
+		if (parent.getType() == IResource.ROOT) return !resources.isEmpty();
+		IPath path = parent.getFullPath();
+		Set allDescendants = (Set)parents.get(path);
+		return (allDescendants != null && !allDescendants.isEmpty());
+	}
 }
