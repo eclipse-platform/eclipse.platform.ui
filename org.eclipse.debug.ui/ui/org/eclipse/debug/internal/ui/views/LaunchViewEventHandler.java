@@ -40,7 +40,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * view and viewer.
 	 * 
 	 * @param view launch view
-	 * @param viewer lanuch viewer
+	 * @param viewer launch viewer
 	 */
 	public LaunchViewEventHandler(LaunchView view, LaunchViewer viewer) {
 		super(view, viewer);
@@ -90,6 +90,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
 		if (element instanceof ISuspendResume) {
 			if (((ISuspendResume)element).isSuspended()) {
+				IThread thread = getThread(element);
+				if (thread != null) {								
+					resetStackFrameCount(thread);
+				}
 				return;
 			}
 		}		
@@ -104,14 +108,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				return;
 			}
 		} else {
-			IThread thread = null;
-			if (element instanceof IThread) {
-				thread = (IThread) element;
-			} else if (element instanceof IStackFrame) {
-				thread = ((IStackFrame)element).getThread();
-			}
+			IThread thread = getThread(element);
 			if (thread != null) {								
-				getLanuchViewer().updateStackFrameIcons(thread);
+				getLaunchViewer().updateStackFrameIcons(thread);
 				resetStackFrameCount(thread);
 			}
 		}
@@ -128,7 +127,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			doHandleSuspendThreadEvent((IThread)element);
 		}
 		updateButtons();
-		getLanuchView().showMarkerForCurrentSelection();
+		getLaunchView().showMarkerForCurrentSelection();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended
@@ -170,7 +169,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		// Auto-expand the thread.  If we are also refreshing the thread,
 		// then we don't need to worry about any children, since refreshing
 		// the parent handles this
-		getLanuchView().autoExpand(thread, refreshNeeded, refreshNeeded);
+		getLaunchView().autoExpand(thread, refreshNeeded, refreshNeeded);
 		if (refreshNeeded) {
 			// Update the stack frame count for the thread
 			oldStackFrameCountObject = new Integer(currentStackFrameCount);
@@ -184,10 +183,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		// any new stack frames, and updating any existing stack frames
 		if ((stackFrames != null) && (currentStackFrameCount > 0)) {
 			for (int i = currentStackFrameCount - 1; i > 0; i--) {
-				getLanuchView().autoExpand(stackFrames[i], true, false);				
+				getLaunchView().autoExpand(stackFrames[i], true, false);				
 			}
 			// Treat the first stack frame differently, since we want to select it
-			getLanuchView().autoExpand(stackFrames[0], true, true);				
+			getLaunchView().autoExpand(stackFrames[0], true, true);				
 		}	
 		
 		// Update the stack frame count for the thread
@@ -219,7 +218,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						IThread[] threads= target.getThreads();
 						for (int i=0; i < threads.length; i++) {
 							if (threads[i].isSuspended()) {
-								getLanuchView().autoExpand(threads[i], false, true);
+								getLaunchView().autoExpand(threads[i], false, true);
 								return;
 							}
 						}						
@@ -227,7 +226,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						DebugUIPlugin.logError(de);
 					}
 					
-					getLanuchView().autoExpand(target.getLaunch(), false, true);
+					getLaunchView().autoExpand(target.getLaunch(), false, true);
 				}
 				updateButtons();
 			}
@@ -253,7 +252,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 				}
 				insert(newLaunch);
-				getLanuchView().autoExpand(newLaunch, false, true);
+				getLaunchView().autoExpand(newLaunch, false, true);
 			}
 		};
 
@@ -275,7 +274,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	private void clearSourceSelection(IThread thread) {
 		if (getViewer() != null) {
 			if (thread != null) {
-				IStructuredSelection selection= (IStructuredSelection)getLanuchViewer().getSelection();
+				IStructuredSelection selection= (IStructuredSelection)getLaunchViewer().getSelection();
 				Object element= selection.getFirstElement();
 				if (element instanceof IStackFrame) {
 					IStackFrame stackFrame = (IStackFrame) element;
@@ -288,7 +287,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				}
 			}
 		
-			getLanuchView().clearSourceSelection();
+			getLaunchView().clearSourceSelection();
 		}
 	}
 
@@ -297,7 +296,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * 
 	 * @return launch viewer
 	 */
-	protected LaunchViewer getLanuchViewer() {
+	protected LaunchViewer getLaunchViewer() {
 		return (LaunchViewer)getViewer();
 	}
 	
@@ -306,8 +305,18 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * 
 	 * @return launch view
 	 */
-	protected LaunchView getLanuchView() {
+	protected LaunchView getLaunchView() {
 		return (LaunchView)getView();
 	}		
+	
+	private IThread getThread(Object element) {
+		IThread thread = null;
+		if (element instanceof IThread) {
+			thread = (IThread) element;
+		} else if (element instanceof IStackFrame) {
+			thread = ((IStackFrame)element).getThread();
+		}
+		return thread;
+	}
 }
 
