@@ -343,13 +343,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return canSave();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
-	public boolean canSave() {
 		return validateLocation() && validateWorkDirectory();
 	}
 	
