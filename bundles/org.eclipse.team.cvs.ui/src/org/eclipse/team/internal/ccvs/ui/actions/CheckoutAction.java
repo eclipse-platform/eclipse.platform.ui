@@ -26,6 +26,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
@@ -93,7 +94,11 @@ public class CheckoutAction extends CVSAction {
 	protected static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
 		if (remoteFolders.length == 1) {
 			ICVSRemoteFolder folder = remoteFolders[0];
-			return Policy.bind("AddToWorkspace.taskName1", folder.getRepositoryRelativePath());  //$NON-NLS-1$
+			String label = folder.getRepositoryRelativePath();
+			if (label.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+				label = folder.getName();
+			}
+			return Policy.bind("AddToWorkspace.taskName1", label);  //$NON-NLS-1$
 		}
 		else {
 			return Policy.bind("AddToWorkspace.taskNameN", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$

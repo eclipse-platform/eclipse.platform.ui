@@ -183,8 +183,8 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		
 		label = new Label(composite, SWT.WRAP);
 		label.setText(Policy.bind("CVSProjectPropertiesPage.You_can_change_the_sharing_of_this_project_to_another_repository_location._However,_this_is_only_possible_if_the_new_location_is___compatible___(on_the_same_host_with_the_same_repository_path)._1")); //$NON-NLS-1$
-		GridData data = new GridData();
-		data.widthHint = 300;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 200;
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		
@@ -288,7 +288,11 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			pathLabel.setText(location.getRootDirectory());
 			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 			if (syncInfo == null) return;
-			moduleLabel.setText(syncInfo.getRepository());
+			String label = syncInfo.getRepository();
+			if (label.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+				label = Policy.bind("CVSPropertiesPage.virtualModule", label);
+			}
+			moduleLabel.setText(label);
 		} catch (TeamException e) {
 			handle(e);
 		}
