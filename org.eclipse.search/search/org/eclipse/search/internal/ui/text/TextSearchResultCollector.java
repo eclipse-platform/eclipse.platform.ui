@@ -8,27 +8,29 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionGroup;
 
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
+import org.eclipse.search.internal.ui.Search;
+import org.eclipse.search.internal.ui.SearchManager;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 public class TextSearchResultCollector implements ITextSearchResultCollector {
 	
@@ -59,6 +61,8 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		}
 		
 		public void fillContextMenu(IMenuManager menu) {
+			if (!isTextSearch())
+				return;
 			// view must exist if we create a context menu for it.
 			ISearchResultView view= SearchUI.getSearchResultView();
 			IStructuredSelection selection= null;
@@ -72,6 +76,15 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 			ReplaceAction replaceSelected= new ReplaceAction(view.getSite(), selection);
 			if (replaceSelected.isEnabled())
 				menu.add(replaceSelected);
+		}
+		
+		private boolean isTextSearch() {
+			IRunnableWithProgress operation= SearchManager.getDefault().getCurrentSearch().getOperation();
+			if (operation instanceof TextSearchOperation) {
+				String pattern= ((TextSearchOperation)operation).getPattern();
+				return pattern != null && pattern.length() > 0;
+			}
+			return false;
 		}
 	}	
 			
