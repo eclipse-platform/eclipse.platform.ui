@@ -41,12 +41,6 @@ public class CoolBarManager extends ContributionManager implements
         ICoolBarManager {
 
     /**
-     * The number of widgets above which the cool bar should have its redraw
-     * disabled. This is to reduce flicker.
-     */
-    private static final int REDRAW_LIMIT = 3;
-
-    /**
      * A separator created by the end user.
      */
     public final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
@@ -415,15 +409,16 @@ public class CoolBarManager extends ContributionManager implements
         boolean replaced = false;
         final int size = cbItemsCreationOrder.size();
         for (int i = 0; i < size; i++) {
-            IContributionItem created = (IContributionItem) cbItemsCreationOrder.get(i);
+            IContributionItem created = (IContributionItem) cbItemsCreationOrder
+                    .get(i);
             if (created.getId() != null && created.getId().equals(item.getId())) {
                 cbItemsCreationOrder.set(i, item);
                 replaced = true;
                 break;
             }
         }
-        
-        if (!replaced) { 
+
+        if (!replaced) {
             cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0),
                     cbItemsCreationOrder.size()), item);
         }
@@ -489,8 +484,8 @@ public class CoolBarManager extends ContributionManager implements
             if (item.isSeparator()) {
                 System.out.println("Separator"); //$NON-NLS-1$
             } else {
-                System.out.println(index + ". Item id: " + item.getId()
-                        + " - is Visible: " //$NON-NLS-1$//$NON-NLS-2$
+                System.out.println(index + ". Item id: " + item.getId() //$NON-NLS-1$
+                        + " - is Visible: " //$NON-NLS-1$
                         + item.isVisible());
             }
         }
@@ -761,6 +756,8 @@ public class CoolBarManager extends ContributionManager implements
         boolean changed = false;
 
         try {
+            coolBar.setRedraw(false);
+
             // Refresh the widget data with the internal data structure.
             refresh();
 
@@ -799,12 +796,6 @@ public class CoolBarManager extends ContributionManager implements
                     coolItemsToRemove.add(coolItems[i]);
                 }
             }
-
-            /*
-             * Redraw should always be turned off.  One cool item can represent
-             * a new line in the cool bar or many individual tool items.
-             */
-            coolBar.setRedraw(false);
 
             // Dispose of any items in the list to be removed.
             for (int i = coolItemsToRemove.size() - 1; i >= 0; i--) {
@@ -881,29 +872,8 @@ public class CoolBarManager extends ContributionManager implements
                 }
             }
 
-            // Turn redraw back on
-            coolBar.setRedraw(true);
-
-            // Update the wrap indices.
-            final int numRows = getNumRows(items) - 1;
-            final int[] wrapIndices = new int[numRows];
-            int j = 0;
-            boolean foundSeparator = false;
-            for (int i = 0; i < items.length; i++) {
-                IContributionItem item = items[i];
-                CoolItem coolItem = findCoolItem(item);
-                if (item.isSeparator()) {
-                    foundSeparator = true;
-                }
-                if ((!item.isSeparator()) && (!item.isGroupMarker())
-                        && (item.isVisible()) && (coolItem != null)
-                        && (foundSeparator)) {
-                    wrapIndices[j] = coolBar.indexOf(coolItem);
-                    j++;
-                    foundSeparator = false;
-                }
-            }
-            coolBar.setWrapIndices(wrapIndices);
+            // Update wrap indices.
+            updateWrapIndices();
 
             // Update the sizes.
             for (int i = 0; i < items.length; i++) {
@@ -950,6 +920,51 @@ public class CoolBarManager extends ContributionManager implements
                 }
 
             }
+        }
+    }
+
+    private void updateWrapIndices() {
+        final IContributionItem[] items = getItems();
+        final int numRows = getNumRows(items) - 1;
+
+        // Generate the list of wrap indices.
+        final int[] wrapIndices = new int[numRows];
+        boolean foundSeparator = false;
+        int j = 0;
+        for (int i = 0; i < items.length; i++) {
+            IContributionItem item = items[i];
+            CoolItem coolItem = findCoolItem(item);
+            if (item.isSeparator()) {
+                foundSeparator = true;
+            }
+            if ((!item.isSeparator()) && (!item.isGroupMarker())
+                    && (item.isVisible()) && (coolItem != null)
+                    && (foundSeparator)) {
+                wrapIndices[j] = coolBar.indexOf(coolItem);
+                j++;
+                foundSeparator = false;
+            }
+        }
+
+        /*
+         * Check to see if these new wrap indices are different than the old
+         * ones.
+         */
+        final int[] oldIndices = coolBar.getWrapIndices();
+        boolean shouldUpdate = false;
+        if (oldIndices.length == wrapIndices.length) {
+            for (int i = 0; i < oldIndices.length; i++) {
+                if (oldIndices[i] != wrapIndices[i]) {
+                    shouldUpdate = true;
+                    break;
+                }
+            }
+        } else {
+            shouldUpdate = true;
+        }
+
+        if (shouldUpdate) {
+            coolBar.setWrapIndices(wrapIndices);
         }
     }
 }
