@@ -35,8 +35,9 @@ class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the current status of the receiver.
-	 * @return IStatus
+	 * Return the current status of the receiver. If there is
+	 * no error return null.
+	 * @return IStatus or <code>null</code>
 	 */
 	IStatus getErrorStatus() {
 		return errorStatus;
