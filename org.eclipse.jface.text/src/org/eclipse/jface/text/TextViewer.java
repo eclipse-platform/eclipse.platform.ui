@@ -318,7 +318,6 @@ public class TextViewer extends Viewer implements
 		}
 	}
 	
-	
 	/**
 	 * Internal verify listener.
 	 */
@@ -1128,7 +1127,28 @@ public class TextViewer extends Viewer implements
 				queuePostSelectionChanged();
 		}
 	}
-		
+	
+	/**
+	 * Internal listener to document rewrite session state changes.
+	 * @since 3.1
+	 */
+	private class DocumentRewriteSessionListener implements IDocumentRewriteSessionListener {
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentRewriteSessionListener#documentRewriteSessionChanged(org.eclipse.jface.text.DocumentRewriteSessionEvent)
+		 */
+		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
+			IRewriteTarget target= TextViewer.this.getRewriteTarget();
+			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
+				target.setRedraw(false);
+				target.beginCompoundChange();
+			} else if (DocumentRewriteSessionEvent.SESSION_STOP == event.getChangeType()) {
+				target.endCompoundChange();
+				target.setRedraw(true);
+			}
+		}
+	}
+	
 	/** 
 	 * Identifies the scrollbars as originators of a view port change.
 	 */
@@ -1152,7 +1172,7 @@ public class TextViewer extends Viewer implements
 	/** 
 	 * Identifies internal reasons as originators of a view port change.
 	 */
-	protected static final int INTERNAL=		6;
+	protected static final int INTERNAL=	6;
 		
 	/** Internal name of the position category used selection preservation during shift. */
 	protected static final String SHIFTING= "__TextViewer_shifting"; //$NON-NLS-1$
@@ -1169,11 +1189,6 @@ public class TextViewer extends Viewer implements
 	private ISlaveDocumentManager fSlaveDocumentManager;
 	/** The text viewer's double click strategies connector */
 	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
-	/** 
-	 * The text viewer's hovering controller
-	 * @since 2.0
-	 */
-	private TextViewerHoverManager fTextHoverManager;
 	/** The text viewer's view port guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
@@ -1190,6 +1205,11 @@ public class TextViewer extends Viewer implements
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
+	/** 
+	 * The text viewer's hovering controller
+	 * @since 2.0
+	 */
+	private TextViewerHoverManager fTextHoverManager;
 	/** 
 	 * The viewer widget token keeper
 	 * @since 2.0
@@ -1255,13 +1275,17 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	private IRegion fLastSentPostSelectionChange;
-
 	/**
-	 * The find/replace document adapter.
-	 * 
-	 * @since 3.0
+	 * The set of registered editor helpers.
+	 * @since 3.1
 	 */
-	protected FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+	private Set fEditorHelpers= new HashSet();
+	/**
+	 * The internal rewrite session listener.
+	 * @since 3.1
+	 */
+	private DocumentRewriteSessionListener fDocumentRewriteSessionListener= new DocumentRewriteSessionListener();
+
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1277,11 +1301,6 @@ public class TextViewer extends Viewer implements
 	protected Map fAutoIndentStrategies;
 	/** The text viewer's text hovers */
 	protected Map fTextHovers;
-	/** 
-	 * The creator of the text hover control
-	 * @since 2.0
-	 */
-	protected IInformationControlCreator fHoverControlCreator;
 	/** All registered view port listeners> */
 	protected List fViewportListeners;
 	/** The last visible vertical position of the top line */
@@ -1294,6 +1313,11 @@ public class TextViewer extends Viewer implements
 	protected IEventConsumer fEventConsumer;
 	/** Indicates whether the viewer's text presentation should be replaced are modified. */
 	protected boolean fReplaceTextPresentation= false;
+	/** 
+	 * The creator of the text hover control
+	 * @since 2.0
+	 */
+	protected IInformationControlCreator fHoverControlCreator;
 	/**
 	 * The mapping between model and visible document.
 	 * @since 2.1
@@ -1315,10 +1339,11 @@ public class TextViewer extends Viewer implements
 	 */
 	protected List fTextPresentationListeners;
 	/**
-	 * The set of registered editor helpers.
-	 * @since 3.1
+	 * The find/replace document adapter.
+	 * @since 3.0
 	 */
-	private Set fEditorHelpers= new HashSet();
+	protected FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+
 	
 	
 	
@@ -4299,6 +4324,7 @@ public class TextViewer extends Viewer implements
 
 		IDocument oldDocument= (IDocument) oldInput;
 		if (oldDocument != null) {
+			
 			if (fMarkPosition != null && !fMarkPosition.isDeleted())
 				oldDocument.removePosition(fMarkPosition);
 
@@ -4311,8 +4337,18 @@ public class TextViewer extends Viewer implements
 		}
 
 		fMarkPosition= null;
+		
+		if (oldDocument instanceof IDocumentExtension4) {
+			IDocumentExtension4 document= (IDocumentExtension4) oldDocument;
+			document.removeDocumentRewriteSessionListener(fDocumentRewriteSessionListener);
+		}
 
 		super.inputChanged(newInput, oldInput);
+		
+		if (newInput instanceof IDocumentExtension4) {
+			IDocumentExtension4 document= (IDocumentExtension4) newInput;
+			document.addDocumentRewriteSessionListener(fDocumentRewriteSessionListener);
+		}
 
 		IDocument newDocument= (IDocument) newInput;
 		if (newDocument != null) {
