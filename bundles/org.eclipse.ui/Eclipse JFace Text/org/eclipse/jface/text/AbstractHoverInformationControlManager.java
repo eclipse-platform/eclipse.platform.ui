@@ -230,7 +230,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.getShell().removeShellListener(this);
 			}
 			
-			fIsActive= false;
 			fMouseLost= false;
 			fShellDeactivated= false;
 		}
@@ -239,6 +238,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseTrackAdapter#mouseHover
 		 */
 		public void mouseHover(MouseEvent event) {
+			
+			if (fIsActive)
+				return;
 			
 			fIsActive= true;
 			fMouseLost= false;
