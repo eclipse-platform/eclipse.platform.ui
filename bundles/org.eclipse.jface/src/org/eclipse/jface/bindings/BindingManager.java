@@ -221,6 +221,131 @@ public final class BindingManager implements IContextManagerListener,
         listeners.add(listener);
     }
 
+    /**
+     * Computes the bindings and inserts them into the
+     * <code>commandIdsByTrigger</code>. It is assumed that
+     * <code>locales</code>,<code>platforsm</code> and
+     * <code>schemeIds</code> correctly reflect the state of the application.
+     * This method does not deal with caching. Contexts are ignored (i.e., all
+     * contexts automatically match).
+     * 
+     * @param bindingsByTrigger
+     *            The empty of map that is intended to be filled with triggers (
+     *            <code>TriggerSequence</code>) to command identifiers (
+     *            <code>String</code>). This value must not be
+     *            <code>null</code> and must be empty.
+     */
+    private final void computeBindings(final Map bindingsByTrigger) {
+        /*
+         * FIRST PASS: Just throw in bindings that match the current state. If
+         * there is more than one match for a binding, then create a list.
+         */
+        final Map possibleBindings = new HashMap();
+        final Iterator bindingItr = bindings.iterator();
+        while (bindingItr.hasNext()) {
+            final Binding binding = (Binding) bindingItr.next();
+            boolean found;
+
+            // Check the locale.
+            final String locale = binding.getLocale();
+            found = false;
+            for (int i = 0; i < locales.length; i++) {
+                if (Util.equals(locale, locales[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                continue;
+            }
+
+            // Check the platform.
+            final String platform = binding.getPlatform();
+            found = false;
+            for (int i = 0; i < platforms.length; i++) {
+                if (Util.equals(platform, platforms[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                continue;
+            }
+
+            // Check the scheme ids.
+            final String schemeId = binding.getSchemeId();
+            found = false;
+            for (int i = 0; i < schemeIds.length; i++) {
+                if (Util.equals(schemeId, schemeIds[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                continue;
+            }
+
+            // Insert the match into the list of possible matches.
+            final TriggerSequence trigger = binding.getTriggerSequence();
+            final Object existingMatch = possibleBindings.get(trigger);
+            final BindingComparator comparator = new BindingComparator(null);
+            if (existingMatch instanceof String) {
+                possibleBindings.remove(trigger);
+                final SortedSet matches = new TreeSet(comparator);
+                matches.add(existingMatch);
+                matches.add(binding);
+                possibleBindings.put(trigger, matches);
+
+            } else if (existingMatch instanceof SortedSet) {
+                final SortedSet matches = (SortedSet) existingMatch;
+                matches.add(binding);
+
+            } else {
+                possibleBindings.put(trigger, binding);
+            }
+        }
+
+        /*
+         * SECOND PASS: We now know that all bindings in possibleBindings match
+         * the current state.
+         * 
+         * There is an ordering in which the search is applied. This ordering is
+         * the priority certain properties are given within the binding. The
+         * order for bindings is scheme, context, type, platform, and locale.
+         * 
+         * There are some some special cases that need mentioning. First of all,
+         * there is a linear ordering to schemes, types, platforms and locales.
+         * This is not the case for contexts. It is possible for two active
+         * contexts to be siblings or even completely even completely unrelated.
+         * So, if an inheritance relationship is defined, then a conflict can be
+         * resolved. If two bindings belong to contexts who are not
+         * ancestors/descendents of each other, then a conflict arises.
+         * 
+         * The second thing to consider is that it is possible to unbind
+         * something. An unbinding is identified by a null command identifier.
+         * An unbinding has to match on almost other property -- including the
+         * trigger, but excluding the type. The trigger needs to be included so
+         * that we know how to match (otherwise all bindings in a particular
+         * context, a particular platform and a particular locale would be
+         * removed). The type needs to be excluded so that the user can override
+         * system bindings.
+         */
+        final Iterator possibleBindingItr = possibleBindings.entrySet()
+                .iterator();
+        while (possibleBindingItr.hasNext()) {
+            final Map.Entry entry = (Map.Entry) possibleBindingItr.next();
+            final TriggerSequence trigger = (TriggerSequence) entry.getKey();
+            final Object match = entry.getValue();
+            if (match instanceof Binding) {
+                bindingsByTrigger.put(trigger, match);
+
+            } else if (match instanceof SortedSet) {
+                final SortedSet matches = (SortedSet) match;
+                bindingsByTrigger.put(trigger, matches.first());
+            }
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -379,6 +504,47 @@ public final class BindingManager implements IContextManagerListener,
      */
     public final Map getActiveBindings() {
         return activeBindings;
+    }
+
+    /**
+     * Computes the bindings for the current state of the application, but
+     * disregarding the current contexts. This can be useful when trying to
+     * display all the possible bindings.
+     * 
+     * @return A map of trigger (<code>TriggerSequence</code>) to binding (
+     *         <code>Binding</code>). This map may be empty, but it is never
+     *         <code>null</code>.
+     */
+    public final Map getActiveBindingsDisregardingContext() {
+        if (bindings == null) {
+            // Not yet initialized. This is happening too early. Do nothing.
+            return Collections.EMPTY_MAP;
+        }
+
+        // Build a cached binding set for that state.
+        final CachedBindingSet bindingCache = new CachedBindingSet(
+                Collections.EMPTY_MAP, locales, platforms, schemeIds);
+
+        /*
+         * Check if the cached binding set already exists. If so, simply set the
+         * active bindings and return.
+         */
+        CachedBindingSet existingCache = (CachedBindingSet) cachedBindings
+                .get(bindingCache);
+        if (existingCache == null) {
+            existingCache = bindingCache;
+            cachedBindings.put(existingCache, existingCache);
+        }
+        Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
+        if (commandIdsByTrigger != null) {
+            return commandIdsByTrigger;
+        }
+
+        // Compute the active bindings.
+        commandIdsByTrigger = new HashMap();
+        computeBindings(commandIdsByTrigger);
+        existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
+        return commandIdsByTrigger;
     }
 
     /**
@@ -686,48 +852,30 @@ public final class BindingManager implements IContextManagerListener,
 
             // Insert the match into the list of possible matches.
             final TriggerSequence trigger = binding.getTriggerSequence();
-            final String commandId = binding.getCommandId();
             final Object existingMatch = possibleBindings.get(trigger);
-            if (existingMatch instanceof String) {
+            final BindingComparator comparator = new BindingComparator(
+                    activeContextTree);
+            if (existingMatch instanceof Binding) {
                 possibleBindings.remove(trigger);
-                final SortedSet matches = new TreeSet(new BindingComparator());
+                final SortedSet matches = new TreeSet(comparator);
                 matches.add(existingMatch);
-                matches.add(commandId);
+                matches.add(binding);
                 possibleBindings.put(trigger, matches);
 
             } else if (existingMatch instanceof SortedSet) {
                 final SortedSet matches = (SortedSet) existingMatch;
-                matches.add(commandId);
+                matches.add(binding);
 
             } else {
-                possibleBindings.put(trigger, commandId);
+                possibleBindings.put(trigger, binding);
             }
         }
 
         /*
          * SECOND PASS: We now know that all bindings in possibleBindings match
-         * the current state.
-         * 
-         * There is an ordering in which the search is applied. This ordering is
-         * the priority certain properties are given within the binding. The
-         * order for bindings is scheme, context, type, platform, and locale.
-         * 
-         * There are some some special cases that need mentioning. First of all,
-         * there is a linear ordering to schemes, types, platforms and locales.
-         * This is not the case for contexts. It is possible for two active
-         * contexts to be siblings or even completely even completely unrelated.
-         * So, if an inheritance relationship is defined, then a conflict can be
-         * resolved. If two bindings belong to contexts who are not
-         * ancestors/descendents of each other, then a conflict arises.
-         * 
-         * The second thing to consider is that it is possible to unbind
-         * something. An unbinding is identified by a null command identifier.
-         * An unbinding has to match on almost other property -- including the
-         * trigger, but excluding the type. The trigger needs to be included so
-         * that we know how to match (otherwise all bindings in a particular
-         * context, a particular platform and a particular locale would be
-         * removed). The type needs to be excluded so that the user can override
-         * system bindings.
+         * the current state. The comparator has already sorted all the items,
+         * so we just need to distinguish between the single match and multiple
+         * match case.
          */
         final Iterator possibleBindingItr = possibleBindings.entrySet()
                 .iterator();
@@ -737,13 +885,16 @@ public final class BindingManager implements IContextManagerListener,
             final Map.Entry entry = (Map.Entry) possibleBindingItr.next();
             final TriggerSequence trigger = (TriggerSequence) entry.getKey();
             final Object match = entry.getValue();
-            if (match instanceof String) {
-                commandIdsByTrigger.put(trigger, match);
+            if (match instanceof Binding) {
+                commandIdsByTrigger.put(trigger, ((Binding) match)
+                        .getCommandId());
                 singleMatchCount++;
 
             } else if (match instanceof SortedSet) {
                 final SortedSet matches = (SortedSet) match;
-                commandIdsByTrigger.put(trigger, matches.first());
+                commandIdsByTrigger.put(trigger, ((Binding) matches.first())
+                        .getCommandId());
+                multipleMatchCount++;
             }
         }
 
