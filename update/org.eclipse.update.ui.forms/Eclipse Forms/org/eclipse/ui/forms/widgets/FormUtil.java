@@ -154,10 +154,11 @@ public class FormUtil {
 			loc = wb.next()) {
 			String line = text.substring(saved, loc);
 			Point extent = gc.textExtent(line);
+
 			if (extent.x > width) {
 				// overflow
 				String prevLine = text.substring(saved, last);
-				gc.drawString(prevLine, bounds.x, y, true);
+				gc.drawText(prevLine, bounds.x, y, true);
 				if (underline) {
 					Point prevExtent = gc.textExtent(prevLine);
 					int lineY = y + lineHeight - descent + 1;
@@ -171,7 +172,7 @@ public class FormUtil {
 		}
 		// paint the last line
 		String lastLine = text.substring(saved, last);
-		gc.drawString(lastLine, bounds.x, y, true);
+		gc.drawText(lastLine, bounds.x, y, true);
 		if (underline) {
 			int lineY = y + lineHeight - descent + 1;
 			Point lastExtent = gc.textExtent(lastLine);

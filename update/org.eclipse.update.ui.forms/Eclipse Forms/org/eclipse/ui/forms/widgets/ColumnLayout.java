@@ -91,8 +91,6 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int cheight = 0;
 		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
-			ColumnLayoutData cd = (ColumnLayoutData) children[i]
-					.getLayoutData();
 			sizes[i] = computeControlSize(children[i]);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
@@ -132,6 +130,7 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		}
 		size.x = cwidth * ncolumns + (ncolumns - 1) * horizontalSpacing;
 		size.x += leftMargin + rightMargin;
+		System.out.println("ColumnLayout: whint="+wHint+", size.x="+size.x);
 		size.y += topMargin + bottomMargin;
 		return size;
 	}

@@ -107,7 +107,6 @@ public class Hyperlink extends AbstractHyperlink {
 		int textHeight = textSize.y + 2 * marginHeight;
 		return new Point(textWidth, textHeight);
 	}
-
 	/**
 	 * Returns the current hyperlink text.
 	 * 
@@ -137,17 +136,19 @@ public class Hyperlink extends AbstractHyperlink {
 	 */
 	protected void paintHyperlink(PaintEvent e) {
 		GC gc = e.gc;
-		int x = marginWidth;
-		int y = marginHeight;
-		Point size = getSize();
-		Rectangle bounds = new Rectangle(x, y, size.x - marginWidth
-				- marginWidth, size.y - marginHeight - marginHeight);
+		Rectangle carea = getClientArea();
+		Rectangle bounds = new Rectangle(marginWidth, marginHeight, carea.width
+				- marginWidth - marginWidth, carea.height - marginHeight
+				- marginHeight);
 		paintText(gc, bounds);
 	}
 	/**
 	 * Paints the hyperlink text in provided bounding rectangle.
-	 * @param gc graphic context
-	 * @param bounds the bounding rectangle in which to paint the text
+	 * 
+	 * @param gc
+	 *            graphic context
+	 * @param bounds
+	 *            the bounding rectangle in which to paint the text
 	 */
 	protected void paintText(GC gc, Rectangle bounds) {
 		gc.setFont(getFont());
@@ -160,7 +161,7 @@ public class Hyperlink extends AbstractHyperlink {
 				FontMetrics fm = gc.getFontMetrics();
 				int descent = fm.getDescent();
 				int lineY = bounds.y + bounds.height - descent + 1;
-				gc.drawLine(bounds.x, lineY, bounds.x+bounds.width, lineY);
+				gc.drawLine(bounds.x, lineY, bounds.x + bounds.width, lineY);
 			}
 		}
 	}
@@ -169,7 +170,7 @@ public class Hyperlink extends AbstractHyperlink {
 		GC gc = new GC(this);
 		gc.setFont(getFont());
 		if ((getStyle() & SWT.WRAP) != 0 && wHint != SWT.DEFAULT) {
-			extent = FormUtil.computeWrapSize(gc, text, wHint);
+			extent = FormUtil.computeWrapSize(gc, getText(), wHint);
 		} else {
 			extent = gc.textExtent(getText());
 		}

@@ -128,7 +128,7 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 
 		int[] columnWidths;
 
-		if (parentWidth < minWidth) {
+		if (parentWidth <= minWidth) {
 			tableWidth = minWidth;
 			if (makeColumnsEqualWidth) {
 				columnWidths = new int[numColumns];
@@ -165,12 +165,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					columnWidths[i] = col;
 				}
 			} else {
-				int[] extraSpace =
-					calculateExtraSpace(tableWidth, maxWidth, minWidth);
-				for (int i = 0; i < numColumns; i++) {
-					int minCWidth = minColumnWidths[i];
-					columnWidths[i] = minCWidth + extraSpace[i];
-				}
+				columnWidths =
+					assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
 		int x = 0;
@@ -227,14 +223,14 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		return false;
 	}
 
-	int[] calculateExtraSpace(int tableWidth, int maxWidth, int minWidth) {
+	int[] assignExtraSpace(int tableWidth, int maxWidth, int minWidth) {
 		int fixedPart =
 			leftMargin + rightMargin + (numColumns - 1) * horizontalSpacing;
 		int D = maxWidth - minWidth;
 
 		int W = tableWidth - fixedPart - minWidth;
 
-		int extraSpace[] = new int[numColumns];
+		int widths[] = new int[numColumns];
 
 		int rem = 0;
 		for (int i = 0; i < numColumns; i++) {
@@ -243,13 +239,13 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			int d = cmax - cmin;
 			int extra = D != 0 ? (d * W) / D : 0;
 			if (i < numColumns - 1) {
-				extraSpace[i] = extra;
-				rem += extra;
+				widths[i] = cmin + extra;
+				rem += widths[i];
 			} else {
-				extraSpace[i] = W - rem;
+				widths[i] = tableWidth - fixedPart - rem;
 			}
 		}
-		return extraSpace;
+		return widths;
 	}
 
 	Point computeSize(Control child, int width, boolean changed) {
@@ -268,9 +264,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		int rowHeight) {
 		int xloc = x + td.indent;
 		int yloc = y;
-		int width = td.compSize.x;
 		int height = td.compSize.y;
 		int colWidth = td.compWidth;
+		int width = Math.min(td.compSize.x, colWidth);
 
 		// align horizontally
 		if (td.align == TableWrapData.CENTER) {
@@ -445,7 +441,7 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 
 		int[] columnWidths;
 
-		if (parentWidth < minWidth) {
+		if (parentWidth <= minWidth) {
 			tableWidth = minWidth;
 			if (makeColumnsEqualWidth) {
 				columnWidths = new int[numColumns];
@@ -477,12 +473,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					columnWidths[i] = col;
 				}
 			} else {
-				int[] extraSpace =
-					calculateExtraSpace(tableWidth, maxWidth, minWidth);
-				for (int i = 0; i < numColumns; i++) {
-					int minCWidth = minColumnWidths[i];
-					columnWidths[i] = minCWidth + extraSpace[i];
-				}
+				columnWidths =
+					assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
 		int totalHeight = 0;
@@ -593,19 +585,13 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					}
 				}
 				if (minWidth == -1) {
-					if (isWrap(child)) {
-						// Should be the width of the
-						// longest word, we'll pick
-						// some small number instead
-						minWidth = 30;
-					} else {
-						Point size =
-							child.computeSize(
-								SWT.DEFAULT,
-								SWT.DEFAULT,
-								changed);
-						minWidth = size.x;
-					}
+					int minWHint = isWrap(child)?0:SWT.DEFAULT;
+					Point size =
+						child.computeSize(
+							minWHint,
+							SWT.DEFAULT,
+							changed);
+					minWidth = size.x;
 				}
 				minWidth += td.indent;
 				minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);

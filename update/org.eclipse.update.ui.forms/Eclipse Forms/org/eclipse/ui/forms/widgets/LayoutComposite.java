@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-class LayoutComposite extends Composite {
+public class LayoutComposite extends Composite {
 	public LayoutComposite(Composite parent, int style) {
 		super(parent, style);
 	}

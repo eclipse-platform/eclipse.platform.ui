@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.forms.internal.widgets.WrappedPageBook;
 /**
  * @author dejan
  * 
@@ -19,7 +19,7 @@ import org.eclipse.ui.part.PageBook;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ScrolledPageBook extends SharedScrolledComposite {
-	private PageBook pageBook;
+	private WrappedPageBook pageBook;
 	private Hashtable pages;
 	private Composite emptyPage;
 	private Composite currentPage;
@@ -33,7 +33,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	}
 	public ScrolledPageBook(Composite parent, int style) {
 		super(parent, style);
-		pageBook = new PageBook(this, SWT.NULL);
+		pageBook = new WrappedPageBook(this, SWT.NULL);
 		setContent(pageBook);
 		pages = new Hashtable();
 		setExpandHorizontal(true);
@@ -51,6 +51,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 			}
 		});
 	}
+	
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		Rectangle trim = computeTrim (0, 0, 10, 10);
 		return new Point (trim.width, trim.height);
