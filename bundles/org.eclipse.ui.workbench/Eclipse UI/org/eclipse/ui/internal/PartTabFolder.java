@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -29,6 +30,7 @@ import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -37,12 +39,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {
@@ -62,23 +67,23 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			
-			if(current instanceof PartPane){
+
+			if (current instanceof PartPane) {
 				WorkbenchPage page = ((PartPane) current).getPage();
-				if(current instanceof ViewPane){
+				if (current instanceof ViewPane) {
 					page.toggleZoom(((ViewPane) PartTabFolder.this.current).partReference);
 				}
 			}
-			
+
 		}
-		
+
 		public void mouseDown(MouseEvent e) {
-				// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
+			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
 			// Else, set focus.
 			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
 			if (newItem != null) {
@@ -91,8 +96,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				//tabFolder.setBorderVisible(true);
 			}
 		}
-		
-		
+
 	};
 
 	private class TabInfo {
@@ -266,12 +270,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			 */
 			public void itemClosed(CTabFolderEvent event) {
 				LayoutPart item = (LayoutPart) mapTabToPart.get(event.item);
-				if(item instanceof ViewPane)
-					((ViewPane ) item).doHide();
+				if (item instanceof ViewPane)
+					 ((ViewPane) item).doHide();
 				//remove(item);
 			}
 		});
-		
+
 		// enable for drag & drop target
 		tabFolder.setData(this);
 
@@ -315,8 +319,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		else
 			tabItem = new CTabItem2(this.tabFolder, SWT.NONE, tabIndex);
 		tabItem.setText(tabName);
-		
-		if(part instanceof PartPane){
+
+		if (part instanceof PartPane) {
 			tabItem.setImage(((PartPane) part).getPartReference().getTitleImage());
 		}
 
@@ -945,55 +949,99 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		Window window = getWindow();
 		if (window instanceof DetachedWindow) {
 			if (current == null || !(current instanceof PartPane))
-				window.getShell().setText("");
-			//$NON-NLS-1$
+				window.getShell().setText("");//$NON-NLS-1$
 			else
 				window.getShell().setText(((PartPane) current).getPartReference().getTitle());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
 	 */
 	public void addDropTargets(Collection result) {
-		addDropTargets(result,this);
-		
+		addDropTargets(result, this);
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
 	 */
 	public int getType() {
 		return VIEW;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
 	 */
 	public boolean isDragAllowed(Point point) {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
 	 */
 	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
 		return this;
 	}
-	
+
 	/**
 	 * Set the active appearence on the tab folder.
 	 * @param active
 	 */
-	public void setActive(boolean active){
+	public void setActive(boolean active) {
 		tabFolder.setBorderVisible(active);
 		if (active) {
-			tabFolder.setSelectionBackground(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND));	
+			tabFolder.setSelectionBackground(
+				WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			tabFolder.setSelectionForeground(
+				WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		} else {
-			tabFolder.setSelectionBackground(JFaceColors.getTabFolderSelectionBackground(tabFolder.getDisplay()));
-			tabFolder.setSelectionForeground(JFaceColors.getTabFolderSelectionForeground(tabFolder.getDisplay()));	
-		
-		}		
+			tabFolder.setSelectionBackground(
+				JFaceColors.getTabFolderSelectionBackground(tabFolder.getDisplay()));
+			tabFolder.setSelectionForeground(
+				JFaceColors.getTabFolderSelectionForeground(tabFolder.getDisplay()));
+
+		}
+	}
+
+	/**
+	 * Indicate busy state in the supplied partPane.
+	 * @param partPane PartPane.
+	 */
+	public void showBusy(PartPane partPane) {
+		updateTab(
+			partPane,
+			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
+	}
+	
+	/**
+	 * Restore the part to the default.
+	 * @param partPane PartPane
+	 */
+	public void clearBusy(PartPane partPane) {
+		updateTab(partPane,partPane.getPartReference().getTitleImage());
+	}
+	
+	/**
+	 * Replace the image on the tab with the supplied image.
+	 * @param part PartPane
+	 * @param image Image
+	 */
+	private void updateTab(PartPane part, final Image image){
+		final CTabItem2 item = getTab(part);
+		if(item != null){
+			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					item.setImage(image);
+					return Status.OK_STATUS;
+				}
+			};
+			updateJob.setSystem(true);
+			updateJob.schedule();
+		}
+			
 	}
 }

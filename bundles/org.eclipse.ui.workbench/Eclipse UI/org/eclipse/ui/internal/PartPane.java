@@ -516,7 +516,39 @@ protected void doDock() {
  * @return IJobChangeListener or <code>null</code>.
  */
 public IJobChangeListener getJobChangeListener(){
-	return null;
+	return new JobChangeAdapter(){
+		
+		/**
+		 * Get the tab folder for the receiver if it is contained
+		 * in one. Otherwise return null.
+		 * @return PartTabFolder or null.
+		 */
+		private PartTabFolder getFolder(){
+			ILayoutContainer container = getContainer();
+			if(container instanceof PartTabFolder)
+				return (PartTabFolder) container;
+			else
+				return null;
+			
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void done(IJobChangeEvent event) {
+			PartTabFolder folder = getFolder();
+			if(folder != null)
+				folder.clearBusy(PartPane.this);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#running(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void running(IJobChangeEvent event) {
+			PartTabFolder folder = getFolder();
+			if(folder != null)
+				folder.showBusy(PartPane.this);
+		}
+	};
 }
 
 

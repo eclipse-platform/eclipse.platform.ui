@@ -75,10 +75,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			 * @see org.eclipse.jface.viewers.TableViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
 			 *      java.lang.Object, boolean)
 			 */
-			protected void doUpdateItem(
-				Widget widget,
-				Object element,
-				boolean fullMap) {
+			protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 				super.doUpdateItem(widget, element, fullMap);
 				adjustSize();
 			}
@@ -86,6 +83,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
+		viewer.getControl().setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		initContentProvider();
@@ -120,44 +118,43 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			size.x = 500;
 		getShell().setSize(size);
 		moveShell(getShell());
-		
+
 		Region oldRegion = getShell().getRegion();
 		Point shellSize = getShell().getSize();
 		Region r = new Region(getShell().getDisplay());
-		Rectangle rect = new Rectangle(0,0, shellSize.x, shellSize.y);
+		Rectangle rect = new Rectangle(0, 0, shellSize.x, shellSize.y);
 		r.add(rect);
 		Region cornerRegion = new Region(getShell().getDisplay());
-		
+
 		//top right corner region
-		cornerRegion.add(new Rectangle(shellSize.x - 5, 0, 5 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 3, 1, 3 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 2, 2, 2 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 1, 3, 1 ,2));
-		
+		cornerRegion.add(new Rectangle(shellSize.x - 5, 0, 5, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 3, 1, 3, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 2, 2, 2, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 1, 3, 1, 2));
+
 		//bottom right corner region
 		int y = shellSize.y;
-		cornerRegion.add(new Rectangle(shellSize.x - 5, y - 1, 5 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 3, y - 2, 3 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 2, y - 3, 2 ,1));
-		cornerRegion.add(new Rectangle(shellSize.x - 1, y - 5, 1 ,2));
-		
+		cornerRegion.add(new Rectangle(shellSize.x - 5, y - 1, 5, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 3, y - 2, 3, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 2, y - 3, 2, 1));
+		cornerRegion.add(new Rectangle(shellSize.x - 1, y - 5, 1, 2));
+
 		//top left corner region
-		cornerRegion.add(new Rectangle(0, 0, 5 ,1));
-		cornerRegion.add(new Rectangle(0, 1, 3 ,1));
-		cornerRegion.add(new Rectangle(0, 2, 2 ,1));
-		cornerRegion.add(new Rectangle(0, 3, 1 ,2));
-		
+		cornerRegion.add(new Rectangle(0, 0, 5, 1));
+		cornerRegion.add(new Rectangle(0, 1, 3, 1));
+		cornerRegion.add(new Rectangle(0, 2, 2, 1));
+		cornerRegion.add(new Rectangle(0, 3, 1, 2));
+
 		//bottom left corner region
-		cornerRegion.add(new Rectangle(0, y - 5, 1 ,2));
-		cornerRegion.add(new Rectangle(0, y - 3, 2 ,1));
-		cornerRegion.add(new Rectangle(0, y - 2, 3 ,1));
-		cornerRegion.add(new Rectangle(0, y - 1, 5 ,1));
-		
-		
+		cornerRegion.add(new Rectangle(0, y - 5, 1, 2));
+		cornerRegion.add(new Rectangle(0, y - 3, 2, 1));
+		cornerRegion.add(new Rectangle(0, y - 2, 3, 1));
+		cornerRegion.add(new Rectangle(0, y - 1, 5, 1));
+
 		r.subtract(cornerRegion);
 		getShell().setRegion(r);
-		
-		if(oldRegion != null)
+
+		if (oldRegion != null)
 			oldRegion.dispose();
 
 	}
@@ -178,7 +175,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.ui.internal.AssociatedWindow#getTransparencyValue()
 	 */
 	protected int getTransparencyValue() {
-		return 95;
+		return 50;
 	}
 
 	/*
@@ -188,23 +185,21 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setBackground(
-			JFaceColors.getSchemeBackground(newShell.getDisplay()));
-		
+		newShell.setBackground(JFaceColors.getSchemeBackground(newShell.getDisplay()));
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		if(getShell() == null)
+		if (getShell() == null)
 			return super.close();
 		Region oldRegion = getShell().getRegion();
-		boolean result =  super.close();
-		if(result && oldRegion != null)
+		boolean result = super.close();
+		if (result && oldRegion != null)
 			oldRegion.dispose();
 		return result;
 	}
-	
 
 }
