@@ -169,10 +169,7 @@ public boolean isOptionalForInstall() {
 	return _isOptional();
 }
 public boolean isSelected() {
-	if (isOptionalForInstall())
-		return fSelected;
-	else
-		return true;	
+	return fSelected;
 }
 public void isSelected(boolean sel) {
 	
