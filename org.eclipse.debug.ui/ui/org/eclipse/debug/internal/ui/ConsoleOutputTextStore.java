@@ -16,28 +16,28 @@ public class ConsoleOutputTextStore implements ITextStore {
 	}
 
 	/**
-	 * @see ITextStore
+	 * @see ITextStore#get(int)
 	 */
 	public char get(int pos) {
 		return fBuffer.charAt(pos);
 	}
 
 	/**
-	 * @see ITextStore
+	 * @see ITextStore#get(int, int)
 	 */
 	public String get(int pos, int length) {
 		return fBuffer.substring(pos, pos + length);
 	}
 
 	/**
-	 * @see ITextStore
+	 * @see ITextStore#getLength()
 	 */
 	 public int getLength() {
 		return fBuffer.length();
 	}
 
 	/**
-	 * @see ITextStore
+	 * @see ITextStore#replace(int, int, String)
 	 */
 	 public void replace(int pos, int length, String text) {
 		if (text == null) {
@@ -47,14 +47,14 @@ public class ConsoleOutputTextStore implements ITextStore {
 	}
 
 	/**
-	 * @see ITextStore
+	 * @see ITextStore#set(String)
 	 */
 	 public void set(String text) {
 		fBuffer= new StringBuffer(text);
 	}
 
 	/**
-	 * @see StringBuffer#ensureCapacity
+	 * @see StringBuffer#ensureCapacity(int)
 	 */
 	public void setMinimalBufferSize(int bufferSize) {
 		fBuffer.ensureCapacity(bufferSize);
