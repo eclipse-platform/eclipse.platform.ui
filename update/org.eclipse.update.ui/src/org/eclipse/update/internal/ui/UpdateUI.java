@@ -214,7 +214,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
-		UpdateColors.disposeColors();
+
 		if (labelProvider != null)
 			labelProvider.dispose();
 		super.shutdown();
@@ -467,7 +467,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, false);
 		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
-		UpdateColors.setDefaults(store);
 	}
 
 	public static boolean showURL(String url) {

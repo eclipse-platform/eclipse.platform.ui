@@ -31,26 +31,16 @@ import org.eclipse.jface.dialogs.Dialog;
  * @see PreferencePage
  */
 public class MainPreferencePage
-	extends FieldEditorPreferencePage
+	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_DESCRIPTION =
 		"MainPreferencePage.description";
 	private static final String PREFIX = UpdateUI.getPluginId();
-	public static final String P_BROWSER = PREFIX + ".browser";
-	public static final String EMBEDDED_VALUE = "embedded";
 	private static final String SYSTEM_VALUE = "system";
 	private static final String KEY_CHECK_SIGNATURE =
 		"MainPreferencePage.checkSignature";
 	private static final String KEY_HISTORY_SIZE =
 		"MainPreferencePage.historySize";
-	private static final String KEY_TOPIC_COLOR =
-		"MainPreferencePage.topicColor";
-	private static final String KEY_BROWSER_CHOICE =
-		"MainPreferencePage.browserChoice";
-	private static final String KEY_BROWSER_CHOICE_EMBEDDED =
-		"MainPreferencePage.browserChoice.embedded";
-	private static final String KEY_BROWSER_CHOICE_SYSTEM =
-		"MainPreferencePage.browserChoice.system";
 	private static final String KEY_UPDATE_VERSIONS =
 		"MainPreferencePage.updateVersions";
 	private static final String KEY_UPDATE_VERSIONS_EQUIVALENT =
@@ -83,7 +73,7 @@ public class MainPreferencePage
 	 * The constructor.
 	 */
 	public MainPreferencePage() {
-		super(GRID);
+		super();
 		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
 		setDescription(UpdateUI.getString(KEY_DESCRIPTION));
 	}
@@ -94,13 +84,17 @@ public class MainPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	public void createFieldEditors() {
+	
+	/* (non-Javadoc)
+	 * Method declared on PreferencePage.
+	 */
+	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(
-			getFieldEditorParent(),
+			parent,
 			"org.eclipse.update.ui.MainPreferencePage");
 
 		Composite mainComposite =
-			new Composite(getFieldEditorParent(), SWT.NULL);
+			new Composite(parent, SWT.NULL);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -110,16 +104,16 @@ public class MainPreferencePage
 
 		historySizeLabel = new Label(mainComposite, SWT.NONE);
 		historySizeLabel.setText(UpdateUI.getString(KEY_HISTORY_SIZE));
-		historySizeLabel.setFont(getFieldEditorParent().getFont());
+		historySizeLabel.setFont(parent.getFont());
 		historySizeText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		historySizeText.setLayoutData(gd);
-		historySizeText.setFont(getFieldEditorParent().getFont());
+		historySizeText.setFont(parent.getFont());
 
 		checkSignatureCheckbox =
 			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
 		checkSignatureCheckbox.setText(UpdateUI.getString(KEY_CHECK_SIGNATURE));
-		checkSignatureCheckbox.setFont(getFieldEditorParent().getFont());
+		checkSignatureCheckbox.setFont(parent.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		checkSignatureCheckbox.setLayoutData(gd);
@@ -130,25 +124,10 @@ public class MainPreferencePage
 				}
 			}
 		});
-		if ("win32".equals(SWT.getPlatform())) {
-			RadioGroupFieldEditor browser =
-				new RadioGroupFieldEditor(
-					P_BROWSER,
-					UpdateUI.getString(KEY_BROWSER_CHOICE),
-					1,
-					new String[][] {
-						{
-							UpdateUI.getString(KEY_BROWSER_CHOICE_EMBEDDED),
-							EMBEDDED_VALUE },
-						{
-					UpdateUI.getString(KEY_BROWSER_CHOICE_SYSTEM),
-						SYSTEM_VALUE }
-			}, getFieldEditorParent(), true);
-			addField(browser);
-		}
-		createSpacer(getFieldEditorParent(), 2);
-
-		Group group = new Group(getFieldEditorParent(), SWT.NONE);
+		
+		createSpacer(mainComposite, 2);
+		
+		Group group = new Group(mainComposite, SWT.NONE);
 		group.setText(UpdateUI.getString(KEY_UPDATE_VERSIONS));
 		layout = new GridLayout();
 		layout.numColumns = 1;
@@ -157,7 +136,7 @@ public class MainPreferencePage
 		gd.horizontalSpan = 2;
 		gd.horizontalAlignment = GridData.FILL;
 		group.setLayoutData(gd);
-		group.setFont(getFieldEditorParent().getFont());
+		group.setFont(parent.getFont());
 
 		equivalentButton = new Button(group, SWT.RADIO);
 		equivalentButton.setText(
@@ -169,18 +148,10 @@ public class MainPreferencePage
 			UpdateUI.getString(KEY_UPDATE_VERSIONS_COMPATIBLE));
 		compatibleButton.setFont(group.getFont());
 
-		createSpacer(getFieldEditorParent(), 2);
+		createSpacer(mainComposite, 2);
+		createHttpProxy(mainComposite, 2);
 
-		ColorFieldEditor topicColor =
-			new ColorFieldEditor(
-				UpdateColors.P_TOPIC_COLOR,
-				UpdateUI.getString(KEY_TOPIC_COLOR),
-				getFieldEditorParent());
-		addField(topicColor);
-
-		createSpacer(getFieldEditorParent(), 2);
-		createHttpProxy(getFieldEditorParent(), 2);
-
+		return mainComposite;
 	}
 
 	public void createControl(Composite parent) {
@@ -252,11 +223,6 @@ public class MainPreferencePage
 	public static boolean getCheckDigitalSignature() {
 		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
 		return store.getBoolean(UpdateCore.P_CHECK_SIGNATURE);
-	}
-
-	public static boolean getUseEmbeddedBrowser() {
-		IPreferenceStore store = UpdateUI.getDefault().getPreferenceStore();
-		return store.getString(P_BROWSER).equals(EMBEDDED_VALUE);
 	}
 
 	public static String getUpdateVersionsMode() {
