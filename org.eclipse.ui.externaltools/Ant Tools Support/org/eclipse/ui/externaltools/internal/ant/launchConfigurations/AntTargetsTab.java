@@ -9,6 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,10 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,7 +33,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -47,7 +52,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private Label descriptionLabel;
 	private Label executeLabel;
-	private List executeTargetsList;
+	private ListViewer executeTargetsList;
 	private Button showSubTargetsButton;
 	
 	private TargetInfo defaultTarget = null;
@@ -57,6 +62,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Button addButton;
 	
 	private Map targetNamesToTargetInfos = new HashMap();
+	private Button removeButton;
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -121,15 +127,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 		
 	 	executeLabel.setEnabled(enabled);
-	 	executeTargetsList.setEnabled(enabled);
-	 	if (enabled && executeTargetsList.getItemCount() == 0) {
+	 	executeTargetsList.getControl().setEnabled(enabled);
+	 	if (enabled && executeTargetsList.getElementAt(0) != null) {
 	 		TargetInfo[] infos= getTargets();
-	 		String[] names= new String[infos.length];
+	 		/*String[] names= new String[infos.length];
 	 		for (int i = 0; i < infos.length; i++) {
 				TargetInfo info = infos[i];
 				names[i]= info.getName();
-			}
-	 		executeTargetsList.setItems(names);
+			}*/
+	 		executeTargetsList.setInput(infos);
 	 	}
 	 	descriptionLabel.setEnabled(enabled);
 	 	descriptionField.setEnabled(enabled);
@@ -162,14 +168,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 			
-		Button removeButton = createPushButton(buttonComposite, "Remove", null);
+		removeButton = createPushButton(buttonComposite, "Remove", null);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					removeTargets();
 					updateLaunchConfigurationDialog();
 				}
 			});
-				
+		
 		upButton = createPushButton(buttonComposite, "Up", null);
 		upButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -221,6 +227,17 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					targetNameList.addAll(subTargets);
 				//}
 			}
+			
+			Arrays.sort(targets, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				TargetInfo t1= (TargetInfo)o1;
+				TargetInfo t2= (TargetInfo)o2;
+				return t1.getName().compareTo(t2.getName());
+			}
+			public boolean equals(Object obj) {
+				return false;
+			}
+		});
 			return targets;
 	}
 				
@@ -240,22 +257,22 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void removeTargets() {
-		String[] targets = executeTargetsList.getSelection();
+		String[] targets = executeTargetsList.getList().getSelection();
 		for (int i=0; i < targets.length; i++) {
 			executeTargetsList.remove(targets[i]);
 		}
 	}
 	
 	private void handleMove(int direction) {
-		int index = executeTargetsList.getSelectionIndex();
+		int index = executeTargetsList.getList().getSelectionIndex();
 		if (index < 0) {
 			return;
 		}
 		
-		String target = executeTargetsList.getItem(index);
-		executeTargetsList.remove(index);
-		executeTargetsList.add(target, index + direction);
-		executeTargetsList.setSelection(index + direction);
+		String target = executeTargetsList.getList().getItem(index);
+		executeTargetsList.getList().remove(index);
+		executeTargetsList.getList().add(target, index + direction);
+		executeTargetsList.getList().setSelection(index + direction);
 		
 		updateButtonEnablement();
 	}
@@ -278,33 +295,34 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		executeLabel = new Label(listComposite, SWT.LEFT);
 		executeLabel.setText("Targets to execute:"); 
 		
-		executeTargetsList = new List(listComposite, SWT.BORDER | SWT.MULTI);	
+		executeTargetsList = new ListViewer(listComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		executeTargetsList.setContentProvider(new AntTargetContentProvider());
+		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider();
+		if (defaultTarget != null) {
+			labelProvider.setDefaultTargetName(defaultTarget.getName());
+		}
+		executeTargetsList.setLabelProvider(labelProvider);
 		gridData = new GridData(GridData.FILL_BOTH);
-		executeTargetsList.setLayoutData(gridData);
+		executeTargetsList.getControl().setLayoutData(gridData);
 		
-		executeTargetsList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int index = executeTargetsList.getSelectionIndex();
-				if (index >= 0) {
-					targetsSelected(executeTargetsList.getItem(index), executeTargetsList);
+		executeTargetsList.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)executeTargetsList.getSelection();
+				if (selection.isEmpty()) {
+					targetsSelected((TargetInfo)selection.getFirstElement());
 				} else {
 					//deselectAll();
 				}
 			}
-		});	
+		});
 	}
 	
 	/*
-	 * A target was selected in one of the lists.
+	 * A target was selected.
 	 */
-	private void targetsSelected(String targetName, List list) {
+	private void targetsSelected(TargetInfo target) {
 		updateButtonEnablement();
-
-		if (targetName == null)	{
-			return;
-		}
-	
-		showDescription(targetName);
+		descriptionField.setText(target.getDescription());
 	}
 	
 	/*
@@ -396,8 +414,25 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		runDefaultTargetButton.setSelection(targets == null);
 		allowSelectTargets(targets != null);
+		String[] targetNames= AntUtil.parseRunTargets(targets);
+		TargetInfo[] infos= getTargets();
+		TargetInfo[] targetInfos= new TargetInfo[targetNames.length];
+		int found= 0;
+		for (int i = 0; i < infos.length; i++) {
+			TargetInfo info = infos[i];
+			for (int j = 0; j < targetNames.length; j++) {
+				String name = targetNames[j];
+				if (info.getName().equals(name)) {
+					targetInfos[j]= info;
+					found++;
+				}
+			}
+			if (found == targetNames.length) {
+				break;
+			}
+		}
 		if (targets != null) {
-			executeTargetsList.setItems(AntUtil.parseRunTargets(targets));
+			executeTargetsList.setInput(targetInfos);
 		}
 	}
 
@@ -406,7 +441,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (!runDefaultTargetButton.getSelection()) {
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, AntUtil.combineRunTargets(executeTargetsList.getItems()));
+			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, AntUtil.combineRunTargets(executeTargetsList.getList().getItems()));
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
 		}
@@ -424,27 +459,33 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * on the current list selection.
 	 */
 	private void updateButtonEnablement() {
-		if (executeTargetsList.getEnabled() == false) {
+		if (executeTargetsList.getList().isEnabled() == false) {
 			upButton.setEnabled(false);
-			downButton.setEnabled(false);	
+			downButton.setEnabled(false);
+			removeButton.setEnabled(false);
+			addButton.setEnabled(false);	
 			return;
 		}
+		
+		addButton.setEnabled(true);
 		// Disable upButton and downButton buttons if there is not one
 		// target selected in the active list.
-		if (executeTargetsList.getSelectionCount() != 1) {
+		if (executeTargetsList.getSelection().isEmpty()) {
 			upButton.setEnabled(false);
-			downButton.setEnabled(false);	
+			downButton.setEnabled(false);
+			removeButton.setEnabled(false);
 			return;	
 		}
-			
-		int index = executeTargetsList.getSelectionIndex();
+		
+		removeButton.setEnabled(true);
+		int index = executeTargetsList.getList().getSelectionIndex();
 		if (index > 0) {
 			upButton.setEnabled(true);
 		} else {
 			upButton.setEnabled(false);
 		}
 	
-		if (index >= 0 && index < executeTargetsList.getItemCount() - 1) {
+		if (index >= 0 && index < executeTargetsList.getList().getItemCount() - 1) {
 			downButton.setEnabled(true);
 		} else {
 			downButton.setEnabled(false);		
