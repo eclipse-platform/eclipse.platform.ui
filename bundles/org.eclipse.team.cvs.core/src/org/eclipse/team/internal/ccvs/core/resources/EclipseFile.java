@@ -191,7 +191,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			switch (responseType) {
 				case UPDATED:
 					if (resource.exists()) {
-						file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
+						file.setContents(stream, false /*force*/, true /*keep history*/, monitor);
 						break;
 					}
 				case CREATED: // creating a new file so it should not exist locally
@@ -202,14 +202,14 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 					IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
 					monitor.beginTask(null, 100);
 					if (tempFile.exists()) 
-						tempFile.delete(true, Policy.subMonitorFor(monitor, 25));
+						tempFile.delete(true /* force */, Policy.subMonitorFor(monitor, 25));
 					tempFile.create(stream, true /*force*/, Policy.subMonitorFor(monitor, 25));
-					file.delete(false, true, Policy.subMonitorFor(monitor, 25));
-					tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, Policy.subMonitorFor(monitor, 25));
+					file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 25));
+					tempFile.move(new Path(file.getName()), false /*force*/, true /*history*/, Policy.subMonitorFor(monitor, 25));
 					monitor.done();
 					break;
 				case UPDATE_EXISTING: // creating a new file so it should exist locally
-					file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
+					file.setContents(stream, false /*force*/, true /*keep history*/, monitor);
 					break;
 			}
 		} catch(CoreException e) {
