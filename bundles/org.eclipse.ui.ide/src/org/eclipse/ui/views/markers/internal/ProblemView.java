@@ -181,29 +181,36 @@ public class ProblemView extends MarkerView {
 		super.initMenu(menu);
 	}
 	
-	/**
-	 * Retrieves statistical information (the total number of markers with each
-	 * severity type) for the markers contained in the marker registry for this
-	 * view. This information is then massaged into a string which may be
-	 * displayed by the caller.
-	 * 
-	 * @return a message ready for display
-	 */
-	protected String updateSummaryVisible() {
-		return getSummary(getVisibleMarkers(), "problem.statusSummaryVisible"); //$NON-NLS-1$
+	void updateTitle() {
+		MarkerList visibleMarkers = getVisibleMarkers();
+		String breakdown = formatSummaryBreakDown(visibleMarkers);
+		int filteredCount = visibleMarkers.getItemCount();
+		int totalCount = getTotalMarkers();
+		if (filteredCount != totalCount) 
+			breakdown = Messages.format("problem.filter.matchedMessage", //$NON-NLS-1$
+					new Object[] { 
+						breakdown, 
+						new Integer(filteredCount), 
+						new Integer(totalCount)});
+		setContentDescription(breakdown);
 	}
 	
+	private String formatSummaryBreakDown(MarkerList visibleMarkers) {
+		return Messages.format(
+				"problem.statusSummaryBreakdown", //$NON-NLS-1$
+				new Object[] {
+						new Integer(visibleMarkers.getErrors()),
+						new Integer(visibleMarkers.getWarnings()),
+						new Integer(visibleMarkers.getInfos())
+				});
+	}
+
 	private String getSummary(MarkerList markers, String messageKey) {
 		String message = Messages.format(
 				messageKey,
 				new Object[] {
 						   new Integer(markers.getItemCount()),
-						   		Messages.format(
-						   				"problem.statusSummaryBreakdown", //$NON-NLS-1$
-						   					new Object[] {
-													   new Integer(markers.getErrors()),
-													   new Integer(markers.getWarnings()),
-													   new Integer(markers.getInfos())})
+						   		formatSummaryBreakDown(markers)
 				});
 		return message;
 	}
