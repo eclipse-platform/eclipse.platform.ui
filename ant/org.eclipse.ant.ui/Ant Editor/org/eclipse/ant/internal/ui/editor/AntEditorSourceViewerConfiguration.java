@@ -189,6 +189,9 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * Update the default tokens of the scanners.
 	 */
 	public void updateScanners() {
+		if (tagScanner == null) {
+			return; //property change before the editor is fully created
+		}
 		tagScanner.adaptToColorChange();
 		instructionScanner.adaptToColorChange();
 				   
@@ -233,19 +236,19 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		String p= event.getProperty();
 
-		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
+		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p) && contentAssistant != null) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			contentAssistant.enableAutoActivation(enabled);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p)) {
+		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && contentAssistant != null) {
 			int delay= store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			contentAssistant.setAutoActivationDelay(delay);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p)) {
+		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && contentAssistant != null) {
 			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
 			contentAssistant.setProposalSelectorForeground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p)) {
+		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && contentAssistant != null) {
 			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);
 			contentAssistant.setProposalSelectorBackground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p)) {
+		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && contentAssistant != null) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
 			contentAssistant.enableAutoInsert(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS.equals(p)) {
