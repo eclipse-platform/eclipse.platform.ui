@@ -82,15 +82,17 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 						if (participant != null) {
 							((ISharableParticipant)participant).addElement(element, arguments);
 						} else {
-							participant= descriptor.createParticipant();
-							if (fParticipantClass.isInstance(participant)) {
+							try {
+								participant= descriptor.createParticipant();
+								if (!fParticipantClass.isInstance(participant))
+									throw new ClassCastException();
 								if (participant.initialize(processor, element, arguments)) {
 									participant.setDescriptor(descriptor);
 									result.add(participant);
 									if (participant instanceof ISharableParticipant)
 										shared.put(descriptor, participant);
 								}
-							} else {
+							} catch(ClassCastException e) {
 								status.addError(RefactoringCoreMessages.getFormattedString(
 									"ParticipantExtensionPoint.participant_removed",  //$NON-NLS-1$
 									descriptor.getName()));
@@ -98,6 +100,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 									RefactoringCoreMessages.getFormattedString(
 										"ParticipantExtensionPoint.wrong_type", //$NON-NLS-1$
 										new String[] {descriptor.getName(), fParticipantClass.getName()}));
+								iter.remove();
 							}
 						}
 					}
