@@ -23,9 +23,9 @@ import java.util.*;
  */
 public class ActionSetDialogInput {
 	private ArrayList categories = new ArrayList(10);
-	private final static String ID_VIEW = "org.eclipse.ui.views";
-	private final static String ID_WIZARD = "org.eclipse.ui.wizards";
-	private final static String ID_PERSP = "org.eclipse.ui.perspectives";
+	private final static String ID_VIEW = "org.eclipse.ui.views"; //$NON-NLS-1$
+	private final static String ID_WIZARD = "org.eclipse.ui.wizards"; //$NON-NLS-1$
+	private final static String ID_PERSP = "org.eclipse.ui.perspectives"; //$NON-NLS-1$
 	private FakeActionSetCategory viewCat;
 	private FakeActionSetCategory perspCat;
 	private FakeActionSetCategory wizardCat;

@@ -11,7 +11,7 @@ import org.eclipse.jface.resource.*;
  * A simple editor input for the welcome editor
  */	
 public class WelcomeEditorInput implements IEditorInput {
-	private final String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory";
+	private final String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
 /**
  * WelcomeEditorInput constructor comment.
  */

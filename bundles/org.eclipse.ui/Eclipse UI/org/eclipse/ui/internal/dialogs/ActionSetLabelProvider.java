@@ -9,14 +9,14 @@ import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
 
 public class ActionSetLabelProvider extends LabelProvider {
-/**
- * ActionSetRegistryLabelProvider constructor comment.
- */
+
+	private String UNKNOWN = WorkbenchMessages.getString("ActionSetLabelProvider.Unknown"); //$NON-NLS-1$
+	
 public ActionSetLabelProvider() {
 	super();
 }
 public String getText(Object element) {
-	String label = "Unknown";
+	String label = UNKNOWN;
 	if (element instanceof ActionSetCategory)
 		label = ((ActionSetCategory)element).getLabel();
 	else if (element instanceof IActionSetDescriptor)

@@ -28,23 +28,17 @@ public class FileStatesPage
 	private static final int defaultMaxFileStates = 50;
 
 	private static final String LONGEVITY_TITLE =
-		WorkbenchMessages.getString("FileHistory.longevity");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
 	private static final String MAX_FILE_STATES_TITLE =
-		WorkbenchMessages.getString("FileHistory.entries");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
 	private static final String MAX_FILE_STATE_SIZE_TITLE =
-		WorkbenchMessages.getString("FileHistory.diskSpace");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
 	private static final String POSITIVE_MESSAGE =
-		WorkbenchMessages.getString("FileHistory.mustBePositive");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
 	private static final String INVALID_VALUE_MESSAGE =
-		WorkbenchMessages.getString("FileHistory.invalid");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
 	private static final String SAVE_ERROR_MESSAGE =
-		WorkbenchMessages.getString("FileHistory.exceptionSaving");
-	//$NON-NLS-1$
+		WorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
 
 	private static final int FAILED_VALUE = -1;
 
