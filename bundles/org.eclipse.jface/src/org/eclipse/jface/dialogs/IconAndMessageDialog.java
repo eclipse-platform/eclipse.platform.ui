@@ -20,6 +20,11 @@ public abstract class IconAndMessageDialog extends Dialog {
 	protected String message;
 
 	/**
+	 * Message label is the label the message is shown on.
+	 */
+	protected Label messageLabel;
+
+	/**
 	 * Constructor for IconAndMessageDialog.
 	 * @param parentShell
 	 */
@@ -36,7 +41,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 		// create image
 		Image image = getImage();
 		if (image != null) {
-			Label label = new Label(composite, 0);
+			Label label = new Label(composite, SWT.NULL);
 			image.setBackground(label.getBackground());
 			label.setImage(image);
 			label.setLayoutData(
@@ -47,17 +52,18 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 		// create message
 		if (message != null) {
-			Label label = new Label(composite, SWT.WRAP);
-			label.setText(message);
-			GridData data = new GridData(GridData.GRAB_HORIZONTAL |
-				//GridData.GRAB_VERTICAL |
-	GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+			messageLabel = new Label(composite, SWT.WRAP);
+			messageLabel.setText(message);
+			GridData data =
+				new GridData(
+					GridData.GRAB_HORIZONTAL
+						| GridData.HORIZONTAL_ALIGN_FILL
+						| GridData.VERTICAL_ALIGN_BEGINNING);
 			data.widthHint =
 				convertHorizontalDLUsToPixels(
 					IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-			;
-			label.setLayoutData(data);
-			label.setFont(composite.getFont());
+			messageLabel.setLayoutData(data);
+			messageLabel.setFont(composite.getFont());
 		}
 		return composite;
 	}
@@ -112,26 +118,30 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * @see Dialog.createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		
+
 		// initialize the dialog units
 		initializeDialogUnits(parent);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginHeight =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN) * 3/2;
+		layout.marginWidth =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING)
+				* 2;
 		layout.makeColumnsEqualWidth = false;
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createDialogAndButtonArea(parent);
-		
-		
+
 		return parent;
 	}
-	
+
 	/**
 	 * Create the dialog area and button bar for the receiver.	 * @param parent	 */
 
@@ -140,4 +150,5 @@ public abstract class IconAndMessageDialog extends Dialog {
 		dialogArea = createDialogArea(parent);
 		buttonBar = createButtonBar(parent);
 	}
+
 }
