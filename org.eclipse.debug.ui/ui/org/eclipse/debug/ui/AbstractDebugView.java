@@ -447,7 +447,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @see Display.asyncExec(Runnable)
 	 */
-	protected void asyncExec(Runnable r) {
+	public void asyncExec(Runnable r) {
 		if (getViewer() != null) {
 			Control ctrl= getViewer().getControl();
 			if (ctrl != null && !ctrl.isDisposed()) {
@@ -462,7 +462,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
  	 *
 	 * @see Display.syncExec(Runnable)
 	 */
-	protected void syncExec(Runnable r) {
+	public void syncExec(Runnable r) {
 		if (getViewer() != null) {
 			Control ctrl= getViewer().getControl();
 			if (ctrl != null && !ctrl.isDisposed()) {

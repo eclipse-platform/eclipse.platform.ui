@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -13,12 +13,24 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
+import org.eclipse.debug.internal.ui.AddToInspectorAction;
+import org.eclipse.debug.internal.ui.ChangeVariableValueAction;
+import org.eclipse.debug.internal.ui.ControlAction;
+import org.eclipse.debug.internal.ui.CopyVariablesToClipboardActionDelegate;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.ShowQualifiedAction;
+import org.eclipse.debug.internal.ui.ShowTypesAction;
+import org.eclipse.debug.internal.ui.ShowVariableDetailPaneAction;
+import org.eclipse.debug.internal.ui.TextViewerAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -36,7 +48,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -44,7 +55,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -63,7 +73,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * This view shows variables and their values for a particular stack frame
  */
-public class VariablesView extends AbstractDebugView implements ISelectionChangedListener, 
+public class VariablesView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, 
 																	IPropertyChangeListener,
 																	IValueDetailListener {
 
@@ -164,7 +174,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 			return;
 		}
 
-		((VariablesContentProvider)getStructuredViewer().getContentProvider()).clearCache();
+		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).clearCache();
 		if (frame != null) {
 			setDebugModel(frame.getModelIdentifier());
 		}
@@ -220,7 +230,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		
 		// add tree viewer
 		TreeViewer vv = new TreeViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		vv.setContentProvider(new VariablesContentProvider(this));
+		vv.setContentProvider(new VariablesViewContentProvider());
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);
 		
@@ -239,6 +249,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		
 		// listen to selection in debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		setEventHandler(new VariablesViewEventHandler(this, vv));
 		
 		return vv;
 	}
@@ -269,7 +280,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 * details for the current selection.  If hiding, save the current relative 
 	 * weights, unless the detail pane hasn't yet been shown.
 	 */
-	protected void toggleDetailPane(boolean on) {
+	public void toggleDetailPane(boolean on) {
 		if (on) {
 			getSashForm().setMaximizedControl(null);
 			getSashForm().setWeights(getLastSashWeights());

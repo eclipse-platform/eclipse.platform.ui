@@ -10,7 +10,6 @@ import java.util.HashMap;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -23,26 +22,14 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Handles debug events, updating the launch view and viewer.
  */
-public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListener{
-	
-	/**
-	 * This event handler's view
-	 */
-	private LaunchView fView;
-	
-	/**
-	 * This event handler's viewer
-	 */
-	private LaunchViewer fViewer;
-	
+public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchListener{
+		
 	/**
 	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
 	 */
@@ -56,38 +43,16 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * @param viewer lanuch viewer
 	 */
 	public LaunchViewEventHandler(LaunchView view, LaunchViewer viewer) {
-		setView(view);
-		setViewer(viewer);
+		super(view, viewer);
 		DebugPlugin plugin= DebugPlugin.getDefault();
-		plugin.addDebugEventListener(this);
 		plugin.getLaunchManager().addLaunchListener(this);
-	}
-	
-	/**
-	 * @see IDebugEventListener
-	 */
-	public void handleDebugEvent(final DebugEvent event) {
-		if (getViewer() == null) {
-			return;
-		}
-		Object element= event.getSource();
-		if (element == null) {
-			return;
-		}
-		Runnable r= new Runnable() {
-			public void run() {
-				doHandleDebugEvent(event);
-			}
-		};
-		
-		getView().asyncExec(r);
 	}
 	
 
 	/**
-	 * @see BasicContentProvider#doHandleDebug(Event)
+	 * @see AbstractDebugEventHandler#doHandleDebugEvent(DebugEvent)
 	 */
-	public void doHandleDebugEvent(DebugEvent event) {
+	protected void doHandleDebugEvent(DebugEvent event) {
 		Object element= event.getSource();
 		if (element instanceof IVariable || element instanceof IValue || element instanceof IExpression) {
 			// the debug view does not show variables
@@ -104,7 +69,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 					remove(element);
 				} else {
 					clearSourceSelection(null);
-					Object parent = ((ITreeContentProvider)getViewer().getContentProvider()).getParent(element);
+					Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
 					refresh(parent);
 				}
 				updateButtons();
@@ -146,7 +111,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 				thread = ((IStackFrame)element).getThread();
 			}
 			if (thread != null) {								
-				getViewer().updateStackFrameIcons(thread);
+				getLanuchViewer().updateStackFrameIcons(thread);
 				resetStackFrameCount(thread);
 			}
 		}
@@ -163,7 +128,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 			doHandleSuspendThreadEvent((IThread)element);
 		}
 		updateButtons();
-		getView().showMarkerForCurrentSelection();
+		getLanuchView().showMarkerForCurrentSelection();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended
@@ -205,7 +170,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		// Auto-expand the thread.  If we are also refreshing the thread,
 		// then we don't need to worry about any children, since refreshing
 		// the parent handles this
-		getView().autoExpand(thread, refreshNeeded, refreshNeeded);
+		getLanuchView().autoExpand(thread, refreshNeeded, refreshNeeded);
 		if (refreshNeeded) {
 			// Update the stack frame count for the thread
 			oldStackFrameCountObject = new Integer(currentStackFrameCount);
@@ -219,10 +184,10 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		// any new stack frames, and updating any existing stack frames
 		if ((stackFrames != null) && (currentStackFrameCount > 0)) {
 			for (int i = currentStackFrameCount - 1; i > 0; i--) {
-				getView().autoExpand(stackFrames[i], true, false);				
+				getLanuchView().autoExpand(stackFrames[i], true, false);				
 			}
 			// Treat the first stack frame differently, since we want to select it
-			getView().autoExpand(stackFrames[0], true, true);				
+			getLanuchView().autoExpand(stackFrames[0], true, true);				
 		}	
 		
 		// Update the stack frame count for the thread
@@ -230,33 +195,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
 	}
 	
-		
-	/**
-	 * Helper method for inserting the given element - must be called in UI thread
-	 */
-	protected void insert(Object element) {
-		final Object parent= ((ITreeContentProvider)getViewer().getContentProvider()).getParent(element);
-		// a parent can be null for a debug target or process that has not yet been associated
-		// with a launch
-		if (parent != null) {
-			getViewer().add(parent, element);
-		}
-	}
-
-	/**
-	 * Helper method to remove the given element - must be called in UI thread
-	 */
-	private void remove(Object element) {
-		getViewer().remove(element);
-	}
-
-	/**
-	 * Helper method to update the label of the given element - must be called in UI thread
-	 */
-	protected void labelChanged(Object element) {
-		getViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
-	}
-
 	/**
 	 * Helper method to update the buttons of the viewer - must be called in UI thread
 	 */
@@ -264,22 +202,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		// fire a selection change such that the debug menu can
 		// update
 		getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
-	}
-
-	/**
-	 * Refresh the given element in the viewer - must be called in UI thread.
-	 */
-	protected void refresh(Object element) {
-		if (getViewer() != null) {
-			 getViewer().refresh(element);
-		}
-	}
-
-	/**
-	 * Helper method to select and reveal the given element - must be called in UI thread
-	 */
-	protected void selectAndReveal(Object element) {
-		getViewer().setSelection(new StructuredSelection(element), true);
 	}
 
 	/**
@@ -297,7 +219,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 						IThread[] threads= target.getThreads();
 						for (int i=0; i < threads.length; i++) {
 							if (threads[i].isSuspended()) {
-								getView().autoExpand(threads[i], false, true);
+								getLanuchView().autoExpand(threads[i], false, true);
 								return;
 							}
 						}						
@@ -305,7 +227,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 						DebugUIPlugin.logError(de);
 					}
 					
-					getView().autoExpand(target.getLaunch(), false, true);
+					getLanuchView().autoExpand(target.getLaunch(), false, true);
 				}
 				updateButtons();
 			}
@@ -331,7 +253,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 					}
 				}
 				insert(newLaunch);
-				getView().autoExpand(newLaunch, false, true);
+				getLanuchView().autoExpand(newLaunch, false, true);
 			}
 		};
 
@@ -342,8 +264,8 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * De-registers this event handler from the debug model.
 	 */
 	public void dispose() {
+		super.dispose();
 		DebugPlugin plugin= DebugPlugin.getDefault();
-		plugin.removeDebugEventListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);
 	}
 
@@ -351,9 +273,9 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * Clear the selection in the editor - must be called in UI thread
 	 */
 	private void clearSourceSelection(IThread thread) {
-		if (fViewer != null) {
+		if (getViewer() != null) {
 			if (thread != null) {
-				IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
+				IStructuredSelection selection= (IStructuredSelection)getLanuchViewer().getSelection();
 				Object element= selection.getFirstElement();
 				if (element instanceof IStackFrame) {
 					IStackFrame stackFrame = (IStackFrame) element;
@@ -366,46 +288,26 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 				}
 			}
 		
-			getView().clearSourceSelection();
+			getLanuchView().clearSourceSelection();
 		}
-	}
-	
-	/**
-	 * Returns the launch view this event handler is
-	 * updating.
-	 * 
-	 * @return launch view
-	 */
-	protected LaunchView getView() {
-		return fView;
-	}
-	
-	/**
-	 * Sets the view this event handler is updating.
-	 * 
-	 * @param view launch view
-	 */
-	private void setView(LaunchView view) {
-		fView = view;
 	}
 
 	/**
-	 * Returns the launch viewer this event handler is 
-	 * updating.
+	 * Returns this event handler's launch viewer
 	 * 
 	 * @return launch viewer
-	 */	
-	protected LaunchViewer getViewer() {
-		return fViewer;
+	 */
+	protected LaunchViewer getLanuchViewer() {
+		return (LaunchViewer)getViewer();
 	}
 	
 	/**
-	 * Sets the viewer this event handler is updating.
+	 * Returns this event handler's launch view
 	 * 
-	 * @param viewer launch viewer
+	 * @return launch view
 	 */
-	private void setViewer(LaunchViewer viewer) {
-		fViewer = viewer;
-	}
+	protected LaunchView getLanuchView() {
+		return (LaunchView)getView();
+	}		
 }
 

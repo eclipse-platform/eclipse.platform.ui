@@ -63,12 +63,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPartListener, IPerspectiveListener, IPageListener {
-
-	/**
-	 * Event handler for this view
-	 */
-	private LaunchViewEventHandler fEventHandler;
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPartListener, IPerspectiveListener, IPageListener {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -232,9 +227,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
-		if (getEventHandler() != null) {
-			getEventHandler().dispose();
-		}
 		super.dispose();
 	}
 	
@@ -608,42 +600,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			//reveal the thread children of a debug target
 			getStructuredViewer().reveal(children[0]);
 		}
-	}	
-	
-	/**
-	 * Sets the event handler for this view
-	 * 
-	 * @param eventHandler event handler
-	 */
-	private void setEventHandler(LaunchViewEventHandler eventHandler) {
-		fEventHandler = eventHandler;
-	}
-	
-	/**
-	 * Sets the event handler for this view
-	 * 
-	 * @param eventHandler event handler
-	 */
-	protected LaunchViewEventHandler getEventHandler() {
-		return fEventHandler;
-	}	
-	
-	/**
-	 * Added here to make visible for event handler
-	 * 
-	 * @see AbstractDebugView#asyncExec(Runnable)
-	 */
-	protected void asyncExec(Runnable r) {
-		super.asyncExec(r);
-	}
-	
-	/**
-	 * Added here to make visible for event handler
-	 * 
-	 * @see AbstractDebugView#syncExec(Runnable)
-	 */
-	protected void syncExec(Runnable r) {
-		super.syncExec(r);
 	}
 
 }

@@ -75,7 +75,7 @@
          name="%VariablesView.name"
          icon="icons/full/cview16/variable_view.gif"
          category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.VariablesView"
+         class="org.eclipse.debug.internal.ui.views.VariablesView"
          id="org.eclipse.debug.ui.VariableView">
    </view>
    <view
