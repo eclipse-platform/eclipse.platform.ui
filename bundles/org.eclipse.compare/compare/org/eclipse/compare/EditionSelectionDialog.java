@@ -47,6 +47,7 @@ import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.compare.*;
 
+
 /**
  * A dialog where one input element can be compared against
  * a list of historic variants (editions) of the same input element.
@@ -147,6 +148,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	
 	// Configuration options
 	private CompareConfiguration fCompareConfiguration;
+	private ArrayList fArrayList= new ArrayList();
 	/** use a side-by-side compare viewer */
 	private boolean fCompare= true;
 	/** show target on right hand side */
@@ -159,12 +161,18 @@ public class EditionSelectionDialog extends ResizableDialog {
 	private boolean fCompareMode= false;
 	/** perform structure compare on editions */
 	private boolean fStructureCompare= false;
+	/** allow for multiple selection */
+	private boolean fMultiSelect= false;
 	
 	/**
 	 * Maps from members to their corresponding editions.
 	 * Has only a single entry if dialog is used in "Replace" (and not "Add") mode.
 	 */
 	private HashMap fMemberEditions;
+	/**
+	 * Maps from members to their corresponding selected edition.
+	 */
+	private HashMap fMemberSelection;
 	/** The editions of the current selected member */
 	private List fCurrentEditions;
 	private Thread fThread;
@@ -499,6 +507,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 */
 	public void setAddMode(boolean addMode) {
 		fAddMode= addMode;
+		fMultiSelect= addMode;
 	}
 	
 	/**
@@ -528,6 +537,27 @@ public class EditionSelectionDialog extends ResizableDialog {
 		return fTargetPair.getItem();
 	}
  	
+	/**
+	 * Returns the selected editions that have been specified with the most
+	 * recent call to <code>selectEdition</code>.
+	 * 
+	 * @since 2.1
+	 */
+	public ITypedElement[] getSelection() {
+		ArrayList result= new ArrayList();
+		if (fMemberSelection != null) {
+			Iterator iter= fArrayList.iterator();
+			for (int i= 0; iter.hasNext(); i++) {
+				Object edition= iter.next();		
+				Object item= fMemberSelection.get(edition);
+				if (item != null)
+					result.add(item);
+			}
+		} else if (fSelectedItem != null)
+			result.add(fSelectedItem);
+		return (ITypedElement[]) result.toArray(new ITypedElement[result.size()]);
+	}
+		
  	/**
  	 * Returns a label for identifying the target side of a compare viewer.
  	 * This implementation extracts the value for the key "targetLabel" from the resource bundle
@@ -669,17 +699,9 @@ public class EditionSelectionDialog extends ResizableDialog {
 			
 			fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle")); //$NON-NLS-1$
-			fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
-			fMemberTable.addSelectionListener(
-				new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						handleMemberSelect(e.item);
-					}
-				}
-			);
 			
-			fMemberPane.setContent(fMemberTable);
-			
+			//createTable();
+						
 			fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 		} else {
 			if (fStructureCompare) {
@@ -741,6 +763,39 @@ public class EditionSelectionDialog extends ResizableDialog {
 		vsplitter.setWeights(new int[] { 30, 70 });
 				
 		return vsplitter;
+	}
+	
+	private void createTable(boolean error) {
+		if (fMemberPane == null)
+			return;
+		if (fMemberTable == null) {
+			int flags= SWT.H_SCROLL + SWT.V_SCROLL;
+			if (fMultiSelect && !error)
+				flags|= SWT.CHECK;
+			fMemberTable= new Table(fMemberPane, flags);
+			fMemberTable.addSelectionListener(
+				new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (e.detail == SWT.CHECK) {
+							if (e.item instanceof TableItem) {
+								TableItem ti= (TableItem) e.item;
+								if (ti.getChecked())
+									fArrayList.add(ti.getData());
+								else
+									fArrayList.remove(ti.getData());
+									
+								if (fCommitButton != null)
+									fCommitButton.setEnabled(fArrayList.size() > 0);
+							}
+						}
+						handleMemberSelect(e.item);
+					}
+				}
+			);
+			fMemberPane.setContent(fMemberTable);
+			fMemberTable.setFocus();
+			fMemberPane.layout();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -827,13 +882,14 @@ public class EditionSelectionDialog extends ResizableDialog {
 	private void addMemberEdition(Pair pair) {
 		
 		if (pair == null) {	// end of list of pairs
+			createTable(true);
 			if (fMemberTable != null) {
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
 					ti.setText(Utilities.getString(fBundle, "noAdditionalMembersMessage")); //$NON-NLS-1$
 				}
 				return;
-			}			
+			}
 			if (fEditionTree != null && !fEditionTree.isDisposed() && fEditionTree.getItemCount() == 0) {
 				TreeItem ti= new TreeItem(fEditionTree, SWT.NONE);
 				ti.setText(Utilities.getString(fBundle, "notFoundInLocalHistoryMessage")); //$NON-NLS-1$
@@ -843,12 +899,15 @@ public class EditionSelectionDialog extends ResizableDialog {
 		
 		if (fMemberEditions == null)
 			fMemberEditions= new HashMap();
+		if (fMultiSelect && fMemberSelection == null)
+			fMemberSelection= new HashMap();
 		
 		ITypedElement item= pair.getItem();
 		List editions= (List) fMemberEditions.get(item);
 		if (editions == null) {
 			editions= new ArrayList();
 			fMemberEditions.put(item, editions);
+			createTable(false);
 			if (fMemberTable != null && !fMemberTable.isDisposed()) {
 				ITypedElement te= (ITypedElement)item;
 				String name= te.getName();
@@ -949,12 +1008,25 @@ public class EditionSelectionDialog extends ResizableDialog {
 		ti.setText(s);
 		
 		ti.setData(pair);
-		if (first) {
-			fEditionTree.setSelection(new TreeItem[] {ti});
+		
+		// determine selected TreeItem
+		TreeItem selection= first ? ti : null;
+		if (fMemberSelection != null) {
+			Object selected= fMemberSelection.get(fCurrentEditions);
+			if (selected != null) {
+				if (selected == pair.getItem())
+					selection= ti;
+				else
+					selection= null;
+			}
+		}
+		if (selection != null) {
+			fEditionTree.setSelection(new TreeItem[] { selection });
 			if (!fAddMode)
 				fEditionTree.setFocus();
-			feedInput(ti);
+			feedInput(selection);
 		}
+		
 		if (first) // expand first node
 			lastDay.setExpanded(true);
 	}
@@ -1011,8 +1083,10 @@ public class EditionSelectionDialog extends ResizableDialog {
 			ITypedElement edition= pair.getEdition();
 			String editionLabel= getEditionLabel(edition, fSelectedItem);
 			Image editionImage= getEditionImage(edition, fSelectedItem);
-			
+					
 			if (fAddMode) {
+				if (fMemberSelection != null)
+					fMemberSelection.put(fCurrentEditions, fSelectedItem);
 				setInput(fSelectedItem);
 				fContentPane.setText(editionLabel);
 				fContentPane.setImage(editionImage);
@@ -1031,8 +1105,12 @@ public class EditionSelectionDialog extends ResizableDialog {
 			fSelectedItem= null;
 			setInput(null);
 		}
-		if (fCommitButton != null)
-			fCommitButton.setEnabled(isOK && fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
+		if (fCommitButton != null) {
+			if (fMultiSelect)
+				fCommitButton.setEnabled(isOK && fSelectedItem != null && fArrayList.size() > 0);
+			else
+				fCommitButton.setEnabled(isOK && fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
+		}
 	}
 	
 	/*
