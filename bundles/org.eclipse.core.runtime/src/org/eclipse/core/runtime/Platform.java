@@ -206,8 +206,9 @@ public final class Platform {
 	}
 	/**
 	 * Returns a URL which is the local equivalent of the
-	 * supplied URL. This method is expected to be used with 
-	 * plug-in-relative URLs returned by IPluginDescriptor.
+	 * supplied URL. This method is expected to be used with the
+	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
+	 * and Platform.find().
 	 * If the specified URL is not a plug-in-relative URL, it 
 	 * is returned asis. If the specified URL is a plug-in-relative
 	 * URL of a file (incl. .jar archive), it is returned as 
@@ -219,8 +220,9 @@ public final class Platform {
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #resolve
+	 * @see #resolve, #find
 	 * @see IPluginDescriptor#getInstallURL
+	 * @see Bundle#getEntry
 	 */
 	public static URL asLocalURL(URL url) throws IOException {
 		return InternalPlatform.getDefault().asLocalURL(url);
@@ -435,18 +437,25 @@ public final class Platform {
 	}
 	/**
 	 * Returns a URL which is the resolved equivalent of the
-	 * supplied URL. This method is expected to be used with 
-	 * plug-in-relative URLs returned by IPluginDescriptor.
+	 * supplied URL. This method is expected to be used with the
+	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
+	 * and Platform.find().
+	 * <p>
 	 * If the specified URL is not a plug-in-relative URL, it is returned
-	 * as is. If the specified URL is a plug-in-relative URL, it is
-	 * resolved to a URL using the actual URL protocol
-	 * (eg. file, http, etc)
-	 *
+	 * as is. If the specified URL is a plug-in-relative URL, this method
+	 * attempts to reduce the given URL to one which is native to the Java
+	 * class library (eg. file, http, etc). 
+	 * </p><p>
+	 * Note however that users of this API should not assume too much about the
+	 * results of this method.  While it may consistently return a file: URL in certain
+	 * installation configurations, others may result in jar: or http: URLs.
+	 * </p>
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #asLocalURL
+	 * @see #asLocalURL, #find
 	 * @see IPluginDescriptor#getInstallURL
+	 * @see Bundle#getEntry
 	 */
 	public static URL resolve(URL url) throws java.io.IOException {
 		return InternalPlatform.getDefault().resolve(url);
