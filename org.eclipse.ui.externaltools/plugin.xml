@@ -60,6 +60,12 @@
                toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
                id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
          </action>
+         <action
+               definitionId="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
+               label="%OpenExternalToolsConfigurations.label"
+               class="org.eclipse.ui.externaltools.internal.menu.OpenExternalToolsConfigurations"
+               id="org.eclipse.ui.externaltools.OpenExternalToolsConfigurations">
+         </action>
       </actionSet>
    </extension>
    <extension
@@ -74,6 +80,18 @@
             keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+       <command
+            name="%ActionDefinition.openExternalToolsConfigurations.name"
+            category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.openExternalToolsConfigurations.description"
+            id="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations">
+      </command>
+      <keyBinding
+            keySequence=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>

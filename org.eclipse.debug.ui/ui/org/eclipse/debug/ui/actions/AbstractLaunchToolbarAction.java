@@ -54,10 +54,14 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 		}
 
 		addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
-		addToMenu(menu, new OpenLaunchDialogAction(getLaunchGroupIdentifier()), -1);
+		addToMenu(menu, getOpenDialogAction(), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
 	
+	protected IAction getOpenDialogAction() {
+		return new OpenLaunchDialogAction(getLaunchGroupIdentifier());
+	}
+
 	/**
 	 * Launch the last launch, or open the launch config dialog if none.
 	 * 
