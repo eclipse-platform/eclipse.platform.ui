@@ -23,9 +23,6 @@ import org.eclipse.compare.internal.*;
  * to retrieve a hierarchical structure from the input object (an <code>ICompareInput</code>)
  * and perform a two-way or three-way compare on it.
  * <p>
- * This <code>DiffTreeViewer</code> supports the so called "smart" mode of the structure creator
- * by installing a button in the viewer's pane title bar.
- * <p>
  * This class may be instantiated; it is not intended to be subclassed outside
  * this package.
  * </p>
@@ -99,9 +96,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * Configures the <code>StructureDiffViewer</code> with a structure creator.
 	 * The structure creator is used to create a hierarchical structure
 	 * for each side of the viewer's input element of type <code>ICompareInput</code>.
-	 * <p>
-	 * If the structure creator's <code>canRewriteTree</code> returns <code>true</code>
-	 * the "smart" button in the viewer's pane control bar is enabled.
 	 *
 	 * @param structureCreator the new structure creator
 	 */
