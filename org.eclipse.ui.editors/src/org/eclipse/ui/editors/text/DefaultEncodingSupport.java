@@ -257,7 +257,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		if (action instanceof TextEditorAction)
 			((TextEditorAction)action).update();
 
-		if (action == null && !action.isEnabled())
+		if (action == null || !action.isEnabled())
 			return;
 
 		Shell shell= parent.getShell();
