@@ -35,14 +35,20 @@ public abstract class AbstractBreakpointContainerFactory implements IBreakpointC
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#setLabel(java.lang.String)
 	 */
-	public String setLabel(String label) {
-		return fLabel= label;
+	public void setLabel(String label) {
+		fLabel= label;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#setIdentifier(java.lang.String)
+	 */
 	public void setIdentifier(String identifier) {
 		fIdentifier= identifier;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getIdentifier()
+	 */
 	public String getIdentifier() {
 		return fIdentifier;
 	}

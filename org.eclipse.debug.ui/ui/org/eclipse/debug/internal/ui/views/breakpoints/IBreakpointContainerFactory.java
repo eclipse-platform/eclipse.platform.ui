@@ -26,12 +26,31 @@ public interface IBreakpointContainerFactory {
 	 */
 	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId);
 	
+	/**
+	 * Returns a user-presentable label for this breakpoint container factory
+	 * @return this breakpoint container factory's label
+	 */
 	public String getLabel();
 	
-	public String setLabel(String label);
+	/**
+	 * Sets this breakpoint container factory's label. This label must be suitable
+	 * for presentation to the user in views, actions, etc.
+	 * @param label the label
+	 */
+	public void setLabel(String label);
 	
+	/**
+	 * Returns this breakpoint container factory's unique identifier.
+	 * @return this breakpoint container factory's unique identifier
+	 */
 	public String getIdentifier();
 	
+	/**
+	 * Sets this breakpoint container factory's unique identifier.
+	 * This method should only be called by the BreakpointContainerFactoryManager
+	 * at startup.
+	 * @param identifier the identifier
+	 */
 	public void setIdentifier(String identifier);
 	
 	/**
