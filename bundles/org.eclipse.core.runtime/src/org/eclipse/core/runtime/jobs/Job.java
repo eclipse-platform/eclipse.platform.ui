@@ -408,8 +408,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * delay as soon as it finishes.  If this method is called multiple times
 	 * while the job is running, the job will still only be rescheduled once,
 	 * with the most recent delay value that was provided.
-	 * <p>
-	 * Scheduling a job that is waiting or sleeping has no effect
+	 * </p><p>
+	 * Scheduling a job that is waiting or sleeping has no effect.
+	 * </p>
 	 * 
 	 * @param delay a time delay in milliseconds before the job should run
 	 */
