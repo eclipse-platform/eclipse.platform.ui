@@ -959,12 +959,6 @@ public void setWorkspaceLock(WorkspaceLock lock);
  */
 public String[] sortNatureSet(String[] natureIds); 
 /**
- * <b>Note:</b> This method is part of an interim API that is still under 
- * development and expected to change significantly before reaching stability. 
- * It is being made available at this early stage to solicit feedback from pioneering 
- * adopters on the understanding that any code that uses this API will almost 
- * certainly be broken (repeatedly) as the API evolves.
- * 
  * Advises that the caller intends to modify the contents of the given files in the near future and
  * asks whether modifying all these files would be reasonable. The files must all exist.
  * This method is used to give the VCM component an opportunity to check out (or otherwise
