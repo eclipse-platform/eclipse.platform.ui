@@ -15,35 +15,89 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.actions.*;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
+import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -229,7 +283,11 @@ public class HistoryView extends ViewPart {
 									revisionTag)
 										.run(monitor);
 							historyTableProvider.setFile(remoteFile);
-							tableViewer.refresh();
+							Display.getDefault().asyncExec(new Runnable() {
+								public void run() {
+									tableViewer.refresh();
+								}
+							});
 						}
 					}
 				} catch (InvocationTargetException e) {
@@ -277,9 +335,13 @@ public class HistoryView extends ViewPart {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
-				if( ! ((MoveRemoteTagAction)tagActionDelegate).wasCancelled()) {
-					refresh();
-				}
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if( ! ((MoveRemoteTagAction)tagActionDelegate).wasCancelled()) {
+							refresh();
+						}
+					}
+				});
 			}
 		});
 		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
@@ -723,8 +785,8 @@ public class HistoryView extends ViewPart {
 					Object o = ss.getFirstElement();
 					currentSelection = (ILogEntry)o;
 					if(needsProgressDialog) {
-						new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
-							protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								try {				
 									action.run(monitor);
 								} catch (CoreException e) {
@@ -732,7 +794,7 @@ public class HistoryView extends ViewPart {
 								}
 							}
 						});
-					}	else {
+					} else {
 						try {				
 							action.run(null);
 						} catch (CoreException e) {
