@@ -1822,13 +1822,13 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	// test if the given location overlaps the platform metadata location
 	IPath testLocation = getMetaArea().getLocation();
 	if (isOverlapping(location, testLocation)) {
-		message = Policy.bind("links.invalidLocation", location.toString()); //$NON-NLS-1$
+		message = Policy.bind("links.invalidLocation", location.toOSString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	//test if the given path overlaps the location of the given project
 	testLocation = resource.getProject().getLocation();
 	if (isOverlapping(location, testLocation)) {
-		message = Policy.bind("links.locationOverlapsProject", location.toString()); //$NON-NLS-1$
+		message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	//check that the location is absolute
@@ -1850,7 +1850,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
 		testLocation = desc.getLocation();
 		if (testLocation != null && isOverlapping(location, testLocation)) {
-			message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
+			message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 		}
 		//iterate over linked resources and check for overlap
@@ -1868,7 +1868,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 			if (children[j].isLinked()) {
 				testLocation = children[j].getLocation();
 				if (testLocation != null && isOverlapping(location, testLocation)) {
-					message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
+					message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
 					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 				}
 			}				
