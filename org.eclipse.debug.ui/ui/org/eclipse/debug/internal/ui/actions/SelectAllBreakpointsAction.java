@@ -15,9 +15,10 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 public class SelectAllBreakpointsAction extends SelectAllAction implements IBreakpointsListener {
@@ -31,14 +32,11 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) {
-		if (!(getView() instanceof IDebugView)) {
+		if (!(getView() instanceof BreakpointsView)) {
 			return;
 		}
-		Viewer viewer = ((IDebugView) getView()).getViewer();
-		if (!(viewer instanceof TableViewer)) {
-			return;
-		}
-		((TableViewer) viewer).getTable().selectAll();
+		CheckboxTreeViewer viewer = ((BreakpointsView) getView()).getCheckboxViewer();
+		viewer.getTree().selectAll();
 		//ensure that the selection change callback is fired
 		viewer.setSelection(viewer.getSelection());
 	}

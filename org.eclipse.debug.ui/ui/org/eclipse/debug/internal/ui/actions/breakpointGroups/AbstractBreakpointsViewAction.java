@@ -17,10 +17,13 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ * Abstract implementation of an action contributed to the breakpoints view.
  */
 public abstract class AbstractBreakpointsViewAction implements IViewActionDelegate {
     
+    /**
+     * The breakpoints view that this action has been contributed to.
+     */
     protected BreakpointsView fView;
 
     /* (non-Javadoc)

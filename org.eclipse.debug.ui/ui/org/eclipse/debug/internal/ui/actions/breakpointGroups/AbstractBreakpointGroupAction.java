@@ -18,10 +18,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * 
+ * An action which acts on a selection of breakpoint groups
  */
 public abstract class AbstractBreakpointGroupAction extends AbstractBreakpointsViewAction {
 
+    /**
+     * The selected breakpoint groups.
+     */
     protected String[] fGroups;
 
 	/* (non-Javadoc)
@@ -49,10 +52,19 @@ public abstract class AbstractBreakpointGroupAction extends AbstractBreakpointsV
 		action.setEnabled(fGroups.length > 0);
 	}
 	
+	/**
+	 * Returns the selected breakpoint groups.
+	 * @return the selected breakpoint groups
+	 */
 	public String[] getSelectedGroups() {
 	    return fGroups;
 	}
 	
+	/**
+	 * Returns the breakpoints within the given group
+	 * @param group the group
+	 * @return the breakpoints within the given group
+	 */
 	public IBreakpoint[] getBreakpoints(String group) {
 	    Object[] children = fView.getTreeContentProvider().getChildren(group);
 	    IBreakpoint[] breakpoints= new IBreakpoint[children.length];

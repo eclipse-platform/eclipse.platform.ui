@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -47,6 +48,8 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 						if (next instanceof IBreakpoint) {
 							IBreakpoint breakpoint= (IBreakpoint)next;						
 							breakpointManager.removeBreakpoint(breakpoint, true);
+						} else if (next instanceof String) {
+						    removeGroup((String) next, breakpointManager);
 						}
 					} catch (CoreException ce) {
 						ms.merge(ce.getStatus());
@@ -67,6 +70,17 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 				DebugUIPlugin.log(ms);
 			}
 		}
+	}
+	
+	/**
+	 * The user has pressed "remove" on a group. Remove all breakpoints in the group.
+	 */
+	private void removeGroup(String group, IBreakpointManager manager) throws CoreException {
+	    Object[] children = ((BreakpointsView) getView()).getTreeContentProvider().getChildren(group);
+	    IBreakpoint[] breakpoints= new IBreakpoint[children.length];
+	    for (int i = 0; i < children.length; i++) {
+            manager.removeBreakpoint((IBreakpoint) children[i], true);
+        }
 	}
 	
 	/**
