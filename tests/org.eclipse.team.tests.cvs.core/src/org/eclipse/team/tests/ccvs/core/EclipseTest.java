@@ -22,6 +22,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.*;
@@ -739,6 +740,38 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if (CVSTestSetup.logListener != null) {
 			CVSTestSetup.logListener.checkErrors();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#runBare()
+	 */
+	public void runBare() throws Throwable {
+		try {
+			super.runBare();
+		} catch (CVSException e) {
+			// If a communication exception occurred
+			// perhaps it is a server problem
+			// Try again, just in case it is
+			if (containsCommunicationException(e)) {
+				super.runBare();
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	private boolean containsCommunicationException(CVSException e) {
+		if (e instanceof CVSCommunicationException) return true;
+		IStatus status = e.getStatus();
+		if (status.getException() instanceof CVSCommunicationException) return true;
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				IStatus child = children[i];
+				if (child.getException() instanceof CVSCommunicationException) return true;
+			}
+		}
+		return false;
 	}
 
 }
