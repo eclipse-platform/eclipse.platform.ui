@@ -49,7 +49,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * the failure.</li></ul>
 	 * @since 2.0
 	 */
 	public IThread[] getThreads() throws DebugException;
@@ -61,7 +61,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * the failure.</li></ul>
 	 * @since 2.0
 	 */
 	public boolean hasThreads() throws DebugException;
@@ -74,7 +74,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * the failure.</li></ul>
 	 */
 	public String getName() throws DebugException;
 	

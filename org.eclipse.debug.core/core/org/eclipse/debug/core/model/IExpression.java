@@ -14,7 +14,7 @@ package org.eclipse.debug.core.model;
  * at a specific location in a program (for example, at a
  * breakpoint/line where certain variables referenced in the
  * expression are visible/allocated). A user may want to
- * evaluate an expression once to produce a value than can
+ * evaluate an expression once to produce a value that can
  * be inspected iteratively, or they may wish to evaluate an
  * expression iteratively producing new values each time
  * (i.e. as in a watch list). 
