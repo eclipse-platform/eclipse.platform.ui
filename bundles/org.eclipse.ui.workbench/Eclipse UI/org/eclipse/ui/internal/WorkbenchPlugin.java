@@ -53,8 +53,6 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
@@ -92,8 +90,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ProjectImageRegistry projectImageRegistry;
 	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
-	// Manager that maps markers to help context ids and resolutions
-	private MarkerHelpRegistry markerHelpRegistry;
 	// Manager for working sets (IWorkingSet)
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
@@ -203,19 +199,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			capabilityRegistry.load();
 		}
 		return capabilityRegistry;
-	}
-	/**
-	 * Returns the marker help registry for the workbench.
-	 *
-	 * @return the marker help registry
-	 * @issue this code should be moved to IDE class
-	 */
-	public MarkerHelpRegistry getMarkerHelpRegistry() {
-		if (markerHelpRegistry == null) {
-			markerHelpRegistry = new MarkerHelpRegistry();
-			new MarkerHelpRegistryReader().addHelp(markerHelpRegistry);
-		}
-		return markerHelpRegistry;
 	}
 	/* Return the default instance of the receiver. This represents the runtime plugin.
 	 *
