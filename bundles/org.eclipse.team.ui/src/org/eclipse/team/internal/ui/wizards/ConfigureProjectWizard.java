@@ -12,14 +12,22 @@ package org.eclipse.team.internal.ui.wizards;
 
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.*;
+import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
@@ -163,7 +171,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement element = elements[j];
-					if (element.getName().equals(TAG_WIZARD)) {
+					if (element.getName().equals(TAG_WIZARD) && !filterItem(element)) {
 						ConfigurationWizardElement wizard = createWizardElement(element);
 						if (wizard != null) {
 							result.add(wizard);
@@ -175,6 +183,15 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		
 		return result;
 	}
+	
+	private boolean filterItem(IConfigurationElement element) {
+		String extensionId = element.getAttribute(ATT_ID);
+		String extensionPluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+	    IActivityManager activityMgr = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
+	    IIdentifier id = activityMgr.getIdentifier(extensionPluginId + "/" +  extensionId); //$NON-NLS-1$
+	    return (!id.isEnabled());
+	}
+	
 	/**
 	 * Returns a new ConfigurationWizardElement configured according to the parameters
 	 * contained in the passed Registry.  
