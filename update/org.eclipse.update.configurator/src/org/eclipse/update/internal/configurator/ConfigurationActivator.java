@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.log.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.service.debug.*;
 import org.eclipse.update.configurator.*;
@@ -61,8 +62,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
-		
 		loadOptions();
+		acquireFrameworkLogService();
 		initialize();
 		
 		//Short cut, if the configuration has not changed
@@ -424,7 +425,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return configurator;
 	}
 	
-//	static Bundle getBundle() {
-//		return ConfigurationActivator.getBundle();
-//	}
+	private void acquireFrameworkLogService() throws Exception{
+		ServiceReference logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
+		if (logServiceReference == null)
+			return;
+		Utils.log  = (FrameworkLog) context.getService(logServiceReference);
+	}
 }

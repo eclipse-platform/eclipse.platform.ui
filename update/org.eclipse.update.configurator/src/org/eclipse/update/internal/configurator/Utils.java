@@ -15,8 +15,10 @@ import java.util.*;
 import org.eclipse.core.internal.boot.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.log.*;
 
 public class Utils {
+	static FrameworkLog log;
 	
 	public static void debug(String s) {
 		if (ConfigurationActivator.DEBUG)
@@ -71,12 +73,13 @@ public class Utils {
 	}
 	
 	public static void log(IStatus status) {
-//		if (Platform.getLog(ConfigurationActivator.getBundle())!= null)
-//			Platform.getLog(ConfigurationActivator.getBundle()).log(status);
-//		else 
+		if (log != null) {
+			log.log(new FrameworkLogEntry(ConfigurationActivator.PI_CONFIGURATOR, status.getMessage(), 0, status.getException(), null));
+		} else {
 			System.out.println(status.getMessage());
 			if (status.getException() != null)
 				status.getException().printStackTrace();
+		}
 	}
 	
 	/**
