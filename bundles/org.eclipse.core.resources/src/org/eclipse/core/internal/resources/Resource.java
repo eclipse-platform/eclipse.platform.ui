@@ -706,7 +706,7 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 	// delete properties
 	CoreException err = null;
 	try {
-		getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
+		getPropertyManager().deleteResource(this);
 	} catch (CoreException e) {
 		if (status != null)
 			status.add(e.getStatus());

@@ -256,10 +256,12 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 				failed(status);
 			}
 			
-			// Clear the natures and builders on the destination project.
+			// Clear stale state on the destination project.
 			ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
 			info.clearNatures();
 			info.setBuilders(null);
+			// note that the property store instance will be recreated lazily
+			info.setPropertyStore(null);
 	
 			// Generate marker deltas.
 			try {

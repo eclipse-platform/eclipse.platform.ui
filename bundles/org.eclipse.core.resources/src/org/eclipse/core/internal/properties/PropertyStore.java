@@ -221,6 +221,13 @@ public QueryResults getNames(ResourceName resourceName, int depth) throws CoreEx
 		recordsDeepMatching(resourceName, propertyNameVisitor(results));
 	return results;
 }
+/**
+ * Returns true if the property store is up and running.  Returns false if
+ * the store has been shutdown.
+ */
+public boolean isRunning() {
+	return store != null;
+}
 protected IVisitor propertyNameVisitor(final QueryResults results) {
 	return new IVisitor() {
 		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
@@ -428,7 +435,12 @@ public void set(ResourceName resourceName, StoredProperty property) throws CoreE
 public void shutdown(IProgressMonitor monitor) {
 	if (store == null)
 		return;
-	store.close();
+	try {
+		store.close();
+	} finally {
+		//null the store so other threads with a handle on it cannot use it
+		store = null;
+	}
 }
 public void startup(IProgressMonitor monitor) {
 }
