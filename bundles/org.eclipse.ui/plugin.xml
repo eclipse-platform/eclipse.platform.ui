@@ -1452,7 +1452,8 @@
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
             class="org.eclipse.ui.internal.dialogs.WelcomeEditor"
-            id="org.eclipse.ui.internal.dialogs.WelcomeEditor">
+            id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
+            contributorClass="org.eclipse.ui.internal.dialogs.WelcomeEditorActionContributor">
       </editor>
    </extension>
    <extension

@@ -12,6 +12,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -62,16 +63,19 @@ public class WelcomeEditor extends EditorPart {
 	private boolean dragEvent = false;
 	
 	private StyledText firstText, lastText;
-	private StyledText lastNavigatedText;
+	private StyledText lastNavigatedText, currentText;
 	private boolean nextTabAbortTraversal, previousTabAbortTraversal = false;
 	
+	private WelcomeEditorCopyAction copyAction;
 	
 /**
  * Create a new instance of the welcome editor
  */
 public WelcomeEditor() {
 	super();
-	setTitle(WorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$	
+	setTitle(WorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
+	copyAction = new WelcomeEditorCopyAction(this);
+	copyAction.setEnabled(false);	
 }
 
 /**
@@ -121,7 +125,20 @@ private StyledText previousText(StyledText text){
 }
 
 /**
- * Find the next link after the current selection.
+ * Returns the current text. */
+protected StyledText getCurrentText() {
+	return currentText;
+}
+
+/**
+ * Returns the copy action. 
+ */
+protected WelcomeEditorCopyAction getCopyAction() {
+	return copyAction;
+}
+
+/**
+ * Finds the next link after the current selection.
  */
 private StyleRange findNextLink(StyledText text) {
 	if(text == null)
@@ -140,7 +157,7 @@ private StyleRange findNextLink(StyledText text) {
 }
 
 /**
- * Find the previous link before the current selection.
+ * Finds the previous link before the current selection.
  */
 private StyleRange findPreviousLink(StyledText text) {
 	if(text == null)
@@ -197,10 +214,12 @@ private void addListeners(StyledText styledText) {
 				}
 			} else if (item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
-				item.triggerLinkAt(offset);
-				StyleRange selectionRange = getCurrentLink(text);
-				text.setSelectionRange(selectionRange.start, selectionRange.length);
-				text.setCursor(null);
+				if (e.button == 1) {
+					item.triggerLinkAt(offset);
+					StyleRange selectionRange = getCurrentLink(text);
+					text.setSelectionRange(selectionRange.start, selectionRange.length);
+					text.setCursor(null);
+				}
 			}
 		}
 	});
@@ -368,14 +387,29 @@ private void addListeners(StyledText styledText) {
 	});
 	
 	styledText.addFocusListener(new FocusAdapter() {
-		// Handle mouse events, retain current position, remove highlights
 		public void focusLost(FocusEvent e) {
-			StyledText text = (StyledText)e.widget;
-			text.setSelection(text.getSelection().x);
-			lastNavigatedText = text;
+			// Remember current text widget
+			lastNavigatedText = (StyledText)e.widget;
 		}
-});
+		public void focusGained(FocusEvent e) {
+			currentText = (StyledText)e.widget;
+			
+			// Remove highlighted selection if text widget has changed
+			if ((currentText != lastNavigatedText) && (lastNavigatedText != null))
+				lastNavigatedText.setSelection(lastNavigatedText.getSelection().x);
+				
+			// enable/disable copy action
+			copyAction.setEnabled(currentText.getSelectionCount()>0);
+		}
+	});
 	
+	styledText.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			// enable/disable copy action			
+			StyledText text = (StyledText)e.widget;
+			copyAction.setEnabled(text.getSelectionCount()>0);
+		}
+	});
 }
 
 /**
@@ -480,7 +514,13 @@ private Composite createInfoArea(Composite parent) {
 		gd = new GridData(GridData.FILL_HORIZONTAL); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
+
+		// create context menu
+		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuMgr.add(copyAction);
+		styledText.setMenu(menuMgr.createContextMenu(styledText));
 	}
+
 	lastText = sampleStyledText;
 	this.scrolledComposite.setContent(infoArea);
 	Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -802,18 +842,6 @@ private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
  * </p>
  */
 public void setFocus() {
-	if (editorComposite != null) {
-		editorComposite.setFocus();
-		
-		if (lastNavigatedText != null) {
-			StyleRange selectionRange = getCurrentLink(lastNavigatedText);
-			if (selectionRange != null)
-				lastNavigatedText.setSelectionRange(selectionRange.start, selectionRange.length);
-			else
-				lastNavigatedText.setSelection(lastNavigatedText.getSelection().x);
-			focusOn(lastNavigatedText, lastNavigatedText.getCaretOffset());
-		}
-	}
 }
 /**
  * Sets the styled text's link (blue) ranges
