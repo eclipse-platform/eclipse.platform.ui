@@ -355,6 +355,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
 		if(tag1 != null && tag2 != null) {
 			ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+			if(logEntries == null || logEntries.length == 0) {
+				addNewElementFor(info, null, null);
+			}
 			for (int i = 0; i < logEntries.length; i++) {
 				ILogEntry entry = logEntries[i];
 				addNewElementFor(info, remoteResource, entry);

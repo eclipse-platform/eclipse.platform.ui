@@ -263,6 +263,6 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 		configuration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 		configuration.addActionContribution(new MergeParticipantActionContribution());
-		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration, getStartTag(), getEndTag()));
+		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
 	}
 }
