@@ -131,9 +131,6 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void connectRequest() {
 		try {
 			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
