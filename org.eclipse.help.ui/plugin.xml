@@ -75,7 +75,7 @@
 				menubarPath="org.eclipse.search.menu/dialogGroup"
 				label="%openHelpSearchPageAction.label"
 				helpContextId="org.eclipse.help.ui.helpSearchMenu"
-	        	icon="icons/searchview.gif"
+	        	icon="icons/search_menu.gif"
 				class="org.eclipse.help.ui.internal.OpenHelpSearchPageAction"/>
 
 		</actionSet>
@@ -108,7 +108,7 @@
 	<page label="%help_search_page"
 		class="org.eclipse.help.ui.internal.search.HelpSearchPage"
 		id="org.eclipse.help.ui.searchPage"
-		icon="icons/searchview.gif"> 
+		icon="icons/search_menu.gif"> 
 		</page>
 	</extension>
    
