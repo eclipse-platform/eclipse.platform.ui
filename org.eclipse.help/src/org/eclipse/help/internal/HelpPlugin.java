@@ -155,7 +155,9 @@ public class HelpPlugin extends Plugin {
 		boolean isWindows = os.indexOf("windows") != -1;
 
 		if (isWindows)
-			prefs.setDefault("custom_browser_path", "start %1");
+			prefs.setDefault(
+				"custom_browser_path",
+				"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE \"%1\"");
 		else
 			prefs.setDefault("custom_browser_path", "mozilla %1");
 	}

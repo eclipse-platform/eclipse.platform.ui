@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.help.browser.*;
@@ -105,7 +106,7 @@ public class CustomBrowser implements IBrowser {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) {
 				if (withinQuotation) {
-					tokenList.add(quotedString);
+					tokenList.add("\"" + quotedString + "\"");
 				} else {
 					quotedString = "";
 				}
@@ -124,9 +125,9 @@ public class CustomBrowser implements IBrowser {
 		}
 		// substitute %1 by url
 		boolean substituted = false;
-		for (int i=0; i<tokenList.size(); i++){
-			String token = (String)tokenList.get(i);
-			if ("%1".equals(token)) {
+		for (int i = 0; i < tokenList.size(); i++) {
+			String token = (String) tokenList.get(i);
+			if ("%1".equals(token) || "\"%1\"".equals(token)) {
 				tokenList.set(i, url);
 				substituted = true;
 			}
@@ -134,23 +135,9 @@ public class CustomBrowser implements IBrowser {
 		// add the url if not substituted already
 		if (!substituted)
 			tokenList.add(url);
-			
-		// may need to prepend the launching command, OS-dependent.
-		
-		String os = System.getProperty("os.name").toLowerCase();
-		boolean isWindows = os.indexOf("windows") != -1;
-		boolean isWindows98orME = isWindows && (os.indexOf("98") != -1 || os.indexOf("me") != -1);
-		
-		if (isWindows){
-			if (isWindows98orME)
-				tokenList.add(0, "command.com");
-			else
-				tokenList.add(0, "cmd");
-			tokenList.add(1, "/c");
-		}
-	
+
 		String[] command = new String[tokenList.size()];
 		tokenList.toArray(command);
-		return command;	
+		return command;
 	}
 }
