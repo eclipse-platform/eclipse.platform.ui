@@ -379,12 +379,8 @@ public class InternalAntRunner {
 			}
 		} catch (AntSecurityException e) {
 			//expected
-		} catch (RuntimeException e) {
+		} catch (Throwable e) {
 			error = e;
-			throw e;
-		} catch (Error e) {
-			error = e;
-			throw e;
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
