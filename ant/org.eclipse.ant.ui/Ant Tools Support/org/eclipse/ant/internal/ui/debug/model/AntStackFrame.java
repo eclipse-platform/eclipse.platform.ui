@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
+import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -25,9 +27,9 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	private AntThread fThread;
 	private String fName;
 	private int fLineNumber;
-	private String fFileName;
 	private String fFilePath;
 	private int fId;
+    private String fFullPath;
 	
 	/**
 	 * Constructs a stack frame in the given thread with the given id.
@@ -35,13 +37,13 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * @param thread
 	 * @param id stack frame id (0 is the top of the stack)
 	 */
-	public AntStackFrame(AntThread thread, int id, String name, String filePath, int lineNumber) {
+	public AntStackFrame(AntThread thread, int id, String name, String fullPath, int lineNumber) {
 		super((AntDebugTarget) thread.getDebugTarget());
 		fId = id;
 		fThread = thread;
 		fLineNumber= lineNumber;
 		fName= name;
-		setFilePath(filePath);
+		setFilePath(fullPath);
 	}
 	
 	protected void setId(int id) {
@@ -80,13 +82,18 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 		fLineNumber= lineNumber;
 	}
 	
-	protected void setFilePath(String filePath) {
-		fFilePath= filePath;
-		fFileName= new Path(fFilePath).lastSegment();
+	protected void setFilePath(String fullPath) {
+        fFullPath= fullPath;
+        IFile file= AntUtil.getFileForLocation(fullPath, null);
+        if (file != null) {
+            fFilePath= file.getProjectRelativePath().toString();
+        } else {
+            fFilePath= new Path(fullPath).lastSegment();
+        }
 	}
 	
 	protected String getFilePath() {
-		return fFilePath;
+		return fFullPath;
 	}
 	
 	/* (non-Javadoc)
@@ -241,7 +248,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * with
 	 */
 	public String getSourceName() {
-		return fFileName;
+		return fFilePath;
 	}
 	
 	/* (non-Javadoc)
