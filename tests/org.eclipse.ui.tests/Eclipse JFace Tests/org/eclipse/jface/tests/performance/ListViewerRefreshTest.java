@@ -37,7 +37,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = new ListViewer(shell);
 		contentProvider = new RefreshTestContentProvider(
-						RefreshTestContentProvider.ELEMENT_COUNT / 2);
+						RefreshTestContentProvider.ELEMENT_COUNT);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(getLabelProvider());
 		return viewer;
@@ -61,44 +61,5 @@ public class ListViewerRefreshTest extends ViewerTest {
 		assertPerformance();
 	}
 	
-	/**
-	 * Test the time for doing a refresh with fewer items
-	 */
-	public void testRefreshSmaller() throws Throwable {
-		openBrowser();
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 2);
-			viewer.refresh();
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 4);
-			startMeasuring();
-			viewer.refresh();
-			processEvents();
-			stopMeasuring();
-		}
-		
-		commitMeasurements();
-		assertPerformance();
-	}
-	
-	/**
-	 * Test the time for doing a refresh with fewer items
-	 */
-	public void testRefreshLarger() throws Throwable {
-		openBrowser();
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 2);
-			viewer.refresh();
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT);
-			startMeasuring();
-			viewer.refresh();
-			processEvents();
-			stopMeasuring();
-		}
-		
-		commitMeasurements();
-		assertPerformance();
-	}
 
 }

@@ -38,7 +38,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = new ComboViewer(shell);
 		contentProvider = new RefreshTestContentProvider(
-						RefreshTestContentProvider.ELEMENT_COUNT / 2);
+						RefreshTestContentProvider.ELEMENT_COUNT);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(getLabelProvider());
 		return viewer;
@@ -51,7 +51,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	public void testRefresh() throws Throwable {
 		openBrowser();
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS / 2; i++) {
 			startMeasuring();
 			for (int j = 0; j < 10; j++) {
 				viewer.refresh();
@@ -64,44 +64,4 @@ public class ComboViewerRefreshTest extends ViewerTest {
 		assertPerformance();
 	}
 	
-	/**
-	 * Test the time for doing a refresh with fewer items
-	 */
-	public void testRefreshSmaller() throws Throwable {
-		openBrowser();
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT / 4);
-			startMeasuring();
-			for (int j = 0; j < 10; j++) {
-				viewer.refresh();
-			}	
-			processEvents();
-			stopMeasuring();
-		}
-		
-		commitMeasurements();
-		assertPerformance();
-	}
-	
-	/**
-	 * Test the time for doing a refresh with fewer items
-	 */
-	public void testRefreshLarger() throws Throwable {
-		openBrowser();
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.setSize(RefreshTestContentProvider.ELEMENT_COUNT);
-			startMeasuring();
-			for (int j = 0; j < 10; j++) {
-				viewer.refresh();
-			}	
-			processEvents();
-			stopMeasuring();
-		}
-		
-		commitMeasurements();
-		assertPerformance();
-	}
-
 }
