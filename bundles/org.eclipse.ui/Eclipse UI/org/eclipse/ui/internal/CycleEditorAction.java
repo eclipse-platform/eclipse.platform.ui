@@ -1,19 +1,25 @@
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.*;
 
 /**
  * This is the abstract superclass for NextEditorAction and PrevEditorAction.
  */
-public class CycleEditorAction extends PageEventAction {
-	private boolean forward;
+public class CycleEditorAction extends CyclePartAction {
 	
 /**
  * Creates a CycleEditorAction.
  */
 protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
-	super("", window); //$NON-NLS-1$
-	this.forward = forward;
+	super(window,forward); //$NON-NLS-1$
+	window.getPartService().addPartListener(this);
+	updateState();
+}
+
+protected void setText() {
 	// TBD: Remove text and tooltip when this becomes an invisible action.
 	if (forward) {
 		setText(WorkbenchMessages.getString("NextEditorAction.text"));
@@ -22,42 +28,6 @@ protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
 	else {
 		setText(WorkbenchMessages.getString("PrevEditorAction.text"));
 		setToolTipText(WorkbenchMessages.getString("PrevEditorAction.toolTip"));
-	}
-	window.getPartService().addPartListener(this);
-	updateState();
-}
-
-public void pageActivated(IWorkbenchPage page) {
-	super.pageActivated(page);
-	updateState();
-}
-
-public void pageClosed(IWorkbenchPage page) {
-	super.pageClosed(page);
-	updateState();
-}
-
-public void partOpened(IWorkbenchPart part) {
-	super.partOpened(part);
-	if (part instanceof IEditorPart) {
-		updateState();
-	}
-}
-
-public void partClosed(IWorkbenchPart part) {
-	super.partClosed(part);
-	if (part instanceof IEditorPart) {
-		updateState();
-	}
-}
-
-/**
- * @see Action#run()
- */
-public void run() {
-	IWorkbenchPage page = getActivePage();
-	if (page != null) {
-		((WorkbenchPage) page).cycleEditors(forward);
 	}
 }
 
@@ -72,6 +42,26 @@ public void updateState() {
 	}
 	setEnabled(page.getEditors().length >= 2);
 }
- 
-}
 
+/**
+ * Add all views to the dialog in the activation order
+ */
+protected void addItems(Table table,WorkbenchPage page) {
+	IEditorPart parts[] = page.getSortedEditors();
+	for (int i = parts.length - 1; i >= 0 ; i--) {
+		TableItem item  = null;
+		if(parts[i] instanceof IEditorPart) {
+			item = new TableItem(table,SWT.NONE);
+			item.setText(parts[i].getTitle());
+			item.setImage(parts[i].getTitleImage());
+			item.setData(parts[i]);
+		}
+	}
+}
+/**
+ * Returns the string which will be shown in the table header.
+ */ 
+protected String getTableHeader() {
+	return WorkbenchMessages.getString("CycleEditorAction.header");
+}
+}
