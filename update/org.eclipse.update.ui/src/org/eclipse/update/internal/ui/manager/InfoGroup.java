@@ -5,6 +5,7 @@ import org.eclipse.update.ui.forms.*;
 import org.eclipse.update.ui.forms.FormWidgetFactory;
 import org.eclipse.update.core.*;
 import org.eclipse.swt.layout.*;
+import java.net.URL;
 
 public class InfoGroup extends ExpandableGroup {
 	private IInfo info;
@@ -69,7 +70,13 @@ public class InfoGroup extends ExpandableGroup {
 		String text = info.getText();
 		view.showText(text);
 	}
+	
+	protected URL resolveURL(URL inputURL) {
+		return inputURL;
+	}
+	
 	private void showURL() {
-		view.showURL(info.getURL().toString());
+		URL url = resolveURL(info.getURL());
+		view.showURL(url.toString());
 	}
 }

@@ -121,12 +121,17 @@ public void initProviders() {
 }
 
 private Object [] openLocalSite() {
-	try {
-		return fakeLocalSite.getFeatures();
+	IFeatureReference [] refs =fakeLocalSite.getFeatureReferences();
+	IFeature [] features = new IFeature[refs.length];
+	for (int i=0; i<refs.length; i++) {
+		try {
+			IFeature feature = refs[i].getFeature();
+			features[i] = feature;
+		}
+		catch (CoreException e) {
+		}
 	}
-	catch (CoreException e) {
-		return new Object[0];
-	}
+	return features;
 }
 
 private Object [] checkForUpdates() {
@@ -141,6 +146,35 @@ private Object [] checkForUpdates() {
 		}
 	});
 	return new Object[0];
+}
+
+class FakeFeatureReference implements IFeatureReference {
+	IFeature feature;
+	
+	public FakeFeatureReference(IFeature feature) {
+		this.feature = feature;
+	}
+	/**
+	 * @see IFeatureReference#getURL()
+	 */
+	public URL getURL() {
+		return null;
+	}
+
+	/**
+	 * @see IFeatureReference#getCategories()
+	 */
+	public ICategory[] getCategories() {
+		return new ICategory[0];
+	}
+
+	/**
+	 * @see IFeatureReference#getFeature()
+	 */
+	public IFeature getFeature() throws CoreException {
+		return feature;
+	}
+
 }
 
 class FakeFeature implements IFeature {
@@ -378,7 +412,7 @@ class FakeLocalSite implements ILocalSite {
 			ibmURL = null;
 			otiURL = null;
 		}
-		features.add(
+		features.add(new FakeFeatureReference(
 		new FakeFeature(this, "org.eclipse.platform", 
 		"1.0.0", "Eclipse Base Platform", 
 		otiURL, "Object Technology International Inc.",
@@ -388,8 +422,8 @@ class FakeLocalSite implements ILocalSite {
 "integrated, and executed. The Platform project's purpose is "+
 "to enable other tool developers to build and deliver really "+
 "nice integrated tools."
-		));
-		features.add(
+		)));
+		features.add(new FakeFeatureReference(
 		new FakeFeature(this, "org.eclipse.jdt", 
 		"1.0.0", "Java Development Tooling (JDT)", 
 		otiURL, "Object Technology International Inc.",
@@ -397,8 +431,8 @@ class FakeLocalSite implements ILocalSite {
 "IDE that supports the development of Java applications including "+
 "Eclipse plug-ins. The JDT project allows Eclipse to be a "+
 "development environment for itself."
-		));
-		features.add(
+		)));
+		features.add(new FakeFeatureReference(
 		new FakeFeature(this, "org.eclipse.pde", 
 		"1.0.0", "Plug-in Development Environment (PDE)", 
 		ibmURL, "International Business Machines Corp.",
@@ -408,7 +442,7 @@ class FakeLocalSite implements ILocalSite {
 "are available, how to plug into them, and helps you put together "+
 "your code in plug-in format. The PDE makes integrating plug-ins "+
 "easy and fun."
-		));
+		)));
 	}
 	/**
 	 * @see ILocalSite#getCurrentConfiguration()
@@ -427,8 +461,8 @@ class FakeLocalSite implements ILocalSite {
 	/**
 	 * @see ISite#getFeatures()
 	 */
-	public IFeature[] getFeatures() {
-		return (IFeature[])features.toArray(new IFeature[features.size()]);
+	public IFeatureReference[] getFeatureReferences() {
+		return (IFeatureReference[])features.toArray(new IFeatureReference[features.size()]);
 	}
 
 	/**

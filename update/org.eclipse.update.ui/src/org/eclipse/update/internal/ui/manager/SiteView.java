@@ -49,7 +49,18 @@ class SiteProvider extends DefaultContentProvider
 			return getSiteCatalog((SiteBookmark)parent);
 		}
 		if (parent instanceof SiteCategory) {
-			SiteCategory category = (SiteCategory)parent;
+			final SiteCategory category = (SiteCategory)parent;
+			BusyIndicator.showWhile(viewer.getTree().getDisplay(),
+									new Runnable() {
+				public void run() {
+					try {
+						category.touchFeatures();
+					}
+					catch (CoreException e) {
+						UpdateUIPlugin.logException(e);
+					}
+				}
+									});
 			return category.getChildren();
 		}
 		return new Object[0];
@@ -78,7 +89,12 @@ class SiteLabelProvider extends LabelProvider {
 			return feature.getLabel();
 		}
 		if (obj instanceof CategorizedFeature) {
-			return ((CategorizedFeature)obj).getFeature().getLabel();
+			try {
+				return ((CategorizedFeature)obj).getFeature().getLabel();
+			}
+			catch (CoreException e) {
+				UpdateUIPlugin.logException(e);
+			}
 		}
 		return super.getText(obj);
 	}

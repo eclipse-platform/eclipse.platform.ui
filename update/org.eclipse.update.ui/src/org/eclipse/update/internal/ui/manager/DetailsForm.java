@@ -96,6 +96,15 @@ class ReflowInfoGroup extends InfoGroup {
 	public ReflowInfoGroup(DetailsView view) {
 		super(view);
 	}
+	
+	protected URL resolveURL(URL inputURL) {
+		try {
+			return org.eclipse.update.internal.core.UpdateManagerUtils.resolveAsLocal(inputURL);
+		}
+		catch (Exception e) {
+			return inputURL;
+		}
+	}
 	public void expanded() {
 		reflow();
 		updateSize();
@@ -226,7 +235,14 @@ public void expandTo(Object obj) {
 		inputChanged((IFeature)obj);
 	}
 	else if (obj instanceof CategorizedFeature) {
-		inputChanged(((CategorizedFeature)obj).getFeature());
+		try {
+			IFeature feature = ((CategorizedFeature)obj).getFeature();
+			inputChanged(feature);
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+		}
+
 	}
 	else if (obj instanceof ChecklistJob) {
 		inputChanged(((ChecklistJob)obj).getFeature());
@@ -261,6 +277,12 @@ private void inputChanged(IFeature feature) {
 		*/
 	imageLabel.setImage(providerImage);
 	infoLinkURL = feature.getDescription().getURL();
+	//Temp. - should not use internal classes
+	try {
+		infoLinkURL = org.eclipse.update.internal.core.UpdateManagerUtils.resolveAsLocal(infoLinkURL);
+	}
+	catch (Exception e) {
+	}
 	infoLinkLabel.setVisible(infoLinkURL!=null);
 	if (feature.getSite() instanceof ILocalSite) {
 		doButton.setText("Uninstall");
@@ -275,6 +297,7 @@ private void inputChanged(IFeature feature) {
 	licenseGroup.setInfo(feature.getLicense());
 	copyrightGroup.setInfo(feature.getCopyright());
 	reflow();
+	updateSize();
 	((Composite)getControl()).redraw();
 
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();

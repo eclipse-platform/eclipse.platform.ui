@@ -106,27 +106,17 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 			addCategoryToCatalog(category);
 		}
 		// Add features to categories
-		IFeature [] features;
-		try {
-			features = site.getFeatures();
-		}
-		catch (CoreException e) {
-			features = new IFeature[0];
-		}
-		for (int i=0; i<features.length; i++) {
-			IFeature feature = features[i];
-			addFeatureToCatalog(feature);
+		IFeatureReference [] featureRefs;
+		featureRefs = site.getFeatureReferences();
+
+		for (int i=0; i<featureRefs.length; i++) {
+			IFeatureReference featureRef = featureRefs[i];
+			addFeatureToCatalog(featureRef);
 		}
 	}
 
 	public Object [] getCatalog() {
-		if (catalog.size()>0) return catalog.toArray();
-		try {
-			return site.getFeatures();
-		}
-		catch (CoreException e) {
-			return new Object[0];
-		}
+		return catalog.toArray();
 	}
 	private void addCategoryToCatalog(ICategory category) {
 		String name = category.getName();
@@ -145,7 +135,7 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 			}
 		}
 	}
-	private void addFeatureToCatalog(IFeature feature) {
+	private void addFeatureToCatalog(IFeatureReference feature) {
 		ICategory [] categories;
 		categories = feature.getCategories();
 

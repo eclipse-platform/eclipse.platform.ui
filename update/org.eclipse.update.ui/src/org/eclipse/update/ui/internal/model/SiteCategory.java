@@ -2,6 +2,7 @@ package org.eclipse.update.ui.internal.model;
 
 import java.util.*;
 import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
 
 public class SiteCategory {
 	Vector children;
@@ -39,5 +40,15 @@ public class SiteCategory {
 	
 	void add(Object child) {
 		children.add(child);
+	}
+	
+	public void touchFeatures() throws CoreException {
+		for (int i=0; i<children.size(); i++) {
+			Object child = children.get(i);
+			if (child instanceof CategorizedFeature) {
+				CategorizedFeature cf = (CategorizedFeature)child;
+				cf.getFeature();
+			}
+		}
 	}
 }

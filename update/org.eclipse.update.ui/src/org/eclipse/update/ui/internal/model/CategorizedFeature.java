@@ -4,16 +4,22 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
 public class CategorizedFeature extends PlatformObject {
-	private IFeature feature;
-	public CategorizedFeature(IFeature feature) {
-		this.feature = feature;
+	private IFeatureReference featureRef;
+	public CategorizedFeature(IFeatureReference featureRef) {
+		this.featureRef = featureRef;
 	}
 	
-	public IFeature getFeature() {
-		return feature;
+	public IFeature getFeature() throws CoreException {
+		return featureRef.getFeature();
 	}
 	
 	public String toString() {
-		return feature.getLabel();
+		try {
+			IFeature feature = getFeature();
+			return feature.getLabel();
+		}
+		catch (CoreException e) {
+			return "<failure>";
+		}
 	}
 }
