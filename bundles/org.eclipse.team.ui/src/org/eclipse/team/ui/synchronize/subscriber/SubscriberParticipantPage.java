@@ -17,12 +17,12 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.jobs.RefreshUserNotificationPolicy;
 import org.eclipse.team.internal.ui.synchronize.ChangesSection;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
@@ -61,7 +61,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	private NavigateAction gotoPrevious;
 	private Action configureSchedule;
 	private SyncViewerShowPreferencesAction showPreferences;
-	private RefreshAction refreshAllAction;
+	private Action refreshAllAction;
 	private Action collapseAll;
 	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
@@ -104,8 +104,25 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		};
 		gotoNext = new NavigateAction(view, nav, true /*next*/);		
 		gotoPrevious = new NavigateAction(view, nav, false /*previous*/);
-		refreshAllAction = new RefreshAction(getSite().getSelectionProvider(), getParticipant().getName(), getParticipant().getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(getParticipant()), true /* refresh all */);
-		refreshAllAction.setWorkbenchSite(view.getSite());
+		
+		if(participant.doesSupportSynchronize()) {
+			refreshAllAction = new Action() {
+				public void run() {
+					// Prime the refresh wizard with an appropriate initial selection
+					SubscriberRefreshWizard wizard = new SubscriberRefreshWizard(participant);
+					int scopeHint = SubscriberRefreshWizard.SCOPE_PARTICIPANT_ROOTS;
+					IWorkingSet set = participant.getWorkingSet();
+					if(set != null) {
+						scopeHint = SubscriberRefreshWizard.SCOPE_WORKING_SET;
+					}
+					wizard.setScopeHint(scopeHint);
+					WizardDialog dialog = new WizardDialog(getShell(), wizard);
+					dialog.open();
+				}
+			};
+			Utils.initAction(refreshAllAction, "action.refreshWithRemote."); //$NON-NLS-1$
+		}
+		
 		collapseAll = new Action() {
 			public void run() {
 				if (changesViewer == null || !(changesViewer instanceof AbstractTreeViewer)) return;
@@ -213,7 +230,9 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 			IToolBarManager manager = actionBars.getToolBarManager();			
 			
 			// toolbar
-			manager.add(refreshAllAction);
+			if(refreshAllAction != null) {
+				manager.add(refreshAllAction);
+			}
 			manager.add(new Separator());	
 			if(gotoNext != null) {
 				manager.add(gotoNext);
@@ -224,9 +243,6 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();
-			MenuManager layoutMenu = new MenuManager(Policy.bind("action.layout.label")); //$NON-NLS-1$		
-			MenuManager comparisonCriteria = new MenuManager(Policy.bind("action.comparisonCriteria.label")); //$NON-NLS-1$
-			//comparisonCriteriaGroup.addActionsToMenuMgr(comparisonCriteria);
 			workingSetGroup.fillActionBars(actionBars);
 			menu.add(new Separator());
 			menu.add(new Separator());

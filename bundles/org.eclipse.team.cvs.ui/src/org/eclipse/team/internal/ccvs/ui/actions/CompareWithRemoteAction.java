@@ -13,12 +13,16 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantDialog;
 
 /**
  * This action shows the CVS workspace participant into a model dialog. For single file
@@ -27,15 +31,37 @@ import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantDialog;
  * @since 3.0
  */
 public class CompareWithRemoteAction extends WorkspaceAction {
-
+	
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final IResource[] resources = getSelectedResources();
 		
+		SyncInfoFilter contentComparison = new SyncInfoFilter() {
+			private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
+			public boolean select(SyncInfo info, IProgressMonitor monitor) {
+				// Want to select infos whose contents do not match
+				boolean different = !contentCompare.select(info, monitor);
+				if(different) {
+					for (int i = 0; i < resources.length; i++) {
+						IResource resource = resources[i];
+						if (resource.getFullPath().isPrefixOf(info.getLocal().getFullPath())) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		};
+		
 		// Show the 3-way comparison in a model dialog
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
-		SubscriberParticipantDialog openCompare = new SubscriberParticipantDialog(getShell(), participant.getId(), participant, resources);
-		openCompare.setRememberInSyncView(false);
-		openCompare.run();
+		SyncInfoTree syncInfoSet = new SyncInfoTree();
+		
+		FilteredSyncInfoCollector collector = new FilteredSyncInfoCollector(
+				participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet(), 
+				syncInfoSet, 
+				contentComparison);	
+		collector.start(new NullProgressMonitor());
+		participant.refresh(resources, participant.getRefreshListeners().createModalDialogListener(participant.getId(), participant, syncInfoSet), Policy.bind("Participant.comparing"), null);
 	}
 	
 	/*

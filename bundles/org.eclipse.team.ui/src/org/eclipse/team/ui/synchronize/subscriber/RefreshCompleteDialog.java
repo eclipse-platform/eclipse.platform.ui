@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.synchronize;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,12 +16,13 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -29,16 +30,10 @@ import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.subscriber.IRefreshEvent;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeCompareInput;
 import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 
 public class RefreshCompleteDialog extends DetailsDialog {
-	// For remembering the dialog sizings
-	private static final String HEIGHT_KEY = "width-key"; //$NON-NLS-1$
-	private static final String WIDTH_KEY = "height-key"; //$NON-NLS-1$
-	
 	private SyncInfoFilter filter;
 	private FilteredSyncInfoCollector collector;
 	private SynchronizeCompareInput compareEditorInput;
@@ -87,17 +82,6 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 */
 	public void initialize() {
 		this.collector.start(new NullProgressMonitor());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		collector.dispose();
-		Rectangle bounds = getShell().getBounds();
-		settings.put(HEIGHT_KEY, bounds.height);
-		settings.put(WIDTH_KEY, bounds.width);
-		return super.close();
 	}
 
 	/* (non-Javadoc)
@@ -183,7 +167,12 @@ public class RefreshCompleteDialog extends DetailsDialog {
 			String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
 			String incoming = Long.toString(set.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK));
 			String conflicting = Long.toString(set.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK));
-			text.append(Policy.bind("RefreshCompleteDialog.5", new Object[] {participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+			if(event.getChanges().length > 0) {
+				String numNewChanges = Integer.toString(event.getChanges().length);
+				text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[] {numNewChanges, participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+			} else {
+				text.append(Policy.bind("RefreshCompleteDialog.5", new Object[] {participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+			}
 			createLabel(parent, text.toString(), 2);
 		} else {
 			text.append(Policy.bind("RefreshCompleteDialog.6")); //$NON-NLS-1$
@@ -208,21 +197,6 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		int width, height;
-		try {
-			height = settings.getInt(HEIGHT_KEY);
-			width = settings.getInt(WIDTH_KEY);
-		} catch (NumberFormatException e) {
-			return super.getInitialSize();
-		}
-		Point p = super.getInitialSize();
-		return new Point(width, p.y);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#includeCancelButton()
 	 */
 	protected boolean includeCancelButton() {
@@ -233,7 +207,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#includeDetailsButton()
 	 */
 	protected boolean includeDetailsButton() {
-		return ! getSubscriberSyncInfoSet().isEmpty();
+		return event.getChanges().length > 0;
 	}
 
 	/* (non-Javadoc)
@@ -263,9 +237,15 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	private Label createLabel(Composite parent, String text, int columns) {
 		Label label = new Label(parent, SWT.WRAP);
 		label.setText(text);
-		GridData data = new GridData();
+		GridData data =
+			new GridData(
+				GridData.GRAB_HORIZONTAL
+					| GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_BEGINNING);
+		data.widthHint =
+			convertHorizontalDLUsToPixels(
+				IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		data.horizontalSpan = columns;
-		data.widthHint = 375;
 		label.setLayoutData(data);
 		return label;
 	}

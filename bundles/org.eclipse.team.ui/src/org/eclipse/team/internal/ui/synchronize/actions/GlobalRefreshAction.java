@@ -44,7 +44,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		SynchronizeWizardDialog(Shell parent, IWizard wizard) {
 			super(parent, wizard);
 			setShellStyle(getShellStyle());
-			setMinimumPageSize(500, 300);
+			//setMinimumPageSize(500, 300);
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		public void run() {
 			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, participant.getId());
 			IWizard wizard = participant.createSynchronizeWizard();
-			SynchronizeWizardDialog dialog = new SynchronizeWizardDialog(window.getShell(), wizard);
+			WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 			dialog.open();
 			GlobalRefreshAction.this.updateTooltipMessage();
 		}
@@ -80,13 +80,12 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		synchronizeAction = new Action(Policy.bind("GlobalRefreshAction.4")) { //$NON-NLS-1$
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();
-				SynchronizeWizardDialog dialog = new SynchronizeWizardDialog(window.getShell(), wizard);
+				WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 				dialog.open();
 			}
 		};
 		setMenuCreator(this);
-		setToolTipText("this is a test");
-		//updateTooltipMessage();
+		updateTooltipMessage();
 	}
 
 	/*
@@ -159,7 +158,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 				wizard = participants[0].createSynchronizeWizard();
 			}
 		}
-		SynchronizeWizardDialog dialog = new SynchronizeWizardDialog(window.getShell(), wizard);
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.open();
 		updateTooltipMessage();
 	}

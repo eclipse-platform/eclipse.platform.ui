@@ -465,8 +465,7 @@ public class Utils {
 		if (site != null) {
 			IWorkbenchSiteProgressService siteProgress = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
 			if (siteProgress != null) {
-				siteProgress.useHalfBusyCursor(job);
-				siteProgress.schedule(job);
+				siteProgress.schedule(job, 0, true /* use half-busy cursor */);
 				return;
 			}
 		}

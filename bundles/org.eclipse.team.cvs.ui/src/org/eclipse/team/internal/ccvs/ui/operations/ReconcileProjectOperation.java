@@ -54,7 +54,7 @@ public class ReconcileProjectOperation extends CVSOperation {
 				public void run() {
 					WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
 					if(participant != null) {
-						participant.refresh(new IResource[] {project});
+						participant.refresh(new IResource[] {project}, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
 					}
 				}
 			});

@@ -86,7 +86,10 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		Composite parent = (Composite) super.createDialogArea(parent2);
 		Control c = fCompareEditorInput.createContents(parent);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-		if (participant != null) {
+		
+		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		
+		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
 			rememberParticipantButton.setText(Policy.bind("ParticipantCompareDialog.1")); //$NON-NLS-1$
 		}
@@ -97,6 +100,13 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		return parent;
 	}
 	
+	private boolean particantRegisteredWithSynchronizeManager(ISynchronizeParticipant participant) {
+		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < participants.length; i++) {
+			if(participants[i] == participant) return true;
+		}
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)

@@ -14,13 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 
 /**
- * Action for catchup/release in popup menus.
+ * Action to initiate a CVS workspace synchronize
  */
 public class SyncAction extends WorkspaceAction {
 	
@@ -30,7 +32,9 @@ public class SyncAction extends WorkspaceAction {
 		
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
 		if(participant != null) {
-			participant.refresh(resources);
+			IWizard wizard = participant.createSynchronizeWizard();
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			dialog.open();
 		}
 	}
 	

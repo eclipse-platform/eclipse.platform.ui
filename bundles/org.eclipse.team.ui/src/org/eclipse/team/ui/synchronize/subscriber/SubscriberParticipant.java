@@ -16,11 +16,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.jobs.RefreshUserNotificationPolicy;
-import org.eclipse.team.internal.ui.wizards.SubscriberRefreshWizard;
+import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
+import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicyInModalDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -84,10 +83,20 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	public final static int[] OUTGOING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING};
 	public final static int[] BOTH_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING, SyncInfo.OUTGOING};
 	public final static int[] CONFLICTING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING};
+
+	private IRefreshSubscriberListenerFactory refreshListenerFactory;
 	
 	public SubscriberParticipant() {
 		super();
 		refreshSchedule = new SubscriberRefreshSchedule(this);
+		refreshListenerFactory = new IRefreshSubscriberListenerFactory() {
+			public IRefreshSubscriberListener createModalDialogListener(String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
+				return new RefreshUserNotificationPolicyInModalDialog(targetId, participant, syncInfoSet);
+			}
+			public IRefreshSubscriberListener createSynchronizeViewListener(SubscriberParticipant participant) {
+				return new RefreshUserNotificationPolicy(participant);
+			}
+		};
 	}
 	
 	/* (non-Javadoc)
@@ -157,16 +166,17 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return collector.getSubscriber().roots();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#refresh(org.eclipse.core.resources.IResource[])
+	/**
+	 * Will refresh a participant in the background.
+	 * 
+	 * @param resources the resources to be refreshed.
 	 */
-	public void refresh(IResource[] resources) {
-		IWorkbenchSite site = view != null ? view.getSite() : null;
-		IResource[] resourcesToRefresh = resources;
-		if((resources == null || resources.length == 0)) {
-			resourcesToRefresh = collector.getWorkingSet();
-		}
-		RefreshAction.run(site, getName(), resourcesToRefresh, getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(this));
+	public void refresh(IResource[] resources, IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
+		refreshHelper(site, taskName, resources, getSubscriberSyncInfoCollector(), listener);
+	}
+	
+	public IRefreshSubscriberListenerFactory getRefreshListeners() {
+		return getRefreshListenerFactory();
 	}
 	
 	/* (non-Javadoc)
@@ -202,6 +212,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if(schedule.isEnabled()) {
 			getRefreshSchedule().startJob();
 		}
+	}
+	
+	protected IRefreshSubscriberListenerFactory getRefreshListenerFactory() {
+		return refreshListenerFactory;
 	}
 	
 	/**
@@ -324,5 +338,27 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 			}
 		}
 		return null;
+	}
+	
+	private void refreshHelper(IWorkbenchSite site, String taskName, IResource[] resources, final SubscriberSyncInfoCollector collector, final IRefreshSubscriberListener listener) {
+		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector); //$NON-NLS-1$
+		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
+			public void refreshStarted(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshStarted(event);
+				}
+			}
+			public void refreshDone(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshDone(event);
+					RefreshSubscriberJob.removeRefreshListener(this);
+				}
+			}
+		};
+		
+		if (listener != null) {
+			RefreshSubscriberJob.addRefreshListener(autoListener);
+		}	
+		Utils.schedule(job, site);
 	}
 }

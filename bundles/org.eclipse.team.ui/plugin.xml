@@ -230,6 +230,7 @@
                icon="icons/full/cview16/synch_synch.gif"
                class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
                toolbarPath="Normal/Team"
+               tooltip="%Command.syncAll.name"
                id="org.eclipse.team.ui.synchronizeAll">
          </action>
       </actionSet>

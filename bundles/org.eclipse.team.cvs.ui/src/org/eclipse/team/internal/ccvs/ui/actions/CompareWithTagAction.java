@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantDialog;
 
 public class CompareWithTagAction extends WorkspaceAction {
 
@@ -32,8 +32,10 @@ public class CompareWithTagAction extends WorkspaceAction {
 		// Run the comparison
 		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
 		CompareParticipant participant = new CompareParticipant(s);
-		SubscriberParticipantDialog openCompare = new SubscriberParticipantDialog(getShell(), CVSCompareSubscriber.ID_MODAL, participant, resources);
-		openCompare.run();
+		participant.refresh(resources, 
+				participant.getRefreshListeners().createModalDialogListener(CVSCompareSubscriber.ID_MODAL, participant, participant.getSubscriberSyncInfoCollector().getSyncInfoTree()), 
+				Policy.bind("Participant.comparing"),  //$NON-NLS-1$
+				null);
 	}
 	
 	protected CVSTag promptForTag(IResource[] resources) {

@@ -8,31 +8,40 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.wizards;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 
 public class SubscriberRefreshWizard extends Wizard {
+	
+	public final static int SCOPE_WORKING_SET = 1;
+	public final static int SCOPE_SELECTED_RESOURCES = 2;
+	public final static int SCOPE_ENCLOSING_PROJECT = 3;
+	public final static int SCOPE_PARTICIPANT_ROOTS = 4;
 
 	private SubscriberParticipant participant;
 	private GlobalRefreshResourceSelectionPage selectionPage;
+	private int scopeHint;
 
 	public SubscriberRefreshWizard(SubscriberParticipant participant) {
-		this.participant = participant;	
+		this.participant = participant;
 		setWindowTitle(Policy.bind("SubscriberRefreshWizard.0") + participant.getName()); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
+	}
+	
+	public void setScopeHint(int scopeHint) {
+		this.scopeHint = scopeHint;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		selectionPage = new GlobalRefreshResourceSelectionPage(participant);
+		selectionPage = new GlobalRefreshResourceSelectionPage(participant, scopeHint);
 		addPage(selectionPage);
 	}
 	
@@ -41,8 +50,11 @@ public class SubscriberRefreshWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		IResource[] resources = selectionPage.getSelectedResources();
-		if(resources != null) {
-			participant.refresh(resources);
+		if(resources != null && resources.length > 0) {
+			IRefreshSubscriberListener listener = participant.getRefreshListeners().createSynchronizeViewListener(participant);
+			
+			// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
+			participant.refresh(resources, listener, Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
 		}
 		return true;
 	}

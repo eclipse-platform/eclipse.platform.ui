@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.jobs;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.subscriber.IRefreshEvent;
-import org.eclipse.team.ui.synchronize.subscriber.IRefreshSubscriberListener;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.ui.synchronize.RefreshChangeListener;
 
 /**
  * Job to refresh a subscriber with its remote state.
@@ -34,7 +33,7 @@ import org.eclipse.team.ui.synchronize.subscriber.IRefreshSubscriberListener;
  * important that no scheduling rules are used for the job in order to
  * avoid possible deadlock. 
  */
-public class RefreshSubscriberJob extends WorkspaceJob {
+public final class RefreshSubscriberJob extends WorkspaceJob {
 	
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
@@ -67,6 +66,8 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	 * Refresh started/completed listener for every refresh
 	 */
 	private static List listeners = new ArrayList(1);
+	private static final int STARTED = 1;
+	private static final int DONE = 2;
 	
 	protected static class RefreshEvent implements IRefreshEvent {
 		int type; 
@@ -161,7 +162,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	
 		
 	public RefreshSubscriberJob(String name, IResource[] resources, SubscriberSyncInfoCollector collector) {
-		this(name, collector);		
+		this(collector.getSubscriber().getName(), collector);		 //$NON-NLS-1$
 		this.resources = resources;
 	}
 	
@@ -191,7 +192,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		boolean shouldRun = collector != null && getSubscriber() != null;
 		if(shouldRun) {
 			IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-			group.beginTask(Policy.bind("RefreshSubscriberJob.2", getSubscriber().getName()), 100); //$NON-NLS-1$
+			group.beginTask(getName(), 100); //$NON-NLS-1$
 			setProgressGroup(group, 80);
 			collector.setProgressGroup(group, 20);
 		}
@@ -213,7 +214,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		// Synchronized to ensure only one refresh job is running at a particular time
 		synchronized (getFamily()) {	
-			MultiStatus status = new MultiStatus(TeamUIPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
 			Subscriber subscriber = getSubscriber();
 			IResource[] roots = getResources();
 			
@@ -239,13 +240,17 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 					// during this refresh.						
 					subscriber.addListener(changeListener);
 					// Pre-Notify
-					notifyListeners(true, event);
+					notifyListeners(STARTED, event);
 					// Perform the refresh										
 					subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));					
 				} catch(TeamException e) {
 					status.merge(e.getStatus());
 				}
 			} catch(OperationCanceledException e2) {
+				subscriber.removeListener(changeListener);
+				event.setStatus(Status.CANCEL_STATUS);
+				event.setStopTime(System.currentTimeMillis());
+				notifyListeners(DONE, event);
 				return Status.CANCEL_STATUS;
 			} finally {
 				monitor.done();
@@ -255,7 +260,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 			event.setChanges(changeListener.getChanges());
 			event.setStopTime(System.currentTimeMillis());
 			event.setStatus(status.isOK() ? Status.OK_STATUS : (IStatus) status);
-			notifyListeners(false, event);
+			notifyListeners(DONE, event);
 			changeListener.clear();
 			
 			return event.getStatus();
@@ -336,7 +341,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		}
 	}
 	
-	protected void notifyListeners(final boolean started, final IRefreshEvent event) {
+	protected void notifyListeners(final int state, final IRefreshEvent event) {
 		// Get a snapshot of the listeners so the list doesn't change while we're firing
 		IRefreshSubscriberListener[] listenerArray;
 		synchronized (listeners) {
@@ -347,10 +352,15 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 			IRefreshSubscriberListener listener = listenerArray[i];
 			Notification notification = new Notification() {
 				protected void notify(IRefreshSubscriberListener listener) {
-					if(started) {
-						listener.refreshStarted(event);
-					} else {
-						listener.refreshDone(event);
+					switch (state) {
+						case STARTED:
+							listener.refreshStarted(event);
+							break;
+						case DONE:
+							listener.refreshDone(event);
+							break;
+						default:
+							break;
 					}
 				}
 			};

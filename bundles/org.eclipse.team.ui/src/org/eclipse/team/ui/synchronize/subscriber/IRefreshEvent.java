@@ -15,6 +15,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 
+/**
+ * 
+ * @since 3.0
+ */
 public interface IRefreshEvent {	
 	public static final int SCHEDULED_REFRESH = 1; 
 	

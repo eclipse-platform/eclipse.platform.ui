@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ui.jobs;
+package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.RefreshCompleteDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.subscriber.*;
 import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
@@ -41,9 +40,9 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	 */
 	public void refreshDone(final IRefreshEvent event) {
 		// Ensure that this event was generated for this participant
-		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
-			return;
-		
+		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return;
+		// If the event is for a cancelled operation, there's nothing to do
+		if(! event.getStatus().isOK()) return;
 		// Decide on what action to take after the refresh is completed
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -77,7 +76,6 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 					}
 				}	
 		});
-		RefreshSubscriberJob.removeRefreshListener(this);
 	}
 	
 	private void notifyIfNeededModal(final IRefreshEvent event) {
@@ -101,6 +99,4 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 			}
 		}, message);
 	}
-	
-	
 }

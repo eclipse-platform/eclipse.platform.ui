@@ -1,16 +1,17 @@
-package org.eclipse.team.internal.ui.jobs;
+package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 
-class RefreshChangeListener implements ISubscriberChangeListener {
+public class RefreshChangeListener implements ISubscriberChangeListener {
 	private List changes = new ArrayList();
 	private SubscriberSyncInfoCollector collector;
 
-	RefreshChangeListener(SubscriberSyncInfoCollector collector) {
+	public RefreshChangeListener(SubscriberSyncInfoCollector collector) {
 		this.collector = collector;
 	}
 	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {

@@ -17,6 +17,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.ui.*;
 import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.IWorkbenchPart;

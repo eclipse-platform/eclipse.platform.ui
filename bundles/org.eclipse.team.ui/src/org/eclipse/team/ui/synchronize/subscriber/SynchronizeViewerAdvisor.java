@@ -12,11 +12,10 @@ package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.jobs.RefreshUserNotificationPolicy;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenWithActionGroup;
 import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
@@ -33,7 +32,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	private SubscriberParticipant participant;
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
-	private RefreshAction refreshSelectionAction;
+	private Action refreshSelectionAction;
 
 	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(participant.getId(), view.getViewSite(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
@@ -49,8 +48,17 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 		super.initializeActions(treeViewer);
 		openWithActions = new OpenWithActionGroup(view, participant);
 		refactorActions = new RefactorActionGroup(view);
-		refreshSelectionAction = new RefreshAction(view.getSite().getSelectionProvider(), getParticipant().getName(), getParticipant().getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(getParticipant()), true /* refresh all */);
-		refreshSelectionAction.setWorkbenchSite(view.getSite());
+		refreshSelectionAction = new Action() {
+			public void run() {
+				StructuredViewer viewer = getViewer();
+				if(viewer != null && ! viewer.getControl().isDisposed()) {
+					IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+					IResource[] resources = Utils.getResources(selection.toArray());
+					participant.refresh(resources, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), view.getSite()); //$NON-NLS-1$
+				}
+			}
+		};
+		Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$
 	}
 
 	protected void fillContextMenu(StructuredViewer viewer, IMenuManager manager) {
