@@ -121,7 +121,7 @@ public interface IHelp {
 	 * @param contextId the context id
 	 * @return the context, or <code>null</code> if none
 	 */
-	public IContext findContext(String contextId);
+	public IContext getContext(String contextId);
 	
 	/**
 	 * Returns the list of all integrated tables of contents available.

@@ -153,7 +153,7 @@ public class DefaultHelp implements IHelp
 	 * @param contextID java.lang.String ID of the context
 	 * @return IContext
 	 */
-	public IContext findContext(String contextID) {
+	public IContext getContext(String contextID) {
 		//return HelpSystem.getContextManager().getContext(contextID);
 		return new ContextProxy(contextID);
 	}
