@@ -19,7 +19,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -31,7 +30,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * achieve hierarchy.
  * </p>
  */
-public class Category extends WorkbenchAdapter {
+public class Category implements IWorkbenchAdapter {
 	/**
 	 * Name of the miscellaneous category
 	 */
@@ -186,5 +185,12 @@ public class Category extends WorkbenchAdapter {
 			return !elements.isEmpty();
 		else
 			return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object o) {
+		return null;
 	}
 }
