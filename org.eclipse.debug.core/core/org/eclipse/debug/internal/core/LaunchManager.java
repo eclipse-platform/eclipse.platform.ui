@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,6 +46,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
@@ -60,6 +62,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -158,6 +161,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration listeners
 	 */
 	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
+	
+	/**
+	 * Table of source locator extensions. Keys
+	 * are identifiers, and values are associated
+	 * configuration elements.
+	 */
+	private Map fSourceLocators = new HashMap(10);
 	
 	/**
 	 * Path to the local directory where local launch configurations
@@ -553,6 +563,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugPlugin.log(e.getStatus());
 			}
 		}
+		
+		initializeSourceLocators();
 	}
 	
 	/**
@@ -1508,6 +1520,44 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener) {
 		fLaunchConfigurationListeners.remove(listener);
+	}
+
+	/**
+	 * Register source locators.
+	 * 
+	 * @exception CoreException if an exception occurrs reading
+	 *  the extensions
+	 */
+	private void initializeSourceLocators() throws CoreException {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
+			if (id != null) {
+				fSourceLocators.put(id,configurationElement);
+			} else {
+				// invalid status handler
+				IStatus s = new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+				MessageFormat.format("Invalid source locator extentsion defined by plug-in '{0}': 'id' not specified.", new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null); 
+				DebugPlugin.getDefault().log(s);
+			}
+		}			
+	}
+	
+	/**
+	 * @see ILaunchManager#newSourceLocator(String)
+	 */
+	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
+		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
+		if (config == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+				MessageFormat.format("Source locator does not exist: {0}", new String[] {identifier} ), null));
+		} else {
+			return (IPersistableSourceLocator)config.createExecutableExtension("class");
+		}
+		
 	}
 
 }

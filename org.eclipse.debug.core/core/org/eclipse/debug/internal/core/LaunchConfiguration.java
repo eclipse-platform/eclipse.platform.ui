@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 
 /**
  * Launch configuration handle.
@@ -56,7 +57,30 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (launch != null) {
 			getLaunchManager().addLaunch(launch);
 		}
+		initializeSourceLocator(launch);
 		return launch;
+	}
+	
+	/**
+	 * Set the source locator to use with the launch, if specified 
+	 * by this configuration.
+	 * 
+	 * @param launch the launch on which to set the source locator
+	 */
+	protected void initializeSourceLocator(ILaunch launch) throws CoreException {
+		if (launch.getSourceLocator() == null) {
+			String type = getAttribute(ATTR_SOURCE_LOCATOR_ID, (String)null);
+			if (type != null) {
+				IPersistableSourceLocator locator = getLaunchManager().newSourceLocator(type);
+				String memento = getAttribute(ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+				if (memento == null) {
+					locator.initializeDefaults(this);
+				} else {
+					locator.initiatlizeFromMemento(memento);
+				}
+				launch.setSourceLocator(locator);
+			}
+		}
 	}
 
 	/**

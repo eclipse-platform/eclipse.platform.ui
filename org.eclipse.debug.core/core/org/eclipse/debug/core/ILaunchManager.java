@@ -6,6 +6,7 @@ package org.eclipse.debug.core;
  */
  
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -346,6 +347,19 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource, String configTypeID) throws CoreException;
+	
+	/**
+	 * Creates and returns a new source locator of the specified
+	 * type.
+	 * 
+	 * @param identifier the identifier associated with a 
+	 *  persistable source locator extension
+	 * @return a source locator
+	 * @exception CoreException if an exception occurrs creating
+	 *  the source locator
+	 * @since 2.0
+	 */
+	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
 }
 
 

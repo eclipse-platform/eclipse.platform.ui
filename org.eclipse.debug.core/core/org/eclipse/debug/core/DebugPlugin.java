@@ -80,7 +80,13 @@ public class DebugPlugin extends Plugin {
 	 * (value <code>"statusHandlers"</code>).
 	 */
 	public static final String EXTENSION_POINT_STATUS_HANDLERS= "statusHandlers";	 //$NON-NLS-1$	
-	
+
+	/**
+	 * Source locator extension point identifier
+	 * (value <code>"sourceLocators"</code>).
+	 */
+	public static final String EXTENSION_POINT_SOURCE_LOCATORS= "sourceLocators";	 //$NON-NLS-1$	
+		
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */

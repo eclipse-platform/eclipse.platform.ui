@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 
 /**
  * Note: This interface is yet experimental.
@@ -63,9 +64,36 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute storing an identifier of
+	 * a persistable source locator extension. When this attribute is
+	 * specified, a new source locator will automatically be created and
+	 * associted with the launch for this configuration.
+	 * 
+	 * @see IPersistableSourceLocator
+	 */
+	public static final String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.PLUGIN_ID + ".source_locator_id"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute storing a memento of a 
+	 * source locator. When this attribute is specified in
+	 * conjunction with a source locator id, the soure locator
+	 * created for a launch will be initialized with this memento.
+	 * When not specified, but a source locator id is specified,
+	 * the source locator will be intialized to default values.
+	 * 
+	 * @see IPersistableSourceLocator 
+	 */
+	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.PLUGIN_ID + ".source_locator_memento"; //$NON-NLS-1$
+	
+	/**
 	 * Launches this configuration in the specified mode by delegating to
 	 * this configuration's launch configuration delegate, and returns the
 	 * resulting launch object that describes the launched configuration.
+	 * An appropriate source locator is created and associated with the
+	 * resulting launch based on the values of <code>ATTR_SOURCE_LOCAOTOR_ID</code>
+	 * and <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch returned
+	 * from by the delegate already specifies a source locator, that
+	 * source locator is used.
 	 * The resulting launch object is registered with the launch manager.
 	 * Returns <code>null</code> if the launch is not completed.
 	 * This causes the underlying launch configuration delegate
