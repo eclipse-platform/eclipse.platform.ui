@@ -340,7 +340,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		//Debug PreferencePage
 		prefs.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);
-		prefs.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
+		prefs.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, AlwaysNeverDialog.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
@@ -506,21 +506,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public static boolean saveAndBuild() {
 		boolean status = true;
-		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO);
+		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		
 		// If we're ignoring dirty editors, check if we need to build
-		if (saveDirty.equals(IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
+		if (saveDirty.equals(AlwaysNeverDialog.NEVER)) {
 			if (buildBeforeLaunch) {
 				return doBuild();
 			}
 		} else {
-			boolean prompt = false;
-			if (saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
-				prompt = true;				
-			} 
-			status = saveAllEditors(prompt);
+			status = saveAllEditors(saveDirty.equals(AlwaysNeverDialog.PROMPT));
 			if (status && !autobuilding && buildBeforeLaunch) {
 				status = doBuild();
 			}
@@ -724,11 +720,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @return whether to proceed with launch 
 	 */
 	public static boolean preLaunchSave() {
-		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO);
-		if (saveDirty.equals(IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
+		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
+		if (saveDirty.equals(AlwaysNeverDialog.NEVER)) {
 			return true;
 		} else {
-			return saveAllEditors(saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH));
+			return saveAllEditors(saveDirty.equals(AlwaysNeverDialog.PROMPT));
 		}
 	}
 	

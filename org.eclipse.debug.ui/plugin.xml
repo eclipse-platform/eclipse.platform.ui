@@ -115,6 +115,12 @@
             id="org.eclipse.debug.ui.DebugPreferencePage">
       </page>
       <page
+            name="%LaunchingPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.LaunchingPreferencePage"
+            id="org.eclipse.debug.ui.LaunchingPreferencePage">
+      </page>
+      <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage"
