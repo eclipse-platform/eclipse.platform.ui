@@ -488,9 +488,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             menu.add(action);
         }
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-		menu.add(new Separator(IDebugUIConstants.SELECT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP_GROUP));
-		menu.add(new Separator(IDebugUIConstants.REMOVE_GROUP));
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

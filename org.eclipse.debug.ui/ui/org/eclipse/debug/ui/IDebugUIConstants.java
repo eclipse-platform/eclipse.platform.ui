@@ -681,28 +681,14 @@ public interface IDebugUIConstants {
 	 * Identifier for a breakpoint group in a menu (value <code>"breakpointGroup"</code>).
 	 */
 	public static final String BREAKPOINT_GROUP = "breakpointGroup"; //$NON-NLS-1$
-	
-	/**
-	 * Identifier for a selection group in a menu (value <code>"selectGroup"</code>).
-	 * 
-	 * @since 3.1
-	 */
-	public static final String SELECT_GROUP = "selectGroup"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Identifier for a "breakpoint group" group in a menu (value <code>"breakpointGroupGroup"</code>).
 	 * 
 	 * @since 3.1
 	 */
 	public static final String BREAKPOINT_GROUP_GROUP = "breakpointGroupGroup"; //$NON-NLS-1$
-	
-	/**
-	 * Identifier for a remove group in a menu (value <code>"removeGroup"</code>).
-	 * 
-	 * @since 3.1
-	 */
-	public static final String REMOVE_GROUP = "removeGroup"; //$NON-NLS-1$
-	
+		
 	/** 
 	 * Identifier for an empty group preceding an
 	 * expression group in a menu (value <code>"emptyExpressionGroup"</code>).
@@ -857,31 +843,39 @@ public interface IDebugUIConstants {
 	public static final String ATTR_CONSOLE_PROCESS = PLUGIN_ID + ".ATTR_CONSOLE_PROCESS"; //$NON-NLS-1$
 	
 	/**
-	 * ProcessConsole attribute - references the encoding that the console should use.
+	 * Launch configuration attribute specifying the encoding that the console should use.
+	 * When unspecified, the default encoding is used. Encoding names are available 
+	 * from {@link org.eclipse.ui.WorkbenchEncoding}.
 	 * 
 	 * @since 3.1
 	 */
 	public static final String ATTR_CONSOLE_ENCODING = PLUGIN_ID + ".ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 	
 	/**
-	 * ProcessConsole attribute - if <code>true</code> the output from the launched process will
-	 * be captured and written to the console.
+	 * Launch configuration boolean attribute specifying whether output from the launched process will
+	 * be captured and written to the console. Default value is <code>true</code>.
 	 * 
 	 * @since 3.1
 	 */
 	public static final String ATTR_CAPTURE_IN_CONSOLE = PLUGIN_ID + ".ATTR_CONSOLE_OUTPUT_ON"; //$NON-NLS-1$
 	
 	/**
-	 * ProcessConsole attribute - if not <code>null</code> the <java.lang.String> value will be a file name. All
-	 * output from the launched process will be written to the file.
+	 * Launch configuration attribute specifying a file name that console output should
+	 * be written to or <code>null</code> if none. Default value is <code>null</code>.
+	 * When specified, all output from the launched process will be written to the file.
+	 * The file name attribute may contain variables which will be resolved by the
+	 * {@link org.eclipse.core.variables.IStringVariableManager}.
 	 * 
 	 * @since 3.1
 	 */
 	public static final String ATTR_CAPTURE_IN_FILE = PLUGIN_ID + ".ATTR_CAPTURE_IN_FILE"; //$NON-NLS-1$
 	
 	/**
-	 * ProcessConsole attribute - if <code>true</code> process output will be appended to the file specified by
-	 * the <code>ATTR_CAPTURE_IN_FILE</code> attribute instead of overwriting the file.
+	 * Launch configuration attribute specifying whether process output will be appended to the
+	 * file specified by the <code>ATTR_CAPTURE_IN_FILE</code> attribute instead of overwriting
+	 * the file. Default value is <code>false</code>.
+	 * 
+	 * @since 3.1
 	 */
 	public static final String ATTR_APPEND_TO_FILE = PLUGIN_ID + ".ATTR_APPEND_TO_FILE"; //$NON-NLS-1$
 	
@@ -964,15 +958,7 @@ public interface IDebugUIConstants {
 	 * for an <code>IContextLaunchVariable</code>.
 	 */
 	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$
-	
-	/**
-	 * Breakpoint container factories extension point identifier (value
-	 * <code>"breakpointContainerFactories"</code>
-     * 
-     * @since 3.1
-	 */
-	public static final String EXTENSION_POINT_BREAKPOINT_CONTAINER_FACTORIES = "breakpointContainerFactories"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Variable value editors extension point identifier (value
 	 * <code>"variableValueEditors"</code>
