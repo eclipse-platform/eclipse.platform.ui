@@ -659,27 +659,16 @@ public void update(String propertyName) {
 						} 
 					} 
 				} 
-				
+											
 				IContributionManagerOverrides overrides = null;
 					
 				if (getParent() != null)
 					overrides = getParent().getOverrides();
 					
-				if (overrides != null) {
+				if (overrides != null)
 					text = getParent().getOverrides().getText(this);
-
-					if (acceleratorText == null)
-						acceleratorText = overrides.getAcceleratorText(this);
-
-					if (accelerator == null)
-						accelerator = overrides.getAccelerator(this); 
-				}
-
-				if (accelerator == null)
-					accelerator = new Integer(action.getAccelerator());
-
-				if (accelerator != null)
-					mi.setAccelerator(accelerator.intValue());		
+				
+				mi.setAccelerator(accelerator != null ? accelerator.intValue() : 0);
 
 				if (text == null)
 					text = action.getText();
