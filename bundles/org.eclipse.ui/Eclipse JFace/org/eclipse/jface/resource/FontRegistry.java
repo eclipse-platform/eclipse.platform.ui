@@ -125,6 +125,7 @@ public FontRegistry() {
  * @param location the name of the resource bundle
  * @param the ClassLoader to use to find the resource bundle
  * @exception MissingResourceException if the resource bundle cannot be found
+ * @since 2.1
  */
 public FontRegistry(String location, ClassLoader loader) throws MissingResourceException {
 
