@@ -13,18 +13,27 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
+import java.util.*;
+
+import org.eclipse.team.internal.ccvs.core.*;
 
 public class CVSEntryLineTag extends CVSTag {
 	
+    /*
+     * This is the format of a date as it appears in the entry line. The date in an entry
+     * line is always in GMT.
+     */
 	private static final String ENTRY_LINE_DATE_TAG_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
-	private static SimpleDateFormat entryLineDateTagFormatter = new SimpleDateFormat(ENTRY_LINE_DATE_TAG_FORMAT, Locale.getDefault());
 	
+	/*
+	 * This is a formatter that will translate dates to and from text as it appears in the entry line 
+	 */
+	private static SimpleDateFormat entryLineDateTagFormatter = new SimpleDateFormat(ENTRY_LINE_DATE_TAG_FORMAT, Locale.US);
+	
+	/*
+	 * Convert the tag name as it appears as an argument to a command
+	 * into the format that appears in the entry line of a folder or file
+	 */
 	private static String getNameInInternalFormat(CVSTag tag) {
 		if(tag.getType() == DATE){
 			String s = ensureEntryLineFormat(tag.getName());
@@ -35,17 +44,22 @@ public class CVSEntryLineTag extends CVSTag {
 		return tag.getName();
 	}
 	
+	/*
+	 * Helper for converting the tag name as it appears as an argument to a command
+	 * into the format that appears in the entry line of a folder or file
+	 */
 	private static synchronized String ensureEntryLineFormat(String text){
 		if(text.length() == ENTRY_LINE_DATE_TAG_FORMAT.length()) return text;
 		Date date = tagNameToDate(text);
 		if (date == null) return text;
-		entryLineDateTagFormatter.setTimeZone(TimeZone.getDefault());
+		entryLineDateTagFormatter.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 		return entryLineDateTagFormatter.format(date);
 	}
 	
 	static synchronized public Date entryLineToDate(String text){
 		try {
-			 return entryLineDateTagFormatter.parse(text);
+		    entryLineDateTagFormatter.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
+			return entryLineDateTagFormatter.parse(text);
 		} catch (ParseException e) {
 			CVSProviderPlugin.log(new CVSException("Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
