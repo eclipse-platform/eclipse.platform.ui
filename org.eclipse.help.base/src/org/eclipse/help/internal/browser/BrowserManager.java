@@ -155,7 +155,7 @@ public class BrowserManager {
 		Collection bDescriptors = new ArrayList();
 		IConfigurationElement configElements[] =
 			Platform.getPluginRegistry().getConfigurationElementsFor(
-				"org.eclipse.help",
+				HelpBasePlugin.PLUGIN_ID,
 				"browser");
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("browser"))
