@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thierry Lach (thierry.lach@bbdodetroit.com) - bug 40502
  *******************************************************************************/
 package org.eclipse.ant.core;
 
@@ -34,6 +35,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private List defaultTasks;
 	private List defaultTypes;
 	private List extraClasspathURLs;
+	private List defaultProperties;
 	private URL[] defaultAntURLs;
 	
 	private Task[] customTasks;
@@ -55,13 +57,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private boolean runningHeadless= false;
 
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
+		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.EMPTY_LIST, headless);
+	}
+	
+	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, List defaultProperties, boolean headless) {
 		runningHeadless= headless;
 		initializePluginClassLoaders();
 		extraClasspathURLs = new ArrayList(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
 		this.defaultTypes = computeDefaultTypes(defaultTypes);
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
+		computeDefaultProperties(defaultProperties);
 		restoreCustomObjects();
+		
 	}
 	
 	/**
@@ -296,7 +304,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				}
 			}
 			Task task = new Task();
-			task.setIsDefault(true);
 			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
@@ -307,6 +314,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			}
 			
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			task.setPluginLabel(descriptor.getLabel());
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				if (new File(url.getPath()).exists()) {
@@ -346,7 +354,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				}
 			}
 			Type type = new Type();
-			type.setIsDefault(true);
+			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			type.setPluginLabel(descriptor.getLabel());
 			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
@@ -355,7 +364,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
-			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				if (new File(url.getPath()).exists()) {
@@ -417,6 +425,64 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
+			}
+		}
+	}
+	
+	/**
+	 * Scan the Ant property extensions for properties to set.
+	 * 
+	 * @since 3.0
+	 */
+	private void computeDefaultProperties(List properties) {
+		defaultProperties = new ArrayList(properties.size());
+		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = (IConfigurationElement) iterator.next();
+			if (runningHeadless) {
+				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
+				if (headless != null) {
+					boolean headlessProperty= Boolean.valueOf(headless).booleanValue();
+					if (!headlessProperty) {
+						continue;
+					}
+				}
+			}
+			String name = element.getAttribute(AntCorePlugin.NAME);
+			if (name == null) {
+				continue;
+			}
+			String value = element.getAttribute(AntCorePlugin.VALUE);
+			if (value != null) {
+				Property property = new Property();
+				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
+				property.setPluginLabel(descriptor.getLabel());
+				property.setName(name);
+				property.setValue(value);
+				defaultProperties.add(property);
+			} else {
+				String className = element.getAttribute(AntCorePlugin.CLASS);
+				Property property = new Property();
+				property.setName(name);
+				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
+				property.setPluginLabel(descriptor.getLabel());
+				ClassLoader loader= descriptor.getPluginClassLoader();
+				Class cls = null;
+				try {
+					cls = loader.loadClass(className);
+				} catch (ClassNotFoundException e) {
+					AntCorePlugin.log(e);
+					continue;
+				}
+				IAntPropertyValueProvider valueProvider= null;
+				try {
+					valueProvider = (IAntPropertyValueProvider)cls.newInstance();
+				} catch (InstantiationException e) {
+					AntCorePlugin.log(e);
+				} catch (IllegalAccessException ex) {
+					AntCorePlugin.log(ex);
+				}
+				property.setValueProvider(valueProvider);
+				defaultProperties.add(property);
 			}
 		}
 	}
@@ -713,6 +779,23 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
+	 * Returns the default and custom properties.
+	 * 
+	 * @return the list of default and custom properties.
+	 * @since 3.0
+	 */
+	public List getProperties() {
+		List result = new ArrayList(10);
+		if (defaultProperties != null && !defaultProperties.isEmpty()) {
+			result.addAll(defaultProperties);
+		}
+		if (customProperties != null && customProperties.length != 0) {
+			result.addAll(Arrays.asList(customProperties));
+		}
+		return result;
+	}
+	
+	/**
 	 * Returns the custom property files specified for Ant builds.
 	 * 
 	 * @return the property files defined for Ant builds.
@@ -828,6 +911,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		List result = new ArrayList(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the default properties defined via the properties extension point
+	 * 
+	 * @return all of the default properties
+	 */
+	public List getDefaultProperties() {
+		List result = new ArrayList(10);
+		if (defaultProperties != null && !defaultProperties.isEmpty()) {
+			result.addAll(defaultProperties);
 		}
 		return result;
 	}
