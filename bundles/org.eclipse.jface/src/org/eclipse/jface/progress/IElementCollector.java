@@ -8,26 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.progress;
+package org.eclipse.jface.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * @author tod
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * IElementCollector is a type that allows for the incremental
+ * update of a collection of objects.
  */
-public class AnimateJob extends Job {
+public interface IElementCollector {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * Add element to the IElementCollector.
+	 * @param element
+	 * @param monitor
 	 */
-	public IStatus run(IProgressMonitor monitor) {
-		// XXX Auto-generated method stub
-		return null;
-	}
+	public void add(Object element,IProgressMonitor monitor);
+
+	/**
+	 * Add elements to the IElementCollector.
+	 * @param element
+	 * @param monitor
+	 */
+	public void add(Object[] elements, IProgressMonitor monitor);
 
 }
