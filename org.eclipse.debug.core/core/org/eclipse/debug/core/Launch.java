@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Bug 82003: The IDisconnect implementation by Launch module is too restrictive. 
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -421,32 +422,78 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	}
 	
 	/**
+     * Returns whether any processes or targets can be disconnected. 
+     * Ones that are already terminated or disconnected are ignored.
+     * 
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
 	public boolean canDisconnect() {
-		if (getDebugTargets0().size() == 1) {
-			return getDebugTarget().canDisconnect();
-		}
-		return false;
+        List processes = getProcesses0();
+        for (int i = 0; i < processes.size(); i++) {
+            if (processes.get(i) instanceof IDisconnect) {
+                IDisconnect process = (IDisconnect)processes.get(i); 
+                if (process.canDisconnect()) {
+                    return true;
+                }
+            }
+        }
+        List targets = getDebugTargets0();
+        for (int i = 0; i < targets.size(); i++) {
+            if ( ((IDebugTarget)targets.get(i)).canDisconnect() ) {
+                return true;
+            }
+        }
+        return false;
 	}
+
 
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
 	public void disconnect() throws DebugException {
-		if (getDebugTargets0().size() == 1) {
-			getDebugTarget().disconnect();
-		}
+        List processes = getProcesses0();
+        for (int i = 0; i < processes.size(); i++) {
+            if (processes.get(i) instanceof IDisconnect) {
+                IDisconnect disconnect = (IDisconnect)processes.get(i);
+                if (disconnect.canDisconnect()) {
+                    disconnect.disconnect();
+                }
+            }
+        }
+        List targets = getDebugTargets0();
+        for (int i = 0; i < targets.size(); i++) {
+            IDebugTarget debugTarget = (IDebugTarget)targets.get(i);
+            if (debugTarget.canDisconnect()) {
+                debugTarget.disconnect();
+            }
+        }
 	}
 
 	/**
+     * Returns whether all of the contained targets and processes are 
+     * disconnected. Processes that don't support disconnecting are not 
+     * counted.
+     * 
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
 	public boolean isDisconnected() {
-		if (getDebugTargets0().size() == 1) {
-			getDebugTarget().isDisconnected();
-		}
-		return false;
+        List processes = getProcesses0();
+        for (int i = 0; i < processes.size(); i++) {
+            if (processes.get(i) instanceof IDisconnect) {
+                IDisconnect process = (IDisconnect)processes.get(i); 
+                if (!process.isDisconnected()) {
+                    return false;
+                }
+            }
+        }
+        List targets = getDebugTargets0();
+        for (int i = 0; i < targets.size(); i++) {
+            if ( !((IDebugTarget)targets.get(i)).isDisconnected() ) {
+                return false;
+            }
+        }
+        // only return true if there are processes or targets that are disconnected
+        return hasChildren();
 	}
 
 	/* (non-Javadoc)
