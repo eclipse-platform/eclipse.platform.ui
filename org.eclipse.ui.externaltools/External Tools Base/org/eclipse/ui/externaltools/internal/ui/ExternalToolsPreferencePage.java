@@ -15,7 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -53,15 +53,9 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
 		
-		Group group= new Group(composite, SWT.NONE);
-		group.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Project_Builders_2")); //$NON-NLS-1$
-		data= new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(data);
-		layout= new GridLayout();
-		group.setLayout(layout);
-		group.setFont(font);
+		new Label(composite, SWT.NULL);
 		
-		promptForMigrationButton= new Button(group, SWT.CHECK | SWT.LEFT);
+		promptForMigrationButton= new Button(composite, SWT.CHECK | SWT.LEFT);
 		promptForMigrationButton.setFont(font);
 		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Always_&prompt_before_migrating_project_builders_3")); //$NON-NLS-1$
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));

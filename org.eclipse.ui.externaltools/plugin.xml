@@ -153,7 +153,8 @@
 		<page 
 			id="org.eclipse.ui.externaltools.ExternalToolsPreferencePage" 
 			name="%PreferencePage.externalToolsPreferences"
-			class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsPreferencePage">
+			class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsPreferencePage"
+			category="org.eclipse.ui.preferencePages.Workbench">
 		</page>
 		<page 
 			id="org.eclipse.ui.externaltools.AntPreferencePage" 
