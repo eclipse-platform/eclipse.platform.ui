@@ -57,12 +57,16 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	 * Parent composite of the advanced widget group for creating 
 	 * linked resources.
 	 */
+	private Composite linkedResourceParent;
+	/**
+	 * Linked resources widget group. Null if advanced section is not visible.
+	 */	
 	private Composite linkedResourceComposite;
 	/**
 	 * Height of the dialog without the "advanced" linked resource group. 
 	 * Set when the advanced group is first made visible. 
 	 */
-	private int basicShellHeight;
+	private int basicShellHeight = -1;
 	
 /**
  * Creates a NewFolderDialog
@@ -116,8 +120,16 @@ protected void createAdvancedControls(Composite parent) {
 	
 	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false && 
 		isValidContainer()) {
-		advancedButton = new Button(parent, SWT.PUSH);
-		advancedButton.setFont(parent.getFont());
+		linkedResourceParent = new Composite(parent, SWT.NONE);
+		linkedResourceParent.setFont(parent.getFont());
+		linkedResourceParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		linkedResourceParent.setLayout(layout);
+
+		advancedButton = new Button(linkedResourceParent, SWT.PUSH);
+		advancedButton.setFont(linkedResourceParent.getFont());
 		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		setButtonLayoutData(advancedButton);
 		GridData data = (GridData) advancedButton.getLayoutData();
@@ -258,25 +270,24 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 protected void handleAdvancedButtonSelect() {
 	Shell shell = getShell();
 	Point shellSize = shell.getSize();
+	Composite composite = (Composite) getDialogArea();
 						
-	if (linkedResourceComposite == null) {
-		basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
-
-		Composite composite = (Composite) getDialogArea();
-		linkedResourceComposite = linkedResourceGroup.createContents(composite);
-		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		shell.setSize(shellSize);
-		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
-	} else if (linkedResourceComposite.getVisible()) {
-		linkedResourceComposite.setVisible(false);
+	if (linkedResourceComposite != null) {
+		linkedResourceComposite.dispose();
+		linkedResourceComposite = null;
+		composite.layout();
 		shell.setSize(shellSize.x, basicShellHeight);
 		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
-		linkedResourceComposite.setVisible(true);
+		if (basicShellHeight == -1) {
+			basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+		}
+		linkedResourceComposite = linkedResourceGroup.createContents(linkedResourceParent);
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
+		composite.layout();
 		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
-	}
+	}				
 }
 /**
  * Returns whether the container specified in the constructor is
