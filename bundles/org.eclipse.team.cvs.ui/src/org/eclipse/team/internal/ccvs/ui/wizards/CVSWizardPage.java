@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -37,7 +38,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page
 	 */
-	public CVSWizardPage(String pageName, String title, org.eclipse.jface.resource.ImageDescriptor titleImage) {
+	public CVSWizardPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
 	/**
