@@ -35,6 +35,8 @@ public abstract class NavigationLocation implements INavigationLocation {
 	 * Returns the part that the receiver holds the location for.
 	 * 	 * @return IEditorPart	 */
 	protected IEditorPart getEditorPart() {
+		if (input == null)
+			return null;
 		return page.findEditor(input);
 	}
 	/*
