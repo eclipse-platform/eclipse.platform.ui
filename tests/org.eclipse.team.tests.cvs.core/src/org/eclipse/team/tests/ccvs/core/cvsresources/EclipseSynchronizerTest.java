@@ -419,7 +419,6 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	private ResourceSyncInfo dummyResourceSync(IResource resource) {
 		if (resource.getType() == IResource.FILE) {
 			MutableResourceSyncInfo info = new MutableResourceSyncInfo(resource.getName(), "1.1");
-			info.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
 			info.setTag(CVSTag.DEFAULT);
 			return info;
 		} else {
