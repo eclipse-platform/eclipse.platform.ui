@@ -28,6 +28,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -73,6 +74,7 @@ public class NewConfigurationView
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
 
+	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
 	private Image eclipseImage;
 	private boolean initialized;
@@ -346,6 +348,27 @@ public class NewConfigurationView
 			UpdateUI.logException(e);
 		}
 
+		modelListener = new IUpdateModelChangedListener() {
+			public void objectsAdded(Object parent, Object[] children) {
+			}
+			public void objectsRemoved(Object parent, Object[] children) {
+			}
+			public void objectChanged(final Object obj, String property) {
+				if (refreshLock)
+					return;
+				Control control = getControl();
+				if (!control.isDisposed()) {
+					control.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							treeViewer.refresh();
+							handleSelectionChanged((IStructuredSelection)treeViewer.getSelection());
+						}
+					});
+				}
+			}
+		};
+		UpdateManager.getOperationsManager().addUpdateModelChangedListener(
+			modelListener);
 		WorkbenchHelp.setHelp(
 			getControl(),
 			"org.eclipse.update.ui.ConfigurationView");
@@ -402,7 +425,7 @@ public class NewConfigurationView
 			}
 			initialized = false;
 		}
-
+		UpdateManager.getOperationsManager().removeUpdateModelChangedListener(modelListener);
 		if (preview!=null)
 			preview.dispose();
 		super.dispose();
