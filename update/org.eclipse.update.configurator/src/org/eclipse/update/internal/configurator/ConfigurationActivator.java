@@ -185,7 +185,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				
 				} catch (Exception e) {
 					if ( bundlesToInstall[i].indexOf("org.eclipse.osgi") == -1) {
-						Utils.log(Utils.newStatus("Bundle is already installed: " + bundlesToInstall[i], e));
+						Utils.log(Utils.newStatus("Could not install bundle: " + bundlesToInstall[i], e));
 					}
 				}
 			}
