@@ -46,13 +46,13 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Image[] externalEditorImages;
 	private Image[] internalEditorImages;
 	private IEditorDescriptor[] editorsToFilter;
-	private static final String Executable_Filter;
+	private static final String [] Executable_Filters;
 	private static final int TABLE_WIDTH = 200;
 	static {
 		if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
-			Executable_Filter = "*.exe";//$NON-NLS-1$
+			Executable_Filters = new String[] { "*.exe", "*.bat", "*.*"};//$NON-NLS-1$
 		} else {
-			Executable_Filter = "*";	//$NON-NLS-1$
+			Executable_Filters = new String[] {"*"};	//$NON-NLS-1$
 		}
 	}
 public EditorSelectionDialog(Shell parentShell) {
@@ -302,7 +302,7 @@ public void handleEvent(Event event) {
 }
 protected void promptForExternalEditor() {
 	FileDialog dialog = new FileDialog(getShell());
-	dialog.setFilterExtensions(new String[] {Executable_Filter});
+	dialog.setFilterExtensions(Executable_Filters);
 	String result = dialog.open();
 	if (result != null) {
 		EditorDescriptor editor = new EditorDescriptor();
