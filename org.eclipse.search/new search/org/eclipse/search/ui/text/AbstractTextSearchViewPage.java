@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
@@ -580,19 +581,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		tbm.update(false);
 		fViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-				boolean hasCurrentMatch = showCurrentMatch(true);
-				if (event.getViewer() instanceof TreeViewer && event.getSelection() instanceof IStructuredSelection) {
-					TreeViewer tv = (TreeViewer) event.getViewer();
-					Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					if (element != null) {
-						tv.setExpandedState(element, !tv.getExpandedState(element));
-						if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
-							gotoNextMatch(true);
-					}
-					return;
-				} else if (!hasCurrentMatch) {
-					gotoNextMatch(true);
-				}
+				handleOpen(event);
 			}
 		});
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -1113,6 +1102,39 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (lp instanceof DecoratingLabelProvider) {
 			((DecoratingLabelProvider)lp).setLabelDecorator(PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());			
 			
+		}
+	}
+
+	/**
+	 * <p>This method is called when the search page gets an open even from it's
+	 * underlying viewer (for example on double click). The default
+	 * implementation will open the first match on any element that has matches.
+	 * If the element to be opened is an inner node in the tree layout, the node
+	 * will be expanded if it's collapsed and vice versa. Subclasses are allowed
+	 * to override this method.
+	 * </p>
+	 * @param event
+	 *            the event sent for the currently shown viewer
+	 * 
+	 * @see IOpenListener
+	 */
+	protected void handleOpen(OpenEvent event) {
+		Viewer viewer= event.getViewer();
+		boolean hasCurrentMatch = showCurrentMatch(true);
+		ISelection sel= event.getSelection();
+		if (viewer instanceof TreeViewer && sel instanceof IStructuredSelection) {
+			IStructuredSelection selection= (IStructuredSelection) sel;
+			TreeViewer tv = (TreeViewer) getViewer();
+			Object element = selection.getFirstElement();
+			if (element != null) {
+				if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
+					gotoNextMatch(true);
+				else 
+					tv.setExpandedState(element, !tv.getExpandedState(element));
+			}
+			return;
+		} else if (!hasCurrentMatch) {
+			gotoNextMatch(true);
 		}
 	}
 
