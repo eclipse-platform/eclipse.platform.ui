@@ -465,9 +465,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             fAltEncodingButton.setSelection(true);
             fDefaultEncodingButton.setSelection(false);
             fEncodingCombo.setText(encoding);
+            fEncodingCombo.setEnabled(true);
         } else {
             fDefaultEncodingButton.setSelection(true);
             fAltEncodingButton.setSelection(false);
+            fEncodingCombo.setEnabled(false);
         }
 	}
 	
