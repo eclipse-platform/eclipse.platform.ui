@@ -185,7 +185,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * Used to render launch history items in the re-launch drop downs
 	 */
 	protected String getLaunchText(ILaunch launch) {
-		if (launch.getLaunchConfiguration() == null || !launch.getLaunchConfiguration().exists()) {
+		if (launch.getLaunchConfiguration() == null || (!launch.getLaunchConfiguration().exists() && !launch.getLaunchConfiguration().isWorkingCopy())) {
 			return DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1"); //$NON-NLS-1$
 		} else {
 			// new launch configuration
