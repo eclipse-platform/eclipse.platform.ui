@@ -772,6 +772,13 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 	}
 
+	/*
+	 * Return the root directory for the temp dir.
+	 */
+	public IPath getTempDir() {
+		return new Path(System.getProperty("java.io.tmpdir"));
+	}
+
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
 	}
