@@ -106,26 +106,26 @@ public class UpdateListener implements ICommandOutputListener {
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(9));
 					updateMessageListener.directoryInformation(commandRoot, path, false);
-					return OK;
 				}
+				return OK;
 			} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(18).trim());
 					updateMessageListener.directoryDoesNotExist(commandRoot, path);
-					return OK;
 				}
+				return OK;
 			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(15, message.indexOf('\'', 15)));
 					updateMessageListener.directoryInformation(commandRoot, path, true);
-					return OK;
 				}
+				return OK;
 			} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					String filename = message.substring(0, message.length() - 31);
 					updateMessageListener.fileDoesNotExist(commandRoot, filename);
-					return OK;
 				}
+				return OK;
 			} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
 				/*
 				 * We can get the following conflict warnings
@@ -140,7 +140,6 @@ public class UpdateListener implements ICommandOutputListener {
 						// The "C foler/file.ext" will come after this so if whould be ignored!
 						String filename = message.substring(10, message.length() - 44);
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
-						return OK;
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
@@ -154,7 +153,6 @@ public class UpdateListener implements ICommandOutputListener {
 					if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
 						String filename = message.substring(9, message.length() - 30);
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
-						return OK;
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
