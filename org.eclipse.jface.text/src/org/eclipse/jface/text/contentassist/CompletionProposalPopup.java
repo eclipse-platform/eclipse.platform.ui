@@ -479,6 +479,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * is displayed when a proposal is selected and additional info is available.
 	 */
 	private void displayProposals() {
+		
+		if (!Helper.okToUse(fProposalShell) ||  !Helper.okToUse(fProposalTable))
+			return;
+		
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
 			
 			if (fDocumentListener == null)

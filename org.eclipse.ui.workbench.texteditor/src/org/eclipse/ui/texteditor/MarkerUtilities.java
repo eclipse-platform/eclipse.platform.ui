@@ -116,12 +116,14 @@ public final class MarkerUtilities {
 	 * @return <code>true</code>if maker is an instance of the reference type
 	 */
 	public static boolean isMarkerType(IMarker marker, String type) {
-		try {
-			return marker.exists() && marker.isSubtypeOf(type);
-		} catch (CoreException e) {
-			handleCoreException(e);
-			return false;
+		if (marker != null) {
+			try {
+				return marker.exists() && marker.isSubtypeOf(type);
+			} catch (CoreException e) {
+				handleCoreException(e);
+			}
 		}
+		return false;
 	}
 	
 	/**
