@@ -356,6 +356,7 @@ void setCacheReader(RegistryCacheReader registryCacheReader) {
 }
 /* Initial resolution - do not generate extension deltas, but save dependency system. */
 public IStatus incrementalResolve() {
+	// no event dispatcher - there is nobody to listen at this moment
 	IncrementalRegistryResolver resolver = new IncrementalRegistryResolver(null);
 	Assert.isTrue(!isResolved());
 	PluginDescriptorModel[] newPlugins = getPlugins();
@@ -370,8 +371,15 @@ public IStatus incrementalResolve() {
 public synchronized IStatus incrementalResolve(PluginRegistryModel additions) {
 	Assert.isTrue(this.isResolved());
 	Assert.isTrue(this.dependencyState != null);
-	Assert.isTrue(!additions.isResolved());	
-	
+	Assert.isTrue(!additions.isResolved());
+	// need to link the plugins/fragments to their new registry
+	PluginDescriptorModel[] pluginsToAdd = additions.getPlugins();
+	for (int i = 0; i < pluginsToAdd.length; i++)
+		pluginsToAdd[i].setRegistry(this);
+	PluginFragmentModel[] fragmentsToAdd = additions.getFragments();
+	for (int i = 0; i < fragmentsToAdd.length; i++)
+		fragmentsToAdd[i].setRegistry(this);	
+	// re-resolve and broadcast changes 
 	IncrementalRegistryResolver resolver = new IncrementalRegistryResolver(PluginEventDispatcher.getInstance());	
 	return resolver.resolve(additions.getPlugins(),additions.getFragments(),plugins,unresolvedPlugins,dependencyState);
 }

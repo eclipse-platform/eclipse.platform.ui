@@ -61,7 +61,7 @@ public class PluginEventDispatcher implements IPluginEventDispatcher {
 			this.events = events;
 		}
 		public IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("pluginEvent.errorListener"), null); //$NON-NLS-1$
+			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("parse.errorPluginListener"), null); //$NON-NLS-1$
 			for (int i = 0; i < listeners.length; i++) {
 				try {
 					listeners[i].pluginChanged(events);

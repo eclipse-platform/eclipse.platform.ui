@@ -391,7 +391,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 			this.deltas = deltas;
 		}
 		public IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("pluginEvent.errorListener"), null); //$NON-NLS-1$			
+			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("parse.errorRegistryListener"), null); //$NON-NLS-1$			
 			for (Iterator iter = listeners.entrySet().iterator(); iter.hasNext();) {
 				Map.Entry entry = (Map.Entry) iter.next();
 				IRegistryChangeListener listener = (IRegistryChangeListener) entry.getKey();
