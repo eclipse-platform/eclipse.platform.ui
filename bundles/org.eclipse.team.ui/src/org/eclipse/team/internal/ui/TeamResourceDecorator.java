@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -149,7 +150,11 @@ public class TeamResourceDecorator extends LabelProvider implements ILabelDecora
 	 */
 	protected ITeamDecorator getDecorator(IResource resource) {
 		try {
-			String[] natureIds = resource.getProject().getDescription().getNatureIds();
+			IProject project = resource.getProject();
+			if (project == null)
+				// Must be the workspace root
+				return null;
+			String[] natureIds = project.getDescription().getNatureIds();
 			for (int i = 0; i < natureIds.length; i++) {
 				if(decorators.containsKey(natureIds[i])) {
 					return (ITeamDecorator)decorators.get(natureIds[i]);
