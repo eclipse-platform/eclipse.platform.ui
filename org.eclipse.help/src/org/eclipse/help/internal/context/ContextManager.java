@@ -6,8 +6,8 @@ package org.eclipse.help.internal.context;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.IContext;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
 /**
  * Maintains the list of contexts
  * and performs look-ups.
@@ -36,6 +36,9 @@ public class ContextManager {
 	 * Finds the context, given context ID.
 	 */
 	public IContext getContext(String contextId) {
+		if (HelpPlugin.DEBUG_CONTEXT) {
+			System.out.println("ContextManager.getContext(" + contextId + ")");
+		}
 		if (contextId == null)
 			return null;
 		String plugin = contextId;
