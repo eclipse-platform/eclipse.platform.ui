@@ -14,6 +14,6 @@ public interface ITargetFactory {
 	/**
 	 * Return a new target provider for the given location.
 	 */	
-	public TargetProvider newTarget(TargetLocation location);
+	public TargetProvider newProvider(TargetLocation location);
 
 }
