@@ -7,10 +7,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2000
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ILabelProvider;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.custom.BusyIndicator;
 
 /**
  * An action that toggles the state of a viewer to
@@ -43,8 +40,12 @@ public class ShowTypesAction extends Action {
 		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
 		if (labelProvider instanceof IDebugModelPresentation) {
 			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)labelProvider;
-			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));
-			fViewer.refresh();
+			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));			
+			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
+				public void run() {
+					fViewer.refresh();					
+				}
+			});
 		}
 		setToolTipText(on ? DebugUIUtils.getResourceString(HIDE) : DebugUIUtils.getResourceString(SHOW));
 	}
