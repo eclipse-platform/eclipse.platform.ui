@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -264,6 +265,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 						} catch (DebugException de) {
 							return getDefaultText(item);
 						}
+					} else if (item instanceof ILaunchConfiguration) {
+						return ((ILaunchConfiguration)item).getName();
+					} else if (item instanceof ILaunchConfigurationType) {
+						return ((ILaunchConfigurationType)item).getName();
 					} else {
 						label= getDesktopLabel(item);
 					}

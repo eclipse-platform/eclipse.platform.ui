@@ -22,6 +22,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -440,6 +441,58 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
 		}
 	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations(IProject, ILaunchConfigurationType)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IProject project, ILaunchConfigurationType type) throws CoreException {
+		List list = (List)fLaunchConfigurationIndex.get(project);
+		if (list == null) {
+			return new ILaunchConfiguration[0];
+		} else {
+			Iterator iter = list.iterator();
+			List configs = new ArrayList();
+			while (iter.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
+				if (config.getType().equals(type)) {
+					configs.add(config);
+				}
+			}
+			return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
+		}
+	}	
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations()
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations() {
+		Iterator iter = fLaunchConfigurationIndex.values().iterator();
+		List allConfigs = new ArrayList();
+		while (iter.hasNext()) {
+			List some = (List)iter.next();
+			allConfigs.addAll(some);
+		}
+		return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
+	}	
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
+		Iterator iter = fLaunchConfigurationIndex.values().iterator();
+		List configs = new ArrayList();
+		while (iter.hasNext()) {
+			List some = (List)iter.next();
+			Iterator list = some.iterator();
+			while (list.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration)list.next();
+				if (config.getType().equals(type)) {
+					configs.add(config);
+				}
+			}
+		}
+		return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
+	}	
 	
 	/**
 	 * @see ILaunchManager#getLaunchConfiguration(IFile)

@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.MultiStatus;
@@ -23,10 +24,13 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -301,5 +305,28 @@ public abstract class ExecutionAction extends Action {
 		if (display != null) {
 			display.beep();
 		}
+	}
+	
+	/**
+	 * Hook to invoke launch configuration dialog.
+	 * 
+	 * @return whether to cancel
+	 */
+	private boolean runLaunchConfiguration() {
+		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell());
+		
+		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		IStructuredSelection selection= resolveSelection(dwindow);
+		IProject[] projects = resolveProjects(selection);
+		if (projects != null && projects.length == 1) {
+			lcd.setContext(projects[0]);
+		} else {
+			lcd.setContext(ResourcesPlugin.getWorkspace().getRoot());
+		}
+		
+		if (lcd.open() == Window.CANCEL) {
+			return true;
+		}		
+		return false;
 	}
 }

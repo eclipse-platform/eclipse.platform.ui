@@ -156,6 +156,38 @@ public interface ILaunchManager {
 	public ILaunchConfiguration[] getLaunchConfigurations(IProject project);
 	
 	/**
+	 * Returns all launch configurations defined by the specified
+	 * project of the specfied type.
+	 * 
+	 * @param project a project
+	 * @param type a launch configuration type
+	 * @return all launch configurations defined by the specified
+	 *  project of the specified type
+	 * @exception CoreException if an error occurrs while retreiving
+	 *  a launch configuration
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IProject project, ILaunchConfigurationType type) throws CoreException;
+	
+	/**
+	 * Returns all launch configurations defined in the workspace.
+	 * 
+	 * @return all launch configurations defined in the workspace
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations();
+	
+	/**
+	 * Returns all launch configurations defined in the workspace
+	 * of the specified type
+	 * 
+	 * @param type a launch configuration type
+	 * @return all launch configurations defined in the workspace
+	 *  of the specified type
+	 * @exception CoreException if an error occurrs while retreiving
+	 *  a launch configuration
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
+	
+	/**
 	 * Returns a handle to the launch configuration contained
 	 * in the specified file. The file is not verified to exist
 	 * or contain a launch configuration.

@@ -120,6 +120,11 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration tab extension point identifier (value <code>"launchConfigurationTabs"</code>).
+	 */
+	public static final String ID_LAUNCH_CONFIGURATION_TABS= "launchConfigurationTabs"; //$NON-NLS-1$	
+	
 	// Preferences
 	/**
 	 * Boolean preference controlling automatic change to debug perspective when
@@ -417,4 +422,10 @@ public interface IDebugUIConstants {
 	 * Id for the popup menu associated with the detail (text viewer) part of the VariableView
 	 */
 	public static final String VARIABLE_VIEW_DETAIL_ID = "org.eclipse.debug.ui.VariableView.detail"; //$NON-NLS-1$
+	
+	// status codes
+	/**
+	 * Status indicating an invalid extension definition.
+	 */
+	public static final int STATUS_INVALID_EXTENSION_DEFINITION = 100;
 }
