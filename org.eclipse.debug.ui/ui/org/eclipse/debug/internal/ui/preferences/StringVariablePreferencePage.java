@@ -149,6 +149,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		TableLayout tableLayout = new TableLayout();
 		table.setLayout(tableLayout);
 		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 		table.setFont(font);
 		gridData = new GridData(GridData.FILL_BOTH);
 		variableTable.getControl().setLayoutData(gridData);
