@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -24,6 +25,8 @@ public class WWinKeyBindingService {
 	private long updateNumber = 0;
 	private HashMap globalActionDefIdToAction = new HashMap();
 	private HashMap actionSetDefIdToAction = new HashMap();
+	
+	private long fakeDefinitionId = 0;
 		
 	public WWinKeyBindingService(WorkbenchWindow window) {
 		IWorkbenchPage[] pages = window.getPages();
@@ -47,16 +50,31 @@ public class WWinKeyBindingService {
 	public void registerActionSets(IActionSet sets[]) {
 		updateNumber++;
 		actionSetDefIdToAction.clear();
+		boolean reinitScopes = false;
 		for(int i=0; i<sets.length; i++) {
 			if(sets[i] instanceof PluginActionSet) {
 				PluginActionSet set = (PluginActionSet)sets[i];
 				IAction actions[] = set.getPluginActions();
 				for (int j = 0; j < actions.length; j++) {
 					Action action = (Action)actions[j];
-					if(action.getActionDefinitionId() != null)
+					String defId = action.getActionDefinitionId();
+					if(defId != null) {
 						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
+					} else if(action.getAccelerator() != 0) {
+						reinitScopes = true;
+						String fake = "org.eclipse.ui.fakeDefinitionId" + fakeDefinitionId;
+						fakeDefinitionId++;
+						action.setActionDefinitionId(fake);
+						actionSetDefIdToAction.put(fake,action);
+						AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+						registry.addFakeAccelerator(fake,action.getAccelerator());
+					}
 				}
 			}
+		}
+		if(reinitScopes) {
+			Workbench w = (Workbench)PlatformUI.getWorkbench();
+			w.getActiveAcceleratorConfiguration().initializeScopes();
 		}
 	}
 	public long getUpdateNumber() {

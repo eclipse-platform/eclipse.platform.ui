@@ -18,12 +18,14 @@ public class AcceleratorRegistry {
 	private List configurations;
 	private List scopes;
 	private List sets;
+	private List fakeAccelerators;
 	private HashMap idToScope;
 	
 	public AcceleratorRegistry() {
 		configurations = new ArrayList();
 		scopes = new ArrayList();
-		sets = new ArrayList();		
+		sets = new ArrayList();
+		fakeAccelerators = new ArrayList();	
 	}
 
 	/**
@@ -90,6 +92,8 @@ public class AcceleratorRegistry {
 	 */
 	public Accelerator[] getAccelerators(String configId, String scopeId) {
 		List accelarators = new ArrayList();
+		if(scopeId.equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID))
+			accelarators.addAll(getFakeAccelerators());	
 		for(int i=0;i<sets.size();i++) {
 			AcceleratorSet set = (AcceleratorSet)(sets.get(i));
 			String setConfigId = set.getConfigurationId();
@@ -101,6 +105,14 @@ public class AcceleratorRegistry {
 		Accelerator[] result = new Accelerator[accelarators.size()];
 		accelarators.toArray(result);
 		return result;
+	}
+	
+	private List getFakeAccelerators() {
+		return fakeAccelerators;
+	}
+	
+	public void addFakeAccelerator(String id,int accelerator) {
+		fakeAccelerators.add(new Accelerator(id,accelerator));
 	}
 	
 	/**

@@ -88,7 +88,7 @@ public class AcceleratorScope {
 				AcceleratorMode childMode = mode;
 				for (int k = 0; k < accKeys[j].length - 1; k++) {
 					AcceleratorAction a = mode.getAction(accKeys[j][k]);
-					if(a == null) {
+					if((a == null) || (!a.isMode())){
 						AcceleratorMode newMode = new AcceleratorMode();
 						childMode.addAction(accKeys[j][k],newMode);
 						childMode = newMode;
@@ -129,6 +129,9 @@ public class AcceleratorScope {
 		AcceleratorAction(String defId) {
 			id = defId;
 		}
+		public boolean isMode() {
+			return false;
+		}
 		public void run(KeyBindingService service,Event e) {
 			IAction a = service.getAction(id);
 			if((a != null) && (a.isEnabled()))
@@ -142,6 +145,9 @@ public class AcceleratorScope {
 		
 		AcceleratorMode() {
 			super(null);
+		}
+		public boolean isMode() {
+			return false;
 		}	
 		public void run(KeyBindingService service,Event e) {
 			currentMode = this;
