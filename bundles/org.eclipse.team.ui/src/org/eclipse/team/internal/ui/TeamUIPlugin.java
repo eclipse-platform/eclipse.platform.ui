@@ -1,4 +1,4 @@
-package org.eclipse.team.ui;
+package org.eclipse.team.internal.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -22,8 +22,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.UIConstants;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -39,25 +38,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	// property change types
 	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
 
-	private Hashtable imageDescriptors = new Hashtable(20);
-	
 	private List propertyChangeListeners = new ArrayList(5);
-
-	public final static String ICON_PATH;
-	static {
-		final String iconPath[] = new String[1];
-		final Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (display.getIconDepth() > 4) {
-					iconPath[0] = UIConstants.ICON_PATH_FULL;
-				} else {
-					iconPath[0] = UIConstants.ICON_PATH_BASIC;
-				}
-			}
-		});
-		ICON_PATH = iconPath[0];
-	}
 
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -102,21 +83,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 		}	
 	}
 	/**
-	 * Creates an image and places it in the image registry.
-	 * 
-	 * @param id  the identifier for the image
-	 * @param baseURL  the base URL for the image
-	 */
-	protected void createImageDescriptor(String id, URL baseURL) {
-		URL url = null;
-		try {
-			url = new URL(baseURL, UIConstants.ICON_PATH_FULL + id);
-		} catch (MalformedURLException e) {
-		}
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		imageDescriptors.put(id, desc);
-	}
-	/**
 	 * Convenience method to get the currently active workbench page
 	 * 
 	 * @return the active workbench page
@@ -131,56 +97,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	 */
 	public static TeamUIPlugin getPlugin() {
 		return instance;
-	}
-	/**
-	 * Returns the image descriptor for the given image ID.
-	 * Returns null if there is no such image.
-	 * 
-	 * @param id  the identifier for the image to retrieve
-	 * @return the image associated with the given ID
-	 */
-	public ImageDescriptor getImageDescriptor(String id) {
-		return (ImageDescriptor) imageDescriptors.get(id);
-	}	
-	/**
-	 * Convenience method to get an image descriptor for an extension
-	 * 
-	 * @param extension  the extension declaring the image
-	 * @param subdirectoryAndFilename  the path to the image
-	 * @return the image
-	 */
-	public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
-		IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
-		URL path = pluginDescriptor.getInstallURL();
-		URL fullPathString = null;
-		try {
-			fullPathString = new URL(path,subdirectoryAndFilename);
-			return ImageDescriptor.createFromURL(fullPathString);
-		} catch (MalformedURLException e) {
-		}
-		return null;
-	}
-	/**
-	 * Initializes the table of images used in this plugin.
-	 */
-	protected void initializeImages() {
-		URL baseURL = getDescriptor().getInstallURL();
-
-		// View decoration overlays
-		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
-		
-		createImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING, baseURL);
-		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING, baseURL);
-		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING, baseURL);
-		createImageDescriptor(UIConstants.IMG_REFRESH, baseURL);
-		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE, baseURL);
-		createImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP, baseURL);
-		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE, baseURL);
-		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE, baseURL);
-		createImageDescriptor(UIConstants.IMG_WIZBAN_SHARE, baseURL);
-		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
 	}
 	/**
 	 * Initializes the preferences for this plugin if necessary.
@@ -227,6 +143,5 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
-		initializeImages();
 	}
 }

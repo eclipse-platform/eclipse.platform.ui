@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.model.AdaptableList;
 
@@ -69,7 +69,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$ //$NON-NLS-2$
 		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description")); //$NON-NLS-1$
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
@@ -178,7 +178,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		String iconName = config.getAttribute(ATT_ICON);
 		if (iconName != null) {
 			IExtension extension = config.getDeclaringExtension();
-			element.setImageDescriptor(TeamUIPlugin.getImageDescriptorFromExtension(extension, iconName));
+			element.setImageDescriptor(TeamImages.getImageDescriptorFromExtension(extension, iconName));
 		}
 		// ensure that a class was specified
 		if (element.getConfigurationElement() == null) {

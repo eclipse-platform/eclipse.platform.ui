@@ -50,8 +50,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
@@ -257,22 +258,22 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	 */
 	private void initializeActions(final SyncCompareInput diffModel) {
 		// Mask actions
-		ImageDescriptor image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING);
+		ImageDescriptor image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING);
 		showIncoming = new FilterAction(Policy.bind("CatchupReleaseViewer.showIncomingAction"), image); //$NON-NLS-1$
 		showIncoming.setToolTipText(Policy.bind("CatchupReleaseViewer.showIncomingAction")); //$NON-NLS-1$
 	
-		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING);
 		showOutgoing = new FilterAction(Policy.bind("CatchupReleaseViewer.showOutgoingAction"), image); //$NON-NLS-1$
 		showOutgoing.setToolTipText(Policy.bind("CatchupReleaseViewer.showOutgoingAction")); //$NON-NLS-1$
 	
-		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING);
 		
 		//show only conflicts is not a HideAction because it doesnt flip bits, it sets an exact mask
 		showOnlyConflicts = new FilterAction(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), image); //$NON-NLS-1$
 		showOnlyConflicts.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction")); //$NON-NLS-1$
 	
 		//refresh action
-		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_REFRESH);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH);
 		refresh = new Action(Policy.bind("CatchupReleaseViewer.refreshAction"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.refresh();
@@ -288,7 +289,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		};
 		
 		// Toggle granularity
-		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_CONTENTS);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
 		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.setSyncGranularity(isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
@@ -364,7 +365,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		}
 		
 		// Ignore white space
-		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE);
+		image = TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE);
 		ignoreWhiteSpace = new Action(Policy.bind("CatchupReleaseViewer.ignoreWhiteSpace"), image) { //$NON-NLS-1$
 			public void run() {
 				Boolean value = isChecked() ? Boolean.TRUE : Boolean.FALSE;

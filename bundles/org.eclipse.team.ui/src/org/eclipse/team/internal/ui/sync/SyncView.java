@@ -29,8 +29,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
@@ -172,21 +173,21 @@ public class SyncView extends ViewPart {
 		// Create the actions
 		incomingMode = new SyncModeAction(
 			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
-			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP),
 			SYNC_INCOMING);
 		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
 		incomingMode.setChecked(false);
 		
 		outgoingMode = new SyncModeAction(
 			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
-			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE),
 			SYNC_OUTGOING);
 		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
 		outgoingMode.setChecked(false);
 		
 		freeMode = new SyncModeAction(
 			Policy.bind("SyncView.freeModeAction"), //$NON-NLS-1$
-			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE),
+			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE),
 			SYNC_BOTH);
 		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip")); //$NON-NLS-1$
 		freeMode.setChecked(false);

@@ -39,7 +39,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IViewSite;
 
 /**

@@ -22,7 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IWorkbenchWindow;
 

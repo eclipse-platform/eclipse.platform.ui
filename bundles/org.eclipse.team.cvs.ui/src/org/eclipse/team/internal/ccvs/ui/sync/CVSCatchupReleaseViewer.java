@@ -64,7 +64,7 @@ import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamImages;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
@@ -167,8 +167,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	
 	private void initializeLabelProvider() {
 		final ImageDescriptor conflictDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT);
-		final ImageDescriptor hasRemoteDescriptor = TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR);
-		final ImageDescriptor addedDescriptor = TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR);
+		final ImageDescriptor hasRemoteDescriptor = TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR);
+		final ImageDescriptor addedDescriptor = TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR);
 		final LabelProvider oldProvider = (LabelProvider)getLabelProvider();
 		setLabelProvider(new LabelProvider() {
 			private OverlayIconCache iconCache = new OverlayIconCache();
