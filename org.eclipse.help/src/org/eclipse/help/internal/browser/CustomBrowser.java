@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
-import java.io.*;
 import java.util.*;
 
 import org.eclipse.help.browser.*;
