@@ -11,16 +11,18 @@
 package org.eclipse.update.internal.operations;
 
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
-import java.text.*;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.search.UpdatesSearchCategory;
 import org.eclipse.update.operations.*;
+import org.eclipse.update.search.*;
 
 
 /**
@@ -393,6 +395,17 @@ public class UpdateUtils {
 			//logException(e);
 			throw e;
 		}
+	}
+	
+	public static UpdateSearchRequest createNewUpdatesRequest(IFeature [] features) {
+		UpdateSearchScope scope = new UpdateSearchScope();
+		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
+		UpdatesSearchCategory category = new UpdatesSearchCategory();
+		if (features!=null)
+			category.setFeatures(features);
+		UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);
+		searchRequest.addFilter(new EnvironmentFilter());
+		return searchRequest;
 	}
 
 	public static void makeConfigurationCurrent(

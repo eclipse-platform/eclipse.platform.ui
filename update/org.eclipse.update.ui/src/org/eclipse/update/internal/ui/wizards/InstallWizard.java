@@ -152,8 +152,8 @@ public class InstallWizard
 
 	public void addPages() {
 		searchRunner = new SearchRunner(getShell(), getContainer());
-
-		if (searchRequest==null || jobs==null) {
+		
+		if (searchRequest==null && jobs == null) {
 			modePage = new ModeSelectionPage(searchRunner);
 			addPage(modePage);
 			sitePage = new SitePage(searchRunner);

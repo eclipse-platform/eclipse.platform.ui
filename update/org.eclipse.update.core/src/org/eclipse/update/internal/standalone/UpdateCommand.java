@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
@@ -59,12 +58,7 @@ public class UpdateCommand extends ScriptedCommand {
 					}
 				}
 			}
-			
-			UpdateSearchScope searchScope = new UpdateSearchScope();
-			searchScope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-			UpdatesSearchCategory category = new UpdatesSearchCategory();
-			searchRequest = new UpdateSearchRequest(category, searchScope);
-			searchRequest.addFilter(new EnvironmentFilter());
+			searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {

@@ -472,6 +472,8 @@ public class ConfigurationView
 			new InstallationHistoryAction(
 				UpdateUI.getString("ConfigurationView.installHistory"), //$NON-NLS-1$
 				UpdateUIImages.DESC_HISTORY_OBJ);
+		installationHistoryAction.setToolTipText(installationHistoryAction.getText());
+		
 		newExtensionLocationAction =
 			new NewExtensionLocationAction(
 				UpdateUI.getString("ConfigurationView.extLocation"), //$NON-NLS-1$
@@ -576,6 +578,8 @@ public class ConfigurationView
 		drillDownAdapter.addNavigationActions(bars.getToolBarManager());
 		tbm.add(new Separator());
 		tbm.add(collapseAllAction);
+		tbm.add(new Separator());
+		tbm.add(installationHistoryAction);
 	}
 
 	protected Object getSelectedObject() {

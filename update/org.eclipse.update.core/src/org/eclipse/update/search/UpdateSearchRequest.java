@@ -89,6 +89,23 @@ public class UpdateSearchRequest {
 		this.scope = scope;
 	}
 	/**
+	 * Returns the search catagory used in this request.
+	 * @return the search category
+	 */
+	
+	public IUpdateSearchCategory getCategory() {
+		return category;
+	}
+	
+	/**
+	 * Returns the scope of this search request.
+	 * @return search scope
+	 */
+	
+	public UpdateSearchScope getScope() {
+		return scope;
+	}
+	/**
 	 * Adds a filter to this request. This method does nothing
 	 * if search is alrady in progress. 
 	 * @param filter the filter 

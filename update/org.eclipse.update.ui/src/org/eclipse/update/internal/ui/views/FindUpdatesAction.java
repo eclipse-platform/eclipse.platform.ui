@@ -36,13 +36,11 @@ public class FindUpdatesAction extends Action {
 	}
 
 	public void run() {
-		UpdateSearchScope scope = new UpdateSearchScope();
-		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-		UpdatesSearchCategory category = new UpdatesSearchCategory();
-		final UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);
-		searchRequest.addFilter(new EnvironmentFilter());
+		IFeature [] features=null;
 		if (feature!=null)
-			category.setFeatures(new IFeature[] { feature });
+			features = new IFeature[] { feature };
+		final UpdateSearchRequest searchRequest = UpdateUtils.createNewUpdatesRequest(features);
+
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				InstallWizard wizard = new InstallWizard(searchRequest);

@@ -14,6 +14,7 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -88,7 +89,8 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 	protected void createContents(Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
-		layout.leftMargin = layout.rightMargin = 10;
+		layout.leftMargin = 10;
+		layout.rightMargin = 5;
 		layout.topMargin = 10;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 20;

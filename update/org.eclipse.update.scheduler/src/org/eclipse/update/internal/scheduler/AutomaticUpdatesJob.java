@@ -20,7 +20,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.search.UpdatesSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
@@ -75,11 +74,7 @@ public class AutomaticUpdatesJob
 	
 	public IStatus run(IProgressMonitor monitor) {
 		System.out.println("Automatic update search started.");
-		UpdateSearchScope scope = new UpdateSearchScope();
-		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-		UpdatesSearchCategory category = new UpdatesSearchCategory();
-		searchRequest = new UpdateSearchRequest(category, scope);
-		searchRequest.addFilter(new EnvironmentFilter());
+		searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 		try {
 			searchRequest.performSearch(this, monitor);
 			System.out.println(
