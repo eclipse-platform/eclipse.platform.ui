@@ -335,8 +335,8 @@ protected void requestActivation() {
  */
 public void setContainer(ILayoutContainer container) {
 	super.setContainer(container);
-	if (control != null && container != null)
-		control.setBorderVisible(container.allowsBorder());
+	if (control != null)
+		control.setBorderVisible(container == null || container.allowsBorder());
 }
 /**
  * Shows the receiver if <code>visible</code> is true otherwise hide it.
