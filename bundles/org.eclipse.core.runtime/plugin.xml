@@ -2,8 +2,8 @@
 <plugin
   name="Eclipse Core Runtime"
   id="org.eclipse.core.runtime"
-  version="1.0"
-  provider-name="IBM">
+  version="0.9"
+  provider-name="Object Technology International, Inc.">
 
   <runtime>
     <library name="runtime.jar">
