@@ -8,6 +8,7 @@
 
   <requires>
     <import plugin="org.apache.xerces"/>
+    <import plugin="org.eclipse.ant.core" optional="true"/>
   </requires>
 
   <runtime>
@@ -49,5 +50,38 @@
     <attribute name="charEnd"/>
     <attribute name="lineNumber"/>
   </extension>
+
+   <!-- Tasks -->
+   <extension point="org.eclipse.ant.core.antTasks">
+      <antTask
+         name="resources.convertPath"
+         class="org.eclipse.core.resources.ant.ConvertPath"
+         library="lib/resources-ant.jar">
+      </antTask>
+      <antTask
+         name="resources.incrementalBuild"
+         class="org.eclipse.core.resources.ant.IncrementalBuild"
+         library="lib/resources-ant.jar">
+      </antTask>
+      <antTask
+         name="resources.refreshLocal"
+         class="org.eclipse.core.resources.ant.RefreshLocalTask"
+         library="lib/resources-ant.jar">
+      </antTask>
+      <antTask
+         name="copy"
+         class="org.eclipse.core.resources.ant.EclipseCopy"
+         library="lib/resources-ant.jar">
+      </antTask>
+   </extension>
+   
+   <!-- Objects -->
+   <extension point="org.eclipse.ant.core.antObjects">
+      <antObject
+         name="org.eclipse.core.resources.ant.EclipseFileUtils"
+         class="org.eclipse.core.resources.ant.EclipseFileUtils"
+         library="lib/resources-ant.jar">
+      </antObject>
+   </extension>
 
 </plugin>

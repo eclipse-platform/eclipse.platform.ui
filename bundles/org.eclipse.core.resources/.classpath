@@ -5,5 +5,7 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
+    <classpathentry kind="src" path="src_ant"/>
+    <classpathentry kind="lib" path="/org.apache.ant/ant.jar" sourcepath="/org.apache.ant/antsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
