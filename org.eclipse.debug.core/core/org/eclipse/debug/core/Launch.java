@@ -382,6 +382,7 @@ public class Launch extends PlatformObject implements ILaunch {
 		if (target != null) {
 			if (!getDebugTargets0().contains(target)) {
 				getDebugTargets0().add(target);
+				fireChanged();
 			}
 		}
 	}
