@@ -58,7 +58,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private boolean pluginsChangeStampIsValid;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
-	private boolean isNew; // true when created out of parsing files
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
@@ -118,6 +117,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (changeStamp > config.getDate().getTime() && !isTransient())
 			reconcile();
 
+//		// save configuration if there were changes
+//		if (config.isDirty())
+//			save();
+		
 		// determine which plugins we will use to start the rest of the "kernel"
 		// (need to get core.runtime matching the executing core.boot and
 		// xerces matching the selected core.runtime)
@@ -641,7 +644,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// create current configuration
 		if (currentPlatformConfiguration == null) {
 			currentPlatformConfiguration = new PlatformConfiguration(configPath);
-			if (currentPlatformConfiguration.isNew)
+			if (currentPlatformConfiguration.config == null)
+				throw new Exception("Cannot load configuration from " + configPath);
+			if (currentPlatformConfiguration.config.isDirty())
 				currentPlatformConfiguration.save();
 		}
 	}
@@ -652,10 +657,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		PlatformConfiguration config = getCurrent();
 		if (config != null) {
 			// only save if there are changes in the config
-			// TODO clean this up when merging with the rest of update code
-			long lastStamp = config.config.getDate().getTime();
-			long computedStamp = config.computeChangeStamp();
-			if (config.config.isDirty() || computedStamp > lastStamp) {
+//			// TODO clean this up when merging with the rest of update code
+//			long lastStamp = config.config.getDate().getTime();
+//			long computedStamp = config.computeChangeStamp();
+			if (config.config.isDirty() /* || computedStamp > lastStamp */) {
 				try {
 					config.save();
 				} catch (IOException e) {
@@ -727,16 +732,16 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	private synchronized void initialize(URL url) throws Exception {
-		if (url == null) {
-			config = new Configuration();
-			config.setURL(url);
-			Utils.debug("Creating empty configuration object"); //$NON-NLS-1$
-			return;
+		if (url != null) {
+			config = loadConfig(url);	
+			Utils.debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 		}
-
-		config = loadConfig(url);
+		if (config == null) {
+			config = new Configuration();		
+			Utils.debug("Creating empty configuration object"); //$NON-NLS-1$
+		}
+		config.setURL(url);
 		configLocation = url;
-		Utils.debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 	}
 
 	private void createDefaultConfiguration(URL url)throws IOException{
@@ -748,7 +753,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		try {
 			// parse the site directory to discover features
 			defaultSite.loadFromDisk();
-			isNew = true;
 		} catch (CoreException e1) {
 			Utils.log("Cannot load default site " + defaultSite.getResolvedURL());
 			return;
@@ -900,7 +904,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			try {
 				is = new FileInputStream(links[i]);
 				props.load(is);
-				configureExternalLinkSites(links[i], props);
+				configureExternalLinkSite(links[i], props);
 			} catch (IOException e) {
 				// skip bad links ...
 				Utils.debug("   unable to load link file " + e); //$NON-NLS-1$
@@ -917,7 +921,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	private void configureExternalLinkSites(File linkFile, Properties props) {
+	private void configureExternalLinkSite(File linkFile, Properties props) {
 		String path = props.getProperty(LINK_PATH);
 		if (path == null) {
 			Utils.debug("   no path definition"); //$NON-NLS-1$
@@ -949,6 +953,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (!link.endsWith("/")) //$NON-NLS-1$
 				link += "/"; // sites must be directories //$NON-NLS-1$
 			siteURL = new URL(link);
+			if (findConfiguredSite(siteURL, true) != null)
+				// linked site is already known
+				return;
 		} catch (MalformedURLException e) {
 			// ignore bad links ...
 			Utils.debug("  bad URL " + e); //$NON-NLS-1$
@@ -968,6 +975,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// configure the new site
 		// NOTE: duplicates are not replaced (first one in wins)
 		configureSite(linkSite);
+		// there are changes in the config
+		config.setDirty(true);
 		Utils.debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -984,6 +993,16 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (!siteRoot.exists()) {
 				unconfigureSite(list[i]);
 				Utils.debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
+			String linkName = list[i].getLinkFileName();
+			if (linkName != null) {
+				File linkFile = new File(linkName);
+				if (!linkFile.exists())  {
+					unconfigureSite(list[i]);
+					config.setDirty(true);
+					Utils.debug("Site " + siteURL + " is no longer linked ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$	
+				}
 			}
 		}
 	}
@@ -1004,7 +1023,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			config = new Configuration(new Date());
 			config.setURL(newConfigURL);
 			config.setLinkedConfig(sharedConfig);
-			isNew = true;
+			config.setDirty(true);
 		} catch (IOException e) {
 			// this is an optimistic copy. If we fail, the state will be reconciled
 			// when the update manager is triggered.
