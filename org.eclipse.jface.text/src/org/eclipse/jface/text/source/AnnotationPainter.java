@@ -12,11 +12,10 @@
 package org.eclipse.jface.text.source;
 
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,6 +68,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		private int fLayer;
 	}
 	
+	
 	/** Indicates whether this painter is active */
 	private boolean fIsActive= false;
 	/** Indicates whether this painter is managing decorations */
@@ -83,13 +83,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private IAnnotationModel fModel;
 	/** The annotation access */
 	private IAnnotationAccess fAnnotationAccess;
-	/** The list of decorations */
-	private List fDecorations= new ArrayList();
+
+	/**
+	 * The map of decorations
+	 * 
+	 * @since 3.0
+	 */
+	private Map fDecorationsMap= new HashMap();
 	/**
 	 * The list of highlighted decorations.
 	 * @since 3.0
 	 */
-	private List fHighlightedDecorations= new ArrayList();
+	private Map fHighlightedDecorationsMap= new HashMap();
 	/** The internal color table */
 	private Map fColorTable= new HashMap();
 	/** The list of configured annotation types for being painted by this painter */
@@ -110,15 +115,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Set fAllowedHighlightAnnotationTypes= new HashSet();
 	/**
-	 * The range in which all highlight annotations can be found.
+	 * The range in which the current highlight annotations can be found.
 	 * @since 3.0
 	 */
-	private Position fHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
+	private Position fCurrentHighlightAnnotationRange= null;
 	/**
-	 * The range in which all new highlight annotations can be found.
+	 * The range in which all add, removed and changed highlight
+	 * annotations can be found since the last world change.
 	 * @since 3.0
 	 */
-	private Position fNextHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
+	private Position fTotalHighlightAnnotationRange= null;
 	/**
 	 * The text input listener.
 	 * @since 3.0
@@ -151,7 +157,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return <code>true</code> if there are squiggles to be drawn, <code>false</code> otherwise
 	 */
 	private boolean hasDecorations() {
-		return !fDecorations.isEmpty();
+		return !fDecorationsMap.isEmpty();
 	}	
 	
 	/**
@@ -211,71 +217,214 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private synchronized void catchupWithModel(AnnotationModelEvent event) {
 	    
-		if (fDecorations != null) {
-			fDecorations.clear();
-			fHighlightedDecorations.clear();
+		if (fDecorationsMap != null) {
 			
 			int highlightAnnotationRangeStart= Integer.MAX_VALUE; 			
 			int highlightAnnotationRangeEnd= -1;
 			
 			if (fModel != null) {
 				
-				Iterator e= fModel.getAnnotationIterator();
-				while (e.hasNext()) {
+				boolean isWorldChange= false;
+				
+				Iterator e;
+				if (event == null || event.isWorldChange()) {
+					isWorldChange= true;
 					
-					Annotation annotation= (Annotation) e.next();
-					if (annotation.isMarkedDeleted())
-						continue;
+					fDecorationsMap.clear();
+					fHighlightedDecorationsMap.clear();
+
+					e= fModel.getAnnotationIterator();
 					
-					Color color= null;
-					Object annotationType= annotation.getType();
-					boolean isHighlighting=  shouldBeHighlighted(annotationType);
-					boolean isDrawingSquiggles= shouldBeDrawn(annotationType); 
-					if (isDrawingSquiggles || isHighlighting)
-						color= findColor(annotationType);
+				} else {
 					
-					if (color != null) {
-						Position position= fModel.getPosition(annotation);
-						if (position == null || position.isDeleted())
-							continue;
-						
-						Decoration pp= new Decoration();
-						pp.fPosition= position;
-						pp.fColor= color;
-						if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-							IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
-							pp.fLayer= extension.getLayer(annotation);
-						} else {
-							pp.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
+					// Remove annotations
+					Annotation[] removedAnnotations= event.getRemovedAnnotations();
+					for (int i=0, length= removedAnnotations.length; i < length; i++) {
+						Annotation annotation= removedAnnotations[i];
+						Decoration decoration= (Decoration)fHighlightedDecorationsMap.remove(annotation);
+						if (decoration != null) {
+							Position position= decoration.fPosition;
+							if (position != null && !position.isDeleted()) {
+								highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
+								highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
+							}
 						}
+						fDecorationsMap.remove(annotation);
+					}
+					
+					// Update existing annotations
+					Annotation[] changedAnnotations= event.getChangedAnnotations();
+					for (int i=0, length= changedAnnotations.length; i < length; i++) {
+						Annotation annotation= changedAnnotations[i];
+
+						Object annotationType= annotation.getType();
+						boolean isHighlighting=  shouldBeHighlighted(annotationType);
+						boolean isDrawingSquiggles= shouldBeDrawn(annotationType); 
 						
-						if (isDrawingSquiggles)
-							fDecorations.add(pp);
+						Decoration decoration= (Decoration)fHighlightedDecorationsMap.get(annotation);
 						
-						if (isHighlighting) {
-							fHighlightedDecorations.add(pp);
+						if (decoration != null) {
+							// The call below updates the decoration - no need to create new decoration
+							decoration= getDecoration(annotation, decoration, isDrawingSquiggles, isHighlighting);
+							if (decoration == null)
+								fHighlightedDecorationsMap.remove(annotation);
+						} else {
+							decoration= getDecoration(annotation, decoration, isDrawingSquiggles, isHighlighting);
+							if (decoration != null)
+								fHighlightedDecorationsMap.put(annotation, decoration);
+						}
+							
+						Position position= null;
+						if (decoration == null)
+							position= fModel.getPosition(annotation);
+						else
+							position= decoration.fPosition;
+						
+						if (!position.isDeleted()) {
 							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
 							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
+						} else {
+							fHighlightedDecorationsMap.remove(annotation);
+						}
+					
+						Decoration oldDecoration= (Decoration)fDecorationsMap.get(annotation);
+						if (decoration != null)
+							fDecorationsMap.put(annotation, decoration);
+						else if (oldDecoration != null)
+							fDecorationsMap.remove(annotation);
+					}
+					
+					e= Arrays.asList(event.getAddedAnnotations()).iterator();
+				}
+				
+				// Add new annotations
+				while (e.hasNext()) {
+					Annotation annotation= (Annotation) e.next();
+
+					Object annotationType= annotation.getType();
+					boolean isHighlighting=  shouldBeHighlighted(annotationType);
+					boolean isDrawingSquiggles= shouldBeDrawn(annotationType);
+					
+					Decoration pp= getDecoration(annotation, null, isDrawingSquiggles, isHighlighting);
+					
+					if (pp != null) {
+						
+						if (isDrawingSquiggles)
+							fDecorationsMap.put(annotation, pp);
+						
+						if (isHighlighting) {
+							fHighlightedDecorationsMap.put(annotation, pp);
+							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, pp.fPosition.offset);
+							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, pp.fPosition.offset + pp.fPosition.length);
 						}
 					}
 				}
-				if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
-				    
-					fNextHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
-					fNextHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
-					
-					if (fHighlightAnnotationRange.offset != Integer.MAX_VALUE) {
-					    highlightAnnotationRangeEnd= Math.max(fHighlightAnnotationRange.offset + fHighlightAnnotationRange.length, highlightAnnotationRangeEnd);
-					}
-
-					highlightAnnotationRangeEnd= Math.min(highlightAnnotationRangeEnd, fSourceViewer.getVisibleRegion().getOffset() + fSourceViewer.getVisibleRegion().getLength());
-					
-					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, highlightAnnotationRangeStart);
-					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, fSourceViewer.getVisibleRegion().getOffset());
-					fHighlightAnnotationRange.length= highlightAnnotationRangeEnd - fHighlightAnnotationRange.offset;
-				}
+				
+				updateHighlightRanges(highlightAnnotationRangeStart, highlightAnnotationRangeEnd, isWorldChange);
 			}
 		}
+	}
+	
+	private void updateHighlightRanges(int highlightAnnotationRangeStart, int highlightAnnotationRangeEnd, boolean isWorldChange) {
+		if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
+			
+			int maxRangeStart= highlightAnnotationRangeStart;
+			int maxRangeEnd= highlightAnnotationRangeEnd;
+			
+			if (fTotalHighlightAnnotationRange != null) {
+				maxRangeStart= Math.min(maxRangeStart, fTotalHighlightAnnotationRange.offset);
+				maxRangeEnd= Math.max(maxRangeEnd, fTotalHighlightAnnotationRange.offset + fTotalHighlightAnnotationRange.length);
+			}
+			
+			if (isWorldChange) {
+				if (fTotalHighlightAnnotationRange == null)
+					fTotalHighlightAnnotationRange= new Position(0);
+				fTotalHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
+				fTotalHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
+				
+				if (fCurrentHighlightAnnotationRange == null)
+					fCurrentHighlightAnnotationRange= new Position(0);
+				fCurrentHighlightAnnotationRange.offset= maxRangeStart;
+				fCurrentHighlightAnnotationRange.length= maxRangeEnd - maxRangeStart;
+			} else {
+				if (fTotalHighlightAnnotationRange == null)
+					fTotalHighlightAnnotationRange= new Position(0);
+				fTotalHighlightAnnotationRange.offset= maxRangeStart;
+				fTotalHighlightAnnotationRange.length= maxRangeEnd - maxRangeStart;
+				
+				if (fCurrentHighlightAnnotationRange == null)
+					fCurrentHighlightAnnotationRange= new Position(0);
+				fCurrentHighlightAnnotationRange.offset=highlightAnnotationRangeStart;
+				fCurrentHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
+			}
+		} else {
+			if (isWorldChange) {
+				fCurrentHighlightAnnotationRange= fTotalHighlightAnnotationRange;
+				fTotalHighlightAnnotationRange= null;
+			} else {
+				fCurrentHighlightAnnotationRange= null;
+			}
+		}
+		
+		adaptToDocumentLength(fCurrentHighlightAnnotationRange);
+		adaptToDocumentLength(fTotalHighlightAnnotationRange);
+	}
+
+	/**
+	 * Adapts the given position to the document length.
+	 * 
+	 * @param position the position to adapt
+	 */
+	private void adaptToDocumentLength(Position position) {
+		if (position == null)
+			return;
+		
+		int length= fSourceViewer.getDocument().getLength();
+		position.offset= Math.min(position.offset, length);
+		position.length= Math.min(position.length, length - position.offset);
+	}
+
+	/**
+	 * Returns a decoration for the given annotation if this
+	 * annotation is valid and shown by this painter.
+	 * 
+	 * @param annotation 			the annotation
+	 * @param decoration 			the decoration to be adapted and returned or <code>null</code> if a new one must be created
+	 * @param isDrawingSquiggles	tells if squiggles should be drawn for this annotation
+	 * @param isHighlighting		tells if this annotation should be highlighted
+	 * @return the decoration or <code>null</code> if there's no valid one
+	 * @since 3.0
+	 */
+	private Decoration getDecoration(Annotation annotation, Decoration decoration, boolean isDrawingSquiggles, boolean isHighlighting) {
+
+		if (annotation.isMarkedDeleted())
+			return null;
+
+		Color color= null;
+
+		if (isDrawingSquiggles || isHighlighting)
+			color= findColor(annotation.getType());
+		
+		if (color == null)
+			return null;
+			
+		Position position= fModel.getPosition(annotation);
+		if (position == null || position.isDeleted())
+			return null;
+		
+		if (decoration == null)
+			decoration= new Decoration();
+		
+		decoration.fPosition= position;
+		decoration.fColor= color;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			decoration.fLayer= extension.getLayer(annotation);
+		} else {
+			decoration.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
+		}
+		
+		return decoration;
 	}
 	
 	/**
@@ -379,7 +528,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void updatePainting(AnnotationModelEvent event) {
 		disablePainting(true);
 		
-		catchupWithModel(null);
+		catchupWithModel(event);
 		
 		if (!fInputDocumentAboutToBeChanged)
 			invalidateTextPresentation();
@@ -388,18 +537,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	private void invalidateTextPresentation() {
-	    if (fHighlightAnnotationRange.getOffset() == Integer.MAX_VALUE)
+	    if (fCurrentHighlightAnnotationRange== null)
 	        return;
 	    
 		if (fSourceViewer instanceof ITextViewerExtension2) {
-			IRegion r= new Region(fHighlightAnnotationRange.getOffset(), fHighlightAnnotationRange.getLength());
+			IRegion r= new Region(fCurrentHighlightAnnotationRange.getOffset(), fCurrentHighlightAnnotationRange.getLength());
 			((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
 		} else {
 			fSourceViewer.invalidateTextPresentation();
 		}
-		
-		fHighlightAnnotationRange.offset= fNextHighlightAnnotationRange.offset;
-		fHighlightAnnotationRange.length= fNextHighlightAnnotationRange.length;
 	}
 
 	/*
@@ -410,7 +556,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		IRegion region= tp.getExtent();
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
-			for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
+			for (Iterator iter= fHighlightedDecorationsMap.values().iterator(); iter.hasNext();) {
 					
 				Decoration pp = (Decoration)iter.next();
 					maxLayer= Math.max(maxLayer, pp.fLayer + 1); // dynamically update layer maximum
@@ -431,7 +577,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
 	public synchronized void modelChanged(final IAnnotationModel model) {
-		modelChanged((AnnotationModelEvent)null);
+		modelChanged(new AnnotationModelEvent(model));
 	}
 	    
 	/*
@@ -593,8 +739,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fSourceViewer= null;
 		fAnnotationAccess= null;
 		fModel= null;
-		fDecorations= null;
-		fHighlightedDecorations= null;
+		fDecorationsMap= null;
+		fHighlightedDecorationsMap= null;
 	}
 
 	/**
@@ -645,7 +791,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
-			for (Iterator e = fDecorations.iterator(); e.hasNext();) {
+			for (Iterator e = fDecorationsMap.values().iterator(); e.hasNext();) {
 				
 				Decoration pp = (Decoration) e.next();
 	
