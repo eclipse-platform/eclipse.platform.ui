@@ -591,8 +591,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			File configIni = new File(configDir, CONFIG_INI);
 			if (!configIni.exists()) {
 				URL configIniURL = ConfigurationActivator.getBundleContext().getBundle().getEntry(CONFIG_INI);
-				File sourceConfigIni = new File(configIniURL.getFile());
-				copy(sourceConfigIni, configIni);
+				copy(configIniURL, configIni);
 			}
 		} catch (Exception e) {
 			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini"));
@@ -1045,6 +1044,34 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						// ignore ...
 					}
 			}
+		}
+	}
+
+	private void copy(URL src, File tgt) throws IOException {
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = src.openStream();
+			os = new FileOutputStream(tgt);
+			byte[] buff = new byte[1024];
+			int count = is.read(buff);
+			while (count != -1) {
+				os.write(buff, 0, count);
+				count = is.read(buff);
+			}
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+					// ignore ...
+				}
+			if (os != null)
+				try {
+					os.close();
+				} catch (IOException e) {
+					// ignore ...
+				}
 		}
 	}
 
