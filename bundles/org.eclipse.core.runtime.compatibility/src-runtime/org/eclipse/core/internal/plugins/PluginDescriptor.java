@@ -233,7 +233,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		//completes.  For example, returning false during activation
 		//would break the registry shutdown procedure, because a
 		//plugin being activated during shutdown would never be shut down.
-		return active;
+		return bundleOsgi.getState() == Bundle.ACTIVE;
 	}
 
 	/*
@@ -384,8 +384,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 		String pluginClassName = getPluginClass();
 		Class runtimeClass = null;
 		try {
-			if (pluginClassName == null || pluginClassName.equals("")) //$NON-NLS-1$
+			if (pluginClassName == null || pluginClassName.equals("")) {//$NON-NLS-1$
 				runtimeClass = DefaultPlugin.class;
+				pluginClassName = DefaultPlugin.class.getName();
+			}
 			else
 				runtimeClass = bundleOsgi.loadClass(pluginClassName);
 		} catch (ClassNotFoundException e) {
@@ -430,5 +432,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	public synchronized void setActive() {
 		this.active = true;
+	}
+	
+	public boolean isActivating() {
+		return activePending;
 	}
 }
