@@ -3,6 +3,6 @@
 <taskdef file="${ROOTDIR}/taskdefs.properties" />
  
  <target name="echoP">
- 	<echoProperties/>
+ 	<myEchoProperties/>
  </target>
 </project>
