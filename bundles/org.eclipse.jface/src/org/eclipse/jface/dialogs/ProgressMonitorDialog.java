@@ -542,7 +542,7 @@ protected void setOperationCancelButtonEnabled(boolean b) {
  */
 protected Image getImage() {
 	if(progressMonitor.locked)
-		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_LOCKED);
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_WARNING);
 	else
 		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 }
