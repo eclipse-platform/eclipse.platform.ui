@@ -1199,7 +1199,8 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		// Figure out the current state.
-		final Set activeContextIds = contextManager.getActiveContextIds();
+		final Set activeContextIds = new HashSet(contextManager
+				.getActiveContextIds());
 		final Map activeContextTree = createFilteredContextTreeFor(activeContextIds);
 
 		// Build a cached binding set for that state.

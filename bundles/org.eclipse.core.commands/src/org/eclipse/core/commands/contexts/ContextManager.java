@@ -146,7 +146,7 @@ public final class ContextManager implements IContextListener {
 	 *         instances of <code>String</code>.
 	 */
 	public final Set getActiveContextIds() {
-		return activeContextIds;
+		return Collections.unmodifiableSet(activeContextIds);
 	}
 
 	/**
