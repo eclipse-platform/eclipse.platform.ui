@@ -103,7 +103,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		menu.add(newMenu);
 		new NewWizardMenu(newMenu, navigator.getSite().getWorkbenchWindow(), false);
 		
-		gotoGroup.fillContextMenu(menu);
 		openGroup.fillContextMenu(menu);
 		menu.add(new Separator());
 		

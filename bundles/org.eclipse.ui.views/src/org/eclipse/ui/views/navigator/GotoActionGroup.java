@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.views.framelist.*;
+import org.eclipse.ui.views.navigator.*;
 
 /**
  * This is the action group for the goto actions.
@@ -26,7 +27,6 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	private ForwardAction forwardAction;
 	private GoIntoAction goIntoAction;
 	private UpAction upAction;
-	private GotoResourceAction gotoResourceAction;
 	private IResourceChangeListener resourceChangeListener;
 	
 	public GotoActionGroup(IResourceNavigator navigator) {
@@ -49,30 +49,6 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		super.dispose();
 	}
 
-	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection =
-			(IStructuredSelection) getContext().getSelection();
-		if (selection.size() == 1) {
-			if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FOLDER)) {
-				menu.add(goIntoAction);
-			} else {
-				IStructuredSelection resourceSelection = ResourceSelectionUtil.allResources(selection, IResource.PROJECT);
-				if (resourceSelection != null && !resourceSelection.isEmpty()) {
-					IProject project = (IProject)resourceSelection.getFirstElement();
-					if (project.isOpen())
-						menu.add(goIntoAction);
-				}
-			}
-		}
-		MenuManager gotoMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.goto")); //$NON-NLS-1$
-		menu.add(gotoMenu);
-		gotoMenu.add(backAction);
-		gotoMenu.add(forwardAction);
-		gotoMenu.add(upAction);
-		gotoMenu.add(gotoResourceAction);
-	}
-	
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.GO_INTO,
@@ -99,10 +75,6 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		backAction = new BackAction(frameList);
 		forwardAction = new ForwardAction(frameList);
 		upAction = new UpAction(frameList);
-		gotoResourceAction =
-			new GotoResourceAction(
-				navigator,
-				ResourceNavigatorMessages.getString("ResourceNavigator.resourceText")); //$NON-NLS-1$
 	}	
 
 	public void updateActionBars() {

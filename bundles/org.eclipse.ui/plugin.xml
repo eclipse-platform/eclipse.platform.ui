@@ -1415,5 +1415,18 @@
             id="org.eclipse.ui.SystemSummaryEditorInputFactory">
       </factory>
    </extension>
-
+   <extension 
+         point="org.eclipse.ui.actionSets">
+	  <actionSet
+			id="org.eclipse.ui.NavigateActionSet"
+        	label="%NavigateActionSet.label"
+			visible="false"
+			description="%NavigateActionSet.description">
+		 <action 
+		    id="org.eclipse.ui.GoToResource"
+      		menubarPath="navigate/goTo/"
+      		label="%GoToResourceAction.label"
+			class="org.eclipse.ui.views.navigator.GoToResourceAction2"/>
+	  </actionSet>			
+   </extension>
 </plugin>
