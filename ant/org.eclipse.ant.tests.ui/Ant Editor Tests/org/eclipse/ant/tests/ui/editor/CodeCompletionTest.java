@@ -666,7 +666,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
-    	//for sure should have project.class.path and project.class.path2
+    	//for sure should have project.class.path and project.class.path2 but project.class.path2 
+    	//should not present itself as a possible reference
     	assertTrue(proposals.length >= 2);
     	assertContains("project.class.path", proposals);
     	assertDoesNotContain("project.class.path2", proposals);
@@ -868,4 +869,47 @@ public class CodeCompletionTest extends AbstractAntUITest {
 			EditorTestHelper.closeAllEditors();
 		}
 	}
+	
+	 /**
+     * Tests the code completion for refids (Bug 65480)
+     */
+    public void testJavacReferencesProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("refid.xml"));
+
+		int lineNumber= 16;
+    	int columnNumber= 24;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//for sure should have project.class.path and project.class.path2
+    	assertTrue(proposals.length >= 2);
+    	assertContains("project.class.path", proposals);
+    	assertContains("project.class.path2", proposals);
+    	
+    	lineNumber= 17;
+    	columnNumber= 25;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//for sure should have project.class.path and project.class.path2
+    	assertTrue(proposals.length >= 2);
+    	assertContains("project.class.path", proposals);
+    	assertContains("project.class.path2", proposals);
+    	
+    	lineNumber= 18;
+    	columnNumber= 26;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//for sure should have project.class.path and project.class.path2
+    	assertTrue(proposals.length >= 2);
+    	assertContains("project.class.path", proposals);
+    	assertContains("project.class.path2", proposals);
+    }
 }

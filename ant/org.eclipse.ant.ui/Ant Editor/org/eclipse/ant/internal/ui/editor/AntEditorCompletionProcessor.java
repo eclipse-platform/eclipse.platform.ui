@@ -358,10 +358,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
                 if ("target".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
-                } else if ("refid".equalsIgnoreCase(attributeString)) { //$NON-NLS-1$
+                } else if ("refid".equalsIgnoreCase(attributeString) || "classpathref".equalsIgnoreCase(attributeString)   //$NON-NLS-1$//$NON-NLS-2$
+                        || "sourcepathref".equalsIgnoreCase(attributeString) || "bootpathref".equalsIgnoreCase(attributeString)) { //$NON-NLS-1$ //$NON-NLS-2$
                 	proposals= getReferencesValueProposals(prefix);
                 } else {
-                	proposals=getAttributeValueProposals(currentTaskString, attributeString, prefix);
+                	proposals= getAttributeValueProposals(currentTaskString, attributeString, prefix);
                 }
 				if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.31"); //$NON-NLS-1$
@@ -405,10 +406,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		int i= 0;
 		String refId;
 		ICompletionProposal proposal;
+		int prefixLength= prefix.length();
+		int replacementOffset= cursorPosition - prefixLength;
 		for (Iterator iter = refIds.iterator(); iter.hasNext(); i++) {
 			refId= (String) iter.next();
-			if (!refId.equals(id) && (prefix.length() == 0 || refId.toLowerCase().startsWith(prefix))) {
-				proposal= new AntCompletionProposal(refId, cursorPosition - prefix.length(), prefix.length(), refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
+			if (!refId.equals(id) && (prefixLength == 0 || refId.toLowerCase().startsWith(prefix))) {
+				proposal= new AntCompletionProposal(refId, replacementOffset, prefixLength, refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
 				proposals.add(proposal);
 			}
 		}
@@ -615,9 +618,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		}
 		Map elements= ((MacroDef)task).getElements();
 		Iterator itr= elements.keySet().iterator();
+		int prefixLength= prefix.length();
+		int replacementOffset= cursorPosition - prefixLength;
 		while (itr.hasNext()) {
 			String elementName = (String) itr.next();
-			if (!(prefix.length() == 0 || elementName.toLowerCase().startsWith(prefix))) {
+			if (!(prefixLength == 0 || elementName.toLowerCase().startsWith(prefix))) {
 				continue;
 			}
 			MacroDef.TemplateElement element = (MacroDef.TemplateElement) elements.get(elementName);
@@ -636,7 +641,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				proposalInfo+= AntEditorMessages.getString("AntEditorCompletionProcessor.2"); //$NON-NLS-1$
 			}
 			
-			ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), elementName.length() + 2, null, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			ICompletionProposal proposal = new AntCompletionProposal(replacementString, replacementOffset, prefixLength, elementName.length() + 2, null, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 			proposals.add(proposal);
 		}
 	}
