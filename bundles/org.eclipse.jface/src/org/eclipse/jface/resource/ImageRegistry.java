@@ -78,6 +78,9 @@ public class ImageRegistry {
 	 */
 	public Image get(String key) {
 		
+		if (key == null){
+			return null;
+		}
 		/**
 		 * NOTE, for backwards compatibility the following images are supported
 		 * here, they should never be disposed, hence we explicitly return them 
