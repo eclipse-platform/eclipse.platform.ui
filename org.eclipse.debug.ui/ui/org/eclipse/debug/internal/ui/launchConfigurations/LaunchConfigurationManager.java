@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -387,7 +388,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				}
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
+			if (e.getStatus().getCode() != DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
+				// only log the error if it's not a missing type definition
+				DebugUIPlugin.log(e);
+			}
 		}	
 	}	
 	

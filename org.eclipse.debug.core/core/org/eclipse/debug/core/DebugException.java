@@ -64,6 +64,14 @@ public class DebugException extends CoreException {
 	public static final int CONFIGURATION_INVALID = 5014;
 	
 	/**
+	 * Indicates a launch configuration could not be restored because its
+	 * launch configuration type definition is missing.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int MISSING_LAUNCH_CONFIGURATION_TYPE = 5020;
+	
+	/**
 	 * Constructs a new debug exception with the given status object.
 	 *
 	 * @param status the status object describing this exception
