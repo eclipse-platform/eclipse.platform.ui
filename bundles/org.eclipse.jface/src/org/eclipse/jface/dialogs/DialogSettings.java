@@ -55,6 +55,7 @@ import org.xml.sax.SAXException;
  *
  * Here is an example of using a DialogSettings:
  * </p>
+ * <pre>
  * <code>
  * DialogSettings settings = new DialogSettings("root");
  * settings.put("Boolean1",true);
@@ -67,6 +68,7 @@ import org.xml.sax.SAXException;
  * section.put("Array2",new String[]{"aaaa2","bbbb2","cccc2"});
  * settings.save("c:\\temp\\test\\dialog.xml");
  * </code>
+ * </pre>
  */
 
 public class DialogSettings implements IDialogSettings {
