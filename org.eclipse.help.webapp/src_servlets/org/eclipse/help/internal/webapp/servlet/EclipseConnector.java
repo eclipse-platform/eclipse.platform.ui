@@ -80,6 +80,8 @@ public class EclipseConnector {
 				// getExpiration() throws NullPointerException when URL is jar:file:...
 				long expiration = con.getExpiration();
 				maxAge = expiration - System.currentTimeMillis();
+				if (maxAge <= 0 )
+					maxAge = 0;
 			} catch (Exception e) {
 			}
 			resp.setHeader("Cache-Control", "max-age=" + maxAge);
