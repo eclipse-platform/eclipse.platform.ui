@@ -1825,7 +1825,7 @@ public class TextViewer extends Viewer implements
 					IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
 					accepted= extension.requestWidgetToken(this, priority);
 				} else  {
-					fWidgetTokenKeeper.requestWidgetToken(this);
+					accepted= fWidgetTokenKeeper.requestWidgetToken(this);
 				}
 				
 				if (accepted) {

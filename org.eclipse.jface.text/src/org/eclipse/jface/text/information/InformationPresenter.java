@@ -63,10 +63,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	
 	/** 
 	 * Priority of the info controls managed by this information presenter.
-	 * Default value: <code>0</code>;
+	 * Default value: <code>5</code> in order to beat the hovers of <code>TextViewerHoverManager</code>
 	 * @since 3.0
 	 */
-	public static final int WIDGET_PRIORITY= 0;
+	public static final int WIDGET_PRIORITY= 5;
 	
 	
 	/**
@@ -428,16 +428,16 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer instanceof IWidgetTokenOwner) {
+		if (fTextViewer instanceof IWidgetTokenOwnerExtension) {
+			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
+			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
+				super.showInformationControl(subjectArea);
+		} else if (fTextViewer instanceof IWidgetTokenOwner) {
 			IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
 			if (owner.requestWidgetToken(this))
 				super.showInformationControl(subjectArea);
 				
-		} else if (fTextViewer instanceof IWidgetTokenOwnerExtension) {
-			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
-			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
-				super.showInformationControl(subjectArea);
-		}
+		} 
 	}
 
 	/*
