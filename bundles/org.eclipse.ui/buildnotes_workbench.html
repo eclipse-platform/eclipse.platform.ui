@@ -11,6 +11,51 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020513
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<blockquote>icon - new attribute to workingSet element of org.eclipse.ui.workingSets
+extension point. The image specified here will be used in the working set
+type list on the first page of the working set creation wizard. It will
+also be used in the working set selection dialog to indicate the type of
+existing working sets.
+<p>- Added new global action: Add Task (under Edit menu). Added IWorkbenchActionConstants.ADD_TASK</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<blockquote>In order to improve startup time, editors are being lazily
+created. The API IWorkbenchPage.getEditors() was deprecated and the APIs
+getEditorReferences(), getDirtyEditors (convenience API) and findEditor(input)
+were added to IWorkbenchPage. To keep backward compatibility, getEditors()
+was changed to initialize/instanciate all editors before returning them.
+So getEditors() should be avoided otherwise the first caller will pay the
+time saved from the startup.
+<p>The API IWorkbenchPage.getViews() was deprecated as well. The intention
+is to lazy create views so that views hidden on a tab folder are not going
+to be instanciated until they are made visible. The API getViewReferences
+was added to IWorkbenchPage but the implementation has not changed yet.</blockquote>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F05%2F07&chfieldto=2002%2F05%2F13&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/05/07 and 2002/05/13.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020507
 <h2>
 What's new in this drop</h2>
@@ -994,10 +1039,9 @@ editor and popup menu action extensions was defined using a limited set
 of elements in xml.&nbsp; The existing tags cannot adequately describe
 the conditions when an action should be enabled or visible.&nbsp; To resolve
 these issues, the following approach has been implemented:
-<p>- a refreshPluginActions() has been added to AbstractUIPlugin. 
-The
-AbtractUIPlugin.startup method will call this to trigger the creation of
-the action delegates for the plugin.
+<p>- a refreshPluginActions() has been added to AbstractUIPlugin. The AbtractUIPlugin.startup
+method will call this to trigger the creation of the action delegates for
+the plugin.
 <br>- a new enablement element has been added to the action markup for
 action sets, views, editors, and popup menus.&nbsp; This can be used to
 define the enablement criteria for any action, and is a sub element of
