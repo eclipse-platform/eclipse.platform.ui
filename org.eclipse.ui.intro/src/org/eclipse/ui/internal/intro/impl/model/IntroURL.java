@@ -141,9 +141,11 @@ public class IntroURL implements IIntroURL {
                     getParameter(KEY_PLUGIN_ID));
 
         else if (action.equals(RUN_ACTION))
-            // run an Intro action. Get the pluginId and the class keys.
+            // run an Intro action. Get the pluginId and the class keys. Pass
+            // the parameters and the standby state.
             return runAction(getParameter(KEY_PLUGIN_ID),
-                    getParameter(KEY_CLASS));
+                    getParameter(KEY_CLASS), parameters,
+                    getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_PAGE)) {
             // display an Intro Page.
@@ -191,6 +193,8 @@ public class IntroURL implements IIntroURL {
      * @param state
      */
     private boolean setStandbyState(String state) {
+        if (state == null)
+            return false;
         boolean standby = state.equals("true") ? true : false; //$NON-NLS-1$
         IIntroPart introPart = IntroPlugin.showIntro(standby);
         if (introPart == null)
@@ -203,7 +207,8 @@ public class IntroURL implements IIntroURL {
     /**
      * Run an action
      */
-    private boolean runAction(String pluginId, String className) {
+    private boolean runAction(String pluginId, String className,
+            Properties parameters, String standbyState) {
 
         Object actionObject = ModelLoaderUtil.createClassInstance(pluginId,
                 className);
@@ -229,11 +234,14 @@ public class IntroURL implements IIntroURL {
                     }
                 };
                 proxy.run();
-                return true;
             } else
                 // we could not create the class.
                 return false;
-            return true;
+            // ran action successfully. Now set intro intro standby if needed.
+            if (standbyState == null)
+                return true;
+            else
+                return setStandbyState(standbyState);
         } catch (Exception e) {
             Log.error("Could not run action: " + className, e); //$NON-NLS-1$
             return false;
