@@ -12,7 +12,7 @@ import org.eclipse.ui.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.UpdateFormPage;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.ui.forms.internal.*;

@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 

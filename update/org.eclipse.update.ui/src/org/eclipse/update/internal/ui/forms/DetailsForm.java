@@ -23,7 +23,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.internal.ui.wizards.*;

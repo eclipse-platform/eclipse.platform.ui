@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.*;
-import org.eclipse.update.internal.ui.parts.IUpdateFormPage;
+import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
 import java.util.*;
 import org.eclipse.jface.action.*;

@@ -12,7 +12,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * ActiveX based web browser control.
  */
-public class WebBrowser implements OleListener {
+public class WebBrowser implements IWebBrowser, OleListener {
 	// Generated from typelib filename: shdocvw.dll
 
 	// Constants for WebBrowser CommandStateChange

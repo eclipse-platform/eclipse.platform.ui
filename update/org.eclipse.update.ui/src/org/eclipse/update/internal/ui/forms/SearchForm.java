@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.ui.forms.internal.*;

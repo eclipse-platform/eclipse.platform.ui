@@ -5,7 +5,6 @@ package org.eclipse.update.internal.ui.pages;
  */
 
 import org.eclipse.update.internal.ui.forms.CategoryForm;
-import org.eclipse.update.internal.ui.parts.UpdateFormPage;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.ui.forms.internal.*;
 

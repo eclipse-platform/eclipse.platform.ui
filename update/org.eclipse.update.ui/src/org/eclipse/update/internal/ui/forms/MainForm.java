@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.forms;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.internal.ui.*;

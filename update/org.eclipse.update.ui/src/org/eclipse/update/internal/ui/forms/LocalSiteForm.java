@@ -10,6 +10,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.ui.forms.internal.*;

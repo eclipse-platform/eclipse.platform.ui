@@ -27,7 +27,7 @@ public class WebBrowserView extends ViewPart {
 	private static final String KEY_FORWARD = "WebBrowserView.forward";
 
 	private int ADDRESS_SIZE = 10;
-	private WebBrowser browser;
+	private IWebBrowser browser;
 	private Control control;
 	private Combo addressCombo;
 	private Object input;
@@ -67,17 +67,18 @@ public class WebBrowserView extends ViewPart {
 		navContainer.setLayout(layout);
 		createNavBar(navContainer);
 		navContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		browser = new WebBrowser(container);
+		final WebBrowser winBrowser = new WebBrowser(container);
+		browser = winBrowser;
 
 		Control c = browser.getControl();
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-		final BrowserControlSite site = browser.getControlSite();
+		final BrowserControlSite site = winBrowser.getControlSite();
 		IStatusLineManager smng = getViewSite().getActionBars().getStatusLineManager();
 		site.setStatusLineManager(smng);
 
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
-				String url = browser.getLocationURL();
+				String url = winBrowser.getLocationURL();
 				if (url != null) {
 					addressCombo.setText(url);
 					downloadComplete(url);

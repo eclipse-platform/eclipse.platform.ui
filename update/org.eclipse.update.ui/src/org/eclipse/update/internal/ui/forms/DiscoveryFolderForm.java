@@ -5,6 +5,7 @@ package org.eclipse.update.internal.ui.forms;
  */
 
 
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
