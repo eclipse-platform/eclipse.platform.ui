@@ -53,6 +53,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -63,7 +65,6 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -384,6 +385,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
+		store.setDefault(IPreferenceConstants.MULTI_KEY_ROCKER, false);
 		
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
