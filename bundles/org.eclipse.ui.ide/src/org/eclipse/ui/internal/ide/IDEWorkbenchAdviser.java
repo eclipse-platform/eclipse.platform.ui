@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -116,16 +115,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private ArrayList welcomePerspectiveInfos = null;
 	
-	/**
-	 * Listener for core preference changes.
-	 */
-	private final Preferences.IPropertyChangeListener preferenceChangeListener =
-		new Preferences.IPropertyChangeListener() {
-			public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
-				handlePreferenceChange(event.getProperty());
-			}
-		};
-
 	/**
 	 * Creates a new workbench adviser instance.
 	 */
@@ -232,7 +221,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public void postStartup() {
 		refreshFromLocal();
 		enableAutoBuild();
-		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(preferenceChangeListener);
 		try {
 			openWelcomeEditors();
 		} catch (WorkbenchException e) {
@@ -537,37 +525,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
 					IDEWorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
 			}
-		}
-	}
-
-	/**
-	 * Update the action bar of every workbench window to
-	 * add/remove the manual build actions.
-	 * 
-	 * @param autoBuildSetting <code>true</code> auto build is enabled 
-	 * 	<code>false</code> auto build is disabled
-	 */
-	private void updateBuildActions(boolean autoBuildSetting) {
-		// Update the menu/tool bars for each window.
-		IWorkbenchWindow[] wins = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < wins.length; i++) {
-			WorkbenchActionBuilder a = (WorkbenchActionBuilder) configurer.getWindowConfigurer(wins[i]).getData(ACTION_BUILDER);
-			if (autoBuildSetting) {
-				a.removeManualIncrementalBuildAction();
-			} else {
-				a.addManualIncrementalBuildAction();
-			}
-		}
-	}
-
-	/**
-	 * Handles a change to a preference.
-	 */
-	private void handlePreferenceChange(String propertyName) {
-		// when auto-build pref changes update the build icon on the toolbar/menu
-		if (propertyName.equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
-			boolean autoBuildPref = ResourcesPlugin.getWorkspace().isAutoBuilding(); 
-			updateBuildActions(autoBuildPref);
 		}
 	}
 

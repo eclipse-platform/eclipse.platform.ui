@@ -153,25 +153,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 	};
 
 	/**
-	 * IDE-specific workbench action: Build project.
-	 * This action is a {@link Retarget Retarget} action with 
-	 * id "buildProject". This action maintains its enablement state.
-	 */
-	public static final ActionFactory BUILD_PROJECT = new ActionFactory("buildProject") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.buildProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.buildProject.ToolTip")); //$NON-NLS-1$
-			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.project.buildProject"); //$NON-NLS-1$
-			return action;
-		}
-	};
-
-	/**
 	 * IDE-specific workbench action: Rebuild project.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "rebuildProject". This action maintains its enablement state.
@@ -315,22 +296,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
-	 * IDE-specific workbench action: Incremental build.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory BUILD = new ActionFactory("build") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 			action.setId(getId());
 			return action;
 		}
