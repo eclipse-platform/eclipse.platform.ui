@@ -67,9 +67,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	// Contents will be cached to disk when this thrshold is exceeded
 	private static final int CACHING_THRESHOLD = 32768;
 	
+	// sync info in byte form
+	private byte[] syncBytes;
 	// buffer for file contents received from the server
 	private byte[] contents;
-	// cach the log entry for the remote file
+	// cache the log entry for the remote file
 	private ILogEntry entry;
 			
 	/**
@@ -96,32 +98,24 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * file ahead of time.
 	 */
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, CVSTag tag) {
-		this(parent, workspaceSyncState, name, "", tag);  //$NON-NLS-1$
-		MutableResourceSyncInfo newInfo = info.cloneMutable();
-		newInfo.setAdded();
+		this(parent, workspaceSyncState, name, ResourceSyncInfo.ADDED_REVISION, tag);  //$NON-NLS-1$
 	}
 	
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
-		this(parent, workspaceSyncState, null);
+		super(parent, name);
 		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);		
 		newInfo.setKeywordMode(Command.KSUBST_TEXT_EXPAND);
 		newInfo.setTag(tag);
-		info = newInfo;
+		syncBytes = newInfo.getBytes();
 	}
 		
-	public RemoteFile(RemoteFolder parent, byte[] syncBytes) {
+	public RemoteFile(RemoteFolder parent, byte[] syncBytes) throws CVSException {
 		this(parent, Update.STATE_NONE, syncBytes);
 	}
 	
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, byte[] syncBytes) {
-		this.parent = parent;
-		if (syncBytes == null)
-			info = null;
-		else
-			try {
-				info = new ResourceSyncInfo(syncBytes);
-			} catch (CVSException e) {
-			}
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, byte[] syncBytes) throws CVSException {
+		super(parent, ResourceSyncInfo.getName(syncBytes));
+		this.syncBytes = syncBytes;
 		setWorkspaceSyncState(workspaceSyncState);
 	}
 
@@ -158,7 +152,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 						IStatus status = Command.UPDATE.execute(
 							Command.NO_GLOBAL_OPTIONS,
 							new LocalOption[] { 
-								Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
+								Update.makeTagOption(new CVSTag(getRevision(), CVSTag.VERSION)),
 								Update.IGNORE_LOCAL_CHANGES },
 							new ICVSResource[] { RemoteFile.this },
 							null,
@@ -201,7 +195,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 						IStatus status = Command.LOG.execute(
 							Command.NO_GLOBAL_OPTIONS,
 							new LocalOption[] { 
-								Log.makeRevisionOption(info.getRevision())},
+								Log.makeRevisionOption(getRevision())},
 							new ICVSResource[] { RemoteFile.this },
 							new LogListener(RemoteFile.this, entries),
 							Policy.subMonitorFor(monitor, 100));
@@ -251,7 +245,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSRemoteFile#getRevision()
 	 */
 	public String getRevision() {
-		return info.getRevision();
+		try {
+			return ResourceSyncInfo.getRevision(syncBytes);
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return ResourceSyncInfo.ADDED_REVISION;
+		}
 	}
 	
 	/*
@@ -293,7 +292,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSFile#getSyncInfo()
 	 */
 	public ResourceSyncInfo getSyncInfo() {
-		return info;
+		try {
+			return new ResourceSyncInfo(syncBytes);
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
 	}
 	
 	/**
@@ -322,7 +326,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see IManagedFile#setFileInfo(FileProperties)
 	 */
 	public void setSyncInfo(ResourceSyncInfo fileInfo) {
-		info = fileInfo;
+		syncBytes = fileInfo.getBytes();
 	}
 
 	/**
@@ -330,10 +334,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * 
 	 * @param revision to associated with this remote file
 	 */
-	public void setRevision(String revision) {
-		MutableResourceSyncInfo newInfo = getSyncInfo().cloneMutable();
-		newInfo.setRevision(revision);
-		info = newInfo;
+	public void setRevision(String revision) throws CVSException {
+		syncBytes = ResourceSyncInfo.setRevision(syncBytes, revision);
 	}		
 	
 	public InputStream getContents() throws CVSException {
@@ -410,7 +412,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSFile#getTimeStamp()
 	 */
 	public Date getTimeStamp() {
-		return info.getTimeStamp();
+		return getSyncInfo().getTimeStamp();
 	}
 
 	/*
@@ -611,7 +613,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getSyncBytes()
 	 */
 	public byte[] getSyncBytes() throws CVSException {
-		return getSyncInfo().getBytes();
+		return syncBytes;
 	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])

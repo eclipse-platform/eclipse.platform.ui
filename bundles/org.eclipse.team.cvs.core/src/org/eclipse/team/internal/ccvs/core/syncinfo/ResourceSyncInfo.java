@@ -52,7 +52,7 @@ public class ResourceSyncInfo {
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo. Is visible so that clients can create sync infos
 	// for new files.
-	protected static final String ADDED_REVISION = "0"; //$NON-NLS-1$
+	public static final String ADDED_REVISION = "0"; //$NON-NLS-1$
 	
 	// Timestamp constants used to identify special cases
 	protected static final int TYPE_REGULAR = 1;
@@ -830,6 +830,16 @@ public class ResourceSyncInfo {
 			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
 		}
 		return revision;
+	}
+	
+	/**
+	 * Method setRevision.
+	 * @param syncBytes
+	 * @param revision
+	 * @return byte[]
+	 */
+	public static byte[] setRevision(byte[] syncBytes, String revision) throws CVSException {
+		return setSlot(syncBytes, 2, revision.getBytes());
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * The CVS analog of a file. CVS files have access to synchronization information
@@ -75,7 +76,16 @@ public interface ICVSFile extends ICVSResource {
 	 * if the resource does not have synchronization information available.
 	 */
 	public byte[] getSyncBytes() throws CVSException;
-	
+
+	/**
+	 * Called to set the workspace synchronization information for a resource. To
+	 * clear sync information call <code>unmanage</code>. The sync info will
+	 * become the persisted between workbench sessions.
+	 * 
+	 * @param info the resource synchronization to associate with this resource.
+	 */	
+	public void setSyncInfo(ResourceSyncInfo info) throws CVSException;
+		
 	/**
 	 * Called to set the workspace synchronization information for a resource. To
 	 * clear sync information call <code>unmanage</code>. The sync info will

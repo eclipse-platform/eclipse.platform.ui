@@ -28,18 +28,26 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource {
 
-	protected ResourceSyncInfo info;
 	protected RemoteFolder parent;
+	protected String name;
 
 	// relative synchronization state calculated by server of this remote file compare to the current local 
 	// workspace copy.
 	private int workspaceSyncState = Update.STATE_NONE;
 
+	/**
+	 * Constructor for RemoteResource.
+	 */
+	public RemoteResource(RemoteFolder parent, String name) {
+		this.parent = parent;
+		this.name = name;
+	}
+
 	/*
 	 * @see ICVSRemoteResource#getName()
 	 */
 	public String getName() {
-		return info.getName();
+		return name;
 	}
 
 	/*
@@ -131,9 +139,8 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	/*
 	 * @see ICVSResource#getSyncInfo()
 	 */
-	public ResourceSyncInfo getSyncInfo() {
-		return info;
-	}
+	public abstract ResourceSyncInfo getSyncInfo();
+	
 	/*
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */

@@ -57,6 +57,7 @@ public class CVSDateFormatter {
 	}
 
 	static public String dateToEntryLine(Date date) {
+		if (date == null) return ""; //$NON-NLS-1$
 		String passOne = entryLineFormat.format(date);
 		if (passOne.charAt(ENTRYLINE_TENS_DAY_OFFSET) != '0') return passOne;
 		StringBuffer passTwo = new StringBuffer(passOne);

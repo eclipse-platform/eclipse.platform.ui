@@ -126,15 +126,6 @@ public interface ICVSResource {
 	 * if the resource does not have synchronization information available.
 	 */
 	public ResourceSyncInfo getSyncInfo() throws CVSException;
-	
-	/**
-	 * Called to set the workspace synchronization information for a resource. To
-	 * clear sync information call <code>unmanage</code>. The sync info will
-	 * become the persisted between workbench sessions.
-	 * 
-	 * @param info the resource synchronization to associate with this resource.
-	 */	
-	public void setSyncInfo(ResourceSyncInfo info) throws CVSException;
 
 	/** 
 	 * Deletes the resource represented by the handle.

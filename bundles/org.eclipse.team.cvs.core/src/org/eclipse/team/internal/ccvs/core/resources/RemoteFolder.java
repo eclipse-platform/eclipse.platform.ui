@@ -78,8 +78,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 	
 	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag, boolean isStatic) {
-		this.info = new ResourceSyncInfo(name);
-		this.parent = parent;
+		super(parent, name);
 		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
 		this.repository = repository;	
 	}
@@ -778,7 +777,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#forTag(CVSTag)
 	 */
 	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
-		return new RemoteFolder((RemoteFolder)parent, info.getName(), repository, folderInfo.getRepository(), tagName, folderInfo.getIsStatic());
+		return new RemoteFolder((RemoteFolder)parent, getName(), repository, folderInfo.getRepository(), tagName, folderInfo.getIsStatic());
 	}
 	
 	/**
@@ -793,6 +792,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	public boolean isDefinedModule() {
 		return false;
+	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.resources.RemoteResource#getSyncInfo()
+	 */
+	public ResourceSyncInfo getSyncInfo() {
+		return new ResourceSyncInfo(getName());
 	}
 
 }

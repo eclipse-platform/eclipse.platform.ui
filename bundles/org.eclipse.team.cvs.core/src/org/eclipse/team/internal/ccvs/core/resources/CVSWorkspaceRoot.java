@@ -307,8 +307,8 @@ public class CVSWorkspaceRoot {
 				manageFolder(parent, root);
 			}
 		}
-		// Set the sync info for the folder so it is managed by it's parent
-		folder.setSyncInfo(new ResourceSyncInfo(folder.getName()));
+		// reset the folder sync info so it will be managed by it's parent
+		folder.setFolderSyncInfo(folder.getFolderSyncInfo());
 	}
 					
 	/**
