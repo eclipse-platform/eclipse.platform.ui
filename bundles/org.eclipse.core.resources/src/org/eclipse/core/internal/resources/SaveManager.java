@@ -765,7 +765,8 @@ protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throw
 		workspace.getMetaArea().write(description);
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++)
-		saveMetaInfo((Project) roots[i], null);
+		if (roots[i].isAccessible())
+			saveMetaInfo((Project) roots[i], null);
 }
 /**
  * Writes the current state of the entire workspace tree to disk.
