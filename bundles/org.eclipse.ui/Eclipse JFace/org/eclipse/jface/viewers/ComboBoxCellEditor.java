@@ -68,7 +68,7 @@ protected Control createControl(Composite parent) {
 	});
 
 	comboBox.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent event) {
+		public void widgetDefaultSelected(SelectionEvent event) {
 			// must set the selection before getting value
 			selection = comboBox.getSelectionIndex();
 			Object newValue = doGetValue();
