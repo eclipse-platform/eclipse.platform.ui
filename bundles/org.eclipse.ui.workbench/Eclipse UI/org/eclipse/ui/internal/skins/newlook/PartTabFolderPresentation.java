@@ -44,10 +44,13 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 				setTabPosition(tabLocation);
-			}
+			} else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
+				boolean traditionalTab = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
+				setTabStyle(traditionalTab);
+			}		
 		}
 	};
-
+	
 	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite, 
 			int flags, ITheme theme) {
 		
@@ -59,15 +62,13 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 		
 		setTabPosition(tabLocation);
+		setTabStyle(preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		
 		// do not support close box on unselected tabs.
 		tabFolder.setUnselectedCloseVisible(false);
 		
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
-		
-		// set the tab style to non-simple
-		tabFolder.setSimpleTab(false);
 		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
@@ -79,6 +80,16 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
 	}
 	
+	/**
+     * Set the tab folder tab style to a tradional style tab
+	 * @param traditionalTab <code>true</code> if traditional style tabs should be used
+     * <code>false</code> otherwise.
+	 */
+	protected void setTabStyle(boolean traditionalTab) {
+		// set the tab style to non-simple
+		getTabFolder().setSimpleTab(traditionalTab);
+	}
+
 	private void applyTheme(ITheme theTheme) {
 		this.theme = theTheme;
 		
