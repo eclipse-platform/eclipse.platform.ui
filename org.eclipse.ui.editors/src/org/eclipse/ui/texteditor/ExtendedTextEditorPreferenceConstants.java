@@ -209,6 +209,56 @@ public class ExtendedTextEditorPreferenceConstants {
 	public static final String EDITOR_WIDE_CARET= AbstractTextEditor.PREFERENCE_WIDE_CARET;
 	
 	/**
+	 * A named preference that holds the color used as the text selection foreground.
+	 * This value has no effect if the system default color is used.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.0
+	 */
+	public final static String EDITOR_SELECTION_FOREGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_FOREGROUND;
+
+	/**
+	 * A named preference that describes if the system default selection foreground color
+	 * is used as the text selection foreground.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT;
+
+	/**
+	 * A named preference that holds the color used as the text selection background.
+	 * This value has no effect if the system default color is used.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.0
+	 */
+	public final static String EDITOR_SELECTION_BACKGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND;
+
+	/**
+	 * A named preference that describes if the system default selection background color
+	 * is used as the text selection background.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. 
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT;
+
+	/**
   	* Initializes the given preference store with the default values.
 	 * 
   	* @param store the preference store to be initialized
@@ -239,6 +289,9 @@ public class ExtendedTextEditorPreferenceConstants {
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, false);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
 		
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
+
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
 }

@@ -138,8 +138,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
 
-
-
 /**
  * Abstract base implementation of a text editor.
  * <p>
@@ -1325,6 +1323,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public final static String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$	
 	/** 
+	 * Key used to look up selection foreground color preference.
+	 * Value: <code>AbstractTextEditor.Color.SelectionForeground</code>
+	 * @since 3.0
+	 */
+	public final static String PREFERENCE_COLOR_SELECTION_FOREGROUND= "AbstractTextEditor.Color.SelectionForeground"; //$NON-NLS-1$
+	/** 
+	 * Key used to look up selection background color preference.
+	 * Value: <code>AbstractTextEditor.Color.SelectionBackground</code>
+	 * @since 3.0
+	 */
+	public final static String PREFERENCE_COLOR_SELECTION_BACKGROUND= "AbstractTextEditor.Color.SelectionBackground"; //$NON-NLS-1$	
+	/** 
+	 * Key used to look up selection foreground color system default preference.
+	 * Value: <code>AbstractTextEditor.Color.SelectionForeground.SystemDefault</code>
+	 * @since 3.0
+	 */
+	public final static String PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionForeground.SystemDefault"; //$NON-NLS-1$
+	/** 
+	 * Key used to look up selection background color system default preference.
+	 * Value: <code>AbstractTextEditor.Color.SelectionBackground.SystemDefault</code>
+	 * @since 3.0
+	 */
+	public final static String PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionBackground.SystemDefault"; //$NON-NLS-1$	
+	/** 
 	 * Key used to look up find scope background color preference.
 	 * Value: <code>AbstractTextEditor.Color.FindScope</code>
 	 * @since 2.0
@@ -1476,6 +1498,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private Color fBackgroundColor;
+	/**
+	 * The editor's selection foreground color.
+	 * @since 3.0
+	 */
+	private Color fSelectionForegroundColor;
+	/** 
+	 * The editor's selection background color.
+	 * @since 3.0
+	 */
+	private Color fSelectionBackgroundColor;
 	/** 
 	 * The find scope's highlight color.
 	 * @since 2.0
@@ -2545,6 +2577,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fBackgroundColor.dispose();
 				
 			fBackgroundColor= color;
+			
+			// ----------- selection foreground color --------------------
+			color= store.getBoolean(PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT)
+				? null
+				: createColor(store, PREFERENCE_COLOR_SELECTION_FOREGROUND, styledText.getDisplay());
+			styledText.setSelectionForeground(color);
+				
+			if (fSelectionForegroundColor != null)
+				fSelectionForegroundColor.dispose();
+			
+			fSelectionForegroundColor= color;
+			
+			// ---------- selection background color ----------------------
+			color= store.getBoolean(PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT)
+				? null
+				: createColor(store, PREFERENCE_COLOR_SELECTION_BACKGROUND, styledText.getDisplay());
+			styledText.setSelectionBackground(color);
+				
+			if (fSelectionBackgroundColor != null)
+				fSelectionBackgroundColor.dispose();
+				
+			fSelectionBackgroundColor= color;
 		}
 	}
 
@@ -2797,6 +2851,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fBackgroundColor= null;
 		}
 		
+		if (fSelectionForegroundColor != null) {
+			fSelectionForegroundColor.dispose();
+			fSelectionForegroundColor= null;
+		}
+		
+		if (fSelectionBackgroundColor != null) {
+			fSelectionBackgroundColor.dispose();
+			fSelectionBackgroundColor= null;
+		}
+		
 		if (fFindScopeHighlightColor != null) {
 			fFindScopeHighlightColor.dispose();
 			fFindScopeHighlightColor= null;
@@ -2977,7 +3041,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// There is a separate handler for font preference changes
 			return;
 		} else if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
-			PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property))
+				PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property) ||
+				PREFERENCE_COLOR_SELECTION_FOREGROUND.equals(property) || PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
+				PREFERENCE_COLOR_SELECTION_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT.equals(property))
 		{
 			initializeViewerColors(fSourceViewer);
 		} else if (PREFERENCE_COLOR_FIND_SCOPE.equals(property)) {
