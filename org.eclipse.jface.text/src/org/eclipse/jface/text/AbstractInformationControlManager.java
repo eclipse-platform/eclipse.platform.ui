@@ -823,6 +823,7 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected void hideInformationControl() {
 		if (fInformationControl != null) {
+			storeInformationControlBounds();
 			fInformationControl.setVisible(false);
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.stop();
