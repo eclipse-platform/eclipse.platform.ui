@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -34,9 +33,11 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -127,24 +129,14 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
 
-	/**
-	 * The Cancel button.
-	 */
-	private Button cancelButton;
 
 	/**
 	 * The current preference page, or <code>null</code> if
 	 * there is none.
 	 */
 	private IPreferencePage currentPage;
-	private String errorMessage;
-	private Color errorMsgAreaBackground;
-	private Image errorMsgImage;
-
-	/**
-	 * The Help button; <code>null</code> if none.
-	 */
-	private Button helpButton = null;
+	
+	private DialogMessageArea messageArea;
 
 	/**
 	 * Indicates whether help is available; <code>false</code> by default.'
@@ -156,9 +148,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 	private IPreferenceNode lastSuccessfulNode;
 
-	private String message = ""; //$NON-NLS-1$
-	private Image messageImage;
-	private CLabel messageLabel;
 
 	/**
 	 * The minimum page size; 400 by 400 by default.
@@ -166,7 +155,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see #setMinimumPageSize
 	 */
 	private Point minimumPageSize = new Point(400, 400);
-	private Color normalMsgAreaBackground;
 
 	/**
 	 * The OK button.
@@ -189,7 +177,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see #setPreferenceStore
 	 */
 	private IPreferenceStore preferenceStore;
-	private boolean showingError = false;
 
 	private Composite titleArea;
 	private Color titleAreaColor;
@@ -311,11 +298,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// create OK and Cancel buttons by default
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		getShell().setDefaultButton(okButton);
-		cancelButton =
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		if (isHelpAvailable) {
-			helpButton =
-				createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
+			createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
 		}
 	}
 
@@ -441,21 +426,21 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private Composite createTitleArea(Composite parent) {
 		// Create the title area which will contain
 		// a title, message, and image.
+		
+		int margins = 2;
 		titleArea = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 2;
-		layout.marginWidth = 2;
-		layout.verticalSpacing = 0;
-		layout.horizontalSpacing = 0;
-		layout.numColumns = 2;
+		
+		FormLayout layout = new FormLayout();
+		layout.marginHeight = margins;
+		layout.marginWidth = margins;
+		titleArea.setLayout(layout);
 
 		// Get the background color for the title area
 		Display display = parent.getDisplay();
 		Color background = JFaceColors.getBannerBackground(display);
-		final Color foreground = JFaceColors.getBannerForeground(display);
-
-		GridData layoutData = new GridData(GridData.FILL_BOTH);
-		titleArea.setLayout(layout);
+		
+		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+		layoutData.heightHint = JFaceResources.getImage(PREF_DLG_TITLE_IMG).getBounds().height + (margins * 3);
 		titleArea.setLayoutData(layoutData);
 		titleArea.setBackground(background);
 
@@ -476,17 +461,13 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			public void widgetDisposed(DisposeEvent e) {
 				if (titleAreaColor != null)
 					titleAreaColor.dispose();
-				if (errorMsgAreaBackground != null)
-					errorMsgAreaBackground.dispose();
 				borderColor.dispose();
 			}
 		});
 
 		// Message label
-		messageLabel = new CLabel(titleArea, SWT.LEFT);
-		JFaceColors.setColors(messageLabel, foreground, background);
-		messageLabel.setText(" "); //$NON-NLS-1$
-		messageLabel.setFont(JFaceResources.getBannerFont());
+		messageArea = new DialogMessageArea();
+		messageArea.createContents(titleArea, SWT.LEFT);
 
 		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -503,7 +484,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		};
 
-		messageLabel.addDisposeListener(new DisposeListener() {
+		titleArea.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				JFaceResources.getFontRegistry().removeListener(fontListener);
 			}
@@ -511,16 +492,24 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		JFaceResources.getFontRegistry().addListener(fontListener);
 
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		messageLabel.setLayoutData(gd);
 
 		// Title image
 		titleImage = new Label(titleArea, SWT.LEFT);
 		titleImage.setBackground(background);
 		titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.END;
-		titleImage.setLayoutData(gd);
+		
+		FormData imageData = new FormData();
+		imageData.right = new FormAttachment(100);
+		imageData.top = new FormAttachment(0);
+		
+		titleImage.setLayoutData(imageData);
+		
+		FormData messageData = new FormData();
+		messageData.top = new FormAttachment(0);
+	    messageData.bottom = new FormAttachment(titleImage,0,SWT.BOTTOM);
+		messageData.right = new FormAttachment(titleImage,0);
+		messageData.left = new FormAttachment(0);
+		messageArea.setLayoutData(messageData);
 
 		return titleArea;
 	}
@@ -828,51 +817,11 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 *
 	 * @param errorMessage the errorMessage to display or <code>null</code>
 	 */
-	public void setErrorMessage(String newErrorMessage) {
-		// Any change?
-		if (errorMessage == null ? newErrorMessage == null : errorMessage.equals(newErrorMessage))
-			return;
-
-		errorMessage = newErrorMessage;
-		if (errorMessage == null) {
-			if (showingError) {
-				// we were previously showing an error
-				showingError = false;
-				messageLabel.setBackground(normalMsgAreaBackground);
-				messageLabel.setImage(null);
-				titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
-			}
-
-			// avoid calling setMessage in case it is overridden to call setErrorMessage, 
-			// which would result in a recursive infinite loop
-			if (message == null)
-				//this should probably never happen since setMessage does this conversion....
-				message = ""; //$NON-NLS-1$
-			messageLabel.setText(message);
-			messageLabel.setImage(messageImage);
-			messageLabel.setToolTipText(message);
-		} else {
-			messageLabel.setText(errorMessage);
-			messageLabel.setToolTipText(errorMessage);
-			if (!showingError) {
-				// we were not previously showing an error
-				showingError = true;
-
-				// lazy initialize the error background color and image
-				if (errorMsgAreaBackground == null) {
-					errorMsgAreaBackground =
-						JFaceColors.getErrorBackground(messageLabel.getDisplay());
-					errorMsgImage = JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
-				}
-
-				// show the error	
-				normalMsgAreaBackground = messageLabel.getBackground();
-				messageLabel.setBackground(errorMsgAreaBackground);
-				messageLabel.setImage(errorMsgImage);
-				titleImage.setImage(null);
-			}
-		}
-		titleArea.layout(true);
+	public void setErrorMessage(String newErrorMessage) {		
+		if(newErrorMessage == null)
+			messageArea.clearErrorMessage();
+		else
+			messageArea.updateText(newErrorMessage,IMessageProvider.ERROR);
 	}
 
 	/**
@@ -933,25 +882,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @since 2.0
 	 */
 	public void setMessage(String newMessage, int newType) {
-		Image newImage = null;
-
-		if (newMessage != null) {
-			switch (newType) {
-				case IMessageProvider.NONE :
-					break;
-				case IMessageProvider.INFORMATION :
-					newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_INFO);
-					break;
-				case IMessageProvider.WARNING :
-					newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING);
-					break;
-				case IMessageProvider.ERROR :
-					newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_ERROR);
-					break;
-			}
-		}
-
-		showMessage(newMessage, newImage);
+		messageArea.updateText(newMessage,newType);
 	}
 
 	/**
@@ -1023,27 +954,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		constrainShellSize();
 	}
 
-	/**
-	 * Show the new message
-	 */
-	private void showMessage(String newMessage, Image newImage) {
-		// Any change?
-		if (message.equals(newMessage) && messageImage == newImage)
-			return;
-
-		message = newMessage;
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		messageImage = newImage;
-
-		if (!showingError) {
-			// we are not showing an error
-			messageLabel.setText(message);
-			messageLabel.setImage(messageImage);
-			messageLabel.setToolTipText(message);
-		}
-	}
-
+	
 	/**
 	 * Shows the preference page corresponding to the given preference node.
 	 * Does nothing if that page is already current.
@@ -1199,33 +1110,26 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
 	 */
 	public void updateMessage() {
-		String pageMessage = currentPage.getMessage();
-		int pageMessageType = IMessageProvider.NONE;
-		if (pageMessage != null && currentPage instanceof IMessageProvider)
-			pageMessageType = ((IMessageProvider) currentPage).getMessageType();
+		String message = currentPage.getMessage();
+		int messageType = IMessageProvider.NONE;
+		if (message != null && currentPage instanceof IMessageProvider)
+			messageType = ((IMessageProvider) currentPage).getMessageType();
 
-		String pageErrorMessage = currentPage.getErrorMessage();
+		String errorMessage = currentPage.getErrorMessage();
 
-		// Adjust the font
-		if (pageMessage == null && pageErrorMessage == null)
-			messageLabel.setFont(JFaceResources.getBannerFont());
-		else
-			messageLabel.setFont(JFaceResources.getDialogFont());
-
-		// Set the message and error message	
-		if (pageMessage == null) {
-			setMessage(currentPage.getTitle());
-		} else {
-			setMessage(pageMessage, pageMessageType);
+		if(errorMessage != null){
+			message = errorMessage;
+			messageType = IMessageProvider.ERROR;
 		}
-		setErrorMessage(pageErrorMessage);
+		
+		messageArea.updateText(message,messageType);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
-		updateMessage();
+		messageArea.showTitle(currentPage.getTitle(),currentPage.getImage());
 	}
 
 	/**
