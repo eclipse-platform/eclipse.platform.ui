@@ -6,12 +6,16 @@ package org.eclipse.core.internal.events;
  */
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.ElementTree;
 import java.util.*;
+import java.util.Map;
 
 public class BuildManager implements ICoreConstants, IManager {
 	protected Workspace workspace;
@@ -62,6 +66,24 @@ public class BuildManager implements ICoreConstants, IManager {
 		}
 	}
 	final protected DeltaCache deltaCache = new DeltaCache();
+	/**
+	 * These builders are added to build tables in place of builders that couldn't be instantiated
+	 */
+	class MissingBuilder extends IncrementalProjectBuilder {
+		private String name;
+		private IStatus status;
+		MissingBuilder(String name) {
+			this.name = name;
+		}
+		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+			if (status == null) {
+				String msg = Policy.bind("events.missing", new String[] {name, getProject().getName()});
+				status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
+			}
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return null;
+		}
+}
 	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
@@ -298,8 +320,14 @@ protected IncrementalProjectBuilder getBuilder(String builderName, IProject proj
 	if (result != null)
 		return result;
 	result = (IncrementalProjectBuilder) instantiateBuilder(builderName, project);
-	if (result == null)
+	if (result == null) {
+		//the builder could not be instantiated.  Return null this time so the user is notified,
+		//but add a dummy builder to the list so errors don't occur in all subsequent builds.
+		result = new MissingBuilder(builderName);
+		((InternalBuilder) result).setProject(project);		
+		builders.put(builderName, result);
 		return null;
+	}
 	builders.put(builderName, result);
 	((InternalBuilder) result).setProject(project);
 	((InternalBuilder) result).startupOnInitialize();
@@ -338,7 +366,7 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 			if (e instanceof OperationCanceledException)
 				throw (OperationCanceledException) e;
 			//ResourceStats.buildException(e);
-			// don't log the exception....it is already being logged in Workspace#run
+			// don't log the exception....it is already being logged in Platform#run
 			if (e instanceof CoreException)
 				status.add(((CoreException) e).getStatus());
 			else {
@@ -346,7 +374,7 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 				String message = e.getMessage();
 				if (message == null)
 					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
-				status.add(new Status(Status.WARNING, pluginId, IResourceStatus.INTERNAL_ERROR, message, e));
+				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 			}
 		}
 	};
