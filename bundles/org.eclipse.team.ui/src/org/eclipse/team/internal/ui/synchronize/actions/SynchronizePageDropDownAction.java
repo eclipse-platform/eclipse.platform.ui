@@ -35,8 +35,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		public SynchronizePageDropDownAction(ISynchronizeView view) {
 			fView= view;
 			Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
-			setMenuCreator(this);
-			TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);			
+			setMenuCreator(this);		
 			update();
 		}
 
@@ -46,9 +45,8 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		public void dispose() {
 			if (fMenu != null) {
 				fMenu.dispose();
+				fMenu = null;
 			}
-		
-			fView= null;
 			TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
 		}
 
@@ -75,6 +73,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 				action.setChecked(page.equals(current));
 				addActionToMenu(fMenu, action);
 			}
+			TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);	
 			return fMenu;
 		}
 	
