@@ -22,6 +22,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
@@ -400,8 +401,24 @@ public class RemoteFolderTreeBuilder {
 				false
 				);
 		} catch (CVSServerException e) {
-			if (!expectError[0])
+			if ( ! RemoteFolder.isNoTagException(errors) && ! expectError[0])
 				throw e;
+				// we now know that this is an exception caused by a cvs bug.
+				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
+				// workaround: retry the request with no tag to get the directory names (if any)
+			Policy.checkCanceled(monitor);
+			Client.execute(
+				Client.UPDATE,
+				new String[] {"-n"}, 
+				Client.EMPTY_ARGS_LIST,
+				new String[] {localPath.toString()}, 
+				remoteRoot,
+				monitor,
+				getPrintStream(),
+				connection,
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				false
+				);
 		}
 	}
 	

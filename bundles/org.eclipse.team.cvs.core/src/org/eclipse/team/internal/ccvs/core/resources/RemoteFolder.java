@@ -405,7 +405,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * Return true if the exception from the cvs server is the no tag error, and false
 	 * otherwise.
 	 */
-	protected boolean isNoTagException(List errors) {
+	public static boolean isNoTagException(List errors) {
 		if (errors.size() != 1)
 			return false;
 		if (((IStatus)errors.get(0)).getMessage().startsWith("cvs [server aborted]: no such tag"))
