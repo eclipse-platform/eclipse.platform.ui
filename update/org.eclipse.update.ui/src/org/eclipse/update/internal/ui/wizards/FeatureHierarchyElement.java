@@ -293,9 +293,9 @@ public class FeatureHierarchyElement {
 				}
 				// test if the old optional feature exists
 				if (oldRef != null
-					&& (oldRef instanceof IIncludedFeatureReference
+					&& ((oldRef instanceof IIncludedFeatureReference
 						&& ((IIncludedFeatureReference) oldRef).isOptional())
-					|| patch) {
+					|| patch)) {
 					try {
 						IFeature f = oldRef.getFeature(null);
 						if (f==null) oldRef = null;

@@ -490,10 +490,19 @@ public class MultiInstallWizard extends Wizard {
 		IConfiguredSite targetSite,
 		ArrayList result)
 		throws CoreException {
-		IFeatureReference[] included = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] included = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < included.length; i++) {
-			IFeatureReference iref = included[i];
-			IFeature ifeature = iref.getFeature(null);
+			IIncludedFeatureReference iref = included[i];
+			
+			IFeature ifeature;
+			
+			try {
+				ifeature = iref.getFeature(null);
+			}
+			catch (CoreException e) {
+				if (iref.isOptional()) continue;
+				throw e;
+			}
 			// find other features and unconfigure
 			String id = iref.getVersionedIdentifier().getIdentifier();
 			IFeature[] sameIds =
