@@ -19,13 +19,13 @@ public class ShowTargetViewerAction extends Action {
 	private AntView antView;
 
 	public ShowTargetViewerAction(AntView view) {
-		super("Show Activated Target View");
+		super(AntViewActionMessages.getString("ShowTargetViewerAction.Show")); //$NON-NLS-1$
 		setAntView(view);
-		setToolTipText("Show Activated Target View"); 
+		setToolTipText(AntViewActionMessages.getString("ShowTargetViewerAction.Show"));  //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE));
-		setId(IExternalToolConstants.PLUGIN_ID + ".ShowTargetViewerAction"); 
+		setId(IExternalToolConstants.PLUGIN_ID + ".ShowTargetViewerAction");  //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION);
 	}
 
