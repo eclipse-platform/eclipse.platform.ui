@@ -102,11 +102,14 @@ public void testSaveParticipant() {
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);
 	IResource file = project.getFile("addedFile");
 	plugin2.addExpectedChange(file, IResourceDelta.ADDED, 0);
+	
 	// Project2 changes
 	project = getWorkspace().getRoot().getProject(PROJECT_2);
 	plugin2.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.OPEN);
 	file = project.getFile("addedFile");
 	plugin2.addExpectedChange(file, project, IResourceDelta.ADDED, 0);
+	IResource prjFile = project.getFile(".project");
+	plugin2.addExpectedChange(prjFile, IResourceDelta.ADDED, 0);
 	IResource[] resources = buildResources(project, defineHierarchy(PROJECT_2));
 	plugin2.addExpectedChange(resources, IResourceDelta.ADDED, 0);
 	//
