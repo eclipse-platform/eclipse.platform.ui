@@ -85,11 +85,11 @@ public class Activity {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;        
-        if (enabled && parent != null) {
-            Activity parentActivity = RoleManager.getInstance().getActivity(parent);
-            if (parentActivity != null) {
-                parentActivity.setEnabled(enabled);
-            }
-        }
+//        if (enabled && parent != null) {
+//            Activity parentActivity = RoleManager.getInstance().getActivity(parent);
+//            if (parentActivity != null) {
+//                parentActivity.setEnabled(enabled);
+//            }
+//        }
 	}
 }
