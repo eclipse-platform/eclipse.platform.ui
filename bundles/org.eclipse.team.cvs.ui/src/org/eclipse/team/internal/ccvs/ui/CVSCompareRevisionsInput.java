@@ -5,11 +5,13 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
@@ -31,6 +33,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -74,6 +77,54 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	Action getContentsAction;
 	Action getRevisionAction;
 	Shell shell;
+	
+	class TypedBufferedContent extends ResourceNode {
+		public TypedBufferedContent(IFile resource) {
+			super(resource);
+		}
+		protected InputStream createStream() throws CoreException {
+			return ((IFile)getResource()).getContents();
+		}
+		public void setContent(byte[] contents) {
+			if (contents == null) contents = new byte[0];
+			final InputStream is = new ByteArrayInputStream(contents);
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						IFile file = resource;
+						if (is != null) {
+							if (!file.exists()) {
+								file.create(is, false, monitor);
+							} else {
+								file.setContents(is, false, true, monitor);
+							}
+						} else {
+							file.delete(false, true, monitor);
+						}
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			};
+			try {
+				new ProgressMonitorDialog(shell).run(false, false, runnable);
+			} catch (InvocationTargetException e) {
+				CoreException targetException;
+				if (e.getTargetException() instanceof CoreException) {
+					targetException = (CoreException)e.getTargetException();
+				} else {
+					targetException = new CoreException(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e.getTargetException())); //$NON-NLS-1$
+				}
+				ErrorDialog.openError(CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", resource.getName()), null, targetException.getStatus()); //$NON-NLS-1$
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+			fireContentChanged();
+		}	
+		public ITypedElement replace(ITypedElement child, ITypedElement other) {
+			return null;
+		}
+	}
 	
 	/**
 	 * This class is an edition node which knows the log entry it came from.
@@ -434,7 +485,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		initLabels();
 		DiffNode diffRoot = new DiffNode(Differencer.NO_CHANGE);
 		for (int i = 0; i < editions.length; i++) {		
-			ITypedElement left = new ResourceNode(resource);
+			ITypedElement left = new TypedBufferedContent(resource);
 			ITypedElement right = new ResourceRevisionNode(editions[i]);
 			diffRoot.add(new VersionCompareDiffNode(left, right));
 		}
