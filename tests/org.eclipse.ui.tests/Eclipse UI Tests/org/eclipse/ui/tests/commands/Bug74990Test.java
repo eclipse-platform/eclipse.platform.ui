@@ -59,7 +59,6 @@ public final class Bug74990Test extends UITestCase {
                 .getCommandSupport();
         final ICommand testCommand = commandSupport.getCommandManager()
                 .getCommand(testCommandId);
-        System.out.println("command is defined = " + testCommand.isDefined());
 
         // Create a handler submission.
         final IHandler handler = new AbstractHandler() {
@@ -92,7 +91,6 @@ public final class Bug74990Test extends UITestCase {
                     testCommand.isHandled());
 
             // Hide the view, and test that is becomes unhandled again.
-            System.out.println("Hiding");
             page.hideView(openedView);
             while (fWorkbench.getDisplay().readAndDispatch());
             assertTrue("The MockViewPart command should not be handled",
