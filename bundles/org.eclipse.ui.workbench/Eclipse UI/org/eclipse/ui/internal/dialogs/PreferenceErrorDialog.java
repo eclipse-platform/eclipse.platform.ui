@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.*;
  * A dialog to show an error while giving the user the option to continue.
  */
 public class PreferenceErrorDialog extends ErrorDialog {
-	private Button detailsButton;
 	private IStatus status;
 	/**
 	 * Create a new instance of the dialog

@@ -37,28 +37,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private boolean openAfterDelay;
 
 	/**
-	 * Creates composite control and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @return the newly-created coposite
-	 */
-	private Composite createComposite(Composite parent, int numColumns) {
-		Composite composite = new Composite(parent, SWT.NULL);
-
-		// GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		composite.setLayout(layout);
-
-		// GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
-		return composite;
-	}
-	/**
 	 *	Create this page's visual contents
 	 *
 	 *	@return org.eclipse.swt.widgets.Control

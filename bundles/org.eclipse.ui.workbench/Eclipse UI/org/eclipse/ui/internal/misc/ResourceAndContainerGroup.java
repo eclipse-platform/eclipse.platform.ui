@@ -61,7 +61,6 @@ public class ResourceAndContainerGroup implements Listener {
 
 	// widgets
 	private ContainerSelectionGroup containerGroup;
-	private Button browseButton;
 	private Text resourceNameField;
 
 	// constants

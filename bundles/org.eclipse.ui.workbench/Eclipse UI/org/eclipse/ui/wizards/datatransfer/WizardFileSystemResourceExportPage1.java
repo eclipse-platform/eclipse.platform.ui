@@ -34,7 +34,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 	// constants
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int	COMBO_HISTORY_LENGTH = 5;
 
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID =
@@ -43,8 +42,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 		"WizardFileSystemResourceExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";//$NON-NLS-1$
 	private static final String STORE_CREATE_STRUCTURE_ID =
 		"WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID";//$NON-NLS-1$
-	private static final String STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID =
-		"WizardFileSystemResourceExportPage1.STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID";//$NON-NLS-1$
 	//messages
 	private static final String DESTINATION_EMPTY_MESSAGE = DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
 	private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.getString("DataTransfer.selectDestination"); //$NON-NLS-1$

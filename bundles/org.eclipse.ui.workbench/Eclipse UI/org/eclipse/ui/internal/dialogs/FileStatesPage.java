@@ -178,13 +178,6 @@ public class FileStatesPage
 		return composite;
 	}
 	/**
-	 * Get the Workspace this page is operating on.
-	 * @return org.eclipse.core.internal.resources.IWorkspace
-	 */
-	private IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-	/**
 	 * Get the Workspace Description this page is operating on.
 	 * @return org.eclipse.core.resources.IWorkspaceDescription
 	 */

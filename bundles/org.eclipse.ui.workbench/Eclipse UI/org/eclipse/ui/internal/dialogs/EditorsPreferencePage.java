@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
@@ -74,7 +73,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	// TODO: editor tabs 
 //	private IntegerFieldEditor numberEditorTabs;
-	private Button editorTabSpanMultipleLines;
 	
 	// editor tab appearance
 	private Group editorTabCompressionGroup;
@@ -93,11 +91,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private static final int REUSE_INDENT = 10;
 
 	private IntegerFieldEditor recentFilesEditor;
-
-	// hashtable mapping accelerator configuration names to accelerator configuration
-	private Hashtable namesToConfiguration;
-	// the name of the active accelerator configuration
-	private String activeAcceleratorConfigurationName;
 			
 	private IPropertyChangeListener validityChangeListener =
 		new IPropertyChangeListener() {

@@ -43,7 +43,6 @@ public class ResourceInfoPage extends PropertyPage {
 	private boolean previousDerivedValue;
 	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
 	private static String DERIVED = WorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
-	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
 	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
 	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
 	private static String RESOLVED_LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.resolvedLocation"); //$NON-NLS-1$

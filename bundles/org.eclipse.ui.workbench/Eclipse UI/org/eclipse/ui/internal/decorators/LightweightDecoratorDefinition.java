@@ -32,7 +32,6 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 	private ILightweightLabelDecorator decorator;
 	private int quadrant;
 	private String iconLocation;
-	private String decoratorClass;
 
 	LightweightDecoratorDefinition(
 		String identifier,

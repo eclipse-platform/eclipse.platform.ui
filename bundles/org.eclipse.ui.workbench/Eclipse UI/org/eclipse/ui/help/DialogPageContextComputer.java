@@ -98,15 +98,7 @@ public Object[] computeContexts(HelpEvent event) {
 	// Return the contexts
 	return contextList.toArray();
 }
-/**
- * Returns the context set on this page.
- *
- * @return the context set on this page. (type <code>String</code>) or
- *  help context object (type <code>IContext</code>)
- */
-private Object getContext() {
-	return context;
-}
+
 /* (non-Javadoc)
  * Method declared on IContextComputer.
  */

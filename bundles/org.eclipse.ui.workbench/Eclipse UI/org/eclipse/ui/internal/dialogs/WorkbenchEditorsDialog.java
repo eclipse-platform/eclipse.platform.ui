@@ -50,7 +50,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private int columnsWidth[];
 	
 	private static final String SORT = "sort"; //$NON-NLS-1$
-	private static final String HISTORY = "history"; //$NON-NLS-1$
 	private static final String ALLPERSP = "allPersp"; //$NON-NLS-1$
 	private static final String BOUNDS = "bounds"; //$NON-NLS-1$
 	private static final String COLUMNS = "columns"; //$NON-NLS-1$

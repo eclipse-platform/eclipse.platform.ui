@@ -23,7 +23,6 @@ public class FontDefinition {
 
 	private String label;
 	private String id;
-	private String registryKey;
 	private String defaultsTo;
 	private String description;
 

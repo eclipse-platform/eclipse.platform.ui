@@ -94,33 +94,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 public PreferencePageRegistryReader(IWorkbench newWorkbench) {
 	workbench = newWorkbench;
 }
-/**
- * Given the category of the node, tokenize it into
- * individual node ids and substitute these IDs
- * with node labels (if node with the matching ID
- * is found). 
- */
-private String computeNamePath(WorkbenchPreferenceNode node) {
-	String category = node.getCategory();
-	if (category == null)
-		return null;
-	StringBuffer sb = new StringBuffer();
-	StringTokenizer stok = new StringTokenizer(category, PREFERENCE_SEPARATOR);
-	WorkbenchPreferenceNode immediateParent=null;
-	while (stok.hasMoreTokens()) {
-		String pathID = stok.nextToken();
-		immediateParent = findNode(pathID);
-		if (immediateParent == null) {
-			// Cannot find the parent - ignore category
-			return null;
-		}
-		if (sb.length() > 0) {
-			sb.append(PREFERENCE_SEPARATOR);
-		}
-		sb.append(immediateParent.getLabelText());
-	}
-	return sb.toString();
-}
+
 /**
  * Searches for the top-level node with the given id.
  */

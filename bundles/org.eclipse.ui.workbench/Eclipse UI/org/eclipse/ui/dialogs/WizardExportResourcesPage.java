@@ -62,10 +62,6 @@ public abstract class WizardExportResourcesPage
 
 	// widgets
 	private ResourceTreeAndListGroup resourceGroup;
-	private Button typesToExportEditButton;
-
-	// dialog store id constants
-	private static final String STORE_SELECTED_TYPES_ID = "WizardFileSystemExportPage1.STORE_SELECTED_TYPES_ID."; //$NON-NLS-1$
 
 	private final static String SELECT_TYPES_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectTypes"); //$NON-NLS-1$
 	private final static String SELECT_ALL_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectAll"); //$NON-NLS-1$

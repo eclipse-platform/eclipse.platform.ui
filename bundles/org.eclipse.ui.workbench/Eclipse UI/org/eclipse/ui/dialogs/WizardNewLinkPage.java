@@ -44,7 +44,6 @@ public class WizardNewLinkPage extends WizardPage {
 	private IContainer container;
 
 	// widgets
-	private Button linkButton;
 	private Text linkTargetField;
 	private Button browseButton;
 	private Button variablesButton;

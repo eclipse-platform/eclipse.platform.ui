@@ -34,14 +34,11 @@ class WizardZipFileResourceImportPage1
 	ZipFileStructureProvider currentProvider;
 
 	// constants
-	private static final int COMBO_HISTORY_LENGTH = 5;
 	private static final String FILE_IMPORT_MASK = "*.jar;*.zip";//$NON-NLS-1$
 
 	// dialog store id constants
 	private final static String STORE_SOURCE_NAMES_ID =
 		"WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
-	private final static String STORE_IMPORT_ALL_RESOURCES_ID =
-		"WizardZipFileResourceImportPage1.STORE_IMPORT_ALL_ENTRIES_ID";//$NON-NLS-1$
 	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID =
 		"WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
 	private final static String STORE_SELECTED_TYPES_ID =

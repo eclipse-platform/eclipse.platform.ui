@@ -32,7 +32,6 @@ import org.eclipse.ui.dialogs.FileSystemElement;
 	private ZipFileStructureProvider providerCache;
 
 	// constants
-	private static final int	COMBO_HISTORY_LENGTH = 5;
 	private static final String	FILE_IMPORT_MASK = "*.jar;*.zip";//$NON-NLS-1$
 	
 	// dialog store id constants

@@ -4,7 +4,6 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
@@ -31,7 +30,6 @@ public abstract class WorkbenchWizardListSelectionPage extends WorkbenchWizardSe
 	// id constants
 	private static final String STORE_SELECTED_WIZARD_ID = "WizardListSelectionPage.STORE_SELECTED_WIZARD_ID";//$NON-NLS-1$
 	private final static int SIZING_LISTS_HEIGHT = 200;
-	private final static int SIZING_LISTS_WIDTH = 150;
 /**
  * Creates a <code>WorkbenchWizardListSelectionPage</code>.
  *

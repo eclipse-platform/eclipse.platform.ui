@@ -14,7 +14,6 @@ Contributors:
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -36,9 +35,6 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * @see ContainerGenerator
  */
 public class SaveAsDialog extends TitleAreaDialog {
-	private IStructuredSelection currentSelection;
-	private IContainer currentParent;
-	private int lastContainerSegmentCount = 0;
 	private IFile originalFile = null;
 	private String originalName = null;
 	private IPath result;

@@ -54,7 +54,6 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 	private IStructuredSelection currentSelection;
-	private IContainer currentParent;
 
 	private IFolder newFolder;
 	// link target location

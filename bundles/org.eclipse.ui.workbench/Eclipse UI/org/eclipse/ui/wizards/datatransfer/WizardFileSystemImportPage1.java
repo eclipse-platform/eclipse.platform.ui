@@ -42,8 +42,6 @@ import org.eclipse.ui.dialogs.*;
 	
 	// constants
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int	SIZING_LIST_HEIGHT = 150;
-	private static final int	COMBO_HISTORY_LENGTH = 5;
 	private static final String TYPE_DELIMITER = DataTransferMessages.getString("DataTransfer.typeDelimiter"); //$NON-NLS-1$
 
 	// dialog store id constants

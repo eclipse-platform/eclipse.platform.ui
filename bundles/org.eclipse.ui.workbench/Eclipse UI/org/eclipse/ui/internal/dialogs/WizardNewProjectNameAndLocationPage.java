@@ -85,7 +85,6 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int SIZING_INDENTATION_WIDTH = 10;
 	
 	/**
 	 * Creates a new project creation wizard page.

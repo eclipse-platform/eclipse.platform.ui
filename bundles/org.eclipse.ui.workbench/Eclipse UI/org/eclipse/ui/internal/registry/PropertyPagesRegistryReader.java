@@ -22,7 +22,6 @@ public class PropertyPagesRegistryReader extends RegistryReader {
 	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
 	private static final String TAG_PAGE = "page";//$NON-NLS-1$
-	private static final String TAG_CONTRIBUTOR = "contributor";//$NON-NLS-1$
 	private static final String TAG_FILTER="filter";//$NON-NLS-1$
 	private static final String ATT_NAME = "name";//$NON-NLS-1$
 	private static final String ATT_ID = "id";//$NON-NLS-1$
@@ -55,30 +54,7 @@ private void processChildElement(IConfigurationElement element) {
 		filterProperties.put(key, value);
 	}
 }
-/**
- * Reads dynamic (contributor-based) property page specification.
- */
-private void processContributorElement(IConfigurationElement element) {
-	String contributorClassName = element.getAttribute(ATT_CLASS);
-	String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-	if (objectClassName == null || contributorClassName == null) {
-		// cannot safely open dialog so log the problem
-		WorkbenchPlugin.log(
-			"Unable to create property page contributor. Object class or contributor class are not specified."//$NON-NLS-1$
-		);
-		return;
-	}
-	IPropertyPageContributor contributor;
-	try {
-		contributor = (IPropertyPageContributor)WorkbenchPlugin.createExtension(
-			element, ATT_CLASS);
-	} catch (CoreException e) {
-		// cannot safely open dialog so log the problem
-		WorkbenchPlugin.log("Unable to create property page contributor.",e.getStatus());//$NON-NLS-1$
-		return;
-	}
-	registerContributor(objectClassName, contributor);
-}
+
 /**
  * Reads static property page specification.
  */

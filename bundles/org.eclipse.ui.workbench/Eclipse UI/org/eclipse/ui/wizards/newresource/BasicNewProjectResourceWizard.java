@@ -90,7 +90,6 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	 */
 	private IConfigurationElement configElement;
 
-	private static String PAGE_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningPage"); //$NON-NLS-1$
 	private static String WINDOW_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
 
 	/**
@@ -279,40 +278,6 @@ protected void initializeDefaultPageImageDescriptor() {
 	}
 	catch (MalformedURLException e) {
 		// Should not happen.  Ignore.
-	}
-}
-/* (non-Javadoc)
- * Opens a new page with a particular perspective and input.
- */
-private static void openInNewPage(IPerspectiveDescriptor desc) {
-
-	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	if (window == null)
-		return;
-
-	// If the active perspective is the same, then reuse it
-	IWorkbenchPage page = window.getActivePage();
-	if (page != null) {
-		IPerspectiveDescriptor persp = page.getPerspective();
-		if (persp != null && persp.getId().equals(desc.getId()))
-			return;
-	}
-
-	// If the perspective is already open, then reuse it.
-	IWorkbenchPage[] pages = window.getPages();
-	for (int i = 0; i < pages.length; i++) {
-		IPerspectiveDescriptor persp = pages[i].getPerspective();
-		if (persp != null && persp.getId().equals(desc.getId())) {
-			window.setActivePage(pages[i]);
-			return;
-		}
-	}
-
-	// Open the page.
-	try {
-		window.openPage(desc.getId(), ResourcesPlugin.getWorkspace().getRoot());
-	} catch (WorkbenchException e) {
-		ErrorDialog.openError(window.getShell(), PAGE_PROBLEMS_TITLE, e.getMessage(), e.getStatus());
 	}
 }
 /* (non-Javadoc)

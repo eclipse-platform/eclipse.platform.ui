@@ -327,34 +327,6 @@ public class DecoratorManager
 	}
 
 	/**
-	* Returns the class search order starting with <code>extensibleClass</code>.
-	* The search order is defined in this class' comment.
-	*/
-	private Vector computeClassOrder(Class extensibleClass) {
-		Vector result = new Vector(4);
-		Class clazz = extensibleClass;
-		while (clazz != null) {
-			result.addElement(clazz);
-			clazz = clazz.getSuperclass();
-		}
-		return result;
-	}
-	/**
-	 * Returns the interface search order for the class hierarchy described
-	 * by <code>classList</code>.
-	 * The search order is defined in this class' comment.
-	 */
-	private List computeInterfaceOrder(List classList) {
-		List result = new ArrayList(4);
-		Map seen = new HashMap(4);
-		for (Iterator list = classList.iterator(); list.hasNext();) {
-			Class[] interfaces = ((Class) list.next()).getInterfaces();
-			internalComputeInterfaceOrder(interfaces, result, seen);
-		}
-		return result;
-	}
-
-	/**
 	 * Add interface Class objects to the result list based
 	 * on the class hierarchy. Interfaces will be searched
 	 * based on their position in the result list.

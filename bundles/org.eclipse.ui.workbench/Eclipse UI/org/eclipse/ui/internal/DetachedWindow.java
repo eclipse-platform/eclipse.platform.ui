@@ -17,9 +17,7 @@ import java.util.List;
 
 public class DetachedWindow extends Window {
 
-	private static int fgCount= 0;
 	private PartTabFolder folder;
-	private int fID;
 	private WorkbenchPage page;
 	
 	//Keep the state of a DetachedWindow when switching perspectives.

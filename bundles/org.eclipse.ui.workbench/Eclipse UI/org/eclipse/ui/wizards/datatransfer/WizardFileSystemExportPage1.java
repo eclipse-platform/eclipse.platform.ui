@@ -32,8 +32,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
 
 	// constants
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int	COMBO_HISTORY_LENGTH = 5;
-
+	
 	// dialog store id constants
 	private static final String	STORE_DESTINATION_NAMES_ID = "WizardFileSystemExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
 	private static final String	STORE_OVERWRITE_EXISTING_FILES_ID = "WizardFileSystemExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";//$NON-NLS-1$

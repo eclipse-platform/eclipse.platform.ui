@@ -56,7 +56,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	// widgets
 	private Text projectNameField;
 	private Text locationPathField;
-	private Label locationLabel;
 	private Button browseButton;
 	private IProjectDescription description;
 
@@ -68,7 +67,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int SIZING_INDENTATION_WIDTH = 10;
 	/**
 	 * Creates a new project creation wizard page.
 	 *

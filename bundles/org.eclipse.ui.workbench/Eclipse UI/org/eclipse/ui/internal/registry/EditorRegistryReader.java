@@ -17,11 +17,9 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class EditorRegistryReader extends RegistryReader {
 	
-	private static final    String      PARAMETER_SEPARATOR = ",";//$NON-NLS-1$
 	private static final    String      ATT_CLASS = "class";//$NON-NLS-1$
 	private static final    String      ATT_NAME = "name";//$NON-NLS-1$
 	private static final    String      TAG_EDITOR = "editor";//$NON-NLS-1$
-	private static final    String      P_EXTERNAL = "external";//$NON-NLS-1$
 	private static final    String      P_TRUE = "true";//$NON-NLS-1$
 	private static final    String      ATT_COMMAND = "command";//$NON-NLS-1$
 	private static final    String      ATT_LAUNCHER = "launcher";//$NON-NLS-1$

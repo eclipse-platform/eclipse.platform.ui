@@ -38,7 +38,6 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Button internalButton;
 	private Button okButton;
 	private Button cancelButton;
-	private static final String EditorSelectionDialog = "FileSystemExportPage1.CreateDirectoriesForSelectedContainers";//$NON-NLS-1$
 	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 	private String message = WorkbenchMessages.getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
 	// collection of IEditorDescriptor
