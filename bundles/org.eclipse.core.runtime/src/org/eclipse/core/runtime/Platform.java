@@ -89,11 +89,11 @@ public final class Platform {
 	public static final int MIN_PERFORMANCE = 1;
 
 	/** 
-	 * Constant (value 3) indicating the maximum allowed value for the 
+	 * Constant (value 5) indicating the maximum allowed value for the 
 	 * <code>PREF_PLATFORM_PERFORMANCE</code> preference setting.
 	 * @since 3.0
 	 */
-	public static final int MAX_PERFORMANCE = 3;
+	public static final int MAX_PERFORMANCE = 5;
 
 	/** 
 	 * Status code constant (value 1) indicating a problem in a plug-in
