@@ -858,15 +858,21 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			//double check if the tree has actually changed
 			if (hasTreeChanges)
 				hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
-			autoBuildJob.endTopLevel(hasTreeChanges);
 
-			broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
-			if (isAutoBuilding() && autoBuildJob.shouldBuild())
-				getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-			broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
+			if (!Policy.BACKGROUND_BUILD) {
+				autoBuildJob.endTopLevel(hasTreeChanges);
+				if (autoBuildJob.shouldBuild()) {
+					IStatus result = autoBuildJob.run(Policy.subMonitorFor(monitor, Policy.opWork));
+					switch (result.getSeverity()) {
+						case IStatus.CANCEL :
+							throw new OperationCanceledException();
+						case IStatus.ERROR :
+						case IStatus.WARNING :
+							throw new CoreException(result);
+					}
+				}
+			}
 			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
-
-			tree.immutable();
 			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			saveManager.snapshotIfNeeded(hasTreeChanges);
 		} finally {
@@ -877,6 +883,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	} finally {
 		workManager.checkOut();
 	}
+	if (Policy.BACKGROUND_BUILD)
+		autoBuildJob.endTopLevel(hasTreeChanges);
 }
 
 /**
@@ -1425,17 +1433,6 @@ public Resource newResource(IPath path, int type) {
 	return null;
 }
 /**
- * Returns a new scheduling rule on a resource.  Two resource scheduling rules
- * will be conflicting if and only if the resource of one rule is a child of, or equal to,
- *  the resource of the other rule.
- * 
- * @return a resource scheduling rule
- * @deprecated IResource now extends ISchedulingRule
- */
-public ISchedulingRule newSchedulingRule(IResource resource) {
-	return resource;
-}
-/**
  * Opens a new mutable element tree layer, thus allowing 
  * modifications to the tree.
  */
@@ -1591,7 +1588,7 @@ public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonito
  * @see IWorkspace#run
  */
 public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreException {
-	run(job, newSchedulingRule(getRoot()), monitor);
+	run(job, defaultRoot, monitor);
 }
 /** 
  * @see IWorkspace

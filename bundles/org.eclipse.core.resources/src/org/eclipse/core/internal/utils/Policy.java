@@ -70,37 +70,42 @@ public class Policy {
 	public static boolean DEBUG_SAVE_METAINFO = false;
 	public static boolean DEBUG_SAVE_SNAPSHOTS = false;
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
+	
+	//temporary debug flag for background build
+	public static boolean BACKGROUND_BUILD = false;
 
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
 		
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
-			DEBUG_BUILD_FAILURE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_NEEDS_BUILD = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_BUILD_INVOKING = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_BUILD_DELTA = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_NATURES = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_HISTORY = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ //$NON-NLS-2$
+			String sTrue = Boolean.TRUE.toString();
+			DEBUG_BUILD_FAILURE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure")); //$NON-NLS-1$ 
+			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
+			DEBUG_BUILD_INVOKING = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ 
+			DEBUG_BUILD_DELTA = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ 
+			BACKGROUND_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/background")); //$NON-NLS-1$ 
+			DEBUG_NATURES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ 
+			DEBUG_HISTORY = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ 
 
-			MONITOR_BUILDERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/builders")); //$NON-NLS-1$ //$NON-NLS-2$
-			MONITOR_LISTENERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/listeners")); //$NON-NLS-1$ //$NON-NLS-2$
+			MONITOR_BUILDERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/builders")); //$NON-NLS-1$ 
+			MONITOR_LISTENERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/listeners")); //$NON-NLS-1$ 
 			
-			DEBUG_RESTORE_MARKERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/markers")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE_SYNCINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/syncinfo")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE_TREE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/tree")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE_METAINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/metainfo")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE_SNAPSHOTS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/snapshots")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE_MASTERTABLE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/mastertable")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_RESTORE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_MARKERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/markers")); //$NON-NLS-1$ 
+			DEBUG_RESTORE_SYNCINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/syncinfo")); //$NON-NLS-1$ 
+			DEBUG_RESTORE_TREE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/tree")); //$NON-NLS-1$ 
+			DEBUG_RESTORE_METAINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/metainfo")); //$NON-NLS-1$ 
+			DEBUG_RESTORE_SNAPSHOTS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/snapshots")); //$NON-NLS-1$ 
+			DEBUG_RESTORE_MASTERTABLE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/mastertable")); //$NON-NLS-1$ 
+			DEBUG_RESTORE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore")); //$NON-NLS-1$ 
 
-			DEBUG_SAVE_MARKERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/markers")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE_SYNCINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/syncinfo")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE_TREE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/tree")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE_METAINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/metainfo")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE_SNAPSHOTS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/snapshots")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE_MASTERTABLE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/mastertable")); //$NON-NLS-1$ //$NON-NLS-2$
-			DEBUG_SAVE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_SAVE_MARKERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/markers")); //$NON-NLS-1$ 
+			DEBUG_SAVE_SYNCINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/syncinfo")); //$NON-NLS-1$ 
+			DEBUG_SAVE_TREE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/tree")); //$NON-NLS-1$ 
+			DEBUG_SAVE_METAINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/metainfo")); //$NON-NLS-1$ 
+			DEBUG_SAVE_SNAPSHOTS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/snapshots")); //$NON-NLS-1$ 
+			DEBUG_SAVE_MASTERTABLE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/mastertable")); //$NON-NLS-1$ 
+			DEBUG_SAVE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save")); //$NON-NLS-1$ 
 		}
 	}
 	

@@ -761,24 +761,6 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
  * @see IProject#move
  */
 public IProjectDescription newProjectDescription(String projectName);
-/**
- * Returns a new scheduling rule on a resource.  Two resource scheduling rules
- * will be conflicting if and only if the resource of one rule is a child of, or equal to,
- *  the resource of the other rule.
- * <p>
- * Resource scheduling rules can be attached to <code>WorkspaceJob</code>
- * subclasses, or can be used when batching changes with the method
- * <code>Workspace.run</code>.
- * 
- * @return a resource scheduling rule
- * @see WorkspaceJob
- * @see #run
- * @since 3.0
- * @deprecated IResource now extends ISchedulingRule
- */
-public ISchedulingRule newSchedulingRule(IResource resource);
-
-
 /** 
  * Removes the given resource change listener from this workspace.
  * Has no effect if an identical listener is not registered.
