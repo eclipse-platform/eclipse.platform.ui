@@ -374,9 +374,11 @@ class TableContentProvider implements IStructuredContentProvider {
 						lock.release();
 					}
 					
-					uiJob.schedule();
-					// Wait for the current update job to complete before scheduling another
-					uiJob.join();					
+					if (uiJob.shouldSchedule()) {
+						uiJob.schedule();
+						// Wait for the current update job to complete before scheduling another
+						uiJob.join();				
+					}
 					
 					// Estimate how much of the remaining work we'll be doing in this update,
 					// and update the progress bar appropriately.
@@ -393,8 +395,10 @@ class TableContentProvider implements IStructuredContentProvider {
 				}
 			}
 		} finally {			
-			enableUpdatesJob.schedule();
-			enableUpdatesJob.join();
+			if (enableUpdatesJob.shouldSchedule()) {
+				enableUpdatesJob.schedule();
+				enableUpdatesJob.join();
+			}
 			
 			monitor.done();
 		}	
