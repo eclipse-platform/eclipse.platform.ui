@@ -1780,7 +1780,7 @@ protected void onActivate() {
 		persp.onActivate();
 		updateVisibility(null,persp);
 	}
-	if (activePart == null) {
+	if (activePart == null && persp != null) {
 		IViewReference refs[] = persp.getViewReferences();
 		for (int i = 0; i < refs.length; i++) {
 			IViewReference ref = refs[i];
