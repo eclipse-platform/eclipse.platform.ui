@@ -17,10 +17,10 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 
 final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 
+	private final static String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	private final static String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
-	private final static String ATTRIBUTE_TOOLTIP = "tooltip"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	private final static String ELEMENT_ACTION_DEFINITION = "actionDefinition"; //$NON-NLS-1$
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 	
@@ -66,18 +66,18 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	private boolean readActionDefinition(IConfigurationElement element) {
 		String id = element.getAttribute(ATTRIBUTE_ID);
-		String name = element.getAttribute(ATTRIBUTE_LABEL);
-		String description = element.getAttribute(ATTRIBUTE_TOOLTIP);
+		String name = element.getAttribute(ATTRIBUTE_NAME);
+		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
 		String icon = element.getAttribute(ATTRIBUTE_ICON);
 			
 		if (id == null)
 			logMissingAttribute(element, ATTRIBUTE_ID);
 		
 		if (name == null)
-			logMissingAttribute(element, ATTRIBUTE_LABEL);
+			logMissingAttribute(element, ATTRIBUTE_NAME);
 		
 		if (description == null)
-			logMissingAttribute(element, ATTRIBUTE_TOOLTIP);
+			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
 
 		String plugin = getPlugin(element);
 		Action action = Action.create(id, name, description, icon, plugin);
