@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see Platform#getContentTypeManager()
+ * @see org.eclipse.core.runtime.Platform#getContentTypeManager()
  * @since 3.0
  */
 public interface IContentTypeManager {
