@@ -404,6 +404,17 @@ public boolean setGrayed(Object element, boolean state) {
 	}
 	return false;
 }
+
+public boolean setGrayChecked(Object element, boolean grayState, boolean checkState) {
+	Widget widget = internalExpand(element, false);
+	if (widget instanceof TreeItem) {
+		((TreeItem) widget).setChecked(checkState);
+		((TreeItem) widget).setGrayed(grayState);
+		return true;
+	}
+	return false;
+}
+
 /**
  * Sets which elements are grayed in this viewer's tree.
  * The given list contains the elements that are to be grayed;
