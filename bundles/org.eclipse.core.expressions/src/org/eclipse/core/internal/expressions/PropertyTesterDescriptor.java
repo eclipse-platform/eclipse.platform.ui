@@ -12,7 +12,9 @@ package org.eclipse.core.internal.expressions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.expressions.IPropertyTester;
 
@@ -28,11 +30,23 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 	private static final String NAMESPACE= "namespace"; //$NON-NLS-1$
 	private static final String CLASS= "class";  //$NON-NLS-1$
 	
-	public PropertyTesterDescriptor(IConfigurationElement element) {
+	public PropertyTesterDescriptor(IConfigurationElement element) throws CoreException {
 		fConfigElement= element;
 		fNamespace= fConfigElement.getAttribute(NAMESPACE);
+		if (fNamespace == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+				IStatus.ERROR, 
+				ExpressionMessages.getString("PropertyTesterDescriptor.no_namespace"), //$NON-NLS-1$
+				null));
+		}
 		StringBuffer buffer= new StringBuffer(","); //$NON-NLS-1$
 		String properties= element.getAttribute(PROPERTIES);
+		if (properties == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+				IStatus.ERROR, 
+				ExpressionMessages.getString("PropertyTesterDescritpri.no_properties"), //$NON-NLS-1$
+				null));
+		}
 		for (int i= 0; i < properties.length(); i++) {
 			char ch= properties.charAt(i);
 			if (!Character.isWhitespace(ch))

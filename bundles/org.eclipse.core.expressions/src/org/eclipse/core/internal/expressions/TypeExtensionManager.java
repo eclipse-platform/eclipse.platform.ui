@@ -33,6 +33,24 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	
 	private static final IPropertyTester[] EMPTY_PROPERTY_TESTER_ARRAY= new IPropertyTester[0];
 	
+	private static final IPropertyTester NULL_PROPERTY_TESTER= new IPropertyTester() {
+		public boolean handles(String namespace, String property) {
+			return false;
+		}
+		public boolean isInstantiated() {
+			return true;
+		}
+		public boolean isDeclaringPluginActive() {
+			return true;
+		}
+		public IPropertyTester instantiate() throws CoreException {
+			return this;
+		}
+		public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+			return false;
+		}
+	};
+	
 	/*
 	 * Map containing all already created type extension object. 
 	 */
@@ -143,7 +161,12 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			IPropertyTester[] result= new IPropertyTester[typeConfigs.size()];
 			for (int i= 0; i < result.length; i++) {
 				IConfigurationElement config= (IConfigurationElement)typeConfigs.get(i);
-				result[i]= new PropertyTesterDescriptor(config);
+				try {
+					result[i]= new PropertyTesterDescriptor(config);
+				} catch (CoreException e) {
+					ExpressionPlugin.getDefault().getLog().log(e.getStatus());
+					result[i]= NULL_PROPERTY_TESTER;
+				}
 			}
 			fConfigurationElementMap.remove(typeName);
 			return result;
