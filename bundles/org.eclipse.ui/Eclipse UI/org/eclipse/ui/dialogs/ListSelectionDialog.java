@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *       getShell(),
  *       input,
  *       new WorkbenchContentProvider(),
- *		 new WorkbenchPartLabelProvider(),
+ *		 new WorkbenchLabelProvider(),
  *		 "Select the resources to save.");
  *	dlg.setInitialSelections(dirtyEditors);
  *	dlg.setTitle("Save Resources");
