@@ -587,9 +587,9 @@ public ISynchronizer getSynchronizer();
  */
 public boolean isAutoBuilding();
 /**
- * Returns whether the workspace tree is currently locked. If locked, any
- * attempts at performing an operation which modifies the workspace tree
- * will fail.
+ * Returns whether the workspace tree is currently locked. Resource changes 
+ * are disallowed during certain types of resource change event notification. 
+ * See IResourceChangeEvent for more details.
  * 
  * @return boolean <code>true</code> if the workspace tree is locked, 
  *     <code>false</code> otherwise
