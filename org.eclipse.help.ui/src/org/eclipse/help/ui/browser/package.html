@@ -8,7 +8,8 @@
 </head>
 <body>
 Provides interfaces that need to be implemented by
-web browser adapters.
+web browser adapters.&nbsp; Also contains an implementation of IWorkbenchWindowActionDelegate
+for opening a URL in a browser.
 <h2>
 Package Specification</h2>
 Help System UI, requires web browser to display help document.&nbsp; Since
@@ -17,7 +18,7 @@ to configure browser adapters in addition to ones provided by Help System
 UI plugin.&nbsp; The browser (or browser adapter) can be configured by
 providing extension <tt>org.eclipse.help.ui.browser</tt> extension point.&nbsp;
 If more than one browser is available on a user system, the default browser
-can be designated in Web Browsers preference page.
+can be designated in Web Help preference page.
 <p>In general terms, implementing a web browser involves:
 <ul>
 <li>
@@ -36,6 +37,12 @@ Note that browser factory will be created on every system.&nbsp; If the
 factory is not capable of creating a browser on some system configurations,
 due to missing prerequisites e.t.c., its <tt>isAvailable()</tt> method
 should be returning false on these systems.
+<p>LaunchURL class implementing <tt>IWorkbenchWindowActionDelegate</tt>
+is an action that can be specified in the <tt>action</tt> element in plugin.xml
+for extensions of <tt>org.eclipse.ui.actionSets</tt> extension point.&nbsp;
+The contributors of menu actions that need to perform launching of URL
+in a browser, can specify this class as an <tt>IWorkbenchWindowActionDelegate</tt>
+in their extension of <tt>org.eclipse.ui.actionSets</tt> point.
 <br>&nbsp;
 </body>
 </html>
