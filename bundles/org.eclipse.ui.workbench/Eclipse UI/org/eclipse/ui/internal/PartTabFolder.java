@@ -1055,8 +1055,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 					getViewRegistry().find(partID);
 			
 				if (descriptor != null) {
-					if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID))
-						continue; // ignore the intro view
 					tabText = descriptor.getLabel();
 				}
 
