@@ -47,7 +47,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		control.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		control.setLayoutData(gd);
 		// Search Expression
 		Group group = new Group(control, SWT.NONE);
