@@ -20,7 +20,19 @@ import org.eclipse.swt.widgets.Shell;
  * Contributed via a source container presentation extension for
  * a specific type of source container.
  * <p>
- * TODO: plugin XML example
+ * Following is an example source container presentation definition
+ * that contributes a source container browser via the
+ * <code>browserClass</code> attribute.
+ * <pre>
+ * &lt;extension point=&quot;org.eclipse.debug.ui.sourceContainerPresentations&quot;&gt;
+ *    &lt;sourceContainerPresentation
+ *          browserClass=&quot;org.eclipse.debug.internal.ui.sourcelookup.browsers.ProjectSourceContainerBrowser&quot;
+ *          containerTypeID=&quot;org.eclipse.debug.core.containerType.project&quot;
+ *          icon=&quot;icons/full/obj16/prj_obj.gif&quot;
+ *          id=&quot;org.eclipse.debug.ui.containerPresentation.project&quot;&gt;
+ *    &lt;/sourceContainerPresentation&gt;
+ * &lt;/extension&gt;
+ * </pre>
  * </p>
  * @since 3.0
  */

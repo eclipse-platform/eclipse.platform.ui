@@ -20,9 +20,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * contribution. The action will toggle watchpoints on objects
  * that provide an <code>IToggleBreakpointsTarget</code> adapter.
  * <p>
- * EXPERIMENTAL
- * </p>
- * <p>
  * Clients may reference/contribute this class as an object contribution
  * action delegate in plug-in XML. This class is not intended to be
  * subclassed.

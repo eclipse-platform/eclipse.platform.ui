@@ -33,9 +33,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * will perform the "run to line" operation for editors that provide
  * an appropriate <code>IRunToLineTarget</code> adapter.
  * <p>
- * EXPERIMENTAL
- * </p>
- * <p>
  * Clients may reference/contribute this class as an editor action delegate
  * in plug-in XML. This class is not intended to be subclassed.
  * </p>

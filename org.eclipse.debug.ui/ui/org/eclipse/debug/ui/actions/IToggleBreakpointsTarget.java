@@ -32,9 +32,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * provide breakpoint adapters for relevant editors and model objects. 
  * </p> 
  * <p>
- * EXPERIMENTAL
- * </p>
- * <p>
  * Clients are intended to implement this interface and provide instances as
  * an adapter on applicable parts (for example, editors) and objects (for
  * example, methods and fields) that support breakpoint toggling.
