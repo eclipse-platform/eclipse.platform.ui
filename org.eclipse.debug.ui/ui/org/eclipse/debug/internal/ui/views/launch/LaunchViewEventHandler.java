@@ -80,6 +80,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					if (element instanceof IThread) {
 						clearSourceSelection((IThread)element);
 						fStackFrameCountByThread.remove(element);
+						fThreadTimer.getTimedOutThreads().remove(element);
 						remove(element);
 					} else {
 						clearSourceSelection(null);
@@ -160,10 +161,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			if (thread != null) {
 				fThreadTimer.stopTimer((IThread)element);
 			}
+			
+			boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
 			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-				if (thread != null && fThreadTimer.getTimedOutThreads().remove(thread)) {
-					// Refresh the thread label when a timed out evaluation or 
-					// step finishes. This is necessary because the timeout updates
+				if (thread != null && wasTimedOut) {
+					// Refresh the thread label when a timed out evaluation finishes.
+					// This is necessary because the timeout updates
 					// the label when it occurs
 					refresh(thread);
 				}
@@ -178,11 +181,13 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		refresh(element);
 	}
 	
-	// This method exists to provide some optimization for refreshing suspended
-	// threads.  If the number of stack frames has changed from the last suspend, 
-	// we do a full refresh on the thread.  Otherwise, we only do a surface-level
-	// refresh on the thread, then refresh each of the children, which eliminates
-	// flicker when do quick stepping (e.g., holding down the F6 key) within a method.
+	/**
+	 * This method exists to provide some optimization for refreshing suspended
+	 * threads.  If the number of stack frames has changed from the last suspend, 
+	 * we do a full refresh on the thread.  Otherwise, we only do a surface-level
+	 * refresh on the thread, then refresh each of the children, which eliminates
+	 * flicker when do quick stepping (e.g., holding down the F6 key) within a method.
+	 */
 	protected void doHandleSuspendThreadEvent(IThread thread) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended()) {
@@ -500,6 +505,4 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 		}
 	}
-	
 }
-
