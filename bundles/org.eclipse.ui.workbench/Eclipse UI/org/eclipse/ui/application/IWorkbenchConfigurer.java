@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
-import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
@@ -104,17 +104,32 @@ public interface IWorkbenchConfigurer {
 	public WindowManager getWorkbenchWindowManager();
 	
 	/**
-	 * Returns the workbench image registry. This image registry holds
-	 * image descriptors for various images that appear in the workbench.
+	 * Declares a workbench image.
 	 * <p>
-	 * Unlike {@link org.eclipse.ui.ISharedImages ISharedImages}, this object
-	 * gives one full read-write access.
+	 * The workbench remembers the given image descriptor under the given name,
+	 * and makes the image available to plug-ins via
+	 * {@link org.eclipse.ui.ISharedImages IWorkbench.getSharedImages()}.
+	 * For "shared" images, the workbench remembers the image descriptor and
+	 * will manages the image object create from it; clients retrieve "shared"
+	 * images via
+	 * {@link org.eclipse.ui.ISharedImages#getImage ISharedImages.getImage()}.
+	 * For the other, "non-shared" images, the workbench remembers only the
+	 * image descriptor; clients retrieve the image descriptor via
+	 * {@link org.eclipse.ui.ISharedImages#getImageDescriptor
+	 * ISharedImages.getImageDescriptor()} and are entirely
+	 * responsible for managing the image objects they create from it.
+	 * (This is made confusing by the historical fact that the API interface
+	 *  is called "ISharedImages".)
 	 * </p>
-	 *
-	 * @return the workbench image registry
-	 * @see org.eclipse.ui.ISharedImages
+	 * 
+	 * @param symbolicName the symbolic name of the image
+	 * @param descriptor the image descriptor
+	 * @param shared <code>true</code> if this is a shared image, and
+	 * <code>false</code> if this is not a shared image
+	 * @see org.eclipse.ui.ISharedImages#getImage
+	 * @see org.eclipse.ui.ISharedImages#getImageDescriptor
 	 */
-	public ImageRegistry getWorkbenchImageRegistry();
+	public void declareImage(String symbolicName, ImageDescriptor descriptor, boolean shared);
 
 	/**
 	 * Forces the workbench to close due to an emergency. This method should

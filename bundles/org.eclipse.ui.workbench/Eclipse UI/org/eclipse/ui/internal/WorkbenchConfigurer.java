@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
@@ -149,11 +149,13 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	}	
 	
 	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbenchImageRegistry
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#declareImage
 	 */
-	public ImageRegistry getWorkbenchImageRegistry() {
-		// return the global workbench image registry
-		return WorkbenchPlugin.getDefault().getImageRegistry();
+	public void declareImage(String symbolicName, ImageDescriptor descriptor, boolean shared) {
+		if (symbolicName == null || descriptor == null) {
+			throw new IllegalArgumentException();
+		}
+		WorkbenchImages.declareImage(symbolicName, descriptor, shared);
 	}	
 
 	/* (non-javadoc)
