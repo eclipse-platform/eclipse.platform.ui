@@ -52,7 +52,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
 		try {
-			String filePath = siteURL.getHost()+":"+siteURL.getPath()+pluginEntry.getIdentifier().toString()+".jar";
+			String filePath = siteURL.getPath()+pluginEntry.getIdentifier().toString()+".jar";
 			if (currentOpenJarFile!=null){
 					if (!currentOpenJarFile.getName().equals(filePath)){
 						currentOpenJarFile.close();
@@ -65,7 +65,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			}
 			
 			
-							
+			if (!(new File(filePath)).exists()) throw new IOException("The File:"+filePath+"does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
 			result = currentOpenJarFile.getInputStream(entry);
 		} catch (MalformedURLException e){
@@ -88,7 +88,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		try {
 			String jarPath = pluginEntry.getIdentifier().toString()+".jar";
 			URL jarURL= new URL(siteURL,jarPath);			
-			jarFile = new JarFile(siteURL.getHost()+":"+jarURL.getPath());
+			jarFile = new JarFile(jarURL.getPath());
 			result = new String[jarFile.size()];
 			Enumeration enum = jarFile.entries();
 			int loop = 0;

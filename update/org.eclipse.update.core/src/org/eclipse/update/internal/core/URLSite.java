@@ -33,13 +33,7 @@ public class URLSite extends AbstractSite {
 		try {
 			String jarFile = sourceFeature.getIdentifier().toString()+File.separator+streamKey;
 			jarURL = new URL(getURL(),jarFile);
-			// FIXME: is there a better solution ?
-			// no File Handler t manage file protocol !!!!!
-			if(jarURL.getProtocol().equalsIgnoreCase("file")){
-				result = new FileInputStream(jarURL.getHost()+":"+jarURL.getPath());
-			}else {
-				result = jarURL.openStream();
-			}
+			result = jarURL.openStream();
 		} catch (MalformedURLException e){
 			//FIXME:
 			e.printStackTrace();

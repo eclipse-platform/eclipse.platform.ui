@@ -32,7 +32,7 @@ public class SiteManager {
 	/* package */ static ISite getTempSite(){
 		if (TEMP_SITE==null){
 			try {
-			TEMP_SITE = new FileSite(new URL("file://"+System.getProperty("java.io.tmpdir")));
+			TEMP_SITE = new FileSite(new URL("file:///"+System.getProperty("java.io.tmpdir")));
 			} catch (MalformedURLException e){
 				//FIXME: should never occur... hardcoded ?
 				e.printStackTrace();

@@ -1,0 +1,14 @@
+		java.util.Enumeration enum =  System.getProperties().keys();
+		String key = null;
+		while (enum.hasMoreElements()){
+			key = (String)enum.nextElement();
+			System.out.print(key);
+			for (int i =0;i<(30-key.length());i++)System.out.print(" ");
+			System.out.println("->"+System.getProperty(key));
+		}
+
+
+new java.net.URL("file://C:/temp/org.eclipse.update.core.feature1_1.0.0/org.eclipse.update.core.feature1.plugin1_1.1.1.jar").openStream()
+
+(new java.io.File("C:\\xtf xtf\\hello\\")).mkdirs();
+

@@ -1,15 +1,18 @@
 package org.eclipse.update.tests.regularInstall;
 
+import java.io.File;
 import java.net.URL;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import junit.framework.TestCase;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 
 public class Test1 extends TestCase {
 
-	private static String SITE1  = "file://C:/temp/";
-	private static String SITE2  = "http://9.26.150.182/UpdateManager2/";	
-	private static String LOCAL1 = "file://C:/TMP/";
+	private static String SOURCE_FILE_SITE;
+	private static String SOURCE_HTTP_SITE;	
+	private static String TARGET_FILE_SITE;
 
 	/**
 	 * Constructor for Test1
@@ -17,6 +20,24 @@ public class Test1 extends TestCase {
 	public Test1(String arg0) {
 		super(arg0);
 	}
+	
+	
+	protected void setUp(){
+		
+		String home = System.getProperty("user.home");
+				
+		// get bundle variables
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.update.tests.regularInstall.Resources");
+		SOURCE_FILE_SITE = "file:///"+home+(String)bundle.getObject("SOURCE_FILE_SITE");
+		SOURCE_HTTP_SITE = "http://"+(String)bundle.getObject("SOURCE_HTTP_SITE");
+		TARGET_FILE_SITE = "file:///"+home+(String)bundle.getObject("TARGET_FILE_SITE");
+		
+		//cleanup target
+		File target= new File(home+(String)bundle.getObject("TARGET_FILE_SITE"));
+
+	}
+	
+	
 	
 
 	private IFeature getFeature1(ISite site){
@@ -34,10 +55,14 @@ public class Test1 extends TestCase {
 
 	public void testExecute1() throws Exception{
 		
-		ISite remoteSite = new URLSite(new URL(SITE1));
+		ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
 		IFeature remoteFeature = getFeature1(remoteSite);
-		ISite localSite = new FileSite(new URL(LOCAL1));
+		ISite localSite = new FileSite(new URL(TARGET_FILE_SITE));
 		localSite.install(remoteFeature,null);
+		
+		// verify
+		String site = localSite.getURL().getHost()+":"+localSite.getURL().getPath();
+		//String file
 	}
 
 
@@ -56,9 +81,9 @@ public class Test1 extends TestCase {
 
 	public void testExecute2() throws Exception{
 		
-		ISite remoteSite = new URLSite(new URL(SITE2));
+		ISite remoteSite = new URLSite(new URL(SOURCE_HTTP_SITE));
 		IFeature remoteFeature = getFeature2(remoteSite);
-		ISite localSite = new FileSite(new URL(LOCAL1));
+		ISite localSite = new FileSite(new URL(TARGET_FILE_SITE));
 		localSite.install(remoteFeature,null);
 	}
 	public static void main(String[] args){

@@ -9,7 +9,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * Abstract Class that implements most of the behavior of a feature
+ * A feature ALWAYS belongs to an I Site
+ */
 
 
 public abstract class AbstractFeature implements IFeature {
@@ -234,17 +237,23 @@ public abstract class AbstractFeature implements IFeature {
 		// copy *blobs* in TEMP space
 		for (int i=0;i<contentReferenceToInstall.length;i++){
 			InputStream sourceContentReferenceStream = ((AbstractSite)getSite()).getInputStream(this,contentReferenceToInstall[i]);
-			String newFile = SiteManager.getTempSite().getURL().getPath()+contentReferenceToInstall[i];
-			FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
-			transferStreams(sourceContentReferenceStream,localContentReferenceStream);
+			if (sourceContentReferenceStream!=null){
+				String newFile = SiteManager.getTempSite().getURL().getPath()+contentReferenceToInstall[i];
+				FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
+				transferStreams(sourceContentReferenceStream,localContentReferenceStream);
+			} else {
+				throw new IOException("Couldn\'t find the file: "+contentReferenceToInstall[i]+" on the site:"+getSite().getURL().toExternalForm());
+			}
 		}
 		this.setSite(SiteManager.getTempSite());
 		
 		// obtain the list of *Streamable Storage Unit*
+		InputStream inStream = null;
 		for (int i=0;i<pluginsToInstall.length;i++){
 			String[] names = getStorageUnitNames(pluginsToInstall[i]);
 			for (int j= 0; j<names.length;j++){
-				targetFeature.store(pluginsToInstall[i],names[j],getInputStreamFor(pluginsToInstall[i],names[j]));
+				if ((inStream=getInputStreamFor(pluginsToInstall[i],names[j]))!=null)
+					targetFeature.store(pluginsToInstall[i],names[j],inStream);
 			}
 			
 		}
@@ -258,6 +267,10 @@ public abstract class AbstractFeature implements IFeature {
  * Taken from FileSystemStore
  */
 private void transferStreams(InputStream source, OutputStream destination) throws IOException {
+	
+	Assert.isNotNull(source);
+	Assert.isNotNull(destination);
+	
 	try {
 		byte[] buffer = new byte[8192];
 		while (true) {

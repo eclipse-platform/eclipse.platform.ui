@@ -16,6 +16,8 @@ import org.eclipse.update.core.ISiteChangedListener;
 
 public class FileSite extends URLSite {
 
+	private String path;
+
 	/**
 	 * Constructor for FileSite
 	 */
@@ -25,7 +27,11 @@ public class FileSite extends URLSite {
 
 
 	private String getPath(){
-		return getURL().getHost()+":"+getURL().getPath();
+		if (path==null){
+			path = getURL().getPath();
+			if (path.startsWith(File.separator)) path= path.substring(1);
+		}
+		return path;
 	}
 
 
@@ -41,16 +47,24 @@ public class FileSite extends URLSite {
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(
-		IPluginEntry pluginEntry,
-		String contentKey,
-		InputStream inStream) {
+	public void store(IPluginEntry pluginEntry,	String contentKey, InputStream inStream) {
 		try {
 			
-			//TEST: what if SiteURL is not valid ? What if the site does not exist?
-			
-			
+			// TEST: what if SiteURL is not valid ? 
+						
+			File site = new File(getPath());
+			if (!site.exists()){
+				if (!CREATE_PATH) {
+					//FIXME: Serviceability
+					throw new IOException("The Path:"+getPath()+"does not exist.");
+				} else {
+					//FIXME: Serviceability
+					if (!site.mkdirs()) throw new IOException("Cannot create:"+getPath()+"");
+				}
+			}
+						
 			// create plugin if doesn't exist
+			// FIXME: mkdir or mkdirs ?
 			String pluginPath = getPath()+pluginEntry.getIdentifier().toString();
 			File pluginDirectory = new File(pluginPath);
 			if (!pluginDirectory.exists()){
