@@ -58,7 +58,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -74,6 +79,7 @@ import org.eclipse.ui.keys.KeyStroke;
 
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 
@@ -164,6 +170,7 @@ public class KeysPreferencePage
 	private Button buttonRestore;
 	private Map categoryIdsByUniqueName;
 	private Map categoryUniqueNamesById;
+	private Button checkBoxMultiKeyAssist;
 	private Button checkBoxMultiKeyRocker;
 	private Combo comboActivity;
 	private Combo comboCategory;
@@ -193,6 +200,7 @@ public class KeysPreferencePage
 	private Table tableAssignmentsForKeySequence;
 	private Text textKeySequence;
 	private KeySequenceText textKeySequenceManager;
+	private IntegerFieldEditor textMultiKeyAssistTime;
 	private SortedMap tree;
 	private IWorkbench workbench;
 
@@ -411,6 +419,33 @@ public class KeysPreferencePage
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		// The multi key assit button.
+		checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
+		checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
+		checkBoxMultiKeyAssist.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$
+		checkBoxMultiKeyAssist.setFont(composite.getFont());
+		checkBoxMultiKeyAssist.setSelection(
+			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
+		checkBoxMultiKeyAssist.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// The multi key assist time.
+		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		textMultiKeyAssistTime = new IntegerFieldEditor(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, Util.translateString(RESOURCE_BUNDLE, "textMultiKeyAssistTime.Text"), composite); //$NON-NLS-1$
+		textMultiKeyAssistTime.setPreferenceStore(store);
+		textMultiKeyAssistTime.setPreferencePage(this);
+		textMultiKeyAssistTime.setTextLimit(2);
+		textMultiKeyAssistTime.setErrorMessage(Util.translateString(RESOURCE_BUNDLE, "textMultiKeyAssistTime.ErrorMessage")); //$NON-NLS-1$
+		textMultiKeyAssistTime.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		textMultiKeyAssistTime.setValidRange(0, Integer.MAX_VALUE);
+		textMultiKeyAssistTime.setStringValue(
+			Integer.toString(store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
+		textMultiKeyAssistTime.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					setValid(textMultiKeyAssistTime.isValid());
+			}
+		});
+
 		// The multi-key rocker button.
 		checkBoxMultiKeyRocker = new Button(composite, SWT.CHECK);
 		checkBoxMultiKeyRocker.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyRocker.Text")); //$NON-NLS-1$
@@ -569,8 +604,7 @@ public class KeysPreferencePage
 
 		// Button for adding trapped key strokes
 		buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);
-		buttonAddKey.setToolTipText(
-			Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText")); //$NON-NLS-1$
+		buttonAddKey.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText")); //$NON-NLS-1$
 		gridData = new GridData();
 		gridData.heightHint = comboCategory.getTextHeight();
 		buttonAddKey.setLayoutData(gridData);
@@ -749,8 +783,7 @@ public class KeysPreferencePage
 		// Advanced tab
 		final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
 		advancedTab.setText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.Text")); //$NON-NLS-1$
-		advancedTab.setToolTipText(
-			Util.translateString(RESOURCE_BUNDLE, "advancedTab.ToolTipText")); //$NON-NLS-1$
+		advancedTab.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.ToolTipText")); //$NON-NLS-1$
 		advancedTab.setControl(createAdvancedTab(tabFolder));
 
 		return tabFolder;
@@ -848,7 +881,12 @@ public class KeysPreferencePage
 
 		// Set the defaults on the advanced tab.
 		IPreferenceStore store = getPreferenceStore();
-		checkBoxMultiKeyRocker.setSelection(store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
+		checkBoxMultiKeyAssist.setSelection(
+			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
+		textMultiKeyAssistTime.setStringValue(
+			Float.toString(store.getDefaultFloat(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
+		checkBoxMultiKeyRocker.setSelection(
+			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 
 		update();
 	}
@@ -878,7 +916,15 @@ public class KeysPreferencePage
 
 		// Save the advanced settings.
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue(IPreferenceConstants.MULTI_KEY_ROCKER, checkBoxMultiKeyRocker.getSelection());
+		store.setValue(
+			IPreferenceConstants.MULTI_KEY_ASSIST,
+			checkBoxMultiKeyAssist.getSelection());
+		store.setValue(
+			IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
+			textMultiKeyAssistTime.getIntValue());
+		store.setValue(
+			IPreferenceConstants.MULTI_KEY_ROCKER,
+			checkBoxMultiKeyRocker.getSelection());
 
 		// TODO remove the dependancy on Workbench. have Workbench rely on
 		// events from CommandManager.
