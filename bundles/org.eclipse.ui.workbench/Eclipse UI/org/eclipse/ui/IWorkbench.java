@@ -24,6 +24,7 @@ import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
+import org.eclipse.ui.wizards.IWizardRegistry;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -507,7 +508,6 @@ public interface IWorkbench {
 	 */
     public IExtensionTracker getExtensionTracker();
     
-
     /**
      * Returns the editor registry for the workbench.
      * 
@@ -515,4 +515,29 @@ public interface IWorkbench {
      * @since 3.1
      */   
     public IViewRegistry getViewRegistry();
+    
+    
+    /**
+     * Return the new wizard registry.
+     * 
+     * @return the new wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getNewWizardRegistry();
+    
+    /**
+     * Return the import wizard registry.
+     * 
+     * @return the import wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getImportWizardRegistry();
+    
+    /**
+     * Return the export wizard registry.
+     * 
+     * @return the export wizard registry
+     * @since 3.1
+     */
+    public IWizardRegistry getExportWizardRegistry();
 }

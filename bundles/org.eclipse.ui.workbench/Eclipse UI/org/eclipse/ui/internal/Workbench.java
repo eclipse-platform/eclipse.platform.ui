@@ -114,6 +114,7 @@ import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
+import org.eclipse.ui.wizards.IWizardRegistry;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -2280,4 +2281,25 @@ public final class Workbench implements IWorkbench {
 	public IViewRegistry getViewRegistry() {
 		return WorkbenchPlugin.getDefault().getViewRegistry();
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbench#getNewWizardRegistry()
+     */
+    public IWizardRegistry getNewWizardRegistry() {
+    	return WorkbenchPlugin.getDefault().getNewWizardRegistry();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbench#getImportWizardRegistry()
+     */
+    public IWizardRegistry getImportWizardRegistry() {
+    	return WorkbenchPlugin.getDefault().getImportWizardRegistry();
+    }
+ 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbench#getExportWizardRegistry()
+     */
+    public IWizardRegistry getExportWizardRegistry() {
+    	return WorkbenchPlugin.getDefault().getExportWizardRegistry();
+    }
 }
