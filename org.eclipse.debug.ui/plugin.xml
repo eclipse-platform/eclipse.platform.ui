@@ -25,7 +25,6 @@
 <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
 <extension-point id="launchConfigurationShortcuts" name="%LaunchConfigurationShortcutName"/>
 <extension-point id="launchConfigurationTabGroups" name="%LaunchConfigurationTabGroupExtensionName"/>
-<extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabExtensionName"/>
 <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
 <extension-point id="debugActionGroups" name="%DebugActionGroupsExtensionName"/>
 

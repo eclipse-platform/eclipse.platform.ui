@@ -108,15 +108,7 @@ public interface IDebugUIConstants {
 	 * Debug model presentation simple extension point identifier (value <code>"debugModelPresentations"</code>).
 	 */
 	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
-	
-	/**
-	 * Launch configuration tab simple extension point identifier (value <code>"launchConfigurationTabs"</code>).
-	 * 
-	 * @since 2.0
-	 * @deprecated replaced with tab groups - will be removed
-	 */
-	public static final String ID_LAUNCH_CONFIGURATION_TABS= "launchConfigurationTabs"; //$NON-NLS-1$	
-	
+		
 	// Preferences
 	/**
 	 * Boolean preference controlling automatic change to debug perspective when
