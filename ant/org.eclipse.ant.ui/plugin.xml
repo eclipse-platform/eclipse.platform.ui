@@ -150,6 +150,18 @@
             command="org.eclipse.ant.ui.showTooltip"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.openExternalDoc.name"
+            description="%ActionDefinition.openExternalDoc.description"
+            category="org.eclipse.ant.ui.category.source"
+            id="org.eclipse.ant.ui.openExternalDoc">
+      </command>
+      <keyBinding
+            keySequence="SHIFT+F2"
+            scope="org.eclipse.ant.ui.AntEditorScope"
+            command="org.eclipse.ant.ui.openExternalDoc"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -316,6 +328,13 @@
                class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
                id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
          </action>
+          <action
+               definitionId="org.eclipse.ant.ui.openExternalDoc"
+               label="%Dummy.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction"
+               id="org.eclipse.ant.ui.OpenExternalDocAction">
+         </action>
+         
       </editorContribution>
    </extension>   
    
