@@ -40,5 +40,6 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(IActionBarsTest.class));
 		addTest(new TestSuite(IViewPartTest.class));
 		addTest(new TestSuite(IEditorPartTest.class));
+		addTest(new TestSuite(IEditorActionBarContributorTest.class));
 	}
 }

@@ -31,13 +31,13 @@ public abstract class IWorkbenchPartTest extends UITestCase {
 		// Open a part.
 		MockWorkbenchPart part = openPart(fPage);
 		CallHistory history = part.getCallHistory();
-		assertTrue(history.contains(new String[] {
-			"init", "createPartControl"}));
+		assertTrue(history.verifyOrder(new String[] {
+			"init", "createPartControl", "setFocus" }));
 		
 		// Close the part.
 		closePart(fPage, part);
-		assertTrue(history.contains(new String[] {
-			"init", "createPartControl", "dispose"}));
+		assertTrue(history.verifyOrder(new String[] {
+			"init", "createPartControl", "setFocus", "dispose"}));
 	}
 	
 	/**

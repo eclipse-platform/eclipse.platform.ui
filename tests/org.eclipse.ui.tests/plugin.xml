@@ -82,6 +82,13 @@
       icon="icons\mockeditorpart2.gif"
       class="org.eclipse.ui.tests.api.MockEditorPart">
     </editor>
+    <editor id ="org.eclipse.ui.tests.api.IEditorActionBarContributorTest"
+      name="IEditorActionBarContributorTest"
+      extensions="mock3"
+      icon="icons\mockeditorpart2.gif"
+      class="org.eclipse.ui.tests.api.MockEditorPart"
+      contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor">
+    </editor>
 </extension>
 
 <extension point = "org.eclipse.ui.actionSets"> 
