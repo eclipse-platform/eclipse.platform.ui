@@ -5,7 +5,6 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -196,25 +195,24 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
 	if (strIcon != null) {
-		try {
-			IPluginDescriptor pd = cfig.getDeclaringExtension()
-				.getDeclaringPluginDescriptor();
-			URL fullPathString = new URL(pd.getInstallURL(), strIcon);
-			imageDescriptor = ImageDescriptor.createFromURL(fullPathString);
-			/* remember the image in a separatly from titleImage,
-			 * since it must be disposed even if the titleImage is changed
-			 * to something else*/
-		 	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-			Image image = (Image)imageCache.get(imageDescriptor);
-			if(image != null) {
-				imageCache.addRef(imageDescriptor);
-			} else {
-				image = imageDescriptor.createImage();
-				imageCache.put(imageDescriptor,image);
-			}
-			titleImage = image;
-		} catch (MalformedURLException e) {
+		imageDescriptor = 
+			WorkbenchImages.getImageDescriptorFromExtension(
+				configElement.getDeclaringExtension(), 
+				strIcon); 
+					
+		
+		/* remember the image in a separatly from titleImage,
+		 * since it must be disposed even if the titleImage is changed
+		 * to something else*/
+	 	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
+		Image image = (Image)imageCache.get(imageDescriptor);
+		if(image != null) {
+			imageCache.addRef(imageDescriptor);
+		} else {
+			image = imageDescriptor.createImage();
+			imageCache.put(imageDescriptor,image);
 		}
+		titleImage = image;
 	}
 }
 /**
