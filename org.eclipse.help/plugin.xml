@@ -9,8 +9,8 @@
 <plugin
    name = "%help_plugin_name"
    id = "org.eclipse.help"
-   version = "0.5"
-   vendor-name = "IBM"
+   version = "0.9"
+   provider-name = "International Business Machines Corp."
    class="org.eclipse.help.internal.HelpPlugin">
 
    <requires>
