@@ -44,12 +44,6 @@
          class="org.eclipse.debug.internal.ui.LauncherPropertyPage"
          id="org.eclipse.debug.internal.ui.LauncherPropertyPage">
    </page>
-   <page
-         objectClass="org.eclipse.jdt.core.IJavaProject"
-         name="%LauncherPropertyPage.name"
-         class="org.eclipse.debug.internal.ui.LauncherPropertyPage"
-         id="org.eclipse.debug.internal.ui.LauncherPropertyPage">
-   </page>
 </extension>
 <extension
       point="org.eclipse.ui.views">
