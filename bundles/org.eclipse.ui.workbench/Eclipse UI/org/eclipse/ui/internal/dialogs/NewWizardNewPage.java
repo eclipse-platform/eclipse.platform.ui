@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -410,25 +411,53 @@ class NewWizardNewPage implements ISelectionChangedListener,
 
             // flipping tabs updates the selected node
             showAllCheck.addSelectionListener(new SelectionAdapter() {
-                private Object[] expandedElements = new Object[0];
+
+                // the delta of expanded elements between the last 'show all'
+                // and the current 'no show all'
+                private Object[] delta = new Object[0];
 
                 public void widgetSelected(SelectionEvent e) {
                     boolean showAll = showAllCheck.getSelection();
-                    if (!showAll)
-                        expandedElements = viewer.getExpandedElements();
 
                     if (showAll) {
                         viewer.getControl().setRedraw(false);
+                    } else {
+                        // get the inital expanded elements when going from show
+                        // all-> no show all.
+                        // this isnt really the delta yet, we're just reusing
+                        // the variable.
+                        delta = viewer.getExpandedElements();
                     }
 
                     try {
                         if (showAll) {
                             viewer.resetFilters();
-                            viewer.setExpandedElements(expandedElements);
+                            // restore the expanded elements that were present
+                            // in the last show all state but not in the 'no
+                            // show all' state.
+                            Object[] currentExpanded = viewer
+                                    .getExpandedElements();
+                            Object[] expanded = new Object[delta.length
+                                    + currentExpanded.length];
+                            System.arraycopy(currentExpanded, 0, expanded, 0,
+                                    currentExpanded.length);
+                            System.arraycopy(delta, 0, expanded,
+                                    currentExpanded.length, delta.length);
+                            viewer.setExpandedElements(expanded);
                         } else {
                             viewer.addFilter(filter);
                         }
                         viewer.refresh(false);
+
+                        if (!showAll) {
+                            // if we're going from show all -> no show all
+                            // record the elements that were expanded in the
+                            // 'show all' state but not the 'no show all' state
+                            // (because they didnt exist).
+                            Object[] newExpanded = viewer.getExpandedElements();
+                            List deltaList = new ArrayList(Arrays.asList(delta));
+                            deltaList.removeAll(Arrays.asList(newExpanded));
+                        }
                     } finally {
                         if (showAll)
                             viewer.getControl().setRedraw(true);
