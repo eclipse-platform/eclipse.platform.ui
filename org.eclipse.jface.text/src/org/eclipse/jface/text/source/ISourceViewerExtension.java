@@ -15,7 +15,7 @@ package org.eclipse.jface.text.source;
  * Extension interface for <code>ISourceViewer</code>.
  * Extends the source viewer with the concept of an annotation overview.
  * The annotation overview differs from the annotation presentation in that it is
- * independent from the viewer's viewport, i.e. the annotations of the 
+ * independent from the viewer's view port, i.e. the annotations of the 
  * whole document are visible. There are no assumptions about 
  * the area in which the annotation overview is shown.<p>
  * As the visibility of annotation overview can dynamically be changed, 

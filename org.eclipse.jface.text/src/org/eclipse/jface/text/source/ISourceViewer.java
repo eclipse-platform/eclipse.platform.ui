@@ -38,7 +38,7 @@ import org.eclipse.jface.text.ITextViewer;
 public interface ISourceViewer extends ITextViewer {
 	
 	/** 
-	 * Text operation code for requesting content assist to show completetion
+	 * Text operation code for requesting content assist to show completion
 	 * proposals for the current insert position. 
 	 */
 	static final int CONTENTASSIST_PROPOSALS= ITextOperationTarget.STRIP_PREFIX + 1;
@@ -83,7 +83,7 @@ public interface ISourceViewer extends ITextViewer {
 	/**
 	 * Sets the given document as this viewer's text model and the 
 	 * given annotation model as the model for this viewer's visual
-	 * annotations. The presentation is accordingly updated. An approriate 
+	 * annotations. The presentation is accordingly updated. An appropriate 
 	 * <code>TextEvent</code> is issued. This text event does not carry 
 	 * a related document event.
 	 *
@@ -98,19 +98,19 @@ public interface ISourceViewer extends ITextViewer {
 	 * Sets the given document as this viewer's text model and the 
 	 * given annotation model as the model for this viewer's visual
 	 * annotations. The presentation is accordingly updated whereby 
-	 * only the specified region is made visible. An approriate
+	 * only the specified region is exposed. An appropriate
 	 * <code>TextEvent</code> is issued. The text event does not carry a 
 	 * related document event. This method is a convenience method for
 	 * <code>setDocument(document, annotationModel);setVisibleRegion(offset, length)</code>.
 	 *
 	 * @param document the new input document
 	 * @param annotationModel the model of the viewer's visual annotations
-	 * @param visibleRegionOffset the offset of the visible region
-	 * @param visibleRegionLength the length of the visible region
+	 * @param modelRangeOffset the offset of the model range
+	 * @param modelRangeLength the length of the model range
 	 *
 	 * @see ITextViewer#setDocument(IDocument, int, int)
 	 */
-	void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength);
+	void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength);
 	
 	/**
 	 * Returns this viewer's annotation model.
