@@ -27,7 +27,12 @@ public class EditorToolBarManager extends SubToolBarManager
 		 * <code>true</code> by default.
 		 */
 		public void updateEnabledAllowed() {
-			IContributionItem[] items = EditorToolBarManager.super.getItems();
+			IContributionItem[] items;
+			if (parentMgr instanceof CoolItemToolBarManager) {
+				items = getItems();
+			} else {
+				items = EditorToolBarManager.super.getItems();
+			}
 			for (int i = 0; i < items.length; i++) {
 				IContributionItem item = items[i];
 				item.update(IContributionManagerOverrides.P_ENABLED);

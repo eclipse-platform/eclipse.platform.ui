@@ -97,6 +97,7 @@ public IToolBarManager getToolBarManager() {
 			coolItemToolBarMgr = new CoolItemMultiToolBarManager(cBarMgr, type, active);
 			coolItemToolBarMgr.setParentMgr(cBarMgr);
 			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
+			coolItemToolBarMgr.setOverrides(toolBarMgr.getOverrides());
 		}
 		return coolItemToolBarMgr;
 	}

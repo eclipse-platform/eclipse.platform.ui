@@ -221,6 +221,7 @@ public class CoolItemMultiToolBarManager extends CoolItemToolBarManager {
 	}
 	protected CoolItemToolBarManager createGroup(String groupId) {
 		CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(parentManager.getStyle());
+		tBarMgr.setOverrides(getOverrides());
 		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(parentManager, tBarMgr, groupId);
 		parentManager.add(coolBarItem);
 		coolBarItems.add(coolBarItem);
@@ -243,7 +244,10 @@ public class CoolItemMultiToolBarManager extends CoolItemToolBarManager {
 		ArrayList allItems = new ArrayList();
 		for (Iterator e = coolBarItems.iterator(); e.hasNext();) {
 			CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
-			allItems.add(cbItem.getToolBarManager().getItems());
+			IContributionItem[] items = cbItem.getToolBarManager().getItems();
+			for (int i=0; i<items.length; i++) {
+				allItems.add(items[i]);
+			}
 		}
 		IContributionItem[] items = new IContributionItem[allItems.size()];
 		allItems.toArray(items);
