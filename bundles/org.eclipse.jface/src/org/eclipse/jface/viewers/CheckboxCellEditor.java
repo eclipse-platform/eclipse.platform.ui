@@ -5,6 +5,7 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -34,7 +35,19 @@ public class CheckboxCellEditor extends CellEditor {
  * @param parent the parent control
  */
 public CheckboxCellEditor(Composite parent) {
-	super(parent);
+	this(parent, SWT.NONE);
+}
+/**
+ * Creates a new checkbox cell editor parented under the given control.
+ * The cell editor value is a boolean value, which is initially <code>false</code>. 
+ * Initially, the cell editor has no cell validator.
+ *
+ * @param parent the parent control
+ * @param style the style bits
+ * @since 2.1
+ */
+public CheckboxCellEditor(Composite parent, int style) {
+	super(parent, style);
 }
 /**
  * The <code>CheckboxCellEditor</code> implementation of

@@ -90,7 +90,19 @@ public class ColorCellEditor extends DialogCellEditor {
  * @param parent the parent control
  */
 public ColorCellEditor(Composite parent) {
-	super(parent);
+	this(parent, SWT.NONE);
+}
+/**
+ * Creates a new color cell editor parented under the given control.
+ * The cell editor value is black (<code>RGB(0,0,0)</code>) initially, and has no 
+ * validator.
+ *
+ * @param parent the parent control
+ * @param style the style bits
+ * @since 2.1
+ */
+public ColorCellEditor(Composite parent, int style) {
+	super(parent, style);
 	doSetValue(new RGB(0, 0, 0));
 }
 /**
@@ -148,7 +160,7 @@ private ImageData createColorImage(Control w, RGB color) {
  */
 protected Control createContents(Composite cell) {
 	Color bg = cell.getBackground();
-	composite = new Composite(cell, SWT.NONE);
+	composite = new Composite(cell, getStyle());
 	composite.setBackground(bg);
 	composite.setLayout(new ColorCellLayout());
 	colorLabel = new Label(composite, SWT.LEFT);

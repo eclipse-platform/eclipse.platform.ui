@@ -48,7 +48,22 @@ public class ComboBoxCellEditor extends CellEditor {
  * @param items the list of strings for the combo box
  */
 public ComboBoxCellEditor(Composite parent, String[] items) {
-	super(parent);
+	this(parent, items, SWT.NONE);
+}
+/**
+ * Creates a new cell editor with a combo containing the given 
+ * list of choices and parented under the given control. The cell
+ * editor value is the zero-based index of the selected item.
+ * Initially, the cell editor has no cell validator and
+ * the first item in the list is selected. 
+ *
+ * @param parent the parent control
+ * @param items the list of strings for the combo box
+ * @param style the style bits
+ * @since 2.1
+ */
+public ComboBoxCellEditor(Composite parent, String[] items, int style) {
+	super(parent, style);
 	Assert.isNotNull(items);
 	this.items = items;
 	selection = 0;
@@ -59,7 +74,7 @@ public ComboBoxCellEditor(Composite parent, String[] items) {
  */
 protected Control createControl(Composite parent) {
 	
-	comboBox = new CCombo(parent, SWT.NONE);
+	comboBox = new CCombo(parent, getStyle());
 	comboBox.setFont(parent.getFont());
 
 	comboBox.addKeyListener(new KeyAdapter() {
