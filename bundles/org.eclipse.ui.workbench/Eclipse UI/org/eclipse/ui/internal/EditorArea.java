@@ -191,9 +191,8 @@ public void removeEditor(EditorPane pane) {
 		return;
 	workbook.remove(pane);
 
-	// remove the editor workbook if empty and
-	// there are other workbooks
-	if (workbook.getItemCount() < 1 && editorWorkbooks.size() > 1) {
+	// remove the editor workbook if empty
+	if (workbook.getItemCount() < 1 /* && editorWorkbooks.size() > 1*/) {
 		remove(workbook);
 		workbook.dispose();
 	}

@@ -114,7 +114,7 @@ public class ColorSchemeService {
                     .getWorkbench()
                     .getThemeManager()
                     .removePropertyChangeListener(listener);
-                    control.setData(LISTENER_KEY, null);                    
+                    control.setData(LISTENER_KEY, null);   
                 }});
 	        
 	        PlatformUI
