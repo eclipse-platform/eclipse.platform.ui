@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing a group of tab to the launch configuration
+         This extension point provides a mechanism for contributing a group of tabs to the launch configuration
 dialog for a type of launch configuration.
       </documentation>
    </annotation>
@@ -83,7 +83,7 @@ launch configuration type extension).
    <element name="launchMode">
       <annotation>
          <documentation>
-            A launch mode element specifies a launch mode this tab group is specific to. A tab grounp can be associated with one or more launch modes. For backwards compatibility (previous to 3.0), a launch mode does not neet to be specified. When unspecified, a tab group is registered as the default tab group for the associated launch confiugration type (i.e. applicable to all supported launch modes for which a specific tab group has not been contributed).
+            A launch mode element specifies a launch mode this tab group is specific to. A tab group can be associated with one or more launch modes. For backwards compatibility (previous to 3.0), a launch mode does not neet to be specified. When unspecified, a tab group is registered as the default tab group for the associated launch confiugration type (i.e. applicable to all supported launch modes for which a specific tab group has not been contributed).
          </documentation>
       </annotation>
       <complexType>
