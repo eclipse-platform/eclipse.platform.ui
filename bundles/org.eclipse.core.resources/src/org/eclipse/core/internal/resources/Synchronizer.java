@@ -75,7 +75,9 @@ public void flushSyncInfo(final QualifiedName partner, final IResource root, fin
 		public void run(IProgressMonitor monitor) throws CoreException {
 			IResourceVisitor visitor = new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
-					setSyncInfo(partner, resource, null);
+					//only need to flush sync info if there is sync info
+					if (getSyncInfo(partner, resource) != null)
+						setSyncInfo(partner, resource, null);
 					return true;
 				}
 			};
