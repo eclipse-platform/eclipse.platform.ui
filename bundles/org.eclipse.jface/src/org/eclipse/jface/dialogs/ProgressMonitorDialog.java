@@ -331,10 +331,11 @@ protected void createButtonsForButtonBar(Composite parent) {
 	createCancelButton(parent);
 }
 
-
 /**
- * Create a cancel button for the receiver.
- * @param parent
+ * Creates the cancel button.
+ * 
+ * @param parent the parent composite
+ * @since 3.0
  */
 protected void createCancelButton(Composite parent) {
     cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
@@ -343,6 +344,7 @@ protected void createCancelButton(Composite parent) {
 	cancel.setCursor(arrowCursor);
 	setOperationCancelButtonEnabled(enableCancelButton);
 }
+
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
