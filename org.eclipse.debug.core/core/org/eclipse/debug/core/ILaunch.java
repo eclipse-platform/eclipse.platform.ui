@@ -49,7 +49,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	public IProcess[] getProcesses();
 	
 	/**
-	 * Returns all the debug targets associatd with this launch,
+	 * Returns all the debug targets associated with this launch,
 	 * or an empty collection if no debug targets are associated
 	 * with this launch. The primary debug target is the first
 	 * in the collection (if any).
@@ -133,7 +133,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	
 	/**
 	 * Returns the configuration that was launched, or <code>null</code>
-	 * if no configration was launched.
+	 * if no configuration was launched.
 	 * 
 	 * @return the launched configuration or <code>null</code>
 	 * @since 2.0
