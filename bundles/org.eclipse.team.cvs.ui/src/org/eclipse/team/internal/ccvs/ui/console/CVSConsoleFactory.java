@@ -33,22 +33,26 @@ public class CVSConsoleFactory implements IConsoleFactory {
 	
 	public static void showConsole() {
 		CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-		IConsole[] existing = manager.getConsoles();
-		boolean exists = false;
-		for (int i = 0; i < existing.length; i++) {
-			if(console == existing[i])
-				exists = true;
+		if (console != null) {
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			IConsole[] existing = manager.getConsoles();
+			boolean exists = false;
+			for (int i = 0; i < existing.length; i++) {
+				if(console == existing[i])
+					exists = true;
+			}
+			if(! exists)
+				manager.addConsoles(new IConsole[] {console});
+			manager.showConsoleView(console);
 		}
-		if(! exists)
-			manager.addConsoles(new IConsole[] {console});
-		manager.showConsoleView(console);
 	}
 	
 	public static void closeConsole() {
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 		CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
-		manager.removeConsoles(new IConsole[] {console});
-		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(console.new MyLifecycle());
+		if (console != null) {
+			manager.removeConsoles(new IConsole[] {console});
+			ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(console.new MyLifecycle());
+		}
 	}
 }

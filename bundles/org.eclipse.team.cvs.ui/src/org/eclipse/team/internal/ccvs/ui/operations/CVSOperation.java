@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -307,7 +308,9 @@ public abstract class CVSOperation extends TeamOperation {
         // Show the console as the goto action
         return new Action("Show CVS Console") {
             public void run() {
-                CVSUIPlugin.getPlugin().getConsole().show(true);
+                CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
+                if (console != null)
+                    console.show(true);
             }
             public String getToolTipText() {
                 return "Show CVS Console";

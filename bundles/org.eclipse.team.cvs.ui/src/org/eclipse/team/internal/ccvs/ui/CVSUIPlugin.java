@@ -676,7 +676,12 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRepositoryLocation.class);
 		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
-		console = new CVSOutputConsole();
+		try {
+            console = new CVSOutputConsole();
+        } catch (RuntimeException e) {
+            // Don't let the console bring down the CVS UI
+            log(IStatus.ERROR, "Errors occurred starting the CVS conbsole", e);
+        }
 
 		// Must load the change set manager on startup since it listens to deltas
 		getChangeSetManager();
@@ -718,7 +723,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				throw new CoreException(e.getStatus());
 			}
 			
-			console.shutdown();
+			if (console != null)
+			    console.shutdown();
 			getChangeSetManager().dispose();
 		} finally {
 			super.stop(context);
