@@ -913,7 +913,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     setDefault(store, KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
     setDefault(store, KEY_PROXY_USER, ""); //$NON-NLS-1$
     setDefault(store, KEY_PROXY_PASS, ""); //$NON-NLS-1$
-    store.setDefault(KEY_USE_SSH2, false);
+    store.setDefault(KEY_USE_SSH2, true);
   }
 
   private static void setDefault(IPreferenceStore store, String key, String value){
