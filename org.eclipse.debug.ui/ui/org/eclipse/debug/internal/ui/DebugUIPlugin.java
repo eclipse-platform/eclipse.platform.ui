@@ -34,24 +34,24 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -69,10 +69,12 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.IProgressService;
 import org.w3c.dom.Document;
 
 /**
@@ -739,79 +741,221 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			monitor.beginTask(message, 200);
 			return configuration.launch(mode, monitor, true);	
 		} else {
-			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD);
-			if (build.length == 1) {
-				int join= waitForBuild(build[0].getState());
-				if (join == WAIT_FOR_BUILD) {
-					try {
-						StringBuffer buffer= new StringBuffer(configuration.getName());
-						buffer.append(DebugUIMessages.getString("DebugUIPlugin.19")); //$NON-NLS-1$
-						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
-						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
-						ILaunch pendingLaunch= new Launch(workingCopy, mode, null);
-						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
-						subMonitor = new SubProgressMonitor(monitor, 100);
-						subMonitor.beginTask(DebugUIMessages.getString("DebugUIPlugin.14"), 100); //$NON-NLS-1$
-						build[0].join();
-						DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
-						if (pendingLaunch.isTerminated()) {
-							monitor.setCanceled(true);
-						}
-					} catch (InterruptedException e) {
-						throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIMessages.getString("DebugUIPlugin.15"), e)); //$NON-NLS-1$
-					}
-				}else if (join == DONT_WAIT_FOR_BUILD){
-					subMonitor = monitor;
-					subMonitor.beginTask(message, 100);
-				} else { //CANCEL_LAUNCH 
-					return null;
-				}
-			}
+			subMonitor = monitor;
+			subMonitor.beginTask(message, 100);
 			return configuration.launch(mode, subMonitor); 
 		}
 	}
 	
+	private static Job[] getCurrentBuildJobs() {
+		Job[] autoBuilds = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD);
+		Job[] manBuilds = Platform.getJobManager().find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
+		Job[] allBuilds = new Job[autoBuilds.length + manBuilds.length];
+		System.arraycopy(autoBuilds, 0, allBuilds, 0, autoBuilds.length);
+		System.arraycopy(manBuilds, 0, allBuilds, autoBuilds.length, manBuilds.length);
+		return allBuilds;
+	}
+
 	/**
-	 * Returns whether a launch should wait for a build to finish before proceeding. If
-	 * a build is running and the user has asked to build before launching, always wait.
-	 * If a build is running and the user hasn't specified that they want to build before
-	 * launching, warn them (because the workspace state is changing) before proceeding.
-	 * If the user has asked to build before launching and a build is waiting, also ask them
-	 * because the build won't begin for an indeterminite amount of time.
+	 * Saves and builds the workspace according to current preference settings and
+	 * launches the given launch configuration in the specified mode in the
+	 * foreground with a progress dialog. Reports any exceptions that occur
+	 * in an error dialog.
 	 * 
-	 * @param buildState the state of the build job
-	 * @return whether a launch should wait for a build to finish before proceeding. Possible
-	 * return values are WAIT_FOR_BUILD, DONT_WAIT_FOR_BUILD, and CANCEL_LAUNCH
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode
+	 * @since 3.0
 	 */
-	private static int waitForBuild(final int buildState) {
-		String waitPreference= DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
-		if (AlwaysNeverDialog.ALWAYS.equals(waitPreference)) {
-			return WAIT_FOR_BUILD;
-		} else if (AlwaysNeverDialog.NEVER.equals(waitPreference)) {
-			return DONT_WAIT_FOR_BUILD;
+	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
+		if (!DebugUIPlugin.preLaunchSave()) {
+			return;
 		}
-		final int[] wait= new int[1];
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				String message= null;
-				if (buildState == Job.RUNNING) {
-					message= DebugUIMessages.getString("DebugUIPlugin.16"); //$NON-NLS-1$
-				} else if (buildState == Job.WAITING) {
-					message= DebugUIMessages.getString("DebugUIPlugin.17"); //$NON-NLS-1$
+				
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		final Job[] builds = getCurrentBuildJobs();
+		boolean wait = false;
+		
+		if (builds.length > 0) {
+			String waitForBuild = store.getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
+			
+			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
+				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUITools.4"), DebugUIMessages.getString("DebugUITools.5"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store);
+				prompt.open();
+				
+				switch (prompt.getReturnCode()) {
+					case CANCEL_LAUNCH:
+						return;
+					case DONT_WAIT_FOR_BUILD:
+						wait = false;
+						break;
+					case WAIT_FOR_BUILD:
+						wait = true;
+						break;
 				}
-				if (message != null) {
-					PromptDialog dialog = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.18"), message, IDebugUIConstants.PREF_WAIT_FOR_BUILD, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
-					dialog.open();
-					wait[0] = dialog.getReturnCode();
-				} else {
-					// Unknown or sleeping job. Don't wait.
-					wait[0]= DONT_WAIT_FOR_BUILD;
-				}
+			} else if (waitForBuild.equals(AlwaysNeverDialog.ALWAYS)) {
+				wait = true;
 			}
-		});
-		return wait[0];
+		}
+
+		if (wait) {
+			IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+			IProgressService progressService = workbench.getProgressService();
+			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					for (int i = 0; i < builds.length; i++) {
+						try {
+							monitor.subTask(DebugUIMessages.getString("DebugUITools.6") + builds[i].getName()); //$NON-NLS-1$
+							builds[i].join();
+						} catch (InterruptedException e) {
+						}
+					}
+
+					try {
+						buildAndLaunch(configuration, mode, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}		
+			};			
+			try {
+				progressService.busyCursorWhile(runnable);
+			} catch (InterruptedException e) {
+				//cancelled
+			} catch (InvocationTargetException e2) {
+				handleInvocationTargetException(e2, configuration, mode);
+			}
+		} else {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());	
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+						buildAndLaunch(configuration, mode, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}		
+			};
+			try {
+				dialog.run(true, true, runnable);
+			} catch (InvocationTargetException e) {
+				handleInvocationTargetException(e, configuration, mode);
+			} catch (InterruptedException e) {
+				// cancelled
+			}							
+
+		}
 	}
 	
+	private static void handleInvocationTargetException(InvocationTargetException e, ILaunchConfiguration configuration, String mode) {
+		Throwable targetException = e.getTargetException();
+		Throwable t = e;
+		if (targetException instanceof CoreException) {
+			t = targetException;
+		}
+		if (t instanceof CoreException) {
+			CoreException ce = (CoreException)t;
+			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
+			if (handler != null) {
+				LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+				if (group != null) {
+					DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
+					return;
+				}
+			}
+		}
+		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$		
+	}
+	
+	/**
+	 * Saves and builds the workspace according to current preference settings and
+	 * launches the given launch configuration in the specified mode in a background
+	 * Job with progress reported via the Job. Exceptions are reported in the Progress
+	 * view.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode
+	 * @since 3.0
+	 */
+	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
+		if (!DebugUIPlugin.preLaunchSave()) {
+			return;
+		}
+
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+
+		final Job[] builds = getCurrentBuildJobs();
+		String waitForBuild = store.getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
+		if (builds.length > 0) { // if there are build jobs running, do we wait or not??
+			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
+				boolean wait = false;
+				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUITools.4"), DebugUIMessages.getString("DebugUITools.5"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store);
+				prompt.open();
+				
+				switch (prompt.getReturnCode()) {
+					case CANCEL_LAUNCH:
+						return;
+					case DONT_WAIT_FOR_BUILD:
+						wait = false;
+						break;
+					case WAIT_FOR_BUILD:
+						wait = true;
+						break;
+				}
+				
+				if (wait) {
+					waitForBuild = AlwaysNeverDialog.ALWAYS;
+				}
+			}
+		}
+		
+		final boolean wait = waitForBuild.equals(AlwaysNeverDialog.ALWAYS);
+		Job job = new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					if(wait) {
+						String configName = configuration.getName();
+						for (int i = 0; i < builds.length; i++) {
+							try {
+								String taskName = MessageFormat.format(DebugUIMessages.getString("DebugUITools.7"), new String[] {configName, builds[i].getName()}); //$NON-NLS-1$
+								monitor.subTask(taskName);
+								monitor.beginTask(taskName, 100);
+								builds[i].join();
+							} catch (InterruptedException e) {
+							}
+						}
+					}
+					
+					buildAndLaunch(configuration, mode, monitor);
+					
+				} catch (CoreException e) {
+					final IStatus status= e.getStatus();
+					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+					if (handler == null) {
+						return status;
+					}
+					final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+					if (group == null) {
+						return status;
+					}
+					Runnable r = new Runnable() {
+						public void run() {
+							DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+						}	
+					};
+					DebugUIPlugin.getStandardDisplay().asyncExec(r);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+
+		IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();			
+		IProgressService progressService = workbench.getProgressService();
+		
+		job.setPriority(Job.INTERACTIVE);
+		job.setName(DebugUIMessages.getString("DebugUITools.8") + configuration.getName()); //$NON-NLS-1$
+		job.schedule();
+		progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job, true); //returns immediately
+	}
 	
 	static class PromptDialog extends MessageDialog {
 		private String fPreferenceKey = null;

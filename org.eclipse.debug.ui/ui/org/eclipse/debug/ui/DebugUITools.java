@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.debug.ui;
 
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -22,21 +20,17 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -50,13 +44,10 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDi
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -510,102 +501,13 @@ public class DebugUITools {
 			DebugUIPlugin.log(e);
 		}
 		if (launchInBackground) {
-			launchInBackground(configuration, mode);
+			DebugUIPlugin.launchInBackground(configuration, mode);
 		} else {
-			launchInForeground(configuration, mode);
+			DebugUIPlugin.launchInForeground(configuration, mode);
 		}
 	}
 	
-	/**
-	 * Saves and builds the workspace according to current preference settings and
-	 * launches the given launch configuration in the specified mode in the
-	 * foreground with a progress dialog. Reports any exceptions that occur
-	 * in an error dialog.
-	 * 
-	 * @param configuration the configuration to launch
-	 * @param mode launch mode
-	 * @since 3.0
-	 */
-	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return;
-		}
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					buildAndLaunch(configuration, mode, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}		
-		};
-		try {
-			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			Throwable targetException = e.getTargetException();
-			Throwable t = e;
-			if (targetException instanceof CoreException) {
-				t = targetException;
-			}
-			if (t instanceof CoreException) {
-				CoreException ce = (CoreException)t;
-				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
-				if (handler != null) {
-					LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-					if (group != null) {
-						openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
-						return;
-					}
-				}
-			}
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (InterruptedException e) {
-			// cancelled
-		}
-	}
-	
-	/**
-	 * Saves and builds the workspace according to current preference settings and
-	 * launches the given launch configuration in the specified mode in a background
-	 * Job with progress reported via the Job. Exceptions are reported in the Progress
-	 * view.
-	 * 
-	 * @param configuration the configuration to launch
-	 * @param mode launch mode
-	 * @since 3.0
-	 */
-	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return;
-		}
-		Job job= new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					buildAndLaunch(configuration, mode, monitor);
-				} catch (CoreException e) {
-					final IStatus status= e.getStatus();
-					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-					if (handler == null) {
-						return status;
-					}
-					final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-					if (group == null) {
-						return status;
-					}
-					Runnable r = new Runnable() {
-						public void run() {
-							openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
-						}
-					};
-					DebugUIPlugin.getStandardDisplay().asyncExec(r);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setPriority(Job.INTERACTIVE);
-		job.schedule();
-	}
+
 	
 	/**
 	 * Builds the workspace according to current preference settings, and launches

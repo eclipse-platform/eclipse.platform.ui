@@ -15,12 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -32,7 +28,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -42,6 +37,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -58,6 +54,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -1088,102 +1085,26 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void handleLaunchPressed() {
 		int result = CANCEL;
 		ILaunchConfiguration config = getTabViewer().getOriginal(); 
-		try {
-			if (getTabViewer().isDirty()) {
-				getTabViewer().handleApplyPressed();
-				config = getTabViewer().getOriginal();
-			}
-			result = doLaunch(config);
-		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_configuration._See_log_for_more_information_49"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
+	
+		if (getTabViewer().isDirty()) {
+			getTabViewer().handleApplyPressed();
+			config = getTabViewer().getOriginal();
 		}
-		if (result == OK) {
-			try {
-				getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, config.getMemento());
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-			close();
-		} else {
-			getShell().setFocus();
-			updateButtons();
+		
+		String mode = getMode();
+		IPreferenceStore store = getPreferenceStore();
+		
+		close();
+		
+		DebugUITools.launch(config, mode);
+		
+		try {
+			store.setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, config.getMemento());
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
 		}
 	}
 	
-	/**
-	 * Save the working copy if necessary, then launch the underlying configuration.
-	 * 
-	 * @return one of CANCEL or OK
-	 */
-	private int doLaunch(ILaunchConfiguration config) throws CoreException {
-		if (CommonTab.isLaunchInBackground(config)) {
-			// Background launching
-			DebugUITools.launchInBackground(config, getMode());
-			return OK;
-		}
-		
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return CANCEL;
-		}
-		// liftoff
-		ILaunch launch = null;
-		try {
-			launch = launchWithProgress(config);
-		} catch (CoreException e) {
-			handleStatus(e.getStatus());
-			return CANCEL;
-		}
-		// If the launch was cancelled, get out.  Otherwise, notify the tabs of the successful launch.
-		if (cancelButtonPressed()) {
-			launch.terminate();
-			return CANCEL;
-		} else if (launch != null) {
-			ILaunchConfigurationTabGroup group = getTabGroup();
-			if (group != null) {
-				group.launched(launch);
-			}
-		}
-		
-		return OK;
-	}
-	
-	/**
-	 * @return the resulting launch, or <code>null</code> if cancelled.
-	 * @exception CoreException if an exception occurs launching
-	 */
-	private ILaunch launchWithProgress(final ILaunchConfiguration config) throws CoreException {
-		final ILaunch[] launchResult = new ILaunch[1];
-		// Do the launch
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					launchResult[0] = DebugUIPlugin.buildAndLaunch(config, getMode(), monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		try {
-			run(true, true, runnable);
-		} catch (InterruptedException e) {
-			removeErrorLaunches();
-			return null;
-		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				//error launch has been removed by the launch configuration
-				throw (CoreException)t;
-			} else {
-				//remove any "error" launches
-			  	removeErrorLaunches();
-				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_50"), t); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-				
-		return launchResult[0];		
-	}
 	
 	private void removeErrorLaunches() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
