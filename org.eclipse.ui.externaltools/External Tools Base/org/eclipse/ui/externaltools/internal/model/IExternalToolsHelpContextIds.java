@@ -20,12 +20,7 @@ public interface IExternalToolsHelpContextIds {
 	public static final String PREFIX = "org.eclipse.ui.externaltools."; //$NON-NLS-1$
 
 	// Actions
-	public static final String ACTIVATE_TARGET_ACTION = PREFIX + "activate_target_action_context"; //$NON-NLS-1$
-	public static final String ANT_VIEW_VERTICAL_ACTION = PREFIX + "ant_view_vertical_action_context"; //$NON-NLS-1$
-	public static final String ANT_VIEW_SINGLE_ACTION = PREFIX + "ant_view_single_action_context"; //$NON-NLS-1$
-	public static final String ANT_VIEW_HORIZONTAL_ACTION = PREFIX + "ant_view_horizontal_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_ALL_ACTION = PREFIX + "remove_all_action_context"; //$NON-NLS-1$
-	public static final String DEACTIVATE_TARGET_ACTION = PREFIX + "deactivate_target_action_context"; //$NON-NLS-1$
 	public static final String TARGET_MOVE_UP_ACTION = PREFIX + "target_move_up_action_context"; //$NON-NLS-1$
 	public static final String TARGET_MOVE_DOWN_ACTION = PREFIX + "target_move_down_action_context"; //$NON-NLS-1$
 	public static final String SEARCH_FOR_BUILDFILES_ACTION = PREFIX + "search_for_buildfiles_action_context"; //$NON-NLS-1$
