@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -25,6 +27,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -65,7 +68,7 @@ import org.eclipse.swt.widgets.Shell;
  * is rarely required.
  * </p>
  */
-public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
+public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, IPageChangeProvider {
     /**
      * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
      */
@@ -129,6 +132,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
     private static final String FOCUS_CONTROL = "focusControl"; //$NON-NLS-1$
 
     private boolean lockedUI = false;
+	
+    private ListenerList pageChangedListeners = new ListenerList(3);
 
     /**
      * A layout for a container which includes several pages, like
@@ -391,8 +396,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
     public boolean close() {
         if (okToClose())
             return hardClose();
-        else
-            return false;
+        return false;
     }
 
     /* (non-Javadoc)
@@ -1092,6 +1096,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
         updateTitleBar();
         // Update the buttons
         updateButtons();
+		// Fires the page change event
+		firePageChanged(new PageChangedEvent(this, getCurrentPage()));
     }
 
     /* (non-Javadoc)
@@ -1250,5 +1256,46 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
         if (title == null)
             title = ""; //$NON-NLS-1$
         getShell().setText(title);
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
+	 */
+	public Object getSelectedPage() {
+		return getCurrentPage();
+	}
+
+   /* (non-Javadoc)
+    * @see org.eclipse.jface.dialog.IPageChangeProvider#addPageChangedListener()
+    */
+	public void addPageChangedListener(IPageChangedListener listener) {
+		pageChangedListeners.add(listener);
+	}
+   /* (non-Javadoc)
+    * @see org.eclipse.jface.dialog.IPageChangeProvider#removePageChangedListener()
+    */
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageChangedListeners.remove(listener);		
+	}
+ 
+	/**
+     * Notifies any selection changed listeners that the selected page
+     * has changed.
+     * Only listeners registered at the time this method is called are notified.
+     *
+     * @param event a selection changed event
+     *
+     * @see IPageChangedListener#pageChanged
+     */
+    protected void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = pageChangedListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
     }
 }

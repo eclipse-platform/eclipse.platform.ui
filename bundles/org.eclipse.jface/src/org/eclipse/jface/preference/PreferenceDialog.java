@@ -16,18 +16,23 @@ import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -79,7 +84,7 @@ import org.eclipse.swt.widgets.Tree;
  * dialog; when a node is selected, the corresponding page is shown on the right
  * hand side.
  */
-public class PreferenceDialog extends Dialog implements IPreferencePageContainer {
+public class PreferenceDialog extends Dialog implements IPreferencePageContainer, IPageChangeProvider {
 	/**
 	 * Layout for the page container.
 	 *  
@@ -193,6 +198,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * The tree viewer.
 	 */
 	private TreeViewer treeViewer;
+	
+    private ListenerList pageChangedListeners = new ListenerList(3);
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -374,28 +381,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		separator.setLayoutData(gd);
 		return composite;
-	}
-
-	/**
-	 * Create the pageArea in the composite.
-	 * @param composite
-	 * @param layout
-	 */
-	private void createPageArea(Composite composite, GridLayout layout) {
-		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
-		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout pageAreaLayout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 10;
-		pageAreaComposite.setLayout(pageAreaLayout);
-		
-		// Build the Page container
-		pageContainer = createPageContainer(pageAreaComposite);
-		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Build the separator line
-		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
 	}
 
 	/**
@@ -1234,6 +1219,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		updateButtons();
 		//Saved the selected node in the preferences
 		setSelectedNode();
+		firePageChanged(new PageChangedEvent(this, getCurrentPage()));
 	}
 
 	/*
@@ -1397,4 +1383,41 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected void createPageControl(IPreferencePage page, Composite parent) {
 		page.createControl(parent);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
+	 */
+	public Object getSelectedPage() {
+			return getCurrentPage();
+		}
+	
+	public void addPageChangedListener(IPageChangedListener listener) {
+		pageChangedListeners.add(listener);
+	}
+
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageChangedListeners.remove(listener);
+		
+	}
+
+	/**
+     * Notifies any selection changed listeners that the selected page
+     * has changed.
+     * Only listeners registered at the time this method is called are notified.
+     *
+     * @param event a selection changed event
+     *
+     * @see IPageChangedListener#pageChanged
+     */
+    protected void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = pageChangedListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
+    }	
 }
