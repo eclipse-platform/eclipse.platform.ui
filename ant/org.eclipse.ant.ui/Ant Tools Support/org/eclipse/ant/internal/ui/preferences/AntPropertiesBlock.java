@@ -42,6 +42,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -208,10 +210,18 @@ public class AntPropertiesBlock {
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
 		
-		TableViewer tableViewer= new TableViewer(table);
+		final TableViewer tableViewer= new TableViewer(table);
 		tableViewer.setContentProvider(new AntContentProvider());
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.addSelectionChangedListener(tableListener);
+		
+		table.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (editButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(tableViewer);
+				}
+			}
+		});	
 		return tableViewer;
 	}
 	
