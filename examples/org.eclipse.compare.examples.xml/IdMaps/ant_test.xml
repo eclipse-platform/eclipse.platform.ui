@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE idmap SYSTEM "idmap.dtd">
+
+<idmap name="ANT">
+	<element signature="root.project." id="name"/>
+	<element signature="root.project.target." id="name"/>
+</idmap>

@@ -1,0 +1,63 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.compare.examples.xml;
+
+import java.util.*;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.window.Window;
+
+/**
+ * Button to create a new id mapping scheme
+ */
+public class CreateNewIdMapAction extends Action {
+
+	private HashMap fIdMaps;// HashMap ( idname -> HashMap (signature -> id) )
+	private HashMap fIdMapsInternal;
+	private HashMap fIdExtensionToName;
+	
+	public CreateNewIdMapAction(XMLStructureViewer viewer) {		
+		setImageDescriptor(XMLPlugin.getDefault().getImageDescriptor("obj16/addidmap.gif")); //$NON-NLS-1$
+		setToolTipText(XMLCompareMessages.getString("XMLStructureViewer.newtask")); //$NON-NLS-1$
+	}
+	
+	public void run() {
+		XMLPlugin plugin= XMLPlugin.getDefault();
+		fIdMapsInternal= plugin.getIdMapsInternal();//fIdMapsInternal is only read, not modified
+		
+		fIdMaps = new HashMap();
+		HashMap PluginIdMaps = plugin.getIdMaps();
+		Set keySet = PluginIdMaps.keySet();
+		for (Iterator iter = keySet.iterator(); iter.hasNext(); ) {
+			String key = (String) iter.next();
+			fIdMaps.put(key, ((HashMap)PluginIdMaps.get(key)).clone());
+		}
+		
+		fIdExtensionToName= new HashMap();
+		HashMap PluginIdExtensionToName= plugin.getIdExtensionToName();
+		keySet= PluginIdExtensionToName.keySet();
+		for (Iterator iter= keySet.iterator(); iter.hasNext(); ) {
+			String key= (String) iter.next();
+			fIdExtensionToName.put(key, PluginIdExtensionToName.get(key));
+		}
+		
+		IdMap idmap = new IdMap(false);
+		XMLCompareAddIdMapDialog dialog= new XMLCompareAddIdMapDialog(XMLPlugin.getActiveWorkbenchShell(),idmap,fIdMaps,fIdMapsInternal,fIdExtensionToName,false);
+		if (dialog.open() == Window.OK) {
+			if (!fIdMaps.containsKey(idmap.getName())) {
+				fIdMaps.put(idmap.getName(),new HashMap());
+				if (!idmap.getExtension().equals("")) //$NON-NLS-1$
+					fIdExtensionToName.put(idmap.getExtension(),idmap.getName());
+				XMLPlugin.getDefault().setIdMaps(fIdMaps,fIdExtensionToName,null,false);
+			}
+		}
+	}
+}

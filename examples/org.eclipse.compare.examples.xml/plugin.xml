@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.compare.examples.xml"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.compare.examples.xml.XMLPlugin">
+
+	<!-- Required plugins -->
+	<requires>
+	   <import plugin="org.eclipse.ui"/>
+	   <import plugin="org.eclipse.core.resources"/>
+	   <import plugin="org.eclipse.compare"/>
+	   <import plugin="org.apache.xerces"/>
+	</requires>
+
+	<!-- Runtime -->
+	<runtime>
+	   <library name="xmlcompareexamples.jar">
+	      <export name="*"/>
+	   </library>
+	</runtime>
+
+	<!-- Extensions -->
+	<extension-point id="idMapping" name="%idMapping"/>
+
+	<!-- Extension points -->
+	<extension
+		point="org.eclipse.compare.structureMergeViewers">
+		<structureMergeViewer
+			extensions="xml,classpath"
+			class="org.eclipse.compare.examples.xml.XMLStructureViewerCreator">
+		</structureMergeViewer>
+	</extension>
+	
+	<extension
+		point="org.eclipse.ui.preferencePages">
+		<page name="%pluginNamePreferencePage"
+			id="org.eclipse.compare.examples.xml.XMLComparePreferencePage"
+			class="org.eclipse.compare.examples.xml.XMLComparePreferencePage"
+			category= "org.eclipse.ui.preferencePages.Workbench">
+		</page>	
+	</extension>
+	
+	<extension
+	      point="org.eclipse.compare.examples.xml.idMapping">
+	   <idmap name="ANT">
+	      <mapping signature="project" id="name"/>
+	      <mapping signature="project>target" id="name"/>
+	      <ordered signature="project>target"/>
+	   </idmap>
+	   <idmap name="Eclipse Plugin">
+	      <mapping signature="plugin" id="id"/>
+	      <mapping signature="plugin>requires>import" id="plugin"/>
+	      <mapping signature="plugin>runtime>library" id="name"/>
+	      <mapping signature="plugin>runtime>library>export" id="name"/>
+	      <mapping signature="plugin>extension-point" id="id"/>
+	      <mapping signature="plugin>extension" id="point"/>
+	   </idmap>
+	   <idmap name="Eclipse ClassPath" extension="CLASSPATH">
+	      <mapping signature="classpath>classpathentry" id="path"/>
+	   </idmap>
+	</extension>
+
+</plugin>
