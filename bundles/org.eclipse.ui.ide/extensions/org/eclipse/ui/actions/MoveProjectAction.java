@@ -91,21 +91,17 @@ public class MoveProjectAction extends CopyProjectAction {
 			final IPath newLocation) {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
-
-				monitor.beginTask(MOVE_PROGRESS_TITLE, 100);
 				try {
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
+					
+					monitor.setTaskName(MOVE_PROGRESS_TITLE);
 					//Get a copy of the current description and modify it
 					IProjectDescription newDescription = createDescription(
 							project, projectName, newLocation);
 
-					monitor.worked(50);
-
 					project.move(newDescription, IResource.FORCE
 							| IResource.SHALLOW, monitor);
-
-					monitor.worked(50);
 
 				} catch (CoreException e) {
 					recordError(e); // log error

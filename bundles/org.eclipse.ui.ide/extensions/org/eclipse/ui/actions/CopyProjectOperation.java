@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
@@ -63,6 +63,7 @@ public class CopyProjectOperation {
 
     /**
      * Paste a copy of the project on the clipboard to the workspace.
+     * @param project The project that is beign copied.
      */
     public void copyProject(IProject project) {
         errorStatus = null;
@@ -72,7 +73,7 @@ public class CopyProjectOperation {
                 parentShell, project);
         dialog.setTitle(IDEWorkbenchMessages
                 .getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
-        if (dialog.open() != Dialog.OK)
+        if (dialog.open() != Window.OK)
             return;
 
         Object[] destinationPaths = dialog.getResult();
@@ -109,27 +110,20 @@ public class CopyProjectOperation {
             final String projectName, final IPath newLocation) {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             public void execute(IProgressMonitor monitor) {
-
-                monitor.beginTask(IDEWorkbenchMessages
-                        .getString("CopyProjectOperation.progressTitle"), 100); //$NON-NLS-1$
                 try {
                     if (monitor.isCanceled())
                         throw new OperationCanceledException();
-
+                    
+                    monitor.setTaskName(IDEWorkbenchMessages
+                            .getString("CopyProjectOperation.progressTitle")); //$NON-NLS-1$
+                    
                     //Get a copy of the current description and modify it
                     IProjectDescription newDescription = createProjectDescription(
                             project, projectName, newLocation);
-                    monitor.worked(50);
-
                     project.copy(newDescription, IResource.SHALLOW
                             | IResource.FORCE, monitor);
-
-                    monitor.worked(50);
-
                 } catch (CoreException e) {
                     recordError(e); // log error
-                } finally {
-                    monitor.done();
                 }
             }
         };
@@ -163,6 +157,7 @@ public class CopyProjectOperation {
      * @param project the source project
      * @param projectName the name for the new project
      * @param rootLocation the path the new project will be stored under.
+     * @throws CoreException
      */
     private IProjectDescription createProjectDescription(IProject project,
             String projectName, IPath rootLocation) throws CoreException {
@@ -183,7 +178,7 @@ public class CopyProjectOperation {
      * Records the core exception to be displayed to the user
      * once the action is finished.
      *
-     * @param exception a <code>CoreException</code>
+     * @param error a <code>CoreException</code>
      */
     private void recordError(CoreException error) {
 
