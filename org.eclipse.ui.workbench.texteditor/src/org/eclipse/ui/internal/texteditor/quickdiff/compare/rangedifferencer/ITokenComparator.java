@@ -30,6 +30,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
  * </p>
  *
  * @see TextMergeViewer
+ * @since 3.0
  */
 public interface ITokenComparator extends IRangeComparator {
 

@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.IStatus;
  * The status message must be passed over as StatusInfo object and can be
  * an error, warning or ok. The OK button is enabled or disabled depending
  * on the status.
+ *
+ * @since 3.0
  */ 
 abstract class StatusDialog extends Dialog {
 	

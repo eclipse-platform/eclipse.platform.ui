@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
+/**
+ * @since 3.0
+ */
 /* package */ class LinkedRangeDifference extends RangeDifference {
 
 	static final int INSERT= 0;

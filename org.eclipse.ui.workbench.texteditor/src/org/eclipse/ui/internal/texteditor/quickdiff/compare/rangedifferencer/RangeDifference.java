@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.DiffRegion;
  * </p>
  *
  * @see RangeDifferencer
+ * @since 3.0
  */
 public class RangeDifference {
 

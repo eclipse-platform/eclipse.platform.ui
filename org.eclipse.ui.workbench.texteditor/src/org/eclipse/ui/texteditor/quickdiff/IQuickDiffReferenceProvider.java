@@ -23,8 +23,8 @@ import org.eclipse.jface.text.IDocument;
  * <p>Extensions to the extension point <code>quickdiff.referenceprovider</code> have to implement
  * this interface (plus another interface for plugin and UI management.</p>
  * 
- * @since 3.0
  * @see IQuickDiffProviderImplementation
+ * @since 3.0
  */
 public interface IQuickDiffReferenceProvider {
 	/**

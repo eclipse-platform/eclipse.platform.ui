@@ -21,9 +21,9 @@ import org.eclipse.jface.util.Assert;
 /**
  * Describes an extension to the <code>quickdiff.referenceprovider</code> extension point.
  * 
- * @since 3.0
  * @see org.eclipse.ui.internal.texteditor.quickdiff.ReferenceSelectionAction
  * @see QuickDiff
+ * @since 3.0
  */
 public class ReferenceProviderDescriptor {
 	

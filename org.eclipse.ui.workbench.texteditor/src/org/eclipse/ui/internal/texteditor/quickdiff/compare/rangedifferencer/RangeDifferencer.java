@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @see IRangeComparator
  * @see RangeDifference
+ * @since 3.0
  */
 public final class RangeDifferencer {
 	

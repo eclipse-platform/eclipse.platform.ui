@@ -830,6 +830,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/*
 		 * @see org.eclipse.jface.action.IAction#isChecked()
+		 * @since 3.0
 		 */
 		public boolean isChecked() {
 			return fInsertMode == SMART_INSERT;
@@ -838,7 +839,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Action to toggle the overwrite mode.
-	 *  @since 3.0
+	 *
+	 * @since 3.0
 	 */
 	class ToggleOverwriteModeAction extends ResourceAction {
 	
@@ -991,6 +993,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @param length The length of the line
 		 * @param offset The caret position in the document
 		 * @return The offset of the line start
+		 * @since 3.0
 		 */
 		protected int getLineStartPosition(final IDocument document, final String line, final int length, final int offset) {
 			int index= 0;
@@ -1143,6 +1146,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/*
 		 * @see org.eclipse.jface.text.IPostSelectionProvider#addPostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 * @since 3.0
 		 */
 		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 			if (fSourceViewer != null) {
@@ -1155,6 +1159,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/*
 		 * @see org.eclipse.jface.text.IPostSelectionProvider#removePostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 * @since 3.0
 		 */
 		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 			if (fSourceViewer != null)  {
@@ -1461,7 +1466,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	
-	/** The editor's explicit document provider. */
+	/**
+	 * The editor's explicit document provider.
+	 * @since 3.0
+	 */
 	private IDocumentProvider fExplicitDocumentProvider;
 	/** The editor's preference store. */
 	private IPreferenceStore fPreferenceStore;
@@ -3398,6 +3406,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param overwrite indicates whether or not overwriting is allowed
 	 * @param progressMonitor the monitor in which to run the operation
+	 * @since 3.0
 	 */
 	protected void performSave(boolean overwrite, IProgressMonitor progressMonitor) {
 		
@@ -4520,6 +4529,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#getInsertMode()
+	 * @since 3.0
 	 */
 	public InsertMode getInsertMode() {
 		return fInsertMode;
@@ -4527,6 +4537,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#setInsertMode(org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode)
+	 * @since 3.0
 	 */
 	public void setInsertMode(InsertMode newMode) {
 		List legalModes= getLegalInsertModes();
@@ -4543,6 +4554,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * are legal.
 	 * 
 	 * @return the set of legal insert modes
+	 * @since 3.0
 	 */
 	protected List getLegalInsertModes() {
 		if (fLegalInsertModes == null) {
@@ -4583,6 +4595,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param mode the insert mode to be configured
 	 * @param legal <code>true</code> if the given mode is legal, <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	protected void configureInsertMode(InsertMode mode, boolean legal) {
 		List legalModes= getLegalInsertModes();		
@@ -4596,6 +4609,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 	
+	/**
+	 * @since 3.0
+	 */
 	protected void enableOverwriteMode(boolean enable) {
 		if (fIsOverwriting && !enable)
 			toggleOverwriteMode();

@@ -16,6 +16,8 @@ import java.util.List;
 /**
  * A custom iterator to iterate over a List of <code>RangeDifferences</code>.
  * It is used internally by the <code>RangeDifferencer</code>.
+ * 
+ * @since 3.0
  */
 /* package */ class DifferencesIterator {
 

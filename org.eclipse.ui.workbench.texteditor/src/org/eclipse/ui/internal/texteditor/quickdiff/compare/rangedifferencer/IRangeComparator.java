@@ -25,6 +25,8 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
  * <p>
  * Clients should implement this interface; there is no standard implementation.
  * </p>
+ *
+ * @since 3.0
  */
 public interface IRangeComparator {
 

@@ -18,6 +18,8 @@ import org.eclipse.jface.util.Assert;
  * A settable IStatus. 
  * Can be an error, warning, info or ok. For error, info and warning states,
  * a message describes the problem.
+ *
+ * @since 3.0
  */
 class StatusInfo implements IStatus {
 	
