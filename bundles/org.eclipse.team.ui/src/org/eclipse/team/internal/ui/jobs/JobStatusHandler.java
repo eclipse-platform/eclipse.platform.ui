@@ -36,19 +36,20 @@ public class JobStatusHandler extends JobChangeAdapter {
 	private List listeners = new ArrayList();
 	
 	/**
-	 * Associate the job with the given jobType and schdule the job for 
+	 * Associate the job with the given jobType and schedule the job for 
 	 * immediate start.
 	 * @param job
 	 * @param jobType
 	 */
 	public static void schedule(Job job, QualifiedName jobType) {
+		JobStatusHandler handler;
 		synchronized (handlers) {
-			JobStatusHandler handler = getHandler(jobType);
+			 handler = getHandler(jobType);
 			if (handler == null) {
 				handler = createHandler(jobType);
-			}
-			handler.schedule(job);
+			}			
 		}
+		handler.schedule(job);
 	}
 
 	/**
