@@ -630,6 +630,18 @@ public class FormToolkit {
 	public int getBorderStyle() {
 		return borderStyle;
 	}
+	/**
+	 * Sets the border style to be used when creating widgets. The
+	 * toolkit chooses the correct style based on the platform but
+	 * this value can be changed using this method.
+	 * 
+	 * @param style <code>SWT.BORDER</code> or <code>SWT.NULL</code>
+	 * @see #getBorderStyle
+	 */
+	public void setBorderStyle(int style) {
+		this.borderStyle = style;
+	}
+	
 	private void initialize() {
 		String osname = System.getProperty("os.name");
 		if (osname.equals("Windows XP"))

@@ -19,10 +19,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
-/**
- * TODO This class is under construction and will probably move to internal
- * (do not use).
- */
 public class FormUtil {
 	static final int H_SCROLL_INCREMENT = 5;
 	static final int V_SCROLL_INCREMENT = 64;
@@ -214,37 +210,46 @@ public class FormUtil {
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
-
-		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.x) {
+		//System.out.println("Ensure: area="+area+", origin="+scompOrigin+", cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
+		
+		//horizontal right
+		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
 			x = controlOrigin.x + controlSize.x - area.width;
 		}
-
-		if (controlOrigin.x < x) {
+		// horizontal left
+		else if (controlOrigin.x < x) {
 			x = controlOrigin.x;
 		}
-
-		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.y) {
+		// vertical bottom
+		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
 			y = controlOrigin.y + controlSize.y - area.height;
 		}
-
-		if (controlOrigin.y < y) {
+		// vertical top
+		else if (controlOrigin.y < y) {
 			y = controlOrigin.y;
 		}
-		if (scompOrigin.x!=x || scompOrigin.y!=y)
+
+		if (scompOrigin.x!=x || scompOrigin.y!=y) {
+			// scroll to reveal
 			scomp.setOrigin(x, y);
+		}
 	}
 
 	public static Point getControlLocation(ScrolledComposite scomp, Control control) {
 		int x = 0;
 		int y = 0;
+		Control content = scomp.getContent();
 		Control currentControl = control;
 		for (;;) {
-			if (currentControl == scomp)
+			if (currentControl == content)
 				break;
-			if (currentControl.getLocation().x > 0)
-				x += currentControl.getLocation().x;
-			if (currentControl.getLocation().y > 0)
-				y += currentControl.getLocation().y;
+			Point location = currentControl.getLocation();
+			//if (location.x > 0)
+				//x += location.x;
+			//if (location.y > 0)
+				//y += location.y;
+			x+= location.x;
+			y += location.y;
 			currentControl = currentControl.getParent();
 		}
 		return new Point(x, y);

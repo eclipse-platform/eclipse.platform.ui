@@ -817,7 +817,7 @@ public class FormText extends Canvas {
 		if (segment == null)
 			return;
 		Rectangle bounds = segment.getBounds();
-		ScrolledComposite scomp = getScrolledComposite();
+		ScrolledComposite scomp = FormUtil.getScrolledComposite(this);
 		if (scomp == null)
 			return;
 		Point origin = FormUtil.getControlLocation(scomp, this);
@@ -826,15 +826,7 @@ public class FormText extends Canvas {
 		FormUtil.ensureVisible(scomp, origin, new Point(bounds.width,
 				bounds.height));
 	}
-	private ScrolledComposite getScrolledComposite() {
-		Composite parent = getParent();
-		while (parent != null) {
-			if (parent instanceof ScrolledComposite)
-				return (ScrolledComposite) parent;
-			parent = parent.getParent();
-		}
-		return null;
-	}
+
 	private void handleDrag(MouseEvent e) {
 	}
 	/**
