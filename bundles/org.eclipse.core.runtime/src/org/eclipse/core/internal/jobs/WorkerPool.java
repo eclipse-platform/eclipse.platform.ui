@@ -162,6 +162,7 @@ class WorkerPool {
 	 */
 	private synchronized void sleep(long duration) {
 		sleepingThreads++;
+		decrementBusyThreads();
 		if (JobManager.DEBUG)
 			JobManager.debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
@@ -171,6 +172,7 @@ class WorkerPool {
 				JobManager.debug("worker interrupted while waiting... :-|"); //$NON-NLS-1$
 		} finally {
 			sleepingThreads--;
+			incrementBusyThreads();
 		}
 	}
 
@@ -186,35 +188,43 @@ class WorkerPool {
 				return null;
 			}
 		}
-		Job job = manager.startJob();
-		//spin until a job is found or until we have been idle for too long
-		long idleStart = System.currentTimeMillis();
-		while (manager.isActive() && job == null) {
-			long hint = manager.sleepHint();
-			if (hint > 0)
-				sleep(Math.min(hint, BEST_BEFORE));
+		//set the thread to be busy now in case of reentrant scheduling
+		incrementBusyThreads();
+		Job job = null;
+		try {
 			job = manager.startJob();
-			//if we were already idle, and there are still no new jobs, then
-			// the thread can expire
-			synchronized (this) {
-				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
-					//must remove the worker immediately to prevent all threads from expiring
-					endWorker(worker);
-					return null;
+			//spin until a job is found or until we have been idle for too long
+			long idleStart = System.currentTimeMillis();
+			while (manager.isActive() && job == null) {
+				long hint = manager.sleepHint();
+				if (hint > 0)
+					sleep(Math.min(hint, BEST_BEFORE));
+				job = manager.startJob();
+				//if we were already idle, and there are still no new jobs, then
+				// the thread can expire
+				synchronized (this) {
+					if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
+						//must remove the worker immediately to prevent all threads from expiring
+						endWorker(worker);
+						return null;
+					}
 				}
 			}
-		}
-		if (job != null) {
-			incrementBusyThreads();
-			//if this job has a rule, then we are essentially acquiring a lock
-			if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
-				//don't need to reaquire locks because it was not recorded in the graph
-				//that this thread waited to get this rule
-				manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
+			if (job != null) {
+				//if this job has a rule, then we are essentially acquiring a lock
+				if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
+					//don't need to reaquire locks because it was not recorded in the graph
+					//that this thread waited to get this rule
+					manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
+				}
+				//see if we need to wake another worker
+				if (manager.sleepHint() <= 0)
+					jobQueued(null);
 			}
-			//see if we need to wake another worker
-			if (manager.sleepHint() <= 0)
-				jobQueued(null);
+		} finally {
+			//decrement busy thread count if we're not running a job
+			if (job == null)
+				decrementBusyThreads();
 		}
 		return job;
 	}
