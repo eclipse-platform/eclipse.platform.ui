@@ -22,7 +22,7 @@ public class ObjectActionContributor extends PluginActionBuilder
 	private IConfigurationElement config;
 	private boolean configRead=false;
 	static final String ATT_NAME_FILTER="nameFilter";//$NON-NLS-1$
-	private HashMap filterProperties;
+	private ObjectFilterTest filterTest;
 /**
  * The constructor.
  */
@@ -114,17 +114,9 @@ public boolean isApplicableTo(Object object) {
 		return false;
 
 	// Test custom filter.
-	if (filterProperties == null)
+	if (filterTest == null)
 		return true;
-	IActionFilter filter = null;
-	if (object instanceof IActionFilter)
-		filter = (IActionFilter)object;
-	else if (object instanceof IAdaptable)
-		filter = (IActionFilter)((IAdaptable)object).getAdapter(IActionFilter.class);
-	if (filter != null)
-		return testCustom(object, filter);
-	else
-		return true;
+	return filterTest.matches(object, true);
 }
 /**
  * Reads the configuration element and all the children.
@@ -143,33 +135,13 @@ private void readConfigElement() {
 protected boolean readElement(IConfigurationElement element) {
 	String tag = element.getName();
 	if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
-		String key = element.getAttribute("name");//$NON-NLS-1$
-		String value = element.getAttribute("value");//$NON-NLS-1$
-		if (key == null || value == null)
-			return true;
-		if (filterProperties==null) 
-			filterProperties = new HashMap();
-		filterProperties.put(key, value);
+		if (filterTest == null)
+			filterTest = new ObjectFilterTest();
+		filterTest.addFilterElement(element);
 		return true;
 	} else {
 		return super.readElement(element);
 	}
-}
-/**
- * Returns whether the current selection passes a custom key value filter
- * implemented by a matcher.
- */
-private boolean testCustom(Object object, IActionFilter filter) {
-	if (filterProperties == null)
-		return false;
-	Iterator iter = filterProperties.keySet().iterator();
-	while (iter.hasNext()) {
-		String key = (String)iter.next();
-		String value = (String)filterProperties.get(key);
-		if (!filter.testAttribute(object, key, value))
-			return false;
-	}
-	return true;
 }
 /**
  * Returns whether the current selection matches the contribution name filter.
