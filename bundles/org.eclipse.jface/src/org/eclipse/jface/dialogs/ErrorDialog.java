@@ -339,7 +339,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		for (int i = 0; i < nesting; i++) {
 			sb.append(NESTING_INDENT); //$NON-NLS-1$
 		}
-		sb.append(status.getMessage());
+		sb.append(buildingStatus.getMessage());
 		listToPopulate.add(sb.toString());
 		IStatus[] children = buildingStatus.getChildren();
 		for (int i = 0; i < children.length; i++) {
