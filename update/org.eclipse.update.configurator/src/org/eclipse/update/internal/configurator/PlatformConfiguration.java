@@ -625,7 +625,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			currentPlatformConfiguration = new PlatformConfiguration(platformConfigLocation);
 			if (currentPlatformConfiguration.config == null)
 				throw new Exception("Cannot load configuration from " + platformConfigLocation.getURL());
-			if (currentPlatformConfiguration.config.isDirty())
+			if (currentPlatformConfiguration.config.isDirty() && !currentPlatformConfiguration.isTransient())
 				currentPlatformConfiguration.save();
 		}
 	}
@@ -639,7 +639,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 //			// TODO clean this up when merging with the rest of update code
 //			long lastStamp = config.config.getDate().getTime();
 //			long computedStamp = config.computeChangeStamp();
-			if (config.config.isDirty() /* || computedStamp > lastStamp */) {
+			if (config.config.isDirty() && !config.isTransient()/* || computedStamp > lastStamp */) {
 				try {
 					config.save();
 				} catch (IOException e) {
