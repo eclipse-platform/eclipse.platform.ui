@@ -19,10 +19,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -46,22 +61,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -85,7 +84,6 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -425,6 +423,20 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return newPage;
 	}
     
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#create()
+     */
+    public void create() {
+        Platform.run(new ISafeRunnable() {
+            public void handleException(Throwable exception) {
+                // just let it get logged by the runtime
+            }
+            public void run() throws Exception {
+                WorkbenchWindow.super.create();
+            }
+        });
+    }
 	/**
 	 * @see Window
 	 */
@@ -604,7 +616,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      * 
      * @param shell the shell
      */
-	protected void createDefaultContents(Shell shell) {
+	protected void createDefaultContents(final Shell shell) {
 		defaultLayout = new TrimLayout();
 		defaultLayout.setSpacing(5, 5, 2, 2);
 		shell.setLayout(defaultLayout);
@@ -616,7 +628,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    
 		topBar = new CBanner(shell, SWT.NONE);
 
-		createCoolBarControl(topBar);
+		Control coolBar = createCoolBarControl(topBar);
+		// need to resize the shell, not just the coolbar's immediate
+		// parent, if the coolbar wants to grow or shrink
+        coolBar.addListener(SWT.Resize, new Listener() {
+            public void handleEvent(Event event) {
+                shell.layout();
+            }
+        });
 		if (getWindowConfigurer().getShowCoolBar()) {
 			topBar.setLeft(getCoolBarControl());
 		}
