@@ -38,7 +38,7 @@ public class SiteManager {
 	/**
 	 * return the local site where the feature will be temporary transfered
 	 */
-	public static ISite getTempSite(){
+	public static ISite getTempSite() throws CoreException {
 		return InternalSiteManager.getTempSite();
 	}
 }

@@ -32,5 +32,26 @@ public class TestCategories extends UpdateManagerTestCase {
 			assertEquals("UML tools",featureCategory.getLabel());
 			
 	}
+	
+		public void testOrderedCategories() throws Exception { 
+
+			URL remoteUrl = new URL(SOURCE_FILE_SITE+"xmls/site1/");
+			ISite remoteSite = SiteManager.getSite(remoteUrl);
+
+			ICategory[] categories = remoteSite.getCategories();
+			
+			assertEquals("Eclipse tools",categories[1].getLabel());
+			
+	}
+	
+		public void testTranslatedCategories() throws Exception { 
+
+			ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+
+			ICategory[] categories = remoteSite.getCategories();
+			
+			assertEquals("Required Drivers",categories[0].getLabel());
+			
+	}
 }
 

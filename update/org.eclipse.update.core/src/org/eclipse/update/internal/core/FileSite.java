@@ -6,6 +6,8 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.URL;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 
 /**
@@ -26,44 +28,23 @@ public class FileSite extends URLSite {
 	/**
 	 * @see AbstractSite#createExecutableFeature(IFeature)
 	 */
-	public AbstractFeature createExecutableFeature(IFeature sourceFeature) {
+	public AbstractFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
 		return new DefaultExecutableFeature(sourceFeature, this);
 	}
 
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(
-		IPluginEntry pluginEntry,
-		String contentKey,
-		InputStream inStream) {
+	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) throws CoreException {
+
+   		String pluginPath =	getURL().getPath() + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+   		pluginPath += pluginPath.endsWith(File.separator)?contentKey:File.separator+contentKey;
 		try {
-
-			// TEST: what if SiteURL is not valid ? 
-
-			File pluginSite = new File(getURL().getPath() + DEFAULT_PLUGIN_PATH);
-			if (!pluginSite.exists()) {
-				if (!CREATE_PATH) {
-					//FIXME: Serviceability
-					throw new IOException("The Path:" + pluginSite.toString() + "does not exist.");
-				} else {
-					//FIXME: Serviceability
-					if (!pluginSite.mkdirs())
-						throw new IOException("Cannot create:" + pluginSite.toString());
-				}
-			}
-
-			String pluginPath =
-				getURL().getPath() + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
-			
-			
-
-			UpdateManagerUtils.copyToLocal(inStream, pluginPath + File.separator + contentKey);
-
-
+			UpdateManagerUtils.copyToLocal(inStream, pluginPath);
 		} catch (IOException e) {
-			//FIXME: 
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating file:"+pluginPath,e);
+			throw new CoreException(status);
 		} finally {
 			try {
 				// close stream
@@ -76,31 +57,16 @@ public class FileSite extends URLSite {
 	/**
 	 * store Feature files
 	 */
-	public void storeFeatureInfo(
-		VersionedIdentifier featureIdentifier,
-		String contentKey,
-		InputStream inStream) {
+	public void storeFeatureInfo(	VersionedIdentifier featureIdentifier, String contentKey,InputStream inStream) throws CoreException {
+
+		String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
+   		featurePath += featurePath.endsWith(File.separator)?contentKey:File.separator+contentKey;			
 		try {
-
-			// TEST: what if SiteURL is not valid ? 
-			File featureSite = new File(getURL().getPath() + INSTALL_FEATURE_PATH);
-			if (!featureSite.exists()) {
-				if (!CREATE_PATH) {
-					//FIXME: Serviceability
-					throw new IOException("The Path:" + featureSite.toString() + "does not exist.");
-				} else {
-					//FIXME: Serviceability
-					if (!featureSite.mkdirs())
-						throw new IOException("Cannot create:" + featureSite.toString());
-				}
-			}
-
-			String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath + File.separator + contentKey);
-
 		} catch (IOException e) {
-			//FIXME: 
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating file:"+featurePath,e);
+			throw new CoreException(status);
 		} finally {
 			try {
 				// close stream

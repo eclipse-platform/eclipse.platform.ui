@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -87,7 +88,8 @@ public class DefaultSiteParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug(
 				"Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
-
+		try {
+			
 		String tag = localName.trim();
 
 		if (tag.equalsIgnoreCase(SITE)) {
@@ -114,13 +116,16 @@ public class DefaultSiteParser extends DefaultHandler {
 			processCategory(attributes);
 			return;
 		}
+		} catch (MalformedURLException e){
+			throw new SAXException("error processing URL. Check the validity of the URLs",e);
+		}
 
 	}
 
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes) {
+	private void processSite(Attributes attributes)  throws MalformedURLException {
 		//
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL, bundle);
@@ -142,7 +147,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/** 
 	 * process the Feature info
 	 */
-	private void processFeature(Attributes attributes) {
+	private void processFeature(Attributes attributes) throws MalformedURLException {
 
 		// url
 		URL url =
@@ -185,7 +190,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/** 
 	 * process the Archive info
 	 */
-	private void processArchive(Attributes attributes) {
+	private void processArchive(Attributes attributes) throws MalformedURLException {
 		String id = attributes.getValue("id");
 		String urlString = attributes.getValue("url");
 		URL url = UpdateManagerUtils.getURL(site.getURL(), urlString, null);

@@ -6,6 +6,7 @@ package org.eclipse.update.tests.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -26,7 +27,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private AbstractFeature getFeature(){
+	private AbstractFeature getFeature() throws MalformedURLException {
 		if (remoteFeature == null){
 
 		ISite site = new FileSite(SOURCE_FILE_SITE);
@@ -40,7 +41,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testIdentifier()
 	 */
-	public void testIdentifier() {
+	public void testIdentifier() throws CoreException, MalformedURLException {
 		String id1 = "xmls/apitests/org.eclipse.test.feature_1.0.0/";
 		String id2 = "xmls/apitests/org.eclipse_test_feature";
 		VersionedIdentifier ident1 = new VersionedIdentifier("org.test1.ident1","1.0.0");
@@ -64,7 +65,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testSite()
 	 */
-	public void testSite() {
+	public void testSite() throws MalformedURLException{
 		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
 
 			ISite site = new FileSite(SOURCE_FILE_SITE);
@@ -79,7 +80,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testLabel()
 	 */
-	public void testLabel() {
+	public void testLabel() throws CoreException,MalformedURLException {
 		String label = "dummy label";
 		AbstractFeature feature = getFeature();
 		feature.setLabel(label);
@@ -90,7 +91,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testUpdateURL()
 	 */
-	public void testUpdateURL() {
+	public void testUpdateURL() throws CoreException,MalformedURLException {
 		URL url = null;
 		String label = "OTI Site";
 		try {
@@ -109,7 +110,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testDiscoveryURLs()
 	 */
-	public void testDiscoveryURLs() {
+	public void testDiscoveryURLs() throws CoreException,MalformedURLException {
 		IInfo[] urlInfo = new Info[2];
 		URL[] url = new URL[2];
 		String[] label = new String[2];
@@ -134,7 +135,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testProvider()
 	 */
-	public void testProvider() {
+	public void testProvider() throws CoreException,MalformedURLException {
 		String provider = "not so dummy provider";
 		AbstractFeature feature = getFeature();
 		feature.setProvider(provider);
@@ -145,7 +146,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testDescription()
 	 */
-	public void testDescription() {
+	public void testDescription() throws CoreException,MalformedURLException {
 		String desc = "pretty long description as a string with \r\n and \t and \n";
 		IInfo info = new Info(desc);
 		AbstractFeature feature = getFeature();
@@ -156,7 +157,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testDescription()
 	 */
-	public void testDescription1() {
+	public void testDescription1() throws CoreException, MalformedURLException {
 		URL desc = null;
 		try {
 			desc = new URL("http://www.oti.com");
@@ -170,7 +171,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testDescription()
 	 */
-	public void testDescription2() {
+	public void testDescription2() throws CoreException, MalformedURLException {
 		URL url = null;
 		try {
 			url = new URL("http://www.oti.com");

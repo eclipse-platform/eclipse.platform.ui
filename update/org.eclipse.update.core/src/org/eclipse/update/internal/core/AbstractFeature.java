@@ -9,6 +9,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.ICategory;
 import org.xml.sax.SAXException;
@@ -116,7 +119,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * Copy constructor
 	 */
-	public AbstractFeature(IFeature sourceFeature, ISite targetSite) {
+	public AbstractFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		this(sourceFeature.getURL(), targetSite);
 		this.versionIdentifier = sourceFeature.getIdentifier();
 		this.label = sourceFeature.getLabel();
@@ -142,7 +145,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getIdentifier()
 	 */
-	public VersionedIdentifier getIdentifier() {
+	public VersionedIdentifier getIdentifier() throws CoreException {
 		if (versionIdentifier == null && !isInitialized)init();
 		return versionIdentifier;
 	}
@@ -158,7 +161,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getLabel()
 	 */
-	public String getLabel() {
+	public String getLabel() throws CoreException {
 		if (label == null && !isInitialized)
 			init();
 		return label;
@@ -197,7 +200,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getUpdateInfo()
 	 */
-	public IInfo getUpdateInfo() {
+	public IInfo getUpdateInfo() throws CoreException {
 		if (updateInfo == null && !isInitialized)
 			init();
 		return updateInfo;
@@ -206,7 +209,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getDiscoveryInfos()
 	 */
-	public IInfo[] getDiscoveryInfos() {
+	public IInfo[] getDiscoveryInfos() throws CoreException {
 		IInfo[] result = null;
 		if (discoveryInfos == null && !isInitialized)init();
 		if (!(discoveryInfos == null || discoveryInfos.isEmpty())) {
@@ -219,7 +222,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getProvider()
 	 */
-	public String getProvider() {
+	public String getProvider() throws CoreException {
 		if (provider == null && !isInitialized)
 			init();
 		return provider;
@@ -228,7 +231,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getDescription()
 	 */
-	public IInfo getDescription() {
+	public IInfo getDescription() throws CoreException {
 		if (description == null && !isInitialized)
 			init();
 		return description;
@@ -237,7 +240,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getCopyright()
 	 */
-	public IInfo getCopyright() {
+	public IInfo getCopyright() throws CoreException {
 		if (copyright == null && !isInitialized)
 			init();
 		return copyright;
@@ -246,7 +249,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getLicense()
 	 */
-	public IInfo getLicense() {
+	public IInfo getLicense() throws CoreException {
 		if (license == null && !isInitialized)
 			init();
 		return license;
@@ -255,14 +258,14 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getImage()
 	 */
-	public URL getImage() {
+	public URL getImage() throws CoreException {
 		if (image == null && !isInitialized)init();
 		return image;
 	}
 	/**
 	 * @see IFeature#getNL()
 	 */
-	public String getNL() {
+	public String getNL() throws CoreException {
 		if (nl == null && !isInitialized)init();		
 		return nl;
 	}
@@ -271,7 +274,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getOS()
 	 */
-	public String getOS() {
+	public String getOS() throws CoreException {
 		if (os == null && !isInitialized)init();		
 		return os;
 	}
@@ -280,7 +283,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getWS()
 	 */
-	public String getWS() {
+	public String getWS() throws CoreException {
 		if (ws == null && !isInitialized)init();		
 		return ws;
 	}
@@ -289,7 +292,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * Gets the categoryString
 	 * @return Returns a String
 	 */
-	private List getCategoryString() {
+	private List getCategoryString() throws CoreException {
 		if (categoryString == null && !isInitialized) init();
 		return categoryString;
 	}
@@ -438,7 +441,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getDownloadSize(ISite)
 	 */
-	public long getDownloadSize(ISite site) {
+	public long getDownloadSize(ISite site) throws CoreException {
 		int result=0;
 		IPluginEntry[] featureEntries = this.getPluginEntries();
 		IPluginEntry[] siteEntries = site.getPluginEntries();
@@ -459,7 +462,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getInstallSize(ISite)
 	 */
-	public long getInstallSize(ISite site) {
+	public long getInstallSize(ISite site) throws CoreException {
 		int result=0;
 		IPluginEntry[] featureEntries = this.getPluginEntries();
 		IPluginEntry[] siteEntries = site.getPluginEntries();
@@ -494,7 +497,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * @see IFeature#install(IFeature)
 	 * 
 	 */
-	public void install(IFeature targetFeature) {
+	public void install(IFeature targetFeature) throws CoreException {
 		try {
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			IPluginEntry[] targetSitePluginEntries =
@@ -558,24 +561,23 @@ public abstract class AbstractFeature implements IFeature {
 			}
 
 		} catch (IOException e) {
-			//FIXME: implement serviceability
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during Install",e);
+			throw new CoreException(status);
 		}
 	}
 
 	/** 
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
-	private void init() {
+	private void init() throws CoreException {
 		if (url != null) {
 			try {
 					new DefaultFeatureParser(getFeatureInputStream(), this);
-			} catch (IOException e) {
-				//FIXME:
-				e.printStackTrace();
-			} catch (org.xml.sax.SAXException e) {
-				//FIXME:
-				e.printStackTrace();
+			} catch (Exception e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during initialization of Feature",e);
+				throw new CoreException(status);
 			}
 		}
 	}
@@ -604,7 +606,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 */
-	public IPluginEntry[] getPluginEntries() {
+	public IPluginEntry[] getPluginEntries() throws CoreException {
 		IPluginEntry[] result = null;
 		if (pluginEntries == null && !isInitialized) init();
 		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
@@ -617,10 +619,8 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IFeature#getCategories()
 	 */
-	public ICategory[] getCategories() {
-		
-
-		
+	public ICategory[] getCategories() throws CoreException {
+				
 		if (categories==null) {
 			categories = new ArrayList();
 			List categoriesAsString = getCategoryString();
@@ -643,7 +643,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
-	public int getPluginEntryCount() {
+	public int getPluginEntryCount() throws CoreException {
 		return getPluginEntries().length;
 	}
 
@@ -693,7 +693,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(IPluginEntry pluginEntry,	String contentKey,InputStream inStream) {
+	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) throws CoreException {
 		// check if pluginEntry already exists before passing to the site
 		// anything else ?
 		boolean found = false;
@@ -708,7 +708,9 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		}
 		if (!found) {
-			//FIXME: throw exception
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"The plugin:"+pluginEntry.getIdentifier().toString()+" is not part of the plugins of the feature:"+this.getIdentifier().toString(),null);
+			throw new CoreException(status);			
 		}
 		getSite().store(pluginEntry, contentKey, inStream);
 	}
@@ -718,45 +720,56 @@ public abstract class AbstractFeature implements IFeature {
 	 * Private implementation of the feature. return the list of ID.
 	 * Call the site with the ID to get the URL of the contentReference of the Site
 	 */
-	public abstract String[] getContentReferences();
+	public abstract String[] getContentReferences() throws CoreException;
 
 	/**
 	 * return the list of FILE to be transfered for a Plugin
 	 */
-	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry);
+	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException;
 
 	/**
 	 * return the list of FILE to be transfered from within the Feature
 	 */
-	protected abstract String[] getStorageUnitNames();
+	protected abstract String[] getStorageUnitNames() throws CoreException ;
 
 	/**
 	 * return the Stream of the FILE to be transfered for a Plugin
 	 */
-	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry,String name);
+	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry,String name) throws CoreException;
 
 	/**
 	 * return the Stream of FILE to be transfered from within the Feature
 	 */
-	protected abstract InputStream getInputStreamFor(String name);
+	protected abstract InputStream getInputStreamFor(String name) throws CoreException ;
 
 	/**
 	 * returns the Stream corresponding to the XML file
 	 */
-	protected InputStream getFeatureInputStream() throws IOException{
+	protected InputStream getFeatureInputStream() throws CoreException {
 
 		//FIXME: is that global to ALL implementation ?
 		
 		// get the stream inside the Feature
 		URL insideURL = null;
+		URL rootURL = null;
 		try {
-			insideURL = new URL(getRootURL(),FEATURE_XML);
+			rootURL = getRootURL();
+			insideURL = new URL(rootURL,FEATURE_XML);
 		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating the URL for"+rootURL.toExternalForm(),e);
+			throw new CoreException(status);
+		} 
+
+		InputStream resultStream = null;
+		try {
+			resultStream = insideURL.openStream();
+		}catch (IOException e){
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error opening feature.xml in the feature archive:"+rootURL.toExternalForm(),e);
+			throw new CoreException(status);
 		}
-
-		return insideURL.openStream();
+		return resultStream;
 	};
 
 	/**

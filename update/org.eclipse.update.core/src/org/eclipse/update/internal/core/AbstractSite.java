@@ -3,15 +3,13 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.xml.sax.SAXException;
 
 public abstract class AbstractSite implements ISite {
 
@@ -39,7 +37,7 @@ public abstract class AbstractSite implements ISite {
 	private URL siteURL;
 	private URL infoURL;
 	private List features;
-	private List categories;
+	private Set categories;
 	private List archives;
 
 	/**
@@ -48,15 +46,12 @@ public abstract class AbstractSite implements ISite {
 	public AbstractSite(URL siteReference) {
 		super();
 		this.siteURL = siteReference;
-		// initializeSite();
-		// FIXME: should I initialize now or lazyly do it ?
-		// Should I get only the name of teh site first ?
 	}
 	
 	/**
 	 * Initializes the site by reading the site.xml file
 	 */
-	private void initializeSite(){
+	private void initializeSite() throws CoreException {
 		InputStream inStream = null;
 		isManageable = false;		
 		
@@ -64,22 +59,15 @@ public abstract class AbstractSite implements ISite {
 			URL siteXml = new URL(siteURL,SITE_XML);
 			parser = new DefaultSiteParser(siteXml.openStream(),this);
 			isManageable = true;		 	
-		} catch (org.xml.sax.SAXException e){
-			//FIXME: who should handle XML exception  the parser ? 
-			// ok but what should it do ? just put null in result ?
-			// send and transform teh exception ?
-			e.printStackTrace();
 		} catch (FileNotFoundException e){
 			// log not manageable site
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
 				System.out.println(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
 			}
-		} catch (MalformedURLException e){
-			// FIXME:
-			e.printStackTrace();
-		} catch (IOException e){
-			// FIXME:
-			e.printStackTrace();
+		} catch (Exception e){
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during parsing of the site XML",e);
+			throw new CoreException(status);
 		} finally {
 			try {
 			 inStream.close();
@@ -137,19 +125,17 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * 
 	 */
-	public abstract AbstractFeature createExecutableFeature(IFeature sourceFeature);
-
+	public abstract AbstractFeature createExecutableFeature(IFeature sourceFeature)throws CoreException ;
+	
 	/**
 	 * store Feature files/ Fetaures info into the Site
 	 */
-	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream);
+	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream) throws CoreException ;
 
 	/**
 	 *
 	 */
-	public abstract URL getURL(
-		IFeature sourceFeature,
-		String streamKey);
+	public abstract URL getURL  (	IFeature sourceFeature,	String streamKey) throws CoreException;
 
 	/**
 	 * Gets the siteURL
@@ -163,7 +149,7 @@ public abstract class AbstractSite implements ISite {
 	 * Gets the features
 	 * @return Returns a IFeature[]
 	 */
-	public IFeature[] getFeatures() {
+	public IFeature[] getFeatures() throws CoreException {
 		IFeature[] result = null;
 		if (isManageable){
 			if (features==null) initializeSite();
@@ -190,7 +176,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getArchives()
 	 */
-	public IInfo[] getArchives(){
+	public IInfo[] getArchives() throws CoreException {
 		IInfo[] result = null;
 		if (isManageable){
 			if (archives==null) initializeSite();
@@ -255,7 +241,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getInfoURL()
 	 */
-	public URL getInfoURL() {
+	public URL getInfoURL() throws CoreException {
 		if (isManageable){
 			if (infoURL==null) initializeSite();
 		}
@@ -273,7 +259,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getCategories()
 	 */
-	public ICategory[] getCategories() {
+	public ICategory[] getCategories() throws CoreException {
 		ICategory[] result = null;
 		if (isManageable) {
 			if (categories == null)	initializeSite();
@@ -291,8 +277,8 @@ public abstract class AbstractSite implements ISite {
 	 * @param category The category to add
 	 */
 	public void addCategory(ICategory category) {
-		if (categories==null){
-			categories = new ArrayList(0);
+		if (this.categories==null){
+			this.categories = new TreeSet(DefaultCategory.getComparator());
 		}
 		this.categories.add(category);
 	}	
@@ -300,7 +286,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * returns the associated ICategory
 	 */
-	public ICategory getCategory(String key) {
+	public ICategory getCategory(String key) throws CoreException {
 		ICategory result = null;
 		boolean found = false;		
 		

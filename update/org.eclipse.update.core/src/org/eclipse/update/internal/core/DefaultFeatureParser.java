@@ -5,15 +5,12 @@ package org.eclipse.update.internal.core;
  */
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.util.*;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IInfo;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -30,11 +27,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private static final String FEATURE			= "feature";	
 	private static final String DESCRIPTION		= "description";
 	private static final String COPYRIGHT		= "copyright";	
-	private static final String LICENSE 		= "license";	
-	private static final String UPDATE			 = "update";
-	private static final String DISCOVERY		 = "discovery";
-	private static final String IMPORT			= "import";	
-	private static final String PLUGIN			= "plugin";	
+	private static final String LICENSE 			= "license";	
+	private static final String UPDATE				= "update";
+	private static final String DISCOVERY		= "discovery";
+	private static final String IMPORT				= "import";	
+	private static final String PLUGIN				= "plugin";	
 	
 	private String text;
 	private ResourceBundle	bundle;
@@ -220,7 +217,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the Category Def info
 	 */
-	private void processPlugin(Attributes attributes){
+	private void processPlugin(Attributes attributes) {
 		String id  = attributes.getValue("id");
 		String ver = attributes.getValue("version");
 		PluginEntry pluginEntry = new PluginEntry(id,ver);
@@ -245,12 +242,13 @@ public class DefaultFeatureParser extends DefaultHandler {
 		int download_size = -1;
 		String download = attributes.getValue("download-size");
 		if (download!=null && !download.trim().equals("")){
-			try{
-				download_size = Integer.valueOf(download).intValue();
-			} catch (NumberFormatException e){
-				//FIXME:
-				e.printStackTrace();
-			}
+		try {
+			download_size = Integer.valueOf(download).intValue();
+		} catch (NumberFormatException e){
+			String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,pluginId,IStatus.OK,"Invalid download Size:"+download+"  for plugin:"+id+"  version:"+ver,e);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+		}
 		}
 		pluginEntry.setDownloadSize(download_size);
 		
@@ -262,8 +260,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 			try{
 				install_size = Integer.valueOf(install).intValue();
 			} catch (NumberFormatException e){
-				//FIXME:
-				e.printStackTrace();
+			String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,pluginId,IStatus.OK,"Invalid install size:"+install+"  for plugin:"+id+"  version:"+ver,e);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
 			}
 		}
 		pluginEntry.setInstallSize(install_size);				
@@ -291,7 +290,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName)
 		throws SAXException {
-
+		try {
 		if (text!= null) {
 
 			String tag = localName.trim();
@@ -329,6 +328,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("End Element:"+uri+":"+localName+":"+qName);
+		}
+		} catch (CoreException e){
+			throw new SAXException(e);
 		}
 	}
 

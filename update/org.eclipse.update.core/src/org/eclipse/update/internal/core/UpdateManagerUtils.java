@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.SiteManager;
 
 public class UpdateManagerUtils {
@@ -18,36 +19,32 @@ public class UpdateManagerUtils {
 	 * otherwise, return the default URL if the urlString is null
 	 * if teh urlString or the defautl URL are relatives, prepend the rootURL to it
 	 */
-	public static URL getURL(URL rootURL, String urlString, String defaultURL) {
+	public static URL getURL(URL rootURL, String urlString, String defaultURL) throws MalformedURLException {
 		URL url = null;
+
+		// if no URL , provide Default
+		if (urlString == null || urlString.trim().equals("")) {
+
+		// no URL, no default, return right now...
+		if (defaultURL == null || defaultURL.trim().equals(""))
+			return null;
+		else
+			urlString = defaultURL;
+		}
+
+		// URL can be relative or absolute	
+		if (urlString.startsWith("/") && urlString.length() > 1)
+			urlString = urlString.substring(1);
 		try {
-			// if no URL , provide Default
-			if (urlString == null || urlString.trim().equals("")) {
-
-				// no URL, no default, return right now...
-				if (defaultURL == null || defaultURL.trim().equals(""))
-					return null;
-				else
-					urlString = defaultURL;
-			}
-
-			// URL can be relative or absolute	
-			if (urlString.startsWith("/") && urlString.length() > 1)
-				urlString = urlString.substring(1);
-			try {
-				url = new URL(urlString);
-			} catch (MalformedURLException e) {
-				// the url is not an absolute URL
-				// try relative
-				url =
-					new URL(
-						rootURL.getProtocol(),
-						rootURL.getHost(),
-						rootURL.getPath() + (rootURL.getPath().endsWith("/")?"":"/")+urlString);
-			}
+			url = new URL(urlString);
 		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
+			// the url is not an absolute URL
+			// try relative
+			url =
+				new URL(
+					rootURL.getProtocol(),
+					rootURL.getHost(),
+					rootURL.getPath() + (rootURL.getPath().endsWith("/")?"":"/")+urlString);
 		}
 		return url;
 	}
@@ -72,7 +69,7 @@ public class UpdateManagerUtils {
 	 * and return the new URL
 	 */
 	public static URL resolveAsLocal(URL remoteURL)
-	throws MalformedURLException, IOException {
+	throws MalformedURLException, IOException, CoreException {
 		return resolveAsLocal(remoteURL,null);
 	}
 
@@ -83,7 +80,7 @@ public class UpdateManagerUtils {
 	 * and return the new URL
 	 */
 	public static URL resolveAsLocal(URL remoteURL, String localName)
-		throws MalformedURLException, IOException {
+		throws MalformedURLException, IOException, CoreException {
 		URL result = remoteURL;
 
 		if (!(remoteURL == null || remoteURL.getProtocol().equals("file"))) {

@@ -4,6 +4,7 @@ package org.eclipse.update.tests.regularInstall;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
@@ -19,13 +20,12 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 	
 	
-	private IFeature getFeature1(ISite site){
+	private IFeature getFeature1(ISite site) throws MalformedURLException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/org.eclipse.update.core.tests.feature1_1.0.4.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
 		return remoteFeature;
 	}	
 	
-
 	public void testFileSite() throws Exception{
 		
 		ISite remoteSite = new URLSite(SOURCE_FILE_SITE);
@@ -47,15 +47,12 @@ public class TestInstall extends UpdateManagerTestCase {
 		removeFromFileSystem(pluginFile);
 
 	}
-
-
-	private IFeature getFeature2(ISite site){
+	private IFeature getFeature2(ISite site) throws MalformedURLException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/features2.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
 		return remoteFeature;
 	}	
 	
-
 	public void testHTTPSite() throws Exception{
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);

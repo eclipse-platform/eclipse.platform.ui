@@ -7,6 +7,9 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.*; 
 
 /**
@@ -23,7 +26,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultExecutableFeature
 	 */
-	public DefaultExecutableFeature(IFeature sourceFeature, ISite targetSite) {
+	public DefaultExecutableFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		super(sourceFeature, targetSite);
 	}
 
@@ -51,7 +54,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
-	public InputStream getInputStreamFor(IPluginEntry pluginEntry,String name) {
+	public InputStream getInputStreamFor(IPluginEntry pluginEntry,String name) throws CoreException {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
 		try {
@@ -71,12 +74,10 @@ public class DefaultExecutableFeature extends AbstractFeature {
 				throw new IOException("The File:" + filePath + "does not exist.");
 			File entry = new File(filePath,name);
 			result = new FileInputStream(entry);
-		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		} catch (IOException e) {
-			//FIXME:
-			e.printStackTrace();
+		} catch (Exception e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during retrieving the Stream of :"+name+" in plugin:"+pluginEntry.getIdentifier().toString(),e);
+			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -84,38 +85,37 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getStorageUnitNames(IPluginEntry)
 	 */
-	public String[] getStorageUnitNames(IPluginEntry pluginEntry) {
+	public String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException {
 		URL siteURL = getSite().getURL();
 		String[] result = null;
 		try {
-			// get the URL of the JAR file that contains teh plugin entry
-			URL fileURL =
-				((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+			// get the URL of the Archive file that contains the plugin entry
+			URL fileURL = 	((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+
+			// if doesn't exist, get default path			
 			if (fileURL == null) {
-				// default path
-				fileURL =
-					new URL(siteURL, AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
+				fileURL =	new URL(siteURL, AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
 			}
-			File pluginDir = new File(fileURL.getFile());
 			
+			// return the list of all subdirectories
+			File pluginDir = new File(fileURL.getFile());
 			result = new String[pluginDir.list().length];
-
-
 			for (int i = 0; i<pluginDir.list().length;i++){
 				result[i] = pluginDir.list()[i];
-
 			}
+			//FIXME: check validity of algorithm and create testcase
 
 		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error retrieving archive names for:"+pluginEntry.getIdentifier().toString(),e);
+			throw new CoreException(status);		
 		}
 		return result;
 	}
 	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
-	public String[] getContentReferences() {
+	public String[] getContentReferences() throws CoreException {
 		String[] names = new String[getPluginEntryCount()];
 		for (int i = 0; i < getPluginEntryCount(); i++) {
 			names[i] = getArchiveID(getPluginEntries()[i]);

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
 public class URLSite extends AbstractSite {
@@ -31,23 +32,23 @@ public class URLSite extends AbstractSite {
 	 * In other implementations, we may have to use the site.xml archive tag, that maps
 	 * an id and a URL
 	 */
-	public URL getURL(IFeature sourceFeature, String archiveId) {
+	public URL getURL(IFeature sourceFeature, String archiveId) throws CoreException {
 		URL contentURL = null;
 		try {
-			//FIXME: delete ?
 			contentURL = getArchiveURLfor(archiveId);
 			if (contentURL==null) contentURL = new URL(getURL(),DEFAULT_PLUGIN_PATH+archiveId);
 		} catch (MalformedURLException e){
-			//FIXME:
-			e.printStackTrace();
-		} 
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating",e);
+			throw new CoreException(status);	
+		}		
 		return contentURL;
 	}
 
 	/**
 	 * @see AbstractSite#createExecutableFeature(IFeature)
 	 */
-	public AbstractFeature createExecutableFeature(IFeature sourceFeature) {
+	public AbstractFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
 		return null;
 	}
 
@@ -98,14 +99,14 @@ public class URLSite extends AbstractSite {
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) {
+	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) throws CoreException{
 		//FIXME: should not be called should it ? Can I store in any URL Site ?
 	}
 	
 	/**
 	 * store Feature files
 	 */
-	public void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream){
+	public void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream) throws CoreException {
 		//FIXME: should not be called should it ?
 	}
 

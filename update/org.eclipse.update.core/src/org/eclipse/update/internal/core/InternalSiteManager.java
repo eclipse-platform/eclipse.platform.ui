@@ -65,7 +65,6 @@ public class InternalSiteManager {
 			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),resolvedURL.getPath().substring(0,index));
 			localSite = new LocalSite(newURL);
 			} catch (Exception e){
-				// FIXME: exception
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create the Local Site Object",e);
 				throw new CoreException(status);
@@ -97,13 +96,11 @@ public class InternalSiteManager {
 				site = (ISite) constructor.newInstance(objArgs);
 
 			} catch (Exception e){
-				// FIXME: exception
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"cannot create an instance of the Site Object",e);
 				throw new CoreException(status);
 			} 
 		} else {
-			// FIXME: exception
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"The protocol of the URL is not recognized",null);
 			throw new CoreException(status);
@@ -114,15 +111,16 @@ public class InternalSiteManager {
 	/**
 	 * return the local site where the feature will be temporary transfered
 	 */
-	public static ISite getTempSite() {
+	public static ISite getTempSite() throws CoreException {
 		if (TEMP_SITE == null) {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
 				TEMP_SITE =	new FileSite(new URL("file",null,tempDir));
 			} catch (MalformedURLException e) {
-				//FIXME: should never occur... hardcoded ?
-				e.printStackTrace();
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create TEmporary Site",e);
+				throw new CoreException(status);
 			}
 		}
 		return TEMP_SITE;

@@ -6,12 +6,11 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
 /**
@@ -49,7 +48,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
-	public DefaultPackagedFeature(IFeature sourceFeature, ISite targetSite) {
+	public DefaultPackagedFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		super(sourceFeature, targetSite);
 	}
 
@@ -75,45 +74,43 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	}
 
 	/**
-	 * @see AbstractFeature#getInputStreamFor(String)
+	 * @see AbstractFeature#getInputStreamFor(IPluginEntry,String)
 	 */
-	public InputStream getInputStreamFor(IPluginEntry pluginEntry, String name) {
+	public InputStream getInputStreamFor(IPluginEntry pluginEntry, String name) throws CoreException {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
+
 		try {
-			// default			
-			String filePath =
-				siteURL.getPath()
-					+ AbstractSite.DEFAULT_PLUGIN_PATH
-					+ getArchiveID(pluginEntry);
-			URL fileURL =
-				((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+			String filePath = null;
+			// check if the site.xml had a coded URL for this plugin or if we
+			// should look in teh default place to find it: <site>+/plugins/+archiveId
+			URL fileURL =		((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
 			if (fileURL != null) {
-				// has to be local, file ?
 				filePath = fileURL.getPath();
+			} else {
+				filePath =	siteURL.getPath()+ AbstractSite.DEFAULT_PLUGIN_PATH+ getArchiveID(pluginEntry);
 			}
-
+
+			// are we looking into teh same Jar file
+			// or shoudl we close the previously opened one and open another one ?
 			if (currentOpenJarFile != null) {
 				if (!currentOpenJarFile.getName().equals(filePath)) {
 					currentOpenJarFile.close();
 					currentOpenJarFile = new JarFile(filePath);
-				} else {
-					// same file do nothing
-				}
+				} 
 			} else {
 				currentOpenJarFile = new JarFile(filePath);
 			}
-
+
+
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
 			result = currentOpenJarFile.getInputStream(entry);
-		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		} catch (IOException e) {
-			//FIXME:
-			e.printStackTrace();
+		} catch (Exception e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error opening :"+name+" in plugin archive:"+pluginEntry.getIdentifier().toString(),e);
+			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -121,45 +118,27 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getStorageUnitNames(IPluginEntry)
 	 */
-	public String[] getStorageUnitNames(IPluginEntry pluginEntry) {
+	public String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException {
 		URL siteURL = getSite().getURL();
 		JarFile jarFile = null;
 		String[] result = null;
 		try {
-			// get the URL of the JAR file that contains teh plugin entry
-			URL jarURL =
-				((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
+			// try to obtain the URL of the JAR file that contains the plugin entry from teh site.xml
+			// if it doesn't exist, use the default one
+			URL jarURL =	((AbstractSite) getSite()).getArchiveURLfor(getArchiveID(pluginEntry));
 			if (jarURL == null) {
-				// default path
-				jarURL =
-					new URL(siteURL.getProtocol(),siteURL.getHost(),siteURL.getPath()+AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
+				jarURL =	new URL(siteURL.getProtocol(),siteURL.getHost(),siteURL.getPath()+AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
 			}
-			jarFile = new JarFile(jarURL.getPath());
-			List list = new ArrayList();
-			Enumeration enum = jarFile.entries();
-			int loop = 0;
-			String currentName=null;
-			while (enum.hasMoreElements()) {
-				ZipEntry nextEntry = (ZipEntry) enum.nextElement();
-				if (!nextEntry.isDirectory()){
-					list.add(nextEntry.getName());
-					loop++;
-				}
-			}
-			jarFile.close();
 			
-			if (loop>0 && !list.isEmpty()){
-				result = new String[loop];
-				list.toArray(result);				
-			}
+			result = getJAREntries(jarURL.getPath());
 			
 		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		} catch (IOException e) {
-			//FIXME:
-			e.printStackTrace();
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error retrieving entries for the plugin:"+pluginEntry.getIdentifier().toString(),e);
+			throw new CoreException(status);
 		}
+		
+		
 		return result;
 	}
 
@@ -170,7 +149,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	 * Change the URL to be JAR url jar:file://<filename>!/
 	 * and get the feature.xml
 	 */
-	public InputStream getFeatureInputStream() throws IOException {
+	public InputStream getFeatureInputStream() throws CoreException {
 		transferLocally();
 		return super.getFeatureInputStream();
 	}
@@ -178,21 +157,21 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * Transfer feature.jar file locally
 	 */
-	private void transferLocally() throws IOException {
+	private void transferLocally() throws CoreException {
 		// install in DEFAULT PATH for feature
 		// as we OWN the temp site
 
-		// FIXME:
-		//String newFile = 
-		//		AbstractSite.DEFAULT_FEATURE_PATH
-		//		+ getIdentifier().toString()
-		//		+ JAR_EXTENSION;
-				
+		try {
 		URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),null);		this.setURL(resolvedURL);
 
 		// DEBUG:
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
 			System.out.println("the feature on TEMP file is :"+resolvedURL.toExternalForm());					
+		}
+		} catch (IOException e){
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error transfering feature to TEMP directory",e);
+			throw new CoreException(status);			
 		}
 	}
 
@@ -206,7 +185,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
-	public String[] getContentReferences() {
+	public String[] getContentReferences() throws CoreException {
 		String[] names = new String[getPluginEntryCount()];
 		for (int i = 0; i < getPluginEntryCount(); i++) {
 			names[i] = getArchiveID(getPluginEntries()[i]);
@@ -224,31 +203,26 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
-	protected InputStream getInputStreamFor(String name) {
+	protected InputStream getInputStreamFor(String name) throws CoreException {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
-
 		try {
+			// ensure the file is local
 			transferLocally();
-
-			// default			
-			String filePath =
-				siteURL.getPath()
-					+ AbstractSite.DEFAULT_FEATURE_PATH
-					+ getIdentifier().toString()
-					+ JAR_EXTENSION;
+
+			// if the feature doesn't have a URL, use the default
+			String filePath =	null;
 			URL fileURL = getURL();
 			if (fileURL != null) {
-				// has to be local, file ?
 				filePath = fileURL.getPath();
+			} else {
+				filePath =	siteURL.getPath()+ AbstractSite.DEFAULT_FEATURE_PATH	+ getIdentifier().toString()	+ JAR_EXTENSION;
 			}
-
+			// ensure we close the previous JAR file 
 			if (currentOpenJarFile != null) {
 				if (!currentOpenJarFile.getName().equals(filePath)) {
 					currentOpenJarFile.close();
 					currentOpenJarFile = new JarFile(filePath);
-				} else {
-					// same file do nothing
 				}
 			} else {
 				currentOpenJarFile = new JarFile(filePath);
@@ -258,12 +232,11 @@ public class DefaultPackagedFeature extends AbstractFeature {
 				throw new IOException("The File:" + filePath + "does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
 			result = currentOpenJarFile.getInputStream(entry);
-		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		} catch (IOException e) {
-			//FIXME:
-			e.printStackTrace();
+			
+		} catch (Exception e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error opening :"+name+" in feature archive:"+getIdentifier().toString(),e);
+			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -271,25 +244,44 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getStorageUnitNames()
 	 */
-	protected String[] getStorageUnitNames() {
+	protected String[] getStorageUnitNames() throws CoreException {
 		URL siteURL = getSite().getURL();
 		JarFile jarFile = null;
 		String[] result = null;
-
+
 		try {
-
+			// make sure the feature archive has been transfered locally
 			transferLocally();
-
-			// get the URL of the feature JAR file
+			
+			// get the URL of the feature JAR file or use the default
 			URL jarURL = getURL();
 			if (jarURL == null) {
-				// default path
-				jarURL =
-					new URL(
-						siteURL,
-						AbstractSite.DEFAULT_FEATURE_PATH + getIdentifier().toString() + JAR_EXTENSION);
+				jarURL =	new URL(	siteURL,AbstractSite.DEFAULT_FEATURE_PATH + getIdentifier().toString() + JAR_EXTENSION);
 			}
-			jarFile = new JarFile(jarURL.getPath());
+			result = getJAREntries(jarURL.getPath());
+						
+		} catch (MalformedURLException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during Install",e);
+			throw new CoreException(status);
+		}
+		return result;
+	}
+
+
+	/**
+	 * return the list of entries in the JAR file
+	 * Do not retrun Directory entries
+	 * 
+	 * do not get directories only entry as the directories will
+	 * be created when teh fils will be created
+	 * it was difficult to obtain a correct URL for a Directory inside a JAR
+	 * because of the last '\' in the entry
+	 */
+	private String[] getJAREntries(String path) throws CoreException {
+			String[] result = null;
+			try {
+			JarFile jarFile = new JarFile(path);
 			List list = new ArrayList();
 			Enumeration enum = jarFile.entries();
 			int loop = 0;
@@ -300,21 +292,18 @@ public class DefaultPackagedFeature extends AbstractFeature {
 					loop++;
 				}
 			}
-			
 			jarFile.close();
-			
+
+			// set the result			
 			if (loop>0 && !list.isEmpty()){
 				result = new String[loop];
 				list.toArray(result);
 			}
-		} catch (MalformedURLException e) {
-			//FIXME:
-			e.printStackTrace();
-		} catch (IOException e) {
-			//FIXME:
-			e.printStackTrace();
-		}
-		return result;
-	}
-
+			} catch (IOException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error opening JAR file:"+path,e);
+				throw new CoreException(status);
+			}			
+			return result;
+	}
 }

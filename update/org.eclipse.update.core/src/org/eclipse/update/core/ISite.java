@@ -10,16 +10,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
 public interface ISite extends IPluginContainer {
-	IFeature [] getFeatures();
-	//IFeature createExecutableFeature(IFeature feature);
-	// not API ... not called by UI
+	IFeature [] getFeatures() throws CoreException ;
 	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	void addSiteChangedListener(ISiteChangedListener listener);
 	void removeSiteChangedListener(ISiteChangedListener listener);
-	URL getURL();
-	URL getInfoURL();
-	ICategory[] getCategories();
-	IInfo[] getArchives();
+	URL getURL() ;
+	URL getInfoURL() throws CoreException ;
+	ICategory[] getCategories() throws CoreException ;
+	IInfo[] getArchives() throws CoreException ;
 	
 }
