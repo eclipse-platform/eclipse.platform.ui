@@ -85,8 +85,8 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 			fNextStep.setInputModel(getModel());
 			IReconcileResult[] nextResult= fNextStep.reconcile(partition);
 			return merge(result, convertToInputModel(nextResult));
-		} else
-			return result;
+		}
+		return result;
 	}
 
 	/*
@@ -98,8 +98,8 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 			fNextStep.setInputModel(getModel());
 			IReconcileResult[] nextResult= fNextStep.reconcile(dirtyRegion, subRegion);
 			return merge(result, convertToInputModel(nextResult));
-		} else
-			return result;
+		}
+		return result;
 	}
 
 	

@@ -157,8 +157,8 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	/**
 	 * Displays the given context information for the given offset.
 	 * 
-	 * @param info the context information
-	 * @param position the offset
+	 * @param information the context information
+	 * @param offset the offset
 	 * @since 2.0
 	 */
 

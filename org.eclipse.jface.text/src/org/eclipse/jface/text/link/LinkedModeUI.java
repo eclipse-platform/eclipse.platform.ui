@@ -440,12 +440,12 @@ public class LinkedModeUI {
 						// outside any edit box -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedModeListener.EXIT_ALL);
 						break;
-					} else {
-						if (event.stateMask == SWT.SHIFT)
-							previous();
-						else
-							next();
-					}
+					} 
+
+					if (event.stateMask == SWT.SHIFT)
+						previous();
+					else
+						next();
 
 					event.doit= false;
 					break;
@@ -460,12 +460,12 @@ public class LinkedModeUI {
 						// outside any edit box or on exit position -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedModeListener.EXIT_ALL);
 						break;
-					} else {
-						// normal case: exit entire stack and put caret to final position
-						leave(ILinkedModeListener.EXIT_ALL | ILinkedModeListener.UPDATE_CARET);
-						event.doit= false;
-						break;
 					}
+
+					// normal case: exit entire stack and put caret to final position
+					leave(ILinkedModeListener.EXIT_ALL | ILinkedModeListener.UPDATE_CARET);
+					event.doit= false;
+					break;
 
 				// ESC
 				case 0x1B:
@@ -777,8 +777,8 @@ public class LinkedModeUI {
 		if (fIterator.hasNext(fFramePosition)) {
 			switchPosition(fIterator.next(fFramePosition), true, true);
 			return;
-		} else
-			leave(ILinkedModeListener.UPDATE_CARET);
+		}
+		leave(ILinkedModeListener.UPDATE_CARET);
 	}
 
 	void previous() {

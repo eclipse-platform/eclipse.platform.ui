@@ -29,11 +29,9 @@ abstract class SingleCharReader extends Reader {
 		for (int i= off; i < end; i++) {
 			int ch= read();
 			if (ch == -1) {
-				if (i == off) {
+				if (i == off)
 					return -1;
-				} else {
-					return i - off;
-				}
+				return i - off;
 			}
 			cbuf[i]= (char)ch;
 		}
@@ -48,7 +46,9 @@ abstract class SingleCharReader extends Reader {
 	}
 	
 	/**
-	 * Gets the content as a String
+	 * Returns the readable content as string.
+	 * @return the readable content as string
+	 * @exception IOException in case reading fails
 	 */
 	public String getString() throws IOException {
 		StringBuffer buf= new StringBuffer();

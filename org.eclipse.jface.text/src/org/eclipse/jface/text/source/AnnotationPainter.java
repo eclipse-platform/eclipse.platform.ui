@@ -1291,23 +1291,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			return null;
 		
 		if (fSourceViewer instanceof ITextViewerExtension5) {
-			
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			return extension.modelRange2WidgetRange(p);
-		
-		} else {
-			
-			IRegion region= fSourceViewer.getVisibleRegion();
-			int offset= region.getOffset();
-			int length= region.getLength();
-			
-			if (overlapsWith(p, region)) {
-				int p1= Math.max(offset, p.getOffset());
-				int p2= Math.min(offset + length, p.getOffset() + p.getLength());
-				return new Region(p1 - offset, p2 - p1);
-			}
 		}
+			
+		IRegion region= fSourceViewer.getVisibleRegion();
+		int offset= region.getOffset();
+		int length= region.getLength();
 		
+		if (overlapsWith(p, region)) {
+			int p1= Math.max(offset, p.getOffset());
+			int p2= Math.min(offset + length, p.getOffset() + p.getLength());
+			return new Region(p1 - offset, p2 - p1);
+		}
 		return null;
 	}
 	

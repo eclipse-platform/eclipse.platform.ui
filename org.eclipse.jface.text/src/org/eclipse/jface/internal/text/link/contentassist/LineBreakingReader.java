@@ -36,7 +36,7 @@ class LineBreakingReader {
 	 * Creates a reader that breaks an input text to fit in a given width.
 	 * @param reader Reader of the input text
 	 * @param gc The graphic context that defines the currently used font sizes
-	 * @param maxLineWidth The max width (pixes) where the text has to fit in 
+	 * @param maxLineWidth The max width (in pixels) where the text has to fit in 
 	 */
 	public LineBreakingReader(Reader reader, GC gc, int maxLineWidth) {
 		fReader= new BufferedReader(reader);
@@ -51,10 +51,6 @@ class LineBreakingReader {
 		return fLine != null;
 	}
 	
-	/**
-	 * Reads the next line. The lengths of the line will not exceed the gived maximum
-	 * width.
-	 */
 	public String readLine() throws IOException {
 		if (fLine == null) {
 			String line= fReader.readLine();
@@ -92,11 +88,9 @@ class LineBreakingReader {
 			int wordWidth= fGC.textExtent(word).x;
 			int nextWidth= wordWidth + currWidth;
 			if (nextWidth > fMaxWidth) {
-				if (currWidth > 0) {
+				if (currWidth > 0)
 					return currOffset;
-				} else {
-					return nextOffset;
-				}
+				return nextOffset;
 			}
 			currWidth= nextWidth;
 			currOffset= nextOffset;

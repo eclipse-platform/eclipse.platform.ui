@@ -13,6 +13,7 @@ package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1613,18 +1614,31 @@ public class TextViewer extends Viewer implements
 	protected int getEmptySelectionChangedEventDelay() {
 		return 500;
 	}
-			
-	/*
-	 * @see org.eclipse.jface.text.ITextViewer#setAutoIndentStrategy(org.eclipse.jface.text.IAutoIndentStrategy, java.lang.String)
+	
+	/**
+	 * @inheritDoc
+	 * @deprecated since 3.1, use
+	 *             {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
+	 *             {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)} instead
 	 */
 	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
+		setAutoEditStrategies(new IAutoEditStrategy[] { strategy }, contentType);
+	}
 
+	/**
+	 * Sets the given edit strategy as the only strategy for the given content type.
+	 * 
+	 * @param strategies the auto edit strategies
+	 * @param contentType the content type
+	 * @since 3.1
+	 */
+	protected final void setAutoEditStrategies(IAutoEditStrategy[] strategies, String contentType) {
 		if (fAutoIndentStrategies == null)
 			fAutoIndentStrategies= new HashMap();
 
 		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
 
-		if (strategy == null) {
+		if (strategies == null) {
 			if (autoEditStrategies == null)
 				return;
 				
@@ -1637,7 +1651,7 @@ public class TextViewer extends Viewer implements
 			}
 
 			autoEditStrategies.clear();
-			autoEditStrategies.add(strategy);			
+			autoEditStrategies.addAll(Arrays.asList(strategies));			
 		}
 	}
 
@@ -4544,6 +4558,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @param normalized <code>true</code> if the rewrite is performed from the start to the end of the document
 	 * @since 2.0
+	 * @deprecated since 3.1 use {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)} instead
 	 */
 	protected final void startSequentialRewriteMode(boolean normalized) {
 		IDocument document= getDocument();
@@ -4555,7 +4570,9 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Sets the sequential rewrite mode of the viewer's document.
+	 * 
 	 * @since 2.0
+	 * @deprecated since 3.1 use {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)} instead
 	 */
 	protected final void stopSequentialRewriteMode() {
 		IDocument document= getDocument();

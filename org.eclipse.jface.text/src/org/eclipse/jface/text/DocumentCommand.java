@@ -319,15 +319,15 @@ public class DocumentCommand {
 	 * with existing ones. If the document command owner is not <code>null</code>, it will not
 	 * get document change notifications for the particular command.
 	 *
-	 * @param offset the offset of the region to replace
-	 * @param length the length of the region to replace
-	 * @param text the text to replace with, may be <code>null</code>
-	 * @param owner the command owner, may be <code>null</code>
+	 * @param commandOffset the offset of the region to replace
+	 * @param commandLength the length of the region to replace
+	 * @param commandText the text to replace with, may be <code>null</code>
+	 * @param commandOwner the command owner, may be <code>null</code>
 	 * @throws BadLocationException if the added command intersects with an existing one
 	 * @since 2.1
 	 */
-	public void addCommand(int offset, int length, String text, IDocumentListener owner) throws BadLocationException {
-		final Command command= new Command(offset, length, text, owner);
+	public void addCommand(int commandOffset, int commandLength, String commandText, IDocumentListener commandOwner) throws BadLocationException {
+		final Command command= new Command(commandOffset, commandLength, commandText, commandOwner);
 
 		if (intersects(command))
 			throw new BadLocationException();		
@@ -386,8 +386,7 @@ public class DocumentCommand {
 		// diff middle points if not intersecting
 		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset)		
 			return (2 * command0.fOffset + command0.fLength) - (2 * command1.fOffset + command1.fLength) == 0;
-		else
-			return true;		
+		return true;		
 	}
 	
 	/**
@@ -401,8 +400,7 @@ public class DocumentCommand {
 		// diff middle points if not intersecting
 		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset)		
 			return (2 * offset + length) - (2 * command.fOffset + command.fLength) == 0;
-		else
-			return true;		
+		return true;		
 	}
 
 	/**

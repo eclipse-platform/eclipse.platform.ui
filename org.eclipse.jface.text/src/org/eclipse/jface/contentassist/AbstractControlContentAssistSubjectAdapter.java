@@ -382,11 +382,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			
 			int[] getPolygon(boolean border) {
 				Point e= getExtent();
-				if (border) {
+				if (border)
 					return new int[] { 0,0, e.x-1,0, e.x-1,e.y-1, HD+HW,e.y-1, HD+HW/2,e.y+HH-1, HD,e.y-1, 0,e.y-1, 0,0 };
-				} else {
-					return new int[] { 0,0, e.x,  0, e.x,  e.y,   HD+HW,e.y,   HD+HW/2,e.y+HH,   HD,e.y,   0,e.y,   0,0 };
-				}
+				return new int[] { 0,0, e.x,  0, e.x,  e.y,   HD+HW,e.y,   HD+HW/2,e.y+HH,   HD,e.y,   0,e.y,   0,0 };
 			}
 			
 			void dispose() {
@@ -619,8 +617,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					c.redraw();
 					if (c instanceof Shell)
 						break;
-					else
-						c= c.getParent();
+					c= c.getParent();
 				}
 			}
 			
@@ -650,8 +647,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					}
 					if (c instanceof Shell)
 						break;
-					else
-						c= c.getParent();
+					c= c.getParent();
 				}
 			}
 		}

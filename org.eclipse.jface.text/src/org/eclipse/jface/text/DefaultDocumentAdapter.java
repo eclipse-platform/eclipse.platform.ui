@@ -143,7 +143,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	private IDocument getDocumentForRead() {
 		if (!fIsForwarding) {
 			if (fDocumentClone == null) {
-				String content= fOriginalContent == null ? "" : fOriginalContent;
+				String content= fOriginalContent == null ? "" : fOriginalContent; //$NON-NLS-1$
 				String[] delims= fOriginalLineDelimiters == null ? DefaultLineTracker.DELIMITERS : fOriginalLineDelimiters;
 				fDocumentClone= new DocumentClone(content, delims);
 			}

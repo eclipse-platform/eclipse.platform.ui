@@ -50,8 +50,7 @@ class TabStopIterator {
 			int i= p1.getSequenceNumber() - p2.getSequenceNumber();
 			if (i != 0)
 				return i;
-			else
-				return p1.getOffset() - p2.getOffset();
+			return p1.getOffset() - p2.getOffset();
 		}
 		
 	}
@@ -106,24 +105,26 @@ class TabStopIterator {
 		if (index != -1) {
 			if (fIsCycling && index == fSize - 1)
 				return 0;
-			else
-				return index + 1;
-		} else {
-			// find the position that follows closest to the current position
-			LinkedPosition found= null;
-			for (Iterator it= fList.iterator(); it.hasNext(); ) {
-				LinkedPosition p= (LinkedPosition) it.next();
-				if (p.offset > current.offset)
-					if (found == null || found.offset > p.offset)
-						found= p;
-			}
-			if (found != null) {
-				return fList.indexOf(found);
-			} else if (fIsCycling) {
-				return 0;
-			} else
-				return fSize;
+			return index + 1;
 		}
+		
+		// index == -1
+		
+		// find the position that follows closest to the current position
+		LinkedPosition found= null;
+		for (Iterator it= fList.iterator(); it.hasNext(); ) {
+			LinkedPosition p= (LinkedPosition) it.next();
+			if (p.offset > current.offset)
+				if (found == null || found.offset > p.offset)
+					found= p;
+		}
+		
+		if (found != null) {
+			return fList.indexOf(found);
+		} else if (fIsCycling) {
+			return 0;
+		} else
+			return fSize;
 	}
 
 	boolean hasPrevious(LinkedPosition current) {
@@ -154,38 +155,37 @@ class TabStopIterator {
 		if (index != -1) {
 			if (fIsCycling && index == 0)
 				return fSize - 1;
-			else
-				return index - 1;
-		} else {
-			// find the position that follows closest to the current position
-			LinkedPosition found= null;
-			for (Iterator it= fList.iterator(); it.hasNext(); ) {
-				LinkedPosition p= (LinkedPosition) it.next();
-				if (p.offset < current.offset)
-					if (found == null || found.offset < p.offset)
-						found= p;
-			}
-			if (found != null) {
-				return fList.indexOf(found);
-			} else if (fIsCycling) {
-				return fSize - 1;
-			} else
-				return -1;
+			return index - 1;
 		}
+		
+		// index == -1
+		
+		// find the position that follows closest to the current position
+		LinkedPosition found= null;
+		for (Iterator it= fList.iterator(); it.hasNext(); ) {
+			LinkedPosition p= (LinkedPosition) it.next();
+			if (p.offset < current.offset)
+				if (found == null || found.offset < p.offset)
+					found= p;
+		}
+		if (found != null) {
+			return fList.indexOf(found);
+		} else if (fIsCycling) {
+			return fSize - 1;
+		} else
+			return -1;
 	}
 
 	LinkedPosition next(LinkedPosition current) {
 		if (!hasNext(current))
 			throw new NoSuchElementException();
-		else 
-			return (LinkedPosition) fList.get(fIndex= getNextIndex(current));
+		return (LinkedPosition) fList.get(fIndex= getNextIndex(current));
 	}
 
 	LinkedPosition previous(LinkedPosition current) {
 		if (!hasPrevious(current))
 			throw new NoSuchElementException();
-		else
-			return (LinkedPosition) fList.get(fIndex= getPreviousIndex(current));
+		return (LinkedPosition) fList.get(fIndex= getPreviousIndex(current));
 	}
 
 	void setCycling(boolean mode) {

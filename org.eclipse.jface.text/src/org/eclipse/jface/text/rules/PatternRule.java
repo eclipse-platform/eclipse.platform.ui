@@ -259,8 +259,7 @@ public class PatternRule implements IPredicateRule {
 		scanner.unread();
 		if (c == fStartSequence[0])
 			return (fColumn == scanner.getColumn() ? doEvaluate(scanner, resume) : Token.UNDEFINED);
-		else
-			return Token.UNDEFINED;	
+		return Token.UNDEFINED;	
 	}
 
 	/*

@@ -175,8 +175,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		}
 		if (model instanceof ILineDiffer)
 			return (ILineDiffer)model;
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -252,6 +251,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	/**
 	 * Adapts the start line to the implementation of <code>ILineDiffInfo</code>.
 	 * 
+	 * @param viewer the source viewer
 	 * @param startLine the line to adapt
 	 * @return <code>startLine - 1</code> if that line exists and is an
 	 *         unchanged line followed by deletions, <code>startLine</code>
@@ -271,6 +271,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	/**
 	 * Adapts the last line to the implementation of <code>ILineDiffInfo</code>.
 	 * 
+	 * @param viewer the source viewer
 	 * @param lastLine the line to adapt
 	 * @return <code>lastLine - 1</code> if that line exists and is an
 	 *         unchanged line followed by deletions, <code>startLine</code>

@@ -341,8 +341,8 @@ public class TemplateReaderWriter {
 			} catch (MissingResourceException e) {
 				return '!' + key + '!';
 			}
-		} else
-			return TemplatePersistenceMessages.getString(key); // default messages
+		}
+		return TemplatePersistenceMessages.getString(key); // default messages
 	}
 }
 

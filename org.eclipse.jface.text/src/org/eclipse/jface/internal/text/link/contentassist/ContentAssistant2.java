@@ -1352,7 +1352,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * Returns the content assist processor for the content
 	 * type of the specified document position.
 	 *
-	 * @param textViewer the text viewer
+	 * @param viewer the text viewer
 	 * @param offset a offset within the document
 	 * @return a content-assist processor or <code>null</code> if none exists
 	 */
@@ -1524,8 +1524,8 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		if (priority > WIDGET_PRIORITY) {
 			hidePossibleCompletions();
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 
 	/*

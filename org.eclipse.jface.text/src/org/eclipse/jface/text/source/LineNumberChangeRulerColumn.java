@@ -364,8 +364,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	protected String createDisplayString(int line) {
 		if (fCharacterDisplay && getModel() != null)
 			return super.createDisplayString(line) + getDisplayCharacter(getDiffInfo(line));
-		else
-			return super.createDisplayString(line);
+		return super.createDisplayString(line);
 	}
 
 	/*
@@ -374,8 +373,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	protected int computeNumberOfDigits() {
 		if (fCharacterDisplay && getModel() != null)
 			return super.computeNumberOfDigits() + 1;
-		else
-			return super.computeNumberOfDigits();
+		return super.computeNumberOfDigits();
 	}
 
 	/*

@@ -156,8 +156,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		
 		if (read() == EOF)
 			return Token.EOF;
-		else
-			return fDefaultReturnToken;
+		return fDefaultReturnToken;
 	}
 	
 	/*

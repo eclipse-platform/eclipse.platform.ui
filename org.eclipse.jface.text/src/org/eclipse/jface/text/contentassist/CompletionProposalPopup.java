@@ -247,8 +247,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private ICompletionProposal[] computeProposals(int offset) {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
-		else
-			return fContentAssistant.computeCompletionProposals(fViewer, offset);
+		return fContentAssistant.computeCompletionProposals(fViewer, offset);
 	}
 	
 	/**
@@ -735,36 +734,36 @@ class CompletionProposalPopup implements IContentAssistListener {
 			e.doit= false;
 			return false;
 
-		} else {
-			
-			switch (key) {
-				case 0x1B: // Esc
+		}
+		
+		// key != 0
+		switch (key) {
+			case 0x1B: // Esc
+				e.doit= false;
+				hide();
+				break;
+				
+			case '\n': // Ctrl-Enter on w2k
+			case '\r': // Enter
+				e.doit= false;
+				selectProposalWithMask(e.stateMask);
+				break;
+				
+			case '\t':
+				e.doit= false;
+				fProposalShell.setFocus();
+				return false;
+				
+			default:			
+				ICompletionProposal p= getSelectedProposal();
+			if (p instanceof ICompletionProposalExtension) {
+				ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+				char[] triggers= t.getTriggerCharacters();
+				if (contains(triggers, key)) {		
 					e.doit= false;
 					hide();
-					break;
-					
-				case '\n': // Ctrl-Enter on w2k
-				case '\r': // Enter
-					e.doit= false;
-					selectProposalWithMask(e.stateMask);
-					break;
-				
-				case '\t':
-					e.doit= false;
-					fProposalShell.setFocus();
-					return false;
-					
-				default:			
-					ICompletionProposal p= getSelectedProposal();
-					if (p instanceof ICompletionProposalExtension) {
-						ICompletionProposalExtension t= (ICompletionProposalExtension) p;
-						char[] triggers= t.getTriggerCharacters();
-						if (contains(triggers, key)) {		
-							e.doit= false;
-							hide();
-							insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-						}
-					}
+					insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+				}
 			}
 		}
 		
@@ -1159,8 +1158,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private int getPrefixCompletionOffset(ICompletionProposal proposal) {
 		if (proposal instanceof ICompletionProposalExtension3)
 			return ((ICompletionProposalExtension3) proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
-		else
-			return fInvocationOffset;	
+		return fInvocationOffset;	
 	}
 
 	/**

@@ -139,19 +139,21 @@ public interface ITextViewer {
 	 * Sets this viewer's auto indent strategy for the given content type. If
 	 * the given strategy is <code>null</code> any installed strategy for the
 	 * content type is removed. This method has been replaced by
-	 * {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)}
-	 * and
+	 * {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
 	 * {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)}.
 	 * It is now equivalent to
 	 * <pre>
-	 *    ITextViewerExtension2 extension= (ITextViewerExtension2) viewer;
-	 *    extension.removeAutoEditStrategy(oldStrategy, contentType);
-	 *    extension.prependAutoEditStrategy(strategy, contentType);
+	 * 		ITextViewerExtension2 extension= (ITextViewerExtension2) viewer;
+	 * 		extension.removeAutoEditStrategy(oldStrategy, contentType);
+	 * 		extension.prependAutoEditStrategy(strategy, contentType);
 	 * </pre>
 	 * 
 	 * @param strategy the new auto indent strategy. <code>null</code> is a
 	 *            valid argument.
 	 * @param contentType the type for which the strategy is registered
+	 * @deprecated since 3.1, use
+	 *             {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
+	 *             {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)} instead
 	 */
 	void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType);
 		

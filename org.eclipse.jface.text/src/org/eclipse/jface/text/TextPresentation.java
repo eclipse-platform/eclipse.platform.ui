@@ -216,8 +216,7 @@ public class TextPresentation {
 		StyleRange range= createWindowRelativeRange(fResultWindow, fDefaultRange);
 		if (range == null)
 			return null;
-		else
-			return (StyleRange)range.clone();
+		return (StyleRange)range.clone();
 		
 	}
 
@@ -683,8 +682,7 @@ public class TextPresentation {
 	public IRegion getExtent() {
 		if (fExtent != null)
 			return createWindowRelativeRegion(fExtent);
-		else
-			return getCoverage();
+		return getCoverage();
 	}
 	
 	/**

@@ -1316,8 +1316,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		promoteKeyListener();
 		if (fIsPrefixCompletionEnabled)
 			return fProposalPopup.incrementalComplete();
-		else
-			return fProposalPopup.showProposals(false);
+		return fProposalPopup.showProposals(false);
 	}
 	
 	/*
@@ -1344,8 +1343,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		promoteKeyListener();
 		if (fContextInfoPopup != null)
 			return fContextInfoPopup.showContextProposals(false);
-		else
-			return null;
+		return null;
 	}
 	
 	/**
@@ -1674,9 +1672,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (priority > WIDGET_PRIORITY) {
 			hide();
 			return true;
-		} else  {
-			return false;
 		}
+		return false;
 	}
 
 	/*

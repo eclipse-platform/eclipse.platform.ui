@@ -50,9 +50,9 @@ public class WhitespaceRule implements IRule {
 			} while (fDetector.isWhitespace((char) c));
 			scanner.unread();
 			return Token.WHITESPACE;
-		} else {
-			scanner.unread();
-			return Token.UNDEFINED;
 		}
+		
+		scanner.unread();
+		return Token.UNDEFINED;
 	}
 }

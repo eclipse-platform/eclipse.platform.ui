@@ -25,10 +25,6 @@ class TemplatePersistenceMessages {
 	private TemplatePersistenceMessages() {
 	}
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -37,24 +33,10 @@ class TemplatePersistenceMessages {
 		}
 	}
 	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 * @param arg
-	 * @return
-	 */
 	public static String getFormattedString(String key, Object arg) {
 		return MessageFormat.format(getString(key), new Object[] { arg });
 	}
 
-
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 * @param key
-	 * @param args
-	 * @return
-	 */	
 	public static String getFormattedString(String key, Object[] args) {
 		return MessageFormat.format(getString(key), args);
 	}

@@ -715,44 +715,44 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				e.doit= false;
 				return false;
 	
-			} else {
-				
-				switch (key) {
-					case 0x1B: // Esc
+			}
+			
+			// key != 0
+			switch (key) {
+				case 0x1B: // Esc
+					e.doit= false;
+					hide();
+					break;
+					
+				case '\n': // Ctrl-Enter on w2k
+				case '\r': // Enter
+					if ((e.stateMask & SWT.CTRL) == 0) {
 						e.doit= false;
-						hide();
-						break;
-						
-					case '\n': // Ctrl-Enter on w2k
-					case '\r': // Enter
-						if ((e.stateMask & SWT.CTRL) == 0) {
-							e.doit= false;
-							selectProposalWithMask(e.stateMask);
-						}
-						break;
-						
+						selectProposalWithMask(e.stateMask);
+					}
+					break;
+					
 					// in linked mode: hide popup
 					// plus: don't invalidate the event in order to give LinkedUI a chance to handle it
-					case '\t':
-//							hide();
-							break;
-						
-					default:			
-						ICompletionProposal p= getSelectedProposal();
-						if (p instanceof ICompletionProposalExtension) {
-							ICompletionProposalExtension t= (ICompletionProposalExtension) p;
-							char[] triggers= t.getTriggerCharacters();
-							if (contains(triggers, key)) {
-								hide();
-								if (key == ';') {		
-									e.doit= true;
-									insertProposal(p, (char) 0, e.stateMask, fViewer.getSelectedRange().x);
-								} else {
-									e.doit= false;
-									insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
-								}
-							}
+				case '\t':
+//					hide();
+					break;
+					
+				default:			
+					ICompletionProposal p= getSelectedProposal();
+				if (p instanceof ICompletionProposalExtension) {
+					ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+					char[] triggers= t.getTriggerCharacters();
+					if (contains(triggers, key)) {
+						hide();
+						if (key == ';') {		
+							e.doit= true;
+							insertProposal(p, (char) 0, e.stateMask, fViewer.getSelectedRange().x);
+						} else {
+							e.doit= false;
+							insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
 						}
+					}
 				}
 			}
 			

@@ -17,6 +17,7 @@ import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.DefaultUndoManager;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
@@ -138,10 +139,25 @@ public class SourceViewerConfiguration {
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the strategy is applicable
 	 * @return the auto indent strategy or <code>null</code> if automatic indentation is not to be enabled
+	 * @deprecated since 3.1 use {@link #getAutoEditStrategies(ISourceViewer, String)} instead
 	 */
 	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
 		return new DefaultAutoIndentStrategy();
 	}
+
+	/**
+	 * Returns the auto edit strategies ready to be used with the given source viewer
+	 * when manipulating text of the given content type. For backward compatibility, this implementation always 
+	 * returns an array containing the result of {@link #getAutoIndentStrategy(ISourceViewer, String)}.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @param contentType the content type for which the strategies are applicable
+	 * @return the auto edit strategies or <code>null</code> if automatic editing is not to be enabled
+	 */
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };
+	}
+	
 	/**
 	 * Returns the default prefixes to be used by the line-prefix operation
 	 * in the given source viewer for text of the given content type. This implementation always

@@ -354,7 +354,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			
 			String t= types[i];
 				
-			setAutoIndentStrategy(configuration.getAutoIndentStrategy(this, t), t);
+			setAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
 			
 			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);

@@ -67,7 +67,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		/** Indicates whether this closer is active */
 		private boolean fIsActive= false;
 		/** The information control. */
-		private IInformationControl fInformationControl;
+		private IInformationControl fInformationControlToClose;
 		
 		/**
 		 * Creates a new information control closer.
@@ -86,7 +86,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
-			fInformationControl= control;
+			fInformationControlToClose= control;
 		}
 		
 		/*
@@ -99,7 +99,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			
 			fSubjectArea= subjectArea;
 		
-			fInformationControl.addDisposeListener(this);
+			fInformationControlToClose.addDisposeListener(this);
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addMouseMoveListener(this);
@@ -606,7 +606,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			// return a location that just overlaps the annotation on the bar
 			if (anchor == AbstractInformationControlManager.ANCHOR_RIGHT)
 				return subjectControl.toDisplay(subjectArea.x - 4, subjectArea.y - 2);
-			else if (anchor == AbstractHoverInformationControlManager.ANCHOR_LEFT)
+			else if (anchor == AbstractInformationControlManager.ANCHOR_LEFT)
 				return subjectControl.toDisplay(subjectArea.x + subjectArea.width - controlSize.x + 4, subjectArea.y - 2);
 		}
 		

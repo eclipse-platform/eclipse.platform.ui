@@ -59,6 +59,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * by the linked environment.
 	 * 
 	 * @param position the new focus position, or <code>null</code> if no focus is set.
+	 * @throws BadLocationException if <code>position</code> is invalid
 	 */
 	private void setFocusPosition(Position position) throws BadLocationException {
 		if (fMarkFocus && getPosition(fFocusAnnotation) != position) {
@@ -77,6 +78,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * by the linked environment.
 	 * 
 	 * @param position the new exit position, or <code>null</code> if no focus is set.
+	 * @throws BadLocationException in case <code>position</code> is invalid
 	 */
 	private void setExitPosition(Position position) throws BadLocationException {
 		if (fMarkExitTarget && getPosition(fExitAnnotation) != position) {
@@ -94,6 +96,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * as the positions that are linked to the focus position.
 	 * 
 	 * @param positions the new slave positions, or <code>null</code> if no slave positions are to be set
+	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
 	private void setGroupPositions(List positions) throws BadLocationException {
 		if (!fMarkSlaves)
@@ -101,7 +104,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		
 		// remove all positions which are already there
 		// algo: toRemove contains all mappings at first, but all that are in 
-		// positions get removed -> toRemove contains the difference set of previsous - new
+		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
 		List toRemove= new ArrayList(fGroupAnnotations.values());
 		Map toAdd= new HashMap();
@@ -127,6 +130,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * as the positions that can be jumped to in a linked set up.
 	 * 
 	 * @param positions the new target positions, or <code>null</code> if no target positions are to be set
+	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
 	private void setTargetPositions(List positions) throws BadLocationException {
 		if (!fMarkTargets)
@@ -134,7 +138,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		
 		// remove all positions which are already there
 		// algo: toRemove contains all mappings at first, but all that are in 
-		// positions get removed -> toRemove contains the difference set of previsous - new
+		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
 		List toRemove= new ArrayList(fTargetAnnotations.values());
 		Map toAdd= new HashMap();

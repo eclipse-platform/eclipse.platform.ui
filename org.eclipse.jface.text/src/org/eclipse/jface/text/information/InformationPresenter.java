@@ -65,9 +65,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	
 	/** 
 	 * Priority of the info controls managed by this information presenter.
-	 * Default value: <code>5</code> in order to beat the hovers of {@link org.eclipse.jface.text.TextViewerHoverManager}
+	 * Default value: <code>5</code>.
 	 * 
 	 * @since 3.0
+	 */
+	/*
+	 * 5 as value has been chosen in order to beat the hovers of {@link org.eclipse.jface.text.TextViewerHoverManager}
 	 */
 	public static final int WIDGET_PRIORITY= 5;
 	
@@ -81,7 +84,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		/** The subject control. */
 		private Control fSubjectControl;
 		/** The information control. */
-		private IInformationControl fInformationControl;
+		private IInformationControl fInformationControlToClose;
 		/** Indicates whether this closer is active. */
 		private boolean fIsActive= false;
 		
@@ -96,7 +99,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
-			fInformationControl= control;
+			fInformationControlToClose= control;
 		}
 		
 		/*
@@ -115,8 +118,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.addKeyListener(this);
 			}
 			
-			if (fInformationControl != null)
-				fInformationControl.addFocusListener(this);
+			if (fInformationControlToClose != null)
+				fInformationControlToClose.addFocusListener(this);
 			
 			fTextViewer.addViewportListener(this);			
 		}
@@ -132,8 +135,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			
 			fTextViewer.removeViewportListener(this);			
 			
-			if (fInformationControl != null)
-				fInformationControl.removeFocusListener(this);
+			if (fInformationControlToClose != null)
+				fInformationControlToClose.removeFocusListener(this);
 				
 			hideInformationControl();
 						
@@ -192,7 +195,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
 				public void run() {
-					if (fInformationControl == null || !fInformationControl.isFocusControl())
+					if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl())
 						stop();
 				}
 			});
@@ -342,8 +345,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (provider instanceof IInformationProviderExtension) {
 			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
 			setInformation(extension.getInformation2(fTextViewer, subject), computeArea(subject));
-		} else
+		} else {
+			// backward compatibility code
 			setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
+		}
 	}
 	
 	/**

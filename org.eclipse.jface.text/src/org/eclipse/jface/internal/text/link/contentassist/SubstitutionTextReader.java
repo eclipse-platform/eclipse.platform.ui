@@ -49,14 +49,20 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 	}
 	
 	/**
-	 * Implement to compute the substitution for the given character and 
-	 * if necessary subsequent characters. Use <code>nextChar</code>
+	 * Computes the substitution for the given character and if necessary
+	 * subsequent characters. Implementation should use <code>nextChar</code>
 	 * to read subsequent characters.
+	 * 
+	 * @param c the character to be substituted
+	 * @return the substitution for <code>c</code>
+	 * @throws IOException in case computing the substitution fails
 	 */
 	protected abstract String computeSubstitution(int c) throws IOException;
 	
 	/**
 	 * Returns the internal reader.
+	 * 
+	 * @return the internal reader
 	 */
 	protected Reader getReader() {
 		return fReader;
@@ -64,6 +70,8 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 	 
 	/**
 	 * Returns the next character.
+	 * @return the next character
+	 * @throws IOException in case reading the character fails
 	 */
 	protected int nextChar() throws IOException {
 		fReadFromBuffer= (fBuffer.length() > 0);
@@ -74,24 +82,24 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 				fIndex= 0;
 			}
 			return ch;
-		} else {
-			int ch= fCharAfterWhiteSpace;
-			if (ch == -1) {
-				ch= fReader.read();
-			}
-			if (fSkipWhiteSpace && Character.isWhitespace((char)ch)) {
-				do {
-					ch= fReader.read();
-				} while (Character.isWhitespace((char)ch));
-				if (ch != -1) {
-					fCharAfterWhiteSpace= ch;
-					return ' ';
-				}
-			} else {
-				fCharAfterWhiteSpace= -1;
-			}
-			return ch;
 		}
+		
+		int ch= fCharAfterWhiteSpace;
+		if (ch == -1) {
+			ch= fReader.read();
+		}
+		if (fSkipWhiteSpace && Character.isWhitespace((char)ch)) {
+			do {
+				ch= fReader.read();
+			} while (Character.isWhitespace((char)ch));
+			if (ch != -1) {
+				fCharAfterWhiteSpace= ch;
+				return ' ';
+			}
+		} else {
+			fCharAfterWhiteSpace= -1;
+		}
+		return ch;
 	}
 	
 	/**
