@@ -883,7 +883,15 @@ public final class InternalPlatform implements IPlatform {
 		return context;
 	}
 	public Bundle getBundle(String symbolicName) {
-		return packageAdmin.getResolvedBundle(symbolicName,null,null);
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName,null,null);
+		if (bundles == null)
+			return null;
+		for(int i=0; i<bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0 ) {
+				return bundles[i];
+			}
+		}
+		return null;
 	}
 	public boolean isFragment(Bundle bundle) {
 		return packageAdmin.isFragment(bundle);
