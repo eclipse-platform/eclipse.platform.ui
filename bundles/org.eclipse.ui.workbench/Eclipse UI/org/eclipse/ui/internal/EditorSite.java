@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.*;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
@@ -88,6 +90,20 @@ public boolean getReuseEditor() {
 public void setReuseEditor(boolean reuse) {
 	reuseEditor = reuse;
 	firePropertyChange(PROP_REUSE_EDITOR);
+	/*
+	 * the editor's pin status changed (added or removed) 
+     * we should ask the presentable part to fire a
+ 	 * PROP_TITLE event in order for the presentation to
+  	 * request the new icon for this editor
+	 */
+	PartPane partPane = getPane();
+	EditorPane editorPane = null;
+	if (partPane instanceof EditorPane) {
+		editorPane= (EditorPane)partPane;
+		IPresentablePart iPresPart = editorPane.getPresentablePart();
+		if (iPresPart instanceof PresentablePart) 
+			((PresentablePart)iPresPart).firePropertyChange(IWorkbenchPart.PROP_TITLE);
+	}	
 }
 protected String getInitialScopeId() {
 	return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$

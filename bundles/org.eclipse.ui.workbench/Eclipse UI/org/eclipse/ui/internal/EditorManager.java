@@ -11,9 +11,13 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +40,19 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorLauncher;
@@ -55,22 +67,32 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Manage a group of element editors.  Prevent the creation of two editors on
@@ -91,6 +113,20 @@ public class EditorManager {
 	private WorkbenchWindow window;
 	private WorkbenchPage page;
 	private Map actionCache = new HashMap();
+	
+	
+	// the following fields are for handling the pin icon of editors
+	private static final String PIN_EDITOR_FOLDER = "icons/full/ovr16/"; //$NON-NLS-1$
+	private static final String PIN_EDITOR_KEY = "PIN_EDITOR"; //$NON-NLS-1$
+	private static final String PIN_EDITOR = "pinned_ovr.gif"; //$NON-NLS-1$
+	// When the user removes or adds the close editors automatically preference
+	// the icon should be removed or added accordingly
+	private IPropertyChangeListener editorPropChangeListnener = null;
+	// Use a cache to optimise image creation
+	private Hashtable imgHashtable = new Hashtable();
+	
+	// Handler for the pin editor keyboard shortcut
+	private HandlerSubmission pinEditorHandlerSubmission = null;
 	
 	private MultiStatus closingEditorStatus = null;
 
@@ -178,6 +214,111 @@ public class EditorManager {
 			closingEditorStatus = null;
 		}
 	}
+	
+	/**
+	 * Check to determine if the editor resources are no longer needed
+	 * removes property change listener for editors
+	 * removes pin editor keyboard shortcut handler
+	 * disposes cached images and clears the cached images hash table 
+	 */
+	private void checkDeleteEditorResources() {
+		// get the current number of editors
+		IEditorReference[] editors = editorPresentation.getEditors();
+		// If there are no editors
+		if (editors.length == 0) {
+			if (editorPropChangeListnener != null) {
+				// remove property change listener for editors
+				IPreferenceStore prefStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+				prefStore.removePropertyChangeListener(editorPropChangeListnener);
+				editorPropChangeListnener = null;
+			}
+			if (pinEditorHandlerSubmission != null) {
+				// remove pin editor keyboard shortcut handler
+				PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(pinEditorHandlerSubmission);
+				pinEditorHandlerSubmission = null;
+			}
+			// Dispose the cached images for editors
+			Enumeration images = imgHashtable.elements();
+			while (images.hasMoreElements()) {
+				Image image = (Image)images.nextElement();
+				image.dispose();
+			}
+			// Clear cached images hash table
+			imgHashtable.clear();
+		}
+	}
+	/**
+	 * Check to determine if the property change listener for editors should be created
+	 */
+	private void checkCreateEditorPropListener() {
+		if (editorPropChangeListnener == null) {
+			// Add a property change listener for closing editors automatically preference
+			// Add or remove the pin icon accordingly
+			editorPropChangeListnener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {					
+						IEditorReference[] editors = getEditors();
+						for (int i = 0; i < editors.length; i++)
+							((Editor)editors[i]).pinStatusUpdated();
+					}
+				}
+			};
+			WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(editorPropChangeListnener);
+		}
+	}
+	
+	/**
+	 * Check to determine if the handler for the pin editor keyboard shortcut should be created.
+	 */
+	private void checkCreatePinEditorShortcutKeyHandler() {
+		if (pinEditorHandlerSubmission == null) {
+			final Shell shell = page.getWorkbenchWindow().getShell();
+		    IHandler pinEditorHandler = new AbstractHandler() {
+		        public Object execute(Map parameterValuesByName) throws ExecutionException {
+		        	// check if the "Close editors automatically" preference is set
+		        	if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+		        		// add or remove the editor's pin
+		        		IWorkbenchPartSite iEditorSite = editorPresentation.getVisibleEditor().getPart(false).getSite();
+		        		if (iEditorSite instanceof EditorSite) {
+		        			EditorSite editorSite = (EditorSite)iEditorSite;
+		        			editorSite.setReuseEditor(!editorSite.getReuseEditor());
+		        		}
+		        	}
+		            return null;
+		        }
+		    };
+		    pinEditorHandlerSubmission = new HandlerSubmission(null,
+		            shell, null, "org.eclipse.ui.window.pinEditor", //$NON-NLS-1$
+		            pinEditorHandler, Priority.MEDIUM);
+		    // Assign the handler for the pin editor keyboard shortcut.
+			PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+					pinEditorHandlerSubmission);
+		}
+	}
+	
+	/**
+	 * Method to create the editor's pin ImageDescriptor
+	 * @return the single image descriptor for the editor's pin icon
+	 */
+	private ImageDescriptor getEditorPinImageDesc() {
+		ImageRegistry registry = JFaceResources.getImageRegistry();
+		ImageDescriptor pinDesc = registry.getDescriptor(PIN_EDITOR_KEY);
+		// Avoid registering twice
+		if (pinDesc == null) {
+			try {
+				URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID, PIN_EDITOR_FOLDER);
+				pinDesc = ImageDescriptor.createFromURL(new URL(iconsRoot, PIN_EDITOR));
+				registry.put(PIN_EDITOR_KEY, pinDesc);
+			} catch (MalformedURLException e) {
+				String errorMessage = e.getMessage();
+				WorkbenchPlugin.log(errorMessage, 
+						StatusUtil.newStatus(IStatus.ERROR, errorMessage, e));
+				return null;
+			}
+		}
+		return pinDesc;
+	}
+	
 	/**
 	 * Answer a list of dirty editors.
 	 */
@@ -1076,13 +1217,45 @@ public class EditorManager {
 		 * Constructs a new editor reference for use by editors being newly opened.
 		 */
 		Editor() {
-			// do nothing
+			// initialize the necessary editor listeners and handlers
+			initListenersAndHandlers();
 		}
 		
+		/**
+		 * Initializes the necessary editor listeners and handlers
+		 */
+		private void initListenersAndHandlers() {
+			// Create a property change listener to track the "close editors automatically"
+			// preference and show/remove the pin icon on editors
+			// Only 1 listener will be created in the EditorManager when necessary
+			checkCreateEditorPropListener();
+			// Create a keyboard shortcut handler for pinning editors
+			// Only 1 handler will be created in the EditorManager when necessary
+			checkCreatePinEditorShortcutKeyHandler();
+		}
+
+		/**
+		 * This method is called when there should be a change in the editor pin
+		 * status (added or removed) so that it will ask its presentable part
+		 * to fire a PROP_TITLE event in order for the presentation to request
+		 * the new icon for this editor
+		 */
+		public void pinStatusUpdated() {
+				PartPane partPane = getPane();
+				EditorPane editorPane = null;
+				if (partPane instanceof EditorPane) {
+					editorPane= (EditorPane)partPane;
+					IPresentablePart iPresPart = editorPane.getPresentablePart();
+					if (iPresPart instanceof PresentablePart) 
+						((PresentablePart)iPresPart).firePropertyChange(IWorkbenchPart.PROP_TITLE);
+				}			
+		}
+
 		/**
 		 * Constructs a new editor reference for use by editors being restored from a memento.
 		 */
 		Editor(IMemento memento) {
+			this();
 			this.editorMemento = memento;
 			String id = memento.getString(IWorkbenchConstants.TAG_ID);
 			String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
@@ -1224,6 +1397,8 @@ public class EditorManager {
 			return page;
 		}
 		public void dispose() {
+			checkDeleteEditorResources();
+			
 			super.dispose();
 			editorMemento = null;
 		}
@@ -1272,8 +1447,77 @@ public class EditorManager {
 			restoredInput = (IEditorInput) input;
 			return restoredInput;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleImage()
+		 * This method will append a pin to the icon of the editor
+		 * if the "automatically close editors" option in the 
+		 * preferences is enabled and the editor has been pinned.
+		 */
+		public Image getTitleImage() {
+			Image img = super.getTitleImage();
+			if (!isPinned())
+				return img;
+			
+			// Check if the pinned preference is set
+			IPreferenceStore prefStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+			boolean bUsePin = prefStore.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+			
+			if (!bUsePin)
+				return img;
 
+			ImageDescriptor pinDesc = getEditorPinImageDesc();
+			if (pinDesc == null)
+				return img;
+			
+			ImageWrapper imgDesc =  new ImageWrapper(img);
+			OverlayIcon overlayIcon = new OverlayIcon(imgDesc, pinDesc, new Point(16, 16));
+			// try to get the image from the cache, otherwise create it
+			// and cache it
+			int imgHashCode = overlayIcon.hashCode();
+			Integer imgHashKey = new Integer(imgHashCode);
+			Image image = (Image)imgHashtable.get(imgHashKey);
+			if (image == null) {
+				image = overlayIcon.createImage();
+				imgHashtable.put(imgHashKey, image);
+			}
+			return image;
+		}
 	}
+	
+	/**
+	 * This class extends ImageDescriptor and only holds on to an Image,
+	 * it calculates its hash code based on its Image.
+	 */
+	private class ImageWrapper extends ImageDescriptor {
+		private Image image = null;
+		
+		/**
+		 * Constructor
+		 * @param img the Image to hold on to
+		 */
+		public ImageWrapper(Image img) {
+			image = img;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
+		 */
+		public ImageData getImageData() {
+			return image == null ? null : image.getImageData();
+		}
+		
+		/**
+		 * @see java.lang.Object#hashCode()
+		 * @return if the image if not null, return its hash code,
+		 * else, call the hashCode method in the hierarchy
+		 */
+		public int hashCode() {
+			if (image != null)
+				return image.hashCode();
+			return hashCode();
+		}
+	}
+	
 	protected void restoreEditorState(IMemento editorMem, ArrayList visibleEditors,
 			IEditorPart[] activeEditor, ArrayList errorWorkbooks, MultiStatus result) {
 		String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
