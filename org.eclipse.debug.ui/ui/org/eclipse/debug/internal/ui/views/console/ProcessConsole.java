@@ -327,10 +327,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 */
     public void connect(IStreamsProxy streamsProxy) {
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-        connect(streamsProxy.getErrorStreamMonitor(), IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
-        getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM).setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR));
-        connect(streamsProxy.getOutputStreamMonitor(), IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
-        getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM).setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT));
+        IStreamMonitor streamMonitor = streamsProxy.getErrorStreamMonitor();
+        if (streamMonitor != null) {
+            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
+            getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM).setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR));
+        }
+        streamMonitor = streamsProxy.getOutputStreamMonitor();
+        if (streamMonitor != null) {
+            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
+            getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM).setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT));
+        }
         InputReadJob readJob = new InputReadJob(streamsProxy);
         readJob.setSystem(true);
         readJob.schedule();
