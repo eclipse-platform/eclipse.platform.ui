@@ -37,8 +37,10 @@ import org.eclipse.swt.widgets.Composite;
  * change. As a result we are forced to refresh the entire entry tree
  * when a property changes value.
  * </p>
+ * 
+ * @since 3.0 (was previously internal)
  */
-/*package*/ class PropertySheetEntry implements IPropertySheetEntry {
+public class PropertySheetEntry implements IPropertySheetEntry {
 
 	/**
 	* The values we are displaying/editing.
