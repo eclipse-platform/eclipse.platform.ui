@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.about.AboutBundleData;
 import org.eclipse.ui.internal.about.AboutData;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 /**
  * Displays information about the product plugins.

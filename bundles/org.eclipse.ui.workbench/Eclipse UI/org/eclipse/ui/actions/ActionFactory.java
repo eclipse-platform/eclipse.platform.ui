@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
