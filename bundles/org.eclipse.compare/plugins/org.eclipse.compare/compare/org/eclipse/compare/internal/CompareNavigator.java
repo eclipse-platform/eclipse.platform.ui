@@ -96,7 +96,7 @@ public class CompareNavigator {
 	}
 	
 	private static CompareNavigator findNavigator(Control c) {
-		while (c != null) {
+		while (c != null && !c.isDisposed()) {	// PR 1GEUVV2
 			Object data= c.getData();
 			if (data instanceof CompareEditorInput) {
 				CompareEditorInput cei= (CompareEditorInput) data;
