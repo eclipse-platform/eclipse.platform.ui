@@ -1344,7 +1344,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
 		IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
 		if (introMem != null) {
-		    getWorkbench().showIntro(this, Boolean.valueOf(introMem.getString(IWorkbenchConstants.TAG_STANDBY)).booleanValue());
+		    getWorkbench().getIntroManager().showIntro(this, Boolean.valueOf(introMem.getString(IWorkbenchConstants.TAG_STANDBY)).booleanValue());
 		}
 		return result;
 	}
@@ -1636,7 +1636,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		if (getActivePage().findView(IIntroConstants.INTRO_VIEW_ID) != null) {
 			IMemento introMem = memento.createChild(IWorkbenchConstants.TAG_INTRO);
-			introMem.putString(IWorkbenchConstants.TAG_STANDBY, Boolean.valueOf(getWorkbench().isIntroStandby(getWorkbench().getIntro())).toString());
+			introMem.putString(
+			        IWorkbenchConstants.TAG_STANDBY, 
+			        Boolean.valueOf(
+			                getWorkbench()
+			                .getIntroManager()
+			                .isIntroStandby(
+			                        getWorkbench()
+			                        .getIntroManager()
+			                        .getIntro())).toString());
 		}				
 		
 		/// Save the order of the cool bar contribution items

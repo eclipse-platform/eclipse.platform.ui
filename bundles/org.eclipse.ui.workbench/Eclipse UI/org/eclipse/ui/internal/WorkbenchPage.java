@@ -2725,8 +2725,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			editorPresentation.showVisibleEditor();
 		
 		final Workbench workbench = (Workbench)window.getWorkbench();
-		if (newPersp != null && workbench.hasIntro()) {
-			if (workbench.isIntroInWindow(window) && !introPerspectives.contains(newPersp.getDesc())) {
+		if (newPersp != null && workbench.getIntroManager().hasIntro()) {
+			if (workbench.getWorkbenchIntroManager().isIntroInWindow(window) && !introPerspectives.contains(newPersp.getDesc())) {
 				try {
 					showView(IIntroConstants.INTRO_VIEW_ID, null,  IWorkbenchPage.VIEW_CREATE);
 				} catch (PartInitException e) {

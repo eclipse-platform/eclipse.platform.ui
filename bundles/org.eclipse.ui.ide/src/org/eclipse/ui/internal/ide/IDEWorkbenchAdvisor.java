@@ -947,12 +947,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
      * <code>false</code> otherwise
 	 */
 	private boolean openIntro(IWorkbenchWindow window) {	    
-	    boolean hasIntro = getWorkbenchConfigurer().getWorkbench().hasIntro();
+	    boolean hasIntro = getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro();
 	    
 		if (hasIntro && IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) {
 		    getWorkbenchConfigurer()
 		    	.getWorkbench()
-		    	.showIntro(
+		    	.getIntroManager().showIntro(
 		    	        window, 
 		    	        false);
 		    IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);

@@ -84,7 +84,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	 */
 	public void dispose() {		
 		super.dispose();
-		getSite().getWorkbenchWindow().getWorkbench().closeIntro(introPart);
+		getSite().getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro(introPart);
 		introPart.dispose();
 	}
 
@@ -123,7 +123,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		super.init(site);
 		Workbench workbench = (Workbench)site.getWorkbenchWindow().getWorkbench();
 		try {
-			introPart = workbench.createNewIntroPart();
+			introPart = workbench.getWorkbenchIntroManager().createNewIntroPart();
 			introPart.addPropertyListener(new IPropertyListener() {
 				public void propertyChanged(Object source, int propId) {
 					firePropertyChange(propId);					

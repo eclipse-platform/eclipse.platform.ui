@@ -129,9 +129,9 @@ public class OpenCloseTest extends TestCase {
 	public void testOpenCloseIntro() {
 		IIntroPart introPart = null;
 		for (index = 0; index < numIterations; index++) {
-			introPart = PlatformUI.getWorkbench().showIntro(workbenchWindow,
+			introPart = PlatformUI.getWorkbench().getIntroManager().showIntro(workbenchWindow,
 					false);
-			PlatformUI.getWorkbench().closeIntro(introPart);
+			PlatformUI.getWorkbench().getIntroManager().closeIntro(introPart);
 		}
 	}
 }

@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
+import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -35,27 +36,27 @@ public class IntroTest extends UITestCase {
     }
 
     public void testShow() {
-        IWorkbench workbench = window.getWorkbench();        
-        IIntroPart part = workbench.showIntro(window, false);
+        IIntroManager introManager = window.getWorkbench().getIntroManager();
+        IIntroPart part = introManager.showIntro(window, false);
         assertNotNull(part);
-        assertFalse(workbench.isIntroStandby(part));
-        workbench.closeIntro(part);
-        assertNull(workbench.getIntro());
+        assertFalse(introManager.isIntroStandby(part));
+        introManager.closeIntro(part);
+        assertNull(introManager.getIntro());
         
-        part = workbench.showIntro(window, true);
+        part = introManager.showIntro(window, true);
         assertNotNull(part);
-        assertTrue(workbench.isIntroStandby(part));
-        workbench.closeIntro(part);
-        assertNull(workbench.getIntro());
+        assertTrue(introManager.isIntroStandby(part));
+        introManager.closeIntro(part);
+        assertNull(introManager.getIntro());
 	}
     
     public void testStandby() {
         IWorkbench workbench = window.getWorkbench();        
-        IIntroPart part = workbench.showIntro(window, false);
+        IIntroPart part = workbench.getIntroManager().showIntro(window, false);
         assertNotNull(part);
-        assertFalse(workbench.isIntroStandby(part));
-        workbench.setIntroStandby(part, true);
-        assertTrue(workbench.isIntroStandby(part));        
+        assertFalse(workbench.getIntroManager().isIntroStandby(part));
+        workbench.getIntroManager().setIntroStandby(part, true);
+        assertTrue(workbench.getIntroManager().isIntroStandby(part));        
     }
     
     /* (non-Javadoc)

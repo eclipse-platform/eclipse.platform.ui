@@ -19,7 +19,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -63,14 +62,11 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -89,10 +85,8 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
-import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -102,7 +96,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
@@ -1916,204 +1910,46 @@ public final class Workbench implements IWorkbench {
     }
 	
 	private ActivityPersistanceHelper activityHelper;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#closeIntro(org.eclipse.ui.intro.IIntroPart)
-	 */
-	public boolean closeIntro(IIntroPart part) {
-		if (introPart == null || !introPart.equals(part))
-			return false;
-		introPart = null;
-
-        IViewPart introView = getViewIntroAdapterPart();
-		if (introView != null) {
-			getViewIntroAdapterPart().getSite().getPage().hideView(introView);
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#showIntro(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public IIntroPart showIntro(IWorkbenchWindow preferredWindow, boolean standby) {
-	    if (preferredWindow == null)
-	        preferredWindow = getActiveWorkbenchWindow();
-	    
-	    if (preferredWindow == null)
-	        return null;
-	    
-		if (getViewIntroAdapterPart() == null) {
-			createIntro((WorkbenchWindow) preferredWindow);
-		}
-		else {
-			try {
-				ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();				
-				WorkbenchPage page = (WorkbenchPage) viewPart.getSite().getPage();
-				WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-				if (!window.equals(preferredWindow)) {
-					window.getShell().setActive();
-				}
-				
-				page.showView(IIntroConstants.INTRO_VIEW_ID);
-//				IPerspectiveDescriptor [] perspDescriptors = page.getOpenedPerspectives();
-//				for (int i = 0; i < perspDescriptors.length; i++) {
-//					IPerspectiveDescriptor descriptor = perspDescriptors[i];
-//					if (page.findPerspective(descriptor).containsView(viewPart)) {
-//						if (!page.getPerspective().equals(descriptor)) {
-//							page.setPerspective(descriptor);
-//						}
-//						break;
-//					}
-//				}
-//				
-//				page.getWorkbenchWindow().getShell().setActive();
-//				page.showView(IIntroConstants.INTRO_VIEW_ID);
-			} catch (PartInitException e) {
-				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		setIntroStandby(introPart, standby);
-		return introPart;
-	}
-
-	/**	 
-	 * @param window the window to test
-	 * @return whether the intro exists in the given window
-	 * @since 3.0
-	 */
-	/*package*/ boolean isIntroInWindow(IWorkbenchWindow testWindow) {
-		ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();	
-		if (viewPart == null)
-			return false;
-		
-		WorkbenchPage page = (WorkbenchPage) viewPart.getSite().getPage();
-		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-		if (window.equals(testWindow)) {
-			return true;
-		}
-		return false;
-	}
 	
-	/**
-     * Create a new Intro area (a view, currently) in the provided window.  If there is no intro
-     * descriptor for this workbench then no work is done.
-     *
-	 * @param preferredWindow the window to create the intro in.
-	 * @since 3.0
-	 */
-	private void createIntro(WorkbenchWindow preferredWindow) {
-		if (getIntroDescriptor() == null)
-			return;
-		
-		WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
-		try {
-			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);			
-		} catch (PartInitException e) {
-			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_part"), e)); //$NON-NLS-1$ //$NON-NLS-2$
-		}		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#setIntroStandby(org.eclipse.ui.intro.IIntroPart, boolean)
-	 */
-	public void setIntroStandby(IIntroPart part, boolean standby) {
-		if (introPart == null || !introPart.equals(part))
-			return;
-		
-		PartPane pane = ((PartSite)getViewIntroAdapterPart().getSite()).getPane();
-		if (standby == !pane.isZoomed()) {
-		    // the zoom state is already correct - just update the part's state.
-		    getViewIntroAdapterPart().setStandby(standby);
-			return;
-		}
-		
-		((WorkbenchPage)getViewIntroAdapterPart().getSite().getPage()).toggleZoom(pane.getPartReference());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
-	 */
-	public boolean isIntroStandby(IIntroPart part) {
-		if (introPart == null || !introPart.equals(part))
-			return false;
-
-		return !((PartSite)getViewIntroAdapterPart().getSite()).getPane().isZoomed();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#findIntro()
-	 */
-	public IIntroPart getIntro() {
-		return introPart;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbench#getIntroManager()
+     */
+    public IIntroManager getIntroManager() {
+        return introManager;
+    }
 	
-	/** 
-	 * @return the <code>ViewIntroAdapterPart</code> for this workbench, <code>null</code> if it 
-     * cannot be found.
-	 * @since 3.0
-	 */
-	/*package*/ ViewIntroAdapterPart getViewIntroAdapterPart() {
-		IWorkbenchWindow [] windows = getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
-			WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-			if (page == null) {
-				continue;
-			}
-			IPerspectiveDescriptor [] perspDescs = page.getOpenedPerspectives();
-			for (int j = 0; j < perspDescs.length; j++) {
-				IPerspectiveDescriptor descriptor = perspDescs[j];
-				IViewReference reference = page.findPerspective(descriptor).findView(IIntroConstants.INTRO_VIEW_ID);
-				if (reference != null) {
-					ViewIntroAdapterPart part = (ViewIntroAdapterPart) reference.getView(false);
-					if (part != null)
-						return part;
-				}
-			}
-		}
-		return null;
-	}
-		
-	/**
-	 * @return a new IIntroPart.  This has the side effect of setting the introPart field to the new
-	 * value.
-	 * @since 3.0
-	 */
-	/*package*/ IIntroPart createNewIntroPart() throws CoreException {	
-		return introPart = introDescriptor == null ? null : introDescriptor.createIntro();
-	}
-	
+    /** 
+     * @return the workbench intro manager
+     * @since 3.0
+     */
+    /*package*/ WorkbenchIntroManager getWorkbenchIntroManager() {
+        return introManager;
+    }
+    
+    private WorkbenchIntroManager introManager = new WorkbenchIntroManager(this);
+    
 	/** 
 	 * @return the intro extension for this workbench.
+	 * 
 	 * @since 3.0
 	 */
 	public IntroDescriptor getIntroDescriptor() {
 		return introDescriptor;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#hasIntro()
-	 */
-	public boolean hasIntro() {
-		return introDescriptor != null;
-	}
-	
 	/**
-	 * This method exists as a test hook.  This method should NEVER be called
-	 * by clients.
+	 * This method exists as a test hook.  This method should 
+	 * <strong>NEVER</strong> be called by clients.
+	 * 
+	 * @since 3.0
 	 */
 	public void setIntroDescriptor(IntroDescriptor descriptor) {
-	    if (getIntro() != null) {
-	        closeIntro(getIntro());
+	    if (introManager.getIntro() != null) {
+	        introManager.closeIntro(introManager.getIntro());
 	    }
 	    introDescriptor = descriptor;
 	}
-	
-	/**
-	 * The currently active introPart in this workspace, <code>null</code> if none.
-	 */
-	private IIntroPart introPart;
-	
+		
 	/**
 	 * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
 	 */

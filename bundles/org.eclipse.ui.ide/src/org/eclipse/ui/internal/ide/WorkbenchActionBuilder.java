@@ -1224,7 +1224,7 @@ public final class WorkbenchActionBuilder {
         	registerGlobalAction(categoryAction);
 		}		
 		
-		if (getWindow().getWorkbench().hasIntro()) {
+		if (getWindow().getWorkbench().getIntroManager().hasIntro()) {
 			introAction = ActionFactory.INTRO.create(window);
 			registerGlobalAction(introAction);
 		}
