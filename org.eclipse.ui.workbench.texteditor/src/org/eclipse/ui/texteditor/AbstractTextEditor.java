@@ -4324,7 +4324,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	private Image createOverwriteModeCaretImage(StyledText styledText) {
 
-		if ("carbon".equals(SWT.getPlatform()))
+		if (!"win32".equals(SWT.getPlatform()))  //$NON-NLS-1$
 			return null;
 
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
@@ -4354,7 +4354,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private Image createSmartInsertModeCaretImage(StyledText styledText) {
 		
-		if ("carbon".equals(SWT.getPlatform()))
+		if (!"win32".equals(SWT.getPlatform()))  //$NON-NLS-1$
 			return null;
 		
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
