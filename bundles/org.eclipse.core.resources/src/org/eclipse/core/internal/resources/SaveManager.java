@@ -944,8 +944,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * This should be called at the end of every top level operation.
 	 */
 	public void snapshotIfNeeded(boolean hasTreeChanges) {
-		if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
-			return;
 		if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
 			if (snapshotJob.getState() == Job.NONE)
 				snapshotJob.schedule();

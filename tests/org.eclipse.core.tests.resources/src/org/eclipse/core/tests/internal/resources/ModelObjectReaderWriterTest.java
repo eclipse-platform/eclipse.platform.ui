@@ -200,7 +200,6 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			assertEquals("1.5", prefs.getDefaultInt(ResourcesPlugin.PREF_MAX_FILE_STATES), desc2.getMaxFileStates());
 			assertEquals("1.6", prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE), desc2.getMaxFileStateSize());
 			assertEquals("1.7", prefs.getDefaultInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT), desc2.getOperationsPerSnapshot());
-			assertEquals("1.8", prefs.getDefaultBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED), desc2.isSnapshotEnabled());
 		} finally {
 			/* remove trash */
 			Workspace.clear(location.toFile());
@@ -588,7 +587,6 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			assertTrue("1.5", desc.getMaxFileStates() == desc2.getMaxFileStates());
 			assertTrue("1.6", desc.getMaxFileStateSize() == desc2.getMaxFileStateSize());
 			assertTrue("1.7", desc.getOperationsPerSnapshot() == desc2.getOperationsPerSnapshot());
-			assertTrue("1.8", desc.isSnapshotEnabled() == desc2.isSnapshotEnabled());
 		} finally {
 			/* remove trash */
 			Workspace.clear(location.toFile());

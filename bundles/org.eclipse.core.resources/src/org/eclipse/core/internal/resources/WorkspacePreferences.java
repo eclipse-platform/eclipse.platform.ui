@@ -39,7 +39,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
-		super.setSnapshotEnabled(preferences.getBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED));
 		super.setMaxFileStates(preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		super.setMaxFileStateSize(preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
 		super.setFileStateLongevity(preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
@@ -99,10 +98,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 
 	public void setOperationsPerSnapshot(int value) {
 		preferences.setValue(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, value);
-	}
-
-	public void setSnapshotsEnabled(boolean value) {
-		preferences.setValue(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED, value);
 	}
 
 	public void setDeltaExpiration(long value) {
@@ -177,7 +172,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		target.setMaxFileStates(source.getMaxFileStates());
 		target.setMaxFileStateSize(source.getMaxFileStateSize());
 		target.setSnapshotInterval(source.getSnapshotInterval());
-		target.setSnapshotEnabled(source.isSnapshotEnabled());
 		target.setOperationsPerSnapshot(source.getOperationsPerSnapshot());
 		target.setDeltaExpiration(source.getDeltaExpiration());
 	}
@@ -207,8 +201,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setSnapshotInterval(preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS))
 			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
-		else if (property.equals(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED))
-			super.setSnapshotEnabled(preferences.getBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_FILE_STATES))
 			super.setMaxFileStates(preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE))

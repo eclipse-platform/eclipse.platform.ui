@@ -30,7 +30,6 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	// thread safety: (Concurrency004)
 	private volatile long snapshotInterval;
 	protected Workspace workspace;
-	protected boolean snapshotsEnabled;
 	protected int operationsPerSnapshot;
 	protected long deltaExpiration;
 
@@ -44,7 +43,6 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 		maxFileStates = node.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES, PreferenceInitializer.PREF_MAX_FILE_STATES_DEFAULT);
 		maxFileStateSize = node.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, PreferenceInitializer.PREF_MAX_FILE_STATE_SIZE_DEFAULT);
 		snapshotInterval = node.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PreferenceInitializer.PREF_SNAPSHOT_INTERVAL_DEFAULT);
-		snapshotsEnabled = node.getBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED, PreferenceInitializer.PREF_SNAPSHOTS_ENABLED_DEFAULT);
 		operationsPerSnapshot = node.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT);
 		deltaExpiration = node.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION, PreferenceInitializer.PREF_DELTA_EXPIRATION_DEFAULT);
 	}
@@ -118,14 +116,6 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public boolean isAutoBuilding() {
 		return autoBuilding;
-	}
-
-	public boolean isSnapshotEnabled() {
-		return snapshotsEnabled;
-	}
-
-	public void setSnapshotEnabled(boolean value) {
-		snapshotsEnabled = value;
 	}
 
 	public void setOperationsPerSnapshot(int value) {

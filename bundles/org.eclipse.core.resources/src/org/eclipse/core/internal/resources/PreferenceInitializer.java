@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.preferences.*;
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	// internal preference keys
-	public static final String PREF_SNAPSHOTS_ENABLED = "snapshots.enabled"; //$NON-NLS-1$
 	public static final String PREF_OPERATIONS_PER_SNAPSHOT = "snapshots.operations"; //$NON-NLS-1$
 	public static final String PREF_DELTA_EXPIRATION = "delta.expiration";  //$NON-NLS-1$
 
@@ -32,7 +31,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static final int PREF_MAX_BUILD_ITERATIONS_DEFAULT = 10;
 	public static final boolean PREF_DEFAULT_BUILD_ORDER_DEFAULT = true; //$NON-NLS-1$
 	public final static long PREF_SNAPSHOT_INTERVAL_DEFAULT = 5 * 60 * 1000l; // 5 min
-	public final static boolean PREF_SNAPSHOTS_ENABLED_DEFAULT = true;
 	public static final int PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT = 100;
 	public static final long PREF_FILE_STATE_LONGEVITY_DEFAULT = 7 * 24 * 3600 * 1000l; // 7 days
 	public static final long PREF_MAX_FILE_STATE_SIZE_DEFAULT = 1024 * 1024l; // 1 MB
@@ -67,7 +65,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// save manager defaults
 		node.putLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PREF_SNAPSHOT_INTERVAL_DEFAULT);
-		node.putBoolean(PREF_SNAPSHOTS_ENABLED, PREF_SNAPSHOTS_ENABLED_DEFAULT);
 		node.putInt(PREF_OPERATIONS_PER_SNAPSHOT, PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT);
 		node.putLong(PREF_DELTA_EXPIRATION, PREF_DELTA_EXPIRATION_DEFAULT);
 
