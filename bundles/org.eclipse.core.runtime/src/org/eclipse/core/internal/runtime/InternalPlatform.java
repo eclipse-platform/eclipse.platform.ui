@@ -476,6 +476,7 @@ public final class InternalPlatform implements IPlatform {
 		debugTracker.open();
 		options = (DebugOptions) debugTracker.getService(); //TODO This is not good, but is avoids problems
 		initializeDebugFlags();
+		getMetaArea();
 		initialized = true;
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
