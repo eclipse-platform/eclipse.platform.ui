@@ -361,6 +361,20 @@ public class InstallConfiguration
 			runtimeConfiguration.unconfigureFeatureEntry(
 				configuredFeatureEntries[i]);
 		}
+		
+		// [19958] remember sites currently configured by runtime (use
+		// temp configuration object rather than a straight list to ensure
+		// correct lookup)
+		IPlatformConfiguration tempConfig = null;
+		try {
+			tempConfig = BootLoader.getPlatformConfiguration(null);
+			IPlatformConfiguration.ISiteEntry[] tmpSites = runtimeConfiguration.getConfiguredSites();
+			for (int i = 0; i < tmpSites.length; i++) {
+				tempConfig.configureSite(tmpSites[i]);
+			}
+		} catch (IOException e) {
+			// assume no currently configured sites
+		}
 
 		//check sites
 		checkSites(configurationSites,runtimeConfiguration);
@@ -372,7 +386,7 @@ public class InstallConfiguration
 			ConfigurationPolicy configurationPolicy =
 				cSite.getConfigurationPolicy();
 
-			savePluginPath(cSite, runtimeConfiguration);
+			savePluginPath(cSite, runtimeConfiguration, tempConfig);
 
 			// IF primary feature URL or platform feature URL that we need to pass to runtime config
 			// is part of platform:base:, write it as platform:base: URL
@@ -386,6 +400,16 @@ public class InstallConfiguration
 					UpdateManagerPlugin.warn(null, e);
 				}
 				saveFeatureEntry(cSite, feature, runtimeConfiguration);
+			}
+		}
+		
+		// [19958] remove any extra site entries from runtime configuration
+		// (site entries that no longer exist in this configuration)
+		if (tempConfig != null) {		
+			IPlatformConfiguration.ISiteEntry[] tmpSites = 
+				tempConfig.getConfiguredSites();
+			for (int i=0; i < tmpSites.length; i++) {
+				runtimeConfiguration.unconfigureSite(tmpSites[i]);
 			}
 		}
 
@@ -410,7 +434,10 @@ public class InstallConfiguration
 	 */
 	private void savePluginPath(
 		ConfiguredSite cSite,
-		IPlatformConfiguration runtimeConfiguration) throws CoreException {
+		IPlatformConfiguration runtimeConfiguration,
+		IPlatformConfiguration tempConfig) // [19958]
+		throws CoreException {
+			
 		ConfigurationPolicy configurationPolicy =
 			cSite.getConfigurationPolicy();
 
@@ -451,8 +478,11 @@ public class InstallConfiguration
 		if (siteEntry == null) 
 			siteEntry = 	
 				runtimeConfiguration.createSiteEntry(urlToCheck,sitePolicy);
-		else
+		else {
 			siteEntry.setSitePolicy(sitePolicy);
+			if (tempConfig != null) // [19958] remove reused entries from list
+				tempConfig.unconfigureSite(siteEntry); 
+		}
 		runtimeConfiguration.configureSite(siteEntry, true /*replace if exists*/);
 	}
 
