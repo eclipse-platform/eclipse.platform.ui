@@ -23,22 +23,22 @@
 	
 	<target name="lib/remoteAntLib.jar" description= "Creates the remoteAnt.jar" depends="init">
 		<property name="destdir" value="${temp.folder}/lib/remoteAnt.jar.bin"/>
-		<delete dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
-		<mkdir dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
+		<delete dir="${destdir}"/>
+		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="yes"
+		<javac target="1.1" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes"
 			classpath="${basedir}/../org.eclipse.swt${version.suffix}/bin;
 									${swt.jar};
-			${basedir}/common_ant_support_bin">
+						${basedir}/common_ant_support_bin">
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
-		<copy todir="${temp.folder}/lib/remoteAnt.jar.bin">
+		<copy todir="${destdir}">
 			<fileset dir="Remote Ant Support/" excludes="**/*.java"/>
 			<fileset dir="${basedir}/common_ant_support_bin"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar destfile="${build.result.folder}/lib/remoteAnt.jar" basedir="${temp.folder}/lib/remoteAnt.jar.bin"/>
+		<jar destfile="${build.result.folder}/lib/remoteAnt.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
