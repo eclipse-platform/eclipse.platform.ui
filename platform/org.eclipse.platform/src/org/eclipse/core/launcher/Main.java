@@ -747,10 +747,14 @@ public class Main {
 		} catch (Throwable e) {
 			// try and take down the splash screen.
 			takeDownSplash();
-			String message = "Exception launching the Eclipse Platform"; //$NON-NLS-1$
-			System.getProperties().put(PROP_EXITDATA, message);
-			log(message);
-			log(e);
+			// only log the exceptions if they have not been caught by the 
+			// EclipseStarter (i.e., if the exitCode is not 13) 
+			if (!"13".equals(System.getProperty(PROP_EXITCODE))) {
+				String message = "An error has occurred.  See the log file\n" + logFile.getAbsolutePath();
+			    System.getProperties().put(PROP_EXITDATA, message);
+				log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
+				log(e);
+			}
 			// Return "unlucky" 13 as the exit code. The executable will recognize
 			// this constant and display a message to the user telling them that
 			// there is information in their log file.
@@ -778,7 +782,7 @@ public class Main {
 	 * @return the arguments to pass through to the launched application
 	 * @param args the command line arguments
 	 */
-	protected String[] processCommandLine(String[] args) throws Exception {
+	protected String[] processCommandLine(String[] args) {
 		// TODO temporarily handle the fact that PDE appends the -showsplash <timeout> onto 
 		// the *end* of the command line.  This interferes with the -vmargs arg.  Process 
 		// -showsplash now and remove it from the end.  This code should be removed soon.
