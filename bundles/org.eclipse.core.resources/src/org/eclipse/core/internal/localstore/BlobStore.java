@@ -154,6 +154,23 @@ public Set getBlobNames() {
 	return result;
 }
 /**
+ * Delete all of the blobs from disk except the ones which are
+ * contained in the given set. 
+ */
+public void deleteAllExcept(Set exceptions) {
+	String[] folders = storeLocation.list();
+	if (folders == null)
+		return;
+	for (int i = 0; i < folders.length; i++) {
+		File folder = new File(storeLocation, folders[i]);
+		String[] blobs = folder.list();
+		if (blobs != null)
+			for (int j = 0; j < blobs.length; j++)
+				if (!exceptions.contains(blobs[j]))
+					delete(new File(folder, blobs[j]));
+	}
+}
+/**
  * Converts a byte array into a byte hash representation. It is used to
  * get a directory name.
  */

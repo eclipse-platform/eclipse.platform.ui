@@ -424,12 +424,7 @@ public void removeGarbage() {
  * Remove all blobs but the ones in the parameter.
  */
 protected void removeGarbage(Set blobsToPreserv) {
-	Set storedBlobs = blobStore.getBlobNames();
-	for (Iterator i = storedBlobs.iterator(); i.hasNext();) {
-		String blob = (String) i.next();
-		if (!blobsToPreserv.contains(blob))
-			blobStore.deleteBlob(blob);
-	}
+	blobStore.deleteAllExcept(blobsToPreserv);
 }
 protected void removeOldestEntries(List entries, int maxEntries) throws IndexedStoreException {
 	// do we have more states than necessary?
