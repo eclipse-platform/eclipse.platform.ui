@@ -355,4 +355,22 @@ public class RemoteModule extends RemoteFolder {
 	public boolean isDefinedModule() {
 		return true;
 	}
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof RemoteModule) {
+			RemoteModule module = (RemoteModule) arg0;
+			return (getName().equals(module.getName()) && super.equals(module));
+		}
+		return false;
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return super.hashCode() | getName().hashCode();
+	}
+
 }

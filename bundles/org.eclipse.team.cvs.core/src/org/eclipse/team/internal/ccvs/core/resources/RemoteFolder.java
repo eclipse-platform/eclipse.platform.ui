@@ -751,6 +751,15 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return tag1.equals(tag2);
 	}
 	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		CVSTag tag = getTag();
+		if (tag == null) tag = CVSTag.DEFAULT;
+		return super.hashCode() | tag.getName().hashCode();
+	}
+	
 	/*
 	 * The given root must be an ancestor of the receiver (or the receiver)
 	 * and the path of the receiver must be a prefix of the provided path.
