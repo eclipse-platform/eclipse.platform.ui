@@ -7,7 +7,7 @@ package org.eclipse.ui.internal;
 import java.io.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
@@ -134,7 +134,7 @@ private void openInfoDialog(Throwable t) {
 		} else {
 			msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {t.getMessage()}); //$NON-NLS-1$
 		} 
-		MessageDialog.openError(null, WorkbenchMessages.getString("Internal_error"), msg); //$NON-NLS-1$
+		InternalErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), msg,t); //$NON-NLS-1$
 	} catch (Throwable th) {
 		/* It is unlikely to happen */
 		System.err.println("A fatal error happened while informing the user about a fatal error."); //$NON-NLS-1$
@@ -158,7 +158,7 @@ private boolean openQuestionDialog(Throwable t) {
 		else if(t instanceof SWTError)
 			msg = MSG_SWTError;
 			
-		return MessageDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR);
+		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t);
 	} catch (Throwable th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */
