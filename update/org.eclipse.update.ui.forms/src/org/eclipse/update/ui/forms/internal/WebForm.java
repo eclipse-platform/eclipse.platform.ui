@@ -185,7 +185,7 @@ public class WebForm extends AbstractSectionForm {
 	
 	protected void updateHyperlinkColors() {
 		factory.updateHyperlinkColors();
-		if (control != null) {
+		if (control != null && !control.isDisposed()) {
 			control.redraw();
 		}
 	}
