@@ -194,7 +194,8 @@ List pruneResources(List resourceCollection) {
 	IProject[] projects = new IProject[resourceCollection.size()];
 	projects = (IProject[]) resourceCollection.toArray(projects);
 	IProject[][] prereqs = ResourcesPlugin.getWorkspace().computePrerequisiteOrder(projects);
-	List ordered = Arrays.asList(prereqs[0]);
+	ArrayList ordered = new ArrayList();
+	ordered.addAll(Arrays.asList(prereqs[0]));
 	ordered.addAll(Arrays.asList(prereqs[1]));
 	return ordered;
 }
