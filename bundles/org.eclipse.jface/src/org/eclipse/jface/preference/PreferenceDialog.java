@@ -33,6 +33,7 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
@@ -170,6 +171,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * The preference manager.
 	 */
 	private PreferenceManager preferenceManager;
+	/**
+	 * Flag for the presence of the error message.
+	 */
+	private boolean showingError = false;
 
 	/**
 	 * Preference store, initially <code>null</code> meaning none.
@@ -501,6 +506,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		FormData imageData = new FormData();
 		imageData.right = new FormAttachment(100);
 		imageData.top = new FormAttachment(0);
+		imageData.bottom =  new FormAttachment(100);
 		
 		titleImage.setLayoutData(imageData);
 		
@@ -1128,15 +1134,69 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		int messageType = IMessageProvider.NONE;
 		if (message != null && currentPage instanceof IMessageProvider)
 			messageType = ((IMessageProvider) currentPage).getMessageType();
-
 		String errorMessage = currentPage.getErrorMessage();
-
-		if(errorMessage != null){
+		if (errorMessage != null) {
 			message = errorMessage;
 			messageType = IMessageProvider.ERROR;
+			if (!showingError) {
+				// we were not previously showing an error
+				showingError = true;
+				titleImage.setImage(null);
+				titleImage.setBackground(JFaceColors.getErrorBackground(titleImage
+						.getDisplay()));
+				titleImage.setSize(0,0);
+				titleImage.getParent().layout();
+				
+			}
+		} else {
+			if (showingError) {
+				// we were previously showing an error
+				showingError = false;
+				titleImage
+						.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
+				titleImage.computeSize(SWT.NULL,SWT.NULL);
+				titleImage.getParent().layout();
+			}
 		}
-		
-		messageArea.updateText(message,messageType);
+		messageArea.updateText(getShortenedString(message), messageType);
+	}
+	private final String ellipsis = "..."; //$NON-NLS-1$
+	/**
+	 * Shortned the message if too long.
+	 * @param textValue
+	 * 			The messgae value.
+	 * @return The shortened string.
+	 */
+	private String getShortenedString(String textValue) {
+		if (textValue == null)
+			return null;
+		Display display = titleArea.getDisplay();
+		GC gc = new GC(display);
+		System.out.println();
+		int maxWidth = titleArea.getBounds().width - 28;
+		if (gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
+			return textValue;
+		}
+		int length = textValue.length();
+		int ellipsisWidth = gc.textExtent(ellipsis).x;
+		int pivot = length / 2;
+		int start = pivot;
+		int end = pivot + 1;
+		while (start >= 0 && end < length) {
+			String s1 = textValue.substring(0, start);
+			String s2 = textValue.substring(end, length);
+			int l1 = gc.textExtent(s1).x;
+			int l2 = gc.textExtent(s2).x;
+			if (l1 + ellipsisWidth + l2 < maxWidth) {
+				gc.dispose();
+				return s1 + ellipsis + s2;
+			}
+			start--;
+			end++;
+		}
+		gc.dispose();
+		return textValue;
 	}
 
 	/* (non-Javadoc)
