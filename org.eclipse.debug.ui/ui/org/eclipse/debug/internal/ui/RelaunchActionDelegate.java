@@ -39,12 +39,44 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		if (!ok) {
 			String string= DebugUIMessages.getString("RelaunchActionDelegate.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
 			String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"), message);	 //$NON-NLS-1$
+			MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"), message);	 //$NON-NLS-1$
 		}				
 	}
 	
 	public static void relaunch(LaunchHistoryElement history) {
-		relaunch(history.getLauncher(), history.getMode(), history.getLaunchElement());
+		boolean ok = verifyHistoryElement(history);
+		if (ok) {
+			relaunch(history.getLauncher(), history.getMode(), history.getLaunchElement());
+		} else {
+			DebugUIPlugin.getDefault().removeHistoryElement(history);
+		}
+	}
+	
+	/**
+	 * Returns whether the launcher and launch element this history element
+	 * refers to are still valid. Reports errors to the user.
+	 * 
+	 * @param history the launch history element to verify
+	 * @return whether this given launch history element is still valid
+	 */
+	protected static boolean verifyHistoryElement(LaunchHistoryElement history) {
+		ILauncher launcher = history.getLauncher();
+		if (launcher == null) {
+			MessageDialog.openError(
+				DebugUIPlugin.getShell(),
+				DebugUIMessages.getString("RelaunchActionDelegate.Unable_to_Launch"), //$NON-NLS-1$
+				DebugUIMessages.getString("RelaunchActionDelegate.launcher_no_longer_exists")); //$NON-NLS-1$
+			return false;
+		}
+		Object element = history.getLaunchElement();
+		if (element == null) {
+		MessageDialog.openError(
+				DebugUIPlugin.getShell(),
+				DebugUIMessages.getString("RelaunchActionDelegate.Unable_to_Launch"), //$NON-NLS-1$
+				DebugUIMessages.getString("RelaunchActionDelegate.element_no_longer_exists"));			 //$NON-NLS-1$
+			return false;
+		}
+		return true;
 	}
 	
 	public static void relaunch(IDebugElement element) {

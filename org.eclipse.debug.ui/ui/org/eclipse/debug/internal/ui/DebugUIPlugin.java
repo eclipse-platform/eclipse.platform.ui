@@ -1361,6 +1361,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 	
 	/**
+	 * Removes the given element from launch histories.
+	 * 
+	 * @param hsitory the history element to remove
+	 */
+	protected void removeHistoryElement(LaunchHistoryElement history) {
+		fDebugHistory.remove(history);
+		fRunHistory.remove(history);
+		if (fRecentLaunch.equals(history)) {
+			fRecentLaunch = null;
+		}
+	}
+	
+	/**
 	 * Add the given launch to the debug history if the
 	 * launcher supports the debug mode.  
 	 */
