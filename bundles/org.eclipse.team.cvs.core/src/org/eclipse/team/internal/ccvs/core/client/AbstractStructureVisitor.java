@@ -79,7 +79,12 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		Policy.checkCanceled(monitor);
 		
-		if ( ! mFolder.exists()) return;
+		boolean exists = mFolder.exists();
+		boolean isCVSFolder = mFolder.isCVSFolder();
+		
+		// We are only interested in folders that exist or are CVS folders
+		// A folder could be a non-existant CVS folder if it is a holder for outgoing file deletions
+		if ( ! exists && ! isCVSFolder) return;
 		
 		// Do not send the same folder twice
 		if (isLastSent(mFolder)) return;
@@ -89,7 +94,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", localPath)); //$NON-NLS-1$
 		
 		// Deal with questionable directories
-		boolean isQuestionable = ! mFolder.isCVSFolder() || isOrphanedSubtree(mFolder);
+		boolean isQuestionable = exists && (! isCVSFolder || isOrphanedSubtree(mFolder));
 		if (isQuestionable) {
 			if (sendQuestionable) {
 				// We need to make sure the parent folder was sent 

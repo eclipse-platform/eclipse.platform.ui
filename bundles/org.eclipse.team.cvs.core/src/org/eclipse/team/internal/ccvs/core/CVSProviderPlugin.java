@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -253,6 +254,8 @@ public class CVSProviderPlugin extends Plugin {
 		CVSProviderPlugin.getPlugin().addResourceStateChangeListener(addDeleteMoveListener);
 		
 		createCacheDirectory();
+		
+		CVSTeamProvider.setMoveDeleteHook(new MoveDeleteHook());
 	}
 	
 	/**

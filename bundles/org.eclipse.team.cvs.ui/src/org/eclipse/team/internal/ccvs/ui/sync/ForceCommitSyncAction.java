@@ -1,9 +1,15 @@
-package org.eclipse.team.internal.ccvs.ui.sync;
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+package org.eclipse.team.internal.ccvs.ui.sync;
  
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,6 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -67,7 +75,7 @@ public class ForceCommitSyncAction extends MergeAction {
 		if (changed.length == 0) {
 			return syncSet;
 		}
-		IResource[] changedResources = new IResource[changed.length];
+		List commits = new ArrayList();
 		List additions = new ArrayList();
 		List deletions = new ArrayList();
 		List toMerge = new ArrayList();
@@ -79,9 +87,11 @@ public class ForceCommitSyncAction extends MergeAction {
 		List parentConflictElements = new ArrayList();
 		
 		for (int i = 0; i < changed.length; i++) {
-			changedResources[i] = changed[i].getResource();
 			int kind = changed[i].getKind();
 			IResource resource = changed[i].getResource();
+			if (resource.getType() == resource.FILE) {
+				commits.add(resource);
+			}
 			IDiffContainer parent = changed[i].getParent();
 			if (parent != null) {
 				int parentKind = changed[i].getParent().getKind();
@@ -180,7 +190,20 @@ public class ForceCommitSyncAction extends MergeAction {
 			if (toMerge.size() != 0) {
 				manager.merged((IRemoteSyncElement[])toMerge.toArray(new IRemoteSyncElement[0]));
 			}
-			manager.commit(changedResources, comment, monitor);
+			manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, monitor);
+			
+			// Reset the timestamps for any files that were not committed
+			// because their contents match that of the server
+			for (Iterator iter = commits.iterator(); iter.hasNext(); ) {
+				IResource resource = (IResource)iter.next();
+				if (resource.getType() == IResource.FILE) {
+					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+					// If the file is still modified after the commit, it probably is a pseudo change
+					if (cvsFile.exists() && cvsFile.isModified()) {
+						cvsFile.setTimeStamp(cvsFile.getSyncInfo().getTimeStamp());
+					}
+				}
+			}
 			
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
@@ -222,9 +245,9 @@ public class ForceCommitSyncAction extends MergeAction {
 		// The force commit action is enabled only for conflicting and incoming changes
 		SyncSet set = new SyncSet(new StructuredSelection(node));
 		if (syncMode == SyncView.SYNC_OUTGOING) {
-			return set.hasConflicts();
+			return (set.hasConflicts() && hasRealChanges(node, new int[] { ITeamNode.CONFLICTING }));
 		} else {
-			return set.hasIncomingChanges() || set.hasConflicts();
+			return ((set.hasIncomingChanges() || set.hasConflicts()) && hasRealChanges(node, new int[] { ITeamNode.CONFLICTING, ITeamNode.INCOMING }));
 		}
 	}	
 	

@@ -49,6 +49,9 @@ import org.eclipse.team.internal.ui.sync.SyncSet;
 /**
  * UpdateSyncAction is run on a set of sync nodes when the "Update" menu item is performed
  * in the Synchronize view.
+ * 
+ * This class is also used as the super class of the merge update actions for regular and forced
+ * update.
  */
 public class UpdateSyncAction extends MergeAction {
 	public static class ConfirmDialog extends MessageDialog {
@@ -143,6 +146,8 @@ public class UpdateSyncAction extends MergeAction {
 		Set parentCreationElements = new HashSet();
 		// A list of diff elements in the sync set which are folder conflicts
 		Set parentConflictElements = new HashSet();
+		// A list of diff elements in the sync set which are outgoing folder deletions
+		Set parentDeletionElements = new HashSet();
 		// A list of the team nodes that we need to perform makeIncoming on
 		List makeIncoming = new ArrayList();
 		// A list of diff elements that need to be unmanaged and locally deleted
@@ -155,11 +160,14 @@ public class UpdateSyncAction extends MergeAction {
 				if (((parentKind & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) &&
 					((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.INCOMING)) {
 					parentCreationElements.add(parent);
+				} else if (isLocallyDeletedFolder(parent)) {
+					parentDeletionElements.add(parent);
 				} else if ((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.CONFLICTING) {
 					parentConflictElements.add(parent);
 				}
 			}
 			ITeamNode changedNode = changed[i];
+			IResource resource = changedNode.getResource();
 			int kind = changedNode.getKind();
 			switch (kind & Differencer.DIRECTION_MASK) {
 				case ITeamNode.INCOMING:
@@ -180,8 +188,10 @@ public class UpdateSyncAction extends MergeAction {
 							deletions.add(changedNode);
 							break;
 						case Differencer.DELETION:
-							makeIncoming.add(changedNode);
-							updateDeep.add(changedNode);
+							if (resource.getType() == IResource.FILE) {
+								makeIncoming.add(changedNode);
+								updateDeep.add(changedNode);
+							}
 							break;
 						case Differencer.CHANGE:
 							updateIgnoreLocalShallow.add(changedNode);
@@ -203,11 +213,17 @@ public class UpdateSyncAction extends MergeAction {
 							// Doesn't happen, these nodes don't appear in the tree.
 							break;
 						case Differencer.CHANGE:
-							// Depends on the flag.
-							if (onlyUpdateAutomergeable && (changedNode.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-								updateShallow.add(changedNode);
+							if (resource.getType() == IResource.FILE) {
+								// Depends on the flag.
+								if (onlyUpdateAutomergeable && (changedNode.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+									updateShallow.add(changedNode);
+								} else {
+									updateIgnoreLocalShallow.add(changedNode);
+								}
 							} else {
-								updateIgnoreLocalShallow.add(changedNode);
+								// Conflicting change on a folder only occurs if the folder has been deleted locally
+								// The folder should only be recreated if there were children in the changed set.
+								// Such folders would have been added to the parentDeletionElements set above
 							}
 							break;
 					}
@@ -220,6 +236,16 @@ public class UpdateSyncAction extends MergeAction {
 			monitor.beginTask(null, work);
 
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+			if (parentDeletionElements.size() > 0) {
+				// If a node has a parent that is an outgoing folder deletion, we have to 
+				// recreate that folder locally (it's sync info already exists locally). 
+				// We must do this for all outgoing folder deletions (recursively)
+				// in the case where there are multiple levels of outgoing folder deletions.
+				Iterator it = parentDeletionElements.iterator();
+				while (it.hasNext()) {
+					recreateLocallyDeletedFolder((IDiffElement)it.next());
+				}				
+			}
 			if (parentCreationElements.size() > 0) {
 				// If a node has a parent that is an incoming folder creation, we have to 
 				// create that folder locally and set its sync info before we can get the

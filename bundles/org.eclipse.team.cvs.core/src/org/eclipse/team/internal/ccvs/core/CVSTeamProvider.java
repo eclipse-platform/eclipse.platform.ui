@@ -379,8 +379,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 			subProgress.done();
 			// If an exception occured during the visit, throw it here
-			if (eHolder[0] != null)
-				throw eHolder[0];
+			if (eHolder[0] != null) throw eHolder[0];		
+			// If there are no files to delete, we are done
+			if (files.isEmpty()) return;
 			
 			// Remove the files remotely
 			IStatus status;
@@ -1137,8 +1138,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/*
-	 * Set the Move/Delete hook of the CVS Team Provider. This is provided to allow the CVS UI to
-	 * register a hook that can perform prompting. It is not to be used by other clients
+	 * Set the Move/Delete hook of the CVS Team Provider. This is for internal use by CVS only. 
+	 * It is not to be used by other clients
 	 */
 	 public static void setMoveDeleteHook(IMoveDeleteHook hook) {
 	 	moveDeleteHook = hook;

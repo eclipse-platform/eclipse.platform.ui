@@ -110,6 +110,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				project.open(null);				
 			} else {
 				((IFolder)resource).create(false /*don't force*/, true /*make local*/, null);
+				EclipseSynchronizer.getInstance().folderCreated((IFolder)resource);
 			}				
 		} catch (CoreException e) {
 			throw CVSException.wrapException(resource, Policy.bind("EclipseFolder_problem_creating", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$
@@ -250,7 +251,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		if(path.segmentCount()==0) {
 			 return this;
 		}
-		IResource child = ((IContainer)resource).findMember(path);
+		IResource child = ((IContainer)resource).findMember(path, true /* include phantoms */);
 		if(child!=null) {
 			if(child.getType()==IResource.FILE) {
 				return new EclipseFile((IFile)child);

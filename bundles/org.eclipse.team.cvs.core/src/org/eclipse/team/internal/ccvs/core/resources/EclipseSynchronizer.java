@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,7 +63,10 @@ public class EclipseSynchronizer {
 	private Set changedResources = new HashSet();
 	private Set changedFolders = new HashSet();
 	
-	private EclipseSynchronizer() {		
+	/*
+	 * Package private contructor to allow specialized subclass for handling folder deletions
+	 */
+	EclipseSynchronizer() {		
 	}
 	
 	/**
@@ -70,7 +74,7 @@ public class EclipseSynchronizer {
 	 */
 	public static EclipseSynchronizer getInstance() {		
 		if(instance==null) {
-			instance = new EclipseSynchronizer();
+			instance = new EclipsePhantomSynchronizer();
 		}
 		return instance;
 	}
@@ -406,6 +410,21 @@ public class EclipseSynchronizer {
 	}
 	
 	/**
+	 * The folder is about to be deleted (including its CVS subfolder).
+	 * Take any appropriate action to remember the CVS information.
+	 */
+	public void prepareForDeletion(IContainer container) throws CVSException {
+	}
+	
+	/**
+	 * Signal to the synchronizer that a folder has been created
+	 * 
+	 * @param folder the folder to be created
+	 */
+	public void folderCreated(IFolder folder) throws CVSException {
+	}
+	
+	/**
 	 * Prepares the cache for a series of operations.
 	 *
 	 * @param monitor the progress monitor, may be null
@@ -420,11 +439,14 @@ public class EclipseSynchronizer {
 	 * information to disk. If an error occurs a multistatus is returned
 	 * with the list of reasons for the failures. Failures are recovered,
 	 * and all changed resources are given a chance to be written to disk.
-	 *
+	 * 
 	 * @param monitor the progress monitor, may be null
 	 */
 	private IStatus commitCache(IProgressMonitor monitor) {
-		if (changedFolders.isEmpty() && changedResources.isEmpty()) return STATUS_OK;
+		if (changedFolders.isEmpty() && changedResources.isEmpty()) {
+			broadcastResourceStateChanges(new IResource[0]);
+			return STATUS_OK;
+		}
 		List errors = new ArrayList();
 		try {
 			/*** prepare operation ***/
@@ -501,7 +523,7 @@ public class EclipseSynchronizer {
 			changedResources.addAll(changedFolders);				
 			IResource[] resources = (IResource[]) changedResources.toArray(
 				new IResource[changedResources.size()]);
-			CVSProviderPlugin.broadcastResourceStateChanges(resources);
+			broadcastResourceStateChanges(resources);
 			changedResources.clear();
 			changedFolders.clear();
 			if ( ! errors.isEmpty()) {
@@ -517,6 +539,15 @@ public class EclipseSynchronizer {
 			return STATUS_OK;
 		} finally {
 			monitor.done();
+		}
+	}
+	
+	/**
+	 * Broadcasts the resource state changes for the given resources to CVS Provider Plugin
+	 */
+	void broadcastResourceStateChanges(IResource[] resources) {
+		if (resources.length > 0) {
+			CVSProviderPlugin.broadcastResourceStateChanges(resources);
 		}
 	}
 	

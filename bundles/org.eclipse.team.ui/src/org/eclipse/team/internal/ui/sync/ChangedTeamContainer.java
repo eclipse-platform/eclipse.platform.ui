@@ -66,4 +66,9 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 	public String toString() {
 		return "ChangedTeamContainer(" + getResource().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	public void makeInSync() {
+		setKind(Differencer.NO_CHANGE);
+	}
+	
 }

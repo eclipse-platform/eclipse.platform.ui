@@ -118,6 +118,12 @@ public interface ICVSFolder extends ICVSResource {
 	 * Note: This method does not throw an exception so this method does not differentiate
 	 * between a folder not be shared with CVS and a folder that is shared but whose sync info has
 	 * become corrupt. Use getFolderSyncInfo() to differentiate between these situations.
+	 * 
+	 * Also Note: A folder that is a CVS folder may not exist in the workspace. The purpose of
+	 * such a folder is to act as a remotely existing folder that does not exist locally. 
+	 * This is normally done in order to remember outgoing file deletions when a parent
+	 * folder is deleted.
+	 * Creating the folder will result in a folder that is mapped to a remote folder.
 	 */
 	public boolean isCVSFolder();
 	

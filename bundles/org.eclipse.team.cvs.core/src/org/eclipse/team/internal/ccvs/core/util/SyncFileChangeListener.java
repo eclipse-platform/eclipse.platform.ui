@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -79,6 +80,15 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					
 					if(name.equals(SyncFileWriter.CVS_DIRNAME)) {
 						handleCVSDir((IContainer)resource, kind);
+					} else {
+						// Inform the synchronizer about folder creations
+						if (kind == delta.ADDED && resource.getType() == IResource.FOLDER) {
+							try {
+								EclipseSynchronizer.getInstance().folderCreated((IFolder)resource);
+							} catch (CVSException e) {
+								throw new CoreException(e.getStatus());
+							}
+						}
 					}
 					
 					if(isMetaFile(resource)) {

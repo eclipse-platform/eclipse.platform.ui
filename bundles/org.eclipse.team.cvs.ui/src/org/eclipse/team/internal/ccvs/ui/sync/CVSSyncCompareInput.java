@@ -7,7 +7,10 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,6 +33,7 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 
@@ -242,5 +246,42 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		}
 			
 		return result[0];
+	}
+	
+	/**
+	 * Adjust the sync info (to conflicting change) for locally deleted 
+	 * folders (i.e. outgoing folder deletions)
+	 * that have incoming or conflicting changes in one or more children.
+	 * 
+	 * @see MergeAction#removeNodes(ITeamNode[])
+	 */
+	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
+		IDiffElement element = super.collectResourceChanges(parent, tree, pm);
+		int kind = element.getKind();
+		if ((element instanceof ChangedTeamContainer) 
+				&& ((kind & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION) 
+				&& ((kind & Differencer.DIRECTION_MASK) == ITeamNode.OUTGOING)) {
+			// Check the children to see if there are any incomming changes
+			if (hasIncomingChanges((ChangedTeamContainer)element)) {
+				((ChangedTeamContainer)element).setKind(ITeamNode.CONFLICTING | Differencer.CHANGE);
+			}
+		}
+		return element;
+	}
+	
+	private boolean hasIncomingChanges(ChangedTeamContainer container) {
+		IDiffElement[] children = container.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IDiffElement element = children[i];
+			int direction = element.getKind() & Differencer.DIRECTION_MASK;
+			if (direction == ITeamNode.CONFLICTING || direction == ITeamNode.INCOMING) {
+				return true;
+			}
+			if (element instanceof ChangedTeamContainer)  {
+				boolean hasIncomingChanges = hasIncomingChanges((ChangedTeamContainer)element);
+				if (hasIncomingChanges) return true;
+			}
+		}
+		return false;
 	}
 }

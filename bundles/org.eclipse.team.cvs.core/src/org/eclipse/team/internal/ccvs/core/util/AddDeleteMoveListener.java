@@ -32,6 +32,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -62,7 +63,9 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			if (marker != null) {
 				return marker;
 			}
-			marker = resource.getParent().createMarker(DELETION_MARKER);
+			IContainer parent = resource.getParent();
+			if (! parent.exists()) return null;
+			marker = parent.createMarker(DELETION_MARKER);
 			marker.setAttribute("name", resource.getName());//$NON-NLS-1$
 			marker.setAttribute(IMarker.MESSAGE, Policy.bind("AddDeleteMoveListener.deletedResource", resource.getName()));//$NON-NLS-1$
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
@@ -189,7 +192,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				ResourceSyncInfo info = mFile.getSyncInfo();
 				if (info.isAdded()) {
 					mFile.unmanage(null);
-				} else {
+				} else if ( ! info.isDeleted()) {
 					createDeleteMarker(resource);
 					MutableResourceSyncInfo deletedInfo = info.cloneMutable();
 					deletedInfo.setDeleted(true);

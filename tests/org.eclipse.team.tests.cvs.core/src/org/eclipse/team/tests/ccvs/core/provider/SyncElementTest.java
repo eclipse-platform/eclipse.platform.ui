@@ -811,7 +811,7 @@ public class SyncElementTest extends EclipseTest {
 	
 	public void testFolderDeletion() throws TeamException, CoreException {
 		
-		IProject project = createProject("testFolderDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IProject project = createProject("testFolderDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/file.txt"});
 		
 		// Delete a folder and ensure that the file is managed but doesn't exist
 		// (Special behavior is provider by the CVS move/delete hook but this is not part of CVS core)
@@ -819,20 +819,33 @@ public class SyncElementTest extends EclipseTest {
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
 		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
 		
-		// The folder should show up as an incomming addition
+		// The folders and files should show up as outgoing deletions
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderDeletion sync check", tree,
-						 new String[] { "folder1", "folder1/a.txt"},
-						 new int[] { IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
-						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION});
+						 new String[] { "folder1", "folder1/a.txt", "folder1/folder2", "folder1/folder2/file.txt"},
+						 new int[] { IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
 		
-		// Update and ensure everything is back
-		updateProject(project, null, false);		 			  					 			  
+		// commit folder1/a.txt
+		commitResources(project, new String[] { "folder1/a.txt" });
+		
+		// Resync and verify that above file is gone and others remain the same
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderDeletion sync check", tree,
-						 new String[] { "folder1", "folder1/a.txt"},
-						 new int[] { IRemoteSyncElement.IN_SYNC,
-						 			  IRemoteSyncElement.IN_SYNC});
+						 new String[] { "folder1", "folder1/folder2", "folder1/folder2/file.txt"},
+						 new int[] { IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
+		assertDeleted("testFolderDeletion", tree, new String[] {"folder1/a.txt"});
+		
+		// Commit folder1/folder2/file.txt
+		commitResources(project, new String[] { "folder1/folder2/file.txt" });
+		
+		// Resync and verify that all are deleted
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertDeleted("testFolderDeletion", tree, new String[] {"folder1", "folder1/folder2", "folder1/folder2/file.txt"});
 	}
 	/**
 	  * There is special handling required when building a sync tree for a tag when there are undiscovered folders
