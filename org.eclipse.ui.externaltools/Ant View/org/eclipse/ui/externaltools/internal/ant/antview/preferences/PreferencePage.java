@@ -32,6 +32,7 @@ public class PreferencePage
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(Preferences.getPreferenceStore());
+		ResourceMgr.init();
 		setDescription(ResourceMgr.getString("Preferences.PageDescription"));
 		Preferences.setDefaults();
 	}
