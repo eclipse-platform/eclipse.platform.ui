@@ -7,17 +7,22 @@ package org.eclipse.help.servlet;
 
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.*;
 
 public class HighlightFilter implements IFilter {
 	private String searchWord;
 	private HttpServletRequest request;
-
+	// content size limit, above which the script
+	// that has a time limit will be inserted
+	private static final int TIMED_SCRIPT_TRESHOLD = 50000;
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
 		");\n-->\n</script>\n<script language=\"JavaScript\" src=\"";
-	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n";
+	private static final String scriptPart5 =
+		"advanced/highlight.js\"></script>\n";
+	private static final String scriptPart5Timed =
+		"advanced/highlightTimed.js\"></script>\n";
 
 	/**
 	 * Constructor.
@@ -41,7 +46,7 @@ public class HighlightFilter implements IFilter {
 		Collection keywords = getWords();
 		keywords = removeWildCards(keywords);
 		keywords = encodeKeyWords(keywords);
-		byte[] script = createJScript(keywords);
+		byte[] script = createJScript(keywords, input.length);
 		if (script == null) {
 			return input;
 		}
@@ -51,8 +56,11 @@ public class HighlightFilter implements IFilter {
 
 	/**
 	 * Creates Java Script that does highlighting
+	 * @param keywords
+	 * @param contentSize size of document
+	 * @return byte[]
 	 */
-	private byte[] createJScript(Collection keywords) {
+	private byte[] createJScript(Collection keywords, int contentSize) {
 		StringBuffer buf = new StringBuffer(scriptPart1);
 		// append comma separated list of keywords
 		Iterator it = keywords.iterator();
@@ -76,7 +84,11 @@ public class HighlightFilter implements IFilter {
 			}
 		}
 		//
-		buf.append(scriptPart5);
+		if (contentSize < TIMED_SCRIPT_TRESHOLD) {
+			buf.append(scriptPart5);
+		} else {
+			buf.append(scriptPart5Timed);
+		}
 		return buf.toString().getBytes();
 	}
 	/**
