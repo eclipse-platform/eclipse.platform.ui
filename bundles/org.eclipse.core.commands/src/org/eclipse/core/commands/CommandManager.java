@@ -182,14 +182,22 @@ public final class CommandManager implements ICategoryListener,
 	 * exists, then the command will be created (but be undefined).
 	 * 
 	 * @param commandId
-	 *            The identifier to find; must not be <code>null</code>.
+	 *            The identifier to find; must not be <code>null</code> and
+	 *            must not be zero-length.
 	 * @return The command with the given identifier; this value will never be
 	 *         <code>null</code>, but it might be undefined.
 	 * @see Command
 	 */
 	public final Command getCommand(final String commandId) {
-		if (commandId == null)
-			throw new NullPointerException();
+		if (commandId == null) {
+			throw new NullPointerException(
+					"A command may not have a null identifier"); //$NON-NLS-1$
+		}
+
+		if (commandId.length() < 1) {
+			throw new IllegalArgumentException(
+					"The command must not have a zero-length identifier"); //$NON-NLS-1$
+		}
 
 		Command command = (Command) commandsById.get(commandId);
 		if (command == null) {
