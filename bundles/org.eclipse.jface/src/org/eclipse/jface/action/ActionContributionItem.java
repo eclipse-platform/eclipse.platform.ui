@@ -635,6 +635,11 @@ public void update(String propertyName) {
 			
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
+			
+			if (textChanged){
+				if(action instanceof Action && (((Action) action).showTextInToolBar()))
+						ti.setText(action.getText());
+			}
 				
 			if (enableStateChanged) {
 				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
