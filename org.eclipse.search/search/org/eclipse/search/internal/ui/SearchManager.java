@@ -255,6 +255,27 @@ public class SearchManager implements IResourceChangeListener {
 		}
 		fCurrentSearch= newSearch;
 		getPreviousSearches().addFirst(fCurrentSearch);
+		
+		// Remove the markers
+		try {
+			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
+		} catch (CoreException ex) {
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+		}
+
+		// Clear the viewers
+		Iterator iter= fListeners.iterator();
+		Display display= getDisplay();
+		if (display != null && !display.isDisposed()) {
+			while (iter.hasNext()) {
+				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
+				display.syncExec(new Runnable() {
+					public void run() {
+						viewer.handleRemoveAll();
+					}
+				});
+			}
+		}
 	}
 
 	void setCurrentResults(ArrayList results) {

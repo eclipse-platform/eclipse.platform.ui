@@ -54,7 +54,6 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 				new GroupByKeyComputer(),
 				fOperation);
 		}
-		SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 	}
 	 
 	/**

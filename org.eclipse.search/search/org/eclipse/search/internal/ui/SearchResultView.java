@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -19,10 +23,9 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.help.ViewContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
@@ -47,7 +50,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
 		
-		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
 		WorkbenchHelp.setHelp(fViewer.getControl(), new ViewContextComputer(this, ISearchHelpContextIds.SEARCH_VIEW));
 	}
 	
@@ -143,11 +145,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
-/*
-		fViewer.setPageId(pageId);
-		setContextMenuContributor(contributor);
-		setLabelProvider(labelProvider);
-		*/
+
 		SearchManager.getDefault().addNewSearch(		
 			new Search(
 				pageId,
