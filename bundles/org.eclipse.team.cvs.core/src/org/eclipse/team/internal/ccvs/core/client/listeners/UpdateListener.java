@@ -117,7 +117,7 @@ public class UpdateListener implements ICommandOutputListener {
 				}
 			} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					String filename = message.substring(0, message.indexOf(' '));
+					String filename = message.substring(0, message.length() - 31);
 					updateMessageListener.fileDoesNotExist(filename);
 				}
 			} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class UpdateListener implements ICommandOutputListener {
 				if (updateMessageListener != null) {
 					if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
 						// The "C foler/file.ext" will come after this so if whould be ignored!
-						String filename = message.substring(10, message.indexOf(' ', 10));
+						String filename = message.substring(10, message.length() - 44);
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
@@ -145,7 +145,7 @@ public class UpdateListener implements ICommandOutputListener {
 				 */
 				if (updateMessageListener != null) {
 					if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
-						String filename = message.substring(9, message.indexOf(' ', 9));
+						String filename = message.substring(9, message.length() - 30);
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
