@@ -104,8 +104,6 @@ protected Control createContents(Composite parent) {
 	createEditorTabButtonGroup(buttonComposite);
 	createViewTabButtonGroup(buttonComposite);
 
-	createSpacer(composite);
-
 	Composite messageComposite = new Composite(composite, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
@@ -182,16 +180,15 @@ private void createEditorTabButtonGroup(Composite composite) {
  */
 private void createOpenViewButtonGroup(Composite composite) {
 
-	Label titleLabel = new Label(composite, SWT.NONE);
-	titleLabel.setText(OVM_TITLE);
-
-	Composite buttonComposite = new Composite(composite, SWT.LEFT);
+	Group buttonComposite = new Group(composite, SWT.LEFT);
+	buttonComposite.setText(OVM_TITLE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 1;
 	buttonComposite.setLayout(layout);
-	GridData data =
-		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-	composite.setData(data);
+	GridData data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.grabExcessHorizontalSpace = true;
+	buttonComposite.setLayoutData(data);
 
 	openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 	openEmbedButton.setText(OVM_EMBED);

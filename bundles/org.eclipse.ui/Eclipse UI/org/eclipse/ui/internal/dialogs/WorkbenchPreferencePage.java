@@ -113,11 +113,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		createEditorGroup(composite);
 
-		createSpace(composite);
-
 		createPerspectiveGroup(composite);
-
-		createSpace(composite);
 
 		createProjectPerspectiveGroup(composite);
 
@@ -169,15 +165,15 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private void createPerspectiveGroup(Composite composite) {
 
-		Label titleLabel = new Label(composite, SWT.NONE);
-		titleLabel.setText(NEW_PERSPECTIVE_TITLE);
-
-		Composite buttonComposite = new Composite(composite, SWT.LEFT);
+		Group buttonComposite = new Group(composite, SWT.LEFT);
+		buttonComposite.setText(NEW_PERSPECTIVE_TITLE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-		composite.setData(data);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		buttonComposite.setLayoutData(data);
 
 		//Open New Window button
 		this.openInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_LABEL);
@@ -220,16 +216,14 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
 
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String currentPersspetive = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-		Label titleLabel = new Label(composite, SWT.NONE);
-		titleLabel.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
-
-		Composite buttonComposite = new Composite(composite, SWT.LEFT);
+		Group buttonComposite = new Group(composite, SWT.LEFT);
+		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
 		GridLayout layout = new GridLayout();
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-		composite.setData(data);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		buttonComposite.setLayoutData(data);
 
 		//Open New Page button
 		this.openProjectInNewPageButton = createRadioButton(buttonComposite, OPEN_NEW_PAGE_PROJECT_LABEL);
