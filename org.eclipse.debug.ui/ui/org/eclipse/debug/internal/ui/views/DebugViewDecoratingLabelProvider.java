@@ -74,14 +74,13 @@ public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 	/**
 	 * Returns the stored text computed by the background decorator
 	 * or delegates to the decorating label provider to compute text.
-	 * If a stored value exists for the given element, it is cleared and
-	 * then returned such that the next call to this method will have to
-	 * delegate.
+	 * The stored value is not cleared - the value is cleared when
+	 * #lablesComputed(...) has completed the update of its elements.  
 	 * 
 	 * @see DecoratingLabelProvider#getText(java.lang.Object) 
 	 */
 	public String getText(Object element) {
-		String text= (String) computedText.remove(element);
+		String text= (String) computedText.get(element);
 		if (text != null) {
 			return text;
 		}
