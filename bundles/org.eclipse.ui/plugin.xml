@@ -1118,26 +1118,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-<!-- FastView -->
-      <colorDefinition
-            label="Fast View Border 1"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            value="132,130,132"
-            id="FAST_VIEW_BORDER_1">
-      </colorDefinition>
-      <colorDefinition
-            label="Fast View Border 2"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            value="143,141,138"
-            id="FAST_VIEW_BORDER_2">
-      </colorDefinition>
-      <colorDefinition
-            label="Fast View Border 3"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            value="171,168,165"
-            id="FAST_VIEW_BORDER_3">
-      </colorDefinition>
-
       <fontDefinition
             label="%FontsPreference.BannerFontLabel"
             id="org.eclipse.jface.bannerfont">
