@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -49,7 +50,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			if (historyElement != null) {
 				final ILaunchConfiguration historyConfig = historyElement.getLaunchConfiguration();
 				if (historyConfig.supportsMode(getMode())) {
-					if (!DebugUIPlugin.saveAndBuild()) {
+					if (!DebugUITools.saveAndBuildBeforeLaunch()) {
 						return;
 					}
 					BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {

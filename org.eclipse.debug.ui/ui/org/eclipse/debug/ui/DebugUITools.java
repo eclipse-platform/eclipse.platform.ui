@@ -251,4 +251,27 @@ public class DebugUITools {
 		dialog.setInitialSelection(selection);
 		return dialog.open();
 	}
+	
+	/**
+	 * Saves all dirty editors and builds the workspace according to current
+	 * preference settings, and returns whether a launch should proceed.
+	 * <p>
+	 * The following preferences effect whether dirty editors are saved,
+	 * and/or if the user is prompted to save dirty edtiors:<ul>
+	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * </ul>
+	 * The following preference effects whether a build is performed before
+	 * launching (if required):<ul>
+	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return whether a launch should proceed
+	 * @since 2.0
+	 */
+	public static boolean saveAndBuildBeforeLaunch() {
+		return DebugUIPlugin.saveAndBuild();
+	}
 }

@@ -2102,7 +2102,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected int doLaunch(ILaunchConfiguration config) throws CoreException {
 		
-		if (!DebugUIPlugin.saveAndBuild()) {
+		if (!DebugUITools.saveAndBuildBeforeLaunch()) {
 			return CANCEL;
 		}
 		
