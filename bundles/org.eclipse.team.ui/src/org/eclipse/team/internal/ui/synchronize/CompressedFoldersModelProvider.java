@@ -91,7 +91,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#createModelObjects(org.eclipse.compare.structuremergeviewer.DiffNode)
 	 */	
-	protected IDiffElement[] createModelObjects(SynchronizeModelElement container) {
+	protected IDiffElement[] createModelObjects(ISynchronizeModelElement container) {
 		IResource resource = null;
 		if (container == getModelRoot()) {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
@@ -109,7 +109,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		return super.createModelObjects(container);
 	}
 	
-	private IDiffElement[] getFolderChildren(SynchronizeModelElement parent, IResource resource) {
+	private IDiffElement[] getFolderChildren(ISynchronizeModelElement parent, IResource resource) {
 		// Folders will only contain out-of-sync children
 		IResource[] children = getSyncInfoTree().members(resource);
 		List result = new ArrayList();
@@ -122,7 +122,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		return (IDiffElement[])result.toArray(new IDiffElement[result.size()]);
 	}
 
-	private IDiffElement[] getProjectChildren(SynchronizeModelElement parent, IProject project) {
+	private IDiffElement[] getProjectChildren(ISynchronizeModelElement parent, IProject project) {
 		// The out-of-sync elements could possibly include the project so the code 
 		// below is written to ignore the project
 		SyncInfo[] outOfSync = getSyncInfoTree().getSyncInfos(project, IResource.DEPTH_INFINITE);
