@@ -305,8 +305,7 @@ public final class MutableActivityManager
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String parentActivityId = (String) entry.getKey();
 
-			if (activityActivityBindingsByParentActivityId
-				.containsKey(parentActivityId)) {
+			if (activityDefinitionsById.containsKey(parentActivityId)) {
 				Collection activityActivityBindingDefinitions =
 					(Collection) entry.getValue();
 
@@ -322,7 +321,8 @@ public final class MutableActivityManager
 							activityActivityBindingDefinition
 								.getChildActivityId();
 
-						if (childActivityId != null) {
+						if (activityDefinitionsById
+							.containsKey(childActivityId)) {
 							IActivityActivityBinding activityActivityBinding =
 								new ActivityActivityBinding(
 									childActivityId,
@@ -412,7 +412,7 @@ public final class MutableActivityManager
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String categoryId = (String) entry.getKey();
 
-			if (categoryActivityBindingsByCategoryId.containsKey(categoryId)) {
+			if (categoryDefinitionsById.containsKey(categoryId)) {
 				Collection categoryActivityBindingDefinitions =
 					(Collection) entry.getValue();
 
@@ -427,7 +427,7 @@ public final class MutableActivityManager
 						String activityId =
 							categoryActivityBindingDefinition.getActivityId();
 
-						if (activityId != null) {
+						if (activityDefinitionsById.containsKey(activityId)) {
 							ICategoryActivityBinding categoryActivityBinding =
 								new CategoryActivityBinding(
 									activityId,
