@@ -117,6 +117,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	private static AntHandler elementHandler = new ElementHandler();
 	private static AntHandler projectHandler = new ProjectHandler();
 	private static AntHandler targetHandler = new TargetHandler();
+	private static AntHandler mainHandler= new MainHandler();
 	
 	
 	public static class ElementHandler extends ProjectHelper2.ElementHandler {
@@ -420,11 +421,12 @@ public class ProjectHelper extends ProjectHelper2 {
     	
     	if (!(source instanceof String)) {
     		super.parse(project, source, handler);
+    		return;
     	}
     	
     	AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
 		//switch to using "our" handler so parsing will continue on hitting errors.
-    	handler= new RootHandler(context, new ProjectHelper.MainHandler());
+    	handler= new RootHandler(context, mainHandler);
     	
         Reader stream= new StringReader((String)source);
              
@@ -481,5 +483,41 @@ public class ProjectHelper extends ProjectHelper2 {
 	 */
 	public void setBuildFile(File file) {
 		buildFile= file;
+	}
+	
+	/* (non-Javadoc)
+	 * We override this method from ProjectHelper2 as we do not want to execute the implicit target or
+	 * any other target for that matter as it could hang Eclipse.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=50795 for more details.
+	 * 
+	 * @see org.apache.tools.ant.ProjectHelper#parse(org.apache.tools.ant.Project, java.lang.Object)
+	 */
+	public void parse(Project project, Object source) throws BuildException {
+		 getImportStack().addElement(source);
+        AntXMLContext context = null;
+        context = (AntXMLContext) project.getReference("ant.parsing.context"); //$NON-NLS-1$
+        if (context == null) {
+            context = new AntXMLContext(project);
+            project.addReference("ant.parsing.context", context); //$NON-NLS-1$
+            project.addReference("ant.targets", context.getTargets()); //$NON-NLS-1$
+        }
+
+        if (getImportStack().size() > 1) {
+            // we are in an imported file.
+            context.setIgnoreProjectTag(true);
+            Target currentTarget = context.getCurrentTarget();
+            try {
+                Target newCurrent = new Target();
+                newCurrent.setProject(project);
+                newCurrent.setName(""); //$NON-NLS-1$
+                context.setCurrentTarget(newCurrent);
+                parse(project, source, new RootHandler(context, mainHandler));
+            } finally {
+                context.setCurrentTarget(currentTarget);
+            }
+        } else {
+            // top level file
+            parse(project, source, new RootHandler(context, mainHandler));
+        }
 	}
 }
