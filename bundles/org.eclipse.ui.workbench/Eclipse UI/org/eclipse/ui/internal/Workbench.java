@@ -757,7 +757,6 @@ public class Workbench
 		commandManager.setActiveContextIds(
 			contextManager.getActiveContextIds());
 		
-		updateActiveWorkbenchWindowMenuManager();
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
@@ -766,7 +765,7 @@ public class Workbench
 		if (workbenchWindow instanceof WorkbenchWindow) {
 			MenuManager menuManager =
 				((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.updateAll(true); // menuManager.update(IAction.TEXT);
+			menuManager.update(IAction.TEXT);
 		}
 	}
 
@@ -2677,7 +2676,10 @@ public class Workbench
 	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
 	 */
 	public IObjectActivityManager getActivityManager(String id, boolean create) {
-		return ObjectActivityManager.getManager(id,create);
+		if(RoleManager.getInstance().isFiltering())
+			return ObjectActivityManager.getManager(id,create);
+		else
+			return null;
 	}
 	
 	/* (non-Javadoc)
