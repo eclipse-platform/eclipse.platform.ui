@@ -527,7 +527,7 @@ public class DecoratorManager
 				return definition.getDecorator();
 			}
 			catch (CoreException exception){
-				//Could not instantiate - return null
+				//Cannot be thrown - remove when API is updated
 			}
 		}
 		return null;

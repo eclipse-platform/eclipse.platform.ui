@@ -102,11 +102,14 @@ public class DecoratorDefinition {
 	}
 
 	/**
-	 * Gets the decorator. Throws a CoreException if there is a problem
+	 * Gets the decorator and creates it if it does
+	 * not exist yet. Throws a CoreException if there is a problem
 	 * creating the decorator.
+	 * This method should not be called unless a check for
+	 * enabled to be true is done first.
 	 * @return Returns a ILabelDecorator
 	 */
-	public ILabelDecorator getDecorator() throws CoreException {
+	private ILabelDecorator internalGetDecorator() throws CoreException {
 		if (decorator == null)
 			decorator =
 				(ILabelDecorator) WorkbenchPlugin.createExtension(
@@ -172,7 +175,7 @@ public class DecoratorDefinition {
 		DecoratorManager manager = (DecoratorManager) WorkbenchPlugin.getDefault().getDecoratorManager();
 		
 		if (this.enabled)
-			getDecorator().addListener(manager);
+			internalGetDecorator().addListener(manager);
 		else {
 			if (decorator != null) {
 				ILabelDecorator cached = decorator;
@@ -218,11 +221,13 @@ public class DecoratorDefinition {
 
 	/**
 	 * Decorate the image provided for the element type.
+	 * This method should not be called unless a check for
+	 * isEnabled() has been done first.
 	 * Return null if there is no image or if an error occurs.
 	 */
 	Image decorateImage(Image image, Object element) {
 		try {
-			return getDecorator().decorateImage(image, element);
+			return internalGetDecorator().decorateImage(image, element);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -230,11 +235,13 @@ public class DecoratorDefinition {
 	}	
 	/**
 	 * Decorate the text provided for the element type.
+	 * This method should not be called unless a check for
+	 * isEnabled() has been done first.
 	 * Return null if there is no text or if there is an exception.
 	 */
 	String decorateText(String text, Object element) {
 		try {
-			return getDecorator().decorateText(text, element);
+			return internalGetDecorator().decorateText(text, element);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -246,12 +253,14 @@ public class DecoratorDefinition {
 	 * <code>ICombinedLabelDecorator</code> then do both at the same
 	 * time - otherwise call the decorateText and decorateImage
 	 * seperately. 
+	 * This method should not be called unless a check for
+	 * isEnabled() has been done first.
 	 */
 	void decorateLabel(
 		Object element,
 		CombinedLabel decorationResult) {
 		try {
-			ILabelDecorator decorator = getDecorator();
+			ILabelDecorator decorator = internalGetDecorator();
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 			return;
@@ -273,10 +282,12 @@ public class DecoratorDefinition {
 	/**
 	 * Add a listener for the decorator.If there is an exception
 	 * then inform the user and disable the receiver.
+	 * This method should not be called unless a check for
+	 * isEnabled() has been done first.
 	 */
 	void addListener(ILabelProviderListener listener) {
 		try {
-			getDecorator().addListener(listener);
+			internalGetDecorator().addListener(listener);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -285,11 +296,13 @@ public class DecoratorDefinition {
 	/**
 	* Return whether or not the decorator registered for element
 	* has a label property called property name. If there is an 
-	* exception disable the receiver and return false;
+	* exception disable the receiver and return false.
+	* This method should not be called unless a check for
+	* isEnabled() has been done first.
 	*/
 	boolean isLabelProperty(Object element, String property) {
 		try {
-			return getDecorator().isLabelProperty(element, property);
+			return internalGetDecorator().isLabelProperty(element, property);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 			return false;
@@ -302,6 +315,16 @@ public class DecoratorDefinition {
 	 */
 	public boolean getDefaultValue(){
 		return defaultEnabled;
+	}
+
+	/**
+	 * Gets the decorator.
+	 * @return Returns a ILabelDecorator
+	 * @throws CoreException. This will be removed and is only
+	 * here for backwards compatability.
+	 */
+	public ILabelDecorator getDecorator() throws CoreException{
+		return decorator;
 	}
 
 }
