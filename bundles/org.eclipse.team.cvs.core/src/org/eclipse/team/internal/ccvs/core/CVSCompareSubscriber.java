@@ -34,8 +34,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
  */
 public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubscriberChangeListener {
 
-	public static final String ID = "org.eclipse.team.cvs.ui.compare-participant";
-	public static final String ID_MODAL = "org.eclipse.team.cvs.ui.compare-participant-modal";
+	public static final String ID = "org.eclipse.team.cvs.ui.compare-participant"; //$NON-NLS-1$
+	public static final String ID_MODAL = "org.eclipse.team.cvs.ui.compare-participant-modal"; //$NON-NLS-1$
 	
 	public static final String QUALIFIED_NAME = CVSProviderPlugin.ID + ".compare"; //$NON-NLS-1$
 	private static final String UNIQUE_ID_PREFIX = "compare-"; //$NON-NLS-1$

@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -86,9 +87,9 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 	}
 		
 	public GlobalRefreshParticipantSelectionPage() {
-		super("Synchronize");
-		setDescription("Select the participant to synchronize");
-		setTitle("Select a Synchronize Participant");
+		super(Policy.bind("GlobalRefreshParticipantSelectionPage.0")); //$NON-NLS-1$
+		setDescription(Policy.bind("GlobalRefreshParticipantSelectionPage.1")); //$NON-NLS-1$
+		setTitle(Policy.bind("GlobalRefreshParticipantSelectionPage.2")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +113,7 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 		setControl(top);
 		
 		Label l = new Label(top, SWT.NULL);
-		l.setText("Available synchronize participants:");
+		l.setText(Policy.bind("GlobalRefreshParticipantSelectionPage.3")); //$NON-NLS-1$
 		fViewer = new TableViewer(top, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		fViewer.getControl().setLayoutData(data);

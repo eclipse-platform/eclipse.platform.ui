@@ -151,9 +151,6 @@ public class ReleaseCommentDialog extends DetailsDialog {
 			compareConfig.setLeftEditable(false);
 			TreeViewerAdvisor viewerAdvisor = new TreeViewerAdvisor(set);
 			compareEditorInput = new SynchronizeCompareInput(compareConfig, viewerAdvisor) {
-				public String getTitle() {
-					return "Resources to commit";
-				}
 				protected StructuredViewer internalCreateDiffViewer(Composite parent, TreeViewerAdvisor diffViewerConfiguration) {
 					ContainerCheckedTreeViewer viewer = new TreeViewerAdvisor.NavigableCheckboxTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 					viewer.setCheckedElements(set.getResources());

@@ -26,7 +26,7 @@ public class CompareRevertOperation extends CVSSubscriberOperation {
 	protected CompareRevertOperation(IWorkbenchPart part, IDiffElement[] elements) {
 		super(part, elements);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName()
 	 */
@@ -42,6 +42,8 @@ public class CompareRevertOperation extends CVSSubscriberOperation {
 	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		SyncInfo[] changed = syncSet.getSyncInfos();
 		if (changed.length == 0) return;
+		
+		if(! promptForOverwrite(syncSet)) return;
 		
 		// The list of sync resources to be updated using "cvs update"
 		List updateShallow = new ArrayList();

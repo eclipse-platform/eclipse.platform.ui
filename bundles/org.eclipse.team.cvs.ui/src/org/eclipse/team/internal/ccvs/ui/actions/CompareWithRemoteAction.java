@@ -61,7 +61,7 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 				syncInfoSet, 
 				contentComparison);	
 		collector.start(new NullProgressMonitor());
-		participant.refresh(resources, participant.getRefreshListeners().createModalDialogListener(participant.getId(), participant, syncInfoSet), Policy.bind("Participant.comparing"), null);
+		participant.refresh(resources, participant.getRefreshListeners().createModalDialogListener(participant.getId(), participant, syncInfoSet), Policy.bind("Participant.comparing"), null); //$NON-NLS-1$
 	}
 	
 	/*

@@ -253,7 +253,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  for(int i=0; i<files.length; i++){
 	    String foo=files[i];
-	    if(keys.length()!=0)keys=keys+",";
+	    if(keys.length()!=0)keys=keys+","; //$NON-NLS-1$
 	    keys=keys+dir+foo;
 	  }
 	  privateKeyText.setText(keys);
@@ -646,8 +646,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  if(target[0]==null){
 	    return;
 	  }
-	  String user="";
-	  String host="";
+	  String user=""; //$NON-NLS-1$
+	  String host=""; //$NON-NLS-1$
 	  int port=22;
   
 	  if(target[0].indexOf('@')>0){
@@ -669,17 +669,17 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    return;
 	  }
 
-	  String options="";
+	  String options=""; //$NON-NLS-1$
 	  try{
 	    ByteArrayOutputStream bos=new ByteArrayOutputStream();
 	    if(options.length()!=0){
-	      try{bos.write((options+" ").getBytes());}
+	      try{bos.write((options+" ").getBytes());} //$NON-NLS-1$
 	      catch(IOException eeee){}
 	    }
 	    kpair.writePublicKey(bos, kpairComment);
 	    bos.close();
 	    export_via_sftp(user, host, port, 
-			    ".ssh/authorized_keys",
+			    ".ssh/authorized_keys", //$NON-NLS-1$
 			    bos.toByteArray());
 	  }
 	  catch(IOException ee){
@@ -758,14 +758,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(ok){
  	    MessageDialog.openInformation(getShell(),
-					  Policy.bind("CVSSSH2PreferencePage.information"), //$NON-NLS-2$
+					  Policy.bind("CVSSSH2PreferencePage.information"), //$NON-NLS-1$
 					  Policy.bind("CVSSSH2PreferencePage.55")+ //$NON-NLS-1$
 					  "\n"+ //$NON-NLS-1$
 					  Policy.bind("CVSSSH2PreferencePage.57")+file+ //$NON-NLS-1$
 					  "\n"+ //$NON-NLS-1$
 					  Policy.bind("CVSSSH2PreferencePage.59")+ //$NON-NLS-1$
 					  file+
-					  ".pub");
+					  ".pub"); //$NON-NLS-1$
 	  }
 	}
       });
@@ -798,31 +798,31 @@ public class CVSSSH2PreferencePage extends PreferencePage
       }
       */
 
-      String location=":extssh:dummy@dummy:/";
+      String location=":extssh:dummy@dummy:/"; //$NON-NLS-1$
       CVSRepositoryLocation crl=CVSRepositoryLocation.fromString(location);
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
-      Session session=JSchSession.getSession(crl, user, "", host, port, pm);
-      if(session.getServerVersion().indexOf("OpenSSH")==-1){
-      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110"));
+      Session session=JSchSession.getSession(crl, user, "", host, port, pm); //$NON-NLS-1$
+      if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
+      	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110")); //$NON-NLS-1$
     	return;
       }
-      Channel channel=session.openChannel("sftp");
+      Channel channel=session.openChannel("sftp"); //$NON-NLS-1$
       channel.connect();
       ChannelSftp c=(ChannelSftp)channel;
 
       String pwd=c.pwd();
       SftpATTRS attr=null;
 
-      try{ attr=c.stat(".ssh"); }
+      try{ attr=c.stat(".ssh"); } //$NON-NLS-1$
       catch(SftpException ee){ }
       if(attr==null){
-        try{ c.mkdir(".ssh"); }
+        try{ c.mkdir(".ssh"); } //$NON-NLS-1$
 	catch(SftpException ee){
 	  setErrorMessage(ee.message);
 	  return;
 	}
       }
-      try{ c.cd(".ssh"); }
+      try{ c.cd(".ssh"); } //$NON-NLS-1$
       catch(SftpException ee){
 	setErrorMessage(ee.message);
 	return;
@@ -830,12 +830,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
       try{
 	ByteArrayInputStream bis=new ByteArrayInputStream(pkey);
-	c.put(bis, "authorized_keys", null, ChannelSftp.APPEND);
+	c.put(bis, "authorized_keys", null, ChannelSftp.APPEND); //$NON-NLS-1$
 	bis.close();
-	checkPermission(c, "authorized_keys");
-	checkPermission(c, ".");                // .ssh
-	c.cd("..");                             
-	checkPermission(c, ".");                //  home directory
+	checkPermission(c, "authorized_keys"); //$NON-NLS-1$
+	checkPermission(c, ".");                // .ssh //$NON-NLS-1$
+	c.cd("..");                              //$NON-NLS-1$
+	checkPermission(c, ".");                //  home directory //$NON-NLS-1$
       }
       catch(SftpException ee){
 	//setErrorMessage(debug+ee.message);
@@ -843,8 +843,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
       MessageDialog.openInformation(getShell(),
 				    Policy.bind("CVSSSH2PreferencePage.information"),  //$NON-NLS-1$
-				    Policy.bind("CVSSSH2PreferencePage.109")+
-				    (user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys")); //$NON-NLS-1$
+				    Policy.bind("CVSSSH2PreferencePage.109")+ //$NON-NLS-1$
+				    (user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
       c.disconnect();
       //session.disconnect();
@@ -934,7 +934,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     useAuth=store.getString(KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
     enableAuth.setSelection(useAuth);
     
-    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
     if(map!=null){
       String username=(String) map.get(KEY_PROXY_USER);
       if(username!=null) proxyUserText.setText(username);
@@ -976,14 +976,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
       store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
 
       store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
-      store.setValue(KEY_PROXY_USER, "");
-      store.setValue(KEY_PROXY_PASS, "");
+      store.setValue(KEY_PROXY_USER, ""); //$NON-NLS-1$
+      store.setValue(KEY_PROXY_PASS, ""); //$NON-NLS-1$
  
-      Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+      Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
       if(map==null) map=new java.util.HashMap(10);
       map.put(KEY_PROXY_USER, proxyUserText.getText());
       map.put(KEY_PROXY_PASS, proxyPassText.getText());
-      try{ Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);}
+      try{ Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);} //$NON-NLS-1$
       catch(CoreException e){}
 
       store.setValue(KEY_USE_SSH2, enableSSH2.getSelection());
@@ -1037,11 +1037,11 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
 
-    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
     if(map==null) map=new java.util.HashMap(10);
     map.put(KEY_PROXY_USER, proxyUserText.getText());
     map.put(KEY_PROXY_PASS, proxyPassText.getText());
-    try{Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);}
+    try{Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);} //$NON-NLS-1$
     catch (CoreException e) {}
   }
 
@@ -1108,7 +1108,7 @@ class ExportDialog extends Dialog {
   }
 
   protected void createTargetFields(Composite parent) {
-    new Label(parent, SWT.NONE).setText("Target site:");
+    new Label(parent, SWT.NONE).setText(Policy.bind("CVSSSH2PreferencePage.125")); //$NON-NLS-1$
 		
     field=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);

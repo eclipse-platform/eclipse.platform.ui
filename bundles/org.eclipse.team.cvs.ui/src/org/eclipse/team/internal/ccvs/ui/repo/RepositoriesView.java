@@ -51,6 +51,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -141,7 +142,7 @@ public class RepositoriesView extends RemoteViewPart {
 		
 		// Properties
 		propertiesAction = new PropertyDialogAction(shell, getViewer());
-		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);		
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertiesAction);		
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
 		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
 			propertiesAction.setEnabled(true);
@@ -159,7 +160,7 @@ public class RepositoriesView extends RemoteViewPart {
 		removeRootAction.selectionChanged((IStructuredSelection)null);
 		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
+		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeRootAction);
 		super.contributeActions();
 	}
 	

@@ -289,7 +289,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				}
 				WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
 				if(participant != null) {
-					participant.refresh(new IResource[] {project}, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), null);
+					participant.refresh(new IResource[] {project}, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
 				}
 			}
 		} catch (InterruptedException e) {

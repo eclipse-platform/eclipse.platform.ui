@@ -103,7 +103,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 * Return the compare dialog to use to show the compare input.
 	 */
 	protected SynchronizeDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
-		return  new SynchronizeDialog(getShell(), "Compare With Revision", input);
+		return  new SynchronizeDialog(getShell(), Policy.bind("CompareWithRevisionAction.4"), input); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

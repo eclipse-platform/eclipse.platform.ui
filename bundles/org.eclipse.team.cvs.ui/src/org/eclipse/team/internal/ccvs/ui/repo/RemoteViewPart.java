@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -209,7 +210,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
-		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
 		collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
 			public void run() {
