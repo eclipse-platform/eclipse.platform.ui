@@ -385,7 +385,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						if (action instanceof IUpdate)
 							((IUpdate) action).update();
 						
-						if (action.isEnabled()) {
+						// fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=15058
+						if (!action.isEnabled() && action instanceof IReadOnlyDependent) {
+							IReadOnlyDependent dependent= (IReadOnlyDependent) action;
+							boolean writable= dependent.isEnabled(true);
+							if (writable) {
+								event.doit= false;
+								return;
+							}
+						} else if (action.isEnabled()) {
 							event.doit= false;
 							action.run();
 							return;
@@ -566,7 +574,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/**
-	 * Internal action for scroll the editor's viewer by a specified number of lines.
+	 * Internal action to scroll the editor's viewer by a specified number of lines.
 	 */
 	class ScrollLinesAction extends Action {
 		
@@ -1147,7 +1155,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 			doSetInput(input);
 		} catch (CoreException x) {
-			throw new PartInitException(x.getMessage());
+			throw new PartInitException(x.getStatus());
 		}
 		
 		IWorkbenchWindow window= getSite().getWorkbenchWindow();
@@ -1701,7 +1709,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		String msg;
 		Shell shell= getSite().getShell();
 		
-		if (getDocumentProvider().isDeleted(getEditorInput())) {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider == null) {
+			// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
+			close(false);
+			return;
+		}
+		
+		if (provider.isDeleted(getEditorInput())) {
 			
 			if (isSaveAsAllowed()) {
 			
@@ -2280,7 +2295,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				updateAction((String) e.next());
 		}
 	}
-
+	
 	/**
 	 * Updates all state dependent actions.
 	 */
@@ -2365,12 +2380,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
