@@ -343,7 +343,7 @@ protected boolean ensureResourcesLocal(List resources) {
 		WorkbenchPlugin.log(e.getTargetException().getMessage());
 		MessageDialog.openError(
 			getContainer().getShell(),
-			WorkbenchMessages.getString("WizardExportPage.internalError"), //$NON-NLS-1$
+			WorkbenchMessages.getString("WizardExportPage.internalErrorTitle"), //$NON-NLS-1$
 			WorkbenchMessages.format("BuildAction.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 	}
 
@@ -353,7 +353,7 @@ protected boolean ensureResourcesLocal(List resources) {
 	// If errors occurred, open an Error dialog
 	ErrorDialog.openError(
 		getContainer().getShell(),
-		WorkbenchMessages.getString("WizardExportPage.contentRetreival"), //$NON-NLS-1$
+		WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblems"), //$NON-NLS-1$
 		null,
 		StatusUtil.newStatus(
 			errors,
