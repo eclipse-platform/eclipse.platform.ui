@@ -371,8 +371,9 @@ protected void runWithNewPath(IPath path, IResource resource) {
  * Save the changes and dispose of the text widget.
  * @param resource - the resource to move.
  */
-private void saveChangesAndDispose(final IResource resource) {
-	//Cache the resource to avoid selection loss after disposal
+private void saveChangesAndDispose(IResource resource) {
+	// Cache the resource to avoid selection loss since a selection of
+	// another item can trigger this method
 	inlinedResource = resource;
 	final String newName = textEditor.getText();
 	// Run this in an async to make sure that the operation that triggered
@@ -383,21 +384,21 @@ private void saveChangesAndDispose(final IResource resource) {
 		public void run() {
 			//Dispose the text widget regardless
 			disposeTextWidget();
-			if (!newName.equals(resource.getName())) {
+			if (!newName.equals(inlinedResource.getName())) {
 				IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-				IStatus status = workspace.validateName(newName, resource.getType());
+				IStatus status = workspace.validateName(newName, inlinedResource.getType());
 				if (!status.isOK()) {
 					displayError(status.getMessage());
 				}
 				else {
-					IPath newPath = resource.getFullPath().removeLastSegments(1).append(newName);
-					runWithNewPath(newPath, resource);
+					IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
+					runWithNewPath(newPath, inlinedResource);
 				}
 			}
+			inlinedResource = null;
 		}
 	};
 	getTree().getShell().getDisplay().asyncExec(query);
-	inlinedResource = null;
 }
 /**
  * The <code>RenameResourceAction</code> implementation of this
