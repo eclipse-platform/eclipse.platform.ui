@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.PartiallySynchronizedDocument;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 
 /**
@@ -30,7 +31,7 @@ public class PlantyContentOutlinePageNew extends PlantyContentOutlinePage {
 	}
 
 	public synchronized void reconcile() {
-		final XmlElement contentOutline= getInput() == null ? new XmlElement("") : getContentOutline(getInput());
+		final XmlElement contentOutline= getInput() == null ? new XmlElement("") : getContentOutline(getInput()); //$NON-NLS-1$
 		
 		if (!getControl().isDisposed()) {
 			getControl().getDisplay().asyncExec(new Runnable() {
@@ -54,6 +55,9 @@ public class PlantyContentOutlinePageNew extends PlantyContentOutlinePage {
 	}
 
 	protected IPath getLocation(Object input) {
+		if (input instanceof PartiallySynchronizedDocument) {
+			return ((PartiallySynchronizedDocument)input).getLocation();
+		}
 		return null;
 	}
 
