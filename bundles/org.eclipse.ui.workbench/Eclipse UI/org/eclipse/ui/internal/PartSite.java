@@ -19,10 +19,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
@@ -34,11 +37,11 @@ import org.eclipse.ui.activities.ActivityServiceFactory;
 import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
 import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
-import org.eclipse.ui.part.WorkbenchPart;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -73,8 +76,6 @@ public class PartSite implements IWorkbenchPartSite {
 	private SubActionBars actionBars;
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
-	
-	private IActionService handlerService;
 		
 	/**
 	 * EditorContainer constructor comment.

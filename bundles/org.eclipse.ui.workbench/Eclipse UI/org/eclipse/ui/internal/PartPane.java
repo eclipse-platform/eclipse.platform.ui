@@ -13,10 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
@@ -36,12 +33,18 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
+
+import org.eclipse.ui.internal.misc.UIStats;
 
 
 /**
@@ -492,19 +495,27 @@ protected void addSizeItems(Menu sizeMenu) {
 /**
  * Add the pin menu item on the editor system menu
  */
-protected void addPinEditorItem(Menu parent) {}
+protected void addPinEditorItem(Menu parent) {
+	// do nothing
+}
 /**
  * Add the move items to the Move menu.
  */
-protected void addMoveItems(Menu parent) {}
+protected void addMoveItems(Menu parent) {
+	// do nothing
+}
 /**
  * Add the Fast View menu item to the part title menu.
  */
-protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
+protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
+	// do nothing
+}
 /**
  * Pin this part.
  */
-protected void doDock() {}
+protected void doDock() {
+	// do nothing
+}
 
 /**
  * Return an IJobChangeListener for jobs run in this pane.
