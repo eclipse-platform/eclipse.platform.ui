@@ -170,18 +170,13 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (keySequence == null)
 			keySequence = Persistence.ZERO_LENGTH_KEY_SEQUENCE;
 		
-		String plugin = memento.getString(DEPRECATED_TAG_PLUGIN);
-		Integer rank = memento.getInteger(DEPRECATED_TAG_RANK);
-		
-		if (rank == null)
-			rank = Persistence.ZERO;	
-		
+		String plugin = memento.getString(DEPRECATED_TAG_PLUGIN);	
 		String scope = memento.getString(DEPRECATED_TAG_SCOPE);
 
 		if (scope == null)
 			scope = Persistence.ZERO_LENGTH_STRING;
 
-		return KeyBinding.create(command, keyConfiguration, keySequence, plugin, rank.intValue(), scope);
+		return KeyBinding.create(command, keyConfiguration, keySequence, plugin, 0, scope);
 	}
 
 	private static List readDeprecatedKeyBindings(IMemento memento, String name)

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -210,23 +211,23 @@ public class Manager {
 		return path;			
 	}	
 
-	static SortedSet solveRegionalKeyBindingSet(SortedSet regionalBindingSet, State[] states) {
+	static SortedSet solveRegionalKeyBindingSet(Collection regionalKeyBindingSet, State state) {
 		
 		class Key implements Comparable {		
 		
 			private final static int HASH_INITIAL = 17;
 			private final static int HASH_FACTOR = 27;
 			
+			String keyConfiguration;
 			KeySequence keySequence;
-			String configuration;
 			String scope;
 
 			public int compareTo(Object object) {
 				Key key = (Key) object;
-				int compareTo = keySequence.compareTo(key.keySequence);
+				int compareTo = keyConfiguration.compareTo(key.keyConfiguration);
 		
 				if (compareTo == 0) {
-					compareTo = configuration.compareTo(key.configuration);
+					compareTo = keySequence.compareTo(key.keySequence);
 		
 					if (compareTo == 0)
 						compareTo = scope.compareTo(key.scope);
@@ -240,33 +241,32 @@ public class Manager {
 					return false;
 				
 				Key key = (Key) object;
-				return keySequence.equals(key.keySequence) && configuration.equals(key.configuration) && scope.equals(key.scope);
+				return keyConfiguration.equals(key.keyConfiguration) && keySequence.equals(key.keySequence) && scope.equals(key.scope);
 			}
 
 			public int hashCode() {
 				int result = HASH_INITIAL;
+				result = result * HASH_FACTOR + keyConfiguration.hashCode();		
 				result = result * HASH_FACTOR + keySequence.hashCode();		
-				result = result * HASH_FACTOR + configuration.hashCode();		
 				result = result * HASH_FACTOR + scope.hashCode();		
 				return result;
 			}
 		}
 
-		SortedSet bindingSet = new TreeSet();
 		Map map = new TreeMap();
-		Iterator iterator = regionalBindingSet.iterator();
+		Iterator iterator = regionalKeyBindingSet.iterator();
 		
 		while (iterator.hasNext()) {
-			RegionalKeyBinding regionalBinding = (RegionalKeyBinding) iterator.next();
-			KeyBinding binding = regionalBinding.getKeyBinding();
+			RegionalKeyBinding regionalKeyBinding = (RegionalKeyBinding) iterator.next();
+			KeyBinding keyBinding = regionalKeyBinding.getKeyBinding();
 			List pathItems = new ArrayList();
-			pathItems.add(pathForPlatform(regionalBinding.getPlatform()));
-			pathItems.add(pathForLocale(regionalBinding.getLocale()));
-			State state = State.create(pathItems);
+			pathItems.add(pathForPlatform(regionalKeyBinding.getPlatform()));
+			pathItems.add(pathForLocale(regionalKeyBinding.getLocale()));
+			State region = State.create(pathItems);		
 			Key key = new Key();
-			key.keySequence = binding.getKeySequence();
-			key.configuration = binding.getKeyConfiguration();
-			key.scope = binding.getScope();
+			key.keyConfiguration = keyBinding.getKeyConfiguration();
+			key.keySequence = keyBinding.getKeySequence();
+			key.scope = keyBinding.getScope();
 			Map stateMap = (Map) map.get(key);
 			
 			if (stateMap == null) {
@@ -274,35 +274,35 @@ public class Manager {
 				map.put(key, stateMap);
 			}
 			
-			List bindings = (List) stateMap.get(state);
+			List keyBindings = (List) stateMap.get(region);
 			
-			if (bindings == null) {
-				bindings = new ArrayList();
-				stateMap.put(state, bindings);	
+			if (keyBindings == null) {
+				keyBindings = new ArrayList();
+				stateMap.put(region, keyBindings);	
 			}			
 		
-			bindings.add(binding);		
+			keyBindings.add(keyBinding);		
 		}
 
-		Iterator iterator2 = map.values().iterator();
+		SortedSet keyBindingSet = new TreeSet();
+		iterator = map.values().iterator();
 
-		while (iterator2.hasNext()) {
-			Map stateMap = (Map) iterator2.next();				
+		while (iterator.hasNext()) {
+			Map stateMap = (Map) iterator.next();				
 			int bestMatch = -1;
-			List bindings = null;
-			Iterator iterator3 = stateMap.entrySet().iterator();
+			List bestKeyBindings = null;
+			Iterator iterator2 = stateMap.entrySet().iterator();
 
-			while (iterator3.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator3.next();
+			while (iterator2.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator2.next();
 				State testState = (State) entry.getKey();
-				List testBindingSet = (List) entry.getValue();
-							
-				int testMatch = testState.match(states[0]);
+				List testKeyBindings = (List) entry.getValue();							
+				int testMatch = testState.match(state);
 				
 				if (testMatch >= 0) {
-					if (bindings == null || testMatch < bestMatch) {
-						bindings = testBindingSet;
+					if (bestMatch == -1 || testMatch < bestMatch) {
 						bestMatch = testMatch;
+						bestKeyBindings = testKeyBindings;
 					}
 					
 					if (bestMatch == 0)
@@ -310,18 +310,11 @@ public class Manager {
 				}
 			}				
 
-			if (bindings != null) {
-				Iterator iterator4 = bindings.iterator();
-				
-				while (iterator4.hasNext()) {
-					KeyBinding binding = (KeyBinding) iterator4.next();
-					bindingSet.add(KeyBinding.create(binding.getCommand(), binding.getKeyConfiguration(), binding.getKeySequence(), binding.getPlugin(),
-						binding.getRank() + bestMatch, binding.getScope()));								
-				}				
-			}
+			if (bestKeyBindings != null)
+				keyBindingSet.addAll(bestKeyBindings);
 		}					
 
-		return bindingSet;
+		return keyBindingSet;
 	}
 
 	/*
@@ -394,7 +387,7 @@ public class Manager {
 		List pathItems = new ArrayList();
 		pathItems.add(systemPlatform());
 		pathItems.add(systemLocale());
-		State[] states = new State[] { State.create(pathItems) };	
+		State state = State.create(pathItems);	
 
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
@@ -431,15 +424,11 @@ public class Manager {
 
 		SortedSet coreRegistryKeyBindingSet = new TreeSet();
 		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
-		SortedSet coreRegistryRegionalKeyBindingSet = new TreeSet();
-		coreRegistryRegionalKeyBindingSet.addAll(coreRegistry.getRegionalKeyBindings());
-		coreRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(coreRegistryRegionalKeyBindingSet, states));
+		coreRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(coreRegistry.getRegionalKeyBindings(), state));
 
 		SortedSet localRegistryKeyBindingSet = new TreeSet();
 		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
-		SortedSet localRegistryRegionalKeyBindingSet = new TreeSet();
-		localRegistryRegionalKeyBindingSet.addAll(localRegistry.getRegionalKeyBindings());
-		localRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(localRegistryRegionalKeyBindingSet, states));
+		localRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(localRegistry.getRegionalKeyBindings(), state));
 		
 		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
 		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	

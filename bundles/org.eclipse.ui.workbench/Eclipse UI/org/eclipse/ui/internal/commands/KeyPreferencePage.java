@@ -241,7 +241,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	//private TableViewer tableViewerCommandsForKeySequence;
 
 	private IWorkbench workbench;
-	private State[] states;
+	private State state;
 
 	private List categories;
 	private SortedMap categoriesById;
@@ -285,7 +285,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		List pathItems = new ArrayList();
 		pathItems.add(Manager.systemPlatform());
 		pathItems.add(Manager.systemLocale());
-		states = new State[] { State.create(pathItems) };
+		state = State.create(pathItems);
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
@@ -495,22 +495,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		SortedSet coreKeyBindingSet = new TreeSet();
-		coreKeyBindingSet.addAll(coreKeyBindings);			
-		SortedSet coreRegionalKeyBindingSet = new TreeSet();
-		coreRegionalKeyBindingSet.addAll(coreRegionalKeyBindings);
-		coreKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(coreRegionalKeyBindingSet, states));
+		coreKeyBindingSet.addAll(coreKeyBindings);		
+		coreKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(coreRegionalKeyBindings, state));
 
 		SortedSet localKeyBindingSet = new TreeSet();
 		localKeyBindingSet.addAll(localKeyBindings);			
-		SortedSet localRegionalKeyBindingSet = new TreeSet();
-		localRegionalKeyBindingSet.addAll(localRegionalKeyBindings);
-		localKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(localRegionalKeyBindingSet, states));
+		localKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(localRegionalKeyBindings, state));
 
 		SortedSet preferenceKeyBindingSet = new TreeSet();
 		preferenceKeyBindingSet.addAll(preferenceKeyBindings);			
-		SortedSet preferenceRegionalKeyBindingSet = new TreeSet();
-		preferenceRegionalKeyBindingSet.addAll(preferenceRegionalKeyBindings);
-		preferenceKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindingSet, states));
+		preferenceKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindings, state));
 
 		tree = new TreeMap();
 		SortedSet keyBindingSet = new TreeSet();

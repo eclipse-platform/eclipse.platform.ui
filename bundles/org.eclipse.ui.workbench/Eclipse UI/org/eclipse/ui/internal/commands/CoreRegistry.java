@@ -270,21 +270,12 @@ public final class CoreRegistry extends AbstractRegistry {
 					if (platform == null)
 						platform = Persistence.ZERO_LENGTH_STRING;
 		
-					String plugin = getPlugin(element);		
-					String rankString = element.getAttribute(Persistence.TAG_RANK);
-					int rank = 0;
-
-					if (rankString != null)
-						try {
-							rank = Integer.parseInt(rankString);		
-						} catch (NumberFormatException eNumberFormat) {
-						}
-					
+					String plugin = getPlugin(element);				
 					Iterator iterator = keySequences.iterator();
 				
 					while (iterator.hasNext()) {
 						KeySequence keySequence = (KeySequence) iterator.next();			
-						KeyBinding keyBinding = KeyBinding.create(id, keyConfiguration, keySequence, plugin, rank, scope);	
+						KeyBinding keyBinding = KeyBinding.create(id, keyConfiguration, keySequence, plugin, 0, scope);	
 						regionalKeyBindings.add(RegionalKeyBinding.create(keyBinding, locale, platform));
 					}
 				}

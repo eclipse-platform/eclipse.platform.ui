@@ -42,7 +42,6 @@ final class Persistence {
 	final static String TAG_PARENT = "parent"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$		
 	final static String TAG_PLUGIN = "plugin"; //$NON-NLS-1$
-	final static String TAG_RANK = "rank"; //$NON-NLS-1$
 	final static String TAG_REGIONAL_GESTURE_BINDING = "regionalGestureBinding"; //$NON-NLS-1$
 	final static String TAG_REGIONAL_KEY_BINDING = "regionalKeyBinding"; //$NON-NLS-1$
 	final static String TAG_SCOPE = "scope"; //$NON-NLS-1$
@@ -223,17 +222,12 @@ final class Persistence {
 			gestureSequence = ZERO_LENGTH_GESTURE_SEQUENCE;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
-		Integer rank = memento.getInteger(TAG_RANK);
-		
-		if (rank == null)
-			rank = ZERO;	
-		
 		String scope = memento.getString(TAG_SCOPE);
 
 		if (scope == null)
 			scope = ZERO_LENGTH_STRING;
 
-		return GestureBinding.create(command, gestureConfiguration, gestureSequence, plugin, rank.intValue(), scope);
+		return GestureBinding.create(command, gestureConfiguration, gestureSequence, plugin, 0, scope);
 	}
 
 	static List readGestureBindings(IMemento memento, String name, String pluginOverride)
@@ -354,17 +348,12 @@ final class Persistence {
 			keySequence = ZERO_LENGTH_KEY_SEQUENCE;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
-		Integer rank = memento.getInteger(TAG_RANK);
-		
-		if (rank == null)
-			rank = ZERO;	
-		
 		String scope = memento.getString(TAG_SCOPE);
 
 		if (scope == null)
 			scope = ZERO_LENGTH_STRING;
 
-		return KeyBinding.create(command, keyConfiguration, keySequence, plugin, rank.intValue(), scope);
+		return KeyBinding.create(command, keyConfiguration, keySequence, plugin, 0, scope);
 	}
 
 	static List readKeyBindings(IMemento memento, String name, String pluginOverride)
@@ -704,7 +693,6 @@ final class Persistence {
 		memento.putString(TAG_GESTURE_CONFIGURATION, gestureBinding.getGestureConfiguration());
 		writeGestureSequence(memento.createChild(TAG_GESTURE_SEQUENCE), gestureBinding.getGestureSequence());		
 		memento.putString(TAG_PLUGIN, gestureBinding.getPlugin());
-		memento.putInteger(TAG_RANK, gestureBinding.getRank());
 		memento.putString(TAG_SCOPE, gestureBinding.getScope());
 	}	
 
@@ -784,7 +772,6 @@ final class Persistence {
 		memento.putString(TAG_KEY_CONFIGURATION, keyBinding.getKeyConfiguration());
 		writeKeySequence(memento.createChild(TAG_KEY_SEQUENCE), keyBinding.getKeySequence());		
 		memento.putString(TAG_PLUGIN, keyBinding.getPlugin());
-		memento.putInteger(TAG_RANK, keyBinding.getRank());
 		memento.putString(TAG_SCOPE, keyBinding.getScope());
 	}	
 
