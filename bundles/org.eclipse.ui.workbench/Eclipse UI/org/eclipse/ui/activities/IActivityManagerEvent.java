@@ -44,4 +44,19 @@ public interface IActivityManagerEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IActivityManager getActivityManager();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveActiveActivityIdsChanged();
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedActivityIdsChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveEnabledActivityIdsChanged();	
 }

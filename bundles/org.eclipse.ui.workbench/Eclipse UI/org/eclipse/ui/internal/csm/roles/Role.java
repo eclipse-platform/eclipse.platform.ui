@@ -168,7 +168,7 @@ final class Role implements IRole {
 		if (roleListeners != null) {
 			for (int i = 0; i < roleListeners.size(); i++) {
 				if (roleEvent == null)
-					roleEvent = new RoleEvent(this);
+					roleEvent = new RoleEvent(this, false, false, false, false);
 							
 				((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
 			}				

@@ -44,4 +44,39 @@ public interface IActivityEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IActivity getActivity();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDefinedChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDescriptionChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasEnabledChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasNameChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasParentIdChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean havePatternBindingsChanged();		
 }

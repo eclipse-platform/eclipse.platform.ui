@@ -44,4 +44,9 @@ public interface IRoleManagerEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IRoleManager getRoleManager();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedRoleIdsChanged();
 }

@@ -227,7 +227,7 @@ final class Activity implements IActivity {
 		if (activityListeners != null) {
 			for (int i = 0; i < activityListeners.size(); i++) {
 				if (activityEvent == null)
-					activityEvent = new ActivityEvent(this);
+					activityEvent = new ActivityEvent(this, false, false, false, false, false, false, false);
 							
 				((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
 			}				

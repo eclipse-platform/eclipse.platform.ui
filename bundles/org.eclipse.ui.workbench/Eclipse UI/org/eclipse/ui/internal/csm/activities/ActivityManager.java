@@ -175,7 +175,7 @@ public final class ActivityManager implements IActivityManager {
 		if (activityManagerListeners != null)
 			for (int i = 0; i < activityManagerListeners.size(); i++) {
 				if (activityManagerEvent == null)
-					activityManagerEvent = new ActivityManagerEvent(this);
+					activityManagerEvent = new ActivityManagerEvent(this, false, false, false);
 								
 				((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
 			}				

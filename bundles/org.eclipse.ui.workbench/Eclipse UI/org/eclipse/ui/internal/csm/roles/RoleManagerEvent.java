@@ -16,16 +16,22 @@ import org.eclipse.ui.roles.IRoleManagerEvent;
 
 final class RoleManagerEvent implements IRoleManagerEvent {
 
+	private boolean definedRoleIdsChanged;
 	private IRoleManager roleManager;
-
-	RoleManagerEvent(IRoleManager roleManager) {
+	
+	RoleManagerEvent(IRoleManager roleManager, boolean definedRoleIdsChanged) {
 		if (roleManager == null)
 			throw new NullPointerException();
 		
 		this.roleManager = roleManager;
+		this.definedRoleIdsChanged = definedRoleIdsChanged;
 	}
 
 	public IRoleManager getRoleManager() {
 		return roleManager;
+	}
+	
+	public boolean haveDefinedRoleIdsChanged() {
+		return definedRoleIdsChanged;
 	}
 }

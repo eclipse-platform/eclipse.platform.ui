@@ -100,7 +100,7 @@ public final class RoleManager implements IRoleManager {
 		if (roleManagerListeners != null)
 			for (int i = 0; i < roleManagerListeners.size(); i++) {
 				if (roleManagerEvent == null)
-					roleManagerEvent = new RoleManagerEvent(this);
+					roleManagerEvent = new RoleManagerEvent(this, false);
 								
 				((IRoleManagerListener) roleManagerListeners.get(i)).roleManagerChanged(roleManagerEvent);
 			}				

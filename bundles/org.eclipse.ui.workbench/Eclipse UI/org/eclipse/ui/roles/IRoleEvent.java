@@ -43,4 +43,24 @@ public interface IRoleEvent {
 	 *         not to be <code>null</code>.
 	 */
 	IRole getRole();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDefinedChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDescriptionChanged();	
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasNameChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveActivityBindingsChanged();		
 }

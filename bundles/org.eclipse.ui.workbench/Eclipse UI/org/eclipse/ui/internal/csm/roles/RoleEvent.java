@@ -16,16 +16,40 @@ import org.eclipse.ui.roles.IRoleEvent;
 
 final class RoleEvent implements IRoleEvent {
 
+	private boolean activityBindingsChanged;
+	private boolean definedChanged;
+	private boolean descriptionChanged;
+	private boolean nameChanged;
 	private IRole role;
 
-	RoleEvent(IRole role) {
+	RoleEvent(IRole role, boolean activityBindingsChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
 		if (role == null)
 			throw new NullPointerException();
 		
 		this.role = role;
+		this.activityBindingsChanged = activityBindingsChanged;			
+		this.definedChanged = definedChanged;
+		this.descriptionChanged = descriptionChanged;
+		this.nameChanged = nameChanged;
 	}
 
 	public IRole getRole() {
 		return role;
+	}
+
+	public boolean hasDefinedChanged() {
+		return definedChanged;
+	}	
+	
+	public boolean hasDescriptionChanged() {
+		return descriptionChanged;
+	}
+
+	public boolean hasNameChanged() {
+		return nameChanged;
+	}
+	
+	public boolean haveActivityBindingsChanged() {
+		return activityBindingsChanged;
 	}
 }
