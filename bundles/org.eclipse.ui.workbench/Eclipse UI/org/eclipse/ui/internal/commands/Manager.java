@@ -72,26 +72,31 @@ public class Manager {
 		return text != null ? text : Util.ZERO_LENGTH_STRING;
 	}
 
+	public static boolean validateSequence(Sequence sequence) {
+		List strokes = sequence.getStrokes();
+		int size = strokes.size();
+			
+		if (size == 0)
+			return false;
+		else 
+			for (int i = 0; i < size; i++) {
+				Stroke stroke = (Stroke) strokes.get(i);	
+
+				if (stroke.getValue() == 0)
+					return false;
+			}
+			
+		return true;
+	}
+
 	public static void validateSequenceBindings(Collection sequenceBindings) {
 		Iterator iterator = sequenceBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
-			Sequence sequence = sequenceBinding.getSequence();
-			List strokes = sequence.getStrokes();
-			int size = strokes.size();
 			
-			if (size == 0)
+			if (!validateSequence(sequenceBinding.getSequence()))
 				iterator.remove();
-			else 
-				for (int i = 0; i < size; i++) {
-					Stroke stroke = (Stroke) strokes.get(i);	
-
-					if (stroke.getValue() == 0) {
-						iterator.remove();
-						break;
-					}						
-				}
 		}
 	}
 

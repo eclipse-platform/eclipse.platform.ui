@@ -997,7 +997,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		boolean commandSelected = command != null;
 
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && !keySequence.getStrokes().isEmpty();
+		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();

@@ -15,13 +15,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 
 public final class KeySupport {
+
+	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeySupport.class.getName());
 
 	private final static String ALT = "Alt"; //$NON-NLS-1$
 	private final static String COMMAND = "Command"; //$NON-NLS-1$
@@ -120,28 +122,28 @@ public final class KeySupport {
 		int value = stroke.getValue();
 		
 		if ((value & SWT.CTRL) != 0) {
-			stringBuffer.append(localize ? JFaceResources.getString(CTRL) : CTRL);
+			stringBuffer.append(localize ? Util.getString(resourceBundle, CTRL) : CTRL);
 		}
 		
 		if ((value & SWT.ALT) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? JFaceResources.getString(ALT) : ALT);								
+			stringBuffer.append(localize ? Util.getString(resourceBundle, ALT) : ALT);								
 		}
 
 		if ((value & SWT.SHIFT) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? JFaceResources.getString(SHIFT) : SHIFT);								
+			stringBuffer.append(localize ? Util.getString(resourceBundle, SHIFT) : SHIFT);								
 		}
 
 		if ((value & SWT.COMMAND) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? JFaceResources.getString(COMMAND) : COMMAND);								
+			stringBuffer.append(localize ? Util.getString(resourceBundle, COMMAND) : COMMAND);								
 		}		
 
 		if (stringBuffer.length() > 0)
@@ -151,7 +153,7 @@ public final class KeySupport {
 		String string = (String) valueToStringMap.get(new Integer(value));
 
 		if (string != null)
-			stringBuffer.append(localize ? JFaceResources.getString(string) : string);
+			stringBuffer.append(localize ? Util.getString(resourceBundle, string) : string);
 		else 
 			stringBuffer.append(Character.toUpperCase((char) value));
 
