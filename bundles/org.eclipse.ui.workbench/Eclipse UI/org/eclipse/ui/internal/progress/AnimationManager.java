@@ -9,17 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The AnimationManager is the class that keeps track of the animation items to
@@ -134,7 +134,7 @@ public class AnimationManager {
 
 	private IJobProgressManagerListener getProgressListener() {
 		return new IJobProgressManagerListener() {
-			HashSet jobs = new HashSet();
+			Set jobs = Collections.synchronizedSet(new HashSet());
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -175,9 +175,7 @@ public class AnimationManager {
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 			 */
 			public void removeJob(JobInfo info) {
-				if (jobs.contains(info.getJob())) {
-					decrementJobCount(info.getJob());
-				}
+				decrementJobCount(info.getJob());
 			}
 			/*
 			 * (non-Javadoc)
@@ -195,6 +193,10 @@ public class AnimationManager {
 					setAnimated(true);
 				jobs.add(info.getJob());
 			}
+			
+			/*
+			 * Decrement the job count for the job
+			 */
 			private void decrementJobCount(Job job) {
 				jobs.remove(job);
 				if (jobs.isEmpty())
