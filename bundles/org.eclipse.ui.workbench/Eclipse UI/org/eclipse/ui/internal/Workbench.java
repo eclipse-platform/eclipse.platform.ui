@@ -1744,21 +1744,21 @@ public final class Workbench implements IWorkbench {
                 IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId,
                         input);
                 return newWindow.getActivePage();
-            } else {
-                IPerspectiveDescriptor desc = getPerspectiveRegistry()
-                        .findPerspectiveWithId(perspectiveId);
-                if (desc == null)
-                    throw new WorkbenchException(
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
-                win.getShell().open();
-                if (page == null)
-                    page = win.openPage(perspectiveId, input);
-                else
-                    page.setPerspective(desc);
-                return page;
             }
+            
+			IPerspectiveDescriptor desc = getPerspectiveRegistry()
+					.findPerspectiveWithId(perspectiveId);
+			if (desc == null)
+				throw new WorkbenchException(
+						WorkbenchMessages
+								.format(
+										"WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
+			win.getShell().open();
+			if (page == null)
+				page = win.openPage(perspectiveId, input);
+			else
+				page.setPerspective(desc);
+			return page;
         }
 
         // Just throw an exception....
@@ -2155,11 +2155,13 @@ public final class Workbench implements IWorkbench {
     }
 
     /**
-     * This method exists as a test hook.  This method should 
-     * <strong>NEVER</strong> be called by clients.
-     * 
-     * @since 3.0
-     */
+	 * This method exists as a test hook. This method should <strong>NEVER</strong>
+	 * be called by clients.
+	 * 
+	 * @param descriptor
+	 *            The intro descriptor to use.
+	 * @since 3.0
+	 */
     public void setIntroDescriptor(IntroDescriptor descriptor) {
         if (getIntroManager().getIntro() != null) {
         	getIntroManager().closeIntro(getIntroManager().getIntro());
@@ -2210,9 +2212,12 @@ public final class Workbench implements IWorkbench {
     }
 
     /**
-     * Returns <code>true</code> if the workbench is running,
-     * <code>false</code> if it has been terminated. 
-     */
+	 * Returns <code>true</code> if the workbench is running,
+	 * <code>false</code> if it has been terminated.
+	 * 
+	 * @return <code>true</code> if the workbench is running,
+	 *         <code>false</code> if it has been terminated.
+	 */
     public boolean isRunning() {
         return runEventLoop;
     }
