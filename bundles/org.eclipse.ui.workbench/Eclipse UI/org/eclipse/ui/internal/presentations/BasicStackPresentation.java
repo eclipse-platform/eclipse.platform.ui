@@ -173,14 +173,14 @@ public class BasicStackPresentation extends StackPresentation {
 		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
 		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
 				
-		titleLabel = new Label(tabFolder.getControl(), SWT.WRAP);
+		titleLabel = new Label(tabFolder.getControl(), SWT.NONE);
 		titleLabel.setVisible(false);
 		titleLabel.moveAbove(null);
 		
 		ColorSchemeService.setViewTitleFont(this, titleLabel);
 		
 		viewToolBar = new ToolBar(control.getControl(), SWT.HORIZONTAL 
-				| SWT.FLAT | SWT.WRAP);
+				| SWT.FLAT);
 		viewToolBar.moveAbove(null);
 		
 		ToolItem pullDownButton = new ToolItem(viewToolBar, SWT.PUSH);
