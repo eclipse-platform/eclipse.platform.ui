@@ -486,14 +486,10 @@ public class AntClasspathBlock {
 		if (path == null) {
 			return;
 		}
+		antHome= path;
 		if (path.length() > 0) {
 			File rootDir = new File(path, "lib"); //$NON-NLS-1$
-			if (rootDir.exists()) {
-				antHome= path;
-				setAntHome(rootDir);
-			} else {
-				updateContainer();
-			}
+			setAntHome(rootDir);
 		} else {
 			updateContainer();
 		}
@@ -505,14 +501,16 @@ public class AntClasspathBlock {
 		contentProvider.setRefreshEnabled(false);
 		contentProvider.removeAllGlobalAntClasspathEntries();
 		String[] names = rootDir.list();
-		Arrays.sort(names);
-		for (int i = 0; i < names.length; i++) {
-			File file = new File(rootDir, names[i]);
-			if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
-				try {
-					URL url = new URL("file:" +  file.getAbsolutePath()); //$NON-NLS-1$
-					contentProvider.add(ClasspathModel.ANT_HOME, url);
-				} catch (MalformedURLException e) {
+		if (names != null) {
+			Arrays.sort(names);
+			for (int i = 0; i < names.length; i++) {
+				File file = new File(rootDir, names[i]);
+				if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
+					try {
+						URL url = new URL("file:" +  file.getAbsolutePath()); //$NON-NLS-1$
+						contentProvider.add(ClasspathModel.ANT_HOME, url);
+					} catch (MalformedURLException e) {
+					}
 				}
 			}
 		}
