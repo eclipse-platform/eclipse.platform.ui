@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -40,6 +40,7 @@ public class CVSPropertiesPage extends PropertyPage {
 	Label hostLabel;
 	Label pathLabel;
 	Label moduleLabel;
+	Label portLabel;
 	
 	boolean passwordChanged;
 
@@ -70,6 +71,9 @@ public class CVSPropertiesPage extends PropertyPage {
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"));
 		hostLabel = createLabel(composite, "");
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"));
+		portLabel = createLabel(composite, "");
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"));
 		pathLabel = createLabel(composite, "");
@@ -173,11 +177,12 @@ public class CVSPropertiesPage extends PropertyPage {
 		try {
 			ICVSRemoteResource resource = provider.getRemoteResource(project);
 			ICVSRepositoryLocation location = resource.getRepository();
+			hostLabel.setText(location.getHost());
 			int port = location.getPort();
 			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-				hostLabel.setText(location.getHost());
+				portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort"));
 			} else {
-				hostLabel.setText(location.getHost() + ":" + port);
+				portLabel.setText("" + port);
 			}
 			pathLabel.setText(location.getRootDirectory());
 			moduleLabel.setText(resource.getRelativePath());
