@@ -72,7 +72,8 @@ public class InputDialog extends Dialog {
      * </p>
      * 
      * @param parentShell
-     *            the parent shell
+     *            the parent shell, or <code>null</code> to create a top-level
+     *            shell
      * @param dialogTitle
      *            the dialog title, or <code>null</code> if none
      * @param dialogMessage
