@@ -398,7 +398,7 @@
             scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
          <accelerator
-               key="Ctrl+X Ctrl+K"
+               key="Ctrl+F4||Ctrl+X Ctrl+K"
                id="org.eclipse.ui.file.close">
          </accelerator>
          <accelerator
@@ -410,7 +410,7 @@
                id="org.eclipse.ui.file.save">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+Shift+S||Ctrl+X S"
                id="org.eclipse.ui.file.saveAll">
          </accelerator>
          <accelerator

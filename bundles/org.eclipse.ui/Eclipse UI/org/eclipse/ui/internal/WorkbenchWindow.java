@@ -537,20 +537,28 @@ protected MenuManager createMenuManager() {
 			if(!(item instanceof ActionContributionItem))
 				return null;
 			ActionContributionItem aci = (ActionContributionItem)item;
-			String registeredAction = null;
-			int acc[] = new int[]{aci.getAction().getAccelerator()};
-			if(acc[0] != 0)
-				registeredAction = getKeyBindingService().getDefinitionId(acc);
 			String defId = aci.getAction().getActionDefinitionId();
-			if(registeredAction != null) {
-				if(defId == null)
-					return ""; //$NON-NLS-1$
-				else if(defId.equals(registeredAction))
-					return getKeyBindingService().getAcceleratorText(defId);
+			if(defId == null) {
+				String registeredAction = null;
+				int acc[] = new int[]{aci.getAction().getAccelerator()};
+				if(acc[0] != 0)
+					registeredAction = getKeyBindingService().getDefinitionId(acc);
+				if(registeredAction == null)
+					return null;
 				else
 					return ""; //$NON-NLS-1$
+			} else {
+				String registeredAction = null;
+				int acc[][] = getKeyBindingService().getAccelerators(defId);
+				if(acc == null)
+					return null;
+				for (int i = 0; i < acc.length; i++) {
+					registeredAction = getKeyBindingService().getDefinitionId(acc[i]);
+					if(!defId.equals(registeredAction))
+						return ""; //$NON-NLS-1$
+				}
 			}
-			return null;
+			return getKeyBindingService().getAcceleratorText(defId);
 		}
 		public String getText(IContributionItem item) {
 			if(getKeyBindingService().acceleratorsAllowed())

@@ -223,4 +223,13 @@ public class WWinKeyBindingService {
 			return null;
     	return result;
     }
+    public int[][] getAccelerators(String definitionId) {
+    	if(activeService == null) return null;
+    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+    	if(scope == null) return null;
+    	Accelerator acc = scope.getAccelerator(definitionId);
+		if(acc == null)
+			return null;
+		return acc.getAccelerators();
+    }     
 }
