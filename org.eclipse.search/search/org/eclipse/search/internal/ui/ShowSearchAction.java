@@ -18,7 +18,7 @@ class ShowSearchAction extends Action {
 	public ShowSearchAction(Search search) {
 		super("");
 		fSearch= search;
-		String desc= search.getDescription();
+		String desc= search.getShortDescription();
 		setText(desc);
 		setToolTipText(desc);
 		setImageDescriptor(search.getImageDescriptor());

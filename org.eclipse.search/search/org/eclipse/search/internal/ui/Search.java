@@ -49,13 +49,37 @@ class Search extends Object {
 		fGroupByKeyComputer= groupByKeyComputer;
 		fOperation= operation;
 	}
-
 	/**
-	 * Description of the search.
+	 * Returns the full description of the search.
 	 * The description set by the client where
 	 * {0} will be replaced by the match count.
 	 */
-	String getDescription() {
+	String getFullDescription() {
+		if (fDescription == null)
+			return "";
+
+		String text= fDescription;
+		int i= fDescription.lastIndexOf("{0}");
+		if (i != -1) {
+			// replace "{0}" with the match count
+			int count= getItemCount();
+			text= fDescription.substring(0, i);
+			text += count;
+			// cut away last 's' if count is 1
+			if (count == 1 && fDescription.lastIndexOf('s') == (fDescription.length() - 1))
+				text += fDescription.substring(i + 3, fDescription.length() - 1);
+			else
+			 	text += fDescription.substring(i + 3);
+		}
+		return text;
+	}
+	/**
+	 * Returns a short description of the search.
+	 * Cuts off after 30 characters and adds ...
+	 * The description set by the client where
+	 * {0} will be replaced by the match count.
+	 */
+	String getShortDescription() {
 		if (fDescription == null)
 			return "";
 

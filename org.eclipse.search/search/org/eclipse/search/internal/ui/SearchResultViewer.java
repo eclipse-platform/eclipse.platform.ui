@@ -382,7 +382,7 @@ class SearchResultViewer extends TableViewer {
 			fOuterPart.setTitle(title);
 		String toolTip= null;
 		if (hasCurrentSearch)
-			toolTip= SearchManager.getDefault().getCurrentSearch().getDescription();
+			toolTip= SearchManager.getDefault().getCurrentSearch().getFullDescription();
 		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
 			fOuterPart.setTitleToolTip(toolTip);
 	}
