@@ -597,8 +597,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Copy_configuration_4")); //$NON-NLS-1$
-		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.&Choose_a_configuration_to_copy__5")); //$NON-NLS-1$
+		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.4")); //$NON-NLS-1$
+		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.5")); //$NON-NLS-1$
 		dialog.setElements(configurations.toArray());
 		if (dialog.open() == Window.CANCEL) {
 			return;
