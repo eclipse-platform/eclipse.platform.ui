@@ -16,6 +16,7 @@ import org.eclipse.swt.events.TypedEvent;
  * @since 3.0
  */
 public final class ExpansionEvent extends TypedEvent {
+	private static final long serialVersionUID = 6009335074727417445L;
 	/**
 	 * Creates a new expansion ecent.
 	 * 
