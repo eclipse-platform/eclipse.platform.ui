@@ -487,7 +487,7 @@ public class WorkbenchKeyboard {
 			final Display display = workbench.getDisplay();
 			display
 				.timerExec(
-					store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME),
+					1000 * store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME),
 					new Runnable() {
 				public void run() {
 					if (System.currentTimeMillis() > (startTime - 1000L)) {
