@@ -66,6 +66,13 @@ public interface IPresentablePart {
 	public void addPropertyListener(IPropertyListener listener);
 	
 	/**
+	 * Remove a listener that was previously added using addPropertyListener.
+	 *
+	 * @param listener a property listener
+	 */
+	public void removePropertyListener(IPropertyListener listener);
+	
+	/**
 	 * Returns the short name of the part. This is used as the text on
 	 * the tab when this part is stacked on top of other parts.
 	 * 
