@@ -14,7 +14,6 @@
    </runtime>
    <requires>
       <import plugin="org.apache.lucene"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.help" export="true"/>
       <import plugin="org.eclipse.help.appserver"/>
    </requires>
