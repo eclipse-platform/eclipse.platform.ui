@@ -13,16 +13,36 @@
 package org.eclipse.ui.dialogs;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -381,9 +401,14 @@ protected Control createDialogArea(Composite parent) {
 	pattern.addKeyListener(new KeyAdapter(){
 		public void keyReleased(KeyEvent e) {
 			if (e.keyCode == SWT.ARROW_DOWN) resourceNames.setFocus();
-			else textChanged();
 		}
 	});
+    
+    pattern.addModifyListener(new ModifyListener() {
+        public void modifyText(ModifyEvent e) {
+            textChanged();
+        }
+    });
 			
 	resourceNames.addSelectionListener(new SelectionAdapter(){
 		public void widgetSelected(SelectionEvent e) {
