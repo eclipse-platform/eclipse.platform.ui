@@ -93,7 +93,7 @@ public class EclipseCVSClient implements ICVSClient {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		Session session = new Session(cvsRepositoryLocation, cvsLocalRoot);
 		try {
-			session.open(monitor);
+			session.open(monitor, true /* open for modification */);
 			IStatus status = cvsCommand.execute(session,
 				cvsGlobalOptions, cvsLocalOptions, arguments, null, monitor);
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {

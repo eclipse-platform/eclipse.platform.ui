@@ -180,7 +180,7 @@ public class RestoreFromRepositoryAction extends CVSAction {
 		monitor.beginTask(null, 100);
 		AtticLogListener listener = new AtticLogListener();
 		Session session = new Session(location, parent, true /* output to console */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 			try {

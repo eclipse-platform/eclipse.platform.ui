@@ -89,7 +89,7 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
-			s.open(Policy.subMonitorFor(progress, 20));
+			s.open(Policy.subMonitorFor(progress, 20), true /* open for modification */);
 			return Command.TAG.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
 				commandOptions,

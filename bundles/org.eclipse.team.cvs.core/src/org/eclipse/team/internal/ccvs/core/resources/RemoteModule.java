@@ -54,7 +54,7 @@ public class RemoteModule extends RemoteFolder {
 		try {		
 			RemoteModule[] modules;
 			Session s = new Session(repository, (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(ResourcesPlugin.getWorkspace().getRoot()), false);
-			s.open(Policy.subMonitorFor(monitor, 10));
+			s.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				modules = Command.CHECKOUT.getRemoteModules(s, tag, Policy.subMonitorFor(monitor, 90));
 			} finally {

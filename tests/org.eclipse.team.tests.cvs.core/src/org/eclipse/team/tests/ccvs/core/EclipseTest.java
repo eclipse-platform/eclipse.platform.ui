@@ -629,7 +629,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		// Perform the import
 		IStatus status;
 		Session s = new Session(getRepository(), root);
-		s.open(DEFAULT_MONITOR);
+		s.open(DEFAULT_MONITOR, true /* open for modification */);
 		try {
 			status = Command.IMPORT.execute(s,
 				Command.NO_GLOBAL_OPTIONS,

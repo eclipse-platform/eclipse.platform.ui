@@ -216,7 +216,7 @@ public class RemoteFolderTreeBuilder {
 		monitor.beginTask(null, 100);
 		Policy.checkCanceled(monitor);
 		Session session = new Session(repository, root, false);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			Policy.checkCanceled(monitor);
 			fetchDelta(session, (String[]) arguments.toArray(new String[arguments.size()]), Policy.subMonitorFor(monitor, 90));
@@ -248,7 +248,7 @@ public class RemoteFolderTreeBuilder {
 		if (newFolderExist) {
 			// New folders will require a connection for fetching their members
 			session = new Session(repository, remoteRoot, false);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		} else {
 			session = null;
 		}
@@ -278,7 +278,7 @@ public class RemoteFolderTreeBuilder {
 				String buffer[] = new String[length];
 				System.arraycopy(allChangedFiles, i * MAX_REVISION_FETCHES_PER_CONNECTION, buffer, 0, length);
 				Session session = new Session(repository, remoteRoot, false);
-				session.open(Policy.subMonitorFor(monitor, 1));
+				session.open(Policy.subMonitorFor(monitor, 1), false /* read-only */);
 				try {
 					fetchFileRevisions(session, buffer, Policy.subMonitorFor(monitor, 2));
 				} finally {
@@ -298,7 +298,7 @@ public class RemoteFolderTreeBuilder {
 			// Query the server to see if there is a delta available
 			Policy.checkCanceled(monitor);
 			Session session = new Session(repository, root, false);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				Policy.checkCanceled(monitor);
 				fetchDelta(session, new String[] { file.getName() }, Policy.subMonitorFor(monitor, 50));
@@ -343,7 +343,7 @@ public class RemoteFolderTreeBuilder {
 				// Add the remote folder to the remote folder lookup table (used to update file revisions)
 				recordRemoteFolder(remoteRoot);
 				session = new Session(repository, remoteRoot, false);
-				session.open(Policy.subMonitorFor(monitor, 10));
+				session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 				try {
 					fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), Policy.subMonitorFor(monitor, 20));
 				} finally {

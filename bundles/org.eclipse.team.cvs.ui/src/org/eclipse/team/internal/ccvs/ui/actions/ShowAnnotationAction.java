@@ -114,7 +114,7 @@ public class ShowAnnotationAction extends CVSAction {
 			final FolderSyncInfo info = folder.getFolderSyncInfo();
 			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
 			Session session = new Session(location, folder, true /* output to console */);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				Command.QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 				try {

@@ -94,7 +94,7 @@ public class ResourceSyncBytesTest extends EclipseTest {
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(false);
 		// create and open a session
 		Session session = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
-		session.open(DEFAULT_MONITOR);
+		session.open(DEFAULT_MONITOR, false /* read-only */);
 		
 		// test a normal entry line
 		byte[] entryLine = "/plugin.xml/1.27/Tue Mar  4 19:47:36 2003/-ko/".getBytes();

@@ -39,7 +39,7 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 	protected void execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		monitor.beginTask(null, 100);
 		Session session = new Session(getRemoteLocation(provider), getLocalRoot(provider), true /* output to console */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), isServerModificationOperation());
 		try {
 			IStatus status = executeCommand(session, provider, resources, Policy.subMonitorFor(monitor, 90));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -48,6 +48,15 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		} finally {
 			session.close();
 		}
+	}
+
+	/**
+	 * Indicate whether the operation requires write access to the server (i.e.
+	 * the operation changes state on the server whether it be to commit, tag, admin, etc).
+	 * @return
+	 */
+	protected boolean isServerModificationOperation() {
+		return false;
 	}
 
 	/**

@@ -121,6 +121,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
 	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
 	
+	// alternate repository connection details to be used when reading or writting
+	private String readLocation;
+	private String writeLocation;
+	
 	static {
 		URL temp = null;
 		try {
@@ -487,7 +491,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			monitor.beginTask(null, 100);
 			ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
 			Session session = new Session(this, root, false /* output to console */);
-			session.open(Policy.subMonitorFor(monitor, 50));
+			session.open(Policy.subMonitorFor(monitor, 50), false /* read-only */);
 			try {
 				IStatus status = Command.VERSION.execute(session, this, Policy.subMonitorFor(monitor, 50));
 				// Log any non-ok status
@@ -980,4 +984,56 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// This is not a server message with the desired prefix
 		return null;
 	}
+	
+	/**
+	 * The read location is a string that contains the connection details 
+	 * to be used when performing an operation that only requires read-access
+	 * to the repository.
+	 * 
+	 * @return Returns the readLocation.
+	 */
+	public String getReadLocation() {
+		return readLocation;
+	}
+
+	/**
+	 * Set the location used to perform operations that only require
+	 * read-access to the repository. Passing a value of <code>null</code>
+	 * will cause the receiver's information to be used when connecting
+	 * for read access.
+	 * @param readLocation The readLocation to set.
+	 */
+	public void setReadLocation(String readLocation) {
+		if (readLocation != null && readLocation.equals(getLocation())) {
+			this.readLocation = null;
+		} else {
+			this.readLocation = readLocation;
+		}
+	}
+
+	/**
+	 * The write location is a string that contains the connection details 
+	 * to be used when performing an operation that only requires read-access
+	 * to the repository.
+	 * @return Returns the writeLocation.
+	 */
+	public String getWriteLocation() {
+		return writeLocation;
+	}
+
+	/**
+	 * Set the location used to perform operations that require
+	 * write-access to the repository. Passing a value of <code>null</code>
+	 * will cause the receiver's information to be used when connecting
+	 * for write access.
+	 * @param writeLocation The writeLocation to set.
+	 */
+	public void setWriteLocation(String writeLocation) {
+		if (writeLocation != null && writeLocation.equals(getLocation())) {
+			this.writeLocation = null;
+		} else {
+			this.writeLocation = writeLocation;
+		}
+	}
+
 }

@@ -185,13 +185,17 @@ public class Session {
 	 * @throws IllegalStateException if the Session is not in the CLOSED state
 	 */
 	public void open(IProgressMonitor monitor) throws CVSException {
+		open(monitor, true /* write access*/);
+	}
+	
+	public void open(IProgressMonitor monitor, boolean writeAccess) throws CVSException {
 		if (connection != null) throw new IllegalStateException();
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		boolean opened = false;	
 	
 		try {
-			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
+			connection = getLocationForConnection(writeAccess).openConnection(Policy.subMonitorFor(monitor, 50));
 			
 			// If we're connected to a CVSNT server or we don't know the platform, 
 			// accept MT. Otherwise don't.
@@ -243,6 +247,33 @@ public class Session {
 		}
 	}		
 	
+	/*
+	 * Return the location to be used for this connection
+	 */
+	private CVSRepositoryLocation getLocationForConnection(boolean writeAccess) {
+		try {
+			if (writeAccess) {
+				String writeLocation = location.getWriteLocation();
+				if (writeLocation != null) {
+					return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(writeLocation);
+				}
+			} else {
+				String readLocation = location.getReadLocation();
+				if (readLocation != null) {
+					return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(readLocation);
+				} else {
+					// TODO: Temporary measure to increase performance for Eclipse developers
+					if (location.getHost().equals("dev.eclipse.org")) {
+						return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(":pserver:anonymous@dev.eclipse.org:/home/eclipse");
+					}
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+		return location;
+	}
+
 	/**
 	 * Closes a connection to the server.
 	 *

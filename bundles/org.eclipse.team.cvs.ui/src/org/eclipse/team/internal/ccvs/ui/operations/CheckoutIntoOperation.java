@@ -328,7 +328,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		ICVSRepositoryLocation repository = remoteFolder.getRepository();
 		Session session = new Session(repository, parentFolder);
 		try {
-			session.open(Policy.subMonitorFor(monitor, 5));
+			session.open(Policy.subMonitorFor(monitor, 5), false /* read-only */);
 			
 			// Determine which local folders will be affected
 			ICVSFolder[] targetFolders = prepareLocalFolders(session, remoteFolder, parentFolder, localFolderName, Policy.subMonitorFor(monitor, 5));

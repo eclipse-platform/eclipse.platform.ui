@@ -298,7 +298,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			if (!folders.isEmpty()) {
 				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(progress, 2));
+				session.open(Policy.subMonitorFor(progress, 2), true /* open for modification */);
 				try {
 					IStatus status = Command.ADD.execute(
 						session,
@@ -319,7 +319,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				final KSubstOption ksubst = (KSubstOption) entry.getKey();
 				final Set set = (Set) entry.getValue();
 				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(progress, 2));
+				session.open(Policy.subMonitorFor(progress, 2), true /* open for modification */);
 				try {
 					IStatus status = Command.ADD.execute(
 						session,
@@ -373,7 +373,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
-			s.open(Policy.subMonitorFor(progress, 20));
+			s.open(Policy.subMonitorFor(progress, 20), true /* open for modification */);
 			status = Command.COMMIT.execute(s,
 			Command.NO_GLOBAL_OPTIONS,
 			commandOptions,
@@ -445,7 +445,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			// Remove the files remotely
 			IStatus status;
 			Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-			s.open(Policy.subMonitorFor(progress, 10));
+			s.open(Policy.subMonitorFor(progress, 10), true /* open for modification */);
 			try {
 				status = Command.REMOVE.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
@@ -491,7 +491,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		Session s = new Session(workspaceRoot.getRemoteLocation(), commandRoot);
 		progress.beginTask(null, 100);
 		try {
-			s.open(Policy.subMonitorFor(progress, 20));
+			s.open(Policy.subMonitorFor(progress, 20), false /* read-only */);
 			Command.DIFF.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
 				options,
@@ -646,7 +646,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		//	Make a connection before preparing for the replace to avoid deletion of resources before a failed connection
 		progress.beginTask(null, 100);
 		Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-		session.open(Policy.subMonitorFor(progress,10));
+		session.open(Policy.subMonitorFor(progress,10), false /* read-only */);
 		try {
 			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 20)); //$NON-NLS-1$
 			
@@ -700,7 +700,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			if (versionTag != null) {
 				// Version using a custom tag command that skips added but not commited reesources
 				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(monitor, 5));
+				session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
 				try {
 					status = Command.CUSTOM_TAG.execute(
 						session,
@@ -716,7 +716,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				if (status.isOK()) {
 					// Branch using the tag
 					session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-					session.open(Policy.subMonitorFor(monitor, 5));
+					session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
 					try {
 						status = Command.CUSTOM_TAG.execute(
 							session,
@@ -733,7 +733,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			} else {
 				// Just branch using tag
 				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(monitor, 5));
+				session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
 				try {
 					status = Command.CUSTOM_TAG.execute(
 						session,
@@ -887,7 +887,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, boolean createBackups, IProgressMonitor progress) throws TeamException {
 		progress.beginTask(null, 100);
 		Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-		session.open(Policy.subMonitorFor(progress,10));
+		session.open(Policy.subMonitorFor(progress,10), false /* read-only */);
 		try {
 			update(session, resources, options, tag, createBackups, Policy.subMonitorFor(progress, 90));
 		} finally {
@@ -1126,7 +1126,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						//       resource sync info still says "binary".
 						if (filesToCommit.size() != 0) {
 							Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-							session.open(Policy.subMonitorFor(monitor, 1));
+							session.open(Policy.subMonitorFor(monitor, 1), true /* open for modification */);
 							try {
 								String keywordChangeComment = comment;
 								if (keywordChangeComment == null || keywordChangeComment.length() == 0)
@@ -1160,7 +1160,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 							final List list = (List) entry.getValue();
 							// do it
 							Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-							session.open(Policy.subMonitorFor(monitor, 1));
+							session.open(Policy.subMonitorFor(monitor, 1), true /* open for modification */);
 							try {
 								result[0] = Command.ADMIN.execute(
 									session,
@@ -1360,7 +1360,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 					monitor.beginTask(null, 100);
 					Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true);
 					try {
-						session.open(Policy.subMonitorFor(monitor, 10));
+						session.open(Policy.subMonitorFor(monitor, 10), true /* open for modification */);
 					} catch (CVSException e1) {
 						// If the connection cannot be opened, just exit normally.
 						// The notifications will be sent when a connection can be made
@@ -1494,7 +1494,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		progress.beginTask(null, 100);
 		try {
 			// Opening the session takes 20% of the time
-			session.open(Policy.subMonitorFor(progress, 20));
+			session.open(Policy.subMonitorFor(progress, 20), false /* read-only */);
 
 			if (!progress.isCanceled()) {
 				// Execute the editors command

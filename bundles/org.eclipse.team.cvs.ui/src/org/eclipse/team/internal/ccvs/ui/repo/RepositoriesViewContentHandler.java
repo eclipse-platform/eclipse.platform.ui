@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -41,6 +42,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String FULL_PATH_ATTRIBUTE = "full-path"; //$NON-NLS-1$
 	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	public static final String REPOSITORY_PROGRAM_NAME_ATTRIBUTE = "program-name"; //$NON-NLS-1$
+	public static final String READ_ID_ATTRIBUTE = "read-id"; //$NON-NLS-1$
+	public static final String WRITE_ID_ATTRIBUTE = "write-id"; //$NON-NLS-1$
 	
 	public static final String[] TAG_TYPES = {"head", "branch", "version", "date"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	public static final String DEFAULT_TAG_TYPE = "version"; //$NON-NLS-1$
@@ -127,6 +130,10 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			if (name != null) {
 				currentRepositoryRoot.setName(name);
 			}
+			String readLocation = atts.getValue(READ_ID_ATTRIBUTE);
+			((CVSRepositoryLocation)root).setReadLocation(readLocation);
+			String writeLocation = atts.getValue(WRITE_ID_ATTRIBUTE);
+			((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
 		} else if (localName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {

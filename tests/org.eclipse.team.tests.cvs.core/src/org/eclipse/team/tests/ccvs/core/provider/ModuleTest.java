@@ -120,7 +120,7 @@ public class ModuleTest extends EclipseTest {
 
 		// import the project into CVS
 		Session s = new Session(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project));
-		s.open(DEFAULT_MONITOR);
+		s.open(DEFAULT_MONITOR, true /* open for modification */);
 		try {
 			Command.IMPORT.execute(s, Command.NO_GLOBAL_OPTIONS, 
 				new LocalOption[] {Command.makeArgumentOption(Command.MESSAGE_OPTION, "")},

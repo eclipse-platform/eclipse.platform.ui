@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -62,8 +64,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	
 	boolean passwordChanged;
 	boolean connectionInfoChanged;
-	boolean programNameChanged;
-	boolean labelChanged;
 
 	IUserInfo info;
 
@@ -75,6 +75,11 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	private Button useLocationAsLabel;
 	private Button useCustomLabel;
 	private Text labelText;
+	// Read/write access
+	private Button useDefaultReadWriteLocations;
+	private Button useCustomReadWriteLocations;
+	private Combo readLocation;
+	private Combo writeLocation;
 			
 	/*
 	 * @see PreferencesPage#createContents
@@ -101,7 +106,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		labelGroup.setLayout(layout);
 		Listener labelListener = new Listener() {
 			public void handleEvent(Event event) {
-				labelChanged = true;
 				updateWidgetEnablements();
 			}
 		};
@@ -114,22 +118,22 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$
 		
-		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
 		methodType = createCombo(composite);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1); //$NON-NLS-1$
 		userText = createTextField(composite);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1); //$NON-NLS-1$
 		passwordText = createPasswordField(composite);
 			
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
 		hostLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1); //$NON-NLS-1$
 		portLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
 		pathLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 
 		// Add some extra space
@@ -137,18 +141,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 
 		// Remote CVS program name
 		// create a composite to ensure the radio buttons come in the correct order
-		Composite programNameGroup = new Composite(composite, SWT.NONE);
-		data = new GridData();
-		data.horizontalSpan = 3;
-		programNameGroup.setLayoutData(data);
-		layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		programNameGroup.setLayout(layout);
+		Composite programNameGroup = createRadioGroupComposite(composite);
 		Listener programNameListener = new Listener() {
 			public void handleEvent(Event event) {
-				programNameChanged = true;
 				updateWidgetEnablements();
 			}
 		};
@@ -157,7 +152,12 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		useCustomProgramName.addListener(SWT.Selection, programNameListener);
 		programNameText = createTextField(programNameGroup);
 		programNameText.addListener(SWT.Modify, programNameListener);
-				
+		
+		// Add some extra space
+		createLabel(composite, "", 3); //$NON-NLS-1$
+		
+		createReadWriteAccessComposite(composite);
+		
 		initializeValues();
 		updateWidgetEnablements();
 		passwordText.addListener(SWT.Modify, new Listener() {
@@ -175,9 +175,50 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				connectionInfoChanged = true;
 			}
 		});
+		useDefaultReadWriteLocations.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateWidgetEnablements();
+
+			}
+		});
+		useCustomReadWriteLocations.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateWidgetEnablements();
+	
+			}
+		});
+		
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
 		return composite;
 	}
+	/**
+	 * @param composite
+	 */
+	private void createReadWriteAccessComposite(Composite composite) {
+		Composite radioGroup = createRadioGroupComposite(composite);
+		useDefaultReadWriteLocations = createRadioButton(radioGroup, "Use this location's connection information for all connections", 3);
+		useCustomReadWriteLocations = createRadioButton(radioGroup, "Use the following locations for read and write access", 3);
+		createLabel(composite, "Read:", 1);
+		readLocation = createCombo(composite);
+		createLabel(composite, "Write:", 1);
+		writeLocation = createCombo(composite);
+	}
+	/**
+	 * @param composite
+	 */
+	private Composite createRadioGroupComposite(Composite composite) {
+		Composite radioGroup = new Composite(composite, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalSpan = 3;
+		radioGroup.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		radioGroup.setLayout(layout);
+		return radioGroup;
+	}
+	
 	/**
 	 * Utility method that creates a combo box
 	 *
@@ -316,47 +357,67 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			label = location.getLocation();
 		}
 		labelText.setText(label);
+		
+		// Fill in read/write repo locations
+		String currentReadLocation = ((CVSRepositoryLocation)root.getRoot()).getReadLocation();
+		String currentWriteLocation = ((CVSRepositoryLocation)root.getRoot()).getWriteLocation();
+		try {
+			// Ensure the read and write locations are listed
+			if (currentReadLocation != null) {
+				CVSProviderPlugin.getPlugin().getRepository(currentReadLocation);
+			}
+			if (currentWriteLocation != null) {
+				CVSProviderPlugin.getPlugin().getRepository(currentWriteLocation);
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+
+		ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
+		for (int i = 0; i < locations.length; i++) {
+			ICVSRepositoryLocation location = locations[i];
+			readLocation.add(location.getLocation());
+			writeLocation.add(location.getLocation());
+		}
+		readLocation.setText(currentReadLocation == null ? root.getRoot().getLocation() : currentReadLocation);
+		writeLocation.setText(currentWriteLocation == null ? root.getRoot().getLocation() : currentWriteLocation);
+		if (currentReadLocation == null && currentWriteLocation == null) {
+			useDefaultReadWriteLocations.setSelection(true);
+			useCustomReadWriteLocations.setSelection(false);
+		} else {
+			useDefaultReadWriteLocations.setSelection(false);
+			useCustomReadWriteLocations.setSelection(true);
+		}
 	}
 	
-	/*
-	 * @see PreferencesPage#performOk
-	 */
-	public boolean performOk() {
-		if (!connectionInfoChanged && !passwordChanged) {
-			if (programNameChanged) {
-				recordNewProgramName((CVSRepositoryLocation)location);
-			}
-			if (labelChanged) {
-				recordNewLabel((CVSRepositoryLocation)location);
-			}
-			return true;
-		}
-		info.setUsername(userText.getText());
-		if (passwordChanged) {
-			info.setPassword(passwordText.getText());
-		}
-		final String type = methodType.getText();
-		final String password = passwordText.getText();
-		final boolean[] result = new boolean[] { false };
+	private boolean performConnectionInfoChanges() {
+		// Don't do anything if there wasn't a password or connection change
+		if (!passwordChanged && !connectionInfoChanged) return true;
+		
 		try {
+			// Check if the password was the only thing to change.
+			if (passwordChanged && !connectionInfoChanged) {
+				CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
+				oldLocation.setPassword(getNewPassword());
+				oldLocation.updateCache();
+				passwordChanged = false;
+				return true;
+			}
+		
+			// Otherwise change the connection info and the password
 			// This operation is done inside a workspace operation in case the sharing
 			// info for existing projects is changed
+			final boolean[] result = new boolean[] { false };
 			new ProgressMonitorDialog(getShell()).run(false, false, new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						// Check if the password was the only thing to change.
-						if (passwordChanged && !connectionInfoChanged) {
-							CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
-							oldLocation.setPassword(password);
-							oldLocation.updateCache();
-							passwordChanged = false;
-							result[0] = true;
-							return;
-						}
-						
 						// Create a new repository location with the new information
 						CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
-						newLocation.setMethod(type);
+						newLocation.setMethod(methodType.getText());
+						info.setUsername(userText.getText());
+						if (passwordChanged) {
+							info.setPassword(getNewPassword());
+						}
 						newLocation.setUserInfo(info);
 						
 						try {
@@ -410,32 +471,40 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 							newLocation.updateCache();
 						}
 						
-						
 						// Set the location of the page to the new location in case Apply was chosen
 						location = newLocation;
-						
-						if (programNameChanged) {
-							recordNewProgramName((CVSRepositoryLocation)location);
-						}
-						if (labelChanged) {
-							recordNewLabel((CVSRepositoryLocation)location);
-						}
-			
 						connectionInfoChanged = false;
 						passwordChanged = false;
-						programNameChanged = false;
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
 					result[0] = true;
 				}
 			});
+			return result[0];
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
+		} catch (CVSException e) {
+			handle(e);
 		}
-					
-		return result[0];
+		return false; /* we only get here if an exception occurred */
+	}
+	
+	private void performNonConnectionInfoChanges() {
+		recordNewProgramName((CVSRepositoryLocation)location);
+		recordNewLabel((CVSRepositoryLocation)location);
+		recordReadWriteLocations((CVSRepositoryLocation)location);
+	}
+	/*
+	 * @see PreferencesPage#performOk
+	 */
+	public boolean performOk() {
+		if (performConnectionInfoChanges()) {
+			performNonConnectionInfoChanges();
+			return true;
+		}
+		return false;
 	}
 	/**
 	 * Shows the given errors to the user.
@@ -458,6 +527,13 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} else {
 			labelText.setEnabled(true);
 		}
+		if (useDefaultReadWriteLocations.getSelection()) {
+			readLocation.setEnabled(false);
+			writeLocation.setEnabled(false);
+		} else {
+			readLocation.setEnabled(true);
+			writeLocation.setEnabled(true);
+		}
 		validateFields();
 	}
 	
@@ -478,6 +554,14 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	}
 	
 	private void recordNewProgramName(CVSRepositoryLocation location) {
+		String newProgramName = getNewProgramName();
+		if (getOldProgramName(location).equals(newProgramName)) return;
+		CVSProviderPlugin.getPlugin().setCVSProgramName(location, newProgramName);
+	}
+	private String getOldProgramName(CVSRepositoryLocation location) {
+		return location.getRemoteCVSProgramName();
+	}
+	private String getNewProgramName() {
 		// Set the remote program name if appropriate
 		String newProgramName;
 		if (useDefaultProgramName.getSelection()) {
@@ -485,12 +569,28 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} else {
 			newProgramName = programNameText.getText();
 		}
-		if (!location.getRemoteCVSProgramName().equals(newProgramName)) {
-			CVSProviderPlugin.getPlugin().setCVSProgramName(location, newProgramName);
+		return newProgramName;
+	}
+	private void recordNewLabel(CVSRepositoryLocation location) {
+		String newLabel = getNewLabel(location);
+		if (newLabel == null) {
+			String oldLabel = getOldLabel(location);
+			if (oldLabel == null || oldLabel.equals(location.getLocation())) {
+				return;
+			}
+		} else if (newLabel.equals(getOldLabel(location))) {
+			return;
+		}
+		try {
+			CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, newLabel);
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
 		}
 	}
-	
-	private void recordNewLabel(CVSRepositoryLocation location) {
+	private String getOldLabel(CVSRepositoryLocation location) {
+		return CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location).getName();
+	}
+	private String getNewLabel(CVSRepositoryLocation location) {
 		String label = null;
 		if (useCustomLabel.getSelection()) {
 			label = labelText.getText();
@@ -498,11 +598,15 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				label = null;
 			}
 		}
-		try {
-			CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, label);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
+		return label;
+	}
+	/* internal use only */ String getNewPassword() {
+		return passwordText.getText();
+	}
+	private void recordReadWriteLocations(CVSRepositoryLocation location) {
+		location.setReadLocation(useDefaultReadWriteLocations.getSelection() ? null : readLocation.getText());
+		location.setWriteLocation(useDefaultReadWriteLocations.getSelection() ? null : writeLocation.getText());
+		// TODO: These will be lost if a crash occurres before shutdown
 	}
 }
 

@@ -112,7 +112,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	protected IStatus performUpdate(IProgressMonitor progress, CVSTag tag) throws CVSException {
 		progress.beginTask(null, 100);
 		Session session = new Session(parentFolder.getRepository(), parentFolder, false /* output to console */);
-		session.open(Policy.subMonitorFor(progress, 10));
+		session.open(Policy.subMonitorFor(progress, 10), false /* read-only */);
 		try {
 			// Build the local options
 			final List localOptions = new ArrayList();
@@ -140,7 +140,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 		try {
 			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 			Session session = new Session(parentFolder.getRepository(), parentFolder, false /* output to console */);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				IStatus status = Command.STATUS.execute(
 					session,

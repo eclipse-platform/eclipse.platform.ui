@@ -176,7 +176,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
 			boolean retry = false;
 			Session session = new Session(getRepository(), this, false /* output to console */);
-			session.open(Policy.subMonitorFor(progress, 10));
+			session.open(Policy.subMonitorFor(progress, 10), false /* read-only */);
 			try {
 				IStatus status = Command.UPDATE.execute(
 					session,
@@ -490,7 +490,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		Session session = new Session(getRepository(), this, true /* output to console */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), true /* open for modification */);
 		try {
 			return Command.RTAG.execute(
 				session,

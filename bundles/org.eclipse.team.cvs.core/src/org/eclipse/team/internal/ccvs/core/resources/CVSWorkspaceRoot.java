@@ -137,7 +137,7 @@ public class CVSWorkspaceRoot {
 							ICVSRepositoryLocation repository = resource.getRepository();
 							Session session = new Session(repository, root);
 							try {
-								session.open(Policy.subMonitorFor(pm, 50));
+								session.open(Policy.subMonitorFor(pm, 50), false /* read-only */);
 								
 								// Determine the local target projects (either the project provider or the module expansions) 
 								final Set targetProjects = new HashSet();
@@ -260,7 +260,7 @@ public class CVSWorkspaceRoot {
 
 			// Perform the import using a dummy root so the local project is not traversed
 			Session s = new Session(location, new RemoteFolderTree(null, location, Path.EMPTY.toString(), null));
-			s.open(monitor);
+			s.open(monitor, true /* open for modification */);
 			try {
 				IStatus status = Command.IMPORT.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
@@ -356,7 +356,7 @@ public class CVSWorkspaceRoot {
 		// Perform the Expand-Modules command
 		IStatus status;
 		Session s = new Session(resources[0].getRepository(), root);
-		s.open(monitor);
+		s.open(monitor, false /* read-only */);
 		try {
 			status = Request.EXPAND_MODULES.execute(s, arguments, monitor);
 		} finally {

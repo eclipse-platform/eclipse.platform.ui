@@ -135,7 +135,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// Open a connection session to the repository
 		Session session = new Session(repository, root);
 		pm.beginTask(null, 100);
-		session.open(Policy.subMonitorFor(pm, 5));
+		session.open(Policy.subMonitorFor(pm, 5), false /* read-only */);
 		try {
 			
 			// Determine the local target projects (either the project provider or the module expansions)

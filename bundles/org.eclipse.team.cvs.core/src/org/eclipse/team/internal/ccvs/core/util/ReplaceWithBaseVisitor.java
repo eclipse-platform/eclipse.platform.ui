@@ -114,7 +114,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 		IProgressMonitor monitor = Policy.monitorFor(pm);
 		monitor.beginTask(null, 100);
 		this.session = new Session(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), root, true /* creat e backups */);
-		this.session.open(Policy.subMonitorFor(monitor, 10));
+		this.session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			this.monitor = Policy.infiniteSubMonitorFor(monitor, 90);
 			this.monitor.beginTask(null, 512);

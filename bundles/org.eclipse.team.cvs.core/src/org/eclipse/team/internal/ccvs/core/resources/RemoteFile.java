@@ -191,7 +191,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 	/* package*/ void fetchContents(IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
 		Session session = new Session(getRepository(), parent, false /* create backups */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			IStatus status = Command.UPDATE.execute(
 				session,
@@ -219,7 +219,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
 			Session session = new Session(getRepository(), parent, false /* output to console */);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				try {
 					final List entries = new ArrayList();
@@ -255,7 +255,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 		monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
 		final List entries = new ArrayList();
 		Session session = new Session(getRepository(), parent, false /* output to console */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 			try {
@@ -489,7 +489,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		Session session = new Session(getRepository(), getParent(), true /* output to console */);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), true /* open for modification */);
 		try {
 			return Command.RTAG.execute(
 				session,

@@ -77,7 +77,7 @@ public class FileContentCachingService {
 		monitor.beginTask(null, 10 + files.length * 100);
 		Policy.checkCanceled(monitor);
 		Session session = new Session(repository, remoteRoot, false);
-		session.open(Policy.subMonitorFor(monitor, 10));
+		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			Policy.checkCanceled(monitor);
 			IStatus status = Command.UPDATE.execute(session,
