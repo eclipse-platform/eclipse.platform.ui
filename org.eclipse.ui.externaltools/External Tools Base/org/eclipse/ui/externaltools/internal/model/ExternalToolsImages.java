@@ -70,7 +70,7 @@ public class ExternalToolsImages {
 	private static void declareImages() {
 		// Ant Editor images
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY, OBJECT + "property_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TASK, OBJECT + "html_tag_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TASK, OBJECT + "task_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TARGET, OBJECT + "ant_tsk_arrow.gif"); //$NON-NLS-1$
 		// Ant View Actions
 		declareRegistryImage(IExternalToolsUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.gif"); //$NON-NLS-1$

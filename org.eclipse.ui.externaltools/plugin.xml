@@ -32,7 +32,7 @@
    <extension point="org.eclipse.ui.editors">
       <editor
             name="%AntEditor.name"
-            icon="icons/full/obj16/ant.gif"
+            icon="icons/full/obj16/ant_buildfile.gif"
             filenames="build.xml"
             contributorClass="org.eclipse.ui.externaltools.internal.ant.editor.PlantyActionContributor"
             class="org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor"
