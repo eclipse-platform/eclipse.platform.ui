@@ -200,9 +200,9 @@ public class TextEditor extends StatusTextEditor {
 	public TextEditor() {
 		super();
 		initializeKeyBindingScopes();
+		setSourceViewerConfiguration(new TextSourceViewerConfiguration());
 		initializeEditor();
 		fAnnotationPreferences= new MarkerAnnotationPreferences();
-		setSourceViewerConfiguration(new TextSourceViewerConfiguration());
 	}
 	
 	/**
