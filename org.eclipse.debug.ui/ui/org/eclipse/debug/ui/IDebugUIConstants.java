@@ -731,7 +731,7 @@ public interface IDebugUIConstants {
 	
 	/**
 	 * Launch configuration attribute - a boolean value indicating whether a
-	 * configuration should be run in the background. Default value is <code>true</code>.
+	 * configuration should be launched in the background. Default value is <code>true</code>.
 	 * 
 	 * @since 3.0
 	 */
