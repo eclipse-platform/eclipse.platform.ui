@@ -1608,18 +1608,18 @@ private void synchConfigurations(String[] dirlist) {
 
 private void synchFragments(String[] dirlist) {
 	List list = Arrays.asList(dirlist);
-	synch(list, plugins);
-	synch(list, pluginsInact);
-	synch(list, pluginsUnmgd);
-	synch(list, pluginsPendingDelete);
-}
-
-private void synchPlugins(String[] dirlist) {
-	List list = Arrays.asList(dirlist);
 	synch(list, fragments);
 	synch(list, fragmentsInact);
 	synch(list, fragmentsUnmgd);
 	synch(list, fragmentsPendingDelete);
+}
+
+private void synchPlugins(String[] dirlist) {
+	List list = Arrays.asList(dirlist);
+	synch(list, plugins);
+	synch(list, pluginsInact);
+	synch(list, pluginsUnmgd);
+	synch(list, pluginsPendingDelete);
 }
 
 public static void todo() {
