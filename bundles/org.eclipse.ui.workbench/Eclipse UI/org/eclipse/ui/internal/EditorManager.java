@@ -13,14 +13,12 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.progress.IJobCompletionListener;
-import org.eclipse.jface.progress.UIJob;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -33,6 +31,7 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.internal.progress.WorkbenchUIJob;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.part.MultiEditor;
@@ -1086,9 +1085,10 @@ public class EditorManager {
 	private static void runProgressMonitorOperation(
 		final String opName,
 		final IRunnableWithProgress progressOp,
-		final IJobCompletionListener listener) {
+		final IJobCompletionListener listener,
+		Display display) {
 
-		UIJob job = new UIJob() {
+		WorkbenchUIJob job = new WorkbenchUIJob(display) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 				try {
@@ -1210,7 +1210,7 @@ public class EditorManager {
 		};
 
 		// Do the save.
-		runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp, listener); //$NON-NLS-1$
+		runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp, listener, window.getShell().getDisplay()); //$NON-NLS-1$
 	}
 	/*
 	 * Saves the workbench part.
@@ -1267,7 +1267,7 @@ public class EditorManager {
 		};
 
 		// Do the save.
-		runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp, listener); //$NON-NLS-1$
+		runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp, listener, window.getShell().getDisplay()); //$NON-NLS-1$
 	}
 	/**
 	 * Save and close an editor.

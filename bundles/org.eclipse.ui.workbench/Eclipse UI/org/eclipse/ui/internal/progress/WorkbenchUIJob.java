@@ -21,6 +21,22 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class WorkbenchUIJob extends UIJob {
 
+	/**
+	 * Create a new instance of the receiver with an unspecified
+	 * display.
+	 */
+	public WorkbenchUIJob() {
+		super();
+		
+	}
+
+	/**
+	 * Create a new instance of the receiver with the supplied display.
+	 * @param jobDisplay
+	 */
+	public WorkbenchUIJob(Display jobDisplay) {
+		super(jobDisplay);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.progress.UIJob#getDisplay()
