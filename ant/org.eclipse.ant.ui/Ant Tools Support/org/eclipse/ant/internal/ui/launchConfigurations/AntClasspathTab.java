@@ -140,12 +140,13 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antClasspathBlock.getAntHome());
-				
 		if (useDefaultButton.getSelection()) {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 			return;
 		}
+		
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antClasspathBlock.getAntHome());
 		
 		List antUrls= antClasspathBlock.getAntURLs();
 		List userUrls= antClasspathBlock.getUserURLs();

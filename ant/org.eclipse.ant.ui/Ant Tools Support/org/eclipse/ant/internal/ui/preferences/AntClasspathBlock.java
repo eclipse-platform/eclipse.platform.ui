@@ -654,7 +654,8 @@ public class AntClasspathBlock {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			antTableViewer.setInput(prefs.getAntURLs());
 			userTableViewer.setInput(prefs.getCustomURLs());
-			initializeAntHome(prefs.getDefaultAntHome());
+			initializing= true;
+			initializeAntHome(prefs.getAntHome());
 			antHome.setEnabled(false);
 			browseAntHomeButton.setEnabled(false);
 		}
