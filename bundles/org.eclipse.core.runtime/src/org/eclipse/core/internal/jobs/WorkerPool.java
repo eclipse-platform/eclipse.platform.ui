@@ -161,7 +161,7 @@ class WorkerPool {
 	 */
 	private synchronized void sleep(long duration) {
 		sleepingThreads++;
-		decrementBusyThreads();
+		busyThreads--;
 		if (JobManager.DEBUG)
 			JobManager.debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
@@ -171,7 +171,7 @@ class WorkerPool {
 				JobManager.debug("worker interrupted while waiting... :-|"); //$NON-NLS-1$
 		} finally {
 			sleepingThreads--;
-			incrementBusyThreads();
+			busyThreads++;
 		}
 	}
 
@@ -186,9 +186,9 @@ class WorkerPool {
 				endWorker(worker);
 				return null;
 			}
+			//set the thread to be busy now in case of reentrant scheduling
+			incrementBusyThreads();
 		}
-		//set the thread to be busy now in case of reentrant scheduling
-		incrementBusyThreads();
 		Job job = null;
 		try {
 			job = manager.startJob();
