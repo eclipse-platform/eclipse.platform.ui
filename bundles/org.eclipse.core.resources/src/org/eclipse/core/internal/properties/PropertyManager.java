@@ -13,6 +13,8 @@ package org.eclipse.core.internal.properties;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.eclipse.core.internal.events.ILifecycleListener;
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
@@ -21,12 +23,10 @@ import org.eclipse.core.runtime.*;
 /**
  *
  */
-public class PropertyManager implements IManager {
+public class PropertyManager implements IManager, ILifecycleListener {
 	protected Workspace workspace;
 public PropertyManager(Workspace workspace) {
 	this.workspace = workspace;
-}
-public void changing(IProject target) {
 }
 public void closePropertyStore(IResource target) throws CoreException {
 	Resource host = (Resource) getPropertyHost(target);
@@ -40,9 +40,6 @@ public void closePropertyStore(IResource target) throws CoreException {
 		store.shutdown(null);
 		setPropertyStore(target, null);
 	}
-}
-public void closing(IProject target) throws CoreException {
-	closePropertyStore(target);
 }
 /**
  * Copy all the properties of one resource to another. Both resources
@@ -101,8 +98,6 @@ protected void deletePropertyStore(IResource target) throws CoreException {
 	closePropertyStore(target);
 	workspace.getMetaArea().getPropertyStoreLocation(target).toFile().delete();
 }
-public void deleting(IProject project) {
-}
 /**
  * Returns the value of the identified property on the given resource as
  * maintained by this store.
@@ -152,7 +147,9 @@ protected PropertyStore getPropertyStore(IResource target) throws CoreException 
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 	}
 }
-public void opening(IProject target) throws CoreException {
+public void handleEvent(LifecycleEvent event) throws CoreException {
+	if (event.kind == LifecycleEvent.PRE_PROJECT_CLOSE) 
+		closePropertyStore(event.resource);
 }
 protected PropertyStore openPropertyStore(IResource target) {
 	int type = target.getType();
@@ -190,5 +187,8 @@ public void shutdown(IProgressMonitor monitor) throws CoreException {
 	closePropertyStore(workspace.getRoot());
 }
 public void startup(IProgressMonitor monitor) throws CoreException {
+	workspace.addLifecycleListener(this);
 }
+
+
 }
