@@ -85,8 +85,12 @@ class EditorStatusLine implements IEditorStatusLine {
 
 		if (error)
 			fStatusLineManager.setErrorMessage(image, message);
-		else
+		else {
+			// Clear error message
+			fStatusLineManager.setErrorMessage(null, null);
+
 			fStatusLineManager.setMessage(image, message);
+		}
 
 		if (isMessageEmpty(message))
 			uninstallStatusLineClearer();			
