@@ -202,6 +202,11 @@
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
 			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder">
 			<action 
+				id="org.eclipse.team.ccvs.ui.tagInRepository"
+				label="%TagInRepositoryAction.label"
+				tooltip="%TagInRepositoryAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.checkoutAs"
 				label="%CheckoutAsAction.label"
 				tooltip="%CheckoutAsAction.tooltip"
