@@ -37,18 +37,7 @@ public class CompareWithTagAction extends WorkspaceAction {
 		for (int i = 0; i < resources.length; i++) {
 			projects[i] = resources[i].getProject();
 		}
-		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, 
-			Policy.bind("CompareWithTagAction.message"),  //$NON-NLS-1$
-			Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
-			TagSelectionDialog.INCLUDE_ALL_TAGS, 
-			false, /* show recurse*/
-			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
-		dialog.setBlockOnOpen(true);
-		int result = dialog.open();
-		if (result == Dialog.CANCEL || dialog.getResult() == null) {
-			return;
-		}
-		final CVSTag tag = dialog.getResult();
+		final CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), projects);
 		if (tag == null) return;
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
@@ -57,9 +46,4 @@ public class CompareWithTagAction extends WorkspaceAction {
 			}
 		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
 	}
-	
-	protected boolean isEnabled() throws TeamException {
-		return isSelectionNonOverlapping();
-	}
-
 }

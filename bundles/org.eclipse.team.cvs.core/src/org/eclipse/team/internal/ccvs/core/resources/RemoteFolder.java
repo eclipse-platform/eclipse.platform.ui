@@ -777,7 +777,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/**
 	 * @see ICVSRemoteFolder#forTag(CVSTag)
 	 */
-	public ICVSRemoteFolder forTag(CVSTag tagName) {
+	public ICVSRemoteResource forTag(CVSTag tagName) {
 		return (ICVSRemoteFolder)forTag(null, tagName);
 	}
 

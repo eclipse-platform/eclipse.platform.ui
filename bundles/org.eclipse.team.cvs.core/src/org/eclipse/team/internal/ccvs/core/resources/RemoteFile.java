@@ -584,4 +584,16 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		return new RemoteFile((RemoteFolder)parent, getWorkspaceSyncState(), getName(), tagName);
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSRemoteResource#forTag(org.eclipse.team.internal.ccvs.core.CVSTag)
+	 */
+	public ICVSRemoteResource forTag(CVSTag tag) {
+		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, getRepository(), 
+			new Path(((ICVSRemoteFolder)getParent()).getRepositoryRelativePath()), 
+			tag);
+		RemoteFile remoteFile = (RemoteFile)forTag(remoteFolder, tag);
+		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });
+		return remoteFile;
+	}
+
 }

@@ -498,6 +498,14 @@
                id="org.eclipse.team.ccvs.ui.compareRemoteResources">
          </action>
          <action
+               label="%CompareRemoteWithTagAction.label"
+               menubarPath="miscGroup"
+               tooltip="%CompareRemoteWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteWithTagAction"
+               helpContextId="org.eclipse.team.cvs.ui.compare_remote_with_tag_action_context"
+               id="org.eclipse.team.ccvs.ui.compareRemoteWithTag">
+         </action>
+         <action
                label="%MoveTagAction.label"
                menubarPath="tagGroup"
                tooltip="%MoveTagAction.tooltip"

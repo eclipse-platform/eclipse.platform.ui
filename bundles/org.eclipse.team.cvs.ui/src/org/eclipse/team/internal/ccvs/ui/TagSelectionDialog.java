@@ -66,6 +66,24 @@ public class TagSelectionDialog extends Dialog {
 	private static final int SIZING_DIALOG_WIDTH = 400;
 	private static final int SIZING_DIALOG_HEIGHT = 250;
 	
+	public static CVSTag getTagToCompareWith(Shell shell, IProject[] projects) {
+		return getTagToCompareWith(shell, getCVSFoldersFor(projects));
+	}
+		
+	public static CVSTag getTagToCompareWith(Shell shell, ICVSFolder[] folders) {
+		TagSelectionDialog dialog = new TagSelectionDialog(shell, folders, 
+			Policy.bind("CompareWithTagAction.message"),  //$NON-NLS-1$
+			Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
+			TagSelectionDialog.INCLUDE_ALL_TAGS, 
+			false, /* show recurse*/
+			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
+		dialog.setBlockOnOpen(true);
+		int result = dialog.open();
+		if (result == Dialog.CANCEL) {
+			return null;
+		}
+		return dialog.getResult();
+	}
 	/**
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.

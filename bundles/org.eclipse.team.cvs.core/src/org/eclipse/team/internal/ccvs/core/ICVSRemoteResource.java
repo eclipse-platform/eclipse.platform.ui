@@ -52,7 +52,15 @@ public interface ICVSRemoteResource extends IRemoteResource, ICVSResource {
 	 * @return an indication of whether the objects are equals
 	 */
 	public boolean equals(Object other);
-		
+
+	/**
+	 * Allows a client to change the context of a remote resource handle.  For
+	 * example, if a remote resource was created with the HEAD context (e.g. can
+	 * be used to browse the main branch) use this method to change the
+	 * context to another branch tag or to a version tag.
+	 */
+	public ICVSRemoteResource forTag(CVSTag tagName);
+			
 	/**
 	 * Tag the remote resources referenced by the receiver (using rtag)
 	 */

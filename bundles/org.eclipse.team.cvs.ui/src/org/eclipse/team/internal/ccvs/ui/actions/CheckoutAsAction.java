@@ -53,7 +53,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		if (folders.length != 1) return;
 		final String name = folders[0].getName();
 		// make a copy of the folder so that we will not effect the original folder when we refetch the members
-		final ICVSRemoteFolder folder = folders[0].forTag(folders[0].getTag());
+		final ICVSRemoteFolder folder = (ICVSRemoteFolder)folders[0].forTag(folders[0].getTag());
 		
 		// Fetch the members of the folder to see if they contain a .project file.
 		final boolean[] hasProjectMetaFile = new boolean[] { false };

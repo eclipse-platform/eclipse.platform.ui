@@ -16,14 +16,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
   * Clients are not expected to implement this interface.
   */
 public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
-
-	/**
-	 * Allows a client to change the context of a remote folder handle.  For
-	 * example, if a remote folder was created with the HEAD context (e.g. can
-	 * be used to browse the main branch) use this method to change the
-	 * context to another branch tag or to a version tag.
-	 */
-	public ICVSRemoteFolder forTag(CVSTag tagName);
 	
 	/**
 	 * Return the context of this handle. The returned tag can be a branch or
