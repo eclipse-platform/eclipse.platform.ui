@@ -57,7 +57,8 @@ public class DefaultPluginParser extends DefaultHandler {
 			pluginEntry = new PluginEntry();
 			parser.parse(new InputSource(in));
 		} catch (ParseCompleteException e) {
-			// expected, we stopped the parsing
+			// expected, we stopped the parsing when we have the information we need
+			/// no need to pursue the parsing
 		}
 
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
@@ -72,14 +73,14 @@ public class DefaultPluginParser extends DefaultHandler {
 		String tag = localName.trim();
 
 		if (tag.equalsIgnoreCase(PLUGIN)) {
+			pluginEntry.isFragment(false);			
 			processPlugin(attributes);
-			pluginEntry.isFragment(false);
 			return;
 		}
 
 		if (tag.equalsIgnoreCase(FRAGMENT)) {
+			pluginEntry.isFragment(true);			
 			processPlugin(attributes);
-			pluginEntry.isFragment(true);
 			return;
 		}
 	}

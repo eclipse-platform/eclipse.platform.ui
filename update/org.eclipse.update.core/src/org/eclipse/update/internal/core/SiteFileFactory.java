@@ -25,9 +25,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 	public class PluginIdentifier {
 		private VersionedIdentifier id;
 		private File location;
-		public PluginIdentifier(VersionedIdentifier id, File location) {
+		private boolean isFragment=false;
+		
+		public PluginIdentifier(VersionedIdentifier id, File location,boolean fragment) {
 			this.id = id;
 			this.location = location;
+			this.isFragment = fragment;
 		}
 
 		public String getIdentifier() {
@@ -42,14 +45,21 @@ public class SiteFileFactory extends BaseSiteFactory {
 			return null;
 		}
 
+		public boolean isFragment() {
+			return isFragment;
+		}
+		
 		public File getLocation() {
 			return location;
 		}
 
 		public String toString() {
+			String msg="";
 			if (id != null)
-				return id.toString();
-			return ""; //$NON-NLS-1$
+				msg = id.toString();
+			if (isFragment())
+				msg+=" [fragment]";
+			return msg; //$NON-NLS-1$
 		}
 	}
 
@@ -256,11 +266,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 	private void parseInstalledPlugin(File dir) throws CoreException{
 		PluginIdentifier plugin = null;
 		File pluginFile = null;
-		String pluginFileString = null;
 
 		try {
 			if (dir.exists() && dir.isDirectory()) {
 				File[] files = dir.listFiles();
+				DefaultPluginParser parser = new DefaultPluginParser();
 				for (int i = 0; i < files.length; i++) {
 					if (files[i].isDirectory()) {
 
@@ -268,13 +278,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 							pluginFile = new File(files[i], "fragment.xml"); //$NON-NLS-1$
 						}
 
-						pluginFileString = (pluginFile==null) ? null : pluginFile.getAbsolutePath();
-
 						if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
-							IPluginEntry entry =
-								new DefaultPluginParser().parse(new FileInputStream(pluginFile));
+							IPluginEntry entry = parser.parse(new FileInputStream(pluginFile));
 							VersionedIdentifier identifier = entry.getVersionedIdentifier();
-							plugin = new PluginIdentifier(identifier, files[i]);
+							plugin = new PluginIdentifier(identifier, files[i], entry.isFragment());
 
 							addParsedPlugin(plugin);
 						}
@@ -282,11 +289,13 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} // path is a directory
 		} catch (IOException e) {
+			String pluginFileString = (pluginFile==null) ? null : pluginFile.getAbsolutePath();			
 			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorAccessing", pluginFileString),
 				e);
 			//$NON-NLS-1$
 		} catch (SAXException e) {
+			String pluginFileString = (pluginFile==null) ? null : pluginFile.getAbsolutePath();						
 			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFileString),
 				e);
@@ -310,6 +319,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 				PluginEntry entry = new PluginEntry();
 				entry.setPluginIdentifier(plugin.getIdentifier());
 				entry.setPluginVersion(plugin.getVersion().toString());
+				entry.isFragment(plugin.isFragment());
+
 				((Site) site).addPluginEntry(entry);
 
 				SiteFileFactory archiveFactory = new SiteFileFactory();
@@ -359,7 +370,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					if (ref != null) {
 						IPluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
 						VersionedIdentifier identifier = entry.getVersionedIdentifier();
-						plugin = new PluginIdentifier(identifier, file);
+						plugin = new PluginIdentifier(identifier, file, entry.isFragment());
 						addParsedPlugin(plugin);
 					} //ref!=null
 				} //for

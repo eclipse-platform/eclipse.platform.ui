@@ -1126,7 +1126,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String fragment = attributes.getValue("fragment"); //$NON-NLS-1$
 			pluginEntry.isFragment(
 				fragment != null && fragment.trim().equalsIgnoreCase("true"));
-			//$NON-NLS-1$
+			//$NON-NLS-1$			
 
 			//setOS
 			String os = attributes.getValue("os"); //$NON-NLS-1$

@@ -281,7 +281,6 @@ public class Feature extends FeatureModel implements IFeature {
 			IVerificationResult vr;
 			ContentReference[] references =
 				provider.getFeatureEntryArchiveReferences(monitor);
-			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
 						vr =
@@ -295,7 +294,6 @@ public class Feature extends FeatureModel implements IFeature {
 						}
 					}
 				}
-			}
 
 			if (monitor != null) {
 				monitor.worked(1);

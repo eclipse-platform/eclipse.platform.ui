@@ -164,7 +164,7 @@ public class Utilities {
 	public static CoreException newCoreException(String s, Throwable e) {
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			
+	
 		// check the case of a multistatus
 		IStatus status;
 		if (e instanceof CoreException){
@@ -179,6 +179,10 @@ public class Utilities {
 			}
 			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);	
 		}
+
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
+			if (e!=null) UpdateManagerPlugin.getPlugin().getLog().log(status);
+		
 		return new CoreException(status); //$NON-NLS-1$
 	}
 

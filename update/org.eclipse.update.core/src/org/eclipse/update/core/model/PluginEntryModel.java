@@ -40,6 +40,7 @@ public class PluginEntryModel extends ContentEntryModel {
 		if (!(obj instanceof PluginEntryModel))
 			return false;
 		PluginEntryModel model = (PluginEntryModel) obj;
+		
 		return (
 			(getPluginIdentifier().equals(model.getPluginIdentifier()))
 				&& (getPluginVersion().equals(model.getPluginVersion()))
@@ -112,6 +113,16 @@ public class PluginEntryModel extends ContentEntryModel {
 	public void isFragment(boolean isFragment) {
 		assertIsWriteable();
 		this.isFragment = isFragment;
+	}
+
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():"";
+		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():"";
+		msg += isFragment()?" fragment":" plugin";
+		return msg;
 	}
 
 }
