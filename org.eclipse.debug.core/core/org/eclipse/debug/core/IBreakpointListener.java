@@ -55,7 +55,9 @@ public interface IBreakpointListener {
 	 *
 	 * @param breakpoint the changed breakpoint
 	 * @param delta the marker delta that describes the changes
-	 *  with the marker associated with the given breakpoint
+	 *  with the marker associated with the given breakpoint, or
+	 *  <code>null</code> when the breakpoint change does not affect
+	 *  the underlying marker
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 */

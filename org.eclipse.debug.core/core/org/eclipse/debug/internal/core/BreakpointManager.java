@@ -335,6 +335,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fireUpdate(breakpoint, null, ADDED);
 		}			
 	}
+	
+	/**
+	 * @see IBreakpointManager#fireBreakpointChanged(IBreakpoint)
+	 */
+	public void fireBreakpointChanged(IBreakpoint breakpoint) {
+		if (getBreakpoints0().contains(breakpoint)) {
+			fireUpdate(breakpoint, null, CHANGED);
+		}
+	}
 
 	/**
 	 * Verifies that the breakpoint marker has the minimal required attributes,

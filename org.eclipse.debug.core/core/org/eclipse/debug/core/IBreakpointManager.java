@@ -83,7 +83,20 @@ public interface IBreakpointManager {
 	 *
 	 * @return whether the breakpoint is registered
 	 */
-	public boolean isRegistered(IBreakpoint breakpoint);	
+	public boolean isRegistered(IBreakpoint breakpoint);
+	
+	/**
+	 * Notifies all registered listeners that this breakpoint has changed.
+	 * Has no effect if the given breakpoint is not currently registered.
+	 * 
+	 * This method is intended to be used when a breakpoint
+	 * attribute is changed that does not alter the breakpoint's
+	 * underlying marker, that is, when notification will not occur
+	 * via the marker delta mechanism.
+	 * 
+	 * @param breakpoint the breakpoint that has changed.
+	 */
+	public void fireBreakpointChanged(IBreakpoint breakpoint);
 
 	/**
 	 * Removes the given breakpoint from the breakpoint manager, deletes
