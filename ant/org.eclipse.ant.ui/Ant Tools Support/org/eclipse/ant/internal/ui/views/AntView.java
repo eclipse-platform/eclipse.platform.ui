@@ -17,7 +17,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -68,17 +68,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -243,11 +238,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			if (buildFile != null) {
 				menu.add(new Separator("group.open")); //$NON-NLS-1$
 				IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.1"));  //$NON-NLS-1$
-				openWithMenu.setFile(buildFile);
-				if (node.getImportNode() != null) {
-					int[] lineAndColumn= node.getExternalInfo();
-					openWithMenu.setExternalInfo(lineAndColumn[0], lineAndColumn[1]);
-				} 
+				openWithMenu.setNode(node);
 				submenu.add(openWithMenu);
 				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
 			}
@@ -357,21 +348,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private void handleProjectViewerDoubleClick() {
 		AntElementNode node= getSelectionNode();
 		if (node != null) {
-			IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-			IFile file= node.getIFile();
-			IEditorDescriptor editor = IDE.getDefaultEditor(file);
-			if (editor == null) {
-				editor= registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
-			}
-			try {
-				if (editor == null) {
-					getViewSite().getPage().openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-				} else {
-					getViewSite().getPage().openEditor(new FileEditorInput(file), editor.getId());
-				}
-			} catch (PartInitException e) {
-				AntUIPlugin.log(e);
-			}
+			AntUtil.openInEditor(getViewSite().getPage(), node);
 		} 
 	}
 

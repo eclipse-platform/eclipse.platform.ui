@@ -21,18 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
@@ -41,16 +35,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * 
@@ -58,16 +47,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class AntOpenWithMenu extends ContributionItem {
 
-	private IWorkbenchPage page;
-	private IAdaptable file;
-	private IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+	private IWorkbenchPage fPage;
+	private IEditorRegistry fRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 	private static final String SYSTEM_EDITOR_ID= PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
 	private static Map imageCache = new Hashtable(11);
-	
-	private int fLine= -1;
-	private int fColumn= -1;
 
+	private AntElementNode fNode;
+	
 	/**
 	 * The id of this action.
 	 */
@@ -75,15 +62,12 @@ public class AntOpenWithMenu extends ContributionItem {
 
 	public AntOpenWithMenu(IWorkbenchPage page) {
 		super(ID);
-		this.page= page;
+		this.fPage= page;
 	}
 	
-	public void setFile(IAdaptable file) {
-		this.file= file;
-		fLine= -1;
-		fColumn= -1;
-	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		Iterator iter= imageCache.values().iterator();
@@ -97,8 +81,8 @@ public class AntOpenWithMenu extends ContributionItem {
 	/**
 	 * Returns an image to show for the corresponding editor descriptor.
 	 *
-	 * @param editorDesc the editor descriptor, or null for the system editor
-	 * @return the image or null
+	 * @param editorDesc the editor descriptor, or <code>null</code> for the system editor
+	 * @return the image or <code>null</code>
 	 */
 	private Image getImage(IEditorDescriptor editorDesc) {
 		ImageDescriptor imageDesc = getImageDescriptor(editorDesc);
@@ -115,18 +99,18 @@ public class AntOpenWithMenu extends ContributionItem {
 
 	/**
 	 * Returns the image descriptor for the given editor descriptor,
-	 * or null if it has no image.
+	 * or <code>null</code> if it has no image.
 	 */
 	private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
 		ImageDescriptor imageDesc = null;
 		if (editorDesc == null) {
-			imageDesc = registry.getImageDescriptor(getFileResource().getName());
+			imageDesc = fRegistry.getImageDescriptor(fNode.getIFile().getName());
 		} else {
 			imageDesc = editorDesc.getImageDescriptor();
 		}
 		if (imageDesc == null) {
 			if (editorDesc.getId().equals(SYSTEM_EDITOR_ID)) {
-				imageDesc = getSystemEditorImageDescriptor(getFileResource().getFileExtension());
+				imageDesc = getSystemEditorImageDescriptor(fNode.getIFile().getFileExtension());
 			}
 		}
 		return imageDesc;
@@ -135,7 +119,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	/**
 	 * Return the image descriptor of the system editor
 	 * that is registered with the OS to edit files of
-	 * this type. Null if none can be found.
+	 * this type. <code>null</code> if none can be found.
 	 */
 	private ImageDescriptor getSystemEditorImageDescriptor(String extension) {
 		Program externalProgram = null;
@@ -165,6 +149,9 @@ public class AntOpenWithMenu extends ContributionItem {
 			menuItem.setImage(image);
 		}
 		Listener listener = new Listener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
 			public void handleEvent(Event event) {
 				switch (event.type) {
 					case SWT.Selection :
@@ -177,21 +164,22 @@ public class AntOpenWithMenu extends ContributionItem {
 		};
 		menuItem.addListener(SWT.Selection, listener);
 	}
+	
 	/* (non-Javadoc)
-	 * Fills the menu with perspective items.
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
 	 */
 	public void fill(Menu menu, int index) {
-		IFile fileResource = getFileResource();
+		IFile fileResource = fNode.getIFile();
 		if (fileResource == null) {
 			return;
 		}
 
-		IEditorDescriptor defaultEditor = registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID); // should not be null
+		IEditorDescriptor defaultEditor = fRegistry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID); // should not be null
 		IEditorDescriptor preferredEditor = IDE.getDefaultEditor(fileResource); // may be null
 		
-		Object[] editors= registry.getEditors(fileResource.getName());
+		Object[] editors= fRegistry.getEditors(fileResource.getName());
 		Arrays.sort(editors, new Comparator() {
-			/**
+			/* (non-Javadoc)
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Object o1, Object o2) {
@@ -201,7 +189,7 @@ public class AntOpenWithMenu extends ContributionItem {
 				return s1.compareToIgnoreCase(s2);
 			}
 		});
-		IEditorDescriptor antEditor= registry.findEditor("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
+		IEditorDescriptor antEditor= fRegistry.findEditor("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
 		
 		boolean defaultFound = false;
 		boolean antFound= false;
@@ -238,26 +226,13 @@ public class AntOpenWithMenu extends ContributionItem {
 		}
 
 		// Add system editor.
-		IEditorDescriptor descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		IEditorDescriptor descriptor = fRegistry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		createMenuItem(menu, descriptor, preferredEditor);
 		createDefaultMenuItem(menu, fileResource);
 	}
 
-	/**
-	 * Converts the IAdaptable file to IFile or null.
-	 */
-	private IFile getFileResource() {
-		if (this.file instanceof IFile) {
-			return (IFile) this.file;
-		}
-		IResource resource = (IResource) this.file.getAdapter(IResource.class);
-		if (resource instanceof IFile) {
-			return (IFile) resource;
-		}
-		return null;
-	}
 	/* (non-Javadoc)
-	 * Returns whether this menu is dynamic.
+	 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
 	 */
 	public boolean isDynamic() {
 		return true;
@@ -265,61 +240,10 @@ public class AntOpenWithMenu extends ContributionItem {
 	/**
 	 * Opens the given editor on the selected file.
 	 *
-	 * @param editor the editor descriptor, or null for the system editor
+	 * @param editor the editor descriptor, or <code>null</code> for the system editor
 	 */
 	private void openEditor(IEditorDescriptor editorDescriptor) {
-		IEditorPart editorPart= null;
-		IFile fileResource = getFileResource();
-		try {
-			if (editorDescriptor == null) {
-				editorPart= page.openEditor(new FileEditorInput(fileResource), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-			} else {
-				editorPart= page.openEditor(new FileEditorInput(fileResource), editorDescriptor.getId());
-			}
-		} catch (PartInitException e) {
-			AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
-		}
-		if (fLine == -1) {
-			return;
-		}
-		if (editorPart instanceof ITextEditor) {
-			ITextEditor editor= (ITextEditor)editorPart;
-			int offset= getOffset(fLine, fColumn, editor);
-			if (offset == -1) {
-				return;
-			}
-			IDocumentProvider provider= editor.getDocumentProvider();
-			if (provider instanceof AntEditorDocumentProvider) {
-				AntModel model= ((AntEditorDocumentProvider)provider).getAntModel(editor.getEditorInput());
-				AntElementNode node= model.getProjectNode().getNode(offset);
-				editor.setHighlightRange(node.getOffset(), node.getLength(), true);
-				editor.selectAndReveal(node.getOffset(), node.getSelectionLength());	
-			}
-		}
-	}
-	
-	private int getOffset(int line, int column, ITextEditor editor) {
-		IDocumentProvider provider= editor.getDocumentProvider();
-		IEditorInput input= editor.getEditorInput();
-		try {
-			provider.connect(input);
-		} catch (CoreException e) {
-			return -1;
-		}
-		try {
-			IDocument document= provider.getDocument(input);
-			if (document != null) {
-				if (column > -1) {
-					 //column marks the length..adjust to 0 index and to be within the element's source range
-					return document.getLineOffset(line - 1) + column - 1 - 2;
-				} 
-				return document.getLineOffset(line - 1);
-			}
-		} catch (BadLocationException e) {
-		} finally {
-			provider.disconnect(input);
-		}
-		return -1;
+		AntUtil.openInEditor(fPage, editorDescriptor, fNode);
 	}
 
 	/**
@@ -335,13 +259,16 @@ public class AntOpenWithMenu extends ContributionItem {
 		menuItem.setText(AntViewActionMessages.getString("AntViewOpenWithMenu.Default_Editor_4")); //$NON-NLS-1$
 
 		Listener listener = new Listener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
 			public void handleEvent(Event event) {
 				switch (event.type) {
 					case SWT.Selection :
 						if (menuItem.getSelection()) {
 							IDE.setDefaultEditor(fileResource, null);
 							try {
-								IDE.openEditor(page, fileResource, true);
+								IDE.openEditor(fPage, fileResource, true);
 							} catch (PartInitException e) {
 								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 							}
@@ -354,9 +281,7 @@ public class AntOpenWithMenu extends ContributionItem {
 		menuItem.addListener(SWT.Selection, listener);
 	}
 
-	
-	public void setExternalInfo(int line, int column) {
-		fLine= line;
-		fColumn= column;
+	public void setNode(AntElementNode node) {
+		fNode= node;
 	}
 }

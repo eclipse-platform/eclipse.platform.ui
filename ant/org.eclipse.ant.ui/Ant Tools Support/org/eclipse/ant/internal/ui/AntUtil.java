@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
@@ -38,6 +39,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.ant.internal.ui.views.actions.AntViewActionMessages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -54,9 +56,20 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * General utility class dealing with Ant build files
@@ -545,4 +558,76 @@ public final class AntUtil {
 			workingCopy.doSave();
 		}
 	}
+
+    private static int getOffset(int line, int column, ITextEditor editor) {
+    	IDocumentProvider provider= editor.getDocumentProvider();
+    	IEditorInput input= editor.getEditorInput();
+    	try {
+    		provider.connect(input);
+    	} catch (CoreException e) {
+    		return -1;
+    	}
+    	try {
+    		IDocument document= provider.getDocument(input);
+    		if (document != null) {
+    			if (column > -1) {
+    				 //column marks the length..adjust to 0 index and to be within the element's source range
+    				return document.getLineOffset(line - 1) + column - 1 - 2;
+    			} 
+    			return document.getLineOffset(line - 1);
+    		}
+    	} catch (BadLocationException e) {
+    	} finally {
+    		provider.disconnect(input);
+    	}
+    	return -1;
+    }
+
+    /**
+     * Opens the given editor on the buildfile of the provided node.
+     *
+     * @param editor the editor descriptor, or <code>null</code> for the system editor
+     */
+    public static void openInEditor(IWorkbenchPage page, IEditorDescriptor editorDescriptor, AntElementNode node) {
+    	IEditorPart editorPart= null;
+    	IFile fileResource = node.getIFile();
+    	try {
+    		if (editorDescriptor == null) {
+    			editorPart= page.openEditor(new FileEditorInput(fileResource), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+    		} else {
+    			editorPart= page.openEditor(new FileEditorInput(fileResource), editorDescriptor.getId());
+    		}
+    	} catch (PartInitException e) {
+    		AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+    	}
+    	
+    	if (editorPart instanceof AntEditor) {
+    	    AntEditor editor= (AntEditor)editorPart;
+    		if (node.getImportNode() != null) {	
+    			AntModel model= editor.getAntModel();
+    			AntProjectNode project= model.getProjectNode();
+    			if (project == null) {
+    				return;
+    			}
+    			int[] info= node.getExternalInfo();
+    			int offset= getOffset(info[0], info[1], editor);
+    			node= project.getNode(offset);
+    		}
+    		editor.setSelection(node, true);
+    	}
+    }
+
+    /**
+     * Opens an editor on the buildfile of the provided node.
+     */
+    public static void openInEditor(IWorkbenchPage page, AntElementNode node) {
+    	IFile file= node.getIFile();
+    	IEditorDescriptor editorDesc;
+        try {
+            editorDesc = IDE.getEditorDescriptor(file);
+        } catch (PartInitException e) {
+           return;
+        }
+        openInEditor(page, editorDesc, node);
+    }
 }
