@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help.ui" id="browser" name="Browser"/>
-   </appInfo>
-   <documentation>
-      For providing web browsers capable of displaying html documents at a given URL.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help.ui" id="browser" name="Browser"/>
+      </appInfo>
+      <documentation>
+         For providing web browsers capable of displaying html documents at a given URL.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -41,6 +41,9 @@
 
    <element name="browser">
       <complexType>
+         <sequence>
+            <element ref="factoryclass"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -48,7 +51,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="factoryClass" type="string" use="required">
+         <attribute name="factoryclass" type="string">
             <annotation>
                <documentation>
                   the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
@@ -68,6 +71,43 @@
       </complexType>
    </element>
 
+   <element name="factoryclass">
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.IBrowserFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -77,13 +117,13 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.ui.browser"&gt;
-		&lt;browser 
-			id="org.eclipse.myPlugin.myBrowserID"
-			factoryClass="org.eclipse.myPlugin.myPackage.MyFactoryClass"
-			name="My Browser"&gt;
-		&lt;/browser&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.help.ui.browser&quot;&gt;
+  &lt;browser 
+   id=&quot;org.eclipse.myPlugin.myBrowserID&quot;
+   factoryClass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
+   name=&quot;My Browser&quot;&gt;
+  &lt;/browser&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
