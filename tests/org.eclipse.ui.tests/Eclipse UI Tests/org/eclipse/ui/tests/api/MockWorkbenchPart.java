@@ -1,12 +1,11 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.CallHistory;
+import org.eclipse.ui.test.harness.util.*;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
@@ -17,11 +16,9 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private Composite myParent;		
 	private IWorkbenchPartSite site;
 	private String title;
-	private MockSelectionProvider selectionProvider;
 	
 	public MockWorkbenchPart() {		
-		callTrace = new CallHistory();
-		selectionProvider = new MockSelectionProvider();		
+		callTrace = new CallHistory(this);
 	}
 	
 	public CallHistory getCallHistory()
@@ -35,7 +32,6 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	
 	public void setSite(IWorkbenchPartSite site) {
 		this.site = site;
-		site.setSelectionProvider(selectionProvider);		
 	}
 	
 	public IWorkbenchPartSite getSite() {
@@ -54,7 +50,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 */
 	public void createPartControl(Composite parent) {
 		myParent = parent;
-		callTrace.add( this, "createPartControl" );
+		callTrace.add("createPartControl" );
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(title);
 	}
@@ -63,7 +59,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		callTrace.add( this, "dispose" );
+		callTrace.add("dispose" );
 	}
 
 	/**
@@ -98,7 +94,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		callTrace.add( this,"setFocus" );
+		callTrace.add("setFocus" );
 	}
 
 	/**
@@ -106,12 +102,5 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 */
 	public Object getAdapter(Class arg0) {
 		return null;
-	}
-	
-	/**
-	 * Fires a selection out.
-	 */
-	public void fireSelection() {
-		selectionProvider.fireSelection();
 	}
 }

@@ -16,7 +16,7 @@ public class MockPropertyListener implements IPropertyListener {
 	{
 		sourceMask = source;
 		sourceId = id;
-		callTrace = new CallHistory();
+		callTrace = new CallHistory(this);
 	}	
 	
 	/**
@@ -24,7 +24,7 @@ public class MockPropertyListener implements IPropertyListener {
 	 */
 	public void propertyChanged(Object source, int propId) {	
 		if( source == sourceMask && propId == sourceId )	
-			callTrace.add( this, "propertyChanged" );
+			callTrace.add( "propertyChanged" );
 	}
 	
 	public CallHistory getCallHistory()

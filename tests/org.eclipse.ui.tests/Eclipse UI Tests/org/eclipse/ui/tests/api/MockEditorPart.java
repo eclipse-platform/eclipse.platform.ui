@@ -24,7 +24,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
-		callTrace.add( this, "doSave" );
+		callTrace.add( "doSave" );
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#gotoMarker(IMarker)
 	 */
 	public void gotoMarker(IMarker marker) {
-		callTrace.add( this, "gotoMarker" );	
+		callTrace.add( "gotoMarker" );	
 	}
 
 	/**
@@ -61,14 +61,14 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 		throws PartInitException {
 		this.input = input;
 		setSite(site);
-		callTrace.add(this, "init");
+		callTrace.add( "init" );
 	}
 
 	/**
 	 * @see IEditorPart#isDirty()
 	 */
 	public boolean isDirty() {
-		callTrace.add( this, "isDirty" );
+		callTrace.add( "isDirty" );
 		return dirty;
 	}
 
@@ -88,7 +88,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#isSaveOnCloseNeeded()
 	 */
 	public boolean isSaveOnCloseNeeded() {
-		callTrace.add( this, "isSaveOnCloseNeeded" );
+		callTrace.add( "isSaveOnCloseNeeded" );
 		return saveNeeded;
 	}
 	
