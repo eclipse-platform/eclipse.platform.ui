@@ -128,17 +128,18 @@ public class SetPagePerspectiveAction extends Action {
 	 */
 	private ImageDescriptor adjustMainImage(ImageDescriptor start){
 		
-		Device device = PlatformUI.getWorkbench().getDisplay();
-		Image sizeImage = start.createImage(device);
-		
-		if(sizeImage == null)
-			return start;
-		
-		ImageData data = sizeImage.getImageData().scaledTo(32,32);
-		
-		ImageDescriptor result = new ResizedDescriptor(data);
-		sizeImage.dispose();
-		return result;
+		return start;
+//		Device device = PlatformUI.getWorkbench().getDisplay();
+//		Image sizeImage = start.createImage(device);
+//		
+//		if(sizeImage == null)
+//			return start;
+//		
+//		ImageData data = sizeImage.getImageData().scaledTo(32,32);
+//		
+//		ImageDescriptor result = new ResizedDescriptor(data);
+//		sizeImage.dispose();
+//		return result;
 		
 	}
 	
