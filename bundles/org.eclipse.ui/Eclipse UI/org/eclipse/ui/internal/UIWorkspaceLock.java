@@ -13,9 +13,11 @@ public class UIWorkspaceLock extends WorkspaceLock {
 	protected Display display;
 	protected Thread ui;
 	protected Semaphore pendingWork;
+	protected boolean pendingWorkStarted;
 public UIWorkspaceLock(IWorkspace workspace, Display display) throws CoreException {
 	super(workspace);
 	this.display = display;
+	pendingWorkStarted = false;
 }
 public boolean acquire() throws InterruptedException {
 	if (isUI()) {
@@ -25,7 +27,7 @@ public boolean acquire() throws InterruptedException {
 				throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
 			// If a syncExec was executed from the current operation, it
 			// has already acquired the lock. So, just return true.
-			if (pendingWork != null && pendingWork.getOperationThread() == currentOperation) {
+			if (pendingWork != null && pendingWorkStarted && pendingWork.getOperationThread() == currentOperation) {
 				if (isTreeLocked())
 					throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
 				else
@@ -47,11 +49,15 @@ void doPendingWork() {
 	if (pendingWork == null)
 		return;
 	try {
+		pendingWorkStarted = true;
 		pendingWork.getRunnable().run();
 	} finally {
 		// only null it after running
 		Semaphore temp = pendingWork;
+		// the following lines have to be done in
+		// that order to avoid concurrency problems
 		pendingWork = null;
+		pendingWorkStarted = false;
 		temp.release();
 	}
 }
