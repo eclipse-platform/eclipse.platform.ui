@@ -411,7 +411,7 @@ final class KeyBindingService implements INestableKeyBindingService {
                 if (!workbenchPartSite.equals(enabledSubmission
                         .getActiveWorkbenchPartSite())) {
                     replacementSubmission = new EnabledSubmission(
-                            enabledSubmission.getActiveShell(),
+                            null, enabledSubmission.getActiveShell(),
                             workbenchPartSite, enabledSubmission.getContextId());
                 } else {
                     replacementSubmission = enabledSubmission;
@@ -513,7 +513,7 @@ final class KeyBindingService implements INestableKeyBindingService {
         for (Iterator iterator = enabledContextIds.iterator(); iterator
                 .hasNext();) {
             String contextId = (String) iterator.next();
-            enabledSubmissions.add(new EnabledSubmission(null,
+            enabledSubmissions.add(new EnabledSubmission(null, null,
                     workbenchPartSite, contextId));
         }
 

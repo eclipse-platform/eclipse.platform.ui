@@ -69,7 +69,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			IExtension extension = configurationElement.getDeclaringExtension();
 
 			if (extension != null)
-				pluginId = extension.getParentIdentifier();
+				pluginId = extension.getNamespace();
 		}
 
 		return pluginId;

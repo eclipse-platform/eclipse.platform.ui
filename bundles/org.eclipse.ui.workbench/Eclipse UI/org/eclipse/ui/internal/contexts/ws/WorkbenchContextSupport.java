@@ -286,9 +286,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 && (newShell.getParent() != null)
                 && (registeredWindows.get(newShell) != null)) {
             final List newSubmissions = new ArrayList();
-            newSubmissions.add(new EnabledSubmission(newShell, null,
+            newSubmissions.add(new EnabledSubmission(null, newShell, null,
                     CONTEXT_ID_DIALOG_AND_WINDOW));
-            newSubmissions.add(new EnabledSubmission(newShell, null,
+            newSubmissions.add(new EnabledSubmission(null, newShell, null,
                     CONTEXT_ID_DIALOG));
             registeredWindows.put(null, newSubmissions);
             submissionsProcessed = true;
@@ -538,17 +538,17 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         final List submissions = new ArrayList();
         switch (type) {
         case TYPE_DIALOG:
-            submissions.add(new EnabledSubmission(shell, null,
+            submissions.add(new EnabledSubmission(null, shell, null,
                     CONTEXT_ID_DIALOG_AND_WINDOW));
-            submissions.add(new EnabledSubmission(shell, null,
+            submissions.add(new EnabledSubmission(null, shell, null,
                     CONTEXT_ID_DIALOG));
             break;
         case TYPE_NONE:
             break;
         case TYPE_WINDOW:
-            submissions.add(new EnabledSubmission(shell, null,
+            submissions.add(new EnabledSubmission(null, shell, null,
                     CONTEXT_ID_DIALOG_AND_WINDOW));
-            submissions.add(new EnabledSubmission(shell, null,
+            submissions.add(new EnabledSubmission(null, shell, null,
                     CONTEXT_ID_WINDOW));
             break;
         default:

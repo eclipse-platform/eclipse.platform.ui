@@ -65,7 +65,7 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 			IExtension extension = configurationElement.getDeclaringExtension();
 
 			if (extension != null)
-				pluginId = extension.getParentIdentifier();
+				pluginId = extension.getNamespace();
 		}
 
 		return pluginId;

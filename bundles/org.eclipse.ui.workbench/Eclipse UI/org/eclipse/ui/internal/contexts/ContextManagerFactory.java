@@ -25,11 +25,7 @@ public final class ContextManagerFactory {
 
     /**
      * Creates a new instance of <code>IMutableContextManager</code>.
-     * 
-     * @deprecated this will not be API for 3.0. there should be no clients of
-     *             this outside of platform-ui. use
-     *             IWorkbenchContextSupport.getContextManager() instead and do
-     *             not expect to be able to cast it to IMutableContextManager.
+     *
      * @return a new instance of <code>IMutableContextManager</code>. Clients
      *         should not make assumptions about the concrete implementation
      *         outside the contract of the interface. Guaranteed not to be
