@@ -41,8 +41,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -63,7 +61,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.IWorkbench;
@@ -268,7 +265,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	private Map colorValuesToSet = new HashMap(7);	
 
-    private TableColumn column;
 	private Text commentText;
     
 	/**
@@ -478,7 +474,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		ThemeElementCategory category = createCategoryControl(mainColumn);
 
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;		
+		data.horizontalSpan = 2;	
 		Label label = new Label(mainColumn, SWT.LEFT);	
 		label.setText(RESOURCE_BUNDLE.getString("colorsAndFonts")); //$NON-NLS-1$
 		myApplyDialogFont(label);
@@ -487,7 +483,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		createList(mainColumn);
 		Composite controlColumn = new Composite(mainColumn, SWT.NONE);
 		data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
+		//data.grabExcessHorizontalSpace = true;
 		controlColumn.setLayoutData(data);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -586,9 +582,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		presentationList.setSorter(new ViewerSorter());
 		
 		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-		data.heightHint = 175;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
 		presentationList.getControl().setLayoutData(data);
-		column = new TableColumn(presentationList.getTable(), SWT.LEFT);
         myApplyDialogFont(presentationList.getControl());
 	}
 
@@ -926,13 +922,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				}
 			}
 		});
-
-		presentationList.getControl().addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                column.setWidth(presentationList.getControl().getSize().x - 4);
-                // TODO: why is this 4?  Why is 4 magical?
-            }});
-		
 	}
 
     /* (non-Javadoc)
