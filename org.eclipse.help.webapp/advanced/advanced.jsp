@@ -187,7 +187,7 @@ function onloadHandler()
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:0px 10px;"><%=ServletResources.getString("SearchExpression", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
         <tr><td style="padding:0px 10px;"><%=ServletResources.getString("expression_label", request)%>
@@ -219,10 +219,10 @@ for (int i=0; i<tocData.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td>
-						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("Search", request)%>'  id="go" alt='<%=ServletResources.getString("Search", request)%>'>
+						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("Search", request)%>'  id="go" alt='<%=ServletResources.getString("Search", request)%>' title='<%=ServletResources.getString("Search", request)%>'>
 					</td>
 					<td>
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>' title='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

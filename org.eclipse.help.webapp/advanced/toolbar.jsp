@@ -226,6 +226,7 @@ if(buttons.length > 0){
 							   id="b<%=i%>">
 							   <img src="<%=buttons[i].getImage()%>" 
 									alt='<%=buttons[i].getTooltip()%>' 
+									title='<%=buttons[i].getTooltip()%>' 
 									border="0"
 									style="float: left;"
 									id="<%=buttons[i].getName()%>">

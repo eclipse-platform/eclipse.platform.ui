@@ -13,10 +13,10 @@
 	<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td nowrap>
-				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>'>
+				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>>
           	  	<input type="hidden" name="maxHits" value="500" >
           	  	<input type="hidden" name="scopedSearch" value="true" >
-				<input type="submit" value='<%=ServletResources.getString("GO", request)%>' alt='<%=ServletResources.getString("GO", request)%>'>
+				<input type="submit" value='<%=ServletResources.getString("GO", request)%>' alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
         	</td>
         </tr>
         <tr>
