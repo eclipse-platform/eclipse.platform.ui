@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
 
@@ -207,6 +209,9 @@ public class ScopePart {
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
+		ISelection selection= fSearchPageContainer.getSelection();
+		fUseSelection.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
