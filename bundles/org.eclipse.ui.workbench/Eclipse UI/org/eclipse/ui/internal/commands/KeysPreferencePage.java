@@ -467,14 +467,11 @@ public class KeysPreferencePage
 
 	private Composite createBasicTab(TabFolder parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;
-		composite.setLayout(gridLayout);
+		composite.setLayout(new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gridData);
 		Composite compositeKeyConfiguration = new Composite(composite, SWT.NULL);
-		gridLayout = new GridLayout();
+		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		compositeKeyConfiguration.setLayout(gridLayout);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
