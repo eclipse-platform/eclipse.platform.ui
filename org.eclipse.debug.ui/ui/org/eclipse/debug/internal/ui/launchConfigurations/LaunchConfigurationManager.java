@@ -573,7 +573,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	protected int findConfigInHistoryList(List list, ILaunchConfiguration config) {
 		for (int i = 0; i < list.size(); i++) {
 			LaunchConfigurationHistoryElement historyElement = (LaunchConfigurationHistoryElement) list.get(i);
-			if (historyElement.getLaunchConfiguration().contentsEqual(config)) {
+			if (historyElement.getLaunchConfiguration().equals(config)) {
 				return i;
 			}
 		}
