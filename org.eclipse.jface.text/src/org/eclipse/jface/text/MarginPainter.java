@@ -86,6 +86,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
+			fCachedWidgetX= -1;
 			fTextWidget.removePaintListener(this);
 			if (redraw)
 				fTextWidget.redraw();
@@ -109,7 +110,7 @@ public class MarginPainter implements IPainter, PaintListener {
 			if (fCachedWidgetX == -1)
 				computeWidgetX();
 			fTextWidget.redraw();
-		}  if (CONFIGURATION == reason || INTERNAL == reason)
+		} else if (CONFIGURATION == reason || INTERNAL == reason)
 			fTextWidget.redraw();
 	}
 	
