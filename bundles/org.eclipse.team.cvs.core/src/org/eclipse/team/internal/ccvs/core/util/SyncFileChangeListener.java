@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.DeferredResourceChangeHandler;
 
 /*
  * Listens to CVS meta-file changes and notifies the EclipseSynchronizer of changes made to sync files 
@@ -61,7 +62,9 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 																	IResourceDelta.REPLACED |
 																	IResourceDelta.TYPE;
 	
-	protected boolean isProjectOpening = false;								
+	protected boolean isProjectOpening = false;
+	
+	protected DeferredResourceChangeHandler deferredHandler = new DeferredResourceChangeHandler();
 	
 	/*
 	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
@@ -111,20 +114,15 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					} else {
 						// Inform the synchronizer about folder creations
 						if(isProjectOpening()) return true;
-						// TODO: Can't do this in a POST_CHANGE
-//						if (kind == IResourceDelta.ADDED) {
-//							try {
-//								EclipseSynchronizer.getInstance().created(resource);
-//							} catch (CVSException e) {
-//								throw new CoreException(e.getStatus());
-//							}
-//						}
 					}
 					
-					if (EclipseSynchronizer.getInstance().handleResourceChanged(resource)) {
+					if (EclipseSynchronizer.getInstance().isWithinActiveOperationScope(resource)) {
 						// The resource change will be handled by the EclipseSynchronizer
 						// Still visit the children of non-team-private members so that 
 						// ignore file changes will be past on to the EclipseSynchronizer
+						if (isIgnoreFile(resource)) {
+							deferredHandler.ignoreFileChanged((IFile)resource);
+						}
 						return (!resource.isTeamPrivateMember());
 					} if(isMetaFile(resource)) {
 						toBeNotified = handleChangedMetaFile(resource, kind);

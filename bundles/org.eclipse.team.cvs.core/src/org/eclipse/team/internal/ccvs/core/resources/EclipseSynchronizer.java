@@ -906,11 +906,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 			allChanges.addAll(Arrays.asList(changedResources));
 			allChanges.addAll(Arrays.asList(changedFolders));
 			allChanges.addAll(dirtyParents);	
-			try {
-				allChanges.addAll(Arrays.asList(getResourcesAffectedByChangedIgnoreFiles(threadInfo.getChangedIgnoreFiles())));
-			} catch (CVSException e) {
-				errors.add(e.getStatus());
-			}
 			IResource[] resources = (IResource[]) allChanges.toArray(
 				new IResource[allChanges.size()]);
 			broadcastResourceStateChanges(resources);
@@ -1466,77 +1461,16 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 
 	/**
-	 * Return true if the given resource is contained by the scheduling rule
-	 * that is being used by the current thread.
+	 * Return whether the resource is within the scope of a currently active
+	 * CVS operation.
 	 * @param resource
 	 * @return
 	 */
-	public boolean isWithinScopeOfActiveOperation(IResource resource) {
-		return resourceLock.isWithinActiveThread(resource);
+	public boolean isWithinActiveOperationScope(IResource resource) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+	
 
-	/**
-	 * Record the changed ignore file so it can be handled at the
-	 * end of the operation associated with the current thread.
-	 * @param resource
-	 */
-	public void handleIgnoreFileChange(IResource resource) {
-		Assert.isTrue(resource.getType() == IResource.FILE);
-		resourceLock.recordIgnoreFileChange((IFile)resource);
-	}
 	
-	private IResource[] getResourcesAffectedByChangedIgnoreFiles(IFile[] files) throws CVSException {
-		try {
-			Set changedPeers = new HashSet();
-			for (int i = 0; i < files.length; i++) {
-				IContainer parent = files[i].getParent();
-				if (parent.exists()) {
-					// Include the parent
-					changedPeers.add(parent);
-					// Include all siblings
-					changedPeers.addAll(Arrays.asList(parent.members(false)));
-				}
-			}
-			return (IResource[]) changedPeers.toArray(new IResource[changedPeers.size()]);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	/**
-	 * Handle a change event on the given resource. If the resource has been changed
-	 * as part of a currently running CVS operation, then add the resource change to
-	 * the list of changed resources for the operation (if necessary) and return <code>true</code>.
-	 * Otherwise, return <code>false</code> (indicating that the client should handle the change).
-	 * @param resource
-	 * @return
-	 */
-	public boolean handleResourceChanged(IResource resource) {
-		try {
-			beginOperation();
-			if(isWithinScopeOfActiveOperation(resource)) {
-				// This resource is modified by an active CVS operation
-				// (i.e. this is an intermitant delta)
-				// Notification is not required (or possible) in this case
-				// as the operation will peform the necessary notifications
-				// when it completes
-				if (isIgnoreFile(resource)) {
-					// Add the ignore file to the current operation 
-					// so it is handled when the operation completes
-					handleIgnoreFileChange(resource);
-				}
-				// Indicate that we've handled the resource
-				return true;
-			}
-			// Indicate that the client shoudl handle the change
-			return false;
-		} finally {
-			endOperation();
-		}
-	}
-	
-	private boolean isIgnoreFile(IResource resource) {
-		return resource.getType() == IResource.FILE &&
-			resource.getName().equals(SyncFileWriter.IGNORE_FILE);
-	}
 }

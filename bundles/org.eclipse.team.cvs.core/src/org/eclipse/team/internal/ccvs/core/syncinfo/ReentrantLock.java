@@ -61,7 +61,6 @@ public class ReentrantLock {
 	public class ThreadInfo {
 		private Set changedResources = new HashSet();
 		private Set changedFolders = new HashSet();
-		private Set changedIgnoreFiles = new HashSet();
 		private IFlushOperation operation;
 		private List rules = new ArrayList();
 		public ThreadInfo(IFlushOperation operation) {
@@ -130,20 +129,14 @@ public class ReentrantLock {
 		public void addChangedFolder(IContainer container) {
 			changedFolders.add(container);
 		}
-		public void addChangedIgnoreFile(IFile resource) {
-			changedIgnoreFiles.add(resource);
-		}
 		public boolean isEmpty() {
-			return changedFolders.isEmpty() && changedResources.isEmpty() && changedIgnoreFiles.isEmpty();
+			return changedFolders.isEmpty() && changedResources.isEmpty();
 		}
 		public IResource[] getChangedResources() {
 			return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
 		}
 		public IContainer[] getChangedFolders() {
 			return (IContainer[]) changedFolders.toArray(new IContainer[changedFolders.size()]);
-		}
-		public IFile[] getChangedIgnoreFiles() {
-			return (IFile[]) changedIgnoreFiles.toArray(new IFile[changedIgnoreFiles.size()]);
 		}
 		public void flush(IProgressMonitor monitor) throws CVSException {
 			try {
@@ -205,22 +198,26 @@ public class ReentrantLock {
 	}
 	
 	private ThreadInfo getThreadInfo(IResource resource) {
-		for (Iterator iter = infos.values().iterator(); iter.hasNext();) {
-			ThreadInfo info = (ThreadInfo) iter.next();
-			if (info.ruleContains(resource)) {
-				return info;
+		synchronized (infos) {
+			for (Iterator iter = infos.values().iterator(); iter.hasNext();) {
+				ThreadInfo info = (ThreadInfo) iter.next();
+				if (info.ruleContains(resource)) {
+					return info;
+				}
 			}
+			return null;
 		}
-		return null;
 	}
 	
 	public synchronized void acquire(IResource resource, IFlushOperation operation) {
 		ThreadInfo info = getThreadInfo();
-		if (info == null) {
-			info = new ThreadInfo(operation);
-			Thread thisThread = Thread.currentThread();
-			infos.put(thisThread, info);
-			if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
+		synchronized (infos) {
+			if (info == null) {
+				info = new ThreadInfo(operation);
+				Thread thisThread = Thread.currentThread();
+				infos.put(thisThread, info);
+				if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		info.pushRule(resource);
 	}
@@ -236,10 +233,12 @@ public class ReentrantLock {
 		Assert.isNotNull(info, "Unmatched acquire/release."); //$NON-NLS-1$
 		Assert.isTrue(info.isNested(), "Unmatched acquire/release."); //$NON-NLS-1$
 		info.popRule(resource, monitor);
-		if (!info.isNested()) {
-			Thread thisThread = Thread.currentThread();
-			if(DEBUG) System.out.println("[" + thisThread.getName() + "] released CVS lock"); //$NON-NLS-1$ //$NON-NLS-2$
-			infos.remove(thisThread);
+		synchronized (infos) {
+			if (!info.isNested()) {
+				Thread thisThread = Thread.currentThread();
+				if(DEBUG) System.out.println("[" + thisThread.getName() + "] released CVS lock"); //$NON-NLS-1$ //$NON-NLS-2$
+				infos.remove(thisThread);
+			}
 		}
 	}
 
@@ -264,23 +263,9 @@ public class ReentrantLock {
 		info.flush(monitor);
 	}
 
-	/**
-	 * Return <code>true</code> if the current thread is part of a CVS operation
-	 * and the given resource is contained the scheduling rule held by that operation.
-	 * @param resource
-	 * @return
-	 */
-	public synchronized boolean isWithinActiveThread(IResource resource) {
-		return getThreadInfo(resource) != null;
-	}
-
-	/**
-	 * Record the ignore file change as part of the current operation.
-	 * @param resource
-	 */
-	public synchronized void recordIgnoreFileChange(IFile resource) {
-		ThreadInfo info = getThreadInfo(resource);
-		Assert.isNotNull(info);
-		info.addChangedIgnoreFile(resource);
+	public boolean isWithinActiveOperationScope(IFile resource) {
+		synchronized (infos) {
+			return getThreadInfo(resource) != null;
+		}
 	}
 }
