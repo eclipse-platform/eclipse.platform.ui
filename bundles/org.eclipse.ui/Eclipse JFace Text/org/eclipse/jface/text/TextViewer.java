@@ -1309,14 +1309,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				int lines= getVisibleLinesInViewport();
 				if (lines > -1 ) {					
 					IDocument d= getVisibleDocument();
-					try {
-						int last= d.getLineOfOffset(d.getLength()) - lines;
-						if (last > 0 && index  > last)
-							index= last;
-					} catch (BadLocationException x) {
-						if (TRACE_ERRORS)
-							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.setTopIndex_2")); //$NON-NLS-1$
-					}
+					int last= d.getNumberOfLines() - lines;
+					if (last > 0 && index  > last)
+						index= last;
 					
 					fTextWidget.setTopIndex(index);
 					updateViewportListeners(INTERNAL);

@@ -24,6 +24,8 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	
 	static class StatusLineLabel extends CLabel {
 		
+		private static int INDENT= 3; // left and right margin used in CLabel
+		
 		private Point fFixedSize;
 		
 		public StatusLineLabel(Composite parent, int style) {
@@ -31,10 +33,10 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			
 			GC gc= new GC(parent);
 			gc.setFont(parent.getFont());
-			Point extent= gc.textExtent("MMMMMMMM");
+			Point extent= gc.textExtent("MMMMMMMMM");
 			gc.dispose();
 			
-			fFixedSize= new Point(extent.x, 10);
+			fFixedSize= new Point(extent.x + INDENT * 2, 10);
 		}
 		
 		public Point computeSize(int wHint, int hHint, boolean changed) {

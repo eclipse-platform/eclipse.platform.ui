@@ -177,8 +177,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 		
 		Point selection= p.getSelection(document);
-		if (selection != null)
+		if (selection != null) {
 			fViewer.setSelectedRange(selection.x, selection.y);
+			fViewer.revealRange(selection.x, selection.y);
+		}
 		
 		fIgnoreConsumedEvents= false;
 		

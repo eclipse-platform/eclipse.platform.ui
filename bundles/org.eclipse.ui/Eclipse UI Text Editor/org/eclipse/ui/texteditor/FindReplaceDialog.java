@@ -40,7 +40,6 @@ class FindReplaceDialog extends Dialog {
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit;
 	private List fFindHistory;
 	private List fReplaceHistory;
-	private String fLastFindContent;
 
 	private IFindReplaceTarget fTarget;
 	private Shell fParentShell;
@@ -70,8 +69,6 @@ class FindReplaceDialog extends Dialog {
 		fDialogPositionInit= null;
 		fFindHistory= new ArrayList(HISTORY_SIZE - 1);
 		fReplaceHistory= new ArrayList(HISTORY_SIZE - 1);
-
-		fLastFindContent= ""; //$NON-NLS-1$
 
 		fWrapInit= false;
 		fCaseInit= false;
@@ -455,7 +452,7 @@ class FindReplaceDialog extends Dialog {
 		if (okToUse(fFindField)) {
 			return fFindField.getText();
 		}
-		return fLastFindContent;
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -521,7 +518,6 @@ class FindReplaceDialog extends Dialog {
 		
 		// store current settings in case of re-open
 		fDialogPositionInit= getDialogBoundaries();
-		fLastFindContent= getFindString();
 		fWrapInit= isWrapSearch();
 		fWholeWordInit= isWholeWordSearch();
 		fCaseInit= isCaseSensitiveSearch();
@@ -546,7 +542,10 @@ class FindReplaceDialog extends Dialog {
 				fFindField.setText(selection);
 			} else {
 				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
-					fFindField.setText(fLastFindContent);
+					if (fFindHistory.size() > 0)
+						fFindField.setText((String) fFindHistory.get(0));
+					else
+						fFindField.setText(""); //$NON-NLS-1$				
 				}
 			}
 		}
@@ -900,11 +899,15 @@ class FindReplaceDialog extends Dialog {
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
 		
 		List history= getFindHistory();
+		while (history.size() > 8)
+			history.remove(8);
 		String[] names= new String[history.size()];
 		history.toArray(names);
 		s.put("findhistory", names); //$NON-NLS-1$
 		
 		history= getReplaceHistory();
+		while (history.size() > 8)
+			history.remove(8);
 		names= new String[history.size()];
 		history.toArray(names);
 		s.put("replacehistory", names); //$NON-NLS-1$

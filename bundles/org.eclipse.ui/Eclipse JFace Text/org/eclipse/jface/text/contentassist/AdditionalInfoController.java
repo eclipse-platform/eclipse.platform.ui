@@ -180,8 +180,10 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			}
 			
 			// compute subject area
-			setMargins(3, 0);
+			setMargins(4, -1);
 			Rectangle area= fProposalTable.getBounds();
+			area.x= 0; // subject area is the whole subject control
+			area.y= 0;
 			
 			// set information & subject area
 			setInformation(information, area);

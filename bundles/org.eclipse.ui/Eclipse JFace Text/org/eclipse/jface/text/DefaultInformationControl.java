@@ -50,6 +50,11 @@ public class DefaultInformationControl implements IInformationControl {
 	};
 	
 	
+	/* border thickness */
+	private static final int BORDER= 1;
+	/* right margin */
+	private static final int RIGHT_MARGIN= 3;
+	
 	/** The control's shell */
 	private Shell fShell;
 	/** The control's text widget */
@@ -80,7 +85,7 @@ public class DefaultInformationControl implements IInformationControl {
 		fText= new StyledText(fShell, SWT.MULTI | SWT.READ_ONLY | style);
 		
 		Display display= fShell.getDisplay();
-		
+
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
@@ -163,15 +168,24 @@ public class DefaultInformationControl implements IInformationControl {
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		fText.setSize(width + 3, height);
-		fShell.setSize(width + 5, height + 2);
+		fShell.setSize(width, height);
+
+		width -= BORDER * 2;
+		if (width < 0)
+			width= 0;
+
+		height -= BORDER * 2;
+		if (height < 0)
+			height= 0;
+
+		fText.setSize(width, height);
 	}
 	
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		fText.setLocation(1,1);
+		fText.setLocation(BORDER, BORDER);
 		fShell.setLocation(location);		
 	}
 	
@@ -187,7 +201,11 @@ public class DefaultInformationControl implements IInformationControl {
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return fText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point point= fText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		point.x += RIGHT_MARGIN + BORDER * 2;
+		point.y += BORDER * 2;
+
+		return point;
 	}
 	
 	/*
