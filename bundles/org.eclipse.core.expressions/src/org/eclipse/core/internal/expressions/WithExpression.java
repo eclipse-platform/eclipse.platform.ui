@@ -28,6 +28,12 @@ public class WithExpression extends CompositeExpression {
 	}
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
-		return evaluateAnd(new EvaluationContext(context, context.getVariable(fVariable)));
+		Object variable= context.getVariable(fVariable);
+		if (variable == null) {
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.VARIABLE_NOT_DEFINED,
+				ExpressionMessages.getFormattedString("WithExpression.variable_not_defined", fVariable))); //$NON-NLS-1$
+		}
+		return evaluateAnd(new EvaluationContext(context, variable));
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 International Business Machines Corp. and others.
+ * Copyright (c) 2000, 2004 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -11,11 +11,42 @@
 package org.eclipse.core.expressions;
 
 import org.eclipse.core.internal.expressions.Assert;
-import org.eclipse.core.internal.expressions.IPropertyTester;
 
 /**
- * Abstract superclass of all type extenders.
- * 
+ * Abstract superclass of all property testers. Implementation classes of
+ * the extension point <code>org.eclipse.core.expresssions.propertyTesters
+ * </code> must extend <code>PropertyTester</code>.
+ * <p>
+ * A property tester implements the property tests enumerated in the property
+ * tester extension point. For the following property test extension
+ * <pre>
+ *   <propertyTester
+ *     	namespace="org.eclipse.jdt.core"
+ *       id="org.eclipse.jdt.core.IPackageFragmentTester"
+ *       properties="isDefaultPackage"
+ *       type="org.eclipse.jdt.core.IPackageFragment"
+ *       class="org.eclipse.demo.MyPackageFragmentTester">
+ *     </propertyTester>
+ * </pre>
+ * the corresponding implemenation class looks like:
+ * <pre>
+ *   public class MyPackageFragmentTester {
+ *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+ *           IPackageFragment fragement= (IPackageFragment)receiver;
+ *	         if ("isDefaultPackage".equals(method)) { 
+ *               return fragement.isDefaultPackage();
+ *           }
+ *           Assert.isTrue(false);
+ *           return false;
+ *       }
+ *   }
+ * </pre>
+ * The property can then be used in a test expression as follows:
+ * <pre>
+ *   <instanceof value="org.eclipse.core.IPackageFragment"/>
+ *   <test property="isDefaultPackage"/>
+ * </pre>
+ * </p>
  * @since 3.0 
  */
 public abstract class PropertyTester implements IPropertyTester {
@@ -24,15 +55,15 @@ public abstract class PropertyTester implements IPropertyTester {
 	private String fNamespace;
 	
 	/**
-	 * Initializes the property tester whith the given namespace and property.
+	 * Initialize the property tester with the given name space and property.
 	 * <p>
 	 * Note: this method is for internal use only. Clients should not call 
 	 * this method.
 	 * </p>
-	 * @param namespace the namespace this tester belongs to
+	 * @param namespace the name space this tester belongs to
 	 * @param property the properties this tester supports
 	 */
-	public void initialize(String namespace, String properties) {
+	public final void initialize(String namespace, String properties) {
 		Assert.isNotNull(properties);
 		Assert.isNotNull(namespace);
 		fProperties= properties;

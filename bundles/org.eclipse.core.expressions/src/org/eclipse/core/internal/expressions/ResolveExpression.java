@@ -32,6 +32,12 @@ public class ResolveExpression extends CompositeExpression {
 	}
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
-		return evaluateAnd(new EvaluationContext(context, context.resolveVariable(fVariable, fArgs)));
+		Object variable= context.resolveVariable(fVariable, fArgs);
+		if (variable == null) {
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.VARIABLE_NOT_DEFINED,
+				ExpressionMessages.getFormattedString("ResolveExpression.variable_not_defined", fVariable))); //$NON-NLS-1$
+		}
+		return evaluateAnd(new EvaluationContext(context, variable));
 	}
 }

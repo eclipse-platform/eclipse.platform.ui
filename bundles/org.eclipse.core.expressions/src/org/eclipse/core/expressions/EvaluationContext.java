@@ -38,9 +38,10 @@ public class EvaluationContext implements IEvaluationContext {
 	 * variable.
 	 * 
 	 * @param parent the parent context. Can be <code>null</code>.
-	 * @param defaultVariable the default variable. Can be <code>null</code>.
+	 * @param defaultVariable the default variable
 	 */
 	public EvaluationContext(IEvaluationContext parent, Object defaultVariable) {
+		Assert.isNotNull(defaultVariable);
 		fParent= parent;
 		fDefaultVariable= defaultVariable;
 	}
@@ -50,11 +51,12 @@ public class EvaluationContext implements IEvaluationContext {
 	 * variable and the variable stored under the name selection.
 	 * 
 	 * @param parent the parent context. Can be <code>null</code>.
-	 * @param defaultVariable the default variable. Can be <code>null</code>.
+	 * @param defaultVariable the default variable
 	 * @param selection the variable stored under the name selection. Can
 	 *  be <code>null</code>
 	 */
 	public EvaluationContext(IEvaluationContext parent, Object defaultVariable, Object selection) {
+		Assert.isNotNull(defaultVariable);
 		fParent= parent;
 		fDefaultVariable= defaultVariable;
 		if (selection != null)
@@ -110,11 +112,15 @@ public class EvaluationContext implements IEvaluationContext {
 	 */
 	public Object getVariable(String name) {
 		Assert.isNotNull(name);
-		if (SYSTEM.equals(name))
-			return System.class;
-		if (fVariables == null)
-			return null;
-		return fVariables.get(name);
+		Object result= null;
+		if (fVariables != null) {
+			result= fVariables.get(name);
+		}
+		if (result != null)
+			return result;
+		if (fParent != null)
+			return fParent.getVariable(name);
+		return null;
 	}
 	
 	/**
@@ -136,6 +142,8 @@ public class EvaluationContext implements IEvaluationContext {
 					ExpressionMessages.getString("VariablePool.resolveVariable.arguments.not_a_string"))); //$NON-NLS-1$
 			return Platform.getPluginRegistry().getPluginDescriptor((String)(args[0]));
 		}
+		if (fParent != null)
+			return fParent.resolveVariable(name, args);
 		return null;
 	}
 }

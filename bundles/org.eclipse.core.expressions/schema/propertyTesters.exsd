@@ -87,7 +87,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a type extender contribution:
+         The following is an example of a property tester contribution:
 
 &lt;p&gt;
 &lt;pre&gt;
@@ -95,6 +95,7 @@
     &lt;propertyTester
       id=&quot;org.eclipse.jdt.ui.IResourceTester&quot;
       type=&quot;org.eclipse.core.resources.IResource&quot;
+      namespace=&quot;org.eclipse.jdt.ui&quot;
       properties=&quot;canDelete&quot;
       class=&quot;org.eclipse.jdt.ui.internal.ResourceTester&quot;&gt;
     &lt;/propertyTester&gt;

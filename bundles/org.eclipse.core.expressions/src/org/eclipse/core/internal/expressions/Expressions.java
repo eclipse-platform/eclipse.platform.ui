@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.Expression;
 
-/* package */ class Expressions {
+public class Expressions {
 	
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
@@ -94,16 +94,20 @@ import org.eclipse.core.expressions.Expression;
 	public static Object[] getArguments(IConfigurationElement element, String attributeName) {
 		String args= element.getAttribute(attributeName);
 		if (args != null) {
-			List result= new ArrayList();
-			Tokenizer tokenizer= new Tokenizer(args);
-			String arg;
-			while ((arg= tokenizer.next()) != null) {
-				result.add(convertToken(arg));
-			}
-			return result.toArray();
+			return parseArguments(args);
 		} else {
 			return EMPTY_ARGS;
 		}
+	}
+	
+	public static Object[] parseArguments(String args) {
+		List result= new ArrayList();
+		Tokenizer tokenizer= new Tokenizer(args);
+		String arg;
+		while ((arg= tokenizer.next()) != null) {
+			result.add(convertArgument(arg));
+		}
+		return result.toArray();
 	}
 		
 	private static final Object[] EMPTY_ARGS= new Object[0];
@@ -112,43 +116,75 @@ import org.eclipse.core.expressions.Expression;
 		private String fString;
 		private int fPosition;
 		public Tokenizer(String s) {
-			fString= s;
+			fString= s.trim();
 			fPosition= 0;
 		}
 		public String next() {
 			if (fPosition >= fString.length())
 				return null;
-			int nextComma= getNextCommna();
-			String result;
-			if (nextComma == -1) {
-				result= fString.substring(fPosition, fString.length()).trim();
-				fPosition= fString.length();
-			} else {
-				result= fString.substring(fPosition, nextComma).trim();
-				fPosition= nextComma + 1;
+			char ch= fString.charAt(fPosition);
+			while (ch == ' ') {
+				fPosition++;
+				ch= fString.charAt(fPosition);
 			}
-			return result;
+			if (ch == '\'') {
+				String result= getString();
+				fPosition++;
+				int comma= fString.indexOf(',', fPosition);
+				if (comma != -1)
+					fPosition= comma + 1;
+				else
+					fPosition= fString.length();
+				return result;
+			} else {
+				int nextComma= fString.indexOf(',', fPosition);
+				String result;
+				if (nextComma == -1) {
+					result= fString.substring(fPosition, fString.length());
+					fPosition= fString.length();
+				} else {
+					result= fString.substring(fPosition, nextComma);
+					
+					fPosition= nextComma + 1;
+				}
+				return result.trim();
+			}
 		}
-		private int getNextCommna() {
-			boolean quoted= false;
-			for (int i= fPosition; i < fString.length(); i++) {
-				char ch= fString.charAt(i);
+		private String getString() {
+			StringBuffer result= new StringBuffer();
+			result.append('\'');
+			fPosition++;
+			loop: for (; fPosition < fString.length(); fPosition++) {
+				char ch= fString.charAt(fPosition);
 				switch (ch) {
 					case '\'':
-						quoted= !quoted;
-					case ',':
-						if (!quoted)
-							return i;
-							
+						if (fPosition == fString.length() - 1) {
+							break loop;
+						} else {
+							char next= fString.charAt(fPosition + 1);
+							if (next == '\'') {
+								result.append('\'');
+								fPosition++;
+							} else {
+								break loop;
+							}
+						}
+						break;
+					default:
+						result.append(ch);
 				}
 			}
-			return -1;
+			result.append('\'');
+			return result.toString();
 		}
 	}
 	
-	private static Object convertToken(String arg) {
-		Assert.isTrue(arg.length() > 0);
-		if (arg.charAt(0) == '\'' && arg.charAt(arg.length() - 1) == '\'') {
+	public static Object convertArgument(String arg) {
+		if (arg == null) {
+			return null;
+		} else if (arg.length() == 0) {
+			return arg;
+		} else if (arg.charAt(0) == '\'' && arg.charAt(arg.length() - 1) == '\'') {
 			return arg.substring(1, arg.length() - 1);
 		} else if ("true".equals(arg)) { //$NON-NLS-1$
 			return Boolean.TRUE;

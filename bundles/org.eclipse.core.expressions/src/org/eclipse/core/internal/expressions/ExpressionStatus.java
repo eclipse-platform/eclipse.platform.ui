@@ -33,7 +33,7 @@ public class ExpressionStatus extends Status {
 	/** Error code indicating that an attribute value doesn't present an integer */
 	public static final int VALUE_IS_NOT_AN_INTEGER= 5;
 	
-	/** Error code indicating that a mandantory attribute is missing */
+	/** Error code indicating that a mandatory attribute is missing */
 	public static final int MISSING_ATTRIBUTE= 50;
 	
 	/** Error code indicating that the value specified for an attribute is invalid */
@@ -56,6 +56,12 @@ public class ExpressionStatus extends Status {
 	
 	/** Error indicating that the value returned from a type extender isn't of type boolean */
 	public static final int TEST_EXPRESSION_NOT_A_BOOLEAN= 203;
+	
+	/** Error indicating that the property attribute of the test element doesn't have a name space */
+	public static final int NO_NAMESPACE_PROVIDED= 300;
+	
+	/** Error indicating that a variable accessed in a with expression isn't available in the evaluation context */
+	public static final int VARIABLE_NOT_DEFINED= 301;
 	
 	
 	/**

@@ -107,11 +107,11 @@ public class EvaluationResult {
 	private static final int TRUE_VALUE= 1;
 	private static final int NOT_LOADED_VALUE= 2;
 	
-	/** The evalutation result representing the value FALSE */
+	/** The evaluation result representing the value FALSE */
 	public static final EvaluationResult FALSE= new EvaluationResult(FALSE_VALUE);
-	/** The evaluation result respresenting the value TRUE */
+	/** The evaluation result representing the value TRUE */
 	public static final EvaluationResult TRUE= new EvaluationResult(TRUE_VALUE);
-	/** The evalutation result representing the value NOT_LOADED */
+	/** The evaluation result representing the value NOT_LOADED */
 	public static final EvaluationResult NOT_LOADED= new EvaluationResult(NOT_LOADED_VALUE);
 
 	private static final EvaluationResult[][] AND= new EvaluationResult[][] {
@@ -141,22 +141,22 @@ public class EvaluationResult {
 	}
 	
 	/**
-	 * Returns an <code>EvalutionResult</code> whose value is <code>this &amp;&amp; other)</code>.
+	 * Returns an <code>EvaluationResult</code> whose value is <code>this &amp;&amp; other)</code>.
 	 * 
 	 * @param other the right hand side of the and operation.
 	 * 
-	 * @return <code>this &amp;&amp; other</code> as defined by the evlaution result
+	 * @return <code>this &amp;&amp; other</code> as defined by the evaluation result
 	 */
 	public EvaluationResult and(EvaluationResult op) {
 		return AND[fValue][op.fValue];
 	}
 	
 	/**
-	 * Returns an <code>EvalutionResult</code> whose value is <code>this || other)</code>.
+	 * Returns an <code>EvaluationResult</code> whose value is <code>this || other)</code>.
 	 * 
 	 * @param other the right hand side of the or operation.
 	 * 
-	 * @return <code>this || other</code> as defined by the evlaution result
+	 * @return <code>this || other</code> as defined by the evaluation result
 	 */
 	public EvaluationResult or(EvaluationResult op) {
 		return OR[fValue][op.fValue];
@@ -175,7 +175,7 @@ public class EvaluationResult {
 	 * Returns an evaluation result instance representing the
 	 * given boolean value. If the given boolean value is
 	 * <code>true</code> then <code.ExpressionResult.TRUE<code>
-	 * is returned. If the value is <code>false</code> the <code>
+	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
 	 * 
 	 * @param b a boolean value
@@ -191,7 +191,7 @@ public class EvaluationResult {
 	 * Returns a evaluation result instance representing the
 	 * given <code>Boolean</code> value. If the given <code>Boolean
 	 * </code> value is <code>true</code> then <code.ExpressionResult.TRUE<code>
-	 * is returned. If the value is <code>false</code> the <code>
+	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
 	 * 
 	 * @param b a <code>Boolean</code> value

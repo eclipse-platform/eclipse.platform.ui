@@ -90,7 +90,8 @@ public interface IEvaluationContext {
 	/**
 	 * Resolves a variable for the given name and arguments. This
 	 * method can be used to dynamically resolve variable such as
-	 * plugin descriptors, resources, etc.
+	 * plug-in descriptors, resources, etc. The method is used
+	 * by the <code>resolve</code> expression.
 	 * 
 	 * @param name the variable to resolve
 	 * @param args an object array of arguments used to resolve the

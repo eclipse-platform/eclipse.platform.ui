@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 
+import org.eclipse.core.expressions.IPropertyTester;
+
 /* package */ class PropertyTesterDescriptor implements IPropertyTester {
 	
 	private String fProperties;

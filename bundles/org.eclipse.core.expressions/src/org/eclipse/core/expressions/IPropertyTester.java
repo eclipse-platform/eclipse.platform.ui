@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.core.internal.expressions;
+package org.eclipse.core.expressions;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -72,7 +72,8 @@ public interface IPropertyTester {
 	 *  are specified in the <code>test</code> expression an array of length 0
 	 *  is passed
 	 * @param expectedValue the expected value of the property. The value is either 
-	 *  of type <code>java.lang.String</code> or a boxed base type
+	 *  of type <code>java.lang.String</code> or a boxed base type. If no value was
+	 *  specified in the <code>test</code> expressions then <code>null</code> is passed
 	 * 
 	 * @return returns <code>true<code> if the property is equal to the expected value; 
 	 *  otherwise <code>false</code> is returned

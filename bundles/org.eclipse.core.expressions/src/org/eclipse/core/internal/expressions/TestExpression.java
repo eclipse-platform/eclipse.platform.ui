@@ -29,10 +29,14 @@ public class TestExpression extends Expression {
 	
 	private static final TypeExtensionManager fgTypeExtensionManager= new TypeExtensionManager("propertyTesters"); //$NON-NLS-1$
 	
-	public TestExpression(IConfigurationElement element) {
+	public TestExpression(IConfigurationElement element) throws CoreException {
 		String property= element.getAttribute(ATT_PROPERTY);
 		int pos= property.lastIndexOf('.');
-		Assert.isTrue(pos != -1);
+		if (pos == -1) {
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.NO_NAMESPACE_PROVIDED,
+				ExpressionMessages.getString("TestExpression.no_name_space"))); //$NON-NLS-1$
+		}
 		fNamespace= property.substring(0, pos);
 		fProperty= property.substring(pos + 1);
 		fArgs= Expressions.getArguments(element, ATT_ARGS);

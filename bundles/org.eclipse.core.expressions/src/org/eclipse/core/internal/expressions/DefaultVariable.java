@@ -35,6 +35,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	 */
 	public DefaultVariable(IEvaluationContext parent, Object defaultVariable) {
 		Assert.isNotNull(parent);
+		Assert.isNotNull(defaultVariable);
 		fParent= parent;
 		while (parent instanceof DefaultVariable) {
 			parent= parent.getParent();

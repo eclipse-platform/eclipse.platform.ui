@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.expressions.IPropertyTester;
 import org.eclipse.core.expressions.PropertyTester;
 
 public class TypeExtension {

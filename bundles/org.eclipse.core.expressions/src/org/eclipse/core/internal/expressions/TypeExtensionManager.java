@@ -15,12 +15,14 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.core.expressions.IPropertyTester;
+
 public class TypeExtensionManager {
 	
 	private String fExtensionPoint; 
 	
 	/*
-	 * Map containing all already instanciated type extension object. Key is
+	 * Map containing all already created type extension object. Key is
 	 * of type <code>Class</code>, value is of type <code>TypeExtension</code>. 
 	 */
 	private final Map/*<Class, TypeExtension>*/ fTypeExtensionMap= new HashMap();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.eclipse.core.expressions.IPropertyTester;
+
 public class Property {
 	
 	private Class fType;
