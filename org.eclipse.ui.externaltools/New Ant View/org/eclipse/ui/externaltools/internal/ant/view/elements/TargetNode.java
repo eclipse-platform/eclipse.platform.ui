@@ -1,10 +1,10 @@
+package org.eclipse.ui.externaltools.internal.ant.view.elements;
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
-package org.eclipse.ui.externaltools.internal.ant.view.elements;
 
 /**
  * Representation of an ant target
@@ -13,6 +13,7 @@ public class TargetNode extends AntNode {
 	private DependencyNode dependencies;
 	private ExecutionPathNode executionPath;
 	private String description;
+	private boolean isErrorNode= false;
 	
 	/**
 	 * Creates a new target node with the given parent node, name, and target
@@ -29,16 +30,6 @@ public class TargetNode extends AntNode {
 		this.executionPath= new ExecutionPathNode(this);
 		addToExecutionPath(getName());
 		this.description= description;
-	}
-	
-	/**
-	 * Creates a new target node with the given name. This should only be called
-	 * by subclasses.
-	 * 
-	 * @param name the new node's name
-	 */
-	protected TargetNode(String name) {
-		super(name);
 	}
 	
 	/**
@@ -92,6 +83,24 @@ public class TargetNode extends AntNode {
 	 */
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * Sets this target's error node state
+	 *
+	 * @param boolean whether or not an error occurred while parsing this node
+	 */
+	public void setIsErrorNode(boolean isErrorNode) {
+		this.isErrorNode= isErrorNode;
+	}
+
+	/**
+	 * Returns whether an error occurred while parsing this Ant node
+	 *
+	 * @return whether an error occurred while parsing this Ant node
+	 */
+	public boolean isErrorNode() {
+		return isErrorNode;
 	}
 
 }

@@ -14,7 +14,6 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.DependencyNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ExecutionPathNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 
 /**
@@ -84,10 +83,12 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 			return ((RootNode) element).getProjects();
 		} else if (element instanceof ProjectNode) {
 			return ((ProjectNode) element).getTargets();
-		} else if (element instanceof TargetErrorNode) {
-			return null;
 		} else if (element instanceof TargetNode) {
-			return new Object[] {((TargetNode) element).getDependencies(), ((TargetNode) element).getExecutionPath()};
+			TargetNode target= (TargetNode) element;
+			if (target.isErrorNode()) {
+				return null;
+			}
+			return new Object[] {target.getDependencies(), target.getExecutionPath()};
 		} else if (element instanceof DependencyNode) {
 			return ((DependencyNode) element).getDependencies();
 		} else if (element instanceof ExecutionPathNode) {
@@ -110,20 +111,10 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof RootNode) {
-			return ((RootNode) element).getProjects().length > 0;
-		} else if (element instanceof ProjectNode) {
-			return ((ProjectNode) element).getTargets().length > 0;
-		} else if (element instanceof TargetErrorNode) {
-			return false;
-		} else if (element instanceof TargetNode) {
-			return true;
-		} else if (element instanceof DependencyNode) {
-			return true;
-		} else if (element instanceof ExecutionPathNode) {
-			return true;
+		if (element instanceof TargetNode) {
+			return !((TargetNode) element).isErrorNode();
 		}
-		return false;
+		return true;
 	}
 
 }

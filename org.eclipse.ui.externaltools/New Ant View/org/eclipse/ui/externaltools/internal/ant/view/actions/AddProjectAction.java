@@ -13,6 +13,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
+import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
@@ -45,8 +46,8 @@ public class AddProjectAction extends Action {
 		if (resource.getType() != IResource.FILE) {
 			return;
 		}
-		view.addBuildFile(((IFile)resource).getLocation().toString());
-
+		ProjectNode project= new ProjectNode(((IFile)resource).getLocation().toString());
+		view.addProject(project);
 	}
 
 }

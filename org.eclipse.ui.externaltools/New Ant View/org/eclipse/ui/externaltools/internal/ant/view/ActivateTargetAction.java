@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -49,7 +48,7 @@ public class ActivateTargetAction extends Action implements IUpdate {
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object data= iter.next();
-			if (iter.hasNext() || !(data instanceof TargetNode) || (data instanceof TargetErrorNode)) {
+			if (iter.hasNext() || !(data instanceof TargetNode) || ((TargetNode) data).isErrorNode()) {
 				// Only enable for single selection of a TargetNode
 				return null;
 			}

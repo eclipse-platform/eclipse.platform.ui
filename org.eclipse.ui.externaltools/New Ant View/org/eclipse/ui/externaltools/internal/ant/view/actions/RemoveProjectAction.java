@@ -5,7 +5,9 @@ This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,12 +37,14 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
 		Iterator iter= selection.iterator();
 		Object element;
+		List projectNodes= new ArrayList();
 		while (iter.hasNext()) {
 			element= iter.next();
 			if (element instanceof ProjectNode) {
-				view.removeProject((ProjectNode) element);
+				projectNodes.add(element);
 			}
 		}
+		view.removeProjects(projectNodes);
 	}
 	
 	/**

@@ -59,5 +59,13 @@ public class RootNode extends AntNode {
 	public void removeProject(ProjectNode project) {
 		projects.remove(project);
 	}
+	
+	/**
+	 * Removes all projects from this root node. Has no effect if this node has
+	 * no projects.
+	 */
+	public void removeAllProjects() {
+		projects.clear();
+	}
 
 }

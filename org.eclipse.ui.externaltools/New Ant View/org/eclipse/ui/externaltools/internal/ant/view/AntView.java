@@ -12,18 +12,11 @@ Contributors:
 *********************************************************************/
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Vector;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -44,11 +37,11 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddProjectAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.SearchForBuildFilesAction;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
@@ -74,9 +67,14 @@ public class AntView extends ViewPart {
 	 */
 	private static final String TAG_PROJECT = "project";
 	/**
+	 * XML key used to store whether or not an ant project is an error node.
+	 * Persisting this data saved a huge amount of processing at startup.
+	 */
+	private String KEY_ERROR = "error";
+	/**
 	 * XML key used to store an ant project's path
 	 */
-	private static final String TAG_PATH = "path";
+	private static final String KEY_PATH = "path";
 	/**
 	 * XML tag used to identify an ant target in storage
 	 */
@@ -84,7 +82,15 @@ public class AntView extends ViewPart {
 	/**
 	 * XML key used to store an ant node's name
 	 */
-	private String TAG_NAME = "name";
+	private String KEY_NAME = "name";
+	/**
+	 * XML value for a boolean attribute whose value is <code>true</code>
+	 */
+	private String VALUE_TRUE="true";
+	/**
+	 * XML value for a boolean attribute whose value is <code>false</code>
+	 */
+	private String VALUE_FALSE="false";
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -109,15 +115,16 @@ public class AntView extends ViewPart {
 	 */
 	private List updateActions = new ArrayList();
 	// Actions
-	AddProjectAction addProjectAction;
-	RemoveProjectAction removeProjectAction;
-	RunActiveTargetsAction runActiveTargetsAction;
-	SearchForBuildFilesAction searchForBuildFilesAction;
-	RunTargetAction runTargetAction;
-	ActivateTargetAction activateTargetAction;
-	DeactivateTargetAction deactivateTargetAction;
-	TargetMoveUpAction moveUpAction;
-	TargetMoveDownAction moveDownAction;
+	private AddProjectAction addProjectAction;
+	private RemoveProjectAction removeProjectAction;
+	private RunActiveTargetsAction runActiveTargetsAction;
+	private SearchForBuildFilesAction searchForBuildFilesAction;
+	private RunTargetAction runTargetAction;
+	private ActivateTargetAction activateTargetAction;
+	private DeactivateTargetAction deactivateTargetAction;
+	private TargetMoveUpAction moveUpAction;
+	private TargetMoveDownAction moveDownAction;
+	private RemoveAllAction removeAllAction;
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -161,10 +168,12 @@ public class AntView extends ViewPart {
 	protected void fillContextMenu(Viewer viewer, IMenuManager menu) {
 		if (viewer == projectViewer) {
 			menu.add(addProjectAction);
-			menu.add(removeProjectAction);
 			menu.add(new Separator());
 			menu.add(runTargetAction);
 			menu.add(activateTargetAction);
+			menu.add(new Separator());
+			menu.add(removeProjectAction);
+			menu.add(removeAllAction);
 		} else if (viewer == targetViewer) {
 			menu.add(deactivateTargetAction);
 			menu.add(new Separator());
@@ -183,6 +192,7 @@ public class AntView extends ViewPart {
 		toolBarMgr.add(addProjectAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 		toolBarMgr.add(removeProjectAction);
+		toolBarMgr.add(removeAllAction);
 	}
 
 	/**
@@ -192,6 +202,7 @@ public class AntView extends ViewPart {
 		addProjectAction = new AddProjectAction(this);
 		removeProjectAction = new RemoveProjectAction(this);
 		updateActions.add(removeProjectAction);
+		removeAllAction = new RemoveAllAction(this);
 		runTargetAction = new RunTargetAction(this);
 		updateActions.add(runTargetAction);
 		runActiveTargetsAction = new RunActiveTargetsAction(this);
@@ -235,7 +246,7 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the ant projects
 	 */
 	private void createProjectViewer() {
-		projectViewer = new TreeViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
+		projectViewer = new TreeViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		projectContentProvider = new AntProjectContentProvider();
 		projectViewer.setContentProvider(projectContentProvider);
 		projectViewer.setLabelProvider(new AntViewLabelProvider());
@@ -281,12 +292,12 @@ public class AntView extends ViewPart {
 	}
 
 	/**
-	 * Adds a project to the view based on the given build file
+	 * Adds the given project project to the view
 	 * 
-	 * @param buildFile the build file to add
+	 * @param project the project to add
 	 */
-	public void addBuildFile(String buildFile) {
-		projectContentProvider.addProject(parseBuildFile(buildFile));
+	public void addProject(ProjectNode project) {
+		projectContentProvider.addProject(project);
 		projectViewer.refresh();
 	}
 
@@ -317,15 +328,57 @@ public class AntView extends ViewPart {
 	 * @param project the project to remove
 	 */
 	public void removeProject(ProjectNode project) {
+		removeProjectFromContentProviders(project);
+		projectViewer.refresh();
+		targetViewer.refresh();
+	}
+	
+	/**
+	 * Removes the given list of <code>ProjectNode</code> objects from the view.
+	 * This method should be called whenever multiple projects are to be removed
+	 * because this method optimizes the viewer refresh associated with removing
+	 * multiple items.
+	 * 
+	 * @param projectNodes the list of <code>ProjectNode</code> objects to
+	 * remove
+	 */
+	public void removeProjects(List projectNodes) {
+		Iterator iter= projectNodes.iterator();
+		while (iter.hasNext()) {
+			ProjectNode project = (ProjectNode) iter.next();
+			removeProjectFromContentProviders(project);
+		}
+		projectViewer.refresh();
+		targetViewer.refresh();
+	}
+	
+	/**
+	 * Removes the given project node from the project content provider. Also
+	 * removes any targets from the given project from the target content
+	 * provider.
+	 * 
+	 * @param project the project to remove
+	 */
+	private void removeProjectFromContentProviders(ProjectNode project) {
 		ListIterator targets= targetContentProvider.getTargets().listIterator();
 		while (targets.hasNext()) {
 			TargetNode target= (TargetNode) targets.next();
 			if (project.equals(target.getParent())) {
 				targets.remove();
-				//deactivateTarget(target);
 			}
 		}
 		projectContentProvider.getRootNode().removeProject(project);
+	}
+	
+	/**
+	 * Removes all projects from the view
+	 */
+	public void removeAllProjects() {
+		// First, clear the active targets list
+		targetContentProvider.getTargets().clear();
+		// Remove all projects
+		projectContentProvider.getRootNode().removeAllProjects();
+		// Refresh the viewers
 		projectViewer.refresh();
 		targetViewer.refresh();
 	}
@@ -360,8 +413,8 @@ public class AntView extends ViewPart {
 		IMemento[] targets = memento.getChildren(TAG_TARGET);
 		for (int i = 0; i < targets.length; i++) {
 			IMemento target = targets[i];
-			String buildFileName = target.getString(TAG_PATH);
-			String targetName = target.getString(TAG_NAME);
+			String buildFileName = target.getString(KEY_PATH);
+			String targetName = target.getString(KEY_NAME);
 			ProjectNode[] projects = restoredRoot.getProjects();
 			for (int j = 0; j < projects.length; j++) {
 				ProjectNode project = projects[j];
@@ -395,11 +448,19 @@ public class AntView extends ViewPart {
 		List projectNodes = new ArrayList(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			IMemento project = projects[i];
-			String pathString = project.getString(TAG_PATH);
-			ProjectNode node = parseBuildFile(pathString);
-			if (!(node instanceof ProjectErrorNode)) {
-				projectNodes.add(node);
+			String pathString = project.getString(KEY_PATH);
+			String nameString = project.getString(KEY_NAME);
+			String errorString = project.getString(KEY_ERROR);
+			
+			ProjectNode node= null;
+			if (nameString == null) {
+				nameString= "";
 			}
+			node= new ProjectNode(nameString, pathString);
+			if (errorString != null && errorString.equals(VALUE_TRUE)) {
+				node.setIsErrorNode(true);
+			}
+			projectNodes.add(node);
 		}
 		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
 	}
@@ -411,10 +472,18 @@ public class AntView extends ViewPart {
 	 */
 	public void saveState(IMemento memento) {
 		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
+		ProjectNode project;
 		IMemento projectMemento;
 		for (int i = 0; i < projects.length; i++) {
+			project= projects[i];
 			projectMemento = memento.createChild(TAG_PROJECT);
-			projectMemento.putString(TAG_PATH, projects[i].getBuildFileName());
+			projectMemento.putString(KEY_PATH, project.getBuildFileName());
+			projectMemento.putString(KEY_NAME, project.getName());
+			if (project.isErrorNode()) {
+				projectMemento.putString(KEY_ERROR, VALUE_TRUE);
+			} else {
+				projectMemento.putString(KEY_ERROR, VALUE_FALSE);
+			}
 		}
 		Iterator targets = targetContentProvider.getTargets().iterator();
 		IMemento targetMemento;
@@ -422,92 +491,11 @@ public class AntView extends ViewPart {
 		while (targets.hasNext()) {
 			target = ((TargetNode) targets.next());
 			targetMemento = memento.createChild(TAG_TARGET);
-			targetMemento.putString(TAG_PATH, ((ProjectNode) target.getParent()).getBuildFileName());
-			targetMemento.putString(TAG_NAME, target.getName());
+			targetMemento.putString(KEY_PATH, ((ProjectNode) target.getParent()).getBuildFileName());
+			targetMemento.putString(KEY_NAME, target.getName());
 		}
 	}
-
-	/**
-	 * Parses the given build file and returns a project node representing the
-	 * build file. If an error occurs while parsing the file, an error node will
-	 * be returned
-	 * 
-	 * @param filename the name (full path) of the build file to parse
-	 * @return ProjectNode the  project node that represents the given build
-	 * file or a <code>ProjectErrorNode</code> if an error occurs while parsing
-	 * the given file.
-	 */
-	public static ProjectNode parseBuildFile(String filename) {
-		AntRunner runner = new AntRunner();
-		runner.setBuildFileLocation(filename);
-		TargetInfo[] infos = null;
-		try {
-			infos = runner.getAvailableTargets();
-		} catch (CoreException e) {
-			return new ProjectErrorNode("An exception occurred retrieving targets: " + e.getMessage(), filename);
-		}
-		if (infos.length < 1) {
-			return new ProjectErrorNode("No targets found", filename);
-		}
-		Project project = new Project();
-		if (infos[0].getProject() != null) {
-			project.setName(infos[0].getProject());
-		}
-		for (int i = 0; i < infos.length; i++) {
-			TargetInfo info = infos[i];
-			if (info.isDefault()) {
-				project.setDefault(info.getName());
-			}
-			Target target = new Target();
-			target.setName(info.getName());
-			String[] dependencies = info.getDependencies();
-			StringBuffer depends = new StringBuffer();
-			int numDependencies = dependencies.length;
-			if (numDependencies > 0) {
-				// Onroll the loop to avoid trailing comma
-				depends.append(dependencies[0]);
-			}
-			for (int j = 1; j < numDependencies; j++) {
-				depends.append(',').append(dependencies[j]);
-			}
-			target.setDepends(depends.toString());
-			target.setDescription(info.getDescription());
-			project.addTarget(target);
-		}
-		if (project.getDefaultTarget() == null) {
-			return new ProjectErrorNode("No project element found", filename);
-		}
-
-		String projectName = project.getName();
-		if (projectName == null) {
-			projectName = "(unnamed)";
-		}
-		ProjectNode projectNode = new ProjectNode(projectName, filename);
-		Enumeration projTargets = project.getTargets().elements();
-		while (projTargets.hasMoreElements()) {
-			Target target = (Target) projTargets.nextElement();
-			// Target Node -----------------
-			Enumeration targetDependencies = target.getDependencies();
-			TargetNode targetNode = new TargetNode(target.getName(), target.getDescription());
-			while (targetDependencies.hasMoreElements()) {
-				targetNode.addDependency((String) targetDependencies.nextElement());
-			}
-			projectNode.addTarget(targetNode);
-			// Execution Path -------
-			Vector topoSort = project.topoSort(target.getName(), project.getTargets());
-			int n = topoSort.indexOf(target) + 1;
-			while (topoSort.size() > n)
-				topoSort.remove(topoSort.size() - 1);
-			topoSort.trimToSize();
-			ListIterator topoElements = topoSort.listIterator();
-			while (topoElements.hasNext()) {
-				int i = topoElements.nextIndex();
-				Target topoTask = (Target) topoElements.next();
-				targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName());
-			}
-		}
-		return projectNode;
-	}
+	
 	/**
 	 * Moves the given target up in the list of active targets
 	 */

@@ -68,6 +68,15 @@ public abstract class AntNode {
 		return name;
 	}
 	
+	/**
+	 * Sets this node's name to the given name
+	 * 
+	 * @param name the new name
+	 */
+	public void setName(String name) {
+		this.name= name;
+	}
+	
 	public String toString() {
 		if (getName() != null) {
 			return getName();

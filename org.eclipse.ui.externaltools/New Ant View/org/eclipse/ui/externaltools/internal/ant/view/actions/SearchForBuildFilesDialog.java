@@ -32,6 +32,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 
+/**
+ * This dialog allows the user to search for Ant build files whose names match a
+ * given pattern. The search may be performed on the entire workspace or it can
+ * be limited to a particular working set.
+ */
 public class SearchForBuildFilesDialog extends InputDialog {
 
 	/**
@@ -39,10 +44,23 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private List results = new ArrayList();
 	/**
-	 * List of <code>IContainer</code> objects in which to search
+	 * List of <code>IResource</code> objects in which to search.
+	 * 
+	 * If the searchScopes are <code>null</code>, the user has asked to search
+	 * the workspace. If the searchScopes are empty, the user has asked to
+	 * search a working set that has no resources.
 	 */
-	private List searchScopes = new ArrayList();
+	private List searchScopes = null;
+	/**
+	 * The working set scope radio button.
+	 */
 	private Button workingSetScopeButton;
+	/**
+	 * The button that allows the user to decide if error results should be
+	 * parsed
+	 */
+	private Button includeErrorResultButton;
+	private boolean includeErrorResults= false;
 
 	public SearchForBuildFilesDialog() {
 		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):", "build.xml", new IInputValidator() {
@@ -69,6 +87,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
+		
+		includeErrorResultButton= new Button(composite, SWT.CHECK);
+		includeErrorResultButton.setText("Include build files that contain errors");
+		includeErrorResultButton.setSelection(false);
 		
 		Group scope= new Group(composite, SWT.NONE);
 		scope.setText("Scope");
@@ -98,6 +120,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		workingSetScopeButton.addSelectionListener(selectionListener);
 		
 		final Text workingSetText= new Text(scope, SWT.BORDER);
+		workingSetText.setEditable(false);
 		data= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END);
 		workingSetText.setLayoutData(data);
 
@@ -124,11 +147,20 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private void updateOkEnabled() {
 		if (workingSetScopeButton.getSelection()) {
-			if (searchScopes.isEmpty()) {
-				getErrorMessageLabel().setText("Must select a working set");
+			String error= null;
+			if (searchScopes == null) {
+				error= "Must select a working set";
+			} else if (searchScopes.isEmpty()) {
+				error= "No searchable resources found in the selected working set";
+			}
+			if (error != null) {
+				getErrorMessageLabel().setText(error);
+				getErrorMessageLabel().getParent().update();
 				getOkButton().setEnabled(false);
 				return;
 			}
+		} else {
+			searchScopes= null;
 		}
 		getOkButton().setEnabled(true);
 		getErrorMessageLabel().setText("");
@@ -148,11 +180,19 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		if (sets == null) {
 			return null;
 		}
-		IAdaptable[] elements= sets[0].getElements();
+		IAdaptable[] elements= sets[0].getElements(); // We disallowed multi-selection
+		searchScopes= new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
+			// Try to get an IResource object from each element
+			IResource resource= null;
 			IAdaptable adaptable = elements[i];
-			if (adaptable instanceof IContainer) {
-				searchScopes.add(adaptable);
+			if (adaptable instanceof IResource) {
+				resource= (IResource) adaptable;
+			} else {
+				resource= (IResource) adaptable.getAdapter(IResource.class);
+			}
+			if (resource != null) {
+				searchScopes.add(resource);
 			}
 		}
 		return sets[0].getName();
@@ -171,6 +211,14 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	public IFile[] getResults() {
 		return (IFile[]) results.toArray(new IFile[results.size()]);
 	}
+	
+	/**
+	 * Returns whether the user wishes to include results which cannot be
+	 * parsed.
+	 */
+	public boolean getIncludeErrorResults() {
+		return includeErrorResults;
+	}
 
 	/**
 	 * When the user presses the search button (tied to the OK id), search the
@@ -178,14 +226,15 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void okPressed() {
 		String input = getInput();
+		includeErrorResults= includeErrorResultButton.getSelection();
 		results = new ArrayList(); // Clear previous results
 		StringMatcher matcher= new StringMatcher(input, true, false);
-		if (searchScopes.isEmpty()) {
+		if (searchScopes == null || searchScopes.isEmpty()) {
 			searchForBuildFiles(matcher, ResourcesPlugin.getWorkspace().getRoot());
 		} else {
 			Iterator iter= searchScopes.iterator();
 			while(iter.hasNext()) {
-				searchForBuildFiles(matcher, (IContainer) iter.next());
+				searchForBuildFiles(matcher, (IResource) iter.next());
 			}
 		}
 		super.okPressed();
@@ -194,22 +243,26 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * Searches for files whose name matches the given regular expression in the
 	 * given container.
+	 * 
+	 * @param matcher the string matcher used to determine which files should
+	 * be added to the results
+	 * @param resource the resource to search
 	 */
-	private void searchForBuildFiles(StringMatcher matcher, IContainer container) {
-		IResource[] members = null;
-		try {
-			members = container.members();
-		} catch (CoreException e) {
-			return;
-		}
-		for (int i = 0; i < members.length; i++) {
-			IResource resource = members[i];
-			if (resource instanceof IContainer) {
-				searchForBuildFiles(matcher, (IContainer) resource);
-			} else if (resource instanceof IFile) {
-				if (matcher.match(((IFile) resource).getName())) {
-					results.add(resource);
-				}
+	private void searchForBuildFiles(StringMatcher matcher, IResource resource) {
+		if (resource instanceof IContainer) {
+			IContainer container= (IContainer) resource;
+			IResource[] members = null;
+			try {
+				members = container.members();
+			} catch (CoreException e) {
+				return;
+			}
+			for (int i = 0; i < members.length; i++) {
+				searchForBuildFiles(matcher, members[i]);
+			}
+		} else if (resource instanceof IFile) {
+			if (matcher.match(((IFile) resource).getName())) {
+				results.add(resource);
 			}
 		}
 	}
