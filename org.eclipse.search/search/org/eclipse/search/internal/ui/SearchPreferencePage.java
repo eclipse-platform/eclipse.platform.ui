@@ -78,25 +78,23 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	}
 	
 	protected void createFieldEditors() {
-		Composite parent= getFieldEditorParent();
-
 		BooleanFieldEditor boolEditor= new BooleanFieldEditor(
 			REUSE_EDITOR,
 			SearchMessages.getString("SearchPreferencePage.reuseEditor"), //$NON-NLS-1$
-			parent
+			getFieldEditorParent()
         );
 		addField(boolEditor);
 
 		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.emphasizePotentialMatches"), //$NON-NLS-1$
-			parent);
+			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
 
 		fColorEditor= new ColorEditor(
 			POTENTIAL_MATCH_FG_COLOR,
 			SearchMessages.getString("SearchPreferencePage.potentialMatchFgColor"), //$NON-NLS-1$
-			parent
+			getFieldEditorParent()
         );
 		addField(fColorEditor);
 		fColorEditor.setEnabled(arePotentialMatchesEmphasized());
