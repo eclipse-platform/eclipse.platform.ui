@@ -231,7 +231,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 			throw new TeamException(
 				new MultiStatus(
 					TeamPlugin.ID,
-					IStatus.ERROR,
+					0,	// code - we don't have one
 					statuses,
 					Policy.bind("multiStatus.errorsOccurred"), //$NON-NLS-1$
 					null));
