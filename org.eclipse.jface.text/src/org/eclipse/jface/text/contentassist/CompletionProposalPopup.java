@@ -408,6 +408,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void setProposals(ICompletionProposal[] proposals) {
 		if (Helper.okToUse(fProposalTable)) {
 
+			ICompletionProposal oldProposal= getSelectedProposal();
+			if (oldProposal instanceof ICompletionProposalExtension2)
+				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
+
 			fFilteredProposals= proposals;
 
 			fProposalTable.setRedraw(false);
@@ -570,9 +574,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void selectProposal(int index, boolean smartToggle) {
 
+		ICompletionProposal oldProposal= getSelectedProposal();
+		if (oldProposal instanceof ICompletionProposalExtension2)
+			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
+
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
+	
 		
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
