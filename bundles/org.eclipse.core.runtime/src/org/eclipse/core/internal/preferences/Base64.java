@@ -24,9 +24,8 @@ public class Base64 {
 	 * Base 64 encoding has to be according to the specification given by the
 	 * RFC 1521 (5.2).
 	 * 
-	 * @param byte[]
-	 *                  data the encoded byte array
-	 * @return char[] the decoded byte array
+	 * @param data the encoded byte array
+	 * @return the decoded byte array
 	 */
 	public static byte[] decode(byte[] data) {
 		int lastRealDataIndex;
@@ -108,8 +107,8 @@ public class Base64 {
 	/**
 	 * This method converts a Base 64 digit to its numeric value.
 	 * 
-	 * @param byte data digit (character) to convert
-	 * @return int value for the digit
+	 * @param data digit (character) to convert
+	 * @return value for the digit
 	 */
 	static int decodeDigit(byte data) {
 		char charData = (char) data;
@@ -133,8 +132,8 @@ public class Base64 {
 	 * This method encodes the byte array into a char array in base 64 according
 	 * to the specification given by the RFC 1521 (5.2).
 	 * 
-	 * @return byte[] the byte array that needs to be encoded
-	 * @param char[] the encoded char array
+	 * @param data the encoded char array
+	 * @return the byte array that needs to be encoded
 	 */
 	public static byte[] encode(byte[] data) {
 		int sourceChunks = data.length / 3;
