@@ -168,25 +168,11 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 					// Other natures are still set
 					Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex); //$NON-NLS-1$
 				}
-				// Make sure we have the cvs nature (the above read may have removed it)
-				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
-					try {
-						// TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), progress);
-						
-						// Set the nature manually in order to override any .project file
-						IProjectDescription description = project.getDescription();
-						String[] prevNatures= description.getNatureIds();
-						String[] newNatures= new String[prevNatures.length + 1];
-						System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-						newNatures[prevNatures.length]= CVSProviderPlugin.getTypeId();
-						description.setNatureIds(newNatures);
-						project.setDescription(description, IResource.FORCE | IResource.KEEP_HISTORY, progress);
-					}  catch (CoreException ex) {
-						// Failing to set the provider is probably due to a missing nature.
-						// Other natures are still set
-						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex); //$NON-NLS-1$
-					}
-				}
+
+				// Make sure we are still marked as a CVS project
+				if(RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) == null)
+					RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+
 				// Mark the .vcm_meta file with a problem marker
 				if (project.getFile(CORE_PROJECT_DESCRIPTION_PATH).exists()) {
 					createVCMMetaMarker(descResource);

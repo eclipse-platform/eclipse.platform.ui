@@ -22,7 +22,7 @@
 	<extension-point name="Authenticator" id="authenticator"/>
 	<extension-point name="ConnectionMethods" id="connectionmethods"/>
 
-	<!-- *************** Conection Methods **************** -->
+	<!-- *************** Connection Methods **************** -->
 	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
 		<adapter>
 			<run class="org.eclipse.team.internal.ccvs.core.connection.PServerConnectionMethod">
@@ -39,6 +39,15 @@
 		</adapter>
 	</extension>
 
+	<!-- *************** Repository Provider **************** -->
+	<extension
+         point="org.eclipse.team.core.repository">
+      <repository
+            class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
+            id="org.eclipse.team.cvs.core.cvsnature">
+      </repository>
+	</extension>
+   
 	<!-- *************** Project Nature **************** -->
 	<extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
 		<runtime>

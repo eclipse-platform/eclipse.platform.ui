@@ -212,7 +212,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
 					try {
 						if (! folder.isCVSFolder()) {
-							Team.removeNatureFromProject(resource.getProject(), CVSProviderPlugin.getTypeId(), null);
+							RepositoryProvider.unmap(resource.getProject());
 						}
 					} catch (TeamException e) {
 						CVSProviderPlugin.log(e.getStatus());

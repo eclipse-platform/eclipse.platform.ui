@@ -497,7 +497,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		} catch (CVSException e) {
 			// If we can't get the remote location, we should disconnect since nothing can be done with the provider
 			try {
-				Team.removeNatureFromProject(project, CVSProviderPlugin.getTypeId(), Policy.monitorFor(null));
+				RepositoryProvider.unmap(project);
 			} catch (TeamException ex) {
 				CVSProviderPlugin.log(ex);
 			}
