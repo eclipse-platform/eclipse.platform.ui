@@ -236,7 +236,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fUseSplines= true;
 	private boolean fUseSingleLine= true;
-	private boolean fUseResolveUI= fUseSingleLine;	// resolve UI only for single lines	private boolean fShowSummeryIcon;
+	private boolean fUseResolveUI= true;
 
 	private String fSymbolicFontName;
 
@@ -681,7 +681,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
-			fUseResolveUI= fUseSingleLine;
 			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
@@ -3005,7 +3004,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
-			fUseResolveUI= fUseSingleLine;
+//			fUseResolveUI= fUseSingleLine;
 			fBasicCenterCurve= null;
 			updateResolveStatus();
 			invalidateLines();
