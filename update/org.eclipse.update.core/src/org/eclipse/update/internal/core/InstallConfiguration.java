@@ -730,7 +730,7 @@ public class InstallConfiguration
 					try {
 						URL locationURL = new URL(location);
 						locationURL = Platform.resolve(locationURL);
-						list.add(locationURL);
+						list.add(asInstallRelativeURL(locationURL));
 					} catch(IOException e) {
 						// skip bad fragments
 					}
@@ -753,5 +753,36 @@ public class InstallConfiguration
 			+ entry.getVersionedIdentifier().toString()
 			+ FeatureContentProvider.JAR_EXTENSION;
 	}
-
+	
+	/**
+	 * Try to recast URL as platform:/base/
+	 */
+	private URL asInstallRelativeURL(URL url) {
+		// get location of install 
+		URL install = BootLoader.getInstallURL();
+		
+		// try to determine if supplied URL can be recast as install-relative
+		if (install.getProtocol().equals(url.getProtocol())) {
+			if (install.getProtocol().equals("file")) {
+				String installS = new File(install.getFile()).getAbsolutePath().replace(File.separatorChar, '/');
+				if (!installS.endsWith("/"))
+					installS += "/";
+				String urlS = new File(url.getFile()).getAbsolutePath().replace(File.separatorChar, '/');
+				if (!urlS.endsWith("/"))
+					urlS += "/";
+				int ix = installS.lastIndexOf("/");
+				if (ix != -1) {
+					installS = installS.substring(0, ix+1);
+					if (urlS.startsWith(installS)) {
+						try {
+							return new URL("platform:/base/"+urlS.substring(installS.length()));
+						} catch(MalformedURLException e) {
+						}
+					}
+				}
+			}
+		}
+		return url;
+	}
+	
 }

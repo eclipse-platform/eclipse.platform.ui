@@ -61,7 +61,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 		
 		// obtain current platform configuration and save stamps
 		IPlatformConfiguration cfg = BootLoader.getCurrentPlatformConfiguration();
-		URL[] originalPluginPath = cfg.getPluginPath();
+	//	URL[] originalPluginPath = cfg.getPluginPath();
 		
 		// perform reconciliation
 		long start = 0;
@@ -95,7 +95,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 		// just exit
 		if (RECONCILER_APP.equals(originalApplication)) {
 			Platform.endSplash();
-			if (!optimistic) 
+			if (changes) 
 				markChanges(cfg);
 			return EXIT_OK; // just exit if original app was reconciler
 		}		
@@ -104,7 +104,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 //		if (pluginPathChanged(cfg, originalPluginPath)) {
 			// plugins lineup changed ... need to restart
 			Platform.endSplash();
-			if (!optimistic)
+			if (changes)
 				markChanges(cfg);
 			if (DEBUG)
 				debug("restarting ...");  //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 //			if (DEBUG)
 //				debug("invoking " + originalApplication + " ...");  //$NON-NLS-1$  //$NON-NLS-2$
 //			// indicate we have new updates (-newUpdates)	
-//			if (!optimistic)
+//			if (changes)
 //				appArgs = markChanges(appArgs);
 //			return originalRunnable.run(appArgs);
 //		}
