@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IPresentationPreview;
+import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -30,7 +30,7 @@ import org.eclipse.ui.themes.ITheme;
 /**
  * @since 3.0
  */
-public class WorkbenchPreview implements IPresentationPreview {
+public class WorkbenchPreview implements IThemePreview {
 
     private IPreferenceStore store;
     private boolean disposed = false;

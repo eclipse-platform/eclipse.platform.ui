@@ -96,7 +96,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  a class that implements &lt;code&gt;org.eclipse.ui.IPresentationPreview&lt;/code&gt;
+                  a class that implements &lt;code&gt;org.eclipse.ui.IThemePreview&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IPresentationPreview"/>
@@ -442,8 +442,13 @@ All rights reserved.   This program and the accompanying materials are made avai
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ui.themes&quot;&gt;
+   	  &lt;themeElementCategory
+   	  	id=&quot;com.xyz.ThemeCategory&quot;
+   	  	class=&quot;com.xyz.XYZPreview&quot;
+   	  	label=&quot;XYZ Elements&quot;/&gt;
       &lt;colorDefinition 
         id=&quot;com.xyz.Forground&quot;
+        categoryId=&quot;com.xyz.ThemeCategory&quot;
         label=&quot;XYZ Foreground Color&quot;
         value=&quot;COLOR_BLACK&quot;&gt;
         &lt;description&gt;
@@ -452,6 +457,7 @@ All rights reserved.   This program and the accompanying materials are made avai
       &lt;/colorDefinition&gt;
       &lt;colorDefinition 
         id=&quot;com.xyz.Background&quot;
+        categoryId=&quot;com.xyz.ThemeCategory&quot;        
         label=&quot;XYZ Background Color&quot;&gt;
         &lt;colorFactory
          class=&quot;org.eclipse.ui.themes.RGBBlendColorFactory&quot;
@@ -469,6 +475,7 @@ All rights reserved.   This program and the accompanying materials are made avai
       &lt;/colorDefinition&gt;      
       &lt;fontDefiniton
         id=&quot;com.xyz.TextFont&quot;
+        categoryId=&quot;com.xyz.ThemeCategory&quot;        
         label=&quot;XYZ Editor Font&quot;
         defaultsTo=&quot;org.eclipse.jface.textfont&quot;&gt;
         &lt;description&gt;

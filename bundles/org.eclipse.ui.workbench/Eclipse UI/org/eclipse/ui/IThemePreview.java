@@ -18,7 +18,7 @@ import org.eclipse.ui.themes.ITheme;
  * <em>EXPERIMENTAL</em>
  * @since 3.0
  */
-public interface IPresentationPreview {
+public interface IThemePreview {
     
     /** 
      * @param parent the Composite in which to create the example

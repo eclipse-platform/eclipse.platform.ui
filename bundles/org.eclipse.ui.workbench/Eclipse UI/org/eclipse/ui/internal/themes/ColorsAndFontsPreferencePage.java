@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IPresentationPreview;
+import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -638,7 +638,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             cascadingTheme.dispose();
 
         for (Iterator i = previewSet.iterator(); i.hasNext();) {
-            IPresentationPreview preview = (IPresentationPreview) i.next();
+            IThemePreview preview = (IThemePreview) i.next();
             try {
                 preview.dispose();               
             }
@@ -1424,7 +1424,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (previewControl == null) {
 		    if (category != null) {
 		        try {
-                    IPresentationPreview preview = category.createPreview();
+                    IThemePreview preview = category.createPreview();
                     if (preview != null) {
 	                    previewControl = new Composite(previewComposite, SWT.NONE);
 	                    previewControl.setLayout(new FillLayout());

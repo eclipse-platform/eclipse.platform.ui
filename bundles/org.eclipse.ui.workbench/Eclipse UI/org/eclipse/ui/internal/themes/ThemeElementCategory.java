@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.themes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.IPresentationPreview;
+import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
@@ -57,11 +57,11 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
      * @return Returns the <code>IColorExample</code> for this category.  If one
      * is not available, <code>null</code> is returned.
      */
-    public IPresentationPreview createPreview() throws CoreException {
+    public IThemePreview createPreview() throws CoreException {
         String classString = element.getAttribute("class"); //$NON-NLS-1$
         if (classString == null || "".equals(classString)) //$NON-NLS-1$
                 return null;
-        return (IPresentationPreview) WorkbenchPlugin.createExtension(element, ThemeRegistryReader.ATT_CLASS);
+        return (IThemePreview) WorkbenchPlugin.createExtension(element, ThemeRegistryReader.ATT_CLASS);
     }
 
     /**
