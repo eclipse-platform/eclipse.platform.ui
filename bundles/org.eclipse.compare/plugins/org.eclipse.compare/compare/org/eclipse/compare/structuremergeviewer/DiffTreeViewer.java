@@ -581,7 +581,22 @@ public class DiffTreeViewer extends TreeViewer {
 	private void internalSetSelection(TreeItem ti) {
 		if (ti != null) {
 			Object data= ti.getData();
-			setSelection(new StructuredSelection(data), true);
+			if (data == null) {
+				//1GFDFH2: ITPJUI:ALL - Structure compare Ctrl-P causes error when previous in an unexpanded folder
+				TreeItem parent= ti.getParentItem();
+				if (parent != null) {
+					Object parentData= parent.getData();
+					if (parentData != null) {
+						expandToLevel(parentData, 99);
+						TreeItem[] items= parent.getItems();
+						if (items != null && items.length > 0)
+							data= items[items.length-1].getData();
+					}	
+				}
+			}
+			
+			if (data != null)
+				setSelection(new StructuredSelection(data), true);
 		}
 	}
 	
