@@ -13,13 +13,12 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * WorkbenchPreferenceGroup is the representation of a category
@@ -166,37 +165,44 @@ public class WorkbenchPreferenceGroup {
 	 */
 	public void highlightHits(String text) {
 		Iterator pagesIterator = pages.iterator();
-		Pattern pattern = Pattern.compile( ".*" +text + ".*");//$NON-NLS-1$//$NON-NLS-2$
+		StringMatcher matcher = new StringMatcher('*' + text + '*', true, false);
 		
 		
 		while(pagesIterator.hasNext()){
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) pagesIterator.next();
-			matchNode(pattern, node);
+			if (text.length() ==0) 
+				clearSearchResults(node); 
+			else
+				matchNode(matcher, node);
 		}
 		
 		Iterator groupsIterator = childGroups.iterator();
 		
 		while(groupsIterator.hasNext()){
 			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) groupsIterator.next();
-			Matcher m = pattern.matcher(group.getName());
-			group.highlight = m.matches();
+			group.highlight = text.length() == 0 ? false : matcher.match(group.getName()); 
 			group.highlightHits(text);
 		}
+	}
+
+	void clearSearchResults(WorkbenchPreferenceNode node) {
+		node.setHighlighted(false);
+		IPreferenceNode[] children = node.getSubNodes();
+		for (int i = 0; i < children.length; i++)
+			clearSearchResults((WorkbenchPreferenceNode) children[i]);
 	}
 
 	/**
 	 * Match the node to the pattern and highlight it if there is
 	 * a match.
-	 * @param pattern
+	 * @param matcher
 	 * @param node
 	 */
-	private void matchNode(Pattern pattern, WorkbenchPreferenceNode node) {
-		Matcher m = pattern.matcher(node.getLabelText());
-		node.setHighlighted(m.matches());
+	private void matchNode(StringMatcher matcher, WorkbenchPreferenceNode node) {
+		node.setHighlighted(matcher.match(node.getLabelText()));
 		IPreferenceNode[] children = node.getSubNodes();
-		for (int i = 0; i < children.length; i++) {
-			matchNode(pattern,(WorkbenchPreferenceNode) children[i]);			
-		}
+		for (int i = 0; i < children.length; i++)
+			matchNode(matcher, (WorkbenchPreferenceNode) children[i]);
 	}
 
 	/**
@@ -206,7 +212,7 @@ public class WorkbenchPreferenceGroup {
 	public boolean isHighlighted() {
 		return highlight;
 	}
-	
+
 	/**
 	 * Get the last selected object in this group.
 	 * @return Object
@@ -214,6 +220,7 @@ public class WorkbenchPreferenceGroup {
 	public Object getLastSelection() {
 		return lastSelection;
 	}
+
 	/**
 	 * Set the last selected object in this group.
 	 * @param lastSelection WorkbenchPreferenceGroup

@@ -11,6 +11,8 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -19,10 +21,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -50,7 +50,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -105,6 +104,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		history = createHistory();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#close()
+	 */
+	public boolean close() {
+		// clear the search results do they don't appear next time we open the dialog
+		clearSearchResults();
+		return super.close();
+	}
+
+	private void clearSearchResults() {
+		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
+		group.highlightHits(""); //$NON-NLS-1$
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,10 +138,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		//		 create a composite with standard margins and spacing
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -136,6 +147,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
 		toolbar.setLayoutData(data);
 
 		createDialogContents(composite);
@@ -154,13 +167,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
 		layout.numColumns = 3;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData compositeData = new GridData(GridData.FILL_BOTH);
+		compositeData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		composite.setLayoutData(compositeData);
 		applyDialogFont(composite);
 		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
@@ -172,17 +187,16 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				SWT.COLOR_LIST_BACKGROUND));
 
 		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout pageAreaLayout = new GridLayout(1, true);
+		GridLayout pageAreaLayout = new GridLayout();
+		pageAreaLayout.marginHeight = 0;
+		pageAreaLayout.marginWidth = 0;
+		pageAreaLayout.horizontalSpacing = 0;
+
 		pageAreaComposite.setLayout(pageAreaLayout);
 
 		// Build the Page container
 		setPageContainer(createPageContainer(pageAreaComposite));
 		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Build the separator line
-		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
-
 	}
 
 	/**
@@ -196,30 +210,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		searchArea.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout searchLayout = new GridLayout();
-		searchLayout.numColumns = 2;
 		searchLayout.marginWidth = 0;
 		searchLayout.marginHeight = 0;
-		searchLayout.makeColumnsEqualWidth = false;
 		searchArea.setLayout(searchLayout);
 
-		final Text searchText = new Text(searchArea, SWT.BORDER);
+		final Text searchText = new Text(searchArea, SWT.BORDER | SWT.SINGLE);
 
 		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
 				| GridData.FILL_VERTICAL);
 		searchText.setLayoutData(textData);
+		searchText.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+			}
 
-		Button searchButton = new Button(searchArea, SWT.PUSH);
-		searchButton.setImage(JFaceResources.getImage(SEARCH_ICON));
-		searchButton.setToolTipText(WorkbenchMessages
-				.getString("FilteredPreferenceDialog.SearchToolTip")); //$NON-NLS-1$
-		GridData searchData = new GridData(GridData.END);
-		searchButton.setLayoutData(searchData);
-
-		searchButton.addSelectionListener(new SelectionAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
+			public void keyReleased(KeyEvent e) {
 				highlightHits(searchText.getText());
 			}
 		});
@@ -240,6 +244,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			leftLayout.numColumns = 1;
 			leftLayout.marginWidth = 0;
 			leftLayout.marginHeight = 0;
+			leftLayout.horizontalSpacing = 0;
+			leftLayout.verticalSpacing = 0;
 
 			leftArea.setLayout(leftLayout);
 
@@ -272,6 +278,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		if (hasGroups()) {
 			Sash sash = super.createSash(composite, rightControl);
 			sash.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
 			return sash;
 		}
 		return super.createSash(composite, rightControl);
@@ -338,6 +345,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 					x = Math.max(x, size.x);
 					y = Math.max(y, size.y);
 				}
+				
+				x += IDialogConstants.HORIZONTAL_MARGIN * 2;
+				y += IDialogConstants.VERTICAL_MARGIN * 2;
+				
 				if (wHint != SWT.DEFAULT)
 					x = wHint;
 				if (hHint != SWT.DEFAULT)
@@ -353,7 +364,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				Rectangle rect = composite.getClientArea();
 				Control[] children = composite.getChildren();
 				for (int i = 0; i < children.length; i++) {
-					children[i].setSize(rect.width, rect.height);
+					children[i].setBounds(IDialogConstants.HORIZONTAL_MARGIN,
+							IDialogConstants.VERTICAL_MARGIN,
+							rect.width - (2 * IDialogConstants.HORIZONTAL_MARGIN),
+							rect.height - (2 * IDialogConstants.VERTICAL_MARGIN)
+							);
 				}
 			}
 
@@ -619,6 +634,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	public void updateMessage() {
 		//Do nothing for now
 	}
+
 	/**
 	 * Return the history for the receiver.
 	 * @return Returns the history.
