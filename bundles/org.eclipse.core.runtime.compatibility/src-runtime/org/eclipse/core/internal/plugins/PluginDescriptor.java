@@ -160,7 +160,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		ArrayList allLibraries = new ArrayList();
 		for (int i = 0; i < allBundles.length; i++)
 			try {
-				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) allBundles[i].getHeaders().get(Constants.BUNDLE_CLASSPATH));
+				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) allBundles[i].getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
 				if (classpathElements == null)
 					continue;
 				for (int j = 0; j < classpathElements.length; j++)
@@ -190,7 +190,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public PluginVersionIdentifier getVersionIdentifier() {
-		String version = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VERSION);
+		String version = (String) bundleOsgi.getHeaders("").get(Constants.BUNDLE_VERSION);
 		try {
 			return new PluginVersionIdentifier(version);
 		} catch (Exception e) {
@@ -373,7 +373,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders().get(PLUGIN_CLASS);
+		return (String) bundleOsgi.getHeaders("").get(PLUGIN_CLASS);
 	}
 
 	private String getId() {
