@@ -54,7 +54,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 							+ ":"
 							+ appServer.getPort()
 							+ "/help";
-					((DefaultHelp)WorkbenchHelp.getHelpSupport()).getHelpBrowser().displayURL(url);
+					WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 				} catch (Exception e) {
 				}
 			}

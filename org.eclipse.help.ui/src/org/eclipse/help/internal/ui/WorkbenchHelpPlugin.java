@@ -6,6 +6,7 @@ package org.eclipse.help.internal.ui;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IAppServer;
 import org.eclipse.help.internal.server.HelpServer;
+import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -20,6 +21,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	private static final String APP_SERVER_CLASS_ATTRIBUTE = "class";
 	private static WorkbenchHelpPlugin plugin;
 	private IAppServer appServer;
+	private IBrowser browser;
 	/**
 	 * WorkbenchHelpPlugin constructor. It is called as part of plugin
 	 * activation.
@@ -94,5 +96,10 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 			});
 		}
 		return appServer;
+	}
+	public IBrowser getHelpBrowser() {
+		if (browser == null)
+			browser = BrowserManager.getInstance().createBrowser();
+		return browser;
 	}
 }

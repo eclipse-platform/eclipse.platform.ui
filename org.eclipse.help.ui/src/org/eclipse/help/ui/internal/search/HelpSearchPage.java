@@ -142,7 +142,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 							+ ":"
 							+ appServer.getPort()
 							+ "/help?tab=search&query="+URLCoder.encode(searchQueryData.getExpression());
-					IBrowser browser=((DefaultHelp)WorkbenchHelp.getHelpSupport()).getHelpBrowser();
+					IBrowser browser=WorkbenchHelpPlugin.getDefault().getHelpBrowser();
 					browser.displayURL(url);
 				} catch (Exception e) {
 				}

@@ -10,8 +10,6 @@ import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.ContextImpl;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.ui.*;
 /**
  * This class is an implementation of the pluggable help support.
@@ -24,7 +22,6 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private IWorkbenchPage helpPage = null;
 	private ContextHelpDialog f1Dialog = null;
-	private IBrowser browser;
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -294,10 +291,5 @@ public class DefaultHelp implements IHelp {
 	}
 	public static DefaultHelp getInstance() {
 		return instance;
-	}
-	public IBrowser getHelpBrowser() {
-		if (browser == null)
-			browser = BrowserManager.getInstance().createBrowser();
-		return browser;
 	}
 }
