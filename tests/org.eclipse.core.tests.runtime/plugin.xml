@@ -153,6 +153,12 @@
    <test id="internal.plugins.PluginXmlTest">
       <run class="org.eclipse.core.tests.internal.plugins.PluginXmlTest"/>
     </test>
+   <test id="org.eclipse.core.tests.internal.plugins.JarSearchTests">
+      <run class="org.eclipse.core.tests.internal.plugins.JarSearchTests"/>
+    </test>
+   <test id="org.eclipse.core.tests.internal.plugins.JarPluginPathTest">
+      <run class="org.eclipse.core.tests.internal.plugins.JarPluginPathTest"/>
+    </test>
    
   </extension>
 
