@@ -64,8 +64,7 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 
 	public void testDisabledBreakpoint() throws Exception {
         String fileName = "breakpoints";
-        IFile file= getIFile(fileName + ".xml");
-		ILineBreakpoint bp = createLineBreakpoint(5, file);
+		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
 		bp.setEnabled(false);
 		
 		AntDebugTarget debugTarget = null;
@@ -79,16 +78,15 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 
 	public void testEnableDisableBreakpoint() throws Exception {
         String fileName = "breakpoints";
-        IFile file= getIFile(fileName + ".xml");
-		ILineBreakpoint bp = createLineBreakpoint(4, file);
+		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
 		bp.setEnabled(true);
 		
 		AntThread thread = null;
 		try {
             ILaunchConfiguration config= getLaunchConfiguration(fileName);
             ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-            copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "entry1, entry2");
-			thread= launchToLineBreakpoint(fileName, bp);
+            copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "entry1,entry2");
+			thread= launchToLineBreakpoint(copy, bp);
 			bp.setEnabled(false);
 			resumeAndExit(thread);
 		} finally {
@@ -100,7 +98,7 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 	public void testSkipLineBreakpoint() throws Exception {
         String fileName = "breakpoints";
         IFile file= getIFile(fileName + ".xml");
-		ILineBreakpoint bp = createLineBreakpoint(4, file);
+		ILineBreakpoint bp = createLineBreakpoint(5, file);
 		createLineBreakpoint(15, file);
 		
 		AntThread thread = null;
