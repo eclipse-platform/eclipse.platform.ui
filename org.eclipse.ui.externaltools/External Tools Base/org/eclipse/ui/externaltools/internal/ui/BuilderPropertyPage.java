@@ -40,6 +40,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -639,11 +640,14 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			return true;
 		}
 		// Warn the user that editing an old config will cause storage migration.
-		return MessageDialogWithToggle.openQuestion(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Migrate_project_builder_10"), //$NON-NLS-1$
+		MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), 
+			ExternalToolsUIMessages.getString("BuilderPropertyPage.Migrate_project_builder_10"), //$NON-NLS-1$
 			ExternalToolsUIMessages.getString("BuilderPropertyPage.Not_Support"), //$NON-NLS-1$
-			IPreferenceConstants.PROMPT_FOR_MIGRATION,
 			ExternalToolsUIMessages.getString("BuilderPropertyPage.Prompt"), //$NON-NLS-1$
-			ExternalToolsPlugin.getDefault().getPreferenceStore());
+			false,
+			ExternalToolsPlugin.getDefault().getPreferenceStore(), 
+			IPreferenceConstants.PROMPT_FOR_MIGRATION);
+		return dialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
 
 	/**
