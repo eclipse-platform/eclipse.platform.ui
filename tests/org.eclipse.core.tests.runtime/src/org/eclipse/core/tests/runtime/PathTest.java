@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -250,6 +251,14 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.0", Path.EMPTY, new Path(""));
 		assertEquals("2.1", Path.ROOT, new Path("/"));
 		assertEquals("2.2", anyPath, anyPath);
+		
+		//should handle slash before the device (see bug 84697)
+		try {
+			assertEquals("3.0", "D:/foo/abc.txt", new Path(new java.io.File("D:\\foo\\abc.txt").toURL().getPath()).toString());
+			assertEquals("3.1", "D:/", new Path(new java.io.File("D:/").toURL().getPath()).toString());
+		} catch (MalformedURLException e) {
+			fail("4.99", e);
+		}
 	}
 
 	public void testFirstSegment() {

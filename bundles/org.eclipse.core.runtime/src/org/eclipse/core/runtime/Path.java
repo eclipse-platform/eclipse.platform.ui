@@ -153,7 +153,9 @@ public class Path implements IPath, Cloneable {
 			//extract device
 			int i = fullPath.indexOf(DEVICE_SEPARATOR);
 			if (i != -1) {
-				devicePart = fullPath.substring(0, i + 1);
+				//remove leading slash from device part to handle output of URL.getFile()
+				int start = fullPath.charAt(0) == SEPARATOR ? 1 : 0;
+				devicePart = fullPath.substring(start, i + 1);
 				fullPath = fullPath.substring(i + 1, fullPath.length());
 			}
 		}
