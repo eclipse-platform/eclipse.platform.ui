@@ -26,6 +26,7 @@ public class FeatureStateAction extends Action {
 				
 			boolean restartNeeded =
 				UpdateManager.getOperationsManager().toggleFeatureState(
+					adapter.getInstallConfiguration(),
 					adapter.getConfiguredSite(),
 					adapter.getFeature(null),
 					adapter.isConfigured(),
