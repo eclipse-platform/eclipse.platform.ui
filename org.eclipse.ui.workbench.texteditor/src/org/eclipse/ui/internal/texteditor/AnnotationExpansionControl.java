@@ -348,7 +348,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 			
 			setMargins(5, 10);
 			setAnchor(ANCHOR_BOTTOM);
-			setFallbackAnchors(new Anchor[] { ANCHOR_LEFT, ANCHOR_RIGHT} );
+			setFallbackAnchors(new Anchor[] {ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT} );
 		}
 
 		/*
