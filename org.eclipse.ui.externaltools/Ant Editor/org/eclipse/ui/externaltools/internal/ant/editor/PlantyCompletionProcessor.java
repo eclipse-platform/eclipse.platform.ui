@@ -392,16 +392,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
          return new ICompletionProposal[0];
 
     }
-    /**
-     * Returns <code>true</code> if the specified character is a word delimiter
-     */
-	private boolean isTokenizerCharacter(char c) {
-		return !Character.isJavaIdentifierPart(c);
-	}
-	
-
-
-
+    
     /**
      * Returns all possible attributes for the specified task.
      * 
@@ -775,16 +766,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         }
         return null;
     }
-    
-    
-    
-
-	private List getEditors(IEditorPart activeEditor) {
-		List editorsVector = new Vector();
-		editorsVector.add(activeEditor);
-		return editorsVector;
-	}
-
 
 	/**
      * Determines the current prefix, that should be used for completion.

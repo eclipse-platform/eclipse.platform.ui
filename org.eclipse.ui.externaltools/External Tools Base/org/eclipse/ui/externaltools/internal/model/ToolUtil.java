@@ -448,14 +448,5 @@ public final class ToolUtil {
 		private VariableDefinition() {
 			super();
 		}
-		
-		/**
-		 * Create an initialized variable definition.
-		 */
-		private VariableDefinition(int start, int end) {
-			super();
-			this.start = start;
-			this.end = end;
-		}
 	}
 }
