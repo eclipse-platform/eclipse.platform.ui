@@ -416,7 +416,7 @@ if (isMozilla) {
 	if (isSafari) {
 		// workaround for lack of good system colors in Safari
 		document.write('<style type="text/css">');
-		document.write('.active {background:#FFB090;color:#000000;}');
+		document.write('.active {background:#B5D5FF;color:#000000;}');
 		document.write('</style>');
 	}
 }
