@@ -233,7 +233,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
     public void endElement(String aUri, String aLocalName, String aQualifiedName)
         throws SAXException {
 
-			if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
+		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
@@ -241,7 +241,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
             return;
         }        
         
-        // Checks wether we know the parent for sure
+        // Checks whether we know the parent for sure
         boolean tempParentKnown = checkForParentElement();
         
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
@@ -279,7 +279,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
      * It is quite common that parsing stopped before the current cursor 
      * position. That happens when the parser finds an error within the parsed 
      * document before. In that case the parent element might be guessed to be
-     * the one that opened last. To tell the handler wether the parent should
+     * the one that opened last. To tell the handler whether the parent should
      * be guessed, <code>aGuessParentFlag</code> may be specified.
      * 
      * @param aGuessParentFlag wether the parent should be guessed
