@@ -18,10 +18,10 @@
    </library>
 </runtime>
 
-<extension-point id="fileTypes" name="%FileTypesRegistry" schema="schema/fileTypes.mxsd"/>
-<extension-point id="ignore" name="%GlobalIgnoreRegistry" schema="schema/ignore.mxsd"/>
-<extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.mxsd"/>
-<extension-point id="repository" name="%Repository" schema="schema/repository.mxsd"/>
+<extension-point id="fileTypes" name="%FileTypesRegistry" schema="schema/fileTypes.exsd"/>
+<extension-point id="ignore" name="%GlobalIgnoreRegistry" schema="schema/ignore.exsd"/>
+<extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.exsd"/>
+<extension-point id="repository" name="%Repository" schema="schema/repository.exsd"/>
 <extension-point id="targets" name="%Targets"/>
 
 <!-- Define common known file types -->
