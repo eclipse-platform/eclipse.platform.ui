@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.omg.CORBA.UNKNOWN;
 
 public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
