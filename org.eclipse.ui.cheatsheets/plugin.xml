@@ -14,6 +14,8 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
@@ -58,6 +60,17 @@
             id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
       </view>
    </extension>
+
+   <!-- =====================================================  -->
+   <!-- Standby Content Part contributions                     -->
+   <!-- =====================================================  -->
+   <extension point="org.eclipse.ui.intro.configExtension">
+      <standbyPart
+            id="org.eclipse.ui.cheatsheets.standbyPart"
+            class="org.eclipse.ui.cheatsheets.CheatSheetStandbyContent"
+            pluginId="org.eclipse.ui.cheatsheets"/>
+   </extension>
+
 <!--
    <extension
          point="org.eclipse.ui.startup">
