@@ -11,10 +11,13 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 
 /**
- * 
+ * A document that populates the console with output. Implementors
+ * of <code>IConsoleDocumentContentProvider</code> should connect
+ * streams to a console document when connected to.
  * <p>
  * Cients are <b>not</b> intended to implement this interface.
  * </p>
+ * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentContentProvider
  * @since 2.1
  */
 public interface IConsoleDocument {
