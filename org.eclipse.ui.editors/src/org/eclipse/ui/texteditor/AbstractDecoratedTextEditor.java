@@ -1138,11 +1138,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action2.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERT);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERT, action2);
 
+		final Shell shell;
+		if (getSourceViewer() != null)
+			shell= getSourceViewer().getTextWidget().getShell();
+		else
+			shell= null;
 		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
 			public void run() {
 				String[] preferencePages= collectRulerMenuPreferencePages();
-				if (preferencePages.length > 0)
-					PreferencesUtil.createPreferenceDialogOn(preferencePages[0], preferencePages, null).open();
+				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, null).open();
 			}
 
 		};
@@ -1151,8 +1156,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.ContextPreferencesAction.") { //$NON-NLS-1$
 			public void run() {
 				String[] preferencePages= collectContextMenuPreferencePages();
-				if (preferencePages.length > 0)
-					PreferencesUtil.createPreferenceDialogOn(preferencePages[0], preferencePages, null).open();
+				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, null).open();
 			}
 		};
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
