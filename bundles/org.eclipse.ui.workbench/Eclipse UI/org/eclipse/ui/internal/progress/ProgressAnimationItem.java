@@ -65,6 +65,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 			 */
 			public void mouseDoubleClick(MouseEvent e) {
 			    progressRegion.processDoubleClick();
+        		toolButton.setImage(noneImage);
 			}
 		};
 	}
@@ -78,18 +79,18 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    	    
 	    if (okImage == null) {
 	        Display display= parent.getDisplay();
-	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.png").createImage(display);
-	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.png").createImage(display);
-	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.png").createImage(display);
+	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display);
+	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display);
+	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display);
 	    }
 		
 		top = new Composite(parent, SWT.NULL);
 		top.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
-        	    		FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
+        	    FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
                 noneImage.dispose();
-    	        		okImage.dispose();
-    	    	        errorImage.dispose();
+    	   		okImage.dispose();
+     	        errorImage.dispose();
            }
 		});
 		//top.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
@@ -106,16 +107,16 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 progressRegion.processDoubleClick();
-        			toolButton.setImage(noneImage);
+        		toolButton.setImage(noneImage);
             }
         });
+		toolbar.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
 		bar.addMouseListener(mouseListener);
-		
 		GridData gd= new GridData();
-		gd.widthHint= 30;
-		gd.verticalAlignment= GridData.CENTER;
+		gd.widthHint= 20;
+		gd.verticalAlignment= GridData.CENTER | GridData.FILL_HORIZONTAL;
 		bar.setLayoutData(gd);
 		
 		return top;

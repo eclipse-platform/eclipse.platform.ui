@@ -848,7 +848,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	public void remove(Object[] elements) {
  	    if (list.isDisposed())
  	        return;
- 	   if (DEBUG) System.err.println("NewProgressViewr.remove");
+ 	    if (DEBUG) System.err.println("remove");
 		boolean changed= false;
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeItem ji= findJobItem(elements[i], false);
@@ -1043,7 +1043,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		if (ji != null) {
 	        ji.getDisplay().asyncExec(new Runnable() {
 	            public void run() {
-	                System.err.println("  forced remove");
+	                if (DEBUG) System.err.println("  forced remove");
 	                if (ji.remove())
 	                    relayout(true, true);
 	            }
