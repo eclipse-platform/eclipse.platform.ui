@@ -67,7 +67,7 @@
 	   name="%ImportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
 	   icon="icons/basic/ctool16/importdir_wiz.gif">
-	   <description>Import resources from the local file system</description>
+	   <description>%ImportWizards.FileSystemDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
 	<wizard
@@ -75,7 +75,7 @@
 	   name="%ImportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
 	   icon="icons/basic/ctool16/importzip_wiz.gif">
-	   <description>Import resources from a Zip or Jar file on the local file system</description>
+	   <description>%ImportWizards.ZipFileDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
       	</wizard>
 </extension>
@@ -87,7 +87,7 @@
 	   name="%ExportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
 	   icon="icons/basic/ctool16/exportdir_wiz.gif">
-	   <description>Export resources to the local file system</description>
+	   <description>%ExportWizards.FileSystemDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
 	<wizard
@@ -95,7 +95,7 @@
 	   name="%ExportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
 	   icon="icons/basic/ctool16/exportzip_wiz.gif">
-	   <description>Export resources to a Zip file on the local file system</description>
+	   <description>%ExportWizards.ZipFileDescription</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
 </extension>
