@@ -12,9 +12,7 @@ Contributors:
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tools.ant.BuildListener;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.ICommand;
 
 /**
  * This class represents a tool script that can be run. The tool
@@ -64,13 +62,14 @@ public class ToolScript {
 	private String location = EMPTY_VALUE;
 	private String arguments = EMPTY_VALUE;
 	private String directory = EMPTY_VALUE;
-	private String refreshScope = REFRESH_SCOPE_NONE;
+	private String refreshScope = EMPTY_VALUE;
 	
 	/**
 	 * Creates an empty initialized tool script.
 	 */
 	public ToolScript() {
 		super();
+		this.refreshScope = buildVariableTag(REFRESH_SCOPE_NONE, null);
 	}
 
 	/**
@@ -134,6 +133,37 @@ public class ToolScript {
 		return buf.toString();
 	}
 	
+	/**
+	 * Extracts a variable tag into its name and argument.
+	 * 
+	 * @param varTag the variable tag to parse
+	 * @return an array where the 1st element is the var name and
+	 * 		the 2nd element is the var argument. Elements in array
+	 * 		can be <code>null</code>
+	 */
+	public static String[] extractVariableTag(String varTag) {
+		String[] result = new String[2];
+		int start = 0;
+		int end = varTag.indexOf(VAR_TAG_START);
+		if (end < 0)
+			return result;
+		start = end + VAR_TAG_START.length();
+		
+		end = varTag.indexOf(VAR_TAG_END, start);
+		if (end < 0 || end == start)
+			return result;
+
+		int mid = varTag.indexOf(VAR_TAG_SEP, start);
+		if (mid < 0 || mid > end) {
+			result[0] = varTag.substring(start, end);
+		} else {
+			result[0] = varTag.substring(start, mid);
+			result[1] = varTag.substring(mid+1, end);
+		}
+		
+		return result;
+	}
+
 	/**
 	 * Returns the type of script.
 	 */
@@ -233,7 +263,7 @@ public class ToolScript {
 	 */
 	public void setRefreshScope(String refreshScope) {
 		if (refreshScope == null || refreshScope.length() < 1)
-			this.refreshScope = REFRESH_SCOPE_NONE;
+			this.refreshScope = buildVariableTag(REFRESH_SCOPE_NONE, null);
 		else
 			this.refreshScope = refreshScope;
 	}
@@ -269,38 +299,5 @@ public class ToolScript {
 		command.setArguments(args);
 		
 		return command;
-	}
-
-	/**
-	 * Runs the tool script and does a resource refresh if specified. 
-	 * An additional listener may be provided for logging more feedback.
-	 * 
-	 * @param listener the listener to provide feedback to, or null.
-	 * @param monitor the monitor to report progress to, or null.
-	 * @param scriptContext the context in which to run this script
-	 */
-	public void run(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		try {
-			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(type);
-			if (runner != null) {
-				if (REFRESH_SCOPE_NONE.equals(refreshScope)) {
-					runner.execute(listener, monitor, scriptContext);
-				} else {
-					monitor.beginTask("Running tool script...", 100);
-					runner.execute(listener, new SubProgressMonitor(monitor, 70), scriptContext);
-					refreshResources(new SubProgressMonitor(monitor, 30));
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	/**
-	 * Causes the specified resources to be refreshed.
-	 */
-	private void refreshResources(IProgressMonitor monitor) {
 	}
 }

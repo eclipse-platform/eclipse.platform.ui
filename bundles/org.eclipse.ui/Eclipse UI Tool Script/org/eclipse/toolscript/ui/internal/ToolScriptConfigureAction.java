@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -171,8 +172,16 @@ public class ToolScriptConfigureAction extends ActionDelegate implements IWorkbe
 		//	return new UIBuildListener(null, null, null, consoles);
 
 		try {
-			IToolScriptContext context = new ToolScriptContext(script, null);
-			script.run(listener, null, context);
+			ToolScriptContext context = new ToolScriptContext(script, null, window.getWorkbench().getWorkingSetManager());
+			String problem = context.validateScriptInContext();
+			if (problem != null) {
+				MessageDialog.openWarning(
+					window.getShell(), 
+					ToolScriptMessages.getString("ToolScriptConfigureAction.errorShellTitle"), //$NON-NLS-1$
+					problem);
+			} else {
+				context.run(listener, null);
+			}
 		} catch(CoreException e) {
 			ErrorDialog.openError(
 				window.getShell(),

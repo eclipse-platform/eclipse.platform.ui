@@ -43,7 +43,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.toolscript.core.internal.ToolScript;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -79,6 +83,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	
 	private boolean editMode = false;
 	private ToolScript script;
+	private String refreshScope;
 
 	private int maxButtonWidth = 0;
 	// The difference between the height of a button and
@@ -277,7 +282,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		refreshField.setEditable(false);
 		data = new FormData();
 		data.left = new FormAttachment(refreshLabel, MARGIN_SPACE, SWT.RIGHT);
-		data.top = new FormAttachment(refreshLabel, 0, SWT.TOP);
+		data.top = new FormAttachment(refreshLabel, 0, SWT.CENTER);
 		data.width = FIELD_WIDTH - MARGIN_SPACE - refreshLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).x;
 		refreshField.setLayoutData(data);
 
@@ -305,6 +310,8 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			argumentsField.setText(script.getArguments());
 			directoryField.setText(script.getWorkingDirectory());
 		}
+		refreshScope = script.getRefreshScope();
+		updateRefreshField();
 
 		// Set the proper tab order
 		Control[] tabList = new Control[] {
@@ -385,7 +392,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				if (results == null || results.length < 1)
 					return;
 				String args = argumentsField.getText();
-				args = args + (String)results[0]; //$NON-NLS-1$
+				args = args + (String)results[0];
 				argumentsField.setText(args);
 			}
 		});
@@ -417,6 +424,19 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				if (selectedDirectory != null) {
 					directoryField.setText(selectedDirectory);
 				}
+			}
+		});
+
+		refreshOptionButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RefreshSelectionDialog dialog;
+				dialog = new RefreshSelectionDialog(getShell());
+				dialog.open();
+				Object[] results = dialog.getResult();
+				if (results == null || results.length < 1)
+					return;
+				refreshScope = (String)results[0];
+				updateRefreshField();
 			}
 		});
 	}
@@ -498,11 +518,46 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		script.setLocation(command);
 		script.setArguments(argumentsField.getText().trim());
 		script.setWorkingDirectory(directoryField.getText().trim());
-		script.setRefreshScope(refreshField.getText().trim());
+		script.setRefreshScope(refreshScope);
 		
 		super.okPressed();
 	}
 	
+	/**
+	 * Update the refresh scope field
+	 */
+	private void updateRefreshField() {
+		String[] result = script.extractVariableTag(refreshScope);
+		if (result[0] == null) {
+			refreshScope = script.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
+			result[0] = script.REFRESH_SCOPE_NONE;
+		}
+		
+		if (script.REFRESH_SCOPE_NONE.equals(result[0])) {
+			refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeNone")); //$NON-NLS-1$
+			return;
+		}
+		if (script.REFRESH_SCOPE_WORKSPACE.equals(result[0])) {
+			refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeWorkspace")); //$NON-NLS-1$
+			return;
+		}
+		if (script.REFRESH_SCOPE_PROJECT.equals(result[0])) {
+			if (result[1] == null)
+				refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeProject")); //$NON-NLS-1$
+			else
+				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeProjectX", new Object[] {result[1]})); //$NON-NLS-1$
+			return;
+		}
+		if (script.REFRESH_SCOPE_WORKING_SET.equals(result[0])) {
+			if (result[1] == null) {
+				refreshScope = script.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
+				refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeNone")); //$NON-NLS-1$
+			}
+			else
+				refreshField.setText(ToolScriptMessages.format("ToolScriptEditDialog.refreshScopeWorkingSet", new Object[] {result[1]})); //$NON-NLS-1$
+			return;
+		}
+	}
 	
 	/**
 	 * Internal dialog to show available resources from which
@@ -625,6 +680,92 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 				case 3 :
 					result = null;
+					break;
+			}
+			
+			if (result != null)
+				setSelectionResult(new Object[] {result});
+			super.okPressed();
+		}
+	}
+	
+	/**
+	 * Internal dialog to show available refresh scope from which
+	 * the user can select one.
+	 */
+	private class RefreshSelectionDialog extends SelectionDialog {
+		// sizing constants
+		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
+		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
+
+		List list;
+		
+		public RefreshSelectionDialog(Shell parent) {
+			super(parent);
+			setTitle(ToolScriptMessages.getString("ToolScriptEditDialog.browseRefreshTitle")); //$NON-NLS-1$
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite 
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolScriptMessages.getString("ToolScriptEditDialog.selectRefresh")); //$NON-NLS-1$
+			
+			list = new List(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			list.setLayoutData(data);
+			
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.refreshNothingLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.refreshWorkspaceLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.refreshProjectLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.refreshProjectXLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.refreshWorkingSetLabel")); //$NON-NLS-1$
+
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			int sel = list.getSelectionIndex();
+			String result = null;
+			
+			switch (sel) {
+				case 0 :
+					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_NONE, null);
+					break;
+					
+				case 1 :
+					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKSPACE, null);
+					break;
+
+				case 2 :
+					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, null);
+					break;
+
+				case 3 :
+					ProjectSelectionDialog prjDialog;
+					prjDialog = new ProjectSelectionDialog(getShell());
+					prjDialog.open();
+					Object[] name = prjDialog.getResult();
+					if (name != null && name.length > 0)
+						result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, (String)name[0]);
+					break;
+
+				case 4 :
+					IWorkingSetSelectionDialog setDialog;
+					setDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+					setDialog.open();
+					IWorkingSet[] sets = setDialog.getSelection();
+					if (sets != null && sets.length > 0)
+						result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKING_SET, sets[0].getName());
 					break;
 			}
 			

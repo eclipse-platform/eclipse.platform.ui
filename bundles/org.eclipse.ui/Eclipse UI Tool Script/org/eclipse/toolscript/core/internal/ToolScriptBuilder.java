@@ -15,6 +15,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The tool script builder can be added to the build spec of a project to run 
@@ -39,9 +42,17 @@ public final class ToolScriptBuilder extends IncrementalProjectBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		ToolScript script = ToolScript.fromArgumentMap(args);
-		IToolScriptContext context = new ToolScriptContext(script, getProject());
-		if (script != null)
-			script.run(null, monitor, context);
+		if (script != null) {
+			ToolScriptContext context = new ToolScriptContext(script, getProject(), PlatformUI.getWorkbench().getWorkingSetManager());
+			String problem = context.validateScriptInContext();
+			if (problem != null) {
+				IStatus status = new Status(IStatus.WARNING, ToolScriptPlugin.PLUGIN_ID, 0, problem, null);
+				throw new CoreException(status);
+			} else {
+				context.run(null, monitor);
+			}
+		}
+		
 		return null;
 	}
 }
