@@ -25,6 +25,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -172,16 +174,18 @@ public class AnimationItem {
 
 			}
 		});
-		
-		imageCanvas.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter(){
+
+		imageCanvas
+			.getAccessible()
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
 			 */
 			public void getValue(AccessibleControlEvent arg0) {
-				if(animated)
-					arg0.result =  ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
+				if (animated)
+					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
-					arg0.result =  ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
+					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
 			}
 		});
 
@@ -248,24 +252,27 @@ public class AnimationItem {
 	 * @param boolean
 	 */
 	void setAnimated(final boolean bool) {
-		if (getControl().isDisposed())
-			return;
-		getControl().getDisplay().asyncExec(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				if (imageCanvas.isDisposed())
-					return;
-				boolean started = animated;
-				animated = bool;
-				imageCanvas.redraw();
-				if (!started && bool)
-					animate();
 
-			}
-		});
+		boolean started = animated;
+		animated = bool;
 
+		if (!started && bool)
+			animate();
+		else {
+			//Clear the image
+			UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) { //$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (!imageCanvas.isDisposed())
+						imageCanvas.redraw();
+					return Status.OK_STATUS;
+				}
+			};
+			clearJob.setSystem(true);
+			clearJob.schedule();
+		}
 	}
 
 	/**
@@ -322,6 +329,8 @@ public class AnimationItem {
 		// Create an off-screen image to draw on, and a GC to draw with.
 		// Both are disposed after the animation.
 
+		if (getControl().isDisposed())
+			return;
 		Display display = imageCanvas.getDisplay();
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
@@ -337,16 +346,22 @@ public class AnimationItem {
 		GC offScreenImageGC = new GC(offScreenImage);
 
 		try {
+			final boolean[] disposed = { false };
 			// Use syncExec to get the background color of the imageCanvas.
 			display.syncExec(new Runnable() {
 				public void run() {
-					if (imageCanvas.isDisposed())
+					if (imageCanvas.isDisposed()) {
+						disposed[0] = true;
 						return;
+					}
 
 					backgrounds[0] = imageCanvas.getBackground();
 				}
 			});
 
+			//If we never got the background then leave.
+			if (disposed[0])
+				return;
 			// Fill the off-screen image with the background color of the canvas.
 			offScreenImageGC.setBackground(backgrounds[0]);
 			offScreenImageGC.fillRectangle(
@@ -474,16 +489,16 @@ public class AnimationItem {
 	 */
 	private IJobChangeListener getJobListener() {
 		return new JobChangeAdapter() {
-			
+
 			int jobCount = 0;
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
 				incrementJobCount(event.getJob());
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
@@ -497,7 +512,6 @@ public class AnimationItem {
 			public void sleeping(IJobChangeEvent event) {
 				decrementJobCount(event.getJob());
 			}
-			
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
