@@ -4,6 +4,7 @@ Bundle-SymbolicName: org.eclipse.core.runtime.compatibility; singleton=true
 Bundle-Vendor: %providerName
 Bundle-ClassPath: compatibility.jar
 Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator
+Bundle-Localization: plugin
 Provide-Package: 
  org.eclipse.core.internal.compatibility,
  org.eclipse.core.internal.boot,
