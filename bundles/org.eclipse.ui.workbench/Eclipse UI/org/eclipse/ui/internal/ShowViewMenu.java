@@ -20,7 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
@@ -51,7 +53,9 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 public class ShowViewMenu extends ContributionItem {
 	
 	private IWorkbenchWindow window;
-		
+	
+	private static final String NO_TARGETS_MSG = WorkbenchMessages.getString("Workbench.showInNoTargets"); //$NON-NLS-1$
+	
 	private Comparator actionComparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			if(collator == null)
@@ -232,8 +236,15 @@ public void fill(Menu menu, int index) {
 	MenuManager manager = new MenuManager();
 	fillMenu(manager);
 	IContributionItem items[] = manager.getItems();
-	for (int i = 0; i < items.length; i++) {
-		items[i].fill(menu,index++);
+	if (items.length == 0) {
+		MenuItem item = new MenuItem(menu, SWT.NONE, index++);
+		item.setText(NO_TARGETS_MSG);
+		item.setEnabled(false);
+	}
+	else {
+		for (int i = 0; i < items.length; i++) {
+			items[i].fill(menu,index++);
+		}
 	}
 	dirty = false;
 }
