@@ -161,8 +161,8 @@ public class SearchForm extends UpdateWebForm {
 	protected void createContents(Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
-		layout.leftMargin = 10;
-		layout.rightMargin = 1;
+		layout.leftMargin = 5;
+		layout.rightMargin = 5;
 		layout.topMargin = 0;
 		layout.bottomMargin = 2;
 		layout.horizontalSpacing = 15;
@@ -326,6 +326,8 @@ public class SearchForm extends UpdateWebForm {
 	private void fillQueryGroup(Composite container, FormWidgetFactory factory) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
 		container.setLayout(layout);
 		factory.createLabel(container, UpdateUIPlugin.getResourceString(KEY_CATEGORY));
 		categoryCombo = new CCombo(container, SWT.READ_ONLY | SWT.FLAT);
@@ -425,6 +427,10 @@ public class SearchForm extends UpdateWebForm {
 
 	private boolean startSearch() {
 		try {
+			if (!searchObject.isCategoryFixed()) {
+				currentCategory.store(searchObject.getSettings());
+				searchObject.setCategoryId(currentCategory.getId());
+			}
 			searchObject.attachProgressMonitor(monitor);
 			//attachStatusLineMonitor();
 			enableOptions(false);

@@ -73,6 +73,7 @@ public class SearchResultSection {
 		TableData td = new TableData();
 		td.align = TableData.FILL;
 		td.colspan = 2;
+		td.grabHorizontal = true;
 		header.setLayoutData(td);
 
 		descLabel =
@@ -148,10 +149,7 @@ public class SearchResultSection {
 				Object[] features = site.getChildren(null);
 				for (int j = 0; j < features.length; j++) {
 					IFeatureAdapter adapter = (IFeatureAdapter) features[j];
-					try {
-						addFeature(site, adapter.getFeature());
-					} catch (CoreException e) {
-					}
+					addFeature(site, adapter);
 				}
 			}
 		}
@@ -163,12 +161,23 @@ public class SearchResultSection {
 		}
 	}
 
-	private void addFeature(final SearchResultSite site, final IFeature feature) {
+	private void addFeature(final SearchResultSite site, final IFeatureAdapter featureAdapter) {
 		counter++;
 		Label imageLabel = factory.createLabel(container, null);
 		imageLabel.setImage(featureImage);
 		TableData td = new TableData();
 		imageLabel.setLayoutData(td);
+		
+		IFeature feature;
+		
+		try {
+			feature = featureAdapter.getFeature();
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+			return;
+		}
+		final IFeature ffeature = feature;
 
 		if (fullMode) {
 			URL siteURL = feature.getSite().getURL();
@@ -202,7 +211,7 @@ public class SearchResultSection {
 
 			HyperlinkAction featureAction = new HyperlinkAction() {
 				public void linkActivated(IHyperlinkSegment link) {
-					openFeature(feature);
+					openFeature(featureAdapter);
 				}
 			};
 			featureAction.setDescription(feature.getURL().toString());
@@ -219,10 +228,10 @@ public class SearchResultSection {
 			featureLabel.setData(feature);
 			factory.turnIntoHyperlink(featureLabel, new HyperlinkAdapter() {
 				public void linkEntered(Control link) {
-					showStatus(feature.getURL().toString());
+					showStatus(ffeature.getURL().toString());
 				}
 				public void linkActivated(Control link) {
-					openFeature(feature);
+					openFeature(featureAdapter);
 				}
 				public void linkExited(Control link) {
 					showStatus(null);
@@ -251,10 +260,14 @@ public class SearchResultSection {
 			+ feature.getVersionedIdentifier().getVersion().toString();
 	}
 
-	private void openFeature(IFeature feature) {
-		DetailsView view = (DetailsView) page.getView();
-		SimpleFeatureAdapter sfeature = new SimpleFeatureAdapter(feature);
-		view.showPageWithInput(DetailsView.DETAILS_PAGE, sfeature);
+	private void openFeature(IFeatureAdapter adapter) {
+		try {
+			UpdatesView view = (UpdatesView)UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_UPDATES);
+			view.setSelection(new StructuredSelection(adapter));
+		}
+		catch (PartInitException e) {
+			UpdateUIPlugin.logException(e);
+		}
 	}
 
 	private void openSite(SearchResultSite resultSite) {
