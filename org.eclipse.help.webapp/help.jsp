@@ -19,7 +19,7 @@
 		srcNavFrame += "?"+request.getQueryString();
 	
 	// url of MainFrame
-	String srcMainFrame = "about:blank";
+	String srcMainFrame = "home.jsp";
 	if(request.getParameter("topic")!=null)
 		srcMainFrame=request.getParameter("topic");
 	

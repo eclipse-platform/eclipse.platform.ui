@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Tocs,org.w3c.dom.*" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -6,7 +6,7 @@
 	
 %>
 <%
-	String title = "Bookshelf";
+	String title = WebappResources.getString("Bookshelf", null);
 	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
 	if (tocs == null)
 		return;

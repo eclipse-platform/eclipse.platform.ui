@@ -36,7 +36,7 @@
 		srcNavFrame = "tocs.jsp";
 		
 	// url of MainFrame
-	String srcMainFrame = "blank.html";
+	String srcMainFrame = "home.jsp";
 	if(request.getParameter("topic")!=null)
 		srcMainFrame=request.getParameter("topic");
 	

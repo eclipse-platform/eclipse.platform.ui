@@ -126,7 +126,11 @@ function getFrameInput(nav)
 
 function showBookshelf()
 {
-	window.toc.window.location.href = "tocs.jsp";
+	// load the bookshelf
+	//window.toc.window.location.href = "tocs.jsp";
+	window.toc.window.location.replace("tocs.jsp");
+	// clear the content page
+	parent.MainFrame.location="home.jsp";
 }
 
 

@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Tocs,org.w3c.dom.*" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -47,7 +47,7 @@
 <body onload="onloadHandler('<%=tocHref%>', '<%=label%>')">
 
 	<ul><li class='bookshelf'>
-    <a target='_self' href='javascript:window.location.replace("tocs.jsp")'><nobr>Bookshelf</nobr></a>
+    <a target='_self' href='javascript:window.location.replace("tocs.jsp")'><nobr><%=WebappResources.getString("Bookshelf", null)%></nobr></a>
     </li></ul>
 
 <%
