@@ -36,9 +36,8 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
             update();
         }
         public void run() {
-            enabled = !enabled;
+            setCommitSetsEnabled(!enabled);
             update();
-            setInput(getSelectedProviderId(), null);
         }
         private void update() {
             setChecked(enabled);
@@ -124,5 +123,22 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
 		    enabled = pageSettings.getBoolean(P_COMMIT_SET_ENABLED);
 		}
         super.initialize(configuration);
+    }
+    
+    /*
+     * This method is public so it can be invoked from test cases
+     */
+    public void setCommitSetsEnabled(boolean enable) {
+        if (this.enabled != enable) {
+	        this.enabled = enable;
+	        setInput(getSelectedProviderId(), null);
+        }
+    }
+    
+    /* (non-Javadoc)
+     * This method is public so it can be invoked from test cases
+     */
+    public ISynchronizeModelProvider getActiveModelProvider() {
+        return super.getActiveModelProvider();
     }
 }
