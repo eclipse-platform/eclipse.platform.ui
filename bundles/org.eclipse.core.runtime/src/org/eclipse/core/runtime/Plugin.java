@@ -343,10 +343,10 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 2.0
 	 */
 	public final void savePluginPreferences() {
-		if (preferences == null || !preferences.needsSaving()) {
-			// nothing to save
-			return;
-		}
+		// populate the "preferences" instvar. We still might
+		// need to save them because someone else might have
+		// made changes via the OSGi APIs.
+		getPluginPreferences();
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {

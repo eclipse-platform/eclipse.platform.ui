@@ -99,7 +99,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
 	public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
-		dirty = true;
 		if (listeners == null)
 			return;
 		Object oldValue = event.getOldValue();
@@ -714,7 +713,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 *  default value, and <code>false</code> otherwise
 	 */
 	public boolean needsSaving() {
-		return dirty;
+		return getPluginPreferences().dirty;
 	}
 
 	/**
@@ -723,9 +722,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @throws BackingStoreException
 	 */
 	public void flush() throws BackingStoreException {
-		if (dirty)
-			getPluginPreferences().flush();
-		dirty = false;
+		getPluginPreferences().flush();
 	}
 
 	/**
@@ -737,7 +734,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		// don't check the dirty flag first because there could be changes
 		// on disk that we want
 		getPluginPreferences().sync();
-		dirty = false;
 	}
 
 	/*
@@ -755,7 +751,11 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		Properties result = new Properties();
 		result.load(in);
 		convertFromProperties(result);
-		dirty = false;
+		try {
+			flush();
+		} catch (BackingStoreException e) {
+			throw new IOException(e.getMessage());
+		}
 	}
 
 	/*
@@ -764,7 +764,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void store(OutputStream out, String header) throws IOException {
 		Properties result = convertToProperties();
 		result.store(out, header);
-		dirty = false;
 	}
 
 	private void convertFromProperties(Properties props) {
