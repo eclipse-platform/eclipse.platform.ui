@@ -216,45 +216,6 @@ public class XmlFormatter {
 		return offsets;	    
 	}
 	
-	private static void offsetsToVariables(int[] allOffsets, TemplateVariable[] variables, int start) {
-		int[] currentIndices= new int[variables.length];
-		for (int i= 0; i != currentIndices.length; i++) {
-			currentIndices[i]= 0;
-		}
-
-		int[][] offsets= new int[variables.length][];
-		for (int i= 0; i != variables.length; i++) {
-			offsets[i]= variables[i].getOffsets();
-		}
-		
-		for (int i= 0; i != allOffsets.length; i++) {
-
-			int min= Integer.MAX_VALUE;
-			int minVariableIndex= -1;
-			for (int j= 0; j != variables.length; j++) {
-			    int currentIndex= currentIndices[j];
-			    
-			    // determine minimum
-				if (currentIndex == offsets[j].length)
-					continue;
-					
-				int offset= offsets[j][currentIndex];
-
-				if (offset < min) {
-				    min= offset;
-					minVariableIndex= j;
-				}		
-			}
-
-			offsets[minVariableIndex][currentIndices[minVariableIndex]]= allOffsets[i] - start;
-			currentIndices[minVariableIndex]++;
-		}
-
-		for (int i= 0; i != variables.length; i++) {
-			variables[i].setOffsets(offsets[i]);	
-		}
-	}
-	
 	/**
 	 * Returns the indentation level at the position of code completion.
 	 */
