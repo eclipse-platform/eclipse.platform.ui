@@ -14,6 +14,8 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -24,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class ContextHelpWindow extends Window {
+public class ContextHelpWindow extends Window implements IPageChangedListener {
 	private ReusableHelpPart helpPart;
 	private static final int DOCK_MARGIN = 10;
 
@@ -160,6 +162,7 @@ public class ContextHelpWindow extends Window {
 	}
 	
 	private void hookFocusListener(Composite parent, Listener listener) {
+		/*
 		Control [] children = parent.getChildren();
 		for (int i=0; i<children.length; i++) {
 			Control child = children[i];
@@ -171,9 +174,15 @@ public class ContextHelpWindow extends Window {
 			child.addListener(SWT.FocusIn, listener);
 			child.addListener(SWT.Selection, listener);
 		}
+		*/
+		Object data = parent.getData();
+		if (data instanceof IPageChangeProvider) {
+			((IPageChangeProvider)data).addPageChangedListener(this);
+		}
 	}
 
 	private void unhookFocusListener(Composite parent, Listener listener) {
+		/*
 		Control [] children = parent.getTabList();
 		for (int i=0; i<children.length; i++) {
 			Control child = children[i];
@@ -186,6 +195,11 @@ public class ContextHelpWindow extends Window {
 				child.removeListener(SWT.FocusIn, listener);
 				child.removeListener(SWT.Selection, listener);
 			}
+		}
+		*/
+		Object data = parent.getData();
+		if (data instanceof IPageChangeProvider) {
+			((IPageChangeProvider)data).removePageChangedListener(this);
 		}
 	}
 
@@ -369,5 +383,14 @@ public class ContextHelpWindow extends Window {
 			return false;
 		return bounds.x==pbounds.x+pbounds.width ||
 			bounds.x==pbounds.x-bounds.width;
+	}
+
+
+
+	public void pageChanged(PageChangedEvent event) {
+		Object page = event.getSelectedPage();
+		if (page instanceof IDialogPage) {
+			update(null, ((IDialogPage)page).getControl());
+		}
 	}
 }
