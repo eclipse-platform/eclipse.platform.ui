@@ -80,8 +80,8 @@ public class UninstallFeatureAction extends Action {
 		if (adapter == null)
 			return false;
 		
-//		if (adapter.isConfigured())
-//			return false;
+		if (adapter.isConfigured())
+			return false;
 			
 		try {
 			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null) //$NON-NLS-1$
