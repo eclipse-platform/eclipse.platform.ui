@@ -85,6 +85,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 	public DefaultFeatureParser() {
 		super();
 		this.parser = new SAXParser();
+		try {
+			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		}
+		catch (SAXException e) {
+		}
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350		
 	}
