@@ -468,7 +468,41 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			return fResolved;
 		}
-
+		
+		private boolean isUnresolvedIncoming() {
+			if (fResolved)
+				return false;
+			switch (fDirection) {
+			case RangeDifference.RIGHT:
+				if (fLeftIsLocal)
+					return true;
+				break;
+			case RangeDifference.LEFT:
+				if (!fLeftIsLocal)
+					return true;
+				break;
+			}
+			return false;
+		}
+		
+		private boolean isUnresolvedIncomingOrConflicting() {
+			if (fResolved)
+				return false;
+			switch (fDirection) {
+			case RangeDifference.RIGHT:
+				if (fLeftIsLocal)
+					return true;
+				break;
+			case RangeDifference.LEFT:
+				if (!fLeftIsLocal)
+					return true;
+				break;
+			case RangeDifference.CONFLICT:
+				return true;
+			}
+			return false;
+		}
+				
 		Position getPosition(MergeSourceViewer w) {
 			if (w == fLeft)
 				return fLeftPos;
@@ -1197,12 +1231,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						public void mouseMove(MouseEvent e) {
 							Rectangle r= new Rectangle(0, 0, 0, 0);
 							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
-							setCurrentDiff(diff, false);
-							if (diff != null && !diff.isResolved()) {
-								fCenterButton.setBounds(r);
-								fCenterButton.setVisible(true);
-							} else {
-								fCenterButton.setVisible(false);
+							if (diff != null && !diff.isUnresolvedIncomingOrConflicting())
+								diff= null;
+							if (diff != fCurrentDiff) {
+								setCurrentDiff(diff, false);
+								if (diff != null) {
+									fCenterButton.setBounds(r);
+									fCenterButton.setVisible(true);
+								} else {
+									fCenterButton.setVisible(false);
+								}
 							}
 						}
 					}
@@ -1216,8 +1254,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
 							fCenterButton.setVisible(false);
-							copyDiffRightToLeft();
-							setCurrentDiff(fCurrentDiff, true);
+							copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT, false);
+							//copyDiffRightToLeft();
 						}
 					}
 				);
@@ -1235,7 +1273,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						}
 					}
 				);
-				//canvas.setMenu(fCenterMenuManager.createContextMenu(canvas));
 			}
 			
 			return canvas;
@@ -2519,7 +2556,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				Iterator e= fChangeDiffs.iterator();
 				while (e.hasNext()) {
 					Diff d= (Diff) e.next();
-					if (!d.isResolved()) {
+					if (d.isUnresolvedIncoming()) {
 						unresolved= true;
 						break;
 					}
@@ -2970,6 +3007,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (! fHiglightRanges)
 			return;
 
+		CompareConfiguration cc= getCompareConfiguration();
+		boolean showResolveUI= fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable());
+
 		if (fChangeDiffs != null) {
 			int lshift= fLeft.getVerticalScrollOffset();
 			int rshift= fRight.getVerticalScrollOffset();
@@ -3053,14 +3093,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				}
 				
-				CompareConfiguration cc= getCompareConfiguration();
-				if (fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable())) {
+				if (showResolveUI && diff.isUnresolvedIncomingOrConflicting()) {
 					// draw resolve state
 					int cx= (w-RESOLVE_SIZE)/2;
 					int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
 					
-					Color c= display.getSystemColor(diff.fResolved ? SWT.COLOR_GREEN : SWT.COLOR_RED);
-					g.setBackground(c);
+					g.setBackground(fillColor);
 					g.fillRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
 					
 					g.setForeground(strokeColor);
@@ -3565,26 +3603,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//--------------------------------------------------------------------------------
 	
-	void copyAllUnresolvedIncoming() {
-		if (fChangeDiffs != null) {
+	void copyAllUnresolved(boolean leftToRight) {
+		if (fChangeDiffs != null && isThreeWay() && !fIgnoreAncestor) {
+			fLeft.getRewriteTarget().beginCompoundChange();
 			Iterator e= fChangeDiffs.iterator();
 			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
-				if (isThreeWay() && !fIgnoreAncestor) {
-					switch (diff.fDirection) {
-					case RangeDifference.RIGHT:
-						if (fLeftIsLocal)
-							copy(diff, !fLeftIsLocal, false);
-						break;
-					case RangeDifference.LEFT:
-						if (!fLeftIsLocal)
-							copy(diff, fLeftIsLocal, false);
-						break;
-					default:
-						continue;
-					}
+				switch (diff.fDirection) {
+				case RangeDifference.LEFT:
+					if (leftToRight)
+						copy(diff, leftToRight, false);
+					break;
+				case RangeDifference.RIGHT:
+					if (!leftToRight)
+						copy(diff, leftToRight, false);
+					break;
+				default:
+					continue;
 				}
 			}
+			fLeft.getRewriteTarget().endCompoundChange();
 		}
 	}
 	
@@ -3592,6 +3630,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Copy whole document from one side to the other.
 	 */
 	protected void copy(boolean leftToRight) {
+		
+		// not ready for primetime
+		if (fUseResolveUI && isThreeWay() && !fIgnoreAncestor) {
+			copyAllUnresolved(leftToRight);
+			invalidateLines();
+			return;
+		}
 				
 		if (leftToRight) {
 			if (fLeft.getEnabled()) {
@@ -3608,27 +3653,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			setRightDirty(true);
 			fRightContentsChanged= false;
 		} else {
-			if (true) {
-				// not ready for primetime
-				copyAllUnresolvedIncoming();
-				invalidateLines();
-				//refreshBirdsEyeView();
-				return;
+			if (fRight.getEnabled()) {
+				// copy text
+				String text= fRight.getTextWidget().getText();
+				fLeft.getTextWidget().setText(text);
+				fLeft.setEnabled(true);
 			} else {
-				if (fRight.getEnabled()) {
-					// copy text
-					String text= fRight.getTextWidget().getText();
-					fLeft.getTextWidget().setText(text);
-					fLeft.setEnabled(true);
-				} else {
-					// delete
-					fLeft.getTextWidget().setText(""); //$NON-NLS-1$
-					fLeft.setEnabled(false);
-				}
-				fLeftLineCount= fLeft.getLineCount();
-				setLeftDirty(true);
-				fLeftContentsChanged= false;
+				// delete
+				fLeft.getTextWidget().setText(""); //$NON-NLS-1$
+				fLeft.setEnabled(false);
 			}
+			fLeftLineCount= fLeft.getLineCount();
+			setLeftDirty(true);
+			fLeftContentsChanged= false;
 		}
 		doDiff();
 		invalidateLines();
