@@ -279,6 +279,18 @@ public class RemoteCompareOperation extends RemoteOperation {
 		return tag;
 	}
 	
+	public static RemoteCompareOperation create(IWorkbenchPart part, ICVSRemoteResource remoteResource, CVSTag tag) throws CVSException {
+		CVSTag tag0 = getTag(remoteResource);
+		CVSTag tag1 = tag;
+		if (tag0.getType() == CVSTag.DATE && tag1.getType() == CVSTag.DATE) {
+			if (tag0.asDate().after(tag1.asDate())) {
+				tag = tag0;
+				remoteResource = remoteResource.forTag(tag1);
+			}
+		}
+		return new RemoteCompareOperation(part, remoteResource, tag);
+	}
+	
 	/**
 	 * Compare two versions of the given remote resource.
 	 * @param shell
@@ -286,7 +298,7 @@ public class RemoteCompareOperation extends RemoteOperation {
 	 * @param left the earlier tag (not null)
 	 * @param right the later tag (not null)
 	 */
-	public RemoteCompareOperation(IWorkbenchPart part, ICVSRemoteResource remoteResource, CVSTag tag) {
+	protected RemoteCompareOperation(IWorkbenchPart part, ICVSRemoteResource remoteResource, CVSTag tag) {
 		super(part, new ICVSRemoteResource[] {remoteResource});
 		Assert.isNotNull(tag);
 		this.right = tag;

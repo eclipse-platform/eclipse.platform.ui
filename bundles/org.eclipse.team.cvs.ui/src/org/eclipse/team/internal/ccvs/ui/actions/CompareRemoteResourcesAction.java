@@ -16,9 +16,9 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 
 /**
@@ -35,7 +35,7 @@ public class CompareRemoteResourcesAction extends CVSAction {
 		}
 		try {
 			if (isSameFolder(editions)) {
-				new RemoteCompareOperation(null, editions[0], RemoteCompareOperation.getTag(editions[1])).run();
+				RemoteCompareOperation.create(null, editions[0], RemoteCompareOperation.getTag(editions[1])).run();
 			} else {
 				ResourceEditionNode left = new ResourceEditionNode(editions[0]);
 				ResourceEditionNode right = new ResourceEditionNode(editions[1]);

@@ -48,8 +48,12 @@ public class CompareRemoteWithTagAction extends CVSAction {
 		if (tag[0] == null) return;
 		
 		// Run the compare operation in the background
-		new RemoteCompareOperation(getTargetPart(), resource, tag[0])
-			.run();
+		try {
+			RemoteCompareOperation.create(getTargetPart(), resource, tag[0])
+				.run();
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
+		}
 	}
 
 	/**
