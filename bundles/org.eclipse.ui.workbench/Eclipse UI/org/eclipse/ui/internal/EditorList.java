@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2002 IBM Corporation and others.
+Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class EditorList {
 	private static final int SET_PAGE_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE;
 	private static final int SET_TAB_GROUP_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_TAB_GROUP_SCOPE;
 	
-	private static final String editorListData = "editorListData";
+	private static final String editorListData = "editorListData"; //$NON-NLS-1$
 	
 	/**
 	 * Listen for notifications from the editor part that its title has change or
@@ -216,12 +216,6 @@ public Control createControl(Composite parent) {
 			if (e.button != 3) {
 				handleSelectionEvent(true);
 			}
-		}
-	});
-
-	editorsTable.addSelectionListener(new SelectionAdapter() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-			handleSelectionEvent(true);
 		}
 	});
 
