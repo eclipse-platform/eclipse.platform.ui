@@ -38,7 +38,7 @@ public class SearchURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
-		Logger.logInfo("I004");
+		Logger.logInfo("SearchURL.openStream()");
 		// The url string should contain the search parameters.
 		try {
 			int indexed = getIndexedPercent();
