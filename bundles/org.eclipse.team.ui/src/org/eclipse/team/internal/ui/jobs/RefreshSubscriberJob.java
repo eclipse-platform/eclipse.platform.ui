@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.jobs;
 
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,7 +20,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.team.core.TeamException;
@@ -46,17 +47,22 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	/**
 	 * If true a rescheduled refresh job should be retarted when cancelled
 	 */
-	private boolean restartOnCancel = true; 
+	/* internal use only */ boolean restartOnCancel = true; 
 
 	/**
 	 * The schedule delay used when rescheduling a completed job 
 	 */
-	private static long scheduleDelay = 20000; //5 /* minutes */ * (60 * 1000); 
+	/* internal use only */ static long scheduleDelay = 20000; //5 /* minutes */ * (60 * 1000); 
 	
 	/**
 	 * Time the job was run last in milliseconds.
 	 */
 	private long lastTimeRun = 0; 
+	
+	/**
+	 * Lock to ensure that only one refresh is occuring at a particulr time
+	 */
+	private OrderedLock lock = JobManager.getInstance().getLockManager().newLock();
 	
 	/**
 	 * The subscribers and roots to refresh. If these are changed when the job
@@ -65,22 +71,6 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	private IResource[] resources;
 	private TeamSubscriber subscriber;
 	
-	private class BatchSimilarSchedulingRule implements ISchedulingRule {
-		public String id;
-		public BatchSimilarSchedulingRule(String id) {
-			this.id = id;
-		}		
-		public boolean isConflicting(ISchedulingRule rule) {
-			if(rule instanceof BatchSimilarSchedulingRule) {
-				return ((BatchSimilarSchedulingRule)rule).id.equals(id);
-			}
-			return false;
-		}
-		public boolean contains(ISchedulingRule rule) {
-			return isConflicting(rule);
-		}
-	}
-	
 	public RefreshSubscriberJob(String name, IResource[] resources, TeamSubscriber subscriber) {
 		super(name);
 		
@@ -88,7 +78,6 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		this.subscriber = subscriber;
 		
 		setPriority(Job.DECORATE);
-		setRule(new BatchSimilarSchedulingRule("org.eclipse.team.core.refreshsubscribers")); //$NON-NLS-1$
 		
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
@@ -131,6 +120,11 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 				
 		monitor.beginTask(getTaskName(subscriber, roots), 100);
 		try {
+			// Only allow one refresh job at a time
+			// NOTE: It would be cleaner if this was done by a scheduling
+			// rule but at the time of writting, it is not possible due to
+			// the scheduling rule containment rules.
+			lock.acquire();
 			lastTimeRun = System.currentTimeMillis();
 			if(monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -144,6 +138,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		} catch(OperationCanceledException e2) {
 			return Status.CANCEL_STATUS;
 		} finally {
+			lock.release();
 			monitor.done();
 		}
 		return status.isOK() ? Status.OK_STATUS : (IStatus) status;
