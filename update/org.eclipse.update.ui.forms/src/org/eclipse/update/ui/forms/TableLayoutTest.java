@@ -15,7 +15,7 @@ public static void main (String [] args) {
     // sc.setAlwaysShowScrollBars(true);
      sc.setBackground(sc.getDisplay().getSystemColor(SWT.COLOR_WHITE));
      final Composite c = new Composite(sc, SWT.NONE);
-     c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_RED));
+     //c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_RED));
      sc.setContent(c);
      sc.addListener (SWT.Resize,  new Listener () {
 		public void handleEvent (Event e) {
@@ -93,6 +93,7 @@ public static void main (String [] args) {
      	public void fillExpansion(Composite container, FormWidgetFactory factory) {
      		HTMLTableLayout layout = new HTMLTableLayout();
      		container.setLayout(layout);
+     		layout.leftMargin = layout.rightMargin = 0;
      		Label label = factory.createLabel(container, null, SWT.WRAP);
      		label.setText("This text will be part of the expandable section");
      	}
@@ -108,7 +109,7 @@ public static void main (String [] args) {
      exp.setText("Expandable Section");
      FormWidgetFactory factory = new FormWidgetFactory();
      exp.createControl(c, factory);
-     exp.getControl().setBackground(label.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+     //exp.getControl().setBackground(label.getDisplay().getSystemColor(SWT.COLOR_GREEN));
      td = new TableData();
      td.colspan = 2;
      td.align = TableData.FILL;
