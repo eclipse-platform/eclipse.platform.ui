@@ -2958,16 +2958,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IDocumentProvider p= getDocumentProvider();
 		if (p == null)
 			return;
-		
-		if (fModificationStamp == -1) 
-			fModificationStamp= p.getSynchronizationStamp(input);
 			
-		long stamp= p.getModificationStamp(input);
-		if (stamp != fModificationStamp) {
-			fModificationStamp= stamp;
-			if (stamp != p.getSynchronizationStamp(input))
-				handleEditorInputChanged();
-		} 
+		if (p instanceof IDocumentProviderExtension3)  {
+			
+			IDocumentProviderExtension3 p3= (IDocumentProviderExtension3) p;
+			
+			long stamp= p.getModificationStamp(input);
+			if (stamp != fModificationStamp) {
+				fModificationStamp= stamp;
+				if (!p3.isSynchronized(input))
+					handleEditorInputChanged();
+			} 
+			
+		} else  {
+		
+			if (fModificationStamp == -1) 
+				fModificationStamp= p.getSynchronizationStamp(input);
+				
+			long stamp= p.getModificationStamp(input);
+			if (stamp != fModificationStamp) {
+				fModificationStamp= stamp;
+				if (stamp != p.getSynchronizationStamp(input))
+					handleEditorInputChanged();
+			} 
+		}
 		
 		updateState(getEditorInput());
 		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
@@ -3150,11 +3164,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			Shell shell= getSite().getShell();
 			
+			boolean isSynchronized= false;
 			IDocumentProvider p= getDocumentProvider();
-			long modifiedStamp= p.getModificationStamp(getEditorInput());
-			long synchStamp= p.getSynchronizationStamp(getEditorInput());
 			
-			if (fErrorCorrectionOnSave == 1 && modifiedStamp != synchStamp) {
+			if (p instanceof IDocumentProviderExtension3)  {
+				IDocumentProviderExtension3 p3= (IDocumentProviderExtension3) p;
+				isSynchronized= p3.isSynchronized(getEditorInput());
+			} else  {
+				long modifiedStamp= p.getModificationStamp(getEditorInput());
+				long synchStamp= p.getSynchronizationStamp(getEditorInput());
+				isSynchronized= (modifiedStamp == synchStamp);
+			}
+			
+			if (fErrorCorrectionOnSave == 1 && !isSynchronized) {
 				
 				String title= EditorMessages.getString("Editor.error.save.outofsync.title"); //$NON-NLS-1$
 				String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
