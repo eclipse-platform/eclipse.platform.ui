@@ -600,7 +600,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] sts = ext.getSupertypes(type);
-			for (int i = 0; i < sts.length; i++) {
+			for (int i= 0; i < sts.length; i++) {
 				strategy= (IDrawingStrategy) fRegisteredDrawingStrategies.get(fAnnotationType2DrawingStrategyId.get(sts[i]));
 				if (strategy != null)
 					return strategy;
@@ -695,7 +695,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
-				for (int i= superTypes.length -1; i > -1; i--) {
+				for (int i= 0; i < superTypes.length; i++) {
 					color= (Color) fColorTable.get(superTypes[i]);
 					if (color != null)
 						return color;

@@ -1002,7 +1002,7 @@ public class OverviewRuler implements IOverviewRuler {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
-				for (int i= superTypes.length -1; i > -1; i--) {
+				for (int i= 0; i < superTypes.length; i++) {
 					color= (Color) fAnnotationTypes2Colors.get(superTypes[i]);
 					if (color != null)
 						return color;
