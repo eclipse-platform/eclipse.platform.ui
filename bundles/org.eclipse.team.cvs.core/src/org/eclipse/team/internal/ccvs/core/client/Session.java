@@ -63,10 +63,10 @@ public class Session {
 	public static final String SERVER_SEPARATOR = "/"; //$NON-NLS-1$
 
 	// default file transfer buffer size (in bytes)
-	private static int TRANSFER_BUFFER_SIZE = 8192;
+	private static final int TRANSFER_BUFFER_SIZE = 8192;
 	// update progress bar in increments of this size (in bytes)
 	//   no incremental progress shown for files smaller than this size
-	private static int TRANSFER_PROGRESS_INCREMENT = 32768;
+	private static final int TRANSFER_PROGRESS_INCREMENT = 32768;
 
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
