@@ -37,6 +37,8 @@ public class FormEngine extends Canvas {
 	public int marginWidth = 0;
 	public int marginHeight = 1;
 	IHyperlinkSegment entered;
+	boolean mouseDown = false;
+	Point dragOrigin;
 
 	public boolean getFocus() {
 		return hasFocus;
@@ -156,17 +158,23 @@ public class FormEngine extends Canvas {
 				enterLink(segmentUnder);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
+			mouseDown=true;
+			dragOrigin = new Point(e.x, e.y);
 		} else {
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
 				activateLink(segmentUnder);
 			}
+			mouseDown = false;
 		}
 	}
 	private void handleMouseHover(MouseEvent e) {
 	}
 	private void handleMouseMove(MouseEvent e) {
-		//IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+		if (mouseDown) {
+			handleDrag(e);
+			return;
+		}
 		ITextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
 		
 		if (segmentUnder == null) {
@@ -188,6 +196,9 @@ public class FormEngine extends Canvas {
 				setCursor(model.getHyperlinkSettings().getTextCursor());
 			}
 		}
+	}
+	
+	private void handleDrag(MouseEvent e) {
 	}
 	
 
