@@ -78,6 +78,17 @@ public interface ILaunchConfigurationType {
 	public String getIdentifier();
 	
 	/**
+	 * Returns whether this launch configuration type is public.  Public configuration
+	 * types are available for use by the user, for example, the user can create new
+	 * configurations based on public types through the UI.  Private types are not
+	 * accessbile in this way, but are still available through the methods on 
+	 * <code>ILaunchManager</code>.
+	 * 
+	 * @return whether this launch configuration type is public.
+	 */
+	public boolean isPublic();
+	
+	/**
 	 * Returns a new launch configuration working copy of this type,
 	 * that resides in the specified container, with the given name.
 	 * When <code>container</code> is </code>null</code>, the configuration

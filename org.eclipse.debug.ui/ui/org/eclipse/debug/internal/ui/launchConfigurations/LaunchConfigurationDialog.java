@@ -1026,7 +1026,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 
 		/**
-		 * Return only the launch configuration types that support the current mode.
+		 * Return only the launch configuration types that support the current mode AND
+		 * are marked as 'public'.
+		 * 
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
@@ -1034,8 +1036,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			ArrayList list = new ArrayList(allTypes.length);
 			String mode = getMode();
 			for (int i = 0; i < allTypes.length; i++) {
-				if (allTypes[i].supportsMode(mode)) {
-					list.add(allTypes[i]);
+				ILaunchConfigurationType configType = allTypes[i];
+				if (configType.supportsMode(mode) && configType.isPublic()) {
+					list.add(configType);
 				}
 			}			
 			return list.toArray();

@@ -109,7 +109,20 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
+	 * @see ILaunchConfigurationType#isPublic()
+	 */
+	public boolean isPublic() {
+		String publicString = getConfigurationElement().getAttribute("public");
+		if (publicString != null) {
+			if (publicString.equalsIgnoreCase("false")) {
+				return false;
+			}
+		} 
+		return true;
+	}
+
+	/**
 	 * @see ILaunchConfigurationType#newInstance(IContainer, String)
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(

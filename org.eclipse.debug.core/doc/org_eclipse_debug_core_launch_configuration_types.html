@@ -26,6 +26,7 @@ responsible for the implementation of launching an application.</p>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delegate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA (true | false) #IMPLIED</tt>&gt;
 </pre>
 
 <ul>
@@ -39,6 +40,8 @@ responsible for the implementation of launching an application.</p>
   type of launch configuration suports - <code>"run"</code> and/or <code>"debug"</code>.</li>
  <li><code>name</code> specifies a human readable name for this type
   of launch configuration.</li>
+ <li><code>public</code> specifies whether this launch configuration type is
+  accessible by users.  Defaults to true if not specified.</li>
 </ul>
 
 <pre>
