@@ -109,9 +109,16 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/*
-	 * @see IDocumentPartitioner#connect(IDocument)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
 	public void connect(IDocument document) {
+		connect(document, false);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#connect(org.eclipse.jface.text.IDocument, boolean)
+	 */
+	public void connect(IDocument document, boolean delayInitialization) {
 		Assert.isNotNull(document);
 		Assert.isTrue(!document.containsPositionCategory(fPositionCategory));
 		
@@ -119,6 +126,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fDocument.addPositionCategory(fPositionCategory);
 		
 		fIsInitialized= false;
+		if (!delayInitialization)
+			checkInitialization();
 	}
 	
 	/*

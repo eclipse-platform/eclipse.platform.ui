@@ -26,11 +26,14 @@ package org.eclipse.jface.text;
  * <ul>
  * <li> {@link org.eclipse.jface.text.IDocumentPartitionerExtension} since version 2.0 replacing
  *      the <code>documentChanged</code> method with a new one returning the minimal document region
- *      comprising all partition changes. </li>
+ *      comprising all partition changes.</li>
  * <li> {@link org.eclipse.jface.text.IDocumentPartitionerExtension2} since version 3.0 
  *      introducing zero-length partitions in conjunction with the distinction between
  *      open and closed partitions. Also provides inside in the implementation of the partitioner
  *      by exposing the position category used for managing the partitioning information.</li>
+ * <li> {@link org.eclipse.jface.text.IDocumentPartitionerExtension3} since version 3.1 introducing
+ *      rewrite session. It also replaces the existing {@link #connect(IDocument)} method with 
+ *      a new one: {@link org.eclipse.jface.text.IDocumentPartitionerExtension3#connect(IDocument, boolean)}.
  * </ul>
  * 
  * Clients may implement this interface and its extension interfaces or use the standard 
@@ -47,8 +50,13 @@ public interface IDocumentPartitioner {
 	 * Connect indicates the begin of the usage of the receiver 
 	 * as partitioner of the given document. Thus, resources the partitioner
 	 * needs to be operational for this document should be allocated.<p>
+	 * 
 	 * The caller of this method must ensure that this partitioner is
-	 * also set as the document's document partitioner.
+	 * also set as the document's document partitioner.<p>
+	 * 
+	 * This method has been replaced with {@link IDocumentPartitionerExtension3#connect(IDocument, boolean)}.
+	 * Implementers should default a call <code>connect(document)</code> to
+	 * <code>connect(document, false)</code> in order to sustain the same semantics.
 	 *
 	 * @param document the document to be connected to
 	 */

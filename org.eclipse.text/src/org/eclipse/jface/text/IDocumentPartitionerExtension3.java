@@ -30,8 +30,7 @@ public interface IDocumentPartitionerExtension3 {
 	 * optimization.
 	 * 
 	 * @param session the rewrite session
-	 * @throws IllegalStateException in case there is already an active rewrite
-	 *             session
+	 * @throws IllegalStateException in case there is already an active rewrite session
 	 */
 	void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException;
 	
@@ -50,4 +49,24 @@ public interface IDocumentPartitionerExtension3 {
 	 * @return the active rewrite session or <code>null</code>
 	 */
 	DocumentRewriteSession getActiveRewriteSession();
+	
+	/**
+	 * Connects this partitioner to a document. Connect indicates the begin of
+	 * the usage of the receiver as partitioner of the given document. Thus,
+	 * resources the partitioner needs to be operational for this document
+	 * should be allocated.
+	 * <p>
+	 * The caller of this method must ensure that this partitioner is also set
+	 * as the document's document partitioner.
+	 * <p>
+	 * <code>delayInitialization</code> indicates whether the partitioner is
+	 * allowed to delay it initial computation of the document's partitioning
+	 * until it has to answer the first query.
+	 * 
+	 * Replaces {@link IDocumentPartitioner#connect(IDocument)}.
+	 * 
+	 * @param document the document to be connected to
+	 * @param delayInitialization <code>true</code> if initialization can be delayed, <code>false</code> otherwise
+	 */
+	void connect(IDocument document, boolean delayInitialization);
 }
