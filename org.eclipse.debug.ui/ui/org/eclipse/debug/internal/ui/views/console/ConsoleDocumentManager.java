@@ -266,9 +266,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
 				if (colorProvider instanceof IConsoleColorProvider) {
 					return (IConsoleColorProvider)colorProvider;
-				} else {
-					DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
-				}
+				} 
+				DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
