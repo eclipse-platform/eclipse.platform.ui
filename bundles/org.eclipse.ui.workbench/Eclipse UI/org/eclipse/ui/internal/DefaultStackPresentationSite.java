@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.presentations.IPresentablePart;
-import org.eclipse.ui.presentations.IPresentationSite;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -22,7 +21,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class DefaultStackPresentationSite implements IStackPresentationSite {
 	
 	private StackPresentation presentation;
-	private int state = IPresentationSite.STATE_RESTORED;
+	private int state = IStackPresentationSite.STATE_RESTORED;
 	
 	public DefaultStackPresentationSite() {
 		
