@@ -33,7 +33,7 @@ import org.eclipse.ui.externaltools.internal.core.ToolMessages;
  * to be used when running Ant build files.
  */
 public class AntClasspathPage extends AntPage {
-	private static final int ADD_JAR_BUTTON = IDialogConstants.CLIENT_ID + 1;
+	private static final int ADD_JARS_BUTTON = IDialogConstants.CLIENT_ID + 1;
 	private static final int ADD_FOLDER_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
 	private static final int UP_BUTTON = IDialogConstants.CLIENT_ID + 4;
@@ -58,7 +58,7 @@ public class AntClasspathPage extends AntPage {
 	 * Method declared on AntPage.
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
-		createButton(parent, "AntClasspathPage.addJarButtonTitle", ADD_JAR_BUTTON); //$NON-NLS-1$;
+		createButton(parent, "AntClasspathPage.addJarButtonTitle", ADD_JARS_BUTTON); //$NON-NLS-1$;
 		createButton(parent, "AntClasspathPage.addFolderButtonTitle", ADD_FOLDER_BUTTON); //$NON-NLS-1$;
 		createSeparator(parent);
 		upButton= createButton(parent, "AntClasspathPage.upButtonTitle", UP_BUTTON); //$NON-NLS-1$;
@@ -86,7 +86,7 @@ public class AntClasspathPage extends AntPage {
 	/**
 	 * Allows the user to enter add JARs to the classpath.
 	 */
-	private void addJarButtonPressed() {
+	private void addJarsButtonPressed() {
 		String lastUsedPath;
 		lastUsedPath= fDialogSettings.get(IUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
@@ -119,8 +119,8 @@ public class AntClasspathPage extends AntPage {
 	 */
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
-			case ADD_JAR_BUTTON :
-				addJarButtonPressed();
+			case ADD_JARS_BUTTON :
+				addJarsButtonPressed();
 				break;
 			case ADD_FOLDER_BUTTON :
 				addFolderButtonPressed();
