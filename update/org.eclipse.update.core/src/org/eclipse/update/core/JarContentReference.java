@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
-import org.eclipse.core.internal.boot.Policy;
 
 /**
  * Local jar content reference. 

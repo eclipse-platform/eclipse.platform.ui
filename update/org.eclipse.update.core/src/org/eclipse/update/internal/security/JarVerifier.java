@@ -34,6 +34,8 @@ public class JarVerifier implements IVerifier {
 	private List /*of CertificatePair*/
 	trustedCertificates = null;	
 	private boolean acceptUnsignedFiles = false;	
+	
+	private static final String MANIFEST = "META-INF";
 
 	/**
 	 * List of initialized keystores
@@ -174,12 +176,13 @@ public class JarVerifier implements IVerifier {
 		JarEntry currentEntry = null;
 		InputStream in = null;
 		if (monitor != null)
-			monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFile.getName()), jarFile.size()); //$NON-NLS-1$ 
+			monitor.setTaskName(Policy.bind("JarVerifier.Verify", jarFile.getName())); //$NON-NLS-1$ 
+			//monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFile.getName()), jarFile.size()); //$NON-NLS-1$ 
 		
 		try {
 			while (entries.hasMoreElements()) {
-				if (monitor !=null)
-					monitor.worked(1);
+				//if (monitor !=null)
+					//monitor.worked(1);
 				currentEntry = (JarEntry) entries.nextElement();
 				list.add(currentEntry);
 				in = jarFile.getInputStream(currentEntry);
@@ -192,8 +195,8 @@ public class JarVerifier implements IVerifier {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
-			if (monitor != null)
-				monitor.done();
+			//if (monitor != null)
+				//monitor.done();
 		}
 		return list;
 	}
@@ -280,6 +283,10 @@ public class JarVerifier implements IVerifier {
 			result.setResultException(e);
 		}
 
+
+		if (monitor!=null)
+			monitor.worked(1);
+			
 		return result;
 	}
 	/**
@@ -328,11 +335,19 @@ public class JarVerifier implements IVerifier {
 				Iterator iter = filesInJar.iterator();
 				boolean certificateFound = false;
 				while (iter.hasNext()) {
-					Certificate[] certs = ((JarEntry) iter.next()).getCertificates();
+					JarEntry currentJarEntry =  (JarEntry) iter.next();
+					Certificate[] certs =currentJarEntry.getCertificates();
 					if ((certs != null) && (certs.length != 0)) {
 						certificateFound = true;
 						result.addCertificates(certs);
-					};
+					} else {
+						String jarEntryName = currentJarEntry.getName();
+						if (!jarEntryName.toUpperCase().startsWith(MANIFEST) && !currentJarEntry.isDirectory()){
+							// if the jarEntry is not in MANIFEST, consider the whole file unsigned							
+							break;
+						}
+
+					}
 				}
 
 				if (certificateFound)

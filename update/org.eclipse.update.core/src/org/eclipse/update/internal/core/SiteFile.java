@@ -115,6 +115,10 @@ public class SiteFile extends Site {
 			// get the plugins from the feature
 			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
 
+			if (monitor!=null){
+				monitor.beginTask("Removing Feature: "+feature.getLabel(),pluginsToRemove.length+1);
+			}
+
 			//finds the contentReferences for this IPluginEntry
 			for (int i = 0; i < pluginsToRemove.length; i++) {
 				remove(feature, pluginsToRemove[i], monitor);
@@ -125,6 +129,7 @@ public class SiteFile extends Site {
 			for (int i = 0; i < references.length; i++) {
 				try {
 					UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+					if (monitor!=null) monitor.worked(1);
 				} catch (IOException e) {
 					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e); //$NON-NLS-1$
@@ -285,6 +290,7 @@ public class SiteFile extends Site {
 		for (int i = 0; i < references.length; i++) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+				if (monitor!=null)	monitor.worked(1);
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("SiteFile.CannotRemovePlugin", pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm()), e); //$NON-NLS-1$

@@ -1,5 +1,6 @@
 package org.eclipse.update.core;
-import org.eclipse.core.internal.boot.Policy;
+
+import org.eclipse.update.internal.core.Policy;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

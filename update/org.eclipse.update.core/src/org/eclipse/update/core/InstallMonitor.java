@@ -8,7 +8,7 @@ package org.eclipse.update.core;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.internal.boot.Policy;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Delegating wrapper for IProgressMonitor used for 

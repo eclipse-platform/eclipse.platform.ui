@@ -12,10 +12,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.eclipse.core.internal.boot.Policy;
 import org.eclipse.update.core.model.ContentEntryModel;
 import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**

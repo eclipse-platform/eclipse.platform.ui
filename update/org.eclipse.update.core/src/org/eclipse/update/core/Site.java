@@ -6,7 +6,6 @@ package org.eclipse.update.core;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.boot.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
