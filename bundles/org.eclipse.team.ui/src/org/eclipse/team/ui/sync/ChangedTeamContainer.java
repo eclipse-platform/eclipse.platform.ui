@@ -31,6 +31,10 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 		return getKind() & Differencer.DIRECTION_MASK;
 	}
 
+	public int getChangeType() {
+		return getKind() & Differencer.CHANGE_TYPE_MASK;
+	}
+
 	public String getName() {
 		return mergeResource.getName();
 	}
