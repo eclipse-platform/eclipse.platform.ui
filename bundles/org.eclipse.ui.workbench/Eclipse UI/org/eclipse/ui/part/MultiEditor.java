@@ -141,7 +141,7 @@ public abstract class MultiEditor extends EditorPart {
 	/**
 	 * Set the active editor.
 	 */
-	private void activateEditor(IEditorPart part) {
+	protected void activateEditor(IEditorPart part) {
 		IEditorPart oldEditor = getActiveEditor();
 		activeEditorIndex = getIndex(part);
 		IEditorPart e = getActiveEditor();
@@ -152,7 +152,7 @@ public abstract class MultiEditor extends EditorPart {
 	/*
 	 * Return the index of the specified editor
 	 */
-	private int getIndex(IEditorPart editor) {
+	protected int getIndex(IEditorPart editor) {
 		for (int i = 0; i < innerEditors.length; i++) {
 			if (innerEditors[i] == editor)
 				return i;
