@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -63,8 +63,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	protected boolean fPushback;
 	
 	
-	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector) 
-			throws CoreException {
+	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status) {
+		super(status);
 		fPattern= pattern;
 		fScope= scope;
 		fCollector= collector;
@@ -78,11 +78,15 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		fMatcher= new StringMatcher(pattern, options.indexOf('i') != -1, false);
 	}
 	
-	public void process(Collection projects) throws CoreException {
+	public void process(Collection projects) {
 		Iterator i= projects.iterator();
 		while(i.hasNext()) {
 			IProject project= (IProject)i.next();
-			project.accept(this);
+			try {
+				project.accept(this);
+			} catch (CoreException ex) {
+				addToStatus(ex);
+			}
 		}
 	}
 
@@ -221,7 +225,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	/*
 	 * @see IResourceVisitor#visit(IResource)
 	 */
-	public boolean visit(IResource resource) throws CoreException {
+	public boolean visit(IResource resource) {
 		fDirtyEditors= getDirtyEditors();
 		return super.visit(resource);
 	}

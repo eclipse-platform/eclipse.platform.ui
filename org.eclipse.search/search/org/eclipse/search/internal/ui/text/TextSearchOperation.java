@@ -4,18 +4,18 @@
  */
 package org.eclipse.search.internal.ui.text;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 /**
@@ -30,6 +30,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	private String fOptions;
 	private ISearchScope fScope;
 	private TextSearchResultCollector fCollector;
+	private IStatus fStatus;
 	
 	/**
 	 * Creates a new text search operation.
@@ -48,10 +49,10 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	/**
 	 * The actual algorithm.
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException {
+	protected void execute(IProgressMonitor monitor) {
 		fCollector.setProgressMonitor(monitor);		
 		TextSearchEngine engine= new TextSearchEngine();
-		engine.search(fWorkspace, fPattern, fOptions, fScope, fCollector);
+		fStatus= engine.search(fWorkspace, fPattern, fOptions, fScope, fCollector);
 	}	
 
 	String getSingularLabel() {
@@ -70,5 +71,9 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	
 	ImageDescriptor getImageDescriptor() {
 		return SearchPluginImages.DESC_OBJ_TSEARCH_DPDN;
+	}
+	
+	IStatus getStatus() {
+		return fStatus;
 	}
 }

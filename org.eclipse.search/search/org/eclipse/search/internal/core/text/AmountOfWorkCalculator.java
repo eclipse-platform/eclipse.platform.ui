@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 
 import org.eclipse.search.internal.core.ISearchScope;
 
@@ -19,6 +20,10 @@ import org.eclipse.search.internal.core.ISearchScope;
 public class AmountOfWorkCalculator extends TypedResourceVisitor {
 	private ISearchScope fScope;
 	private int fResult;
+
+	AmountOfWorkCalculator(MultiStatus status) {
+		super(status);
+	}
 		
 	protected boolean visitFile(IFile file) throws CoreException {
 		if (fScope.encloses(file))
@@ -26,7 +31,7 @@ public class AmountOfWorkCalculator extends TypedResourceVisitor {
 		return true;	
 	}
 	
-	public int process(Collection projects, ISearchScope scope) throws CoreException {
+	public int process(Collection projects, ISearchScope scope) {
 		fResult= 0;
 		fScope= scope;
 		
@@ -34,7 +39,11 @@ public class AmountOfWorkCalculator extends TypedResourceVisitor {
 		while(i.hasNext()) {
 			IProject project= (IProject)i.next();
 			int save= fResult;
-			project.accept(this);
+			try {
+				project.accept(this);
+			} catch (CoreException ex) {
+				addToStatus(ex);
+			}
 			// Project doesn't contain any files that are in scope
 			if (save == fResult)
 				i.remove();	

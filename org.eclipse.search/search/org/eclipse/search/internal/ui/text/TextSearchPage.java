@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -32,11 +33,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -154,6 +155,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		} catch (InterruptedException e) {
 			return false;
 		}
+		IStatus status= op.getStatus();
+		if (status != null && !status.isOK()) {
+			String title= SearchMessages.getString("Search.Problems.title"); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), title, null, status); //$NON-NLS-1$
+		}		
 		return true;
 	}
 	
@@ -245,7 +251,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				fExtensions.setItems(getPreviousExtensions());
 				initializePatternControl();
 			}
-			fExtensions.setFocus();
+			fPattern.setFocus();
 			getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 		}
 		super.setVisible(visible);
