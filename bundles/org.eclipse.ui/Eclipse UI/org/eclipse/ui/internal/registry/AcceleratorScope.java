@@ -175,12 +175,11 @@ public class AcceleratorScope {
 	 */
 	private Integer convertEvent(KeyEvent event) {
 		//ISSUE: Must fix the number 64.
-    	if(event.stateMask == SWT.CONTROL) {
-			char upper = Character.toUpperCase(event.character);
+		char upper = Character.toUpperCase(event.character);
+    	if(event.stateMask == SWT.CONTROL)
 			if (0 <= upper && upper <= 64) 
 				return new Integer(event.stateMask | upper + 64);
-    	}
-    	return new Integer(event.stateMask | event.character);
+    	return new Integer(event.stateMask | upper);
     }
     /**
      * Process a key event. Find a action associated with the event
