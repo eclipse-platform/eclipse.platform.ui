@@ -16,7 +16,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * Provides facilities related to the synchronization of memory renderings.
- * 
+ * <p>
+ * Clients hosting renderings may implement this interface.
+ * </p>
  * @since 3.1
  */
 public interface IMemoryRenderingSynchronizationService {

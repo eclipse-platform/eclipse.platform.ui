@@ -31,7 +31,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
- * Abstract implementation to IMemoryRendering
+ * Abstract implementation of a memory rendering.
+ * <p>
+ * Clients implementing memory renderings must subclass this class.
+ * </p>
  * @since 3.1
  */
 public abstract class AbstractMemoryRendering implements IMemoryRendering{
