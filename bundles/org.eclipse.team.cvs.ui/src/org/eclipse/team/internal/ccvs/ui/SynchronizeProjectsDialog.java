@@ -73,9 +73,7 @@ public class SynchronizeProjectsDialog extends Dialog {
 	
 		Font font = parent.getFont();
 		composite.setFont(font);
-		
-		createLabel(composite, Policy.bind("SynchronizeProjectsDialog.description")); //$NON-NLS-1$
-			
+					
 		workingSetArea = new WorkingSetSelectionArea(this, Policy.bind("SynchronizeProjectsDialog.allSharedProjects"), Policy.bind("SynchronizeProjectsDialog.sharedWorkingSetProjects"), settings); //$NON-NLS-1$ //$NON-NLS-2$
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
