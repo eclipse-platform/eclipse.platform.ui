@@ -67,6 +67,11 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		entries.remove(resource);
 		allEntries.remove(resource);
 	}
+	
+	public void clearEntries() {
+		entries.clear();
+		allEntries.clear();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryLocationOperation#execute(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource[], org.eclipse.core.runtime.IProgressMonitor)

@@ -349,6 +349,10 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				for (int i = 0; i < commentInfos.length; i++) {
 					addSyncInfoToCommentNode(commentInfos[i], logs);
 				}
+				// Don't cache log entries when in two way mode.
+				if(getConfiguration().getComparisonType().equals(ISynchronizePageConfiguration.TWO_WAY)) {
+					logs.clearEntries();
+				}
 			}
 		} catch (CVSException e) {
 			Utils.handle(e);
