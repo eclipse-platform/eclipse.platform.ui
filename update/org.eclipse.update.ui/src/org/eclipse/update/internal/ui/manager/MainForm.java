@@ -62,6 +62,7 @@ public void createFormClient(Composite parent) {
 	section.setDescription("Go here to download the latest updates for the currently installed features.");
 	child = section.createControl(column, factory);
 	//gd = new GridData(GridData.FILL_HORIZONTAL |GridData.VERTICAL_ALIGN_BEGINNING);
+	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	gd = new GridData(GridData.FILL_BOTH);
 	child.setLayoutData(gd);
 	
@@ -75,6 +76,19 @@ public void createFormClient(Composite parent) {
 	child = section.createControl(column, factory);
 	//gd = new GridData(GridData.FILL_HORIZONTAL |GridData.VERTICAL_ALIGN_BEGINNING);
 	gd = new GridData(GridData.FILL_BOTH);
+	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+	child.setLayoutData(gd);
+	
+	section = new EmptySection() {
+		public void titleActivated() {
+			goToPage(UpdateManager.REMOVE_PAGE);
+		}
+	};
+	section.setHeaderText("Feature Removal");
+	section.setDescription("Go here to remove currently installed features.");
+	child = section.createControl(column, factory);
+	gd = new GridData(GridData.FILL_BOTH);
+	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	child.setLayoutData(gd);
 	
 	section = new EmptySection() {
@@ -86,6 +100,7 @@ public void createFormClient(Composite parent) {
 	section.setDescription("Review your installation history or choose to revert to one of the previous stable states.");
 	child = section.createControl(column, factory);
 	gd = new GridData(GridData.FILL_BOTH);
+	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	child.setLayoutData(gd);
 }
 private void goToPage(String pageId) {

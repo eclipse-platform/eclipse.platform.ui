@@ -5,13 +5,13 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
-public class UpdatesForm extends FeatureSelectionForm {
-	public UpdatesForm(UpdateFormPage page) {
-		super(page, IUpdateModes.UPDATE);
+public class RemoveForm extends FeatureSelectionForm {
+	public RemoveForm(UpdateFormPage page) {
+		super(page, IUpdateModes.REMOVE);
 	}
 	
 public void initialize(Object modelObject) {
-	setTitle("Feature Updates");
+	setTitle("Uninstall Features");
 	super.initialize(modelObject);
 }
 
