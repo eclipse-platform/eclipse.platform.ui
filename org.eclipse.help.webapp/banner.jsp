@@ -154,6 +154,7 @@ function doSearch()
 	</tr>
 	</table>
 </td>
+</tr>
 </table>
 				
 </form>
