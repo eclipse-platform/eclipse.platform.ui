@@ -24,7 +24,7 @@ package org.eclipse.ui.contexts.registry;
  * 
  * @since 3.0
  */
-public interface IContextDefinition {
+public interface IContextDefinition extends Comparable {
 
 	/**
 	 * JAVADOC

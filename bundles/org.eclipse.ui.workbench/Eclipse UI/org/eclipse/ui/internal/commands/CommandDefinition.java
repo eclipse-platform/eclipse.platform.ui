@@ -21,7 +21,7 @@ import java.util.TreeMap;
 import org.eclipse.ui.commands.registry.ICommandDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class CommandDefinition implements Comparable, ICommandDefinition {
+final class CommandDefinition implements ICommandDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CommandDefinition.class.getName().hashCode();
@@ -111,16 +111,16 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 				compareTo =	allowsKeyBindings == false ? (commandDefinition.allowsKeyBindings == true ? -1 : 0) : 1;				
 			
 				if (compareTo == 0) {
-					id.compareTo(commandDefinition.id);
+					compareTo = Util.compare(categoryId, commandDefinition.categoryId);
 		
 					if (compareTo == 0) {		
-						compareTo = name.compareTo(commandDefinition.name);			
+						compareTo = Util.compare(description, commandDefinition.description);	
 		
 						if (compareTo == 0) {
-							compareTo = Util.compare(categoryId, commandDefinition.categoryId);
+							compareTo = id.compareTo(commandDefinition.id);	
 				
 							if (compareTo == 0) {
-								compareTo = Util.compare(description, commandDefinition.description);
+								compareTo = name.compareTo(commandDefinition.name);	
 
 								if (compareTo == 0)
 									compareTo = Util.compare(pluginId, commandDefinition.pluginId);								
@@ -139,7 +139,16 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 			return false;
 
 		CommandDefinition commandDefinition = (CommandDefinition) object;	
-		return allowsContextBindings == commandDefinition.allowsContextBindings && allowsImageBindings == commandDefinition.allowsImageBindings && allowsKeyBindings == commandDefinition.allowsKeyBindings && Util.equals(categoryId, commandDefinition.categoryId) && Util.equals(description, commandDefinition.description) && id.equals(commandDefinition.id) && name.equals(commandDefinition.name) && Util.equals(pluginId, commandDefinition.pluginId);
+		boolean equals = true;
+		equals &= allowsContextBindings == commandDefinition.allowsContextBindings;
+		equals &= allowsImageBindings == commandDefinition.allowsImageBindings;
+		equals &= allowsKeyBindings == commandDefinition.allowsKeyBindings;
+		equals &= Util.equals(categoryId, commandDefinition.categoryId);
+		equals &= Util.equals(description, commandDefinition.description);
+		equals &= id.equals(commandDefinition.id);
+		equals &= name.equals(commandDefinition.name);
+		equals &= Util.equals(pluginId, commandDefinition.pluginId);
+		return equals;		
 	}
 
 	public boolean getAllowsContextBindings() {
@@ -201,13 +210,13 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 			stringBuffer.append(',');
 			stringBuffer.append(allowsKeyBindings);
 			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
 			stringBuffer.append(categoryId);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
 			stringBuffer.append(',');
 			stringBuffer.append(pluginId);
 			stringBuffer.append(']');

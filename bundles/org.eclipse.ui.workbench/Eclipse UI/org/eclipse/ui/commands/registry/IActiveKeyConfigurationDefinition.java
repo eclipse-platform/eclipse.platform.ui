@@ -24,7 +24,7 @@ package org.eclipse.ui.commands.registry;
  * 
  * @since 3.0
  */
-public interface IActiveKeyConfigurationDefinition {
+public interface IActiveKeyConfigurationDefinition extends Comparable {
 
 	/**
 	 * JAVADOC

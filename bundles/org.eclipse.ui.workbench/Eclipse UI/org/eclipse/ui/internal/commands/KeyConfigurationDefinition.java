@@ -21,7 +21,7 @@ import java.util.TreeMap;
 import org.eclipse.ui.commands.registry.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationDefinition {
+final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
@@ -95,20 +95,20 @@ final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationD
 	}
 	
 	public int compareTo(Object object) {
-		KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;
-		int compareTo = id.compareTo(keyConfigurationDefinition.id);
+		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;
+		int compareTo = Util.compare(description, keyConfigurationDefintion.description);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(keyConfigurationDefinition.name);			
+			compareTo = id.compareTo(keyConfigurationDefintion.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, keyConfigurationDefinition.description);
+				compareTo = name.compareTo(keyConfigurationDefintion.name);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, keyConfigurationDefinition.parentId);
+					compareTo = Util.compare(parentId, keyConfigurationDefintion.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, keyConfigurationDefinition.pluginId);								
+						compareTo = Util.compare(pluginId, keyConfigurationDefintion.pluginId);								
 				}							
 			}
 		}
@@ -120,8 +120,14 @@ final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationD
 		if (!(object instanceof KeyConfigurationDefinition))
 			return false;
 
-		KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;	
-		return Util.equals(description, keyConfigurationDefinition.description) && id.equals(keyConfigurationDefinition.id) && name.equals(keyConfigurationDefinition.name) && Util.equals(parentId, keyConfigurationDefinition.parentId) && Util.equals(pluginId, keyConfigurationDefinition.pluginId);
+		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;	
+		boolean equals = true;
+		equals &= Util.equals(description, keyConfigurationDefintion.description);
+		equals &= id.equals(keyConfigurationDefintion.id);
+		equals &= name.equals(keyConfigurationDefintion.name);
+		equals &= Util.equals(parentId, keyConfigurationDefintion.parentId);
+		equals &= Util.equals(pluginId, keyConfigurationDefintion.pluginId);
+		return equals;
 	}
 
 	public String getDescription() {
@@ -155,18 +161,18 @@ final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationD
 			hashCodeComputed = true;
 		}
 			
-		return hashCode;
+		return hashCode;		
 	}
 
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
 			stringBuffer.append(',');
 			stringBuffer.append(parentId);
 			stringBuffer.append(',');
@@ -175,6 +181,6 @@ final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationD
 			string = stringBuffer.toString();
 		}
 	
-		return string;
+		return string;		
 	}
 }

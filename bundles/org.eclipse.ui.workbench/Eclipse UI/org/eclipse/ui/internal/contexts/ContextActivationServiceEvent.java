@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
-import org.eclipse.ui.internal.util.Util;
 
 final class ContextActivationServiceEvent implements IContextActivationServiceEvent {
 
@@ -26,14 +25,6 @@ final class ContextActivationServiceEvent implements IContextActivationServiceEv
 		this.contextActivationService = contextActivationService;
 	}
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextActivationServiceEvent))
-			return false;
-
-		ContextActivationServiceEvent contextActivationServiceEvent = (ContextActivationServiceEvent) object;	
-		return Util.equals(contextActivationService, contextActivationServiceEvent.contextActivationService);
-	}
-	
 	public IContextActivationService getContextActivationService() {
 		return contextActivationService;
 	}

@@ -96,13 +96,13 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 	
 	public int compareTo(Object object) {
 		ContextDefinition contextDefintion = (ContextDefinition) object;
-		int compareTo = id.compareTo(contextDefintion.id);
+		int compareTo = Util.compare(description, contextDefintion.description);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(contextDefintion.name);			
+			compareTo = id.compareTo(contextDefintion.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, contextDefintion.description);
+				compareTo = name.compareTo(contextDefintion.name);
 				
 				if (compareTo == 0) {
 					compareTo = Util.compare(parentId, contextDefintion.parentId);
@@ -121,7 +121,13 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 			return false;
 
 		ContextDefinition contextDefintion = (ContextDefinition) object;	
-		return Util.equals(description, contextDefintion.description) && id.equals(contextDefintion.id) && name.equals(contextDefintion.name) && Util.equals(parentId, contextDefintion.parentId) && Util.equals(pluginId, contextDefintion.pluginId);
+		boolean equals = true;
+		equals &= Util.equals(description, contextDefintion.description);
+		equals &= id.equals(contextDefintion.id);
+		equals &= name.equals(contextDefintion.name);
+		equals &= Util.equals(parentId, contextDefintion.parentId);
+		equals &= Util.equals(pluginId, contextDefintion.pluginId);
+		return equals;
 	}
 
 	public String getDescription() {
@@ -162,11 +168,11 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
 			stringBuffer.append(',');
 			stringBuffer.append(parentId);
 			stringBuffer.append(',');

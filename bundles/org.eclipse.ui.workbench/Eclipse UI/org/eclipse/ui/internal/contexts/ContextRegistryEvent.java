@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.registry.IContextRegistry;
 import org.eclipse.ui.contexts.registry.IContextRegistryEvent;
-import org.eclipse.ui.internal.util.Util;
 
 final class ContextRegistryEvent implements IContextRegistryEvent {
 
@@ -26,14 +25,6 @@ final class ContextRegistryEvent implements IContextRegistryEvent {
 		this.contextRegistry = contextRegistry;
 	}
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextRegistryEvent))
-			return false;
-
-		ContextRegistryEvent contextRegistryEvent = (ContextRegistryEvent) object;	
-		return Util.equals(contextRegistry, contextRegistryEvent.contextRegistry);
-	}
-	
 	public IContextRegistry getContextRegistry() {
 		return contextRegistry;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
-import org.eclipse.ui.internal.util.Util;
 
 final class CommandManagerEvent implements ICommandManagerEvent {
 
@@ -26,14 +25,6 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 		this.commandManager = commandManager;
 	}
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CommandManagerEvent))
-			return false;
-
-		CommandManagerEvent commandManagerEvent = (CommandManagerEvent) object;	
-		return Util.equals(commandManager, commandManagerEvent.commandManager);
-	}
-	
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}

@@ -226,8 +226,8 @@ public final class CommandManager implements ICommandManager {
 		
 		while (iterator.hasNext()) {
 			ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
-			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition.getCategoryId(), Collections.EMPTY_LIST, commandDefinition.getDescription(), commandDefinition.getId(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, commandDefinition.getName(), commandDefinition.getPluginId());		
-			commandsById.put(command.getId(), command);
+			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+			commandsById.put(commandDefinition.getId(), command);
 		}
 
 		SortedSet commandChanges = new TreeSet();

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.contexts;
 
+import org.eclipse.ui.contexts.registry.IContextDefinition;
+
 /**
  * <p>
  * JAVADOC
@@ -24,7 +26,7 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface IContext extends Comparable {
 
 	/**
 	 * JAVADOC
@@ -32,39 +34,11 @@ public interface IContext {
 	 * @return
 	 */	
 	boolean getActive();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	IContextDefinition getContextDefinition();
 }

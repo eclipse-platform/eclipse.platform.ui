@@ -15,7 +15,7 @@ import org.eclipse.ui.commands.registry.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBindingDefinition implements Comparable, IKeyBindingDefinition {
+final class KeyBindingDefinition implements IKeyBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyBindingDefinition.class.getName().hashCode();
@@ -80,7 +80,15 @@ final class KeyBindingDefinition implements Comparable, IKeyBindingDefinition {
 			return false;
 
 		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;	
-		return commandId.equals(keyBindingDefinition.commandId) && contextId.equals(keyBindingDefinition.contextId) && keyConfigurationId.equals(keyBindingDefinition.keyConfigurationId) && keySequence.equals(keyBindingDefinition.keySequence) && locale.equals(keyBindingDefinition.locale) && platform.equals(keyBindingDefinition.platform) && Util.equals(pluginId, keyBindingDefinition.pluginId);	
+		boolean equals = true;
+		equals &= commandId.equals(keyBindingDefinition.commandId);
+		equals &= contextId.equals(keyBindingDefinition.contextId);
+		equals &= keyConfigurationId.equals(keyBindingDefinition.keyConfigurationId);
+		equals &= keySequence.equals(keyBindingDefinition.keySequence);
+		equals &= locale.equals(keyBindingDefinition.locale);
+		equals &= platform.equals(keyBindingDefinition.platform);
+		equals &= Util.equals(pluginId, keyBindingDefinition.pluginId);
+		return equals;
 	}
 
 	public String getCommandId() {

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.commands.ICommandDelegateService;
 import org.eclipse.ui.commands.ICommandDelegateServiceEvent;
-import org.eclipse.ui.internal.util.Util;
 
 final class CommandDelegateServiceEvent implements ICommandDelegateServiceEvent {
 
@@ -26,14 +25,6 @@ final class CommandDelegateServiceEvent implements ICommandDelegateServiceEvent 
 		this.commandDelegateService = commandDelegateService;
 	}
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CommandDelegateServiceEvent))
-			return false;
-
-		CommandDelegateServiceEvent commandDelegateServiceEvent = (CommandDelegateServiceEvent) object;	
-		return Util.equals(commandDelegateService, commandDelegateServiceEvent.commandDelegateService);
-	}
-	
 	public ICommandDelegateService getCommandDelegateService() {
 		return commandDelegateService;
 	}

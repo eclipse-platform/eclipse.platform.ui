@@ -181,8 +181,8 @@ public final class ContextManager implements IContextManager {
 		
 		while (iterator.hasNext()) {
 			IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-			IContext context = new Context(activeContextIds.contains(contextDefinition.getId()), contextDefinition.getDescription(), contextDefinition.getId(), contextDefinition.getName(), contextDefinition.getParentId(), contextDefinition.getPluginId());		
-			contextsById.put(context.getId(), context);
+			IContext context = new Context(activeContextIds.contains(contextDefinition.getId()), contextDefinition);		
+			contextsById.put(contextDefinition.getId(), context);
 		}
 
 		SortedSet contextChanges = new TreeSet();

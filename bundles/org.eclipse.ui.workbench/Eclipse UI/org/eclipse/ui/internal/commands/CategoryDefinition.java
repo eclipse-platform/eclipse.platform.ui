@@ -21,7 +21,7 @@ import java.util.TreeMap;
 import org.eclipse.ui.commands.registry.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements Comparable, ICategoryDefinition {
+final class CategoryDefinition implements ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
@@ -94,13 +94,13 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	
 	public int compareTo(Object object) {
 		CategoryDefinition categoryDefinition = (CategoryDefinition) object;
-		int compareTo = id.compareTo(categoryDefinition.id);
+		int compareTo = Util.compare(description, categoryDefinition.description);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(categoryDefinition.name);			
+			compareTo = id.compareTo(categoryDefinition.id);	
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, categoryDefinition.description);
+				compareTo = name.compareTo(categoryDefinition.name);
 				
 				if (compareTo == 0)
 					compareTo = Util.compare(pluginId, categoryDefinition.pluginId);								
@@ -115,7 +115,12 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 			return false;
 
 		CategoryDefinition categoryDefinition = (CategoryDefinition) object;	
-		return Util.equals(description, categoryDefinition.description) && id.equals(categoryDefinition.id) && name.equals(categoryDefinition.name) && Util.equals(pluginId, categoryDefinition.pluginId);
+		boolean equals = true;
+		equals &= Util.equals(description, categoryDefinition.description);
+		equals &= id.equals(categoryDefinition.id);
+		equals &= name.equals(categoryDefinition.name);
+		equals &= Util.equals(pluginId, categoryDefinition.pluginId);
+		return equals;
 	}
 
 	public String getDescription() {
@@ -135,15 +140,33 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + Util.hashCode(description);
-		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + name.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(pluginId);
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + id.hashCode();
+			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;		
 	}
 
 	public String toString() {
-		return '[' + id + ',' + name + ',' + description + ',' + pluginId + ']';
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(pluginId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+	
+		return string;		
 	}
 }

@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.commands;
 import org.eclipse.ui.commands.registry.IImageBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ImageBindingDefinition implements Comparable, IImageBindingDefinition {
+final class ImageBindingDefinition implements IImageBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ImageBindingDefinition.class.getName().hashCode();
@@ -73,7 +73,14 @@ final class ImageBindingDefinition implements Comparable, IImageBindingDefinitio
 			return false;
 
 		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;	
-		return commandId.equals(imageBindingDefinition.commandId) && imageStyle.equals(imageBindingDefinition.imageStyle) && imageUri.equals(imageBindingDefinition.imageUri) && locale.equals(imageBindingDefinition.locale) && platform.equals(imageBindingDefinition.platform) && Util.equals(pluginId, imageBindingDefinition.pluginId);
+		boolean equals = true;
+		equals &= commandId.equals(imageBindingDefinition.commandId);
+		equals &= imageStyle.equals(imageBindingDefinition.imageStyle);
+		equals &= imageUri.equals(imageBindingDefinition.imageUri);
+		equals &= locale.equals(imageBindingDefinition.locale);
+		equals &= platform.equals(imageBindingDefinition.platform);
+		equals &= Util.equals(pluginId, imageBindingDefinition.pluginId);
+		return equals;
 	}
 
 	public String getCommandId() {

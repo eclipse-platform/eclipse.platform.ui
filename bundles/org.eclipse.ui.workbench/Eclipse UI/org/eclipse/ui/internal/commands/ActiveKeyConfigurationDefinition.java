@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.commands;
 import org.eclipse.ui.commands.registry.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ActiveKeyConfigurationDefinition implements Comparable, IActiveKeyConfigurationDefinition {
+final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class.getName().hashCode();
@@ -49,7 +49,10 @@ final class ActiveKeyConfigurationDefinition implements Comparable, IActiveKeyCo
 			return false;
 
 		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;	
-		return keyConfigurationId.equals(activeKeyConfigurationDefinition.keyConfigurationId) && Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
+		boolean equals = true;
+		equals &= keyConfigurationId.equals(activeKeyConfigurationDefinition.keyConfigurationId);
+		equals &= Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
+		return equals;
 	}
 
 	public String getKeyConfigurationId() {
@@ -76,6 +79,8 @@ final class ActiveKeyConfigurationDefinition implements Comparable, IActiveKeyCo
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
 			stringBuffer.append(keyConfigurationId);
+			stringBuffer.append(',');
+			stringBuffer.append(pluginId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -19,9 +19,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.registry.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class Context implements Comparable, IContext {
+final class Context implements IContext {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Context.class.getName().hashCode();
@@ -32,7 +33,7 @@ final class Context implements Comparable, IContext {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((IContext) left).getName(), ((IContext) right).getName());
+					return Collator.getInstance().compare(((IContext) left).getContextDefinition().getName(), ((IContext) right).getContextDefinition().getName());
 				}	
 			};		
 		
@@ -50,7 +51,7 @@ final class Context implements Comparable, IContext {
 			Object object = iterator.next();
 			Util.assertInstance(object, IContext.class);
 			IContext context = (IContext) object;
-			sortedMap.put(context.getId(), context);									
+			sortedMap.put(context.getContextDefinition().getId(), context);									
 		}			
 		
 		return sortedMap;
@@ -67,57 +68,33 @@ final class Context implements Comparable, IContext {
 			Object object = iterator.next();
 			Util.assertInstance(object, IContext.class);			
 			IContext context = (IContext) object;
-			sortedMap.put(context.getName(), context);									
+			sortedMap.put(context.getContextDefinition().getName(), context);									
 		}			
 		
 		return sortedMap;
 	}
 
 	private boolean active;
-	private String description;
-	private String id;
-	private String name;
-	private String parentId;
-	private String pluginId;
+	private IContextDefinition contextDefinition;
 	
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	Context(boolean active, String description, String id, String name, String parentId, String pluginId) {
-		if (id == null || name == null)
+	Context(boolean active, IContextDefinition contextDefinition) {
+		if (contextDefinition == null)
 			throw new NullPointerException();
 		
 		this.active = active;
-		this.description = description;
-		this.id = id;
-		this.name = name;
-		this.parentId = parentId;
-		this.pluginId = pluginId;
+		this.contextDefinition = contextDefinition;
 	}
 	
 	public int compareTo(Object object) {
 		Context context = (Context) object;
 		int compareTo = active == false ? (context.active == true ? -1 : 0) : 1;
 		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(description, context.description);
-			
-			if (compareTo == 0) {		
-				compareTo = id.compareTo(context.id);
-			
-				if (compareTo == 0) {
-					compareTo = name.compareTo(context.name);			
-					
-					if (compareTo == 0) {
-						compareTo = Util.compare(parentId, context.parentId);
-	
-						if (compareTo == 0)
-							compareTo = Util.compare(pluginId, context.pluginId);								
-					}							
-				}
-			}
-		}
+		if (compareTo == 0)		
+			compareTo = contextDefinition.compareTo(context.contextDefinition);
 		
 		return compareTo;	
 	}
@@ -129,11 +106,7 @@ final class Context implements Comparable, IContext {
 		Context context = (Context) object;
 		boolean equals = true;
 		equals &= active == context.active;
-		equals &= Util.equals(description, context.description);
-		equals &= id.equals(context.id);
-		equals &= name.equals(context.name);
-		equals &= Util.equals(parentId, context.parentId);
-		equals &= Util.equals(pluginId, context.pluginId);
+		equals &= contextDefinition.equals(context.contextDefinition);
 		return equals;
 	}
 
@@ -141,35 +114,15 @@ final class Context implements Comparable, IContext {
 		return active;
 	}
 
-	public String getDescription() {
-		return description;	
-	}
-	
-	public String getId() {
-		return id;	
-	}
-	
-	public String getName() {
-		return name;
-	}	
-
-	public String getParentId() {
-		return parentId;
-	}
-
-	public String getPluginId() {
-		return pluginId;
+	public IContextDefinition getContextDefinition() {
+		return contextDefinition;
 	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + id.hashCode();
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + contextDefinition.hashCode();
 			hashCodeComputed = true;
 		}
 			
@@ -182,15 +135,7 @@ final class Context implements Comparable, IContext {
 			stringBuffer.append('[');
 			stringBuffer.append(active);
 			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(contextDefinition);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

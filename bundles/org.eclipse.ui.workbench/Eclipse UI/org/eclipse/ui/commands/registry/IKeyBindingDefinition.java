@@ -26,7 +26,7 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.0
  */
-public interface IKeyBindingDefinition {
+public interface IKeyBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC

@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.commands;
 import org.eclipse.ui.commands.registry.IContextBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextBindingDefinition implements Comparable, IContextBindingDefinition {
+final class ContextBindingDefinition implements IContextBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ContextBindingDefinition.class.getName().hashCode();
@@ -55,7 +55,11 @@ final class ContextBindingDefinition implements Comparable, IContextBindingDefin
 			return false;
 
 		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;	
-		return commandId.equals(contextBindingDefinition.commandId) && contextId.equals(contextBindingDefinition.contextId) && Util.equals(pluginId, contextBindingDefinition.pluginId);
+		boolean equals = true;
+		equals &= commandId.equals(contextBindingDefinition.commandId);
+		equals &= contextId.equals(contextBindingDefinition.contextId);
+		equals &= Util.equals(pluginId, contextBindingDefinition.pluginId);
+		return equals;
 	}
 
 	public String getCommandId() {

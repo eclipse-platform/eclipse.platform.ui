@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
-import org.eclipse.ui.internal.util.Util;
 
 final class ContextManagerEvent implements IContextManagerEvent {
 
@@ -26,14 +25,6 @@ final class ContextManagerEvent implements IContextManagerEvent {
 		this.contextManager = contextManager;
 	}
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextManagerEvent))
-			return false;
-
-		ContextManagerEvent contextManagerEvent = (ContextManagerEvent) object;	
-		return Util.equals(contextManager, contextManagerEvent.contextManager);
-	}
-	
 	public IContextManager getContextManager() {
 		return contextManager;
 	}
