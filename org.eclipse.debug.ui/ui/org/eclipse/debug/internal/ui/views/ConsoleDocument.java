@@ -152,44 +152,13 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		set(""); //$NON-NLS-1$
 	}
 
-	/**
-	 * Fires the <code>DocumentEvent</code>, but also
-	 * writes to the proxy if the user is entering input and
-	 * has hit "Enter".
-	 */
-	protected void fireDocumentChanged(DocumentEvent event) {
-		super.fireDocumentChanged(event);
-		String eventText= event.getText();
-		if (eventText == null || 0 >= eventText.length() || eventText.length() > 2 || isClosed()) {
-			return;
-		}
-		String[] lineDelimiters= event.getDocument().getLegalLineDelimiters();
-		for (int i= 0; i < lineDelimiters.length; i++) {
-			if (lineDelimiters[i].equals(eventText)) {
-				try {
-					String inText= event.getDocument().get();
-					fLastWritePosition = fLastStreamWriteEnd;
-					inText= inText.substring(fLastWritePosition, inText.length());
-					if (inText.length() == 0) {
-						return;
-					}
-					fProxy.write(inText);
-					fLastStreamWriteEnd= getLength();
-					return;
-				} catch (IOException ioe) {
-					if (!isClosed()) {
-						DebugUIPlugin.log(ioe);
-					}
-				}
-			}
-		}
-	}
-
 	public boolean isClosed() {
 		return fClosed;
 	}
 	
 	/**
+	 * The user has typed into the console.
+	 * 
 	 * @see IDocument#replace(int, int, String)
 	 */
 	public void replace(int pos, int replaceLength, String text) {
@@ -198,6 +167,29 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		}
 
 		replace0(pos, replaceLength, text);
+		
+		if (!isClosed()) {
+			// echo the data to the std in of the associated process
+			String[] lineDelimiters= getLegalLineDelimiters();
+			for (int i= 0; i < lineDelimiters.length; i++) {
+				if (lineDelimiters[i].equals(text)) {
+					try {
+						String inText= get();
+						fLastWritePosition = fLastStreamWriteEnd;
+						inText= inText.substring(fLastWritePosition, inText.length());
+						if (inText.length() == 0) {
+							break;
+						}
+						fProxy.write(inText);
+						fLastStreamWriteEnd= getLength();
+						break;
+					} catch (IOException ioe) {
+						DebugUIPlugin.log(ioe);
+					}
+				}
+			}
+		}
+				
 		int docLength= getLength();
 		if (docLength == fNewStreamWriteEnd) {
 			//removed all of the user input text
