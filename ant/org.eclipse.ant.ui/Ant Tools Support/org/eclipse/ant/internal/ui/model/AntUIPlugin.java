@@ -148,6 +148,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, false);
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS, false);
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES, false);
+		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL, false);
 
 		// Ant Editor color preferences
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);

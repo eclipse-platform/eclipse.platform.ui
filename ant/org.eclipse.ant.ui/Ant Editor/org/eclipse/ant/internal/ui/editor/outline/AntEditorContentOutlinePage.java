@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -83,6 +84,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
     private ImportedElementsFilter fImportedElementsFilter= null;   
 	private boolean fFilterProperties;
 	private PropertiesFilter fPropertiesFilter= null;
+	private boolean fFilterTopLevel;
+	private TopLevelFilter fTopLevelFilter= null;
 	private boolean fSort;
 
 	private static ViewerSorter fSorter;
@@ -139,6 +142,21 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof AntPropertyNode) {
 				return false;
+			} 
+			return true;
+		}
+	}
+	
+	/**
+	 * A viewer filter that removes top level tasks and types
+	 */
+	private class TopLevelFilter extends ViewerFilter {
+		
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof AntTaskNode) {
+				if (parentElement instanceof AntProjectNode) {
+					return false;
+				}
 			} 
 			return true;
 		}
@@ -278,13 +296,23 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 
 	/**
-	 * Sets whether internal targets should be filtered out of the outline.
+	 * Sets whether properties should be filtered out of the outline.
 	 * 
-	 * @param filter whether or not internal targets should be filtered out
+	 * @param filter whether or not properties should be filtered out
 	 */
 	protected void setFilterProperties(boolean filter) {
 		fFilterProperties= filter;
 		setFilter(filter, getPropertiesFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);     
+	}
+	
+	/**
+	 * Sets whether internal targets should be filtered out of the outline.
+	 * 
+	 * @param filter whether or not internal targets should be filtered out
+	 */
+	protected void setFilterTopLevel(boolean filter) {
+		fFilterTopLevel= filter;
+		setFilter(filter, getTopLevelFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);     
 	}
 	
 	private ViewerFilter getInternalTargetsFilter() {
@@ -306,6 +334,13 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			fPropertiesFilter= new PropertiesFilter();
 		}
 		return fPropertiesFilter;
+	}
+	
+	private ViewerFilter getTopLevelFilter() {
+		if (fTopLevelFilter == null) {
+			fTopLevelFilter= new TopLevelFilter();
+		}
+		return fTopLevelFilter;
 	}
 
 	/**
@@ -336,6 +371,16 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected boolean filterProperties() {
 		return fFilterProperties;
+	}
+	
+	/**
+	 * Returns whether top level tasks/types are currently being filtered out of
+	 * the outline.
+	 * 
+	 * @return whether or not top level tasks/types are being filtered out
+	 */
+	protected boolean filterTopLevel() {
+		return fFilterTopLevel;
 	}
 	
 	/**
@@ -374,6 +419,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
 		fFilterImportedElements= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS);
 		fFilterProperties= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);
+		fFilterTopLevel= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);
 		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
 	}
 
@@ -435,6 +481,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		tbm.add(new FilterInternalTargetsAction(this));
 		tbm.add(new FilterPropertiesAction(this));
 		tbm.add(new FilterImportedElementsAction(this));
+		tbm.add(new FilterTopLevelAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
@@ -449,6 +496,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		setFilterInternalTargets(fFilterInternalTargets);
 		setFilterImportedElements(fFilterImportedElements);
 		setFilterProperties(fFilterProperties);
+		setFilterTopLevel(fFilterTopLevel);
 	}
 	
 	private void setViewerInput(Object newInput) {
@@ -584,13 +632,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private boolean shouldAddOpenWithMenu() {
 		AntElementNode node= getSelectedNode();
-		if (node != null) {
-			if (node.isExternal()) {
-				String path = node.getFilePath();
-				if (path != null && path.length() > 0) {
-					return true;
-				}
-			} else if (node instanceof AntImportNode) {
+		if (node instanceof AntImportNode) {
+			return true;
+		}
+		if (node != null && node.isExternal()) {
+			String path = node.getFilePath();
+			if (path != null && path.length() > 0) {
 				return true;
 			}
 		}
@@ -610,6 +657,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */

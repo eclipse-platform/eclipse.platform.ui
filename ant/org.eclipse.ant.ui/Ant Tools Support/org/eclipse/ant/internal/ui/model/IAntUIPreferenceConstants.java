@@ -53,6 +53,12 @@ public interface IAntUIPreferenceConstants {
 	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
+	 * show top level tasks/types in the Outline.
+	 */
+	public static final String ANTEDITOR_FILTER_TOP_LEVEL= "anteditor.filterTopLevel"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant editor should
 	 * sort elements in the Outline.
 	 */
 	public static final String ANTEDITOR_SORT= "anteditor.sort"; //$NON-NLS-1$
