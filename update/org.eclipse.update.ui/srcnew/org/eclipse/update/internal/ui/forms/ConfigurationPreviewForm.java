@@ -31,6 +31,8 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 	private Control focusControl;
 	private NewConfigurationView view;
 	private FormEngine desc;
+	private FormEngine taskList;
+	private IPreviewTask [] tasks;
 
 	public ConfigurationPreviewForm(NewConfigurationView view) {
 		this.view = view;
@@ -88,7 +90,6 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		layout.numColumns = 1;
 
 		FormWidgetFactory factory = getFactory();
-		desc = factory.createFormEngine(parent);
 
 		HTTPAction action = new HTTPAction() {
 			public void linkActivated(IHyperlinkSegment link) {
@@ -99,7 +100,23 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		};
 		IActionBars bars = view.getViewSite().getActionBars();
 		action.setStatusLineManager(bars.getStatusLineManager());
+		
+		HTTPAction taskAction = new HTTPAction() {
+			public void linkActivated(IHyperlinkSegment link) {
+				String indexArg = link.getArg();
+				try {
+					int index = Integer.parseInt(indexArg);
+					if (tasks!=null)
+						tasks[index].run();
+				}
+				catch (NumberFormatException e) {
+				}
+			}
+		};
+		taskAction.setStatusLineManager(bars.getStatusLineManager());
 
+		desc = factory.createFormEngine(parent);
+		desc.setHyperlinkSettings(factory.getHyperlinkHandler());
 		desc.registerTextObject(FormEngine.URL_HANDLER_ID, action);
 		desc.load("", false, false);
 		setFocusControl(desc);
@@ -108,6 +125,17 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		td.align = TableData.FILL;
 		td.grabHorizontal = true;
 		desc.setLayoutData(td);
+		
+		taskList = factory.createFormEngine(parent);
+		taskList.setHyperlinkSettings(factory.getHyperlinkHandler());
+		taskList.registerTextObject("task", taskAction);
+		taskList.load("", false, false);
+		//factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);	
+
+		td = new TableData();
+		td.align = TableData.FILL;
+		td.grabHorizontal = true;
+		taskList.setLayoutData(td);
 
 		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm");
 	}
@@ -117,12 +145,15 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 	 * @see IForm#expandTo(Object)
 	 */
 	public void expandTo(Object object) {
+		tasks = view.getPreviewTasks(object);
 		String title = getObjectLabel(object);
 		setHeadingText(title);
 		String description = getObjectDescription(object);
 		boolean tags = description.startsWith("<form>");
 		desc.load(description, tags, !tags);
-		desc.getParent().layout();
+		String taskText = getTasksText();
+		taskList.load(taskText, true, false);
+		taskList.getParent().layout();
 		((Composite) getControl()).layout();
 		updateSize();
 		getControl().redraw();
@@ -168,5 +199,27 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		catch (CoreException e) {
 		}
 		return "";
+	}
+
+	private String getTasksText() {
+		if (tasks==null || tasks.length==0) return "<form/>";
+		boolean hasEnabledTasks=false;
+		for (int i=0; i<tasks.length; i++) {
+			if (tasks[i].isEnabled()) {
+				hasEnabledTasks = true;
+				break;
+			}
+		}
+		if (!hasEnabledTasks) return "<form/>";
+		StringBuffer buf = new StringBuffer();
+		buf.append("<form><p><b>Available Tasks</b></p>");
+		for (int i=0; i<tasks.length; i++) {
+			IPreviewTask task = tasks[i];
+			if (task.isEnabled()==false) continue;
+			buf.append("<li style=\"text\" indent=\"0\"><a href=\"task\" arg=\""+i+"\">"+task.getName()+"</a></li>");
+			buf.append("<li style=\"text\" indent=\"10\" addVerticalSpace=\"false\">"+task.getDescription()+"</li>");
+		}
+		buf.append("</form>");
+		return buf.toString();
 	}
 }

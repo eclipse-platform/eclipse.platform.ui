@@ -29,7 +29,7 @@ public class HyperlinkSegment
 	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
 		super(text, fontId);
 		this.settings = settings;
-		underline = true;
+		underline = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_ALWAYS;
 	}
 	
 	/*
@@ -62,6 +62,7 @@ public class HyperlinkSegment
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
 		int descent = fm.getDescent();
+		boolean rolloverMode = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_ROLLOVER;
 		for (int i=0; i<areaRectangles.size(); i++) {
 			AreaRectangle areaRectangle = (AreaRectangle)areaRectangles.get(i);
 			Rectangle rect = areaRectangle.rect;
@@ -69,9 +70,16 @@ public class HyperlinkSegment
 			Point extent = gc.textExtent(text);
 			int textX = rect.x + 1;
 			gc.drawString(text, textX, rect.y, true);
-			if (underline || hover) {
+			if (underline || hover || rolloverMode) {
 				int lineY = rect.y + lineHeight - descent + 1;
+				Color saved=null;
+				if (rolloverMode && !hover) {
+					saved = gc.getForeground();
+					gc.setForeground(gc.getBackground());
+				}
 				gc.drawLine(textX, lineY, textX+extent.x, lineY);
+				if (saved!=null)
+					gc.setForeground(saved);
 			}
 		}
 	}

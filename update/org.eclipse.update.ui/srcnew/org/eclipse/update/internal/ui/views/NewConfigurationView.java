@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -72,6 +72,7 @@ public class NewConfigurationView
 	private SiteStateAction2 siteStateAction;
 	private SashForm splitter;
 	private ConfigurationPreview preview;
+	private Hashtable previewTasks;
 
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
@@ -295,6 +296,31 @@ public class NewConfigurationView
 			}
 		}
 	}
+	
+	class PreviewTask implements IPreviewTask {
+		private String name;
+		private String desc;
+		private IAction action;
+		public PreviewTask(String name, String desc, IAction action) {
+			this.name = name;
+			this.desc = desc;
+			this.action = action;
+		}
+		
+		public String getName() {
+			if (name!=null) return name;
+			return action.getText();
+		}
+		public String getDescription() {
+			return desc;
+		}
+		public void run() {
+			action.run();
+		}
+		public boolean isEnabled() {
+			return action.isEnabled();
+		}
+	}
 
 	public NewConfigurationView() {
 		UpdateUI.getDefault().getLabelProvider().connect(this);
@@ -437,11 +463,12 @@ public class NewConfigurationView
 		
 		installOptFeatureAction = new InstallOptionalFeatureAction("Install");
 
-		swapVersionAction = new SwapVersionAction("another version...");
+		swapVersionAction = new SwapVersionAction("&Another Version...");
 
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
+		makePreviewTasks();
 		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
 	}
 
@@ -458,7 +485,12 @@ public class NewConfigurationView
 		};
 		showNestedFeaturesAction.setText("Show Nested Features");
 		showNestedFeaturesAction.setImageDescriptor(
-			UpdateUIImages.DESC_FEATURE_OBJ);
+			UpdateUIImages.DESC_SHOW_HIERARCHY);
+		showNestedFeaturesAction.setHoverImageDescriptor(
+			UpdateUIImages.DESC_SHOW_HIERARCHY_H);
+		showNestedFeaturesAction.setDisabledImageDescriptor(
+			UpdateUIImages.DESC_SHOW_HIERARCHY_D);
+		
 		showNestedFeaturesAction.setChecked(
 			pref.getBoolean(STATE_SHOW_NESTED_FEATURES));
 		showNestedFeaturesAction.setToolTipText("Show Nested Features");
@@ -474,10 +506,10 @@ public class NewConfigurationView
 				UpdateUI.getDefault().savePluginPreferences();
 			}
 		};
-		showSitesAction.setText("Show Sites");
-		showSitesAction.setImageDescriptor(UpdateUIImages.DESC_SITE_OBJ);
+		showSitesAction.setText("Show Install Locations");
+		showSitesAction.setImageDescriptor(UpdateUIImages.DESC_LSITE_OBJ);
 		showSitesAction.setChecked(pref.getBoolean(STATE_SHOW_SITES));
-		showSitesAction.setToolTipText("Show Sites");
+		showSitesAction.setToolTipText("Show Install Locations");
 	}
 
 	private void makeShowUnconfiguredFeaturesAction() {
@@ -787,12 +819,79 @@ public class NewConfigurationView
 	}
 	protected void handleSelectionChanged(SelectionChangedEvent e) {
 		IStructuredSelection ssel = (IStructuredSelection)e.getSelection();
-		preview.setSelection(ssel);
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
+			try {
+				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
+				IFeature feature = adapter.getFeature(null);
+				boolean enable = (adapter.isOptional() || !adapter.isIncluded());
+
+				swapVersionAction.setEnabled(enable);
+				featureStateAction.setFeature(adapter);
+				featureStateAction.setEnabled(enable);
+				if (feature instanceof MissingFeature) {
+					MissingFeature mf = (MissingFeature) feature;
+					installOptFeatureAction.setEnabled(
+						mf.isOptional() && mf.getOriginatingSiteURL() != null);
+					uninstallFeatureAction.setEnabled(false);
+				} else {
+					uninstallFeatureAction.setEnabled(enable);
+					installOptFeatureAction.setEnabled(false);
+				}
+			}
+			catch (CoreException ex) {
+				UpdateUI.logException(ex);
+			}
 			propertiesAction.setEnabled(true);
 		}		
 		else
 			propertiesAction.setEnabled(false);
+		if (obj instanceof ILocalSite) {
+			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
+		}
+ 		else if (obj instanceof IConfiguredSiteAdapter) {
+			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
+ 		}
+		preview.setSelection(ssel);
+	}
+
+	private void makePreviewTasks() {
+		previewTasks = new Hashtable();
+		Class key;
+		ArrayList array = new ArrayList();
+		// local site tasks
+		key = ILocalSite.class;
+		array.add(new PreviewTask("Revert to Previous", "You can revert to one of the previous configurations if you are having problems with the current one.", revertAction));
+		array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
+		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
+
+		// configured site tasks
+		array.clear();
+		key = IConfiguredSiteAdapter.class;
+		array.add(new PreviewTask(null, "You can enable or disable an entire install location. Disabling a location is equivalent to disabling every feature in it.", siteStateAction));
+		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
+		
+		// feature adapter tasks
+		array.clear();
+		key = IFeatureAdapter.class;
+		array.add(new PreviewTask("Replace With Another Version", "This tasks allows you to disable the current version of the feature and replace it with another version from the list of currently disabled features.", swapVersionAction));
+		array.add(new PreviewTask(null, "You can enable or disable a feature. Function provided by the feature will be removed but the feature itself will still be present to be enabled later.", featureStateAction));
+		array.add(new PreviewTask("Install from Originating Server", "This optional feature was not originally installed. You can install it now by connecting to the originating server of the parent.", installOptFeatureAction));
+		array.add(new PreviewTask("Uninstall", "This feature is currently not used and can be uninstalled from the product.", uninstallFeatureAction));  
+		array.add(new PreviewTask("Show Properties", "This task allows you to view properties of the feature such as version, provider name, license agreement etc.", propertiesAction));
+		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
+	}
+
+	public IPreviewTask [] getPreviewTasks(Object object) {
+		IPreviewTask [] tasks = null;
+		
+		if (object instanceof IFeatureAdapter)
+			tasks = (IPreviewTask[])previewTasks.get(IFeatureAdapter.class);
+		if (object instanceof ILocalSite)
+			tasks = (IPreviewTask[])previewTasks.get(ILocalSite.class);
+		if (object instanceof IConfiguredSiteAdapter)
+			tasks = (IPreviewTask[])previewTasks.get(IConfiguredSiteAdapter.class);
+		if (tasks!=null) return tasks;
+		return new IPreviewTask[0];
 	}
 }

@@ -134,6 +134,9 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_SHOW_UNCONF_H = create(PATH_LCL_HOVER, "show_unconf.gif");
 	public static final ImageDescriptor DESC_SHOW_UNCONF_D = create(PATH_LCL_DISABLED, "show_unconf.gif");
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif");
+	public static final ImageDescriptor DESC_SHOW_HIERARCHY = create(PATH_LCL, "hierarchicalLayout.gif");
+	public static final ImageDescriptor DESC_SHOW_HIERARCHY_H = create(PATH_LCL_HOVER, "hierarchicalLayout.gif");
+	public static final ImageDescriptor DESC_SHOW_HIERARCHY_D = create(PATH_LCL_DISABLED, "hierarchicalLayout.gif");
 
 	/**
 	 * WIZ

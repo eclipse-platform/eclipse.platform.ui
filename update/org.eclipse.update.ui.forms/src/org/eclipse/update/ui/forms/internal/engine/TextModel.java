@@ -165,7 +165,7 @@ public class TextModel implements ITextModel {
 			text = valueAtt.getNodeValue();
 		}
 		if (indentAtt != null) {
-			String value = valueAtt.getNodeValue();
+			String value = indentAtt.getNodeValue();
 			try {
 				indent = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
