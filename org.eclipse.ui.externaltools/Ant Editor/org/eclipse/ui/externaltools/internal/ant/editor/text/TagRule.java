@@ -1,8 +1,11 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 //
 // Copyright:
@@ -30,10 +33,7 @@ public class TagRule extends MultiLineRule {
         super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    protected boolean sequenceDetected(
-        ICharacterScanner scanner,
-        char[] sequence,
-        boolean eofAllowed) {
+    protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
         int c = scanner.read();
         if (sequence[0] == '<') {
             if (c == '?') {
