@@ -312,7 +312,10 @@ public class AboutDialog extends ProductInfoDialog {
 		}
 		List keepers = new ArrayList(featureInfos.length);
 		// ensure the primary feature make the first cut so we can eliminate at end
-		keepers.add(primaryInfo);
+		// handle case where there is no primary feature info
+		if (primaryInfo != null) {
+			keepers.add(primaryInfo);
+		}
 		// precompute CRCs of all the feature images
 		long[] featureImageCRCs = new long[infoList.size()];
 		for (int i = 0; i < infoList.size(); i++) {
@@ -335,7 +338,9 @@ public class AboutDialog extends ProductInfoDialog {
 				keepers.add(outer);
 			}
 		}
-		keepers.remove(primaryInfo);
+		if (primaryInfo != null) {
+			keepers.remove(primaryInfo);
+		}
 		return (AboutInfo[]) keepers.toArray(new AboutInfo[keepers.size()]);
 	}
 

@@ -689,7 +689,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * for any newly installed features.
 	 */
 	private void openWelcomeEditors() throws WorkbenchException {
-		AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 		IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
@@ -700,7 +699,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.WELCOME_DIALOG)) {
-			// Show the quick start wizard the first time the workbench opens.
+			// Show the welcome page for the primary feature the first time the workbench opens.
+			AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
+			if (primaryInfo == null) {
+				return;
+			}
 			URL url = primaryInfo.getWelcomePageURL();
 			if (url == null) {
 				return;
@@ -713,7 +716,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			for (Iterator it = getNewlyAddedFeatures().iterator(); it.hasNext(); ) {
 				String versionedId = (String) it.next();
 				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
-				String featureVersionId = versionedId.substring(versionedId.indexOf(':')+1);
 				// find the info for this feature
 				AboutInfo info = null;
 				AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();

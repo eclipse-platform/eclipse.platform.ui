@@ -131,7 +131,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (title == null) {
-			title = primaryInfo.getProductName();
+			if (primaryInfo != null) {
+				title = primaryInfo.getProductName();
+			}
 			if (title != null) { 
 				title = IDEWorkbenchMessages.format(
 						"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$

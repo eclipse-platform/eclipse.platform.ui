@@ -638,7 +638,6 @@ public final class WorkbenchActionBuilder {
 
 		aboutAction = IDEActionFactory.ABOUT.create(getWindow());
 		AboutInfo aboutInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-		// @issue performance - reading about info
 		String productName = null;
 		if (aboutInfo != null) {
 			productName = aboutInfo.getProductName();

@@ -29,9 +29,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
@@ -53,11 +51,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.help.WorkbenchHelp;
+
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
+
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -75,7 +79,7 @@ import org.eclipse.update.core.VersionedIdentifier;
  *		This class is internal to the workbench and must not be called outside the workbench
  */
 public class AboutFeaturesDialog extends ProductInfoDialog {
-	
+
 	/**
 	 * Table height in dialog units (value 150).
 	 */
@@ -84,16 +88,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
 	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
 	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
-	
+
 	private Table table;
-	private Label imageLabel;	
+	private Label imageLabel;
 	private StyledText text;
 	private Composite infoArea;
-	
+
 	private Map cachedImages = new HashMap();
 
-	private String columnTitles[] = {
-		IDEWorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
+	private String columnTitles[] = { IDEWorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
 		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
 		IDEWorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
 		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
@@ -101,74 +104,80 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
 	private AboutInfo[] featureInfos;
 	private AboutInfo primaryInfo;
-	
-	private int lastColumnChosen = 0;	// initially sort by provider
-	private boolean reverseSort = false;	// initially sort ascending
+
+	private int lastColumnChosen = 0; // initially sort by provider
+	private boolean reverseSort = false; // initially sort ascending
 	private AboutInfo lastSelection = null;
 	private Button moreButton;
 	private Button pluginsButton;
-	
+
 	private static Map featuresMap;
 
 	/**
 	 * Constructor for AboutFeaturesDialog
 	 */
-	public AboutFeaturesDialog(Shell parentShell, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
+	public AboutFeaturesDialog(
+		Shell parentShell,
+		AboutInfo primaryInfo,
+		AboutInfo[] featureInfos) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
-		
+
 		this.primaryInfo = primaryInfo;
 		this.featureInfos = featureInfos;
-		
+
 		sortByProvider();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
-			case MORE_ID : {
-				TableItem[] items = table.getSelection();
-				if (items.length > 0) {
-					AboutInfo info = (AboutInfo)items[0].getData();
-					IFeature feature = getFeatureFor(info);
-					if (feature != null) {
-						IURLEntry entry = feature.getLicense();
-						if (entry != null) {
-							openLink(entry.getURL().toString());
-							return;
+			case MORE_ID :
+				{
+					TableItem[] items = table.getSelection();
+					if (items.length > 0) {
+						AboutInfo info = (AboutInfo) items[0].getData();
+						IFeature feature = getFeatureFor(info);
+						if (feature != null) {
+							IURLEntry entry = feature.getLicense();
+							if (entry != null) {
+								openLink(entry.getURL().toString());
+								return;
+							}
 						}
-					}
-					MessageDialog.openInformation(
-						getShell(), 
-						IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
+						MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
 						IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+					}
+					return;
 				}
-				return;
-			}
-			case PLUGINS_ID : {
-				TableItem[] items = table.getSelection();
-				if (items.length > 0) {
-					AboutInfo info = (AboutInfo)items[0].getData();
-					IFeature feature = getFeatureFor(info);
-					IPluginDescriptor[] descriptors;
-					if (feature == null)
-						descriptors = new IPluginDescriptor[0];	
-					else
-						descriptors = getPluginsFor(feature);
-					AboutPluginsDialog d = 
-						new AboutPluginsDialog(
-							getShell(), 
-							primaryInfo,
-							descriptors,
-							IDEWorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
-							IDEWorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()}), //$NON-NLS-1$
-							IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
-					d.open();
-				}				
-				return;
-			}
+			case PLUGINS_ID :
+				{
+					TableItem[] items = table.getSelection();
+					if (items.length > 0) {
+						AboutInfo info = (AboutInfo) items[0].getData();
+						IFeature feature = getFeatureFor(info);
+						IPluginDescriptor[] descriptors;
+						if (feature == null)
+							descriptors = new IPluginDescriptor[0];
+						else
+							descriptors = getPluginsFor(feature);
+						AboutPluginsDialog d =
+							new AboutPluginsDialog(
+								getShell(),
+								primaryInfo,
+								descriptors,
+								IDEWorkbenchMessages.getString(
+									"AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
+								IDEWorkbenchMessages.format(
+									"AboutFeaturesDialog.pluginInfoMessage", //$NON-NLS-1$
+									new Object[] { info.getFeatureLabel()}),
+								IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
+						d.open();
+					}
+					return;
+				}
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -178,17 +187,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String title = primaryInfo.getProductName();
-		if (title != null) { 
-		newShell.setText(
-			IDEWorkbenchMessages.format(
-				"AboutFeaturesDialog.shellTitle",	//$NON-NLS-1$
-				new Object[] {title}));
+		String title = null;
+		if (primaryInfo != null) {
+			title = primaryInfo.getProductName();
 		}
-		WorkbenchHelp.setHelp(
-			newShell,
-			IHelpContextIds.ABOUT_FEATURES_DIALOG);
-	} 
+		if (title != null) {
+			newShell.setText(IDEWorkbenchMessages.format("AboutFeaturesDialog.shellTitle", //$NON-NLS-1$
+			new Object[] { title }));
+		}
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_FEATURES_DIALOG);
+	}
 	/**
 	 * Add buttons to the dialog's button bar.
 	 *
@@ -198,22 +206,22 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
+
 		moreButton = createButton(parent, MORE_ID, IDEWorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
 		pluginsButton = createButton(parent, PLUGINS_ID, IDEWorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = (GridLayout)parent.getLayout();
+		GridLayout layout = (GridLayout) parent.getLayout();
 		layout.numColumns++;
 		layout.makeColumnsEqualWidth = false;
-	
+
 		Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		b.setFocus();
-		
+
 		TableItem[] items = table.getSelection();
-		if (items.length > 0) 
-			updateButtons((AboutInfo)items[0].getData());
+		if (items.length > 0)
+			updateButtons((AboutInfo) items[0].getData());
 	}
 
 	/**
@@ -258,16 +266,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	protected void createInfoArea(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		infoArea = new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns = 2; 
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		infoArea.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		int infoAreaHeight = convertVerticalDLUsToPixels(INFO_HEIGHT);
 		data.heightHint = infoAreaHeight;
 		infoArea.setLayoutData(data);
-		
+
 		imageLabel = new Label(infoArea, SWT.NONE);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
@@ -276,7 +284,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.widthHint = 32;
 		imageLabel.setLayoutData(data);
 		imageLabel.setFont(font);
-		
+
 		// text on the right
 		text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
 		text.setCaret(null);
@@ -285,18 +293,18 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
-		data.heightHint = infoAreaHeight;	
+		data.heightHint = infoAreaHeight;
 		text.setLayoutData(data);
 		text.setFont(font);
 		text.setCursor(null);
 		text.setBackground(infoArea.getBackground());
 		addListeners(text);
-		
+
 		TableItem[] items = table.getSelection();
-		if (items.length > 0) 
-			updateInfoArea((AboutInfo)items[0].getData());
-	}		
-	
+		if (items.length > 0)
+			updateInfoArea((AboutInfo) items[0].getData());
+	}
+
 	/**
 	 * Create the table part of the dialog.
 	 *
@@ -310,10 +318,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setFont(parent.getFont());
-		
+
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				AboutInfo info = (AboutInfo)e.item.getData();
+				AboutInfo info = (AboutInfo) e.item.getData();
 				updateInfoArea(info);
 				updateButtons(info);
 			}
@@ -335,20 +343,18 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 * Returns a mapping from feature id to feature
 	 */
 	private Map getFeaturesMap() {
-		if (featuresMap != null) 
+		if (featuresMap != null)
 			return featuresMap;
-			
+
 		featuresMap = new HashMap();
 
 		IPluginRegistry reg = Platform.getPluginRegistry();
 		if (reg == null) {
-			MessageDialog.openError(
-				getShell(), 
-				IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
-				IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+			MessageDialog.openError(getShell(), IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
 			return featuresMap;
 		}
-		
+
 		final ILocalSite[] localSiteArray = new ILocalSite[1];
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
@@ -356,17 +362,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				try {
 					localSiteArray[0] = SiteManager.getLocalSite();
 				} catch (CoreException e) {
-					MessageDialog.openError(
-						getShell(), 
-						IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
-						IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+					MessageDialog.openError(getShell(), IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
 				}
 			}
 		});
 		if (localSiteArray[0] == null)
 			return featuresMap;
-		
-		IInstallConfiguration installConfiguration = localSiteArray[0].getCurrentConfiguration(); 
+
+		IInstallConfiguration installConfiguration = localSiteArray[0].getCurrentConfiguration();
 		IConfiguredSite[] configuredSites = installConfiguration.getConfiguredSites();
 
 		for (int i = 0; i < configuredSites.length; i++) {
@@ -391,13 +395,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	private IFeature getFeatureFor(AboutInfo info) {
 		Map map = getFeaturesMap();
-		if (map == null) 
+		if (map == null)
 			return null;
 		String key = info.getFeatureId() + "_" + info.getVersionId(); //$NON-NLS-1$
-		return (IFeature)map.get(key);
+		return (IFeature) map.get(key);
 	}
 
-	
 	/**
 	 * Return the plugins for the given feature
 	 */
@@ -405,7 +408,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		IPluginRegistry reg = Platform.getPluginRegistry();
 		if (reg == null)
 			return new IPluginDescriptor[0];
-		IPluginEntry[] pluginEntries = feature.getPluginEntries();	
+		IPluginEntry[] pluginEntries = feature.getPluginEntries();
 		ArrayList plugins = new ArrayList();
 		for (int k = 0; k < pluginEntries.length; k++) {
 			VersionedIdentifier id = pluginEntries[k].getVersionedIdentifier();
@@ -414,10 +417,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			if (desc != null)
 				plugins.add(desc);
 		}
-		return (IPluginDescriptor[])plugins.toArray(new IPluginDescriptor[plugins.size()]);	
+		return (IPluginDescriptor[]) plugins.toArray(new IPluginDescriptor[plugins.size()]);
 	}
-		
-
 
 	/**
 	 * Update the button enablement
@@ -434,8 +435,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			IFeature feature = getFeatureFor(info);
 			shouldEnable = feature != null && feature.getLicense() != null;
 		}
-		moreButton.setEnabled(shouldEnable);		
-				
+		moreButton.setEnabled(shouldEnable);
+
 		// Assume there is at least one plugin		
 		shouldEnable = true; // by default enable
 		if (featuresMap != null) {
@@ -455,7 +456,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			return;
 		}
 		ImageDescriptor desc = info.getFeatureImage();
-		Image image =  (Image)cachedImages.get(desc);
+		Image image = (Image) cachedImages.get(desc);
 		if (image == null && desc != null) {
 			image = desc.createImage();
 			cachedImages.put(desc, image);
@@ -470,20 +471,20 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		if (getItem() == null)
 			text.setText(IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
 		else {
-			text.setText(getItem().getText());	
+			text.setText(getItem().getText());
 			text.setCursor(null);
 			setLinkRanges(text, getItem().getLinkRanges());
 		}
 	}
-	
-		/** 
-	 * Select the initial selection
-	 * 
-	 */
+
+	/** 
+	* Select the initial selection
+	* 
+	*/
 	public void setInitialSelection(AboutInfo info) {
 		lastSelection = info;
-	}	
-	
+	}
+
 	/**
 	 * Populate the table with plugin info obtained from the registry.
 	 *
@@ -502,12 +503,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			tableColumn.setWidth(columnWidths[i]);
 			tableColumn.setText(columnTitles[i]);
 			final int columnIndex = i;
-			tableColumn.addSelectionListener(new SelectionAdapter() {		
+			tableColumn.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					sort(columnIndex);
 				}
 			});
-		
+
 		}
 
 		int initialSelectionIndex = 0;
@@ -532,14 +533,13 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			item.setText(row);
 			item.setData(featureInfos[i]);
 		}
-		
+
 		// set initial selection
 		if (featureInfos.length > 0) {
 			table.setSelection(initialSelectionIndex);
 		}
 	}
 
-	
 	/**
 	 * Sort the rows of the table based on the selected column.
 	 *
@@ -547,33 +547,33 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	private void sort(int column) {
 		// Choose new sort algorithm
-		if (lastColumnChosen == column){
+		if (lastColumnChosen == column) {
 			reverseSort = !reverseSort;
-		}
-		else{
+		} else {
 			reverseSort = false;
 			lastColumnChosen = column;
 		}
-		
-		if(table.getItemCount() <= 1)	return;
+
+		if (table.getItemCount() <= 1)
+			return;
 
 		// Remember the last selection
 		int idx = table.getSelectionIndex();
 		if (idx != -1)
 			lastSelection = featureInfos[idx];
-			
-		switch (column){
-			case 0:
+
+		switch (column) {
+			case 0 :
 				sortByProvider();
 				break;
-			case 1:
+			case 1 :
 				sortByName();
 				break;
-			case 2:
+			case 2 :
 				sortByVersion();
 				break;
-			case 3:
-				sortByFeatureId();	
+			case 3 :
+				sortByFeatureId();
 				break;
 		}
 
@@ -586,15 +586,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 *
 	 * @param items the old state table items 
 	 */
-	private void refreshTable(int col){
+	private void refreshTable(int col) {
 		TableItem[] items = table.getItems();
-		int idx = -1;	// the new index of the selection
+		int idx = -1; // the new index of the selection
 		// Create new order of table items
-		for(int i = 0; i < items.length; i++) {
+		for (int i = 0; i < items.length; i++) {
 			String provider = featureInfos[i].getProviderName();
 			String featureName = featureInfos[i].getFeatureLabel();
 			String versionId = featureInfos[i].getVersionId();
-			String featureId = featureInfos[i].getFeatureId();			
+			String featureId = featureInfos[i].getFeatureId();
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
@@ -608,11 +608,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			items[i].setData(featureInfos[i]);
 		}
 		// Maintain the original selection
-		if (lastSelection != null){
-			for (int k = 0; k < featureInfos.length; k++){
+		if (lastSelection != null) {
+			for (int k = 0; k < featureInfos.length; k++) {
 				if (lastSelection == featureInfos[k])
 					idx = k;
-			}	
+			}
 			table.setSelection(idx);
 			table.showSelection();
 		}
@@ -623,32 +623,31 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 * Sort the rows of the table based on the plugin provider.
 	 * Secondary criteria is unique plugin id.
 	 */
-	private void sortByProvider(){
+	private void sortByProvider() {
 		/* If sorting in reverse, info array is already sorted forward by
 		 * key so the info array simply needs to be reversed.
 		 */
-		if (reverseSort){
+		if (reverseSort) {
 			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featureInfos.length; i++){
-				featureInfos[i] = (AboutInfo)infoList.get(i);
+			for (int i = 0; i < featureInfos.length; i++) {
+				featureInfos[i] = (AboutInfo) infoList.get(i);
 			}
-		}
-		else {
+		} else {
 			// Sort ascending
 			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
 					String provider1, provider2, name1, name2;
-					i1 = (AboutInfo)a;
+					i1 = (AboutInfo) a;
 					provider1 = i1.getProviderName();
 					name1 = i1.getFeatureLabel();
 					if (provider1 == null)
 						provider1 = ""; //$NON-NLS-1$
 					if (name1 == null)
 						name1 = ""; //$NON-NLS-1$
-					i2 = (AboutInfo)b;
+					i2 = (AboutInfo) b;
 					provider2 = i2.getProviderName();
 					name2 = i2.getFeatureLabel();
 					if (provider2 == null)
@@ -665,28 +664,27 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	}
 	/**
 	 * Sort the rows of the table based on unique plugin id.
-	 */	
-	private void sortByName(){
+	 */
+	private void sortByName() {
 		/* If sorting in reverse, info array is already sorted forward by
 		 * key so the info array simply needs to be reversed.
 		 */
-		if (reverseSort){
+		if (reverseSort) {
 			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featureInfos.length; i++){
-				featureInfos[i] = (AboutInfo)infoList.get(i);
+			for (int i = 0; i < featureInfos.length; i++) {
+				featureInfos[i] = (AboutInfo) infoList.get(i);
 			}
-		}
-		else {
+		} else {
 			// Sort ascending
 			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
 					String name1, name2;
-					i1 = (AboutInfo)a;
+					i1 = (AboutInfo) a;
 					name1 = i1.getFeatureLabel();
-					i2 = (AboutInfo)b;
+					i2 = (AboutInfo) b;
 					name2 = i2.getFeatureLabel();
 					if (name1 == null)
 						name1 = ""; //$NON-NLS-1$
@@ -696,38 +694,37 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				}
 			});
 		}
-	
+
 	}
 	/**
 	 * Sort the rows of the table based on the plugin version.
 	 * Secondary criteria is unique plugin id.
 	 */
-	private void sortByVersion(){
+	private void sortByVersion() {
 		/* If sorting in reverse, info array is already sorted forward by
 		 * key so the info array simply needs to be reversed.
-		 */		
-		if (reverseSort){
+		 */
+		if (reverseSort) {
 			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featureInfos.length; i++){
-				featureInfos[i] = (AboutInfo)infoList.get(i);
+			for (int i = 0; i < featureInfos.length; i++) {
+				featureInfos[i] = (AboutInfo) infoList.get(i);
 			}
-		}
-		else {
+		} else {
 			// Sort ascending
 			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
 					String version1, version2, name1, name2;
-					i1 = (AboutInfo)a;
+					i1 = (AboutInfo) a;
 					version1 = i1.getVersionId();
 					name1 = i1.getFeatureLabel();
 					if (version1 == null)
 						version1 = ""; //$NON-NLS-1$
 					if (name1 == null)
 						name1 = ""; //$NON-NLS-1$
-					i2 = (AboutInfo)b;
+					i2 = (AboutInfo) b;
 					version2 = i2.getVersionId();
 					name2 = i2.getFeatureLabel();
 					if (version2 == null)
@@ -746,32 +743,31 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 * Sort the rows of the table based on the feature Id.
 	 * Secondary criteria is unique plugin id.
 	 */
-	private void sortByFeatureId(){
+	private void sortByFeatureId() {
 		/* If sorting in reverse, info array is already sorted forward by
 		 * key so the info array simply needs to be reversed.
 		 */
-		if (reverseSort){
+		if (reverseSort) {
 			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featureInfos.length; i++){
-				featureInfos[i] = (AboutInfo)infoList.get(i);
+			for (int i = 0; i < featureInfos.length; i++) {
+				featureInfos[i] = (AboutInfo) infoList.get(i);
 			}
-		}
-		else {
+		} else {
 			// Sort ascending
 			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
 					String featureId1, featureId2, name1, name2;
-					i1 = (AboutInfo)a;
+					i1 = (AboutInfo) a;
 					featureId1 = i1.getFeatureId();
 					name1 = i1.getFeatureLabel();
 					if (featureId1 == null)
-					featureId1 = ""; //$NON-NLS-1$
+						featureId1 = ""; //$NON-NLS-1$
 					if (name1 == null)
 						name1 = ""; //$NON-NLS-1$
-					i2 = (AboutInfo)b;
+					i2 = (AboutInfo) b;
 					featureId2 = i2.getFeatureId();
 					name2 = i2.getFeatureLabel();
 					if (featureId2 == null)
@@ -785,5 +781,5 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				}
 			});
 		}
-	}		
+	}
 }
