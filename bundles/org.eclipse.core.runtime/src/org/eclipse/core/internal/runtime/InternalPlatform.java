@@ -387,11 +387,15 @@ public final class InternalPlatform {
 	}
 
 	private void initializeBundleStopperTracker() {
-		stopperTracker = new ServiceTracker(context, BundleStopper.class.getName(), null);
-		stopperTracker.open();
+		if (! "false".equalsIgnoreCase(System.getProperties().getProperty("eclipse.strictShutdown"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			stopperTracker = new ServiceTracker(context, BundleStopper.class.getName(), null);
+			stopperTracker.open();
+		}
 	}
 
 	public BundleStopper getBundleStopper() {
+		if (stopperTracker == null)
+			return null;
 		return (BundleStopper) stopperTracker.getService();
 	}
 	
