@@ -22,7 +22,21 @@ public interface ICVSFolder extends ICVSResource {
 	public static final int IGNORED_MEMBERS = 4;
 	public static final int UNMANAGED_MEMBERS = 8;
 	public static final int MANAGED_MEMBERS = 16;
-	public static final int ALL_MEMBERS = FILE_MEMBERS | FOLDER_MEMBERS | IGNORED_MEMBERS | UNMANAGED_MEMBERS | MANAGED_MEMBERS;
+	public static final int EXISTING_MEMBERS = 32;
+	public static final int PHANTOM_MEMBERS = 64;
+	public static final int ALL_MEMBERS = FILE_MEMBERS 
+		| FOLDER_MEMBERS 
+		| IGNORED_MEMBERS 
+		| UNMANAGED_MEMBERS 
+		| MANAGED_MEMBERS 
+		| EXISTING_MEMBERS
+		| PHANTOM_MEMBERS;
+	public static final int ALL_EXISTING_MEMBERS = FILE_MEMBERS 
+		| FOLDER_MEMBERS 
+		| IGNORED_MEMBERS 
+		| UNMANAGED_MEMBERS 
+		| MANAGED_MEMBERS 
+		| EXISTING_MEMBERS;
 	
 	/**
 	 * Answers and array of <code>ICVSResource</code> elements that are immediate 
@@ -45,21 +59,23 @@ public interface ICVSFolder extends ICVSResource {
 	 *     and unmanaged resource of the corresponding type
 	 *   b) IGNORED_MEMBERS, MANAGED_RESOURCES and UNMANAGED_RESOURCES
 	 *     will return files and folders of the given type
+	 *   c) EXISTING_MEMBERS and PHANTOM_MEMBERS will return existing 
+	 *     and phatom resource of the corresponding type
 	 * 
 	 * Note: Unmanaged resources are those tat are neither managed
 	 * or ignored.
 	 * 
-	 * If all of the flags from either group a) or group b)
+	 * If all of the flags from either group a), group b) or group c)
 	 * are not present, the same rule for default types applies. 
 	 * For example,
 	 * - FILE_MEMBERS | FOLDER_MEMBERS will return all managed
-	 *   and unmanaged files and folders. 
+	 *   and unmanaged, existing and phantom files and folders. 
 	 * - IGNORED_MEMBERS | UNMANAGED_MEMBERS will return all
-	 *   ignored or unmanaged files and folders
+	 *   ignored or unmanaged, existing or phantom files and folders
 	 * If a flag from each group is present, the result is the
 	 * union of the sets. For example,
-	 * - FILE_MEMBERS | IGNORED_MEMBERS will return all
-	 *   ignored files.
+	 * - FILE_MEMBERS | IGNORED_MEMBERS | EXISTING_MEMBERS will return all
+	 *   existing ignored files.
 	 */
 	public ICVSResource[] members(int flags) throws CVSException;
 	

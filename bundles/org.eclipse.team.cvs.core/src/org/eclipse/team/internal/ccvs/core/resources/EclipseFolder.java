@@ -61,6 +61,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
 		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
 		boolean includeIgnored = ((flags & IGNORED_MEMBERS) != 0);
+		boolean includeExisting = (((flags & EXISTING_MEMBERS) != 0) || ((flags & (EXISTING_MEMBERS | PHANTOM_MEMBERS)) == 0));
+		boolean includePhantoms = (((flags & PHANTOM_MEMBERS) != 0) || ((flags & (EXISTING_MEMBERS | PHANTOM_MEMBERS)) == 0));
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
@@ -70,7 +72,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				boolean isIgnored = cvsResource.isIgnored();
 				if ((isManaged && includeManaged)|| (isIgnored && includeIgnored)
 						|| ( ! isManaged && ! isIgnored && includeUnmanaged)) {
-					result.add(cvsResource);
+					boolean exists = cvsResource.exists();
+					if ((includeExisting && exists) || (includePhantoms && !exists)) {
+						result.add(cvsResource);
+					}
 				}
 						
 			}		
@@ -315,5 +320,15 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException {
 		return members(FILE_MEMBERS | FOLDER_MEMBERS);
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#delete()
+	 */
+	public void delete() throws CVSException {
+		if (!exists()) return;
+		if (isCVSFolder()) {
+			EclipseSynchronizer.getInstance().prepareForDeletion((IContainer)getIResource());
+		}
+		super.delete();
 	}
 }

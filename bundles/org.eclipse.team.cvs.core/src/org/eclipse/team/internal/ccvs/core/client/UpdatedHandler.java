@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Date;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -83,10 +84,17 @@ class UpdatedHandler extends ResponseHandler {
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		if (! mParent.exists()) {
-			// It is possible that we have a case invarient problem.
-			localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
-			mParent = session.getLocalRoot().getFolder(localDir);
-			Assert.isTrue(mParent.exists());
+			// First, check if the parent is a phantom
+			IContainer container = (IContainer)mParent.getIResource();
+			if (container != null && container.isPhantom()) {
+				// Create all the parents as need
+				recreatePhatomFolders(mParent);
+			} else {
+				// It is possible that we have a case variant.
+				localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
+				mParent = session.getLocalRoot().getFolder(localDir);
+				Assert.isTrue(mParent.exists());
+			}
 		}
 		ICVSFile mFile = mParent.getFile(fileName);
 		
@@ -119,4 +127,17 @@ class UpdatedHandler extends ResponseHandler {
 		}
 		mFile.setSyncInfo(newInfoWithTimestamp);
 	}
+
+	/**
+	 * Method recreatePhatomFolders.
+	 * @param mParent
+	 */
+	private void recreatePhatomFolders(ICVSFolder folder) throws CVSException {
+		ICVSFolder parent = folder.getParent();
+		if (!parent.exists()) {
+			recreatePhatomFolders(parent);
+		}
+		folder.mkdir();
+	}
+
 }

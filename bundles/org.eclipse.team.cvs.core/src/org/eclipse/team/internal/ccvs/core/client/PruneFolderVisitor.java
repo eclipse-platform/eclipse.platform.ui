@@ -5,12 +5,14 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
  * Goes recursivly through the folders checks if they are empyty
@@ -56,11 +58,13 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	}
 	
 	private void pruneFolderIfAppropriate(ICVSFolder folder) throws CVSException {
-		if (folder.isManaged() &&
-		 		! folder.equals(session.getLocalRoot()) &&
-				folder.members(ICVSFolder.ALL_MEMBERS).length == 0) {
+		// Only prune managed folders that are not the root of the operation
+		if (folder.isManaged() 
+			&& ! folder.equals(session.getLocalRoot())
+			&& folder.members(ICVSFolder.ALL_EXISTING_MEMBERS).length == 0) {
+			
+			// Delete the folder but keep a phantom for local folders
 			folder.delete();
-			folder.unmanage(null);
 			pruneParentIfAppropriate(folder);
 		}
 	}

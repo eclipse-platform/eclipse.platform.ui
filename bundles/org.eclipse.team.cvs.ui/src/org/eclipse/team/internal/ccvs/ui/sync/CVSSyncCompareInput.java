@@ -394,28 +394,6 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		}
 		return false;
 	}
-
-	
-	/**
-	 * Adjust the sync info (to conflicting change) for locally deleted 
-	 * folders (i.e. outgoing folder deletions)
-	 * that have incoming or conflicting changes in one or more children.
-	 * 
-	 * @see MergeAction#removeNodes(ITeamNode[])
-	 */
-	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
-		IDiffElement element = super.collectResourceChanges(parent, tree, pm);
-		int kind = element.getKind();
-		if ((element instanceof ChangedTeamContainer) 
-				&& ((kind & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION) 
-				&& ((kind & Differencer.DIRECTION_MASK) == ITeamNode.OUTGOING)) {
-			// Check the children to see if there are any incomming changes
-			if (hasIncomingChanges((ChangedTeamContainer)element)) {
-				((ChangedTeamContainer)element).setKind(ITeamNode.CONFLICTING | Differencer.CHANGE);
-			}
-		}
-		return element;
-	}
 	
 	private boolean hasIncomingChanges(ChangedTeamContainer container) {
 		IDiffElement[] children = container.getChildren();

@@ -294,9 +294,9 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		IPath path = parent.append(container1.getName());
 		assertEquals(path, container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
 		assertTrue("The number of resource in " + path.toString() + " differs", 
-			container1.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS).length 
-			== container2.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS).length);
-		ICVSResource[] resources = container1.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.FOLDER_MEMBERS);
+			container1.members(ICVSFolder.ALL_EXISTING_MEMBERS).length 
+			== container2.members(ICVSFolder.ALL_EXISTING_MEMBERS).length);
+		ICVSResource[] resources = container1.members(ICVSFolder.ALL_EXISTING_MEMBERS);
 		for (int i= 0;i <resources.length;i++) {
 			assertEquals(path, resources[i], container2.getChild(resources[i].getName()), includeTimestamps, includeTags);
 		}

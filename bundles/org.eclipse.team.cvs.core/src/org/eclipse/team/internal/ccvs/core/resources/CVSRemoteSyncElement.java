@@ -288,23 +288,15 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				// Assume the folder is not a CVS folder
 			}
 			if(!local.exists()) {
-				if (isCVSFolder) {
-					// We have local information for the folder but it doesn't exist
-					if (remote == null) {
-						// Conflicting deletion. Purge local information
-						try {
-							cvsFolder.unmanage(null);
-						} catch (CVSException e) {
-							CVSProviderPlugin.log(e.getStatus());
-						}
+				if(remote != null) {
+					if (isCVSFolder) {
+						// say the folder is in_sync even though it doesn't exist locally
+						folderKind = IRemoteSyncElement.IN_SYNC;
 					} else {
-						// The folder exists remotely and has been deleted locally
-						folderKind = IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION;
-					} 
-				} else if(remote != null) {
-					folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
+						folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
+					}
 				} else {
-					// conflicting deletion ignore
+					// ignore conflicting deletion to keep phantom sync info
 				}
 			} else {
 				if(remote == null) {

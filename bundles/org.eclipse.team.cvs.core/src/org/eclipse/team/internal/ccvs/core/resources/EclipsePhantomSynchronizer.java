@@ -165,11 +165,7 @@ public class EclipsePhantomSynchronizer extends EclipseSynchronizer {
 				beginOperation(null);
 				Map map = getPhantomResourceSyncInfoMap(parent);
 				map.remove(resource.getName());
-				if (map.isEmpty()) {
-					flushEmptyFolder(parent);
-				} else {
-					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, parent, getBytes(map));
-				}
+				getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, parent, getBytes(map));
 				changedResources.add(resource);
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);

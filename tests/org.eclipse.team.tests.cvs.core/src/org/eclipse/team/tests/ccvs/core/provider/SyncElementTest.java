@@ -119,7 +119,9 @@ public class SyncElementTest extends EclipseTest {
 	public void assertDeleted(String message, IRemoteSyncElement tree, String[] resources) throws CoreException, TeamException {
 		for (int i=0;i<resources.length;i++) {
 			try {
-				getChild(tree, new Path(resources[i]));
+				ILocalSyncElement element = getChild(tree, new Path(resources[i]));
+				if (! element.getLocal().exists())
+					break;
 			} catch (AssertionFailedError e) {
 				break;
 			}
@@ -821,13 +823,13 @@ public class SyncElementTest extends EclipseTest {
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
 		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
 		
-		// The folders and files should show up as outgoing deletions
+		// The files should show up as outgoing deletions
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderDeletion sync check", tree,
 						 new String[] { "folder1", "folder1/a.txt", "folder1/folder2", "folder1/folder2/file.txt"},
-						 new int[] { IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 new int[] { IRemoteSyncElement.IN_SYNC,
 						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
-						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.IN_SYNC,
 						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
 		
 		// commit folder1/a.txt
@@ -837,8 +839,8 @@ public class SyncElementTest extends EclipseTest {
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFolderDeletion sync check", tree,
 						 new String[] { "folder1", "folder1/folder2", "folder1/folder2/file.txt"},
-						 new int[] { IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
-						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION,
+						 new int[] { IRemoteSyncElement.IN_SYNC,
+						 			  IRemoteSyncElement.IN_SYNC,
 						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
 		assertDeleted("testFolderDeletion", tree, new String[] {"folder1/a.txt"});
 		

@@ -69,8 +69,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	 * Delete the files contained in the folder structure rooted at source.
 	 * Return true if at least one file has been marked as an outgoing deletion and the parent folder must remain
 	 */
-	private boolean makeFolderOutgoingDeletion(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		boolean fileFound = false;
+	private void makeFolderOutgoingDeletion(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 
 		// Create the destination for a move
 		if (destination != null && ! destination.exists()) {
@@ -89,65 +88,25 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 				}
 				
 				// Try to delete/move the child
-				if (makeFolderOutgoingDeletion(tree, (IFolder)child, destFolder, updateFlags, monitor)) {
-					fileFound = true;
-				}
+				makeFolderOutgoingDeletion(tree, (IFolder)child, destFolder, updateFlags, monitor);
 			} else if (child.getType() == IResource.FILE) {
 				IFile destFile = null;
 				if (destination != null) {
 					destFile = destination.getFile(child.getFullPath().removeFirstSegments(source.getFullPath().segmentCount()));
 				}
-				fileFound = makeFileOutgoingDeletion(tree, (IFile)child, destFile, updateFlags, monitor);
-			}
-		}
-
-		// If there were no files, we need to check if the folder already has outgoing deletions
-		if ( ! fileFound) {
-			try {
-				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(source);
-				ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
-				for (int i = 0; i < files.length; i++) {
-					ICVSFile cvsFile = (ICVSFile)files[i];
-					if (cvsFile.isManaged() && ! cvsFile.getSyncInfo().isAdded()) {
-						fileFound = true;
-						break;
-					}		
-				}
-				// if there is still no file, look for phantom folders that may hold file deletions
-				if ( ! fileFound) {
-					ICVSResource[] folders = folder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
-					for (int i = 0; i < folders.length; i++) {
-						ICVSFolder cvsFolder = (ICVSFolder)folders[i];
-						if ( ! cvsFolder.exists() && cvsFolder.isCVSFolder()) {
-							// The only time we should have a non-existant CVS folder 
-							// is when it holds outgoing file deletions
-							fileFound = true;
-							break;
-						}		
-					}
-				}
-				
-				// If there is still no file, we can delete the folder without any special handling
-				if ( ! fileFound) {
-					tree.standardDeleteFolder(source, updateFlags, monitor);
-					folder.unmanage(null);
-				}
-			} catch (CVSException e) {
-				tree.failed(e.getStatus());
+				makeFileOutgoingDeletion(tree, (IFile)child, destFile, updateFlags, monitor);
 			}
 		}
 		
-		// If there were managed files found, we must remember the folder's sync info
-		if (fileFound) {
-			try {
-				EclipseSynchronizer.getInstance().prepareForDeletion(source);
-			} catch (CVSException e) {
-				tree.failed(e.getStatus());
-			}
-			tree.standardDeleteFolder(source, updateFlags, monitor);
+		// Remember the folder's sync info so future operations will know about it
+		try {
+			EclipseSynchronizer.getInstance().prepareForDeletion(source);
+		} catch (CVSException e) {
+			tree.failed(e.getStatus());
 		}
+		tree.standardDeleteFolder(source, updateFlags, monitor);
 				
-		return fileFound;
+		return;
 	}
 	
 	/**

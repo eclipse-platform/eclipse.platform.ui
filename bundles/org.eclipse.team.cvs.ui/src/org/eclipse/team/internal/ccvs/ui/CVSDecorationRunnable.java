@@ -120,16 +120,18 @@ public class CVSDecorationRunnable implements Runnable {
 				decoration = null;
 			}
 			
-			// notify that decoration is ready
-			if(decoration!=null) {
+			// record the decoration
+			if (decoration!=null) {
 				resources.add(resource);
 				decorations.add(decoration);
-				if(!resources.isEmpty() && (notifier.remaining()==0 || resources.size() >= NUM_TO_BATCH)) {
-					notifier.decorated((IResource[])resources.toArray(new IResource[resources.size()]), 
-									   (CVSDecoration[])decorations.toArray(new CVSDecoration[decorations.size()]));
-					resources.clear();
-					decorations.clear();
-				}
+			}
+			
+			// notify that decoration is ready
+			if(!resources.isEmpty() && (notifier.remaining()==0 || resources.size() >= NUM_TO_BATCH)) {
+				notifier.decorated((IResource[])resources.toArray(new IResource[resources.size()]), 
+								   (CVSDecoration[])decorations.toArray(new CVSDecoration[decorations.size()]));
+				resources.clear();
+				decorations.clear();
 			}
 		}
 	}

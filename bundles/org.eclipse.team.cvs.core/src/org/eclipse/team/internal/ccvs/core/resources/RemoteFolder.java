@@ -414,6 +414,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		if (children == null) {
 			return new ICVSResource[0];
 		}
+		// RemoteFolders never have phantom members
+		if ((flags & EXISTING_MEMBERS) == 0 && (flags & PHANTOM_MEMBERS) == 1) {
+			return new ICVSResource[0];
+		}
 		boolean includeFiles = (((flags & FILE_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeFolders = (((flags & FOLDER_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));

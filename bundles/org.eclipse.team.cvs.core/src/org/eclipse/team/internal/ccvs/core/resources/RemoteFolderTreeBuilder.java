@@ -489,7 +489,7 @@ public class RemoteFolderTreeBuilder {
 				// Record any children that are empty
 				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
 					// Prune if the local folder is also empty.
-					if (localFolder == null || (localFolder.members(ICVSFolder.ALL_MEMBERS).length == 0))
+					if (localFolder == null || (localFolder.members(ICVSFolder.ALL_EXISTING_MEMBERS).length == 0))
 						emptyChildren.add(remoteFolder);
 					else {
 						// Also prune if the tag we are fetching is not HEAD and differs from the tag of the local folder

@@ -495,8 +495,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				public void visitFolder(ICVSFolder folder) throws CVSException {
 					if(!folder.exists()) {
 						if (folder.isCVSFolder()) {
-							// The folder contains outgoing file deletions
-							throw DECORATOR_EXCEPTION;
+							// The folder may contain outgoing file deletions
+							folder.acceptChildren(this);
 						}
 						return;
 					}
