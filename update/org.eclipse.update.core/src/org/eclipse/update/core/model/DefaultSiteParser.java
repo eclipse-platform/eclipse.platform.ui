@@ -59,6 +59,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_CATEGORY_DEF = 5;
 	private static final int STATE_DESCRIPTION_SITE = 6;
 	private static final int STATE_DESCRIPTION_CATEGORY_DEF = 7;
+	private static final int STATE_MIRROR = 8;
 	private static final String PLUGIN_ID = UpdateCore.getPlugin().getBundle().getSymbolicName();
 
 	private static final String SITE = "site"; //$NON-NLS-1$
@@ -67,6 +68,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final String CATEGORY_DEF = "category-def"; //$NON-NLS-1$
 	private static final String CATEGORY = "category"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String MIRROR = "mirror"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INFO_URL = "index.html"; //$NON-NLS-1$
 
@@ -193,6 +195,9 @@ public class DefaultSiteParser extends DefaultHandler {
 			case STATE_DESCRIPTION_CATEGORY_DEF :
 				handleSiteState(localName, attributes);
 				break;
+				
+			case STATE_MIRROR:
+				handleMirrorState(localName, attributes);
 
 			default :
 				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownStartState", getState(currentState)));//$NON-NLS-1$
@@ -308,6 +313,13 @@ public class DefaultSiteParser extends DefaultHandler {
 					category.setDescriptionModel(info);
 				break;
 
+			case STATE_MIRROR :
+				stateStack.pop();
+				info = (URLEntryModel) objectStack.pop();
+				siteModel = (SiteModel) objectStack.peek();
+				siteModel.addMirrorModel(info);
+				
+				break;
 			default :
 				internalError(Policy.bind("DefaultSiteParser.UnknownEndState", getState(state)));//$NON-NLS-1$
 				break;
@@ -376,6 +388,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else if (elementName.equals(CATEGORY_DEF)) {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
+		} else if (elementName.equals(MIRROR)) {
+				stateStack.push(new Integer(STATE_MIRROR));
+				processMirror(attributes);
 		} else
 			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$ 			
 	}
@@ -396,6 +411,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else if (elementName.equals(CATEGORY)) {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
+		} else if (elementName.equals(MIRROR)) {
+			stateStack.push(new Integer(STATE_MIRROR));
+			processMirror(attributes);
 		} else
 			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$ 			
 	}
@@ -413,6 +431,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
 			processInfo(attributes);
+		} else if (elementName.equals(MIRROR)) {
+			stateStack.push(new Integer(STATE_MIRROR));
+			processMirror(attributes);
 		} else
 			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));	//$NON-NLS-1$ 			
 	}
@@ -430,6 +451,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else if (elementName.equals(CATEGORY_DEF)) {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
+		} else if (elementName.equals(MIRROR)) {
+			stateStack.push(new Integer(STATE_MIRROR));
+			processMirror(attributes);
 		} else if (elementName.equals(CATEGORY)) {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
@@ -437,6 +461,26 @@ public class DefaultSiteParser extends DefaultHandler {
 			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));//$NON-NLS-1$ 			
 	}
 
+	private void handleMirrorState(String elementName, Attributes attributes) {
+		if (elementName.equals(FEATURE)) {
+			stateStack.push(new Integer(STATE_FEATURE));
+			processFeature(attributes);
+		} else if (elementName.equals(ARCHIVE)) {
+			stateStack.push(new Integer(STATE_ARCHIVE));
+			processArchive(attributes);
+		} else if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
+			processInfo(attributes);
+		} else if (elementName.equals(MIRROR)) {
+			stateStack.push(new Integer(STATE_MIRROR));
+			processMirror(attributes);
+		} else
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", elementName, getState(currentState)));	//$NON-NLS-1$ 			
+	}
+	
 	/* 
 	 * process site info
 	 */
@@ -599,19 +643,29 @@ public class DefaultSiteParser extends DefaultHandler {
 	}
 
 	/* 
+	 * process category def info
+	 */
+	private void processMirror(Attributes attributes) {
+		// a mirror is a url entry
+		processInfo(attributes);
+	}
+	
+	/* 
 	 * process URL info with element text
 	 */
 	private void processInfo(Attributes attributes) {
 		URLEntryModel inf = factory.createURLEntryModel();
 		String infoURL = attributes.getValue("url"); //$NON-NLS-1$
+		String label = attributes.getValue("label"); //$NON-NLS-1$
 		inf.setURLString(infoURL);
+		inf.setAnnotation(label);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("Processed Info: url:" + infoURL); //$NON-NLS-1$
+			debug("Processed Info: url:" + infoURL + " label:" + label); //$NON-NLS-1$ //$NON-NLS-2$
 
 		objectStack.push(inf);
 	}
-
+	
 	/*
 	 * 
 	 */
@@ -704,6 +758,8 @@ public class DefaultSiteParser extends DefaultHandler {
 			case STATE_DESCRIPTION_SITE :
 				return "Description / Site"; //$NON-NLS-1$
 
+			case STATE_MIRROR:
+				return "Mirror"; //$NON-NLS-1$
 			default :
 				return Policy.bind("DefaultSiteParser.UnknownState"); //$NON-NLS-1$
 		}

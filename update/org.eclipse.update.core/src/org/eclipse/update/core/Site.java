@@ -33,7 +33,7 @@ import org.eclipse.update.internal.core.*;
  * @see org.eclipse.update.core.model.SiteModel
  * @since 2.0
  */
-public class Site extends SiteModel implements ISite {
+public class Site extends SiteModel implements ISiteWithMirrors {
 
 	/**
 	 * Default installation path for features
@@ -524,4 +524,17 @@ public class Site extends SiteModel implements ISite {
 		featureCache.remove(key);
 	}
 
+	/**
+	 * Return an array of mirror update sites.
+	 * 
+	 * @see ISite#getMirrorSiteEntries()
+	 * @since 2.0
+	 */
+	public IURLEntry[] getMirrorSiteEntries() {
+		URLEntryModel[] result = getMirrorSiteEntryModels();
+		if (result.length == 0)
+			return new IURLEntry[0];
+		else
+			return (IURLEntry[]) result;
+	}
 }

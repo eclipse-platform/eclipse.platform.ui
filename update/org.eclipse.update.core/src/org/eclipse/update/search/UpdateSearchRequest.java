@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.search.UpdatePolicy;
 
 /**
@@ -27,7 +28,7 @@ import org.eclipse.update.internal.search.UpdatePolicy;
  * result collector, while search progress is tracked using
  * the progress monitor.
  * <p>Classes that implement <samp>IUpdateSearchResultCollector</samp>
- * should call 'filter' to test if the match should be
+ * should call 'accept' to test if the match should be
  * accepted according to the filters added to the request.
  * 
  * <p>
@@ -46,6 +47,12 @@ public class UpdateSearchRequest {
 	private boolean searchInProgress = false;
 	private AggregateFilter aggregateFilter = new AggregateFilter();
 
+	class MirroredUpdateSiteAdapter extends UpdateSiteAdapter {
+		public MirroredUpdateSiteAdapter(IURLEntry mirror) {
+			super(mirror.getAnnotation(), mirror.getURL());
+		}
+	}
+	
 	class AggregateFilter implements IUpdateSearchFilter {
 		private ArrayList filters;
 		public void addFilter(IUpdateSearchFilter filter) {
@@ -211,7 +218,8 @@ public class UpdateSearchRequest {
 								null,
 								query,
 								collector,
-								subMonitor);
+								subMonitor,
+								true);
 						if (status != null)
 							statusList.add(status);
 						if (monitor.isCanceled())
@@ -230,7 +238,8 @@ public class UpdateSearchRequest {
 								source.getCategoriesToSkip(),
 								query,
 								collector,
-								subMonitor);
+								subMonitor,
+								true);
 						if (status != null)
 							statusList.add(status);
 					}
@@ -286,9 +295,10 @@ public class UpdateSearchRequest {
 	private IUpdateSiteAdapter getMappedSite(UpdatePolicy policy, IQueryUpdateSiteAdapter qsite) {
 		if (policy!=null && policy.isLoaded()) {
 			IUpdateSiteAdapter mappedSite = policy.getMappedSite(qsite.getMappingId());
-			if (mappedSite!=null) return mappedSite;
-			// no match - use original site if fallback allowed, or nothing.
-			return policy.isFallbackAllowed()? qsite : null;
+			if (mappedSite!=null) 
+				return mappedSite;
+			else // no match - use original site if fallback allowed, or nothing.
+				return policy.isFallbackAllowed()? qsite : null;
 		}
 		return qsite;
 	}
@@ -301,7 +311,8 @@ public class UpdateSearchRequest {
 		String[] categoriesToSkip,
 		IUpdateSearchQuery query,
 		IUpdateSearchResultCollector collector,
-		SubProgressMonitor monitor)
+		SubProgressMonitor monitor,
+		boolean checkMirrors)
 		throws CoreException {
 		String text = Policy.bind("UpdateSearchRequest.contacting") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.subTask(text);
@@ -314,6 +325,20 @@ public class UpdateSearchRequest {
 				SiteManager.getSite(
 					siteURL,
 					new SubProgressMonitor(monitor, 1));
+			
+			// If frozen connection was canceled, there will be no site.
+			if (site == null) {
+				monitor.worked(9);
+				return null;
+			}
+			
+			// prompt the user to pick up a site
+			if ((collector instanceof IUpdateSearchResultCollectorFromMirror)
+				&& (site instanceof ISiteWithMirrors)) {
+				IURLEntry mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
+				if (mirror != null) 
+					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, new SubProgressMonitor(monitor,1), false);
+			}
 		} catch (CoreException e) {
 			// Test the exception. If the exception is
 			// due to the site connection problems,
@@ -327,11 +352,6 @@ public class UpdateSearchRequest {
 				throw e;
 			monitor.worked(10);
 			return status;
-		}
-		// If frozen connection was canceled, there will be no site.
-		if (site == null) {
-			monitor.worked(9);
-			return null;
 		}
 
 		text = Policy.bind("UpdateSearchRequest.checking") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$

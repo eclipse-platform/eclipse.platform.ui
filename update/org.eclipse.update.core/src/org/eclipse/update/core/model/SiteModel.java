@@ -36,12 +36,10 @@ public class SiteModel extends ModelObject {
 
 	private String type;
 	private URLEntryModel description;
-	private List /*of FeatureReferenceModel*/
-	featureReferences;
-	private List /*of ArchiveReferenceModel*/
-	archiveReferences;
-	private Set /*of CategoryModel*/
-	categories;
+	private List /*of FeatureReferenceModel*/	featureReferences;
+	private List /*of ArchiveReferenceModel*/	archiveReferences;
+	private Set /*of CategoryModel*/	categories;
+	private List /* of URLEntryModel */ mirrors;
 	private String locationURLString;
 	private URL locationURL;
 	private ConfiguredSiteModel configuredSiteModel;
@@ -264,6 +262,21 @@ public class SiteModel extends ModelObject {
 		if (!this.categories.contains(category))
 			this.categories.add(category);
 	}
+	
+	/**
+	 * Adds a mirror site.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param mirror mirror model 
+	 * @since 3.1
+	 */
+	public void addMirrorModel(URLEntryModel mirror) {
+		assertIsWriteable();
+		if (this.mirrors == null)
+			this.mirrors = new ArrayList();
+		if (!this.mirrors.contains(mirror))
+			this.mirrors.add(mirror);
+	}
 
 	/**
 	 * Removes a feature reference model from site.
@@ -304,6 +317,19 @@ public class SiteModel extends ModelObject {
 			this.categories.remove(category);
 	}
 
+	/**
+	 * Removes a mirror from site.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param mirror mirror to remove
+	 * @since 3.1
+	 */
+	public void removeMirror(URLEntryModel mirror) {
+		assertIsWriteable();
+		if (this.mirrors != null)
+			this.mirrors.remove(mirror);
+	}
+	
 	/**
 	 * Marks the model object as read-only.
 	 * 
@@ -364,4 +390,32 @@ public class SiteModel extends ModelObject {
 		return Site.SITE_FILE;
 	}
 
+	/**
+	 * Return an array of updat site mirrors
+	 * 
+	 * @return an array of mirror entries, or an empty array.
+	 * @since 3.1
+	 */
+	public URLEntryModel[] getMirrorSiteEntryModels() {
+		//delayedResolve(); no delay;
+		if (mirrors == null || mirrors.size() == 0)
+			return new URLEntryModel[0];
+
+		return (URLEntryModel[]) mirrors.toArray(arrayTypeFor(mirrors));
+	}
+	
+	/**
+	 * Sets additional mirror sites
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param mirrors additional update site mirrors
+	 * @since 3.1
+	 */
+	public void setMirrorSiteEntryModels(URLEntryModel[] mirrors) {
+		assertIsWriteable();
+		if (mirrors == null)
+			this.mirrors = null;
+		else
+			this.mirrors = new ArrayList(Arrays.asList(mirrors));
+	}
 }

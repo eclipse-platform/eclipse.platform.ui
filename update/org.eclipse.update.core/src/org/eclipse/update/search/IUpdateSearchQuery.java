@@ -39,9 +39,9 @@ public interface IUpdateSearchQuery {
 
 /**
  * Executes the query. The implementors should scan the provided
- * update site (scipping certain categories if provided) and
+ * update site (skipping certain categories if provided) and
  * pass the matches to the result collector. The query is also
- * responsible of scoping and moving the provided progress monitor.
+ * responsible for scoping and moving the provided progress monitor.
  * 
  * @param site the update site to scan
  * @param categoriesToSkip an array of category names that need to be skipped or <samp>null</samp> if categories should not be taken into account.

@@ -58,16 +58,11 @@ public class FeatureModel extends ModelObject {
 	private URLEntryModel copyright;
 	private URLEntryModel license;
 	private URLEntryModel updateSiteInfo;
-	private List /*of InfoModel*/
-	discoverySiteInfo;
-	private List /*of ImportModel*/
-	imports;
-	private List /*of PluginEntryModel*/
-	pluginEntries;
-	private List /*of IncludedFeatureReferenceModel */
-	featureIncludes;
-	private List /*of NonPluginEntryModel*/
-	nonPluginEntries;
+	private List /*of InfoModel*/	discoverySiteInfo;
+	private List /*of ImportModel*/	imports;
+	private List /*of PluginEntryModel*/	pluginEntries;
+	private List /*of IncludedFeatureReferenceModel */	featureIncludes;
+	private List /*of NonPluginEntryModel*/	nonPluginEntries;
 
 	// performance
 	private URL bundleURL;
