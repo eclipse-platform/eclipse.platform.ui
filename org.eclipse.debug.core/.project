@@ -14,7 +14,7 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-	<buildCommand>
+		<buildCommand>
 			<name>org.eclipse.pde.SchemaBuilder</name>
 			<arguments>
 			</arguments>
