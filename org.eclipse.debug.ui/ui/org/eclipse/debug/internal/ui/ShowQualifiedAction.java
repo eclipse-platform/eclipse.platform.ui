@@ -28,6 +28,7 @@ public class ShowQualifiedAction extends Action {
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
+		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowQualifedAction"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.SHOW_QUALIFIED_NAMES_ACTION });
