@@ -52,18 +52,22 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						CheckboxTableViewer viewer = (CheckboxTableViewer)fView.getViewer(); 
-						viewer.add(breakpoints);
-						MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "", null);
+						CheckboxTableViewer viewer = (CheckboxTableViewer)fView.getViewer();
+						MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIViewsMessages.getString("BreakpointsViewEventHandler.4"), null); //$NON-NLS-1$
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
+							// check if the breakpoint is still registered at this time
+							if (!DebugPlugin.getDefault().getBreakpointManager().isRegistered(breakpoint)) {
+								continue;
+							}
+							viewer.add(breakpoint);
 							try {
 								boolean enabled= breakpoint.isEnabled();
 								if (viewer.getChecked(breakpoint) != enabled) {
 									viewer.setChecked(breakpoint, breakpoint.isEnabled());								
 								}
 							} catch (CoreException e) {
-								status.add(DebugUIPlugin.newErrorStatus("Exception accessing breakpoint",e));
+								status.add(DebugUIPlugin.newErrorStatus(DebugUIViewsMessages.getString("BreakpointsViewEventHandler.5"),e)); //$NON-NLS-1$
 								DebugUIPlugin.log(e);
 							}	
 						}
