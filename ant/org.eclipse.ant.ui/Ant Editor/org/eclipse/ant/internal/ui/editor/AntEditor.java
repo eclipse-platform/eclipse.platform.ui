@@ -445,7 +445,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         return part != null && part.equals(this);
     }
     
-    private void setSelection(AntElementNode reference, boolean moveCursor) {
+    public void setSelection(AntElementNode reference, boolean moveCursor) {
     	if (fSelectionSetFromOutline) {
     		//the work has all just been done via a selection setting in the outline
     		fSelectionSetFromOutline= false;
