@@ -224,7 +224,7 @@ public class TitleAreaDialog extends Dialog {
         titleImage.setBackground(background);
         titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
         FormData imageData = new FormData();
-        imageData.top = new FormAttachment(0, verticalSpacing);
+        imageData.top = new FormAttachment(0, 0);
         // Note: do not use horizontalSpacing on the right as that would be a
         // regression from
         // the R2.x style where there was no margin on the right and images are
