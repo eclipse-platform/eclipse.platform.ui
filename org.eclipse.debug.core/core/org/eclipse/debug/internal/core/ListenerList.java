@@ -120,7 +120,7 @@ public class ListenerList {
 	/**
 	 * Removes all the listeners from the list.
 	 */
-	public void removeAll() {
+	public synchronized void removeAll() {
 		fListeners= new Object[0];
 		fSize= 0;
 	}
