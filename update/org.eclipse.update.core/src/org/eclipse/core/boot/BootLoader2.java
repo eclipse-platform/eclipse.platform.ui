@@ -4,13 +4,12 @@ package org.eclipse.core.boot;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.internal.boot.PlatformConfiguration;
+import org.eclipse.core.internal.boot.InternalBootLoader2;
 
 public class BootLoader2 {
 	
-	private BootLoader2() {}
 	public static IPlatformConfiguration getPlatformConfiguration() {
-		return new PlatformConfiguration();
+		return InternalBootLoader2.getPlatformConfiguration();
 	}
 
 }

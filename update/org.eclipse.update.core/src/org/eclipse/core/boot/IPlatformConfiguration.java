@@ -40,31 +40,6 @@ public interface IPlatformConfiguration {
 		public static final int SITE_CONFIGURED_PLUGINS = 3;
 		
 		/**
-		 * Create and optionally configure a plug-in entry for this site
-		 *
-		 * @param id unique identifier of the plug-in being configured
-		 * @param version plug-in version. It must be a valid string
-		 * form of a plug-in version identifier
-		 * @param path path relative to the site URL of the plugin.xml 
-		 * or fragment.xml for this entry
-		 * @param configure flag indicating whether the entry is
-		 * only created <code>false</code> or created and configured <code>true</code>.
-		 * @return created plug-in entry
-		 */		
-		public IPluginEntry createPluginEntry(String id, String version, String path, boolean configure);
-		
-		/**
-		 * Returns all configured plug-in entries for this site
-		 * 
-		 * @return array of plug-in entries. An empty array is returned
-		 * if there are no plug-ins explicitly configured for this site.
-		 * An empty array is always returned for sites using
-		 * <code>AUTO_DISCOVER_CHANGES</code> and <code>SITE_CONFIGURED_PLUGINS</code>
-		 * policies.
-		 */
-		public IPluginEntry[] getConfiguredPluginEntries();
-		
-		/**
 		 * Returns the URL for this site
 		 * 
 		 * @return site url
@@ -76,7 +51,43 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @return site policy setting
 		 */				
-		public int getPolicy();
+		public int getPolicy();		
+					
+		/**
+		 * Configures the specified plug-in entry. If the plug-in entry is already
+		 * configured this method does nothing.
+		 * 
+		 * @param entry plug-in entry 
+		 */	
+		public void configurePluginEntry(IPluginEntry entry);
+							
+		/**
+		 * Unconfigures the specified entry. Does not do anything is the entry
+		 * is not configured.
+		 * 
+		 * @param entry plug-in entry
+		 */	
+		public void unconfigurePluginEntry(IPluginEntry entry);
+				
+		/**
+		 * Returns all configured plug-in entries for this site
+		 * 
+		 * @return array of plug-in entries. An empty array is returned
+		 * if there are no plug-ins explicitly configured for this site.
+		 * An empty array is always returned for sites using
+		 * <code>AUTO_DISCOVER_CHANGES</code> and <code>SITE_CONFIGURED_PLUGINS</code>
+		 * policies.
+		 */
+		public IPluginEntry[] getConfiguredPluginEntries();
+				
+		/**
+		 * Tests if specified plug-in entry is configured on this site
+		 * 
+		 * @param entry plug-in entry
+		 * @return <code>true</code> if plug-in entry is configured, <code>false</code> otherwise
+		 */	
+		public boolean isConfigured(IPluginEntry entry);
+				
 	}
 		
 	/**
@@ -85,47 +96,31 @@ public interface IPlatformConfiguration {
 	public interface IPluginEntry {
 				
 		/**
-		 * Returns the site entry for this plug-in entry
-		 * 
-		 * @return site entry
-		 */				
-		public ISiteEntry getSiteEntry();
-				
-		/**
 		 * Returns the relative path to plugin.xnml or fragment.xml on its site
 		 * 
 		 * @return path relative to site entry URL
 		 */				
 		public String getRelativePath();
 				
-		/**
-		 * Returns the plug-in entry version
-		 * 
-		 * @return version
-		 */				
-		public String getVersion();
-				
-		/**
-		 * Returns the plug-in unique identifier
-		 * 
-		 * @return site policy setting
-		 */				
-		public String getUniqueIdentifier();
-	}
+}
+			
+	/**
+	 * Create a plug-in entry
+	 *
+	 * @param path site-relative path of the plugin.xml or fragment.xml
+	 * for this entry
+	 * @return created plug-in entry
+	 */		
+	public IPluginEntry createPluginEntry(String path);
 	
 	/**
-	 * Create and optionally configure a site entry
+	 * Create a site entry
 	 *
 	 * @param url site URL
 	 * @param int site policy
-	 * @param configure flag indicating whether the entry is
-	 * only created (<code>false</code>) or created and configured (<code>true</code>).
-	 * If <code>true</code> is specified, the new entry is configured only
-	 * if an entry with the same site URL does not already exist (ie. this
-	 * method will not replace existing entries)
 	 * @return created site entry
 	 */	
-	public ISiteEntry createSiteEntry(URL url, int policy, boolean configure);		
+	public ISiteEntry createSiteEntry(URL url, int policy);		
 		
 	/**
 	 * Configures the specified site entry. If a site entry with the
@@ -184,66 +179,14 @@ public interface IPlatformConfiguration {
 	 * @return matching site entry, or <code>null</code> if no match found
 	 */	
 	public ISiteEntry findConfiguredSiteEntry(URL url);
-		
+	
 	/**
-	 * Tests if specified site entry is configured
+	 * Returns the URL location of the configuration information
 	 * 
-	 * @param entry site entry
-	 * @return <code>true</code> if site is configured, <code>false</code> otherwise
-	 */	
-	public boolean isConfigured(ISiteEntry entry);
-			
-	/**
-	 * Configures the specified plug-in entry. If the plug-in entry is already
-	 * configured this method does nothing.
-	 * 
-	 * @param entry plug-in entry 
-	 */	
-	public void configurePluginEntry(IPluginEntry entry);
-							
-	/**
-	 * Unconfigures the specified entry. Does not do anything is the entry
-	 * is not configured.
-	 * 
-	 * @param entry plug-in entry
-	 */	
-	public void unconfigurePluginEntry(IPluginEntry entry);
-		
-	/**
-	 * Returns configured plug-in entries
-	 * 
-	 * @return array of plug-in entries. Returns an empty array if no 
-	 * plug-in entries are configured
-	 */	
-	public IPluginEntry[] getConfiguredPluginEntries();
-		
-	/**
-	 * Returns an array of plug-in entries matching the specified criteria.
-	 * 
-	 * @param id plug-in identifier
-	 * @return array of matching plug-in entries, or <code>null</code>
-	 * if no match found
-	 */	
-	public IPluginEntry[] findConfiguredPluginEntries(String id);
-		
-	/**
-	 * Returns an array of plug-in entries matching the specified criteria.
-	 * 
-	 * @param id plug-in identifier
-	 * @param version plug-in version. It must be a valid string
-	 * form of a plug-in version identifier
-	 * @return array of matching plug-in entries, or <code>null</code>
-	 * if no match found
-	 */	
-	public IPluginEntry[] findConfiguredPluginEntries(String id, String version);
-		
-	/**
-	 * Tests if specified plug-in entry is configured
-	 * 
-	 * @param entry plug-in entry
-	 * @return <code>true</code> if plug-in entry is configured, <code>false</code> otherwise
-	 */	
-	public boolean isConfigured(IPluginEntry entry);
+	 * @return configuration location URL, or <code>null</code> if the
+	 * configuration location could not be determined.
+	 */
+	public URL getConfigurationLocation();
 		
 	/**
 	 * Called to save the configuration information
