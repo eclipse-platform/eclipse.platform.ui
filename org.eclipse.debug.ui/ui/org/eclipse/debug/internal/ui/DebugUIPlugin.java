@@ -121,7 +121,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	}		
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}
+	}
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */
@@ -151,7 +151,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	
 	public static LaunchConfigurationManager getLaunchConfigurationManager() {
 		return LaunchConfigurationManager.getDefault();
-	}
+	}
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
@@ -211,7 +211,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	protected ImageRegistry createImageRegistry() {
 		return DebugPluginImages.initializeImageRegistry();
 	}
-
+
 	/**
 	 * Shuts down this plug-in and discards all plug-in state.
 	 * If a plug-in has been started, this method is automatically
@@ -536,4 +536,4 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 }
-
+

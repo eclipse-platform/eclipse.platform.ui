@@ -30,7 +30,7 @@ public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoi
 		}
 		return -1;
 	}
-
+
 	/**
 	 * @see ILineBreakpoint#getCharStart()
 	 */
@@ -41,7 +41,7 @@ public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoi
 		}
 		return -1;
 	}
-
+
 	/**
 	 * @see ILineBreakpoint#getCharEnd()
 	 */
@@ -51,6 +51,6 @@ public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoi
 			return m.getAttribute(IMarker.CHAR_END, -1);
 		}
 		return -1;
-	}
+	}
 }
 
