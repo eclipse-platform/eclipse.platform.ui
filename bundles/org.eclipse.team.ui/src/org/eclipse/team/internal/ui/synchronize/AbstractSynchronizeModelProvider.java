@@ -834,7 +834,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			}
 		}
 		// Notify the update handler that the node has been cleared
-		updateHandler.modelObjectCleared(node);
+		if (node != getModelRoot())
+			updateHandler.modelObjectCleared(node);
     }
 
     /*

@@ -394,6 +394,7 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
     
     private ISynchronizeModelProvider createProvider(ChangeSet set, SyncInfoTree tree) {
         ChangeSetDiffNode node = new ChangeSetDiffNode(getModelRoot(), set);
+        addToViewer(node);
         return createProviderRootedAt(node, tree);
     }
 
