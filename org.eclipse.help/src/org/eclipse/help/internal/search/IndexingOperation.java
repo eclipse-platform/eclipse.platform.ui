@@ -249,6 +249,9 @@ class IndexingOperation {
 					add(topics[j], hrefs);
 				}
 			}
+			ITopic tocDescriptionTopic = tocs[i].getTopic(null);
+			if (tocDescriptionTopic != null)
+				add(tocDescriptionTopic, hrefs);
 		}
 		return hrefs;
 	}
