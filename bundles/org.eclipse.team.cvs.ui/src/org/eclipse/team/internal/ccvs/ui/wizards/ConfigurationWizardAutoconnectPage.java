@@ -79,12 +79,6 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.module"));
 		createLabel(composite, info.getRepository());
 		
-		CVSTag tag = info.getTag();
-		if (tag != null) {
-			// XXX Should we show a tag
-			//properties.setProperty("tag", tag.getName());
-		}
-		 
 		// Spacer
 		createLabel(composite, "");
 		createLabel(composite, "");
