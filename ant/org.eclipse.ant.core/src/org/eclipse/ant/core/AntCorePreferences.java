@@ -278,6 +278,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * user. Try emulating the same behaviour here.
 	 *
 	 * @return the default set of URLs defining the Ant classpath
+	 * @deprecated
 	 */
 	public URL[] getDefaultAntURLs() {
 		if (defaultAntURLs == null) {
@@ -302,6 +303,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * classpath.
 	 * 
 	 * @return the set of URLs defining the Ant classpath
+	 * @deprecated
 	 */
 	public URL[] getAntURLs() {
 		return antURLs;
@@ -558,6 +560,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * entries extension point.
 	 * 
 	 * @return the list of extra classpath URLs
+	 * @deprecated
 	 */
 	public URL[] getExtraClasspathURLs() {
 		return (URL[])extraClasspathURLs.toArray(new URL[extraClasspathURLs.size()]);
@@ -569,6 +572,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return the list of classpath URLs
 	 * @since 3.0
+	 * @deprecated
 	 */
 	public URL[] getRemoteAntURLs() {
 		List result = new ArrayList(30);
@@ -588,6 +592,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return the URL of the remoteAnt.jar
 	 * @since 3.0
+	 * @deprecated
 	 */
 	public URL getRemoteAntURL() {
 		Plugin antUIPlugin= Platform.getPlugin("org.eclipse.ant.ui"); //$NON-NLS-1$
@@ -848,6 +853,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Returns the custom URLs specified for the Ant classpath
 	 * 
 	 * @return the urls defining the Ant classpath
+	 * @deprecated
 	 */
 	public URL[] getCustomURLs() {
 		return customURLs;
@@ -881,6 +887,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * called.
 	 * 
 	 * @param the urls defining the Ant classpath
+	 * @deprecated
 	 */
 	public void setCustomURLs(URL[] urls) {
 		customURLs = urls;
@@ -891,6 +898,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * updatePluginPreferences must be called.
 	 * 
 	 * @param the urls defining the Ant classpath
+	 * @deprecated
 	 */
 	public void setAntURLs(URL[] urls) {
 		antURLs = urls;
@@ -1145,5 +1153,49 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public String getAntHome() {
 		return antHome;
+	}
+	
+	/**
+	 * Returns the set of classpath entries that compose the libraries added to the
+	 * Ant runtime classpath from the Ant home location.
+	 * 
+	 * @return the set of ant home classpath entries
+	 * @since 3.0
+	 */
+	public URL[] getAntHomeClasspathEntries() {
+		return antURLs;
+	}
+	
+	/**
+	 * Returns the set of classpath entries that the user has added to the
+	 * Ant runtime classpath.
+	 * 
+	 * @return the set of user classpath entries
+	 * @since 3.0
+	 */
+	public URL[] getAdditionalClasspathEntries() {
+		return customURLs;
+	}
+	
+	/**
+	 * Sets the set of classpath entries that compose the libraries added to the
+	 * Ant runtime classpath from the Ant home location.
+	 * 
+	 * @param the set of ant home classpath entries
+	 * @since 3.0
+	 */
+	public void setAntHomeClasspathEntries(URL[] urls) {
+		antURLs= urls;
+	}
+	
+	/**
+	 * Sets the set of classpath entries that the user has added to the 
+	 * Ant runtime classpath.
+	 * 
+	 * @param the set of user classpath entries
+	 * @since 3.0
+	 */
+	public void setAdditionalClasspathEntries(URL[] urls) {
+		customURLs= urls;
 	}
 }
