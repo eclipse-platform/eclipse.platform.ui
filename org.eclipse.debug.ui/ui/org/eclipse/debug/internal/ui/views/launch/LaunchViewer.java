@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -82,7 +83,7 @@ public class LaunchViewer extends TreeViewer {
 		// update icon and label
 		ILabelProvider provider= (ILabelProvider) getLabelProvider();
 		String text= provider.getText(element);
-		if ("".equals(item.getText()) || !LaunchView.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
+		if ("".equals(item.getText()) || !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
 			// If an element already has a label, don't set the label to
 			// the pending label. This avoids labels flashing when they're
 			// updated.

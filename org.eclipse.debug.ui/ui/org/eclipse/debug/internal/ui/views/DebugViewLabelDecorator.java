@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.views;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import org.eclipse.swt.graphics.Image;
  * A label decorator which computes text for debug elements
  * in the background and updates them asynchronously.
  */
-public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDecorator, IDebugEventSetListener {
+public class DebugViewLabelDecorator extends LabelProvider implements ILabelDecorator, IDebugEventSetListener {
 
 	/**
 	 * The presentation used to compute text.
@@ -51,7 +51,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	/**
 	 * The label provider notified when text is computed.
 	 */
-	private LaunchViewDecoratingLabelProvider fLabelProvider;
+	private DebugViewDecoratingLabelProvider fLabelProvider;
 	/**
 	 * The job which will be executed next. All new label requests
 	 * are appended to this job.
@@ -80,7 +80,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 * given model presentation for text in the background.
 	 * @param presentation
 	 */
-	public LaunchViewLabelDecorator(IDebugModelPresentation presentation) {
+	public DebugViewLabelDecorator(IDebugModelPresentation presentation) {
 		fPresentation= presentation;
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -92,7 +92,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 * @param labelProvider the label provider to notify when text
 	 *  is computed
 	 */
-	public void setLabelProvider(LaunchViewDecoratingLabelProvider labelProvider) {
+	public void setLabelProvider(DebugViewDecoratingLabelProvider labelProvider) {
 		fLabelProvider= labelProvider;
 	}
 	
@@ -119,7 +119,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	public void computeText(Object element) {
 		synchronized(this) {
 			if (fNextJob == null) {
-				fNextJob= new LabelJob(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.0"), fPresentation); //$NON-NLS-1$
+				fNextJob= new LabelJob(DebugUIViewsMessages.getString("DebugViewLabelDecorator.0"), fPresentation); //$NON-NLS-1$
 			}
 			fNextJob.computeText(element);
 		}
@@ -135,7 +135,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	public void labelsComputed(final Object[] computedElements) {
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(LaunchViewLabelDecorator.this, computedElements));
+				fireLabelProviderChanged(new LabelProviderChangedEvent(DebugViewLabelDecorator.this, computedElements));
 			}
 		});
 	}
@@ -156,6 +156,15 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 		}
 	}
 
+	/**
+	 * When a thread resumes for an evaluation or step while computing
+	 * labels for one of that thread's stack frames, add the thread to the
+	 * collection of "resumed threads". This allows any stack frames whose
+	 * label computation was interrupted when the thread was resumed
+	 * to be cleaned up later.
+	 * 
+	 * @param event the resume event
+	 */
 	private void handleResumeEvent(DebugEvent event) {
 		if (event.getSource() instanceof IThread && (event.isEvaluation() || event.isStepStart())) {
 			IThread thread= (IThread) event.getSource();
@@ -169,6 +178,34 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			if (thread == frame.getThread()) {
 				resumedThreads.add(thread);
 			}
+		}
+	}
+
+	/**
+	 * When a thread suspends after an evaluation or step, recompute labels
+	 * for its stack frames. This ensures that any stack frames whose
+	 * label computation was interrupted when the thread was resumed
+	 * will be cleaned up.
+	 * 
+	 * @param event the suspend event
+	 */
+	private void handleSuspendEvent(DebugEvent event) {
+		Object source= event.getSource();
+		synchronized (resumedThreads) {
+			if (!resumedThreads.remove(source)) {
+				return;
+			}
+		}
+		if (!event.isEvaluation() && (event.getDetail() & DebugEvent.STEP_END) == 0) {
+			return;
+		}
+		IThread thread= (IThread) source;
+		try {
+			IStackFrame[] frames= thread.getStackFrames();
+			for (int i = 0; i < frames.length; i++) {
+				computeText(frames[i]);
+			}
+		} catch (DebugException e) {
 		}
 	}
 
@@ -194,33 +231,6 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			synchronized(resumedThreads) {
 				resumedThreads.retainAll(copiedThreads);
 			}
-		}
-	}
-
-	/**
-	 * When a thread suspends after an evaluation or step, recompute labels
-	 * for its stack frames. This ensures that any stack frames whose
-	 * label computation was interrupted when the thread was resumed
-	 * will be cleaned up.
-	 * @param event the suspend event
-	 */
-	private void handleSuspendEvent(DebugEvent event) {
-		Object source= event.getSource();
-		synchronized (resumedThreads) {
-			if (!resumedThreads.remove(source)) {
-				return;
-			}
-		}
-		if (!event.isEvaluation() && (event.getDetail() & DebugEvent.STEP_END) == 0) {
-			return;
-		}
-		IThread thread= (IThread) source;
-		try {
-			IStackFrame[] frames= thread.getStackFrames();
-			for (int i = 0; i < frames.length; i++) {
-				computeText(frames[i]);
-			}
-		} catch (DebugException e) {
 		}
 	}
 	
@@ -281,11 +291,11 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			}
 
 			int numElements= fElementQueue.size();
-			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
-				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.1"), new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
+				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
 				if (fNextJob != null) {
-					message.append(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.2"), new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
+					message.append(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.2"), new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
 				}
 				monitor.setTaskName(message.toString());
 				int blockSize= 10;

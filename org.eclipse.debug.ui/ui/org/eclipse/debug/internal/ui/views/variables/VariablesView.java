@@ -39,6 +39,9 @@ import org.eclipse.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -70,7 +73,6 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -87,7 +89,6 @@ import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -114,39 +115,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 																	INullSelectionListener {
 
 	/**
-	 * A label provider that delegates to a debug model
-	 * presentation and adds coloring to variables to
+	 * A decorating label provider which adds coloring to variables to
 	 * reflect their changed state
 	 */
-	protected class VariablesViewLabelProvider implements ILabelProvider, IColorProvider {
+	protected class VariablesViewDecoratingLabelProvider extends DebugViewDecoratingLabelProvider implements IColorProvider {
 		
-		protected IDebugModelPresentation presentation;
-
-		public VariablesViewLabelProvider(IDebugModelPresentation presentation) {
-			this.presentation= presentation;
-		}
-		
-		public IDebugModelPresentation getPresentation() {
-			return presentation;
-		}
-		
-		public Image getImage(Object element) {
-			return presentation.getImage(element);
-		}
-		public String getText(Object element) {
-			return presentation.getText(element);
-		}
-		public void addListener(ILabelProviderListener listener) {
-			presentation.addListener(listener);
-		}
-		public void dispose() {
-			presentation.dispose();
-		}
-		public boolean isLabelProperty(Object element, String property) {
-			return presentation.isLabelProperty(element, property);
-		}
-		public void removeListener(ILabelProviderListener listener) {
-			presentation.removeListener(listener);
+		public VariablesViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
+			super(provider, decorator);
 		}
 
 		public Color getForeground(Object element) {
@@ -562,7 +537,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @return a label provider for this view.
 	 */
 	protected IBaseLabelProvider createLabelProvider() {
-		return new VariablesViewLabelProvider(getModelPresentation());
+		return new VariablesViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
 	}
 
 	/**
@@ -1086,10 +1061,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			return getDetailViewer();
 		}
 		if (IDebugModelPresentation.class.equals(required)) {
-			IBaseLabelProvider labelProvider = getStructuredViewer().getLabelProvider();
-			if (labelProvider instanceof VariablesViewLabelProvider) {
-				return ((VariablesViewLabelProvider)labelProvider).getPresentation();
-			}
+			return getModelPresentation();
 		}
 		return super.getAdapter(required);
 	}
@@ -1255,8 +1227,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
 		if (getViewer() instanceof StructuredViewer) {
-			VariablesViewLabelProvider vvlp = (VariablesViewLabelProvider)((StructuredViewer)getViewer()).getLabelProvider();
-			IDebugModelPresentation lp = vvlp.getPresentation();
+			IDebugModelPresentation lp = getModelPresentation();
 			if (lp instanceof DelegatingModelPresentation) {
 				return ((DelegatingModelPresentation)lp).getPresentation(id);
 			}

@@ -48,6 +48,9 @@ import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -64,12 +67,10 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -78,7 +79,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -113,8 +113,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private IMarker fInstructionPointer;
 	private boolean fShowingEditor = false;
-	
-	public final static String PENDING_LABEL= DebugUIViewsMessages.getString("LaunchView.9"); //$NON-NLS-1$
 	
 	// marker attributes
 	private final static String[] fgStartEnd = 
@@ -228,19 +226,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		});
 		lv.setContentProvider(createContentProvider());
 		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-		ILabelProvider provider= new LabelProvider() {
-			public Image getImage(Object element) {
-				return presentation.getImage(element);
-			}
-	
-			public String getText(Object element) {
-				if (!(element instanceof IDebugElement)) {
-					return presentation.getText(element);
-				}
-				return PENDING_LABEL;
-			}
-		};
-		LaunchViewDecoratingLabelProvider labelProvider= new LaunchViewDecoratingLabelProvider(provider, new LaunchViewLabelDecorator(presentation));
+		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
 		lv.setLabelProvider(labelProvider);
 		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works
@@ -259,8 +245,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * 
 	 * @return this view's label decorator
 	 */
-	public LaunchViewLabelDecorator getLabelDecorator() {
-		return (LaunchViewLabelDecorator) ((LaunchViewDecoratingLabelProvider) ((LaunchViewer) getViewer()).getLabelProvider()).getLabelDecorator();
+	public DebugViewLabelDecorator getLabelDecorator() {
+		return (DebugViewLabelDecorator) ((DebugViewDecoratingLabelProvider) ((LaunchViewer) getViewer()).getLabelProvider()).getLabelDecorator();
 	}
 	
 	private void handleDeleteKeyPressed() {

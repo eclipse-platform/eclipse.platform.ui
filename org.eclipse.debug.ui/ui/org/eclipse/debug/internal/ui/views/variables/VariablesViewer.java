@@ -11,10 +11,15 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
  
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -108,6 +113,31 @@ public class VariablesViewer extends TreeViewer {
 		//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=39449
 		if (getRoot() != null) {
 			super.collapseAll();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in AbstractTreeViewer.
+	 */
+	protected void doUpdateItem(Item item, Object element) {
+		// update icon and label
+		ILabelProvider provider= (ILabelProvider) getLabelProvider();
+		String text= provider.getText(element);
+		if ("".equals(item.getText()) || !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
+			// If an element already has a label, don't set the label to
+			// the pending label. This avoids labels flashing when they're
+			// updated.
+			item.setText(text);
+		}
+		Image image = provider.getImage(element);
+		if (item.getImage() != image) {
+			item.setImage(image);
+		}
+		if (provider instanceof IColorProvider) {
+			IColorProvider cp = (IColorProvider) provider;
+			TreeItem treeItem = (TreeItem) item;
+			treeItem.setForeground(cp.getForeground(element));
+			treeItem.setBackground(cp.getBackground(element));
 		}
 	}
 

@@ -21,16 +21,18 @@ import org.eclipse.debug.internal.ui.ColorManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -44,7 +46,11 @@ import org.eclipse.ui.IWorkbenchPart;
  * area.
  */
 public class ExpressionView extends VariablesView {
-	protected class ExpressionViewLabelProvider extends VariablesView.VariablesViewLabelProvider {
+	
+	/**
+	 * A decorating label provider which provides color for expressions.
+	 */
+	protected class ExpressionViewDecoratingLabelProvider extends VariablesView.VariablesViewDecoratingLabelProvider {
 		/**
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
@@ -68,15 +74,15 @@ public class ExpressionView extends VariablesView {
 			return super.getForeground(element);
 		}
 
-		public ExpressionViewLabelProvider(IDebugModelPresentation presentation) {
-			super(presentation);
+		public ExpressionViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
+			super(provider, decorator);
 		}
 	}
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createLabelProvider()
 	 */
 	protected IBaseLabelProvider createLabelProvider() {
-		return new ExpressionViewLabelProvider(getModelPresentation());
+		return new ExpressionViewDecoratingLabelProvider(new DebugViewInterimLabelProvider(getModelPresentation()), new DebugViewLabelDecorator(getModelPresentation()));
 	}
 
 	/**

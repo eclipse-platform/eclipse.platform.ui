@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.views;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * A label provider which receives notification of labels computed in
  * the background by a LaunchViewLabelDecorator.
  */
-public class LaunchViewDecoratingLabelProvider extends DecoratingLabelProvider {
+public class DebugViewDecoratingLabelProvider extends DecoratingLabelProvider {
 	
 	/**
 	 * A map of text computed for elements. Items are added to this map
@@ -35,7 +35,7 @@ public class LaunchViewDecoratingLabelProvider extends DecoratingLabelProvider {
 	/**
 	 * @see DecoratingLabelProvider#DecoratingLabelProvider(org.eclipse.jface.viewers.ILabelProvider, org.eclipse.jface.viewers.ILabelDecorator)
 	 */
-	public LaunchViewDecoratingLabelProvider(ILabelProvider provider, LaunchViewLabelDecorator decorator) {
+	public DebugViewDecoratingLabelProvider(ILabelProvider provider, DebugViewLabelDecorator decorator) {
 		super(provider, decorator);
 		decorator.setLabelProvider(this);
 	}
