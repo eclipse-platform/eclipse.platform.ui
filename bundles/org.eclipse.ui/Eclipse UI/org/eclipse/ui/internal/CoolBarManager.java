@@ -68,7 +68,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void add(IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
-		if (isDuplicate(item)) return;
 		super.add(item);
 	}
 	/**
@@ -438,7 +437,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void insertAfter(String id, IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
-		if (isDuplicate(item)) return;
 		super.insertAfter(id, item);
 		((CoolBarContributionItem)item).setOrderAfter(true);
 	}
@@ -469,16 +467,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void insertBefore(String id, IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
-		if (isDuplicate(item)) return;
 		super.insertBefore(id, item);
 		((CoolBarContributionItem)item).setOrderBefore(true);
-	}
-	protected boolean isDuplicate(IContributionItem item) {
-		if (find(item.getId()) != null) {
-			WorkbenchPlugin.log("Duplicate coolbar item " + item.getId() + " not added."); //$NON-NLS-1$
-			return true;
-		}
-		return false;
 	}
 	/**
 	 */
