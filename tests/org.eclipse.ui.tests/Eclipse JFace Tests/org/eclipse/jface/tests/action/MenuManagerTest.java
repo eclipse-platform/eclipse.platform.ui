@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -26,11 +25,10 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 3.1
  */
-public class MenuManagerTest extends ContributionManagerTest {
+public class MenuManagerTest extends JFaceActionTest {
 
     private int groupMarkerCount = 0;
     private int separatorCount = 0;
-    private int actionCount = 0;
 
     /**
      * Constructs a new test with the given name.
@@ -112,11 +110,11 @@ public class MenuManagerTest extends ContributionManagerTest {
         	case 's':
         	    return new Separator("testSeparator" + separatorCount++);
         	case 'a': {
-        	    IAction action = createDummyAction();
+        	    IAction action = new DummyAction();
         	    return new ActionContributionItem(action);
         	}
         	case 'n': {
-        	    IAction action = createDummyAction();
+        	    IAction action = new DummyAction();
         	    ActionContributionItem item = new ActionContributionItem(action);
         	    item.setVisible(false);
         	    return item;
@@ -124,17 +122,6 @@ public class MenuManagerTest extends ContributionManagerTest {
         	default:
         	    throw new IllegalArgumentException("Unknown template char: " + template);
         }
-    }
-
-    /**
-     * Creates a dummy action
-     * 
-     * @return a dummy action
-     */
-    private IAction createDummyAction() {
-        return new Action("Dummy Action " + ++actionCount ) {
-            /* empty */
-        };
     }
 
     protected MenuManager createMenuBarManager() {

@@ -10,29 +10,28 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
+import junit.framework.TestCase;
+
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import junit.framework.TestCase;
-
-
 /**
- * Abstract superclass of all contribution manager tests.
+ * Abstract superclass of all JFace action tests.
  * 
  * @since 3.1
  */
-public abstract class ContributionManagerTest extends TestCase {
+public abstract class JFaceActionTest extends TestCase {
 
     private Display display;
     private Shell shell;
 
     /**
-     * Constructs a new contribution manager test with the given name
+     * Constructs a new test with the given name
      * 
      * @param name the name of the test
      */
-    protected ContributionManagerTest(String name) {
+    protected JFaceActionTest(String name) {
         super(name);
     }
 
@@ -49,7 +48,14 @@ public abstract class ContributionManagerTest extends TestCase {
 	    shell.setLayout(new FillLayout());
 	    shell.open();
     }
-
+    
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+       shell.dispose();
+    }
+    
     protected Display getDisplay() {
         return display;
     }
@@ -57,4 +63,5 @@ public abstract class ContributionManagerTest extends TestCase {
     protected Shell getShell() {
         return shell;
     }
+    
 }
