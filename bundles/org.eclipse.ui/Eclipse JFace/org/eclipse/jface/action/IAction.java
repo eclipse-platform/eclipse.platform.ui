@@ -104,11 +104,19 @@ public void addPropertyChangeListener(IPropertyChangeListener listener);
  * @see org.eclipse.swt.widgets.MenuItem#getAccelerator
  */
 public int getAccelerator();
-	/**
-	 * Returns the action's description if it has one.
-	 * Otherwise it returns <code>getToolTipText()</code>.
-	 */
-	public String getDescription();
+/**
+ * Returns the action definition id of this action.
+ * 
+ * @return the action definition id of this action, or
+ * <code>null</code> if none
+ * @since 2.0
+ */
+public String getActionDefinitionId();
+/**
+ * Returns the action's description if it has one.
+ * Otherwise it returns <code>getToolTipText()</code>.
+ */
+public String getDescription();
 /**
  * Returns the disabled image for this action as an image descriptor.
  * <p>
@@ -245,6 +253,13 @@ public void run();
  */
 public void runWithEvent(Event event);
 
+/**
+ * Sets the action definition id of this action.
+ * 
+ * @param id the action definition id
+ * @since 2.0
+ */
+public void setActionDefinitionId(String id);
 /**
  * Sets the checked status of this action.
  * <p>

@@ -11,7 +11,11 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
- * 
+ * This class is used to read accelerator configurations, accelerator scopes,
+ * and accelerator sets (as well as the accelerators they contain, in certain cases)
+ * from the platform registry and stores them in the accelerator registry. An
+ * accelerator set's accelerators are only read if the set belongs to the active
+ * accelerator configuration or the default accelerator configuration. 
  */
 public class AcceleratorRegistryReader extends RegistryReader{	
 	private static final String TAG_ACCEL_CONFIG = "acceleratorConfiguration";
@@ -38,7 +42,10 @@ public class AcceleratorRegistryReader extends RegistryReader{
 	
 	private AcceleratorRegistry acceleratorRegistry;
 	private AcceleratorSet acceleratorSet;
-	
+
+	/* (non-Javadoc)
+	 * Method declared in RegistryReader.
+	 */	
 	protected boolean readElement(IConfigurationElement element) {
 		String name = element.getName();
 		if (name.equals(TAG_ACCEL_CONFIG))
@@ -51,7 +58,11 @@ public class AcceleratorRegistryReader extends RegistryReader{
 			return readAccelerator(element);
 		return false;
 	}
-	
+
+	/**
+	 * Reads an element if it is an acclerator configuration, and stores it in
+	 * the accelerator registry.
+	 */	
 	private boolean readConfiguration(IConfigurationElement element) {
 		String id = element.getAttribute(CONFIG_ATT_ID);
 		String name = element.getAttribute(CONFIG_ATT_NAME);
@@ -72,6 +83,10 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		return true;
 	}
 
+	/**
+	 * Reads an element if it is an acclerator scope, and stores it in
+	 * the accelerator registry.
+	 */
 	private boolean readScope(IConfigurationElement element) {
 		String id = element.getAttribute(SCOPE_ATT_ID);
 		String name = element.getAttribute(SCOPE_ATT_NAME);
@@ -92,7 +107,13 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		acceleratorRegistry.addScope(a);
 		return true;		
 	}
-	
+
+	/**
+	 * Reads an element if it is an acclerator set, and stores it in
+	 * the accelerator registry. If the set belongs to the active or
+	 * default accelerator configuration, the set's accelerators are
+	 * also read and stored in the accelerator registry.
+	 */	
 	private boolean readSet(IConfigurationElement element) {
 		String configurationId = element.getAttribute(SET_ATT_CONFIG_ID);
 		String scopeId = element.getAttribute(SET_ATT_SCOPE_ID);
@@ -104,7 +125,8 @@ public class AcceleratorRegistryReader extends RegistryReader{
 			logMissingAttribute(element, SET_ATT_SCOPE_ID);
 		}
 
-		acceleratorSet = new AcceleratorSet(configurationId, scopeId);
+		String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		acceleratorSet = new AcceleratorSet(configurationId, scopeId,  pluginId);
 		acceleratorRegistry.addSet(acceleratorSet);
 		
 		String configId = acceleratorSet.getConfigurationId();
@@ -115,7 +137,11 @@ public class AcceleratorRegistryReader extends RegistryReader{
 
 		return true;	
 	}
-	
+
+	/**
+	 * Reads an element if it is an accelerator, and stores it in it's accelerator
+	 * set in the accelerator registry.
+	 */	
 	private boolean readAccelerator(IConfigurationElement element) {
 		String id = element.getAttribute(ACCEL_ATT_ID);
 		String key = element.getAttribute(ACCEL_ATT_KEY);
@@ -134,6 +160,10 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		return true;	
 	}
 	
+	/**
+	 * Reads from the plugin registry and stores results in the accelerator
+	 * registry.
+	 */	
 	public void read(IPluginRegistry registry, AcceleratorRegistry out) {
 		acceleratorRegistry = out;
 		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);

@@ -7,17 +7,22 @@ package org.eclipse.ui.internal.registry;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+
 /**
- * 
+ * A set of mappings between an accelerator key and an action id.
  */
 public class AcceleratorSet {
 	private String configurationId;
 	private String scopeId;
+	private String pluginId;
+	private String pluginVersion;
 	private HashSet accelerators;
 	
-	public AcceleratorSet(String configurationId, String scopeId) {
+	public AcceleratorSet(String configurationId, String scopeId, String pluginId) {
 		this.configurationId = configurationId;
 		this.scopeId = scopeId;
+		this.pluginId = pluginId;
 		accelerators = new HashSet();
 	}
 	
@@ -26,6 +31,9 @@ public class AcceleratorSet {
 	}
 	public String getScopeId() {
 		return scopeId;
+	}
+	public String getPluginId() {
+		return pluginId;	
 	}
 	public HashSet getAccelerators() {
 		return accelerators;	
@@ -46,7 +54,10 @@ public class AcceleratorSet {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Adds the given accelerator to the set.
+	 */	
 	public boolean add(Accelerator a) {
 		return accelerators.add(a);
 	}

@@ -62,7 +62,7 @@ public EditorDescriptor getEditorDescriptor() {
  * Method declared on IEditorSite.
  */
 public IKeyBindingService getKeyBindingService() {
-	Workbench w = (Workbench)(getPage().getWorkbenchWindow().getWorkbench());
+	WorkbenchWindow w = (WorkbenchWindow)getPage().getWorkbenchWindow();
 	return w.getKeyBindingService();
 }
 

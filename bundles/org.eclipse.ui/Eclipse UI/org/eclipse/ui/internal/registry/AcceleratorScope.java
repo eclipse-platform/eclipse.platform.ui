@@ -6,7 +6,10 @@ package org.eclipse.ui.internal.registry;
  */
 
 /**
- * 
+ * An accelerator scope is a range in which a given accelerator (a mapping
+ * between an accelerator key and an action id) is available.
+ * A scope may represent a view, editor, a page of a multi-page editor, etc.
+ * An accelerator is available when the part represented by its scope is active.
  */
 public class AcceleratorScope {
 	private static final String DEFAULT_PARENT_SCOPE = "org.eclipse.ui.globalScope";
@@ -35,6 +38,11 @@ public class AcceleratorScope {
 	public String getDescription() {
 		return description;	
 	}
+	/**
+	 * Returns the parent scope of the current scope. For example, if the current
+	 * scope is that of a page of a multi-page editor, the parent scope would be
+	 * the scope of the editor.
+	 */
 	public String getParentScope() {
 		return parentScope;
 	}

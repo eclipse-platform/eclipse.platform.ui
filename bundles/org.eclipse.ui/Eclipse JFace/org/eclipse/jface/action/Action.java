@@ -53,6 +53,11 @@ public abstract class Action implements IAction {
 	private String id;
 	
 	/**
+	 * This action's action definition id, or <code>null</code> if none.
+	 */
+	private String actionDefinitionId;
+	
+	/**
 	 * This action's tool tip text, or <code>null</code> if none.
 	 */
 	private String toolTipText;
@@ -281,6 +286,15 @@ protected void firePropertyChange(PropertyChangeEvent event) {
 public int getAccelerator() {
 	return accelerator;
 }
+
+/*(non-Javadoc)
+ * Method declared on IAction.
+ * 
+ */
+public String getActionDefinitionId() {
+	return actionDefinitionId;	
+}
+
 /* (non-Javadoc)
  * Method declared on IAction.
  */
@@ -450,6 +464,13 @@ public void run() {
  */
 public void runWithEvent(Event event) {
 	run();
+}
+
+/* (non-Javadoc)
+ * Method declared on IAciton.
+ */
+public void setActionDefinitionId(String id) {
+	actionDefinitionId = id;	
 }
 
 /* (non-Javadoc)

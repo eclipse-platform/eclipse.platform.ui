@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Site for a nested editor within a multi-page editor.
@@ -97,7 +98,7 @@ public String getId() {
  * Method declared on IEditorSite.
  */
 public IKeyBindingService getKeyBindingService() {
-	Workbench w = (Workbench)(getPage().getWorkbenchWindow().getWorkbench());
+	WorkbenchWindow w = (WorkbenchWindow)getPage().getWorkbenchWindow();
 	return w.getKeyBindingService();	
 }
 

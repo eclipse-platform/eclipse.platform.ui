@@ -22,6 +22,8 @@ import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.MultiEditor;
+
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -1294,7 +1296,10 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 		//firePartOpened(editor);
 		setEditorAreaVisible(true);
 		if (activate) {
-			activate(editor);
+			if(editor instanceof MultiEditor)
+				activate(((MultiEditor)editor).getActiveEditor());
+			else
+				activate(editor);
 		} else {
 			activationList.add(editor);
 			// The previous openEditor call may create a new editor

@@ -44,6 +44,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
+	private IKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
@@ -570,6 +571,17 @@ public IPartService getPartService() {
 	return partService;
 }
 /**
+ * Returns the key binding service in use.
+ * 
+ * @return the key binding service in use.
+ * @since 2.0
+ */
+public IKeyBindingService getKeyBindingService() {
+	if (keyBindingService == null)
+		keyBindingService = new KeyBindingService(this);
+	return keyBindingService;	
+}
+/**
  * @see IWorkbenchWindow
  */
 public IPerspectiveService getPerspectiveService() {
@@ -589,7 +601,7 @@ public ISelectionService getSelectionService() {
  * @return boolean <code>true</code> when shell activated,
  * 		<code>false</code> when shell deactivated
  */
-/* package */ boolean getShellActivated() {
+public boolean getShellActivated() {
 	return shellActivated;
 }
 /**
