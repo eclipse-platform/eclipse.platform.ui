@@ -61,6 +61,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	
 	
 	private IWorkbenchWindow fWindow;
+	private String fFilterPath;
 
 	public OpenExternalFileAction() {
 		setEnabled(true);
@@ -71,6 +72,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	 */
 	public void dispose() {
 		fWindow= null;
+		fFilterPath= null;
 	}
 
 	/*
@@ -78,6 +80,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	 */
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
+		fFilterPath= System.getProperty("user.home"); //$NON-NLS-1$
 	}
 
 	/*
@@ -93,33 +96,44 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
-	private File queryFile() {
-		FileDialog dialog= new FileDialog(fWindow.getShell(), SWT.OPEN);
-		dialog.setText(TextEditorMessages.getString("OpenExternalFileAction.dialog.text")); //$NON-NLS-1$
-		String path= dialog.open();
-		if (path != null && path.length() > 0)
-			return new File(path);
-		return null;
-	}
-
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		File file= queryFile();
-		if (file != null && file.exists()) {
-			IEditorInput input= createEditorInput(file);
-			String editorId= getEditorId(file);
-			IWorkbenchPage page= fWindow.getActivePage();
-			try {
-				page.openEditor(input, editorId);
-			} catch (PartInitException e) {
-				e.printStackTrace();
+		FileDialog dialog= new FileDialog(fWindow.getShell(), SWT.OPEN | SWT.MULTI);
+		dialog.setText(TextEditorMessages.getString("OpenExternalFileAction.title")); //$NON-NLS-1$
+		dialog.setFilterPath(fFilterPath); 
+		dialog.open();
+		String[] names= dialog.getFileNames();
+
+		if (names != null) {
+			fFilterPath= dialog.getFilterPath();
+			
+			int numberOfFilesNotFound= 0;
+			StringBuffer notFound= new StringBuffer();
+			for (int i= 0; i < names.length; i++) {
+				File file= new File(fFilterPath + File.separator + names[i]);
+				if (file != null && file.exists()) {
+					IEditorInput input= createEditorInput(file);
+					String editorId= getEditorId(file);
+					IWorkbenchPage page= fWindow.getActivePage();
+					try {
+						page.openEditor(input, editorId);
+					} catch (PartInitException e) {
+						EditorsPlugin.log(e.getStatus());
+					}
+				} else if (file != null) {
+					if (++numberOfFilesNotFound > 1)
+						notFound.append('\n');
+					notFound.append(file.getName());
+				}				
 			}
-		} else if (file != null) {
-			String msgFmt = TextEditorMessages.getString("OpenExternalFileAction.FileNotFound"); //$NON-NLS-1$
-			String msg = MessageFormat.format(msgFmt, new String[] {file.getName()});
-			MessageDialog.openWarning(fWindow.getShell(), TextEditorMessages.getString("OpenExternalFileAction.dialog.text"), msg); //$NON-NLS-1$
+			
+			if (numberOfFilesNotFound > 0) {
+				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.getString("OpenExternalFileAction.message.fileNotFound") : TextEditorMessages.getString("OpenExternalFileAction.message.filesNotFound"); //$NON-NLS-1$ //$NON-NLS-2$
+				String msg= MessageFormat.format(msgFmt, new Object[] { notFound.toString() });
+				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.getString("OpenExternalFileAction.title"), msg); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -153,8 +167,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IFile selectWorkspaceFile(IFile[] files) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new FileLabelProvider());
 		dialog.setElements(files);
-		dialog.setTitle(TextEditorMessages.getString("OpenExternalFileAction.SelectWorkspaceFile")); //$NON-NLS-1$
-		dialog.setMessage(TextEditorMessages.getString("OpenExternalFileAction.FileLinkedtoMultiple")); //$NON-NLS-1$
+		dialog.setTitle(TextEditorMessages.getString("OpenExternalFileAction.title.selectWorkspaceFile")); //$NON-NLS-1$
+		dialog.setMessage(TextEditorMessages.getString("OpenExternalFileAction.message.fileLinkedToMultiple")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK)
 			return (IFile) dialog.getFirstResult();
 		return null;
