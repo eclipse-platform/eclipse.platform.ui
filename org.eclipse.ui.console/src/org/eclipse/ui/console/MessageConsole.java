@@ -38,16 +38,6 @@ public class MessageConsole extends IOConsole {
 	public MessageConsoleStream newMessageStream() {
 		return new MessageConsoleStream(this);
 	}
-	
-	/** 
-	 * Appends the given message to this console, from the specified stream.
-	 * 
-	 * @param text message
-	 * @param stream stream the message belongs to
-	 */
-	protected synchronized void appendToDocument(String text, MessageConsoleStream stream) {
-		stream.print(text);
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
