@@ -574,20 +574,32 @@ public class OptionTests extends AbstractAntTest {
 
 	/**
 	 * Tests the "-keep-going" option
-	 * On hold as I figure out what -keep-going is supposed to do
 	 */
-	//public void testMinusKeepGoing() throws CoreException {
-	//	run("failingTargets.xml", new String[]{"-keep-going"});
-	//	assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
-	//}
+	public void testMinusKeepGoing() {
+		try {
+			run("failingTarget.xml", new String[]{"-keep-going"}, false);
+		} catch (CoreException be) {
+			assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+			assertTrue("Incorrect message:"  + AntTestChecker.getDefault().getLoggedMessage(1), "Still echo on failure".equals(AntTestChecker.getDefault().getLoggedMessage(1)));
+			return;
+		}
+		
+		assertTrue("The build should have failed", false);
+	}
 	
 	/**
 	 * Tests the "-k" option
-	 * On hold as I figure out what -keep-going is supposed to do
 	 */
-//	public void testMinusK() throws CoreException {
-//		run("failingTargets.xml", new String[]{"-k"});
-//		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
-//	}
+	public void testMinusK() {
+		try {
+			run("failingTarget.xml", new String[]{"-keep-going"}, false);
+		} catch (CoreException be) {
+			assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+			assertTrue("Incorrect message:"  + AntTestChecker.getDefault().getLoggedMessage(1), "Still echo on failure".equals(AntTestChecker.getDefault().getLoggedMessage(1)));
+			return;
+		}
+		
+		assertTrue("The build should have failed", false);
+	}
 	
 }
