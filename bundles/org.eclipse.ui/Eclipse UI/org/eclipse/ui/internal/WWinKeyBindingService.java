@@ -212,6 +212,8 @@ public class WWinKeyBindingService {
     	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
     	if(scope == null) return null;
     	Accelerator acc = scope.getAccelerator(definitionId);
+		if(acc == null)
+			return null;
 		String result = acc.getText();
 		if(result.length() == 0)
 			return null;
