@@ -1,100 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="CVS Testing">
-        <topic label="End-To-End Use Cases" href="html/00002.html">
+        <topic label="Repositories View" href="html/00004.html">
+            <topic label="Check Out - prompts" href="html/00007.html">
+            </topic>
+            <topic label="Check Out Wizard" href="html/checkoutwizard00001.html">
+            </topic>
+            <topic label="Date Tags" href="html/datetags_repoview00001.html">
+            </topic>
         </topic>
-        <topic label="Unit Use-Cases" href="html/00003.html">
-            <topic label="Repositories View" href="html/00004.html">
-                <topic label="Check Out - prompts" href="html/00007.html">
-                </topic>
+        <topic label="Comparing" href="html/00008.html">
+            <topic label="Remote resources" href="html/00009.html">
             </topic>
-            <topic label="Comparing" href="html/00008.html">
-                <topic label="Remote resources" href="html/00009.html">
-                </topic>
-                <topic label="Compare with another branch or version" href="html/00039.html">
-                </topic>
-                <topic label="Reverting deleted resources" href="html/00040.html">
-                </topic>
-                <topic label="File Revisions" href="html/00041.html">
-                </topic>
+            <topic label="Compare with another branch or version" href="html/00039.html">
             </topic>
-            <topic label="Synchronizing" href="html/00010.html">
-                <topic label="Sync View operations and selection" href="html/00011.html">
-                </topic>
-                <topic label="Sync View modes and working sets" href="html/00016.html">
-                </topic>
-                <topic label="Performing a Synchronize" href="html/00048.html">
-                </topic>
-                <topic label="Decorations" href="html/00049.html">
-                </topic>
+            <topic label="Reverting deleted resources" href="html/00040.html">
             </topic>
-            <topic label="Merging" href="html/00012.html">
-                <topic label="Sync View operations and selection" href="html/00013.html">
-                </topic>
-                <topic label="Performing a Merge" href="html/00022.html">
-                </topic>
+            <topic label="File Revisions" href="html/00041.html">
             </topic>
-            <topic label="Resource History" href="html/00014.html">
-                <topic label="Editor Linking" href="html/00018.html">
-                </topic>
-                <topic label="Annotate" href="html/00024.html">
-                </topic>
+            <topic label="Quick Diff" href="html/quickdiff00001.html">
             </topic>
-            <topic label="Concurrency" href="html/00020.html">
-                <topic label="Close and disconnect" href="html/00021.html">
-                </topic>
+        </topic>
+        <topic label="Synchronizing" href="html/00010.html">
+            <topic label="Sync View operations and selection" href="html/00011.html">
             </topic>
-            <topic label="Restarting Workbench" href="html/00023.html">
-                <topic label="Crash Recovery" href="html/00019.html">
-                </topic>
-                <topic label="Synchronize View Settings" href="html/00025.html">
-                </topic>
+            <topic label="Sync View modes and working sets" href="html/00016.html">
             </topic>
-            <topic label="Sharing" href="html/00026.html">
-                <topic label="Sharing as a subfolder" href="html/00027.html">
-                </topic>
-                <topic label="Reconnecting an existing project" href="html/00028.html">
-                </topic>
-                <topic label="Sharing a new project" href="html/00050.html">
-                </topic>
+            <topic label="Performing a Synchronize" href="html/00048.html">
             </topic>
-            <topic label="Patching" href="html/00029.html">
-                <topic label="Importing a zip over a shared project" href="html/00030.html">
-                </topic>
+            <topic label="Decorations" href="html/00049.html">
             </topic>
-            <topic label="SSH2" href="html/00028a.html">
-                <topic label="Server version compatibiliity" href="html/00029a.html">
-                </topic>
-                <topic label="Proxies" href="html/00030a.html">
-                </topic>
-                <topic label="Generating keys" href="html/00031.html">
-                </topic>
-                <topic label="General use" href="html/00032.html">
-                </topic>
+        </topic>
+        <topic label="Merging" href="html/00012.html">
+            <topic label="Sync View operations and selection" href="html/00013.html">
             </topic>
-            <topic label="Annotate" href="html/00033.html">
-                <topic label="Show Annotation Action" href="html/00034.html">
-                </topic>
+            <topic label="Performing a Merge" href="html/00022.html">
             </topic>
-            <topic label="Label Decorations" href="html/00035.html">
-                <topic label="Enablement at startup" href="html/00036.html">
-                </topic>
-                <topic label="Customizations" href="html/00037.html">
-                </topic>
-                <topic label="Decorations in the Synchronize pages" href="html/00038.html">
-                </topic>
+        </topic>
+        <topic label="Sharing" href="html/00026.html">
+            <topic label="Sharing as a subfolder" href="html/00027.html">
             </topic>
-            <topic label="CVS Console" href="html/00042.html">
-                <topic label="Preferences" href="html/00043.html">
-                </topic>
+            <topic label="Reconnecting an existing project" href="html/00028.html">
             </topic>
-            <topic label="Replacing" href="html/00044.html">
-                <topic label="With latest" href="html/00045.html">
-                </topic>
-                <topic label="With another branch of version" href="html/00046.html">
-                </topic>
-                <topic label="With file revision" href="html/00047.html">
-                </topic>
+            <topic label="Sharing a new project" href="html/00050.html">
             </topic>
+            <topic label="Project Sets" href="html/project_sets00001.html">
+            </topic>
+        </topic>
+        <topic label="Resource History" href="html/00014.html">
+            <topic label="Editor Linking" href="html/00018.html">
+            </topic>
+            <topic label="Annotate" href="html/00024.html">
+            </topic>
+        </topic>
+        <topic label="Concurrency" href="html/00020.html">
+            <topic label="Close and disconnect" href="html/00021.html">
+            </topic>
+        </topic>
+        <topic label="Restarting Workbench" href="html/00023.html">
+            <topic label="Crash Recovery" href="html/00019.html">
+            </topic>
+            <topic label="Synchronize View Settings" href="html/00025.html">
+            </topic>
+        </topic>
+        <topic label="Patching" href="html/00029.html">
+            <topic label="Importing a zip over a shared project" href="html/00030.html">
+            </topic>
+        </topic>
+        <topic label="SSH2" href="html/00028a.html">
+            <topic label="Server version compatibiliity" href="html/00029a.html">
+            </topic>
+            <topic label="Proxies" href="html/00030a.html">
+            </topic>
+            <topic label="Generating keys" href="html/00031.html">
+            </topic>
+            <topic label="General use" href="html/00032.html">
+            </topic>
+        </topic>
+        <topic label="Annotate" href="html/00033.html">
+            <topic label="Show Annotation Action" href="html/00034.html">
+            </topic>
+        </topic>
+        <topic label="Label Decorations" href="html/00035.html">
+            <topic label="Enablement at startup" href="html/00036.html">
+            </topic>
+            <topic label="Customizations" href="html/00037.html">
+            </topic>
+            <topic label="Decorations in the Synchronize pages" href="html/00038.html">
+            </topic>
+        </topic>
+        <topic label="Replacing" href="html/00044.html">
+            <topic label="With latest" href="html/00045.html">
+            </topic>
+            <topic label="With another branch of version" href="html/00046.html">
+            </topic>
+            <topic label="With file revision" href="html/00047.html">
+            </topic>
+        </topic>
+        <topic label="CVS Console" href="html/00042.html">
+        </topic>
+        <topic label="Commit Sets" href="html/commit_sets00001.html">
+        </topic>
+        <topic label="Encoding Support" href="html/encoding00001.html">
+        </topic>
+        <topic label="Update" href="html/teamupdate00001.html">
+        </topic>
+        <topic label="Password Management" href="html/passwords00001.html">
+        </topic>
+        <topic label="EXT" href="html/ext_connection_method00001.html">
         </topic>
 </toc>
