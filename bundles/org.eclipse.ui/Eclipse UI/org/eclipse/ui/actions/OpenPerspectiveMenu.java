@@ -41,6 +41,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	private boolean replaceEnabled = true;
 	private IWorkbenchWindow window;
 	private IPerspectiveRegistry reg;
+	private int alternateMask = SWT.NULL;
 
 	private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.pageProblem"); //$NON-NLS-1$
 	private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
@@ -81,16 +82,21 @@ public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
 	super(window, "Open New Page Menu");//$NON-NLS-1$
 	this.pageInput = input;
 }
+
 /**
  * Return the alternate mask for this platform. It is control on win32 and
- * shift alt on other platforms.
+ * shift alt on other platforms. Cache the value.
  * @return int
  */
 private int alternateMask() {
-	if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
-		return SWT.CONTROL;
-	else
-		return SWT.ALT | SWT.SHIFT;
+	
+	if(alternateMask == SWT.NULL){
+		if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
+			alternateMask =  SWT.CONTROL;
+		else
+			alternateMask = SWT.ALT | SWT.SHIFT;
+	}
+	return alternateMask;		
 }
 /**
  * Return whether or not the menu can be run. Answer true unless the current perspective
