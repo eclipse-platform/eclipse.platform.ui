@@ -45,7 +45,7 @@ public class CheckoutAction extends CVSAction {
 		final ICVSRemoteFolder[] remoteFolders = getSelectedRemoteFolders();
 		final String[][] expansions = new String[1][0];
 		expansions[0] = null;
-		CVSUIPlugin.runWithProgress(getShell(), true, new IRunnableWithProgress() {
+		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					expansions[0] = CVSProviderPlugin.getProvider().getExpansions(remoteFolders, monitor);
@@ -69,13 +69,16 @@ public class CheckoutAction extends CVSAction {
 													  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 		if (prompt.promptForMultiple().length != projects.length) return;
 		
-		CVSUIPlugin.runWithProgress(getShell(), true, new IRunnableWithProgress() {
+		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
+					monitor.beginTask(getTaskName(remoteFolders), 100);
 					monitor.setTaskName(getTaskName(remoteFolders));						
 					CVSProviderPlugin.getProvider().checkout(remoteFolders, null, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		});

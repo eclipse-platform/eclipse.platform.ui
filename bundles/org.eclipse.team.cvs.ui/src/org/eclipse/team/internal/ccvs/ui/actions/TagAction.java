@@ -77,7 +77,7 @@ public class TagAction extends CVSAction {
 		if (result[0] == null) return;
 		
 		// Tag the local resources, divided by project/provider
-		CVSUIPlugin.runWithProgress(getShell(), true, new IRunnableWithProgress() {
+		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Hashtable table = getProviderMapping(resources);
 				Set keySet = table.keySet();

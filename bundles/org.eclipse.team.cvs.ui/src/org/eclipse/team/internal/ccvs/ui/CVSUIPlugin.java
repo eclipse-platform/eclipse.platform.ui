@@ -11,10 +11,10 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.Hashtable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Hashtable;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -39,15 +40,15 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -219,7 +220,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 	
 	/**
-	 * Creates a progress monitor and runs the specified runnable.
+	 * Creates a busy cursor and runs the specified runnable.
 	 * May be called from a non-UI thread.
 	 * 
 	 * @param parent the parent Shell for the dialog
@@ -232,6 +233,22 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	public static void runWithProgress(Shell parent, boolean cancelable,
 		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+	}
+	
+	/**
+	 * Creates a progress monitor and runs the specified runnable.
+	 * 
+	 * @param parent the parent Shell for the dialog
+	 * @param cancelable if true, the dialog will support cancelation
+	 * @param runnable the runnable
+	 * 
+	 * @exception InvocationTargetException when an exception is thrown from the runnable
+	 * @exception InterruptedException when the progress monitor is cancelled
+	 */
+	public static void runWithProgressDialog(Shell parent, boolean cancelable,
+		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+			
+		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
 	}
 	
 	/**
