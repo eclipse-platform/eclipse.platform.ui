@@ -46,7 +46,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private boolean transientConfig = false;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
-	private BootDescriptor runtimeDescriptor;
 
 	private static String cmdFeature = null;
 	private static String cmdApplication = null;
@@ -67,7 +66,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
-	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
 	private static final String CFG = "config"; //$NON-NLS-1$
 	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
@@ -113,7 +111,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static final String CMD_FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String CMD_APPLICATION = "-application"; //$NON-NLS-1$
-	private static final String CMD_PLUGINS = "-plugins"; //$NON-NLS-1$
 	private static final String CMD_UPDATE = "-update"; //$NON-NLS-1$
 	private static final String CMD_INITIALIZE = "-initialize"; //$NON-NLS-1$
 	private static final String CMD_FIRSTUSE = "-firstuse"; //$NON-NLS-1$
@@ -598,18 +595,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		} catch (Exception e) {
 			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini"));
 		}
-	}
-
-	public BootDescriptor getPluginBootDescriptor(String id) {
-		// return the plugin descriptor for the specified plugin. This method
-		// is used during boot processing to obtain information about "kernel" plugins
-		// whose class loaders must be created prior to the plugin registry being
-		// available (ie. loaders needed to create the plugin registry).
-
-		if (RUNTIME_PLUGIN_ID.equals(id))
-			return runtimeDescriptor;
-		else
-			return null;
 	}
 
 	public static PlatformConfiguration getCurrent() {
