@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
@@ -220,6 +221,11 @@ public class EditorActionBars extends SubActionBars2 {
         ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
         if (coolBarManager == null) { return null; }
 
+        // add the editor group if the app did not add it already,
+        // otherwise the references to it below will fail
+        if (coolBarManager.find(IWorkbenchActionConstants.GROUP_EDITOR) == null) {
+            coolBarManager.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
+        }
         if (toolBarContributionItem == null) {
             IContributionItem foundItem = coolBarManager.find(type);
             if ((foundItem instanceof ToolBarContributionItem)) {
