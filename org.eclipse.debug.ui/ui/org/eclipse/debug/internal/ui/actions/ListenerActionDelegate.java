@@ -9,13 +9,18 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public abstract class ListenerActionDelegate extends ControlActionDelegate implements IDebugEventListener, IPartListener {
+public abstract class ListenerActionDelegate extends ControlActionDelegate implements IDebugEventListener, IPartListener, IPageListener {
 
 	/**
 	 * The window associated with this action delegate
@@ -57,8 +62,9 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 	
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		getWindow().removePageListener(this);
 		if (getView() != null) {
-			getView().getViewSite().getPage().removePartListener(this);
+			getView().getViewSite().getPage().removePartListener(this);	
 		}
 	}
 	
@@ -73,12 +79,14 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 		if (element == null) {
 			return;
 		}
-		if (getPage().getWorkbenchWindow().getShell().isDisposed()) {
+		Shell shell= getWindow().getShell();
+		if (shell == null || shell.isDisposed()) {
 			return;
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				if (getPage().getWorkbenchWindow().getShell().isDisposed()) {
+				Shell shell= getWindow().getShell();
+				if (shell == null || shell.isDisposed()) {
 					return;
 				}
 				doHandleDebugEvent(event);
@@ -88,6 +96,9 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 		getPage().getWorkbenchWindow().getShell().getDisplay().asyncExec(r);
 	}
 	
+	/**
+	 * Returns the page that this action works in.
+	 */
 	protected IWorkbenchPage getPage() {
 		if (getWindow() != null) {
 			return getWindow().getActivePage();
@@ -104,7 +115,23 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 		fWindow = window;
 	}
 	
-	protected abstract void doHandleDebugEvent(DebugEvent event);
+	/**
+	 * Default implementation to update on specific debug events.
+	 * Subclasses should override to handle events differently.
+	 */
+	protected void doHandleDebugEvent(DebugEvent event) {
+		switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				update(getAction(), getSelection());
+				break;
+			case DebugEvent.RESUME :
+				update(getAction(), getSelection());
+				break;
+			case DebugEvent.SUSPEND :
+				update(getAction(), getSelection());
+				break;
+		}
+	}		
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
@@ -113,6 +140,7 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 		super.init(window);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		setWindow(window);
+		window.addPageListener(this);
 	}
 
 	/**
@@ -123,5 +151,39 @@ public abstract class ListenerActionDelegate extends ControlActionDelegate imple
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		setWindow(view.getViewSite().getWorkbenchWindow());
 		getPage().addPartListener(this);
+		getPage().getWorkbenchWindow().addPageListener(this);
+	}
+	
+	/**
+	 * @see IPageListener#pageActivated(IWorkbenchPage)
+	 */
+	public void pageActivated(final IWorkbenchPage page) {	
+		if (page.equals(getPage())) {
+			Runnable r= new Runnable() {
+				public void run() {
+					if (!getPage().getWorkbenchWindow().getShell().isDisposed()) {
+						ISelection selection= DebugSelectionManager.getDefault().getSelection(page,IDebugUIConstants.ID_DEBUG_VIEW);
+						update(getAction(), selection);
+					}
+				}
+			};
+		
+			getPage().getWorkbenchWindow().getShell().getDisplay().asyncExec(r);
+		}
+	}
+
+	/**
+	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+		if (page.equals(getPage())) {
+			dispose();
+		}
+	}
+
+	/**
+	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	 */
+	public void pageOpened(IWorkbenchPage page) {
 	}
 }
