@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * Content provider that maintains a hierarchical view of classpath URLs which are shown in a tree
@@ -27,7 +26,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	protected TreeViewer treeViewer;
-	private ViewerSorter sorter= null;
 	private ClasspathModel model= null;
 		
 	public void add(Object parent, Object child) {
@@ -56,12 +54,7 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		}
 		model.removeAll();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.AntContentProvider#getSorter()
-	 */
-	protected ViewerSorter getSorter() {
-		return null;
-	}
+
 	/**
 	 * @see ITreeContentProvider#getParent(Object)
 	 */
@@ -106,7 +99,6 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -117,7 +109,6 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		treeViewer = (TreeViewer) viewer;
 		
 		if (newInput != null) {
-			treeViewer.setSorter(getSorter());
 			model= (ClasspathModel)newInput;
 		} else {
 			if (model != null) {
