@@ -69,7 +69,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 
 	} catch (IOException e) {
 		message = Policy.bind("resources.readProjectTree");
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
 	}

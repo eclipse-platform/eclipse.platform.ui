@@ -599,8 +599,9 @@ protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) thr
  */
 protected void restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		String message = Policy.bind("resources.restoring");
+		message = Policy.bind("resources.restoring");
 		monitor.beginTask(message, Policy.totalWork);
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
@@ -1192,8 +1193,8 @@ public void visitAndSave(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
 			} catch (IOException e) {
-				message = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), message, e);
+				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
 			return true;
 		}
@@ -1294,8 +1295,8 @@ public void visitAndSnap(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.snapSyncInfo(resource, syncInfoOutput);
 			} catch (IOException e) {
-				message = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), message, e);
+				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
 			return true;
 		}

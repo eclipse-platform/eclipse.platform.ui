@@ -42,7 +42,7 @@ public void readTree(DataInputStream input, IProgressMonitor monitor) throws Cor
 
 	} catch (IOException e) {
 		message = Policy.bind("resources.readWorkspaceTree");
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
 	}
@@ -170,7 +170,7 @@ public ElementTree readSnapshotTree(DataInputStream input, ElementTree complete,
 		return complete;
 	} catch (IOException e) {
 		message = Policy.bind("resources.readWorkspaceSnap");
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
 	}
@@ -226,7 +226,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 
 	} catch (IOException e) {
 		message = Policy.bind("readProjectTree");
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
 	}
