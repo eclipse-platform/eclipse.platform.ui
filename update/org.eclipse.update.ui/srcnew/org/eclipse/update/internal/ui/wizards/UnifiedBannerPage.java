@@ -35,16 +35,8 @@ public abstract class UnifiedBannerPage extends WizardPage {
 		client.setLayout(layout);
 
 		if (bannerVisible) {
-			Composite bannerParent =
-				new Composite(client, SWT.NULL /*SWT.BORDER */
-			);
-			bannerParent.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-			layout = new GridLayout();
-			layout.marginWidth = layout.marginHeight = 0;
-			bannerParent.setLayout(layout);
-
-			Label label = new Label(bannerParent, SWT.NULL);
-			label.setLayoutData(new GridData(GridData.FILL_BOTH));
+			Label label = new Label(client, SWT.NULL);
+			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			label.setImage(getBannerImage());
 		}
 

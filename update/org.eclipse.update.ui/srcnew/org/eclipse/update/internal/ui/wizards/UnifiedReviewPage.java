@@ -439,8 +439,10 @@ public class UnifiedReviewPage
 						break;
 					}
 				}
-				if (visible)
+				if (visible) {
 					tableViewer.add(job);
+					updateItemCount(0, -1);
+				}
 				jobs.add(job);
 			}
 		});
@@ -463,13 +465,7 @@ public class UnifiedReviewPage
 	private void pageChanged() {
 		Object[] checked = tableViewer.getCheckedElements();
 		int totalCount = tableViewer.getTable().getItemCount();
-		String total = "" + totalCount;
-		String selected = "" + checked.length;
-		counterLabel.setText(
-			UpdateUI.getFormattedMessage(
-				KEY_COUNTER,
-				new String[] { selected, total }));
-		counterLabel.getParent().layout();
+		updateItemCount(checked.length, totalCount);
 		if (checked.length > 0) {
 			validateSelection();
 		} else {
@@ -478,6 +474,23 @@ public class UnifiedReviewPage
 			validationStatus = null;
 		}
 		statusButton.setEnabled(validationStatus != null);
+	}
+
+	private void updateItemCount(int checkedCount, int totalCount) {
+		if (checkedCount == -1) {
+			Object[] checkedElements = tableViewer.getCheckedElements();
+			checkedCount = checkedElements.length;
+		}
+		if (totalCount == -1) {
+			totalCount = tableViewer.getTable().getItemCount();
+		}
+		String total = "" + totalCount;
+		String selected = "" + checkedCount;
+		counterLabel.setText(
+			UpdateUI.getFormattedMessage(
+				KEY_COUNTER,
+				new String[] { selected, total }));
+		counterLabel.getParent().layout();
 	}
 
 	private void handleSelectAll(boolean select) {

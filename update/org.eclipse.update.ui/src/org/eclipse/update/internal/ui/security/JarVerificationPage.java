@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.wizards.BannerPage;
 
 /**
  * 
