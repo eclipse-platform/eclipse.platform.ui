@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.*;
@@ -121,7 +122,7 @@ public class JarVerificationService implements IVerificationListener {
 		JarVerificationDialog dialog = new JarVerificationDialog(shell, result);
 		dialog.open();
 
-		if (dialog.okToInstall())
+		if (dialog.getReturnCode() == dialog.OK)
 			code = CHOICE_INSTALL_TRUST_ONCE;
 		else
 			code = CHOICE_ABORT;

@@ -72,13 +72,6 @@ public class SiteFTP implements ISite {
 	}
 
 	/*
-	 * @see ISite#getInfoURL()
-	 */
-	public URL getInfoURL() {
-		return null;
-	}
-
-	/*
 	 * @see ISite#getCategories()
 	 */
 	public ICategory[] getCategories() {

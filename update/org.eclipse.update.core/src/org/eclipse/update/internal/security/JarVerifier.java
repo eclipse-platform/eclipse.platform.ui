@@ -177,12 +177,9 @@ public class JarVerifier implements IVerifier {
 		InputStream in = null;
 		if (monitor != null)
 			monitor.setTaskName(Policy.bind("JarVerifier.Verify", jarFile.getName())); //$NON-NLS-1$ 
-			//monitor.beginTask(Policy.bind("JarVerifier.Verify", jarFile.getName()), jarFile.size()); //$NON-NLS-1$ 
-		
+					
 		try {
 			while (entries.hasMoreElements()) {
-				//if (monitor !=null)
-					//monitor.worked(1);
 				currentEntry = (JarEntry) entries.nextElement();
 				list.add(currentEntry);
 				in = jarFile.getInputStream(currentEntry);
@@ -194,10 +191,8 @@ public class JarVerifier implements IVerifier {
 		} catch (IOException e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
-		} finally {
-			//if (monitor != null)
-				//monitor.done();
-		}
+		} 
+		
 		return list;
 	}
 	/**

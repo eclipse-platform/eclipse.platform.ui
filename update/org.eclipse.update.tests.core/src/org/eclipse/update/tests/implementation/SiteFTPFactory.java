@@ -19,7 +19,7 @@ public class SiteFTPFactory extends SiteModelFactory implements ISiteFactory {
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url) throws IOException, ParsingException, InvalidSiteTypeException {
 		ISite site = null;
 		InputStream siteStream = null;
 		

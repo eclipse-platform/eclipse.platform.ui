@@ -33,7 +33,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		//ICategory[] categories = remoteSite.getCategories();
 
 		String path = remoteUrl.getFile();
-		String path2 = remoteSite.getInfoURL().getFile();
+		String path2 = remoteSite.getDescription().getURL().getFile();
 		assertEquals(path + "index.html", path2);
 
 	}
