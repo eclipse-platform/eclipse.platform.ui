@@ -28,6 +28,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.ContextEvent;
@@ -67,9 +68,16 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	public LaunchViewContextListener() {
 		loadDebugModelContextExtensions();
 		loadContextToViewExtensions();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().addPageListener(this);
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			window.addPageListener(this);
+		}
 	}
 	
+	/**
+	 * Loads extensions which map context ids to views. This information
+	 * is used to open the appropriate views when a context is activated. 
+	 */
 	private void loadContextToViewExtensions() {
 		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_CONTEXT_VIEW_BINDINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
@@ -101,6 +109,11 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		
 	}
 
+	/**
+	 * Loads the extensions which map debug model identifiers
+	 * to context ids. This information is used to activate the
+	 * appropriate context when a debug element is selected.
+	 */
 	private void loadDebugModelContextExtensions() {
 		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_DEBUG_MODEL_CONTEXT_BINDINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
@@ -114,10 +127,22 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		}
 	}
 	
+	/**
+	 * Returns the context id associated with the given debug
+	 * model identifier as specified via extension or <code>null</code>
+	 * if none.
+	 * @param debugModelIdentifier the debug model identifier
+	 * @return the context id associated with the given debug model
+	 * 	identifier or <code>null</code> if none.
+	 */
 	public String getDebugModelContext(String debugModelIdentifier) {
 		return (String) modelsToContext.get(debugModelIdentifier);
 	}
 	
+	/**
+	 * Returns the context manager that this listener listens to.
+	 * @return the context manager that this listener listens to
+	 */
 	public IMutableContextManager getContextManager() {
 		return contextManager;
 	}
@@ -251,6 +276,10 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		return allElements;		 
 	}
 
+	/**
+	 * When the user closes a view, do not automatically
+	 * open that view in the future.
+	 */
 	public void partClosed(IWorkbenchPart part) {
 		if (part instanceof IViewPart) {
 			String id = ((IViewPart) part).getViewSite().getId();
@@ -259,6 +288,10 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 			}
 		}
 	}
+	/**
+	 * When the user opens a view, do not automatically
+	 * close that view in the future.
+	 */
 	public void partOpened(IWorkbenchPart part) {
 		if (part instanceof IViewPart) {
 			String id = ((IViewPart) part).getViewSite().getId();
@@ -274,23 +307,20 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
+	/**
+	 * When a workbench page is opened, start listening to
+	 * part notifications.
 	 */
 	public void pageActivated(IWorkbenchPage page) {
 		page.addPartListener(this);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
+	/**
+	 * When a workbench page is closed, stop listening to
+	 * part notifications.
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 		page.removePartListener(this);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
-	 */
 	public void pageOpened(IWorkbenchPage page) {
 	}
 
