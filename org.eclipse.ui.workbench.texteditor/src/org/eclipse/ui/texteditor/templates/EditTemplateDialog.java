@@ -160,17 +160,13 @@ public class EditTemplateDialog extends StatusDialog {
 		fTemplate= template;
 		fIsNameModifiable= isNameModifiable;
 		
-		String[] ids= registry.getTypeIds();
-		fContextTypes= new String[ids.length][2];
-		for (int i= 0; i < ids.length; i++) {
-			fContextTypes[i][0]= ids[i];
-			ContextType type= registry.getContextType(ids[i]);
-			if (type != null)
-				fContextTypes[i][1]= type.getName();
-			else
-				fContextTypes[i][1]= ids[i];
-				
+		List contexts= new ArrayList();
+		for (Iterator it= registry.contextTypes(); it.hasNext();) {
+			ContextType type= (ContextType) it.next();
+			contexts.add(new String[] { type.getId(), type.getName() });
 		}
+		fContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
+				
 		fValidationStatus= new StatusInfo();
 		
 		fContextTypeRegistry= registry;

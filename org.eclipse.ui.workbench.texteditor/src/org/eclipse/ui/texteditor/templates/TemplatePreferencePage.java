@@ -540,15 +540,18 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private void add() {		
 		
 		Template template= new Template();
-		template.setContext(fContextTypeRegistry.getDefaultTypeId());
-		
-		EditTemplateDialog dialog= createTemplateEditDialog(template, false, true);
-		if (dialog.open() == Window.OK) {
-			TemplatePersistenceData data= new TemplatePersistenceData(template, true);
-			fTemplateStore.add(data);
-			fTableViewer.refresh();
-			fTableViewer.setChecked(data, true);
-			fTableViewer.setSelection(new StructuredSelection(data));			
+		Iterator it= fContextTypeRegistry.contextTypes();
+		if (it.hasNext()) {
+			template.setContext(((ContextType) it.next()).getId());
+			
+			EditTemplateDialog dialog= createTemplateEditDialog(template, false, true);
+			if (dialog.open() == Window.OK) {
+				TemplatePersistenceData data= new TemplatePersistenceData(template, true);
+				fTemplateStore.add(data);
+				fTableViewer.refresh();
+				fTableViewer.setChecked(data, true);
+				fTableViewer.setSelection(new StructuredSelection(data));			
+			}
 		}
 	}
 
@@ -764,7 +767,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			prefs.setValue(PREF_FORMAT_TEMPLATES, fFormatButton.getSelection());
 		}
 		
-		fTemplateStore.save();
+		try {
+			fTemplateStore.save();
+		} catch (IOException e) {
+			openWriteErrorDialog(e);
+		}
 
 		return super.performOk();
 	}	
@@ -773,7 +780,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @see PreferencePage#performCancel()
 	 */
 	public boolean performCancel() {
-		fTemplateStore.load();
+		try {
+			fTemplateStore.load();
+		} catch (IOException e) {
+			openReadErrorDialog(e);
+			return false;
+		}
 		return super.performCancel();
 	}
 	

@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A singleton to keep track of all known context types.
+ * A registry for context types.
  * 
  * @since 3.0
  */
@@ -44,23 +44,11 @@ public class ContextTypeRegistry {
 	}
 
 	/**
-	 * Returns the id of the default context type.
+	 * Returns an iterator over all registered context types.
 	 * 
-	 * @return the id of the default context type
+	 * @return an iterator over all registered context types
 	 */
-	public String getDefaultTypeId() {
-		for (Iterator it= fContextTypes.keySet().iterator(); it.hasNext();) {
-			return (String) it.next();
-		}
-		return null;
-	}
-
-	/**
-	 * Returns all identifiers of registered context types.
-	 * 
-	 * @return all identifiers of registered context types
-	 */
-	public String[] getTypeIds() {
-		return (String[]) fContextTypes.keySet().toArray(new String[0]);
+	public Iterator contextTypes() {
+		return fContextTypes.values().iterator();
 	}
 }
