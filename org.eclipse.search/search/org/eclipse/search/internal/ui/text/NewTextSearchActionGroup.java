@@ -54,7 +54,7 @@ class NewTextSearchActionGroup extends ActionGroup {
 		IWorkbenchPartSite site= part.getSite();
 		fSelectionProvider= site.getSelectionProvider();
 		fPage= site.getPage();
-		fOpenPropertiesDialog= new PropertyDialogAction(site.getShell(), fSelectionProvider);
+		fOpenPropertiesDialog= new PropertyDialogAction(site, fSelectionProvider);
 		fOpenAction= new OpenFileAction(fPage);
 		ISelection selection= fSelectionProvider.getSelection();
 
