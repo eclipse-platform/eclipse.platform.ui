@@ -32,9 +32,8 @@ public class HelpHttpRequest {
 	InputStream contentStream; // stream of data to be sent to client
 
 	protected int contentLength = 0;
-	private static byte[] errorStringBytes =
-		("<html><body>" + Resources.getString("topicNotAvailable") + "</body></html>")
-			.getBytes();
+	private static String errorStringBytes =
+		"<html><head><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>" + Resources.getString("topicNotAvailable") + "</body></html>";
 
 	/**
 	 * HelpRequest constructor comment.
@@ -91,7 +90,7 @@ public class HelpHttpRequest {
 					inputStream = helpURL.openStream();
 				}
 				if (inputStream == null) {
-					out.write(errorStringBytes);
+					out.write(errorStringBytes.getBytes("UTF-8"));
 					out.flush();
 					return;
 				}
