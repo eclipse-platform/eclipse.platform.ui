@@ -53,6 +53,9 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 	 * @see IDebugEventListener
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
+		if (fViewer == null) {
+			return;
+		}
 		Object element= event.getSource();
 		if (element == null) {
 			return;
