@@ -528,7 +528,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			wraps[i] = ((Integer)wrapIndices.get(i)).intValue();
 		}
 		coolBar.setWrapIndices(wraps);
-		
+		relayout();
 		coolBar.setRedraw(true);
 	}
 	/**
