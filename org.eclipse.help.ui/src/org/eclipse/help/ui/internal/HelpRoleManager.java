@@ -15,14 +15,19 @@ import java.util.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.ui.activities.*;
+import org.eclipse.ui.commands.*;
 
 /**
  * Wrapper for eclipe ui role manager
  */
 public class HelpRoleManager implements IHelpRoleManager {
 	private IActivityManager activityManager;
-	public HelpRoleManager(IActivityManager activityManager) {
+	private ICommandManager commandManager;
+	public HelpRoleManager(
+		IActivityManager activityManager,
+		ICommandManager commandManager) {
 		this.activityManager = activityManager;
+		this.commandManager = commandManager;
 	}
 	/*
 	 * (non-Javadoc)
@@ -44,7 +49,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 		Set disabledActivities =
 			new HashSet(activityManager.getDefinedActivityIds());
 		disabledActivities.removeAll(activityManager.getEnabledActivityIds());
-		disabledActivities.removeAll(activityManager.getActiveActivityIds());
+		disabledActivities.removeAll(commandManager.getActiveActivityIds());
 		return !activityManager.match(href, disabledActivities);
 	}
 

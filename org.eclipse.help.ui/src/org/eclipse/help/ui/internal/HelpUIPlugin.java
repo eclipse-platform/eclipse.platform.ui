@@ -15,7 +15,6 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.plugin.*;
 
 /**
@@ -100,9 +99,13 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 
 		BaseHelpSystem.setDefaultErrorUtil(new ErrorUtil());
 
-		HelpPlugin.setRoleManager(
-			new HelpRoleManager(
-				((Workbench) PlatformUI.getWorkbench()).getActivityManager()));
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) {
+			HelpPlugin.setRoleManager(
+				new HelpRoleManager(
+					workbench.getActivityManager(),
+					workbench.getCommandManager()));
+		}
 	}
 
 	public IBrowser getHelpBrowser() {
