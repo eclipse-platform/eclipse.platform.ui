@@ -1,9 +1,10 @@
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
 package org.eclipse.team.internal.ccvs.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+ 
 import java.util.ArrayList;
 import java.util.List;
 
