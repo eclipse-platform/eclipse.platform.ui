@@ -158,6 +158,12 @@ public class PerspectiveSwitcher {
 
 	private DisposeListener toolBarListener;
 
+	/**
+     * Creates an instance of the perspective switcher.
+	 * @param window  it's window
+	 * @param topBar  the CBanner to place this widget in
+	 * @param style   the widget style to use
+	 */
 	public PerspectiveSwitcher(IWorkbenchWindow window, CBanner topBar, int style) {
 		this.window = window;
 		this.topBar = topBar;
@@ -181,10 +187,13 @@ public class PerspectiveSwitcher {
 		if (IWorkbenchPreferenceConstants.LEFT.equals(preference))
 			return LEFT;
 
-		// TODO log the unknown preference
 		return TOP_RIGHT;
 	}
 
+	/**
+     * Create the contents of the receiver
+	 * @param parent
+	 */
 	public void createControl(Composite parent) {
 		Assert.isTrue(this.parent == null);
 		this.parent = parent;
@@ -208,6 +217,13 @@ public class PerspectiveSwitcher {
 			perspectiveBar.update(true);
 	}
 
+	/**
+     * Find a contribution item that matches the perspective provided.
+     * 
+	 * @param perspective
+	 * @param page
+	 * @return the <code>IContributionItem</code> or null if no matches were found
+	 */
 	public IContributionItem findPerspectiveShortcut(
 			IPerspectiveDescriptor perspective, IWorkbenchPage page) {
 		if (perspectiveBar == null)
@@ -241,6 +257,10 @@ public class PerspectiveSwitcher {
 		}
 	}
 
+	/**
+     * Locate the perspective bar according to the provided location
+	 * @param preference the location to put the perspective bar at
+	 */
 	public void setPerspectiveBarLocation(String preference) {
 		// return if the control has not been created. createControl(...) will
 		// handle updating the state in that case
@@ -286,6 +306,10 @@ public class PerspectiveSwitcher {
 		LayoutUtil.resize(perspectiveBar.getControl());
 	}
 
+	/**
+     * Update the receiver
+	 * @param force
+	 */
 	public void update(boolean force) {
 		if (perspectiveBar == null)
 			return;
@@ -328,10 +352,17 @@ public class PerspectiveSwitcher {
 			((PerspectiveBarContributionItem) item).update(newDesc);
 	}
 
+	/**
+     * Answer the perspective bar manager
+	 * @return the manager
+	 */
 	public PerspectiveBarManager getPerspectiveBar() {
 		return perspectiveBar;
 	}
 
+	/**
+	 * Dispose resources being held by the receiver
+	 */
 	public void dispose() {
         window.removePerspectiveListener(perspectiveAdapter);
 		if (propertyChangeListener != null) {
@@ -445,14 +476,16 @@ public class PerspectiveSwitcher {
                 	Rectangle parentBounds = toolbar.getBounds();
                 	bounds.x += parentBounds.x;
                 	bounds.y += parentBounds.y;
-                	startDragging((PerspectiveBarContributionItem)item.getData(), toolbar.getDisplay().map(toolbar, null, bounds));
+                	startDragging(item.getData(), toolbar.getDisplay().map(toolbar, null, bounds));
                 } else { 
                     //startDragging(toolbar, toolbar.getDisplay().map(toolbar, null, toolbar.getBounds()));
                 }
             }
 			
 			private void startDragging(Object widget, Rectangle bounds) {
-				boolean success = DragUtil.performDrag(widget, bounds, new Point(bounds.x, bounds.y), true);
+				if(!DragUtil.performDrag(widget, bounds, new Point(bounds.x, bounds.y), true)) {
+				       //currently do nothing on a failed drag 
+                }
 		    }
         };
 
@@ -465,24 +498,21 @@ public class PerspectiveSwitcher {
 
 				private Point location;
 
-				/**
+                /**
 				 * @param location
 				 * @param draggedObject
-				 * @param dragRectangle
 				 */
 				public PerspectiveDropTarget(Object draggedObject,
-						Point location, Rectangle dragRectangle) {
-					update(draggedObject, location, dragRectangle);
+						Point location) {
+					update(draggedObject, location);
 				}
 
 				/**
 				 * 
 				 * @param draggedObject
 				 * @param location
-				 * @param dragRectangle
 				 */
-				private void update(Object draggedObject, Point location,
-						Rectangle dragRectangle) {
+				private void update(Object draggedObject, Point location) {
 					this.location = location;
 					this.perspective = (PerspectiveBarContributionItem) draggedObject;
 				}
@@ -548,16 +578,15 @@ public class PerspectiveSwitcher {
 				if (draggedObject instanceof PerspectiveBarContributionItem) {
 					if (perspectiveDropTarget == null) {
 						perspectiveDropTarget = new PerspectiveDropTarget(
-								draggedObject, position, dragRectangle);
+								draggedObject, position);
 					} else {
-						perspectiveDropTarget.update(draggedObject, position,
-								dragRectangle);
+						perspectiveDropTarget.update(draggedObject, position);
 					}
 					// do not support drag to perspective bars between shells.
 					if (!perspectiveDropTarget.sameShell())
 							return null;
 					
-					return (IDropTarget) perspectiveDropTarget;
+					return perspectiveDropTarget;
 				}// else if (draggedObject instanceof IPerspectiveBar) {
 				//	return new PerspectiveBarDropTarget();
 				//}
@@ -579,21 +608,18 @@ public class PerspectiveSwitcher {
 				/**
 				 * @param location
 				 * @param draggedObject
-				 * @param dragRectangle
 				 */
 				public ExternalPerspectiveDropTarget(Object draggedObject,
-						Point location, Rectangle dragRectangle) {
-					update(draggedObject, location, dragRectangle);
+						Point location) {
+					update(draggedObject, location);
 				}
 
 				/**
 				 * 
 				 * @param draggedObject
 				 * @param location
-				 * @param dragRectangle
 				 */
-				private void update(Object draggedObject, Point location,
-						Rectangle dragRectangle) {
+				private void update(Object draggedObject, Point location) {
 					this.location = location;
 					this.perspective = (PerspectiveBarContributionItem) draggedObject;
 				}
@@ -655,12 +681,11 @@ public class PerspectiveSwitcher {
 				if (draggedObject instanceof PerspectiveBarContributionItem) {
 					if (externalPerspectiveDropTarget == null) {
 						externalPerspectiveDropTarget = new ExternalPerspectiveDropTarget(
-								draggedObject, position, dragRectangle);
+								draggedObject, position);
 					} else {
-						externalPerspectiveDropTarget.update(draggedObject,
-								position, dragRectangle);
+						externalPerspectiveDropTarget.update(draggedObject, position);
 					}
-					return (IDropTarget) externalPerspectiveDropTarget;
+					return externalPerspectiveDropTarget;
 				}// else if (draggedObject instanceof IPerspectiveBar) {
 				//	return new PerspectiveBarDropTarget();
 				//}
@@ -750,7 +775,6 @@ public class PerspectiveSwitcher {
 
     /**
      * @param coolItem
-     * @param toolbarWrapper
      */
     private void setCoolItemSize(final CoolItem coolItem) {
         // there is no coolItem when the bar is on the left
@@ -791,7 +815,6 @@ public class PerspectiveSwitcher {
         // Get the tool item under the mouse.
         ToolBar toolBar = perspectiveBar.getControl();
         ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-        boolean isCurrentPerspective=false;
         
         // Get the action for the tool item.
         Object data = null;
@@ -894,7 +917,7 @@ public class PerspectiveSwitcher {
 	/**
 	 * @param toolBar
 	 */
-	private Menu createPopup(ToolBar toolBar, boolean isActive){//boolean isCurrentPerspective, ToolBar toolBar,PerspectiveDescriptor perspectDescriptor) {
+	private Menu createPopup(ToolBar toolBar, boolean isActive){
 		Menu menu = new Menu(toolBar);
 		if(isActive){
 			addCustomizeItem(menu);
@@ -1102,6 +1125,7 @@ public class PerspectiveSwitcher {
     
     /**
      * Method to save the width of the perspective bar in the 
+     * @param persBarMem 
      */
     public void saveState(IMemento persBarMem) {
         // save the width of the perspective bar
@@ -1119,6 +1143,7 @@ public class PerspectiveSwitcher {
 
     /**
      * Method to restore the width of the perspective bar
+     * @param memento 
      */
     public void restoreState(IMemento memento) {
         if (memento == null)
