@@ -72,15 +72,18 @@ public class JobTargetSites extends HashMap {
 		if (site.equals(jobSite.defaultSite))
 			return true;
 			
-		// Not the default. If update, show only private sites.
-		// If install, allow product site + private sites.
-		if (site.isPrivateSite() && site.isUpdatable())
-			return true;
-			
-		if (jobSite.job.getOldFeature() == null && site.isProductSite())
-			return true;
-			
-		return false;
+//		// Not the default. If update, show only private sites.
+//		// If install, allow product site + private sites.
+//		if (site.isPrivateSite() && site.isUpdatable())
+//			return true;
+//			
+//		if (jobSite.job.getOldFeature() == null && site.isProductSite())
+//			return true;
+//			
+//		return false;
+		
+		// Allow installing into any updateable site
+		return site.isUpdatable();
 	}
 
 
