@@ -1629,7 +1629,7 @@
             adaptable="true"
             label="%DecoratorLinkedResource.label"
             class="org.eclipse.ui.internal.LinkedResourceDecorator"
-            quadrant="TOP_LEFT"
+            quadrant="BOTTOM_RIGHT"
             lightweight="true">
          <description>
             %DecoratorLinkedResource.desc
