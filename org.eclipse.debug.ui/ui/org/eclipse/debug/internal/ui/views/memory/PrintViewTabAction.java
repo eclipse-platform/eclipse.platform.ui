@@ -16,7 +16,6 @@ import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.GC;
@@ -171,8 +170,8 @@ public class PrintViewTabAction extends AbstractMemoryAction
 		return lineNum;
 	}
 
-	/**
-	 * @see Action
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		
