@@ -95,13 +95,10 @@ public class ImportResourcesAction
 		
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ));
-//		setHoverImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER));
-//		setDisabledImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
+				IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ_DISABLED));
 	}
 
 	/**

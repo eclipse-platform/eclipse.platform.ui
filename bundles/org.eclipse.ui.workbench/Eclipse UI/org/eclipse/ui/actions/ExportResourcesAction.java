@@ -102,13 +102,10 @@ public class ExportResourcesAction
 		setText(WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
-//		setHoverImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
-//		setDisabledImageDescriptor(
-//			WorkbenchImages.getImageDescriptor(
-//				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
+				IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ_DISABLED));
 	}
 
 	/**

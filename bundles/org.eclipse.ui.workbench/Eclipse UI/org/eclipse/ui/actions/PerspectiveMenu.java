@@ -184,7 +184,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (imageDesc == null) {
 			imageDesc =
 				WorkbenchImages.getImageDescriptor(
-					IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
+					IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
 		}
 		if (imageDesc == null) {
 			return null;
