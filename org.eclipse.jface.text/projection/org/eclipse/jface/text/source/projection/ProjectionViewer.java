@@ -189,6 +189,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private IDocumentListener fDocumentListener= new DocumentListener();
 	/** Remembered top index when the master document changes*/
 	private int fRememberedTopIndex= -1;
+	/** <code>true</code> if projection was on the last time we switched to segmented mode. */
+	private boolean fWasProjectionEnabled;
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -262,7 +264,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected IAnnotationModel createVisualAnnotationModel(IAnnotationModel annotationModel) {
 		IAnnotationModel model= super.createVisualAnnotationModel(annotationModel);
 		fProjectionAnnotationModel= new ProjectionAnnotationModel();
-		addProjectionAnnotationModel(model);
 		return model;
 	}
 
@@ -485,6 +486,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleRegion(int, int)
 	 */
 	public void setVisibleRegion(int start, int length) {
+		if (!isSegmented())
+			fWasProjectionEnabled= isProjectionMode();
 		disableProjection();
 		super.setVisibleRegion(start, length);
 	}
@@ -494,7 +497,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public void resetVisibleRegion() {
 		super.resetVisibleRegion();
-		enableProjection();
+		if (fWasProjectionEnabled)
+			enableProjection();
 	}
 	
 	/*
@@ -1015,8 +1019,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public void doOperation(int operation) {
 		switch (operation) {
 			case TOGGLE:
-				if (!isProjectionMode() && canDoOperation(TOGGLE)) {
-					enableProjection();
+				if (canDoOperation(TOGGLE)) {
+					if (!isProjectionMode()) {
+						enableProjection();
+					} else {
+						expandAll();
+						disableProjection();
+					}
 					return;
 				}
 		}
@@ -1063,13 +1072,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					expandAll();
 				break;
 				
-			case TOGGLE:
-				if (redraws()) {
-					expandAll();
-					disableProjection();
-				}
-				break;
-			
 			case EXPAND:
 				if (redraws()) {
 					expand();
@@ -1080,7 +1082,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (redraws()) {
 					collapse();
 				}
-
+				break;
 			
 			default:
 				super.doOperation(operation);

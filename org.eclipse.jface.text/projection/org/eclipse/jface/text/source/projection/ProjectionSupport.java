@@ -170,8 +170,6 @@ public class ProjectionSupport {
 	public void install() {
 		fViewer.setProjectionSummary(createProjectionSummary());
 		
-		doEnableProjection();
-		
 		fProjectionListener= new ProjectionListener();
 		fViewer.addProjectionListener(fProjectionListener);
 	}
