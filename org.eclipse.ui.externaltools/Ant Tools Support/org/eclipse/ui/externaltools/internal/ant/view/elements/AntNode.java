@@ -11,6 +11,7 @@ public abstract class AntNode {
 	
 	private AntNode parent= null;
 	private String name= null;
+	private String description= null;
 	
 	/**
 	 * Creates a new node with no parent
@@ -83,5 +84,25 @@ public abstract class AntNode {
 		}
 		return super.toString();
 	}
-
+	
+	/**
+	 * Sets this node's description to the given description
+	 * 
+	 * @param description the new description
+	 */
+	public void setDescription(String description) {
+		this.description= description;
+	}
+	
+	/**
+	 * Returns this node's description or <code>null</code> if none. Subclasses
+	 * which represent an ant build element that has a required description must
+	 * override this method to never return <code>null</code>
+	 * 
+	 * @return String this node's description or <code>null</code> if the
+	 * description attribute is optional for this node.
+	 */
+	public String getDescription() {
+		return description;
+	}
 }

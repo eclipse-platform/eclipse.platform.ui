@@ -15,9 +15,10 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
-import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.ProjectInfo;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
 /**
  * Representation of an ant build project.
@@ -131,11 +132,9 @@ public class ProjectNode extends AntNode {
 	 */
 	public void parseBuildFile() {
 		clear();
-		AntRunner runner = new AntRunner();
-		runner.setBuildFileLocation(buildFileName);
 		TargetInfo[] infos = null;
 		try {
-			infos = runner.getAvailableTargets();
+			infos = AntUtil.getTargets(buildFileName);
 		} catch (CoreException e) {
 			setErrorMessage("An exception occurred retrieving targets: " + e.getMessage());
 			return;
@@ -144,11 +143,13 @@ public class ProjectNode extends AntNode {
 			setErrorMessage("No targets found");
 			return;
 		}
+		ProjectInfo projectInfo= infos[0].getProject();
 		// Create Apache Ant objects
 		Project project = new Project();
-		if (infos[0].getProject() != null) {
-			project.setName(infos[0].getProject());
+		if (projectInfo.getName() != null) {
+			project.setName(projectInfo.getName());
 		}
+		
 		for (int i = 0; i < infos.length; i++) {
 			TargetInfo info = infos[i];
 			if (info.isDefault()) {
@@ -181,6 +182,7 @@ public class ProjectNode extends AntNode {
 		}
 		// Update the project name
 		setName(projectName);
+		setDescription(projectInfo.getDescription());
 		Enumeration projTargets = project.getTargets().elements();
 		while (projTargets.hasMoreElements()) {
 			Target target = (Target) projTargets.nextElement();

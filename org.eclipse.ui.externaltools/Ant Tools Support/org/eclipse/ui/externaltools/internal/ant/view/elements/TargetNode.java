@@ -12,7 +12,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 public class TargetNode extends AntNode {
 	private DependencyNode dependencies;
 	private ExecutionPathNode executionPath;
-	private String description;
 	private boolean isErrorNode= false;
 	
 	/**
@@ -28,7 +27,7 @@ public class TargetNode extends AntNode {
 		super(name);
 		this.dependencies= new DependencyNode(this);
 		this.executionPath= new ExecutionPathNode(this);
-		this.description= description;
+		setDescription(description);
 	}
 	
 	/**
@@ -85,15 +84,6 @@ public class TargetNode extends AntNode {
 		return (ProjectNode) getParent();
 	}
 	
-	/**
-	 * Returns this target's description
-	 * 
-	 * @return String this target's description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
 	/**
 	 * Sets this target's error node state
 	 *

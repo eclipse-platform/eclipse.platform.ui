@@ -484,12 +484,27 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				if (selectionIter.hasNext()) {
 					selection = selectionIter.next();
 				}
-				if (!selectionIter.hasNext() && selection instanceof ProjectNode) {
-					ProjectNode project = (ProjectNode) selection;
-					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(project.getBuildFileName());
-				} else {
-					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(null);
-				}
+				String messageString= null;
+				if (!selectionIter.hasNext()) { 
+					if (selection instanceof ProjectNode) {
+						ProjectNode project = (ProjectNode) selection;
+						StringBuffer message= new StringBuffer(project.getBuildFileName());
+						String description= project.getDescription();
+						if (description != null) {
+							message.append(": ");
+							message.append(description);
+						}
+						messageString= message.toString();
+					} else if (selection instanceof TargetNode){
+						TargetNode target = (TargetNode) selection;
+						StringBuffer message= new StringBuffer(target.getName());
+						message.append(": ");
+						message.append(target.getDescription());
+						messageString= message.toString();
+					}
+				} 
+				
+				AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString.toString());
 			}
 		});
 		createContextMenu(projectViewer);
