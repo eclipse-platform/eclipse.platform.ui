@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -1031,15 +1032,21 @@ class FindReplaceDialog extends Dialog {
 	private void performReplaceAll() {
 
 		int replaceCount= 0;
-		String replaceString= getReplaceString();
-		String findString= getFindString();
-
-		if (replaceString == null)
-			replaceString= ""; //$NON-NLS-1$
+		final String replaceString= getReplaceString();
+		final String findString= getFindString();
 
 		if (findString != null && findString.length() > 0) {
 
-			replaceCount= replaceAll(findString, replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isGlobalSearch());
+			class ReplaceAllRunnable implements Runnable {
+				public int replaceCount;
+				public void run() {
+					replaceCount= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isGlobalSearch());	//$NON-NLS-1$
+				}				
+			}
+			
+			ReplaceAllRunnable runnable= new ReplaceAllRunnable();						
+			BusyIndicator.showWhile(fActiveShell.getDisplay(), runnable);
+			replaceCount= runnable.replaceCount;
 
 			if (replaceCount != 0) {
 				if (replaceCount == 1) { // not plural
