@@ -304,6 +304,6 @@ public final class AntUtil {
 	 */
 	public static IFile getFile(String fullPath) {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		return root.getFileForLocation(new Path(fullPath));
+		return root.getFile(new Path(fullPath));
 	}
 }

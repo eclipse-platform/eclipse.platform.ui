@@ -509,6 +509,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		for (int i = 0; i < projects.length; i++) {
 			IMemento projectMemento = projects[i];
 			String pathString = projectMemento.getString(KEY_PATH);
+			if (!ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(pathString)).exists()) {
+				// If the file no longer exists, don't add it.
+				continue;
+			}
 			String nameString = projectMemento.getString(KEY_NAME);
 			String defaultTarget= projectMemento.getString(KEY_DEFAULT);
 			String errorString = projectMemento.getString(KEY_ERROR);
@@ -572,11 +576,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			ProjectNode projects[]= projectContentProvider.getRootNode().getProjects();
 			IPath buildFilePath;
 			for (int i = 0; i < projects.length; i++) {
-				String buildFileName= projects[i].getBuildFileName();
-				buildFilePath= new Path(buildFileName);
-				// Trim the file system relative path to be workspace relative 
-				int matchingSegments= rootPath.matchingFirstSegments(buildFilePath);
-				buildFilePath= buildFilePath.removeFirstSegments(matchingSegments);
+				buildFilePath= new Path(projects[i].getBuildFileName());
 				IResourceDelta change= delta.findMember(buildFilePath);
 				if (change != null) {
 					handleChangeDelta(change, projects[i]);

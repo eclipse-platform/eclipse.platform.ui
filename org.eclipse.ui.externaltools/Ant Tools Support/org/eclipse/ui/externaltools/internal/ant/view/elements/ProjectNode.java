@@ -21,6 +21,7 @@ import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.ProjectInfo;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
 /**
@@ -164,8 +165,13 @@ public class ProjectNode extends AntNode {
 	public void parseBuildFile() {
 		clear();
 		TargetInfo[] infos = null;
+		IPath buildFilePath= AntUtil.getFile(getBuildFileName()).getLocation();
+		if (buildFilePath == null) {
+			setErrorMessage(AntViewElementsMessages.getString("ProjectNode.Build_file_not_found_1")); //$NON-NLS-1$
+			return;
+		}
 		try {
-			infos = AntUtil.getTargets(buildFileName);
+			infos = AntUtil.getTargets(buildFilePath.toString());
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 			return;

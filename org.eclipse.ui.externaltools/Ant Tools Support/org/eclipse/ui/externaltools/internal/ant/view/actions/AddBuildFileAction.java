@@ -48,7 +48,7 @@ public class AddBuildFileAction extends Action {
 		if (file == null) {
 			return;
 		}
-		String buildFileName= file.getLocation().toString();
+		String buildFileName= file.getFullPath().toString();
 		ProjectNode[] existingProjects= view.getProjects();
 		for (int j = 0; j < existingProjects.length; j++) {
 			ProjectNode existingProject = existingProjects[j];

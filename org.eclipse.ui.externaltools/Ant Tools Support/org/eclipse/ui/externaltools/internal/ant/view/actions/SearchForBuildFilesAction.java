@@ -56,7 +56,7 @@ public class SearchForBuildFilesAction extends Action {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask(AntViewActionMessages.getString("SearchForBuildFilesAction.Processing_search_results_3"), files.length); //$NON-NLS-1$
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
-							String buildFileName= files[i].getLocation().toString();
+							String buildFileName= files[i].getFullPath().toString();
 							monitor.subTask(MessageFormat.format(AntViewActionMessages.getString("SearchForBuildFilesAction.Adding_{0}_4"), new String[] {buildFileName})); //$NON-NLS-1$
 							if (alreadyAdded(buildFileName)) {
 								// Don't parse projects that have already been added.
