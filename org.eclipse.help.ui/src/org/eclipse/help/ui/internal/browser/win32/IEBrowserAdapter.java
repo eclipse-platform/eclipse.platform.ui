@@ -7,7 +7,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
@@ -60,10 +60,14 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		String classPath = getClassPath(PLUGIN_ID_HELPUI);
 		String stateLocation =
 			WorkbenchHelpPlugin.getDefault().getStateLocation().toString();
+		String imageURL = getProductImageURL();
+		if (imageURL == null)
+			imageURL = "";
 		cmdarray =
 			new String[] {
 				program,
 				"-D" + IEHost.SYS_PROPERTY_INSTALLURL + "=" + installURL,
+				"-D" + IEHost.SYS_PROPERTY_PRODUCTIMAGEURL + "=" + imageURL,
 				"-D" + IEHost.SYS_PROPERTY_STATELOCATION + "=" + stateLocation,
 				"-Djava.library.path=" + libraryPath,
 				"-cp",
@@ -279,5 +283,39 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		}
 		result.add("");
 		return (String[]) result.toArray(new String[result.size()]);
+	}
+	/**
+	 * Obtains URL to product image
+	 * @return URL as String or null
+	 */
+	private String getProductImageURL() {
+		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
+		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
+		IPluginDescriptor pfd =
+			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+		URL aboutURL = pfd.find(new Path("about.ini"));
+		if (aboutURL == null)
+			return null;
+		try {
+			aboutURL = Platform.resolve(aboutURL);
+			Properties aboutProps = new Properties();
+			aboutProps.load(aboutURL.openStream());
+			String windowIconPathStr = (String) aboutProps.get("windowImage");
+			if (windowIconPathStr == null)
+				return null;
+			IPath windowIconPath = new Path(windowIconPathStr);
+			URL windowIconURL;
+			// find icon under pluginID/nl/ directory
+			Map override = new HashMap(1);
+			override.put("$nl$", Locale.getDefault().toString());
+			windowIconURL = pfd.find(windowIconPath, override);
+			if (windowIconURL == null)
+				return null;
+			windowIconURL = Platform.resolve(windowIconURL);
+			return windowIconURL.toString();
+		} catch (IOException ioe) {
+			Logger.logError("", ioe);
+		}
+		return null;
 	}
 }

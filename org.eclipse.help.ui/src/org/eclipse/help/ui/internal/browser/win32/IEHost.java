@@ -4,14 +4,14 @@
  */
 package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
+import java.net.*;
 import java.util.StringTokenizer;
 
 import org.eclipse.help.internal.ui.util.HelpWorkbenchException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 /**
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class IEHost implements Runnable, ICommandStateChangedListener {
 	public static final String SYS_PROPERTY_INSTALLURL = "installURL";
+	public static final String SYS_PROPERTY_PRODUCTIMAGEURL = "windowImage";
 	public static final String SYS_PROPERTY_STATELOCATION = "stateLocation";
 	public static final String CMD_CLOSE = "close";
 	public static final String CMD_DISPLAY_URL = "displayURL";
@@ -33,6 +34,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private static final String BROWSER_HEIGTH = "browser.h";
 	private static final String BROWSER_MAXIMIZED = "browser.maximized";
 	private static String installURL;
+	private static String productImageURL;
 	private static String stateLocation;
 	private Display display;
 	private Image shellImg, backImg, forwardImg;
@@ -78,6 +80,12 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			System.err.println("Property " + SYS_PROPERTY_INSTALLURL + " must be set.");
 			return;
 		}
+		productImageURL = System.getProperty(SYS_PROPERTY_PRODUCTIMAGEURL);
+		if (productImageURL == null) {
+			System.err.println(
+				"Property " + SYS_PROPERTY_PRODUCTIMAGEURL + " must be set.");
+			return;
+		}
 		stateLocation = System.getProperty(SYS_PROPERTY_STATELOCATION);
 		if (stateLocation == null || stateLocation.length() <= 0) {
 			System.err.println("Property " + SYS_PROPERTY_STATELOCATION + " must be set.");
@@ -89,19 +97,31 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	/**
 	 * Creates the toolbar images
 	 */
-	private void createImages()
-	{
-		shellImg = ImageDescriptor.createFromURL(ieResources.getImagePath("shellIcon")).createImage();
-		backImg = ImageDescriptor.createFromURL(ieResources.getImagePath("back_icon")).createImage();
-		forwardImg = ImageDescriptor.createFromURL(ieResources.getImagePath("forward_icon")).createImage();
+	private void createImages() {
+		try {
+			shellImg =
+				ImageDescriptor.createFromURL(new URL(productImageURL)).createImage();
+		} catch (MalformedURLException mue) {
+			System.out.println(mue);
+			return;
+		}
+		backImg =
+			ImageDescriptor
+				.createFromURL(ieResources.getImagePath("back_icon"))
+				.createImage();
+		forwardImg =
+			ImageDescriptor
+				.createFromURL(ieResources.getImagePath("forward_icon"))
+				.createImage();
 	}
-	
+
 	/**
 	 * Creates hosting shell.
 	 */
 	private void createShell() {
 		shell = new Shell();
-		shell.setImage(shellImg);
+		if (shellImg != null)
+			shell.setImage(shellImg);
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				store.put(BROWSER_X, Integer.toString(x));
