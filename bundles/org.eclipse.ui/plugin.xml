@@ -1616,7 +1616,6 @@
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
             project="true"
-            finalPerspective="org.eclipse.ui.resourcePerspective"
             id="org.eclipse.ui.wizards.new.project">
          <description>
             %NewWizards.project.description

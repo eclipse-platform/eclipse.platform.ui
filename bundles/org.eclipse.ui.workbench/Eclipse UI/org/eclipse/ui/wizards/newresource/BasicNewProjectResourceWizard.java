@@ -1,24 +1,59 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.wizards.newresource;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 
 /**
  * Standard workbench wizard that creates a new project resource in
@@ -56,6 +91,22 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 
 	private static String PAGE_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningPage"); //$NON-NLS-1$
 	private static String WINDOW_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
+
+	/**
+	 * Extension attribute name for final perspective.
+	 */
+	private static final String FINAL_PERSPECTIVE = "finalPerspective";  //$NON-NLS-1$
+
+	/**
+	 * Extension attribute name for preferred perspectives.
+	 */
+	private static final String PREFERRED_PERSPECTIVES = "preferredPerspectives";  //$NON-NLS-1$
+	
+	/**
+	 * Preference name for whether not to show the Confirm PerspectiveSwitchDialog. 
+	 */
+	private static final String PREF_DONT_SHOW_DIALOG = "dontConfirmPerspectiveSwitch";  //$NON-NLS-1$
+	
 /**
  * Creates a wizard for creating a new project resource in the workspace.
  */
@@ -331,8 +382,8 @@ protected void updatePerspective() {
 	updatePerspective(configElement);
 }
 /**
- * Update the perspective based on the current setting
- * in the workbench preference page.
+ * Updates the perspective based on the current settings
+ * in the Workbench/Perspectives preference page.
  * <p>
  * A new project wizard class will need to implement the
  * <code>IExecutableExtension</code> interface so as to gain
@@ -340,10 +391,10 @@ protected void updatePerspective() {
  * That is the configuration element to pass into this method.
  * </p>
  *
- * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
- * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
- * @see @IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
- * @see @IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
+ * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
+ * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
+ * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
+ * @see IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
  */
 public static void updatePerspective(IConfigurationElement configElement) {
 	// Do not change perspective if the configuration element is
@@ -364,32 +415,97 @@ public static void updatePerspective(IConfigurationElement configElement) {
 		return;
 
 	// Read the requested perspective id to be opened.
-	String perspID = configElement.getAttribute("finalPerspective");//$NON-NLS-1$
-	if (perspID == null)
+	String finalPerspId = configElement.getAttribute(FINAL_PERSPECTIVE);
+	if (finalPerspId == null)
 		return;
-
+	
 	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-	IPerspectiveDescriptor persp = reg.findPerspectiveWithId(perspID);
-	if (persp == null)
+	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
+	if (finalPersp == null) {
+		WorkbenchPlugin.log(
+			"Unable to find persective " //$NON-NLS-1$
+				+ finalPerspId
+				+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
 		return;
+	}
 
-	// Open perspective in new window setting
+	// gather the preferred perspectives
+	// always consider the final perspective to be preferred
+	ArrayList preferredPerspIds = new ArrayList();
+	preferredPerspIds.add(finalPerspId);
+	String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
+	if (preferred != null) {
+		StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,");
+		while (tok.hasMoreTokens()) {
+			preferredPerspIds.add(tok.nextToken());
+		}
+	}
+	
+	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	if (window != null) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			IPerspectiveDescriptor currentPersp = page.getPerspective();
+			
+			// don't switch if the current perspective is a preferred perspective	
+			if (currentPersp != null && preferredPerspIds.contains(currentPersp.getId())) {
+				return;
+			}
+		}
+		
+		// prompt the user to switch
+		if (!confirmPerspectiveSwitch(window, finalPersp)) {
+			return;
+		}
+	}
+
+	// open perspective in new window setting
 	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
-		openInNewWindow(persp);
+		openInNewWindow(finalPersp);
 		return;
 	}
 
-	// Open perspective in same window setting
+	// open perspective in same window setting
 	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-		openInNewPage(persp);
+		openInNewPage(finalPersp);
 		return;
 	}
 
-	// Replace active perspective	setting
+	// replace active perspective	setting
 	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
-		replaceCurrentPerspective(persp);
+		replaceCurrentPerspective(finalPersp);
 		return;
 	}
+}
+
+/**
+ * Prompts the user for whether to switch perspectives.
+ * 
+ * @return <code>true</code> if it's OK to switch, <code>false</code> otherwise
+ */
+private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspectiveDescriptor finalPersp) {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean dontShowDialog = store.getBoolean(PREF_DONT_SHOW_DIALOG);
+	if (dontShowDialog) {
+		return true;
+	}
+	MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+		window.getShell(),
+		ResourceMessages.getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$
+		null,	// accept the default window icon
+		ResourceMessages.format(
+			"NewProject.perspSwitchMessage", //$NON-NLS-1$
+			new Object[] { finalPersp.getLabel() }),
+		MessageDialog.QUESTION,
+		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
+		0,		// yes is the default
+		null,	// use the default message for the toggle
+		false); // toggle is initially unchecked
+	if (dialog.open() == 0) {
+		store.setValue(PREF_DONT_SHOW_DIALOG, dialog.getToggleState());
+		return true;
+	}
+	return false;
 }
 }
