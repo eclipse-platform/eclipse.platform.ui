@@ -49,7 +49,7 @@
 		<delete dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/antsupportlib.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/../org.apache.xerces/bin;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${basedir}/../org.eclipse.core.runtime/bin;${basedir}/../org.eclipse.core.boot/bin">
+		<javac destdir="${temp.folder}/lib/antsupportlib.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;">
 			<src path="src_ant/"/>
 		</javac>
 		<!-- copy necessary resources -->
@@ -66,12 +66,5 @@
 		<copy todir="${currentBuildPlugins}">
 			<fileset dir="${destBin}"/>
 		</copy>
-	</target>
-	
-	<!-- Does not work -->
-	<target name="execAntTarget" depends="init">
-		<exec executable= "cmd.exe">
-			<arg line= "/C start c:/Debugger/0917Ant/eclipse/eclipse.exe -vm c:/jdk1.4.1_b15/jdk1.4.1/jre/bin/java.exe -debug -data c:/workspacesAntTesting -showlocation -vmargs -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000"/>
-		</exec>
 	</target>
 </project>
