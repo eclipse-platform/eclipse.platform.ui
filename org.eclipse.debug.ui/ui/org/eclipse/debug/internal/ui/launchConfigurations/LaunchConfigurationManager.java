@@ -231,7 +231,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
 			ILaunchConfiguration configuration = history.getRecentLaunch();
-			if (configuration != null) {
+			if (configuration != null && configuration.exists()) {
 				Element last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
 				last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
 				last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
@@ -245,10 +245,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	protected void createEntry(Document doc, Element historyRootElement, String mode, ILaunchConfiguration[] configurations) throws CoreException {
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];
-			Element launch = doc.createElement(HISTORY_LAUNCH_NODE);
-			launch.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
-			launch.setAttribute(HISTORY_MODE_ATT, mode);
-			historyRootElement.appendChild(launch);
+			if (configuration.exists()) {
+				Element launch = doc.createElement(HISTORY_LAUNCH_NODE);
+				launch.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
+				launch.setAttribute(HISTORY_MODE_ATT, mode);
+				historyRootElement.appendChild(launch);
+			}
 		}
 	}
 				

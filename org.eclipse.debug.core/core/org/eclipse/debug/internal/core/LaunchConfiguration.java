@@ -384,6 +384,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
 			relativePath = relativePath.setDevice(null);
 		} else {
+			IFile file = getFile();
+			if (file == null) {
+				// cannot generate memento - missing file
+				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.Unable_to_generate_memento_for_{0},_shared_file_does_not_exist._1"), new String[]{getName()}), DebugException.INTERNAL_ERROR, null); //$NON-NLS-1$
+				throw new CoreException(status); 
+			}
 			relativePath = getFile().getFullPath();
 		}
 		
