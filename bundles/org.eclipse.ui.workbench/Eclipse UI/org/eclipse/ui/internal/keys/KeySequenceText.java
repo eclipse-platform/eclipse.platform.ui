@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -375,14 +377,28 @@ public final class KeySequenceText {
 			}
 		}
 	}
+
+	static {
+		Collection trappedKeys = new TreeSet();
+		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
+		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
+		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.BS));
+		TRAPPED_KEYS = Collections.unmodifiableCollection(trappedKeys);
+	}
+
 	/** An empty string instance for use in clearing text values. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
 	/**
 	 * The special integer value for the maximum number of strokes indicating
 	 * that an infinite number should be allowed.
 	 */
 	public static final int INFINITE = -1;
+	/**
+	 * The keys trapped by this widget. This list is guaranteed to be roughly
+	 * accurate. Perfection is not possible, as SWT does not export traversal
+	 * keys as constants.
+	 */
+	public static final Collection TRAPPED_KEYS;
 
 	/**
 	 * The text of the key sequence -- containing only the complete key
@@ -573,6 +589,21 @@ public final class KeySequenceText {
 	 */
 	boolean hasSelection() {
 		return (text.getSelectionCount() > 0);
+	}
+	
+	/**
+	 * Inserts the key stroke represented by this string at the current 
+	 * insertion point.  This does a regular delete and insert, as if the key 
+	 * had been pressed.  If the key stroke can't be parsed, nothing happens.
+	 * @param keyStroke The key stroke to insert; must not be <code>null</code>.
+	 */
+	public void insert(String keyStroke) {
+		try {
+			KeyStroke stroke = KeyStroke.getInstance(keyStroke);
+			
+		} catch (ParseException e) {
+			// Do nothing
+		}
 	}
 
 	/**
