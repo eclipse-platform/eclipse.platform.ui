@@ -131,7 +131,7 @@ public void addPart(LayoutPart part) {
 		 * 
 		 * part.reparent(mainLayout.getParent());
 		 */
-		LayoutPart relative = mainLayout.findBottomRigth();
+		LayoutPart relative = mainLayout.findBottomRight();
 		if(relative != null) {
 			stack(part,relative);
 		} else {

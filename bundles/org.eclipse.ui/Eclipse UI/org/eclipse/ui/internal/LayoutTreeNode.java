@@ -65,12 +65,12 @@ public LayoutTree find(LayoutPart child) {
 	return node;
 }
 /**
- * Find the part that is in the bottom rigth possition.
+ * Find the part that is in the bottom right position.
  */
-public LayoutPart findBottomRigth() {
+public LayoutPart findBottomRight() {
 	if(children[1].isVisible())
-		return children[1].findBottomRigth();
-	return children[0].findBottomRigth();
+		return children[1].findBottomRight();
+	return children[0].findBottomRight();
 }
 /**
  * Go up in the tree finding a parent that is common of both children.

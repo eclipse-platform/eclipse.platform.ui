@@ -24,7 +24,7 @@ public class InternalErrorDialog extends MessageDialog {
 	private int detailButtonID = -1;
 	private Text text;
 	
-	//Workaround. SWT does not seem to set rigth the default button if 
+	//Workaround. SWT does not seem to set the default button if 
 	//there is not control with focus. Bug: 14668
 	private int defaultButtonIndex = 0;
 	

@@ -232,12 +232,12 @@ public void disposeSashes() {
 	root.disposeSashes();
 }
 /**
- * Return the most bottom rigth part or null if none.
+ * Return the most bottom right part or null if none.
  */
-public LayoutPart findBottomRigth() {
+public LayoutPart findBottomRight() {
 	if(root == null)
 		return null;
-	return root.findBottomRigth();
+	return root.findBottomRight();
 }
 /**
  * Find a initial position for a new part.
@@ -246,7 +246,7 @@ private void findPosition(RelationshipInfo info) {
 
 	info.ratio = (float)0.5;
 	info.relationship = IPageLayout.RIGHT;
-	info.relative = root.findBottomRigth();
+	info.relative = root.findBottomRight();
 
 	// If no parent go with default.
 	if (parent == null)

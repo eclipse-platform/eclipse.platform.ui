@@ -55,7 +55,7 @@ public LayoutTree find(LayoutPart child) {
 	return this;
 }
 /**
- * Find the Left,Rigth,Top and Botton 
+ * Find the Left,Right,Top and Botton 
  * sashes around this tree and set them
  * in <code>sashes</code>
  */
@@ -67,7 +67,7 @@ public void findSashes(PartPane.Sashes sashes) {
 /**
  * Find the part that is in the bottom rigth possition.
  */
-public LayoutPart findBottomRigth() {
+public LayoutPart findBottomRight() {
 	return part;
 }
 /**

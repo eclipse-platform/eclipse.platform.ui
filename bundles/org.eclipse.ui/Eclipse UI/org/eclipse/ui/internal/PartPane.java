@@ -456,7 +456,7 @@ public WorkbenchPage getPage() {
 	return page;
 }
 /**
- * Add the Left,Rigth,Up,Botton menu items to the Size menu.
+ * Add the Left,Right,Up,Botton menu items to the Size menu.
  */
 protected void addSizeItems(Menu sizeMenu) {
 	Sashes sashes = findSashes();
