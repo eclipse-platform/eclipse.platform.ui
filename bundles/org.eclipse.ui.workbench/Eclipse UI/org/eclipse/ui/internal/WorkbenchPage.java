@@ -3150,7 +3150,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 						PartSite partSite = (PartSite)site;
 						
 						ILayoutContainer container = partSite.getPane().getContainer();
-						if (!container.allowsAutoFocus()) {
+						if ((container != null) && (!container.allowsAutoFocus())) {
 							continue;
 						}
 					}
