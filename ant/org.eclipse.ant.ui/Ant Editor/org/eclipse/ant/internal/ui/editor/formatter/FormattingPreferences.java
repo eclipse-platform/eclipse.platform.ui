@@ -21,11 +21,11 @@ public class FormattingPreferences {
    
     public String getCanonicalIndent() {
        String canonicalIndent;
-        if (fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR)) {
+       if (!useSpacesInsteadOfTabs()) {
             canonicalIndent = "\t"; //$NON-NLS-1$
         } else {
             String tab = ""; //$NON-NLS-1$
-            for (int i = 0; i < fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE); i++) {
+            for (int i = 0; i < getTabWidth(); i++) {
                 tab = tab.concat(" "); //$NON-NLS-1$
             }
             canonicalIndent = tab;
@@ -61,5 +61,8 @@ public class FormattingPreferences {
 	public int getTabWidth() {
 		return fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE);
 	}
+	
+	public boolean useSpacesInsteadOfTabs() {
+    	return ! fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR);
+    }
 }
-
