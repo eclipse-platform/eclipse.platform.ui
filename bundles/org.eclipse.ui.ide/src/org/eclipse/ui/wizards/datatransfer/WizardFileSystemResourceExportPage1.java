@@ -404,7 +404,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 		String conflictingContainer =
 			getConflictingContainerNameFor(destinationValue);
 		if (conflictingContainer == null)
-			setErrorMessage(""); //$NON-NLS-1$
+			setErrorMessage(null);
 		else {
 			setErrorMessage(DataTransferMessages.format("FileExport.conflictingContainer", //$NON-NLS-1$
 			new Object[] { conflictingContainer }));
