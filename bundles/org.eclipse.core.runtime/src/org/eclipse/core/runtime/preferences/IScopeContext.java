@@ -37,7 +37,8 @@ public interface IScopeContext {
 	/**
 	 * Return the preferences node that contains the preferences for the
 	 * given qualifier or <code>null</code> if the node cannot be determined.
-	 * The given qualifier may be <code>null</code>.
+	 * The given qualifier must not be <code>null</code> but may be a path 
+	 * to a subnode within the scope.
 	 * <p>
 	 * An example of a qualifier in Eclipse 2.1 would be the plug-in identifier that 
 	 * the preference is associated with (e.g. the "org.eclipse.core.resources" 
