@@ -93,8 +93,8 @@ public class WebBrowserEditor extends EditorPart {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 		
 		super.dispose();
-		//mark this instance as disposed to avoid stale references
-		disposed=true;
+		// mark this instance as disposed to avoid stale references
+		disposed = true;
 	}
 	
 	public boolean isDisposed() {
@@ -188,7 +188,8 @@ public class WebBrowserEditor extends EditorPart {
 			setTitleToolTip(url.getFile());
 
 			Image oldImage = image;
-			image = ImageResource.getImage(ImageResource.IMG_INTERNAL_BROWSER);
+			ImageDescriptor id = ImageResource.getImageDescriptor(ImageResource.IMG_INTERNAL_BROWSER);
+			image = id.createImage();
 
 			setTitleImage(image);
 			if (oldImage != null && !oldImage.isDisposed())
