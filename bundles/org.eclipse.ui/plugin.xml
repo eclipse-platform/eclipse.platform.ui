@@ -13,7 +13,6 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.help"/>
@@ -26,6 +25,7 @@
       <import plugin="org.eclipse.ui.workbench.texteditor" export="true"/>
       <import plugin="org.eclipse.ui.editors" export="true"/>
    </requires>
+
 
 <!-- Workbench extension points -->
    <extension-point id="activities" name="%ExtPoint.activities" schema="schema/activities.exsd"/>
@@ -68,98 +68,98 @@
                class="org.eclipse.ui.internal.Workbench">
          </run>
       </application>
-   </extension>   
+   </extension>
    <extension
          point="org.eclipse.ui.activities">
       <activity
+            name="%activity.editingText.name"
             description="%activity.editingText.description"
-            id="org.eclipse.ui.textEditorScope"
-            name="%activity.editingText.name">
+            id="org.eclipse.ui.textEditorScope">
       </activity>
       <activity
-            description="%activity.editingJavaSource.description"            
-            id="org.eclipse.jdt.ui.javaEditorScope"
             name="%activity.editingJavaSource.name"
-            parentId="org.eclipse.ui.textEditorScope">
+            description="%activity.editingJavaSource.description"
+            parentId="org.eclipse.ui.textEditorScope"
+            id="org.eclipse.jdt.ui.javaEditorScope">
       </activity>
       <activity
+            name="Debugging"
             description=""
-            id="org.eclipse.debugging"
-            name="Debugging">
+            id="org.eclipse.debugging">
       </activity>
       <activity
+            name="External Tools"
             description=""
-            id="org.eclipse.externalTools"
-            name="External Tools">
+            id="org.eclipse.externalTools">
       </activity>
       <activity
+            name="Java Development"
             description=""
-            id="org.eclipse.javaDevelopment"
-            name="Java Development">
-      </activity>            
+            id="org.eclipse.javaDevelopment">
+      </activity>
       <activity
-            description=""
-            id="org.eclipse.plugInDevelopment"
             name="Plug-In Development"
-            parentId="org.eclipse.javaDevelopment">
-      </activity> 
-      <activity
             description=""
-            id="org.eclipse.team"
-            name="Team">
-      </activity>           
+            parentId="org.eclipse.javaDevelopment"
+            id="org.eclipse.plugInDevelopment">
+      </activity>
+      <activity
+            name="Team"
+            description=""
+            id="org.eclipse.team">
+      </activity>
       <patternBinding
-            activityId="org.eclipse.debugging"
             inclusive="true"
+            activityId="org.eclipse.debugging"
             pattern="org.eclipse.debug.*">
       </patternBinding>
       <patternBinding
-            activityId="org.eclipse.externalTools"
             inclusive="true"
+            activityId="org.eclipse.externalTools"
             pattern="org.eclipse.ant.*">
       </patternBinding>
       <patternBinding
-            activityId="org.eclipse.externalTools"
             inclusive="true"
+            activityId="org.eclipse.externalTools"
             pattern="org.eclipse.ui.externaltools.*">
       </patternBinding>
       <patternBinding
-            activityId="org.eclipse.javaDevelopment"
             inclusive="true"
+            activityId="org.eclipse.javaDevelopment"
             pattern="org.eclipse.jdt.*">
       </patternBinding>
       <patternBinding
-            activityId="org.eclipse.plugInDevelopment"
             inclusive="true"
+            activityId="org.eclipse.plugInDevelopment"
             pattern="org.eclipse.pde.*">
       </patternBinding>
       <patternBinding
-            activityId="org.eclipse.team"
             inclusive="true"
+            activityId="org.eclipse.team"
             pattern="org.eclipse.team.*">
       </patternBinding>
    </extension>
    <extension
          point="org.eclipse.ui.roles">
       <role
+            name="External Tools"
             description=""
-            id="org.eclipse.roles.externalToolsRole"
-            name="External Tools">
+            id="org.eclipse.roles.externalToolsRole">
       </role>
       <role
+            name="Java"
             description=""
-            id="org.eclipse.roles.javaRole"
-            name="Java">
+            id="org.eclipse.roles.javaRole">
       </role>
       <role
+            name="Plug In Development"
             description=""
-            id="org.eclipse.roles.pdeRole"
-            name="Plug In Development">
+            id="org.eclipse.roles.pdeRole">
       </role>
       <role
+            name="Team"
             description=""
-            id="org.eclipse.roles.teamRole"
-            name="Team">
+            id="org.eclipse.roles.teamRole">
       </role>
       <activityBinding
             activityId="org.eclipse.externalTools"
@@ -168,11 +168,11 @@
       <activityBinding
             activityId="org.eclipse.debugging"
             roleId="org.eclipse.roles.javaRole">
-      </activityBinding>   
+      </activityBinding>
       <activityBinding
             activityId="org.eclipse.javaDevelopment"
             roleId="org.eclipse.roles.javaRole">
-      </activityBinding>      
+      </activityBinding>
       <activityBinding
             activityId="org.eclipse.plugInDevelopment"
             roleId="org.eclipse.roles.pdeRole">
@@ -181,7 +181,7 @@
             activityId="org.eclipse.team"
             roleId="org.eclipse.roles.teamRole">
       </activityBinding>
-   </extension>   
+   </extension>
    <extension
          point="org.eclipse.ui.commands">
       <activeKeyConfiguration
