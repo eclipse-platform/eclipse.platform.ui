@@ -152,6 +152,14 @@ public IContributionItem find(String id) {
 /* (non-Javadoc)
  * Method declared on IContributionManager.
  */
+public IContributionItem getItemAt(int index) {
+	if (index >= contributions.size())
+		throw new IndexOutOfBoundsException("getting item at " + index); //$NON-NLS-1$
+	return (IContributionItem) contributions.get(index);
+}
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
 public IContributionItem[] getItems() {
 	IContributionItem[] items = new IContributionItem[contributions.size()];
 	contributions.toArray(items);
@@ -194,6 +202,30 @@ public IContributionManagerOverrides getOverrides() {
  */
 protected boolean hasDynamicItems() {
 	return (dynamicItems > 0);
+}
+/**
+ * Returns the index of the item with the given id.
+ *
+ * @return <code>int</code> the index or -1 if the item is not found
+ */
+public int indexOf(String id) {
+	for (int i = 0; i < contributions.size(); i++) {
+		IContributionItem item = (IContributionItem) contributions.get(i);
+		String itemId = item.getId();
+		if (itemId != null && itemId.equalsIgnoreCase(id))
+			return i;
+	}
+	return -1;
+}
+/**
+ * Insert the item at the given index.
+ */
+public void insert(int index, IContributionItem item) {
+	if (index > contributions.size())
+		throw new IndexOutOfBoundsException("inserting " + item.getId() + " at " + index); //$NON-NLS-1$ //$NON-NLS-2$
+	item.setParent(this);
+	contributions.add(index, item);
+	itemAdded(item);
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
@@ -281,14 +313,6 @@ protected void itemRemoved(IContributionItem item) {
  */
 public void markDirty() {
 	setDirty(true);
-}
-/* (non-Javadoc)
- * Method declared on IContributionManager.
- */
-public void prepend(IContributionItem item) {
-	item.setParent(this);
-	contributions.add(0,item);
-	itemAdded(item);
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
