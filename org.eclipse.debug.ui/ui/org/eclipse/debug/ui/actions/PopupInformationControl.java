@@ -440,5 +440,5 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			shell.dispose();
 		}
 		
-	};
+	}
 }
