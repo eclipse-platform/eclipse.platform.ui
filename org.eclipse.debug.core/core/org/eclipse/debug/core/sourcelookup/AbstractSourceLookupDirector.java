@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -116,6 +117,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
+			MultiStatus multiStatus = null;
+			CoreException single = null;
 			for(int i=0; i < fParticipants.size(); i++) {
 				Object[] sourceArray;
 				try {
@@ -131,9 +134,24 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 						}
 					}
 				} catch (CoreException e) {
-					DebugPlugin.log(e);
+					if (single == null) {
+						single = e;
+					} else if (multiStatus == null) {
+						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.getString("AbstractSourceLookupDirector.19"), null); //$NON-NLS-1$
+						multiStatus.add(e.getStatus());
+					} else {
+						multiStatus.add(e.getStatus());
+					}
 				}
 			}	
+			if (fSourceElements.isEmpty()) {
+				// throw exception if there was one
+				if (multiStatus != null) {
+					throw new CoreException(multiStatus);
+				} else if (single != null) {
+					throw single;
+				}
+			}
 		}
 		
 		public List getSourceElements() {
