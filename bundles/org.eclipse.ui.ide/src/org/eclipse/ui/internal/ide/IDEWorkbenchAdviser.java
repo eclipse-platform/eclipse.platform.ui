@@ -308,7 +308,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			String message;
 			String productName = null;
 			AboutInfo about = IDEApplication.getPrimaryInfo();
-			// @issue performance - reading about info on window close 
 			if (about != null) {
 				productName = about.getProductName();
 			}
@@ -925,7 +924,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		
 		String title = null;
 		AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-		// @issue performance - reading about info
 		if (about != null) {
 			title = about.getProductName();
 		}
