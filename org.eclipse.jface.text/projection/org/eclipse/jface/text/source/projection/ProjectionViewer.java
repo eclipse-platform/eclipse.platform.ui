@@ -11,10 +11,11 @@
 package org.eclipse.jface.text.source.projection;
 
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
@@ -506,6 +507,20 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fWasProjectionEnabled= isProjectionMode();
 		disableProjection();
 		super.setVisibleRegion(start, length);
+	}
+	
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#setVisibleDocument(org.eclipse.jface.text.IDocument)
+	 */
+	protected void setVisibleDocument(IDocument document) {
+		if (!isProjectionMode())
+			super.setVisibleDocument(document);
+
+		// In projection mode we don't want to throw away the find/replace document adapter 
+		FindReplaceDocumentAdapter adapter= fFindReplaceDocumentAdapter;
+		super.setVisibleDocument(document);
+		fFindReplaceDocumentAdapter= adapter;
 	}
 	
 	/*
