@@ -426,7 +426,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
 	/**
 	 * @deprecated this method is no longer a part of the 
-	 * @link org.eclipse.jface.action.IContributionItem API.
+	 *   {@link org.eclipse.jface.action.IContributionItem} API.
 	 */
 	public boolean isSubstituteFor(IContributionItem item) {
 		return this.equals(item);

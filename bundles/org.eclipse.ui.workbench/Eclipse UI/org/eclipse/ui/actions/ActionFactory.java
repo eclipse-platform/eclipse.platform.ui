@@ -101,7 +101,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "back"): Back. This action is a
-	 * {@link Retarget Retarget}action with id "back". This action maintains
+	 * {@link RetargetAction} with id "back". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory BACK = new ActionFactory("back") {//$NON-NLS-1$
@@ -249,7 +249,7 @@ public abstract class ActionFactory {
 	
 	/**
 	 * Workbench action (id "copy"): Copy. This action is a
-	 * {@link Retarget Retarget}action with id "copy". This action maintains
+	 * {@link RetargetAction} with id "copy". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory COPY = new ActionFactory("copy") {//$NON-NLS-1$
@@ -272,7 +272,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "cut"): Cut. This action is a
-	 * {@link Retarget Retarget}action with id "cut". This action maintains
+	 * {@link RetargetAction} with id "cut". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory CUT = new ActionFactory("cut") {//$NON-NLS-1$
@@ -295,7 +295,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "delete"): Delete. This action is a
-	 * {@link Retarget Retarget}action with id "delete". This action maintains
+	 * {@link RetargetAction} with id "delete". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory DELETE = new ActionFactory("delete") {//$NON-NLS-1$
@@ -353,7 +353,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "find"): Find. This action is a
-	 * {@link Retarget Retarget}action with id "find". This action maintains
+	 * {@link RetargetAction} with id "find". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory FIND = new ActionFactory("find") {//$NON-NLS-1$
@@ -376,7 +376,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "forward"): Forward. This action is a
-	 * {@link Retarget Retarget}action with id "forward". This action
+	 * {@link RetargetAction} with id "forward". This action
 	 * maintains its enablement state.
 	 */
 		public static final ActionFactory FORWARD = new ActionFactory("forward") {//$NON-NLS-1$
@@ -411,7 +411,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "goInto"): Go Into. This action is a
-	 * {@link Retarget Retarget}action with id "goInto". This action maintains
+	 * {@link RetargetAction} with id "goInto". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory GO_INTO = new ActionFactory("goInto") {//$NON-NLS-1$
@@ -478,7 +478,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "move"): Move. This action is a
-	 * {@link Retarget Retarget}action with id "move". This action maintains
+	 * {@link RetargetAction} with id "move". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory MOVE = new ActionFactory("move") {//$NON-NLS-1$
@@ -515,7 +515,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "next"): Next. This action is a
-	 * {@link Retarget Retarget}action with id "next". This action maintains
+	 * {@link RetargetAction} with id "next". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory NEXT = new ActionFactory("next") {//$NON-NLS-1$
@@ -616,7 +616,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "paste"): Paste. This action is a
-	 * {@link Retarget Retarget}action with id "paste". This action maintains
+	 * {@link RetargetAction} with id "paste". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory PASTE = new ActionFactory("paste") {//$NON-NLS-1$
@@ -656,7 +656,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "previous"): Previous. This action is a
-	 * {@link Retarget Retarget}action with id "previous". This action
+	 * {@link RetargetAction} with id "previous". This action
 	 * maintains its enablement state.
 	 */
 		public static final ActionFactory PREVIOUS = new ActionFactory("previous") {//$NON-NLS-1$
@@ -741,7 +741,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "print"): Print. This action is a
-	 * {@link Retarget Retarget}action with id "print". This action maintains
+	 * {@link RetargetAction} with id "print". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory PRINT = new ActionFactory("print") {//$NON-NLS-1$
@@ -766,7 +766,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "properties"): Properties. This action is a
-	 * {@link Retarget Retarget}action with id "properties". This action
+	 * {@link RetargetAction} with id "properties". This action
 	 * maintains its enablement state.
 	 */
 		public static final ActionFactory PROPERTIES = new ActionFactory("properties") {//$NON-NLS-1$
@@ -801,7 +801,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "redo"): Redo. This action is a
-	 * {@link Retarget Retarget}action with id "redo". This action maintains
+	 * {@link RetargetAction} with id "redo". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory REDO = new ActionFactory("redo") {//$NON-NLS-1$
@@ -824,7 +824,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "refresh"): Refresh. This action is a
-	 * {@link Retarget Retarget}action with id "refresh". This action
+	 * {@link RetargetAction} with id "refresh". This action
 	 * maintains its enablement state.
 	 */
 		public static final ActionFactory REFRESH = new ActionFactory("refresh") {//$NON-NLS-1$
@@ -843,7 +843,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "rename"): Rename. This action is a
-	 * {@link Retarget Retarget}action with id "rename". This action maintains
+	 * {@link RetargetAction} with id "rename". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory RENAME = new ActionFactory("rename") {//$NON-NLS-1$
@@ -878,7 +878,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "revert"): Revert. This action is a
-	 * {@link Retarget Retarget}action with id "revert". This action maintains
+	 * {@link RetargetAction} with id "revert". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory REVERT = new ActionFactory("revert") {//$NON-NLS-1$
@@ -961,7 +961,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "selectAll"): Select All. This action is a
-	 * {@link Retarget Retarget}action with id "selectAll". This action
+	 * {@link RetargetAction} with id "selectAll". This action
 	 * maintains its enablement state.
 	 */
 		public static final ActionFactory SELECT_ALL = new ActionFactory("selectAll") {//$NON-NLS-1$
@@ -1044,7 +1044,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "undo"): Undo. This action is a
-	 * {@link Retarget Retarget}action with id "undo". This action maintains
+	 * {@link RetargetAction} with id "undo". This action maintains
 	 * its enablement state.
 	 */
 		public static final ActionFactory UNDO = new ActionFactory("undo") {//$NON-NLS-1$
@@ -1067,7 +1067,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Workbench action (id "up"): Up. This action is a
-	 * {@link Retarget Retarget}action with id "up". This action maintains its
+	 * {@link RetargetAction} with id "up". This action maintains its
 	 * enablement state.
 	 */
 		public static final ActionFactory UP = new ActionFactory("up") {//$NON-NLS-1$

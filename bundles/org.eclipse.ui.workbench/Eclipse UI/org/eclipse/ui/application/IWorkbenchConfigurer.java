@@ -88,7 +88,7 @@ public interface IWorkbenchConfigurer {
 	 * <p>
 	 * The workbench remembers the given image descriptor under the given name,
 	 * and makes the image available to plug-ins via
-	 * {@link org.eclipse.ui.ISharedImages IWorkbench.getSharedImages()}.
+	 * {@link IWorkbench#getSharedImages() IWorkbench.getSharedImages()}.
 	 * For "shared" images, the workbench remembers the image descriptor and
 	 * will manages the image object create from it; clients retrieve "shared"
 	 * images via

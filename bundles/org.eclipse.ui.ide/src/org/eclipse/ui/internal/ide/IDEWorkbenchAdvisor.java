@@ -841,10 +841,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	
 	/**
 	 * Declares all IDE-specific workbench images. This includes both "shared"
-	 * images (named in {@link IDE#SharedImages IDE.SharedImages}) and
+	 * images (named in {@link IDE.SharedImages}) and
 	 * internal images (named in
-	 * {@link org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages
-	 * IDEInternalWorkbenchImages}).
+	 * {@link org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages}).
 	 * 
 	 * @see IWorkbenchConfigurer#declareImage
 	 */

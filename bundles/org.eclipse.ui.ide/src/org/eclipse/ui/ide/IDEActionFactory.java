@@ -66,7 +66,7 @@ public final class IDEActionFactory {
 
 	/**
 	 * IDE-specific workbench action: Add task.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "addTask". This action maintains its enablement state.
 	 */
 	public static final ActionFactory ADD_TASK = new ActionFactory("addTask") { //$NON-NLS-1$
@@ -85,7 +85,7 @@ public final class IDEActionFactory {
 		
 	/**
 	 * IDE-specific workbench action: Add bookmark.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "bookmark". This action maintains its enablement state.
 	 */
 	public static final ActionFactory BOOKMARK = new ActionFactory("bookmark") { //$NON-NLS-1$
@@ -134,7 +134,7 @@ public final class IDEActionFactory {
 
 	/**
 	 * IDE-specific workbench action: Incremental build.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "buildProject". This action maintains its enablement state.
 	 */
 	public static final ActionFactory BUILD_PROJECT = new ActionFactory("buildProject") { //$NON-NLS-1$
@@ -153,7 +153,7 @@ public final class IDEActionFactory {
 	
 	/**
 	 * IDE-specific workbench action: Close project.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "closeProject". This action maintains its enablement state.
 	 */
 	public static final ActionFactory CLOSE_PROJECT = new ActionFactory("closeProject") { //$NON-NLS-1$
@@ -190,7 +190,7 @@ public final class IDEActionFactory {
 
 	/**
 	 * IDE-specific workbench action: Open project.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "openProject". This action maintains its enablement state.
 	 */
 	public static final ActionFactory OPEN_PROJECT = new ActionFactory("openProject") { //$NON-NLS-1$
@@ -257,7 +257,7 @@ public final class IDEActionFactory {
 
 	/**
 	 * IDE-specific workbench action: Rebuild project.
-	 * This action is a {@link Retarget Retarget} action with 
+	 * This action is a {@link RetargetAction} with 
 	 * id "rebuildProject". This action maintains its enablement state.
 	 */
 	public static final ActionFactory REBUILD_PROJECT = new ActionFactory("rebuildProject") { //$NON-NLS-1$
