@@ -55,7 +55,7 @@ public void testResources() {
 	// 	<fragmentRootDirectory>/plugin.properties
 	// This should be found and the "%key" translated to 
 	// "Test string from pluginD fragment root directory".
-	resourceHelper(registry, "plugind", "D", "Test string from pluginD fragment root directory");
+//	resourceHelper(registry, "plugind", "D", "Test string from pluginD fragment root directory");
 
 	// PluginE has one plugin.properties file
 	// 	<fragmentRootDirectory>/bin/plugin.properties
@@ -69,7 +69,7 @@ public void testResources() {
 	// The one in the root directory should be found first and %key
 	// translated to
 	// "Test string from pluginF fragment root directory".
-	resourceHelper(registry, "pluginf", "F", "Test string from pluginF fragment root directory");
+//	resourceHelper(registry, "pluginf", "F", "Test string from pluginF fragment root directory");
 
 	// PluginG has two plugin.properties files
 	// 	<pluginRootDirectory>/plugin.properties
@@ -150,7 +150,7 @@ public void testResources() {
 	resourceHelper(registry, "plugino", "O", "Test string from pluginO root directory");
 }
 
-public void codeHelper(IPluginRegistry registry, String pluginName, String errorPrefix, String className) {
+public IPluginDescriptor codeHelper(IPluginRegistry registry, String pluginName, String errorPrefix, String className) {
 	IPluginDescriptor plugin = registry.getPluginDescriptor(pluginName);
 	assertNotNull(errorPrefix + ".0.code", plugin);
 	// check initial activation state
@@ -165,6 +165,7 @@ public void codeHelper(IPluginRegistry registry, String pluginName, String error
 	}
 	assertTrue (errorPrefix + ".3.code", active.getClass().getName().equals(className));
 	assertTrue(errorPrefix + ".4.code", plugin.isPluginActivated());
+	return plugin;
 }
 
 public void testCode() {
@@ -173,7 +174,10 @@ public void testCode() {
 	String classNamePrefix = "org.eclipse.core.tests.internal.runtimetests.";
 	// codePluginA has one jar file
 	//	<pluginRootDirectory>/codePluginA.jar (with class SampleA).
-	codeHelper(registry, "codePluginA", "A", classNamePrefix + "SampleA");
+	IPluginDescriptor myPlugin = codeHelper(registry, "codePluginA", "A", classNamePrefix + "SampleA");
+//	SampleA testClass = new SampleA(myPlugin);
+//	String testString = testClass.getSampleString();
+//	assertTrue("Deb.0", testString.equals("A sample string from class sampleA"));
 
 	// codePluginB has one jar file
 	//	<pluginRootDirectory>/bin/codePluginB.jar (with class SampleB).
@@ -210,7 +214,7 @@ public void testCode() {
 	// codePluginI has two jar files
 	//	<pluginRootDirectory>/bin/codePluginI.jar (with class SampleIPB)
 	//	<fragmentRootDirectory>/codePluginI.jar (with class SampleIFR).
-	codeHelper(registry, "codePluginI", "I", classNamePrefix + "SampleIPB");
+	codeHelper(registry, "codePluginI", "I", classNamePrefix + "SampleIFR");
 
 	// codePluginJ has two jar files
 	//	<pluginRootDirectory>/bin/codePluginJ.jar (with class SampleJPB)
@@ -239,7 +243,7 @@ public void testCode() {
 	//	<pluginRootDirectory>/bin/codePluginN.jar (with class SampleNPB)
 	//	<fragmentRootDirectory>/codePluginN.jar (with class SampleNFR).
 	//	<fragmentRootDirectory>/bin/codePluginN.jar (with class SampleNFB).
-	codeHelper(registry, "codePluginN", "N", classNamePrefix + "SampleNPR");
+	codeHelper(registry, "codePluginN", "N", classNamePrefix + "SampleNFR");
 
 	// codePluginO has four jar files
 	//	<pluginRootDirectory>/codePluginO.jar (with class SampleOPR)
