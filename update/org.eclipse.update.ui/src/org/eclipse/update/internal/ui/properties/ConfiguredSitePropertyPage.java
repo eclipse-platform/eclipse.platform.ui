@@ -20,9 +20,6 @@ public class ConfiguredSitePropertyPage extends PropertyPage implements IWorkben
 		noDefaultAndApplyButton();
 	}
 
-	/**
-	 * @see PropertyPage#createContents
-	 */
 	protected Control createContents(Composite parent)  {
 		IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter)getElement();
 		IConfiguredSite csite = adapter.getConfiguredSite();

@@ -27,9 +27,6 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 		noDefaultAndApplyButton();
 	}
 
-	/**
-	 * @see PropertyPage#createContents
-	 */
 	protected Control createContents(Composite parent) {
 		try {
 			IFeatureAdapter adapter = (IFeatureAdapter) getElement();

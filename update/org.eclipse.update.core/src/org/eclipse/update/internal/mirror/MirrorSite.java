@@ -595,9 +595,7 @@ public class MirrorSite extends Site {
 	public void addDownloadedPluginEntry(IPluginEntry pluginEntry) {
 		downloadedPluginEntries.add(pluginEntry);
 	}
-	/**
-	 * @see IPluginContainer#getPluginEntries()
-	 */
+
 	private IPluginEntry[] getDownloadedPluginEntries() {
 		return (IPluginEntry[]) downloadedPluginEntries.toArray(
 			new IPluginEntry[downloadedPluginEntries.size()]);
@@ -613,9 +611,7 @@ public class MirrorSite extends Site {
 	public void addDownloadedFeatureReferenceModel(SiteFeatureReferenceModel featureModel) {
 		downloadedFeatureReferenceModels.add(featureModel);
 	}
-	/**
-	 * @see IPluginContainer#getPluginEntries()
-	 */
+
 	private SiteFeatureReferenceModel[] getDownloadedFeatureReferenceModels() {
 		return (
 			SiteFeatureReferenceModel[]) downloadedFeatureReferenceModels

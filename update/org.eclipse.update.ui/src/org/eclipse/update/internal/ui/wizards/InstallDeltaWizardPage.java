@@ -82,7 +82,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 	/**
 	 * Constructor for InstallDeltaWizardPage.
-	 * @param pageName
+	 * @param deltas
 	 */
 	public InstallDeltaWizardPage(ISessionDelta[] deltas) {
 		super("installDeltaPage"); //$NON-NLS-1$

@@ -307,7 +307,6 @@ public class FeatureReferenceModel extends ModelObject {
 	/**
 	 * Get optional operating system specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the operating system specification string, or <code>null</code>.
 	 * @since 2.1
 	 */
@@ -319,7 +318,6 @@ public class FeatureReferenceModel extends ModelObject {
 	/**
 	 * Get optional windowing system specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the windowing system specification string, or <code>null</code>.
 	 * @since 2.1
 	 */
@@ -331,7 +329,6 @@ public class FeatureReferenceModel extends ModelObject {
 	/**
 	 * Get optional system architecture specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the system architecture specification string, or <code>null</code>.
 	 * @since 2.1
 	 */

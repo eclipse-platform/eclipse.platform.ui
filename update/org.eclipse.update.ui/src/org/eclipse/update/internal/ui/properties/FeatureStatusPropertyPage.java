@@ -26,9 +26,6 @@ public class FeatureStatusPropertyPage
 		noDefaultAndApplyButton();
 	}
 
-	/**
-	 * @see PropertyPage#createContents
-	 */
 	protected Control createContents(Composite parent) {
 		try {
 

@@ -9,10 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.parts;
-/**
- * @version 	1.0
- * @author
- */
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -28,30 +25,18 @@ public class PixelConverter {
 		gc.dispose();
 	}
 	
-	/**
-	 * @see DialogPage#convertHeightInCharsToPixels
-	 */
 	public int convertHeightInCharsToPixels(int chars) {
 		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
 	}
 
-	/**
-	 * @see DialogPage#convertHorizontalDLUsToPixels
-	 */
 	public int convertHorizontalDLUsToPixels(int dlus) {
 		return Dialog.convertHorizontalDLUsToPixels(fFontMetrics, dlus);
 	}
 
-	/**
-	 * @see DialogPage#convertVerticalDLUsToPixels
-	 */
 	public int convertVerticalDLUsToPixels(int dlus) {
 		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
 	
-	/**
-	 * @see DialogPage#convertWidthInCharsToPixels
-	 */
 	public int convertWidthInCharsToPixels(int chars) {
 		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
 	}	

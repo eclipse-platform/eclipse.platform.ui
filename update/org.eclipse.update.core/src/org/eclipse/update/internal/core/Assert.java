@@ -98,10 +98,9 @@ public static boolean isLegal(boolean expression, String message) {
  * <code>Assert.isNotNull</code> to ensure that <code>null</code> 
  * parameters are detected as early as possible.
  * </p>
- * 
- * @param object the value to test
- * @exception Throwable an unspecified unchecked exception if the object
+ * Method throws an unspecified unchecked exception if the object
  *   is <code>null</code>
+ * @param object the value to test
  */
 public static void isNotNull(Object object) {
 	// succeed as quickly as possible
@@ -123,11 +122,10 @@ public static void isNotNull(Object object) {
  * <code>Assert.isNotNull</code> to ensure that <code>null</code> 
  * parameters are detected as early as possible.
  * </p>
- * 
+ * An unspecified unchecked exception is thrown if the object
+ *   is <code>null</code>
  * @param object the value to test
  * @param message the message to include in the exception
- * @exception Throwable an unspecified unchecked exception if the object
- *   is <code>null</code>
  */
 public static void isNotNull(Object object, String message) {
 	if (object == null)

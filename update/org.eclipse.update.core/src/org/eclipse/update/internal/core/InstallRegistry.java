@@ -35,7 +35,6 @@ public class InstallRegistry extends Properties {
 	
 	/**
 	 * Creates empty Properties.
-	 * @param name name of the table;
 	 */
 	private InstallRegistry() {
 		super();
@@ -126,7 +125,7 @@ public class InstallRegistry extends Properties {
 	
 	/**
 	 * Registers an installed feature so it can be uninstalled later.
-	 * @param feature feature to register.
+	 * @param pluginEntry plugin to register.
 	 */
 	public static synchronized void registerPlugin(IPluginEntry pluginEntry) {
 		String name = "plugin_"+pluginEntry.getVersionedIdentifier();

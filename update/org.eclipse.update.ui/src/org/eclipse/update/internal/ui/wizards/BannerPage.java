@@ -24,9 +24,7 @@ public abstract class BannerPage extends WizardPage {
 	public BannerPage(String name) {
 		super(name);
 	}
-	/**
-	 * @see DialogPage#createControl(Composite)
-	 */
+
 	public void createControl(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

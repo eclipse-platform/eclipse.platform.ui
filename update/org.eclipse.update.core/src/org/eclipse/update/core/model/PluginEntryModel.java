@@ -133,7 +133,7 @@ public class PluginEntryModel extends ContentEntryModel {
 		return unpack;
 	}
 	/**
-	 * @param Sets whether plugin should be unpacked during installation
+	 * @param unpack Sets whether plugin should be unpacked during installation
 	 * or can run from a jar
 	 * @since 3.0
 	 *

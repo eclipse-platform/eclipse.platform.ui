@@ -238,16 +238,11 @@ public class SiteFTP implements ISite {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.update.core.ISite#getConfiguredSite()
-	 */
+
 	public IConfiguredSite getCurrentConfiguredSite() {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
-	 */
 	public IFeature createFeature(String type, URL url) throws CoreException {
 		return null;
 	}

@@ -38,8 +38,6 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 	}
 
 	/**
-	 * Insert the method's description here.
-	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
 		BusyIndicator
@@ -64,10 +62,6 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 			UpdateUI.requestRestart(wizard.isRestartNeeded());
 	}
 
-	/**
-	 * Insert the method's description here.
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
-	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

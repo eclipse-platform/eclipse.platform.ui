@@ -373,9 +373,9 @@ public class InternalSiteManager {
 
 	/**
 	 * Method downloaded.
-	 * @param l size downloaded in bytes
-	 * @param l1 time in seconds
-	 * @param uRL
+	 * @param downloadSize size downloaded in bytes
+	 * @param time time in seconds
+	 * @param url
 	 */
 	public static void downloaded(long downloadSize, long time, URL url) {
 		if (downloadSize <= 0 || time < 0)
@@ -395,7 +395,7 @@ public class InternalSiteManager {
 	}
 	/**
 	 * Method getEstimatedTransferRate rate bytes/seconds.
-	 * @param string
+	 * @param host
 	 * @return long
 	 */
 	public static long getEstimatedTransferRate(String host) {

@@ -319,7 +319,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	/**
 	 * Obtains PatchedFeatures - non patch features with corresponding patches if any
 	 * 
-	 * @param configuredFeatures
+	 * @param features
 	 *            array of features to operate with
 	 * @return Patches
 	 */
@@ -463,7 +463,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	}
 	/**
 	 * @param site
-	 * @param FeaturePlugin[]
+	 * @param plugins[]
 	 * @return valid string pointing to plugins in given features
 	 * @throws CoreException
 	 */

@@ -17,6 +17,12 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
 /**
+ * @author birsan
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+/**
  * Site on the File System
  */
 public class SiteFile extends Site {
@@ -243,8 +249,6 @@ public class SiteFile extends Site {
 	 * If one plug-in entry has an unknown size.
 	 * then the download size is unknown.
 	 * 
-	 * @see ISite#getDownloadSize(IFeature)
-	 * 
 	 */
 	public long getDownloadSizeFor(IFeature feature) {
 		long result = 0;
@@ -324,9 +328,6 @@ public class SiteFile extends Site {
 		pluginEntries.add(pluginEntry);
 	}
 
-	/**
-	 * @see IPluginContainer#getPluginEntries()
-	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = new IPluginEntry[0];
 		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
@@ -336,9 +337,7 @@ public class SiteFile extends Site {
 		return result;
 	}
 
-	/**
-	 * @see IPluginContainer#getPluginEntryCount()
-	 */
+
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
 	}

@@ -63,9 +63,6 @@ public class Volume extends ModelObject implements IVolume {
 		return root;
 	}
 
-	/**
-	 * @see IAdaptable#getAdapter(Class)
-	 */
 	public Object getAdapter(Class arg0) {
 		return null;
 	}

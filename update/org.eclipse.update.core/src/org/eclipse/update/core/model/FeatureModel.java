@@ -756,9 +756,7 @@ public class FeatureModel extends ModelObject {
 	/**
 	 * Adds a feature identifier.
 	 * Throws a runtime exception if this object is marked read-only.
-	 * 
-	 * @param identifier feature identifer
-	 * @param options the options associated with the nested feature
+	 * @param include the included feature
 	 * @since 2.1
 	 */
 	public void addIncludedFeatureReferenceModel(IncludedFeatureReferenceModel include) {

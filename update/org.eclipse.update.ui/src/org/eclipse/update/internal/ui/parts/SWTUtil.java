@@ -90,7 +90,7 @@ public class SWTUtil {
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
 	 * 
-	 * @param	the button for which to set the dimension hint
+	 * @param button	the button for which to set the dimension hint
 	 */
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);

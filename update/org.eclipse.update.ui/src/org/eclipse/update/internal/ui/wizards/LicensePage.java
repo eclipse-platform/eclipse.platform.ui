@@ -60,9 +60,6 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		this.jobs = jobs;
 	}
 
-	/**
-	 * @see DialogPage#createControl(Composite)
-	 */
 	public void createControl(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));

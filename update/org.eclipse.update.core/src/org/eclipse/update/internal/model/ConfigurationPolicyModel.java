@@ -236,7 +236,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	
 	/**
 	 * Sets the unconfiguredFeatureReferences.
-	 * @param unconfiguredFeatureReferences The unconfiguredFeatureReferences to set
+	 * @param featureReferences The unconfiguredFeatureReferences to set
 	 */
 	protected void setUnconfiguredFeatureReferences(IFeatureReference[] featureReferences) {
 		unconfiguredFeatureReferences = new HashMap();
@@ -248,7 +248,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 
 	/**
 	 * Sets the configuredFeatureReferences.
-	 * @param configuredFeatureReferences The configuredFeatureReferences to set
+	 * @param featureReferences The configuredFeatureReferences to set
 	 */
 	protected void setConfiguredFeatureReferences(IFeatureReference[] featureReferences) {
 		configuredFeatureReferences = new HashMap();

@@ -60,9 +60,8 @@ public class SiteModelFactory {
 	 * 
 	 * @param stream site stream
 	 * @return populated site model
-	 * @exception ParsingException
-	 * @exception IOException
-	 * @exception SAXException
+	 * @exception CoreException
+	 * @exception InvalidSiteTypeException
 	 * @since 2.0
 	 */
 	public SiteModel parseSite(InputStream stream)

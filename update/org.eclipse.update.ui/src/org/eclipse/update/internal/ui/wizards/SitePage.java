@@ -124,8 +124,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
 
-	/**
-	 * @param name */
+
 	public SitePage(SearchRunner searchRunner) {
 		super("SitePage"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString("SitePage.title")); //$NON-NLS-1$

@@ -49,8 +49,7 @@ public class FeatureModelFactory {
 	 * 
 	 * @param stream feature stream
 	 * @return populated feature model
-	 * @exception ParsingException
-	 * @exception IOException
+	 * @exception CoreException
 	 * @exception SAXException
 	 * @since 2.0
 	 */

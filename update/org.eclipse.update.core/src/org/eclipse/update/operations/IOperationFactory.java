@@ -68,7 +68,6 @@ public interface IOperationFactory {
 		
 	/**
 	 * Creates a "revert feature version" operation.
-	 * @param targetSite
 	 * @param feature current feature
 	 * @param anotherFeature the new feature to be swapped in
 	 * @return

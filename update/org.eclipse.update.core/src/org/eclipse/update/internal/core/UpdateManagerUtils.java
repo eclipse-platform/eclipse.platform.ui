@@ -931,8 +931,7 @@ public static class Writer {
 	
 	/**
 	 * Returns a list of fragments. Zero length if no fragments.
-	 * @param id the id of the plugin to get fragments for
-	 * @param version the plugin version, or null if higher version selected
+	 * @param bundle the bundle to get fragments for
 	 */
 	public static FragmentEntry[] getFragments(Bundle bundle) {
 		

@@ -57,7 +57,6 @@ public BundleManifest(File manifest) {
 	 * 
 	 * @param in
 	 *            InputStream
-	 * @throws IOException
 	 */
 	private void parse(InputStream in) {
 		try {

@@ -260,8 +260,8 @@ public abstract class ModelObject extends PlatformObject {
 	 * </pre>
 	 * </p>
 	 * 
-	 * @param bundle resource bundle.
-	 * @param s translatable string from model
+	 * @param bundleURL resource bundle url.
+	 * @param string translatable string from model
 	 * @return string, or <code>null</code>
 	 * @since 2.0
 	 */

@@ -61,7 +61,6 @@ public class MainPreferencePage
 
 	/**
 	 * Insert the method's description here.
-	 * @see PreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
 	}

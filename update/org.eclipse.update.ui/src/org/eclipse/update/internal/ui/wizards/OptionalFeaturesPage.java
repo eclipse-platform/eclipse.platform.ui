@@ -126,9 +126,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		super.dispose();
 	}
 
-	/**
-	 * @see DialogPage#createControl(Composite)
-	 */
+
 	public Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.*;
 /**
  * Exception thrown when IOException during downloading features
  * 
- * @see org.eclipse.update.core.Feature#install(IFeature,
- *      IVerificationListener, IProgressMonitor)
  * @since 3.0
  */
 public class FeatureDownloadException extends CoreException {

@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
 /**
  * Exception thrown when the user cancelled an installation.
  * 
- * @see org.eclipse.update.core.Feature#install(IFeature, IVerificationListener, IProgressMonitor)
  * @since 2.0
  */
 public class InstallAbortedException extends CoreException {

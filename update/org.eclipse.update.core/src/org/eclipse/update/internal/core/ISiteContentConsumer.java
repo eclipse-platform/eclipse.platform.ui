@@ -23,8 +23,8 @@ public interface ISiteContentConsumer {
 
 	/**
 	 * Stores a content reference into the SiteContentConsumer
-	 * @param ContentReference the content reference to store
-	 * @param IProgressMonitor the progress monitor
+	 * @param contentReference the content reference to store
+	 * @param monitor the progress monitor
 	 * @throws CoreException if an error occurs storing the content reference
 	 * @since 2.0 
 	 */
