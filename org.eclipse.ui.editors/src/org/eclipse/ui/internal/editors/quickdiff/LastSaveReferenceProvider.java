@@ -47,6 +47,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private IDocument fReference= null;
 	/** Our unique id that makes us comparable to another instance of the same provider. See extension point reference. */
 	private String fId;
+	/** The current document provider. */
+	private IDocumentProvider fDocumentProvider;
 
 	/*
 	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getReference()
@@ -102,6 +104,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		if (provider == null)
 			return;
+		fDocumentProvider= provider;
 		provider.addElementStateListener(this);
 		IEditorInput input= fEditor.getEditorInput();
 		if (!(input instanceof IFileEditorInput))
@@ -195,8 +198,11 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#dispose()
 	 */
 	public void dispose() {
-		if (fEditor != null)
-			fEditor.getDocumentProvider().removeElementStateListener(this);
+		if (fDocumentProvider != null)
+			fDocumentProvider.removeElementStateListener(this);
+		
+		fEditor= null;
+		fDocumentProvider= null;
 		fReference= null;
 		fDocumentRead= false;
 	}
