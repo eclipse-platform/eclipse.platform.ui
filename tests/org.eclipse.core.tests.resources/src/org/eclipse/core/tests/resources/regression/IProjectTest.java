@@ -121,6 +121,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			description.setAutoBuilding(true);
 			getWorkspace().setDescription(description);
 			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			waitForBuild();
 		} catch (CoreException e) {
 			fail("0.0", e);
 		}
@@ -131,6 +132,7 @@ public class IProjectTest extends AbstractBuilderTest {
 		projectTWObuilder.reset();
 		try {
 			projectONE.build(IncrementalProjectBuilder.FULL_BUILD, null);
+			waitForBuild();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
@@ -141,6 +143,7 @@ public class IProjectTest extends AbstractBuilderTest {
 		projectTWObuilder.reset();
 		try {
 			projectTWO.build(IncrementalProjectBuilder.FULL_BUILD, SignaledBuilder.BUILDER_ID, null, null);
+			waitForBuild();
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
