@@ -149,10 +149,6 @@ public class CheatSheetManager implements ICheatSheetManager {
 		if (listeners == null)
 			return;
 
-		// TODO (lorne) - must be careful when notifying listeners since
-		// there is a real possibility that the listener code will
-		// remove or add more listeners to this list
-		// safe thing it to iterate over a copy of listener list
 		for (int i = 0; i < listeners.size(); i++) {
 			((CheatSheetListener) listeners.get(i)).cheatSheetEvent(e);
 		}

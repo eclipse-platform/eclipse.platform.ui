@@ -20,11 +20,7 @@ import org.eclipse.swt.widgets.Display;
  * is the id of a cheat sheet contributed to the <code>cheatsheetContent</code>
  * extension point.
  * </p>
- * <p>
- * This class is not intended to be subclassed by clients.
- * </p>
  * 
- * TODO (lorne) - marked as final
  * @since 3.0
  */
 public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {

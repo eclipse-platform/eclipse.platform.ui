@@ -22,7 +22,6 @@ import org.eclipse.jface.action.IAction;
  * invoked from outside a cheat sheet via <code>IAction.run</code>.
  * </p>
  *
- * TODO (lorne) - n.b. ICheatSheetAction now extends IAction
  * @since 3.0
  */
 public interface ICheatSheetAction extends IAction {
