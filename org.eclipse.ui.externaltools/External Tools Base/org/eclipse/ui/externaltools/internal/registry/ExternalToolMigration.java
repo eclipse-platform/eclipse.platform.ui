@@ -151,7 +151,7 @@ public final class ExternalToolMigration {
 					try {
 						config.doSave();
 					} catch (CoreException e) {
-						// TODO: Decide what to do when saving fails.
+						// Decide what to do when saving fails.
 					}
 				}
 			}
