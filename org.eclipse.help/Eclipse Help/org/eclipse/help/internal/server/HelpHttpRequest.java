@@ -88,10 +88,10 @@ public class HelpHttpRequest {
 				//Info.log(helpURL);
 				InputStream inputStream = helpURL.openStream();
 				if (inputStream == null) {
-					HelpURL errorURL =
+					helpURL =
 						HelpURLFactory.createHelpURL(
 							"/org.eclipse.help/" + Resources.getString("notopic.html"));
-					inputStream = errorURL.openStream();
+					inputStream = helpURL.openStream();
 				}
 				if (inputStream == null) {
 					out.write(errorStringBytes);
