@@ -450,9 +450,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         String extension = resourceName.substring(separatorIndex + 1);
 
-        Iterator enum = selectedTypes.iterator();
-        while (enum.hasNext()) {
-            if (extension.equalsIgnoreCase((String) enum.next()))
+        Iterator it = selectedTypes.iterator();
+        while (it.hasNext()) {
+            if (extension.equalsIgnoreCase((String) it.next()))
                 return true;
         }
 
@@ -514,9 +514,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      */
     protected void setupBasedOnInitialSelections() {
 
-        Iterator enum = this.initialResourceSelection.iterator();
-        while (enum.hasNext()) {
-            IResource currentResource = (IResource) enum.next();
+        Iterator it = this.initialResourceSelection.iterator();
+        while (it.hasNext()) {
+            IResource currentResource = (IResource) it.next();
             if (currentResource.getType() == IResource.FILE)
                 this.resourceGroup.initialCheckListItem(currentResource);
             else

@@ -335,9 +335,9 @@ public class ProjectCapabilityEditingPropertyPage extends
 
         public void dispose() {
             if (imageTable != null) {
-                Iterator enum = imageTable.values().iterator();
-                while (enum.hasNext())
-                    ((Image) enum.next()).dispose();
+                Iterator it = imageTable.values().iterator();
+                while (it.hasNext())
+                    ((Image) it.next()).dispose();
                 imageTable = null;
             }
         }

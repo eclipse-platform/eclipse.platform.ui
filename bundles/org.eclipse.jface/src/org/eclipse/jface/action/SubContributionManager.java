@@ -94,12 +94,12 @@ public abstract class SubContributionManager implements IContributionManager {
      * @since 3.0
      */
     public void disposeManager() {
-        Iterator enum = mapItemToWrapper.values().iterator();
+        Iterator it = mapItemToWrapper.values().iterator();
         // Dispose items in addition to removing them.
         // See bugs 64024 and 73715 for details.
 	    // Do not use getItems() here as subclasses can override that in bad ways.
-        while (enum.hasNext()) {
-            IContributionItem item = (IContributionItem) enum.next();
+        while (it.hasNext()) {
+            IContributionItem item = (IContributionItem) it.next();
             item.dispose();
         }
         removeAll();
@@ -302,9 +302,9 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void removeAll() {
-        Iterator enum = mapItemToWrapper.values().iterator();
-        while (enum.hasNext()) {
-            IContributionItem item = (IContributionItem) enum.next();
+        Iterator it = mapItemToWrapper.values().iterator();
+        while (it.hasNext()) {
+            IContributionItem item = (IContributionItem) it.next();
             parentMgr.remove(item);
         }
         mapItemToWrapper.clear();
@@ -320,9 +320,9 @@ public abstract class SubContributionManager implements IContributionManager {
     public void setVisible(boolean visible) {
         this.visible = visible;
         if (mapItemToWrapper.size() > 0) {
-            Iterator enum = mapItemToWrapper.values().iterator();
-            while (enum.hasNext()) {
-                IContributionItem item = (IContributionItem) enum.next();
+            Iterator it = mapItemToWrapper.values().iterator();
+            while (it.hasNext()) {
+                IContributionItem item = (IContributionItem) it.next();
                 item.setVisible(visible);
             }
             parentMgr.markDirty();

@@ -362,9 +362,9 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @param listToPopulate The list to fill.
      */
     private void populateList(List listToPopulate) {
-        Iterator enum = statusList.iterator();
-        while (enum.hasNext()) {
-            IStatus childStatus = (IStatus) enum.next();
+        Iterator it = statusList.iterator();
+        while (it.hasNext()) {
+            IStatus childStatus = (IStatus) it.next();
             populateList(listToPopulate, childStatus, 0);
         }
     }

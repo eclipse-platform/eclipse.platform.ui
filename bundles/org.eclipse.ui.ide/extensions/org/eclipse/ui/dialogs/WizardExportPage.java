@@ -559,9 +559,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         String extension = resourceName.substring(separatorIndex + 1);
 
-        Iterator enum = selectedTypes.iterator();
-        while (enum.hasNext()) {
-            if (extension.equalsIgnoreCase((String) enum.next()))
+        Iterator it = selectedTypes.iterator();
+        while (it.hasNext()) {
+            if (extension.equalsIgnoreCase((String) it.next()))
                 return true;
         }
 
@@ -866,9 +866,9 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
             return; // no setup needed
 
         List selections = new ArrayList();
-        Iterator enum = currentResourceSelection.iterator();
-        while (enum.hasNext()) {
-            IResource currentResource = (IResource) enum.next();
+        Iterator it = currentResourceSelection.iterator();
+        while (it.hasNext()) {
+            IResource currentResource = (IResource) it.next();
             // do not add inaccessible elements
             if (currentResource.isAccessible())
                 selections.add(currentResource);

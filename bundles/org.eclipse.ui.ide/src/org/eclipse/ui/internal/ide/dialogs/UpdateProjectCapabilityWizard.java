@@ -78,9 +78,9 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
                     natureIds.add(removeCapabilities[i].getNatureId());
                     ArrayList uiIds = removeCapabilities[i].getHandleUIs();
                     if (uiIds != null) {
-                        Iterator enum = uiIds.iterator();
-                        while (enum.hasNext()) {
-                            String id = (String) enum.next();
+                        Iterator it = uiIds.iterator();
+                        while (it.hasNext()) {
+                            String id = (String) it.next();
                             for (int j = 0; j < removeCapabilities.length; j++) {
                                 if (removeCapabilities[j] != null) {
                                     if (removeCapabilities[j].getId()
@@ -175,9 +175,9 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
         for (int i = 0; i < addCapabilities.length; i++) {
             ArrayList ids = addCapabilities[i].getPerspectiveChoices();
             if (ids != null) {
-                Iterator enum = ids.iterator();
-                while (enum.hasNext()) {
-                    String id = (String) enum.next();
+                Iterator it = ids.iterator();
+                while (it.hasNext()) {
+                    String id = (String) it.next();
                     if (!results.contains(id))
                         results.add(id);
                 }

@@ -403,9 +403,9 @@ public class PreferenceStore implements IPersistentPreferenceStore {
      */
     public String[] preferenceNames() {
         ArrayList list = new ArrayList();
-        Enumeration enum = properties.propertyNames();
-        while (enum.hasMoreElements()) {
-            list.add(enum.nextElement());
+        Enumeration it = properties.propertyNames();
+        while (it.hasMoreElements()) {
+            list.add(it.nextElement());
         }
         return (String[]) list.toArray(new String[list.size()]);
     }

@@ -444,9 +444,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
         if (initialContainerFullPath != null)
             resourceGroup.setContainerFullPath(initialContainerFullPath);
         else {
-            Iterator enum = currentSelection.iterator();
-            if (enum.hasNext()) {
-                Object object = enum.next();
+            Iterator it = currentSelection.iterator();
+            if (it.hasNext()) {
+                Object object = it.next();
                 IResource selectedResource = null;
                 if (object instanceof IResource) {
                     selectedResource = (IResource) object;

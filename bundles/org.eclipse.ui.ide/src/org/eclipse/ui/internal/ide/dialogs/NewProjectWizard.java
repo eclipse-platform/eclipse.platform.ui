@@ -200,9 +200,9 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements
         for (int i = 0; i < caps.length; i++) {
             ArrayList ids = caps[i].getPerspectiveChoices();
             if (ids != null) {
-                Iterator enum = ids.iterator();
-                while (enum.hasNext()) {
-                    String id = (String) enum.next();
+                Iterator it = ids.iterator();
+                while (it.hasNext()) {
+                    String id = (String) it.next();
                     if (!results.contains(id))
                         results.add(id);
                 }

@@ -378,9 +378,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
      * Initializes this page's controls.
      */
     protected void initializePage() {
-        Iterator enum = currentSelection.iterator();
-        if (enum.hasNext()) {
-            Object next = enum.next();
+        Iterator it = currentSelection.iterator();
+        if (it.hasNext()) {
+            Object next = it.next();
             IResource selectedResource = null;
             if (next instanceof IResource) {
                 selectedResource = (IResource) next;
