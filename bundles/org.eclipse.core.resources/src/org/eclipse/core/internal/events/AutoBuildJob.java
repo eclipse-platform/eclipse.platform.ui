@@ -97,7 +97,10 @@ class AutoBuildJob extends Job {
 	 * regardless of the tree state.
 	 */
 	public synchronized void forceBuild() {
-		forceBuild = true;
+		if (!forceBuild) {
+			forceBuild = true;
+			endTopLevel(false);
+		}
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
