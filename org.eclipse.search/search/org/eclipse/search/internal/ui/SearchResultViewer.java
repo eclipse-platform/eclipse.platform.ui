@@ -196,11 +196,11 @@ public class SearchResultViewer extends TableViewer {
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 		super.doUpdateItem(item, element, fullMap);
 		if (((SearchResultViewEntry)element).isPotentialMatch()) {
-		    TableItem ti = (TableItem) item;
-		    ti.setForeground(fPotentialMatchFgColor);
+			TableItem ti = (TableItem) item;
+			ti.setForeground(fPotentialMatchFgColor);
 		}
-	}
-
+	}	
+	
 	private void handleSelectionChanged() {
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
@@ -710,4 +710,12 @@ public class SearchResultViewer extends TableViewer {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
+	
+	protected void internalRefresh(Object element, boolean updateLabels) {
+		// see bug 44891
+		getTable().setRedraw(false);
+		super.internalRefresh(element, updateLabels);
+		getTable().setRedraw(true);
+	}
+
 }
