@@ -45,7 +45,6 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 				return;
 
 			oldFeature = oldFeatures[0];
-			ISite oldSite = oldFeature.getSite();
 			IPluginEntry[] oldPlugins = oldFeature.getPluginEntries();
 
 			for (int i = 0; i < pluginEntries.length; i++) {
