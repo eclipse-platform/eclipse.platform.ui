@@ -949,12 +949,29 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	}
 	
 	/**
-	 * Load the collection of perspectives in which perspectives
-	 * for view management from the preference store.
+	 * Load the collection of perspectives in which view
+	 * management will occur from the preference store.
 	 */
-	public void loadAutoManagePerspectives() {
+	private void loadAutoManagePerspectives() {
 		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
 		fAutoManagePerspectives= parseList(prefString);
+	}
+	
+	/**
+	 * Reloaded the collection of view management perspectives
+	 * and updates (potentially opening views) for the given
+	 * selection.
+	 */
+	public void reloadAutoManagePerspectives(Object selection) {
+		// Remove the context ids associated with the current selection
+		// so that updateForSelection(...) will open views
+		// as appropriate given the new view management settings.
+		String[] modelIds = getDebugModelIdsForSelection(selection);
+		List contextIds = getContextsForModels(modelIds);
+		lastEnabledIds.removeAll(contextIds);
+		
+		loadAutoManagePerspectives();
+		updateForSelection(selection);
 	}
 	
 	/**
