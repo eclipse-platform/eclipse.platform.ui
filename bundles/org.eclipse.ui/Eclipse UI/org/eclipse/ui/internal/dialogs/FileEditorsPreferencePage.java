@@ -111,6 +111,8 @@ protected Control createContents(Composite parent) {
 	Composite pageComponent = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	pageComponent.setLayout(layout);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -135,7 +137,10 @@ protected Control createContents(Composite parent) {
 	resourceTypeTable.setLayoutData(data);
 
 	Composite groupComponent= new Composite(pageComponent, SWT.NULL);
-	groupComponent.setLayout(new GridLayout());
+	GridLayout groupLayout = new GridLayout();
+	groupLayout.marginWidth = 0;
+	groupLayout.marginHeight = 0;
+	groupComponent.setLayout(groupLayout);
 	data = new GridData();
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
@@ -184,7 +189,10 @@ protected Control createContents(Composite parent) {
 	editorTable.setLayoutData(data);
 	
 	groupComponent = new Composite(pageComponent, SWT.NULL);
-	groupComponent.setLayout(new GridLayout());
+	groupLayout = new GridLayout();
+	groupLayout.marginWidth = 0;
+	groupLayout.marginHeight = 0;
+	groupComponent.setLayout(groupLayout);
 	data = new GridData();
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;

@@ -46,6 +46,8 @@ protected Control createContents(Composite parent) {
 	Composite pageComponent = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	pageComponent.setLayout(layout);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;

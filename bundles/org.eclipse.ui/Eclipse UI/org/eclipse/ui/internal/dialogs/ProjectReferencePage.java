@@ -49,7 +49,10 @@ protected Control createContents(Composite parent) {
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
 
 	Composite composite = new Composite(parent, SWT.NONE);
-	composite.setLayout(new GridLayout());
+	GridLayout layout = new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);

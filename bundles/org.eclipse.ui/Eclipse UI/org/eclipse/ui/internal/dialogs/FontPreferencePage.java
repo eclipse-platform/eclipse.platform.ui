@@ -94,6 +94,8 @@ public class FontPreferencePage
 		Composite mainColumn = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		layout.makeColumnsEqualWidth = true;
 		mainColumn.setLayout(layout);
 

@@ -93,7 +93,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		autoBuildButton = new Button(composite, SWT.CHECK);
@@ -133,6 +136,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		groupComposite.setLayout(layout);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;

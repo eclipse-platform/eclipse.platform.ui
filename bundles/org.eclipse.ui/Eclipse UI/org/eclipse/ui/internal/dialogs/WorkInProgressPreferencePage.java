@@ -48,7 +48,10 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	private Button createTempOption(Composite parent, String text, String prefId, boolean restartNeeded,String labelText) {
 		// create composite needed to get tab order right
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		
 		Button button = new Button(composite, SWT.CHECK);
@@ -72,12 +75,15 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		// Call commented out on WorkbenchPreferencePage. 
 		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
-
+		
 		// Temporary option to enable cool bars
 		coolBarsButton =
 			createTempOption(

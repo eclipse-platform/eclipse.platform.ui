@@ -147,6 +147,8 @@ protected Control createContents(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	composite.setLayout(layout);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -215,6 +217,8 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 	//Create an intermeditate composite to keep the buttons in the same column
 	this.buttonComposite = new Composite(composite, SWT.RIGHT);
 	GridLayout layout = new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	this.buttonComposite.setLayout(layout);
 	GridData gridData = new GridData();
 	gridData.verticalAlignment = GridData.FILL;

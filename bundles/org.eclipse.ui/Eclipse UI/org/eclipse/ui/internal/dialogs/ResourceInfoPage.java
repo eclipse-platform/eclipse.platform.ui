@@ -66,6 +66,8 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	Composite basicInfoComposite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	basicInfoComposite.setLayout(layout);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -126,6 +128,8 @@ protected Control createContents(Composite parent) {
 	// top level group
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	composite.setLayout(layout);
 	GridData data = new GridData(GridData.FILL);
 	data.grabExcessHorizontalSpace = true;
@@ -204,6 +208,8 @@ private void createStateGroup(Composite parent, IResource resource) {
 	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
 	composite.setLayout(layout);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;

@@ -34,7 +34,10 @@ public class DecoratorsPreferencePage
 
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		mainComposite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		mainComposite.setLayout(layout);
 
 		Label topLabel = new Label(mainComposite, SWT.NONE);
 		topLabel.setText(
@@ -42,7 +45,10 @@ public class DecoratorsPreferencePage
 
 		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
 		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		decoratorsComposite.setLayout(new GridLayout());
+		GridLayout decoratorsLayout = new GridLayout();
+		decoratorsLayout.marginWidth = 0;
+		decoratorsLayout.marginHeight = 0;
+		decoratorsComposite.setLayout(decoratorsLayout);
 
 		Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
 		decoratorsLabel.setText(
@@ -102,7 +108,10 @@ public class DecoratorsPreferencePage
 
 		Composite textComposite = new Composite(mainComposite, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		textComposite.setLayout(new GridLayout());
+		GridLayout textLayout = new GridLayout();
+		textLayout.marginWidth = 0;
+		textLayout.marginHeight = 0;
+		textComposite.setLayout(textLayout);
 
 		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(
