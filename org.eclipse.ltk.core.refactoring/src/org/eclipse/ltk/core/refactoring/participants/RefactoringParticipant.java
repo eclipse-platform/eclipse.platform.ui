@@ -19,7 +19,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 
 /**
- * A refactoring participant can participate in the condidtion checking and
+ * A refactoring participant can participate in the condition checking and
  * change creation of a refactoring processor.
  * <p>
  * If the severity of the condition checking result is {@link RefactoringStatus#FATAL}
@@ -63,7 +63,7 @@ public abstract class RefactoringParticipant {
 	 * @param element the element to be refactored
 	 * @param arguments the refactoring arguments
 	 * 
-	 * @return <code>true</code> if the particpant could be initialized;
+	 * @return <code>true</code> if the participant could be initialized;
 	 *  otherwise <code>false</code> is returned.
 	 * 
 	 * @see #initialize(Object)
@@ -84,7 +84,7 @@ public abstract class RefactoringParticipant {
 	 * 
 	 * @param element the element to be refactored
 	 * 
-	 * @return <code>true</code> if the particpant could be initialized;
+	 * @return <code>true</code> if the participant could be initialized;
 	 *  otherwise <code>false</code> is returned.
 	 */
 	protected abstract boolean initialize(Object element);
@@ -117,8 +117,6 @@ public abstract class RefactoringParticipant {
 	 * 
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.
-	 * 
-	 * @throws CoreException if an exception occurred during final condition checking
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
