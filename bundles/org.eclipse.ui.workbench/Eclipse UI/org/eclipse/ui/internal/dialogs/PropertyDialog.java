@@ -11,21 +11,16 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
-
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
  * an object is selected. It shows one or more pages registered for object's
  * type.
  */
-public class PropertyDialog extends PreferenceDialog {
+public class PropertyDialog extends FilteredPreferenceDialog {
 	private ISelection selection;
 
 	//The id of the last page that was selected
@@ -65,21 +60,5 @@ public class PropertyDialog extends PreferenceDialog {
 	 */
 	protected void setSelectedNodePreference(String pageId) {
 		lastPropertyId = pageId;
-	}
-
-	/**
-	 * Checks whether the given property node (based on its
-	 * RegistryPageContributor) should be filtered from view (as specified by
-	 * the preference page ObjectActivityManager). Note that if a given node is
-	 * filtered out of the view, then its subnodes are filtered out as well.
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget,
-	 *      org.eclipse.jface.preference.IPreferenceNode)
-	 */
-	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        if (WorkbenchActivityHelper.filterItem(node))
-            return;
-        
-        super.createTreeItemFor(parent, node);
 	}
 }

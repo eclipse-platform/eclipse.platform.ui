@@ -26,18 +26,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -48,7 +45,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * Prefence dialog for the workbench including the ability 
  * to load/save preferences.
  */
-public class WorkbenchPreferenceDialog extends PreferenceDialog {
+public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	/**
 	 * The Load button id.
 	 */
@@ -259,21 +256,6 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		
 		// Close since we have "performed Ok" and cancel is no longer valid
 		close();	
-	}
-	
-	/** 
-	 * Checks whether the given preference node is contributed via the registry 
-	 * and if so filters it based on the currently activities.  Note that if a 
-     * given node is filtered out of the view, then its subnodes are filtered 
-     * as well.
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
-	 */
-	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        if (WorkbenchActivityHelper.filterItem(node))
-            return;
-        
-        super.createTreeItemFor(parent, node);
-	}    
+	} 
 }
 

@@ -17,17 +17,55 @@ import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * A preference dialog is a hierarchical presentation of preference
@@ -72,7 +110,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	//The id of the last page that was selected
 	private static String lastPreferenceId = null;
 	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
-
 	/**
 	 * Title area fields
 	 */
@@ -82,7 +119,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * The Cancel button.
 	 */
@@ -93,11 +130,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * there is none.
 	 */
 	private IPreferencePage currentPage;
-
-	/**
-	 * The current tree item.
-	 */
-	private TreeItem currentTreeItem;
 	private String errorMessage;
 	private Color errorMsgAreaBackground;
 	private Image errorMsgImage;
@@ -114,6 +146,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	private boolean isHelpAvailable = false;
 	private Point lastShellSize;
+
+	private IPreferenceNode lastSuccessfulNode;
 
 	private String message = ""; //$NON-NLS-1$
 	private Image messageImage;
@@ -155,9 +189,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private Label titleImage;
 
 	/**
-	 * The tree control.
+	 * The tree viewer.
 	 */
-	private Tree tree;
+	private TreeViewer treeViewer;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
@@ -171,9 +205,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		preferenceManager = manager;
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -194,9 +228,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				}
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
 	protected void cancelPressed() {
 		// Inform all pages that we are cancelling
@@ -224,9 +258,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	void clearSelectedNode() {
 		setSelectedNodePreference(null);
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Window.
+	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 
@@ -237,9 +271,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		}
 		return super.close();
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Window.
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -252,9 +286,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		});
 	}
-	
-	/*(non-Javadoc)
-	 * Method declared on Window.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#constrainShellSize()
 	 */
 	protected void constrainShellSize() {
 		super.constrainShellSize();
@@ -262,9 +296,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		if (lastShellSize == null)
 			lastShellSize = getShell().getSize();
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
@@ -277,9 +311,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(final Composite parent) {
 		final Control[] control = new Control[1];
@@ -293,22 +327,16 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		});
 		return control[0];
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		GridData gd;
 		Composite composite = (Composite) super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 2;
 		((GridLayout) composite.getLayout()).horizontalSpacing = 10;
 
-		// Build the tree an put it into the composite.
-		createTree(composite);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = 150;
-		gd.verticalSpan = 2;
-		tree.setLayoutData(gd);
+		createTreeAreaContents(composite);
 
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(composite, SWT.NONE);
@@ -328,13 +356,13 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 
 		return composite;
 	}
-	
+
 	/**
 	 * Creates the inner page container.
 	 */
@@ -343,12 +371,12 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		result.setLayout(new PageLayout());
 		return result;
 	}
-	
+
 	/**
 	 * Creates the wizard's title area.
 	 *
-	 * @param parent the SWT parent for the title area composite
-	 * @return the created title area composite
+	 * @param parent the SWT parent for the title area composite.
+	 * @return the created title area composite.
 	 */
 	private Composite createTitleArea(Composite parent) {
 		// Create the title area which will contain
@@ -407,7 +435,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				if (JFaceResources.DIALOG_FONT.equals(event.getProperty())) {
 					updateMessage();
 					Font dialogFont = JFaceResources.getDialogFont();
-					tree.setFont(dialogFont);
+					updateTreeFont(dialogFont);
 					Control[] children = ((Composite) buttonBar).getChildren();
 					for (int i = 0; i < children.length; i++)
 						children[i].setFont(dialogFont);
@@ -438,54 +466,76 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	}
 
 	/**
-	 * Creates a Tree/TreeItem structure that reflects the page hierarchy.
+	 * @param parent the SWT parent for the tree area controls.
+	 * @since 3.0
 	 */
-	private void createTree(Composite parent) {
-		if (tree != null)
-			tree.dispose();
+	protected void createTreeAreaContents(Composite parent) {
+		// Build the tree an put it into the composite.
+		treeViewer = createTreeViewer(parent);
+		treeViewer.setLabelProvider(new PreferenceLabelProvider());
+		treeViewer.setContentProvider(new PreferenceContentProvider());
+		treeViewer.setInput(preferenceManager);
 
-		tree = new Tree(parent, SWT.BORDER);
-		OpenStrategy eventAdapter = new OpenStrategy(tree);
-		eventAdapter.addPostSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent event) {
-				BusyIndicator.showWhile(tree.getDisplay(), new Runnable() {
+		layoutTreeAreaControl(treeViewer.getControl());
+	}
 
-					private void handleError() {
-						showPageFlippingAbortDialog();
-						selectCurrentPageAgain();
-						clearSelectedNode();
-					}
-					public void run() {
-						Object data = event.item.getData();
-						if (data instanceof IPreferenceNode) {
-							if (!isCurrentPageValid()) {
-								handleError();
-							} else if (!showPage((IPreferenceNode) data)) {
-								// Page flipping wasn't successful
-								handleError();
-							} else {
-								// Everything went well
-								currentTreeItem = (TreeItem) event.item;
-							}
+	/**
+	 * Create a new <code>TreeViewer</code>.
+	 * @param parent the parent <code>Composite</code>.
+	 * @return the <code>TreeViewer</code>.
+	 * @since 3.0
+	 */
+	protected TreeViewer createTreeViewer(Composite parent) {
 
-							// Keep focus in tree.  See bugs 2692, 2621, and 6775.
-							tree.setFocus();
-						}
-					}
-				});
+		final TreeViewer viewer = new TreeViewer(parent, SWT.BORDER);
+		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
+
+			private void handleError() {
+				try {
+					// remove the listener temporarily so that the events caused 
+					// by the error handling dont further cause error handling 
+					// to occur.
+					viewer.removePostSelectionChangedListener(this);
+					showPageFlippingAbortDialog();
+					selectCurrentPageAgain();
+					clearSelectedNode();
+				} finally {
+					viewer.addPostSelectionChangedListener(this);
+				}
 			}
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				Object selection = getSingleSelection(event.getSelection());
+				if (selection instanceof IPreferenceNode) {
+					if (!isCurrentPageValid()) {
+						handleError();
+					} else if (!showPage((IPreferenceNode) selection)) {
+						// Page flipping wasn't successful
+						handleError();
+					} else {
+						// Everything went well						
+						lastSuccessfulNode = (IPreferenceNode) selection;
+					}
+					viewer.getControl().setFocus();
+				}
+			}
+
 		});
 
-		eventAdapter.addSelectionListener(new SelectionAdapter() {
+		((Tree) viewer.getControl()).addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(final SelectionEvent event) {
-				TreeItem[] selection = tree.getSelection();
-				if (selection.length > 0)
-					selection[0].setExpanded(!selection[0].getExpanded());
+				ISelection selection = viewer.getSelection();
+				if (selection.isEmpty())
+					return;
+
+				IPreferenceNode singleSelection = getSingleSelection(selection);
+				boolean expanded = viewer.getExpandedState(singleSelection);
+				viewer.setExpandedState(singleSelection, !expanded);
 			}
 		});
 
 		//Register help listener on the tree to use context sensitive help
-		tree.addHelpListener(new HelpListener() {
+		viewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent event) {
 				// call perform help on the current page
 				if (currentPage != null) {
@@ -494,76 +544,25 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		});
 
-		IPreferenceNode node = preferenceManager.getRoot();
-		IPreferenceNode[] subnodes = node.getSubNodes();
-		tree.setFont(parent.getFont());
-		for (int i = 0; i < subnodes.length; i++) {
-			createTreeItemFor(tree, subnodes[i]);
-		}
-	}
-	
-	/**
-	 * Creates a TreeItem structure that reflects to the page hierarchy.
-	 */
-	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-		TreeItem item = null;
-		if (parent instanceof Tree)
-			item = new TreeItem((Tree) parent, SWT.DEFAULT);
-		else
-			item = new TreeItem((TreeItem) parent, SWT.DEFAULT);
-
-		item.setData(node);
-		item.setText(node.getLabelText());
-		Image image = node.getLabelImage();
-		if (image != null) {
-			item.setImage(image);
-		}
-
-		IPreferenceNode[] subnodes = node.getSubNodes();
-		for (int i = 0; i < subnodes.length; i++) {
-			createTreeItemFor(item, subnodes[i]);
-		}
+		return viewer;
 	}
 
 	/**
-	 * Find the TreeItem that has data the same id as the nodeId.
-	 * Search the children recursively.
-	 * @return TreeItem or null if not found.
+	 * Find the <code>IPreferenceNode</code> that has data the same id as the 
+	 * supplied value.
+	 * @param nodeId the id to search for.
+	 * @return <code>IPreferenceNode</code> or <code>null</code> if not found.
 	 */
-	private TreeItem findNodeMatching(TreeItem[] items, String nodeId) {
-
-		for (int i = 0; i < items.length; i++) {
-			Object data = items[i].getData();
-			if (data instanceof IPreferenceNode) {
-				if (((IPreferenceNode) data).getId().equals(nodeId))
-					return items[i];
-				else {
-					TreeItem selectedChild = findNodeMatching(items[i].getItems(), nodeId);
-					if (selectedChild != null)
-						return selectedChild;
-				}
-			}
+	private IPreferenceNode findNodeMatching(String nodeId) {
+		List nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
+		for (Iterator i = nodes.iterator(); i.hasNext();) {
+			IPreferenceNode node = (IPreferenceNode) i.next();
+			if (node.getId().equals(nodeId))
+				return node;
 		}
 		return null;
 	}
 
-	/**
-	 * Get the node that was last selected in the dialog store.
-	 * If there is no match then return the first one,
-	 */
-	private TreeItem getLastSelectedNode(TreeItem[] items) {
-		String lastSelectedNode = getSelectedNodePreference();
-
-		if (lastSelectedNode == null)
-			return items[0];
-
-		TreeItem selectedItem = findNodeMatching(items, lastSelectedNode);
-		if (selectedItem == null)
-			return items[0];
-		else
-			return selectedItem;
-	}
-	
 	/**
 	 * Returns the preference mananger used by this preference dialog.
 	 *
@@ -572,9 +571,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	public PreferenceManager getPreferenceManager() {
 		return preferenceManager;
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on IPreferencePageDialog.
+	 * @see org.eclipse.jface.preference.IPreferencePageContainer#getPreferenceStore()
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		return preferenceStore;
@@ -586,7 +585,25 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected String getSelectedNodePreference() {
 		return lastPreferenceId;
 	}
-	
+
+	/** 
+	 * @param selection the <code>ISelection</code> to examine.
+	 * @return the first element, or null if empty.
+	 */
+	protected IPreferenceNode getSingleSelection(ISelection selection) {
+		if (!selection.isEmpty())
+			return (IPreferenceNode) ((IStructuredSelection) selection).getFirstElement();
+		return null;
+	}
+
+	/** 
+	 * @return the <code>TreeViewer</code> for this dialog.
+	 * @since 3.0
+	 */
+	protected TreeViewer getTreeViewer() {
+		return treeViewer;
+	}
+
 	/**
 	 * Save the values specified in the pages.
 	 * <p>
@@ -619,7 +636,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		}
 	}
-	
+
 	/**
 	 * Notifies that the window's close button was pressed, 
 	 * the close menu was selected, or the ESCAPE key pressed.
@@ -634,7 +651,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// handle the same as pressing cancel
 		cancelPressed();
 	}
-	
+
 	/**
 	 * Notifies of the pressing of the Help button.
 	 * <p>
@@ -647,7 +664,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			currentPage.performHelp();
 		}
 	}
-	
+
 	/**
 	 * Returns whether the current page is valid.
 	 *
@@ -661,7 +678,18 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		else
 			return currentPage.isValid();
 	}
-	
+
+	/**
+	 * @param control the <code>Control</code> to lay out.
+	 * @since 3.0
+	 */
+	protected void layoutTreeAreaControl(Control control) {
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint = 150;
+		gd.verticalSpan = 2;
+		control.setLayoutData(gd);
+	}
+
 	/**
 	 * The preference dialog implementation of this <code>Dialog</code>
 	 * framework method sends <code>performOk</code> to all pages of the 
@@ -688,35 +716,37 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		close();
 	}
-	
+
 	/**
-	 * Selects the page determined by <code>currentTreeItem</code> in
+	 * Selects the page determined by <code>lastSuccessfulNode</code> in
 	 * the page hierarchy.
 	 */
 	void selectCurrentPageAgain() {
-		tree.setSelection(new TreeItem[] { currentTreeItem });
+		if (lastSuccessfulNode == null)
+			return;
+
+		getTreeViewer().setSelection(new StructuredSelection(lastSuccessfulNode));
 		currentPage.setVisible(true);
 	}
-	
+
 	/**
 	 * Selects the saved item in the tree of preference pages.
 	 * If it cannot do this it saves the first one.
 	 */
 	protected void selectSavedItem() {
-		if (tree != null) {
-			int count = tree.getItemCount();
-			if (count > 0) {
-				TreeItem selectedItem = getLastSelectedNode(tree.getItems());
-				Object data = selectedItem.getData();
-				if (data instanceof IPreferenceNode) {
-					tree.setSelection(new TreeItem[] { selectedItem });
-					currentTreeItem = selectedItem;
-					showPage((IPreferenceNode) data);
 
-					// Keep focus in tree.  See bugs 2692, 2621, and 6775.
-					tree.setFocus();
-				}
-			}
+		IPreferenceNode node = findNodeMatching(getSelectedNodePreference());
+
+		if (node == null) {
+			IPreferenceNode[] nodes = preferenceManager.getRoot().getSubNodes();
+			if (nodes.length > 0)
+				node = nodes[0];
+		}
+
+		if (node != null) {
+			getTreeViewer().setSelection(new StructuredSelection(node));
+			// Keep focus in tree.  See bugs 2692, 2621, and 6775.            
+			getTreeViewer().getControl().setFocus();
 		}
 	}
 
@@ -773,7 +803,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		}
 		titleArea.layout(true);
 	}
-	
+
 	/**
 	 * Sets whether a Help button is available for this dialog.
 	 * <p>
@@ -787,7 +817,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	public void setHelpAvailable(boolean b) {
 		isHelpAvailable = b;
 	}
-	
+
 	/**
 	 * Set the message text. If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
@@ -801,7 +831,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	public void setMessage(String newMessage) {
 		setMessage(newMessage, IMessageProvider.NONE);
 	}
-	
+
 	/**
 	 * Sets the message for this dialog with an indication of what type
 	 * of message it is.
@@ -843,7 +873,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		showMessage(newMessage, newImage);
 	}
-	
+
 	/**
 	 * Sets the minimum page size.
 	 *
@@ -855,7 +885,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		minimumPageSize.x = minWidth;
 		minimumPageSize.y = minHeight;
 	}
-	
+
 	/**
 	 * Sets the minimum page size.
 	 *
@@ -867,7 +897,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		minimumPageSize.x = size.x;
 		minimumPageSize.y = size.y;
 	}
-	
+
 	/**
 	 * Sets the preference store for this preference dialog.
 	 *
@@ -885,12 +915,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private void setSelectedNode() {
 
 		String storeValue = null;
-
-		if (tree.getSelectionCount() == 1) {
-			TreeItem currentSelection = tree.getSelection()[0];
-			Object data = currentSelection.getData();
-			if (currentSelection.getData() instanceof IPreferenceNode)
-				storeValue = ((IPreferenceNode) data).getId();
+		IStructuredSelection selection = (IStructuredSelection) getTreeViewer().getSelection();
+		if (selection.size() == 1) {
+			IPreferenceNode node = (IPreferenceNode) selection.getFirstElement();
+			storeValue = node.getId();
 		}
 
 		setSelectedNodePreference(storeValue);
@@ -902,7 +930,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected void setSelectedNodePreference(String pageId) {
 		lastPreferenceId = pageId;
 	}
-	
+
 	/**
 	 * Changes the shell size to the given size, ensuring that
 	 * it is no larger than the display bounds.
@@ -914,7 +942,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		getShell().setSize(width, height);
 		constrainShellSize();
 	}
-	
+
 	/**
 	 * Show the new message
 	 */
@@ -935,7 +963,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			messageLabel.setToolTipText(message);
 		}
 	}
-	
+
 	/**
 	 * Shows the preference page corresponding to the given preference node.
 	 * Does nothing if that page is already current.
@@ -1054,7 +1082,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		return true;
 	}
-	
+
 	/**
 	 * Shows the "Page Flipping abort" dialog.
 	 */
@@ -1062,7 +1090,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		MessageDialog.openError(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
 		JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Updates this dialog's controls to reflect the current page.
 	 */
@@ -1079,16 +1107,16 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		//Saved the selected node in the preferences
 		setSelectedNode();
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on IPreferenceContainer
+	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
 	 */
 	public void updateButtons() {
 		okButton.setEnabled(isCurrentPageValid());
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on IPreferencePageContainer.
+	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
 	 */
 	public void updateMessage() {
 		String pageMessage = currentPage.getMessage();
@@ -1112,11 +1140,21 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		}
 		setErrorMessage(pageErrorMessage);
 	}
-	
+
 	/* (non-Javadoc)
-	 * Method declared on IPreferencePageContainer.
+	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
 		updateMessage();
 	}
+	
+	/**
+	 * Update the tree to use the specified <code>Font</code>.
+	 * 
+	 * @param dialogFont the <code>Font</code> to use.
+	 * @since 3.0
+	 */
+	protected void updateTreeFont(Font dialogFont) {
+		getTreeViewer().getControl().setFont(dialogFont);		
+	}	
 }
