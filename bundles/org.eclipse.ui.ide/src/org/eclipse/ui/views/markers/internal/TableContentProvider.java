@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Provides a threaded content provider for efficiently handling large tables.
@@ -70,7 +70,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	/**
 	 * This job disables redraw on the table
 	 */
-	private Job disableUpdatesJob = new UIJob(TABLE_SYNCHRONIZATION) {
+	private Job disableUpdatesJob = new WorkbenchJob(TABLE_SYNCHRONIZATION) {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (controlExists()) {
 				getViewer().getTable().setRedraw(false);
@@ -83,7 +83,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	/**
 	 * This job re-enables redraw on the table
 	 */
-	private Job enableUpdatesJob = new UIJob(TABLE_SYNCHRONIZATION) {
+	private Job enableUpdatesJob = new WorkbenchJob(TABLE_SYNCHRONIZATION) {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (controlExists()) {
 				getViewer().getTable().setRedraw(true);
@@ -99,7 +99,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	 * on the contents of the pending* sets, above. It is scheduled repeatedly by 
 	 * the OverallUpdateJob, below.
 	 */
-	private class WidgetRefreshJob extends UIJob {
+	private class WidgetRefreshJob extends WorkbenchJob {
 				
 		/**
 		 * Number of items modified in the last update
@@ -209,6 +209,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		//No state to dispose here
 	}
 
 	/* (non-Javadoc)
