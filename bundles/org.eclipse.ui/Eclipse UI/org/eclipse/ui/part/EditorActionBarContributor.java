@@ -4,8 +4,9 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.CoolItemMultiToolBarManager;
 
 /**
  * Standard implementation of <code>IEditorActionBarContributor</code>.
@@ -130,6 +131,13 @@ public void init(IActionBars bars) {
 	contributeToMenu(bars.getMenuManager());
 	contributeToToolBar(bars.getToolBarManager());
 	contributeToStatusLine(bars.getStatusLineManager());
+	// If the editor action bar supports multiple CoolItems, create
+	// those cool items.  Workaround for [Bug 17477].
+	IToolBarManager tBarMgr = bars.getToolBarManager();
+	if (tBarMgr instanceof CoolItemMultiToolBarManager) {
+		((CoolItemMultiToolBarManager)tBarMgr).createCoolBarContributionItems();
+	}
+		
 }
 /**
  * Sets the active editor for the contributor.

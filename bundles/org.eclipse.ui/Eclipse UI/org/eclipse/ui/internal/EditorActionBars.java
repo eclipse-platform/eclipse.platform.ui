@@ -17,7 +17,8 @@ public class EditorActionBars extends SubActionBars
 	private int refCount;
 	private IEditorActionBarContributor editorContributor;
 	private IEditorActionBarContributor extensionContributor;
-	private CoolItemToolBarManager coolItemToolBarMgr;
+	private CoolItemMultiToolBarManager coolItemToolBarMgr;
+
 /**
  * Constructs the EditorActionBars for an editor.  
  */
@@ -90,14 +91,12 @@ public IToolBarManager getToolBarManager() {
 		return super.getToolBarManager();
 	} else if (parentMgr instanceof CoolBarManager) {
 		if (coolItemToolBarMgr == null) {
-			// Create a CoolBar item for this action bar.
+			// Create a CoolItem manager for this action bar.  The CoolBarContributionItem(s)
+			// will be created when the EditorActionBar is initialized.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			coolItemToolBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
-			coolItemToolBarMgr.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
+			coolItemToolBarMgr = new CoolItemMultiToolBarManager(cBarMgr, type, active);
+			coolItemToolBarMgr.setParentMgr(cBarMgr);
 			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, type);
-			cBarMgr.add(coolBarItem);
-			coolItemToolBarMgr.setVisible(active);
 		}
 		return coolItemToolBarMgr;
 	}
