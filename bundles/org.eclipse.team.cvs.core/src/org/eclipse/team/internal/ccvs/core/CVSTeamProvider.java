@@ -557,12 +557,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 						null,
 						Policy.subMonitorFor(monitor, 40));
 					if (status.getCode() != CVSStatus.SERVER_ERROR) {
-						status = Command.RTAG.execute(s,
+						// XXX Could use RTAG here when it works
+						status = Command.CUSTOM_TAG.execute(s,
 							Command.NO_GLOBAL_OPTIONS,
 							Command.NO_LOCAL_OPTIONS,
-							versionTag,
 							branchTag,
 							arguments,
+							null,
 							Policy.subMonitorFor(monitor, 20));
 					}
 				} else {
