@@ -171,11 +171,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			renderingManager.setHandleMemoryBlockAddedEvent(true);
 		}
 		
-		if (mem == null){
-			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
-			return;			
-		}
-		
 		memoryBlocks.add(mem);
 		
 		// add listener for the first memory block added
