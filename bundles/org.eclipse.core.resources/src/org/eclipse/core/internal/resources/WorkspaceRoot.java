@@ -106,7 +106,7 @@ public IProject getProject() {
  */
 public IProject getProject(String name) {
 	Path path = new Path(name);
-	String message = Policy.bind("resources.projectPath");
+	String message = "resources.projectPath";
 	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 	return new Project(Path.ROOT.append(name), workspace);
 }
