@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -2165,36 +2166,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * Deletes the current selection. If the selection has the length 0
 	 * the selection is automatically extended to the right - either by 1
 	 * or by the length of line delimiter if at the end of a line.
+	 * 
+	 * @deprecated use <code>StyledText.invokeAction</code> instead
 	 */
 	protected void deleteText() {
-		
-		Point p= getSelectedRange();
-		if (p.y == 0) {
-			
-			int length= getVisibleDocument().getLength();			
-			if (p.x < length) {
-				IDocument document= getDocument();
-				try {
-					IRegion line= document.getLineInformationOfOffset(p.x);
-					if (p.x == line.getOffset() + line.getLength()) {
-						int lineNumber= document.getLineOfOffset(p.x);
-						String delimiter= document.getLineDelimiter(lineNumber);
-						if (delimiter != null) {
-							if (p.x + delimiter.length() <= length)
-								p.y= delimiter.length();
-						}
-					} else
-						p.y= 1;
-						
-					fTextWidget.replaceTextRange(p.x, p.y, ""); //$NON-NLS-1$
-					
-				} catch (BadLocationException x) {
-					// ignore
-				}
-			}
-			
-		} else if (p.x >= 0)
-			fTextWidget.replaceTextRange(p.x, p.y, "");	 //$NON-NLS-1$
+		fTextWidget.invokeAction(ST.DELETE_NEXT);
 	}
 		
 	/**
