@@ -69,6 +69,11 @@ import org.eclipse.jface.text.source.SourceViewer;
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
+	/**
+	 * Threshold determining whether individual repaints should be sent out.
+	 */
+	private static final int REDRAW_THRESHOLD= 15;
+	
 	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
 	
 	/** Operation constant for the expand operation. */
@@ -770,13 +775,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 			} else {
 				
-				boolean fireRedraw= true;
+				Annotation[] addedAnnotations= event.getAddedAnnotations();
+				Annotation[] changedAnnotation= event.getChangedAnnotations();
+				Annotation[] removedAnnotations= event.getRemovedAnnotations();
 				
-				processDeletions(event, fireRedraw);
-				
+				boolean fireRedraw= (addedAnnotations.length + changedAnnotation.length  + removedAnnotations.length) < REDRAW_THRESHOLD;
+				processDeletions(event, removedAnnotations, fireRedraw);
 				List coverage= new ArrayList();
-				processAdditions(event, fireRedraw, coverage);
-				processModifications(event, fireRedraw, coverage);
+				processChanges(addedAnnotations, fireRedraw, coverage);
+				processChanges(changedAnnotation, fireRedraw, coverage);
 				
 				if (!fireRedraw) {
 					//TODO compute minimal scope for invalidation
@@ -817,11 +824,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		
 		return null;
 	}
-
-	private void processDeletions(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
-		Annotation[] annotations= event.getRemovedAnnotations();
-		for (int i= 0; i < annotations.length; i++) {
-			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
+	
+	/*
+	 * We pass the removed annotation into this method for performance reasons only. Otherwise, they could be fetch from the event. 
+	 */
+	private void processDeletions(AnnotationModelEvent event, Annotation[] removedAnnotations, boolean fireRedraw) throws BadLocationException {
+		for (int i= 0; i < removedAnnotations.length; i++) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) removedAnnotations[i];
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
 				Position[] collapsed= computeCollapsedRanges(expanded);
@@ -855,14 +864,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		} catch (BadLocationException x) {
 		}		
 		return null;
-	}
-	
-	private void processAdditions(AnnotationModelEvent event, boolean fireRedraw, List coverage) throws BadLocationException {
-		processChanges(event.getAddedAnnotations(), fireRedraw, coverage);
-	}
-	
-	private void processModifications(AnnotationModelEvent event, boolean fireRedraw, List coverage) throws BadLocationException {
-		processChanges(event.getChangedAnnotations(), fireRedraw, coverage);
 	}
 	
 	private void processChanges(Annotation[] annotations, boolean fireRedraw, List coverage) throws BadLocationException {
