@@ -323,7 +323,7 @@ private FontData makeFontData(String value) throws MissingResourceException {
 		return StringConverter.asFontData(value.trim());
 	} catch (DataFormatException e) {
 		throw new MissingResourceException("Wrong font data format. Value is: \"" + value + "\"", getClass().getName(), value);//$NON-NLS-2$//$NON-NLS-1$
-	};
+	}
 }
 /**
  * Adds (or replaces) a font to this font registry under the given
