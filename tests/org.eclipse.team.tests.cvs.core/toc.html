@@ -19,6 +19,37 @@ flavours. The current server lineup is:<br>
 Latest Stable: <span style="font-weight: bold;">1.11.16</span><br>
 Latest Development: <span style="font-weight: bold;">1.12.8</span><br>
 CVS NT: <strong>2.0.41a</strong>
+<h2>Testing Tips</h2>
+<ul>
+  <li><font color="#000000">test corner cases</font></li>
+  <li>test setups which we typically don't use during development (for
+example no Plug-in developement)</li>
+  <li><font color="#000000">handling of error situations</font>
+    <ul>
+      <li><font color="#000000">watch log</font></li>
+      <li><font color="#000000">error messages</font></li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>Whenever you have to fill in data in dialogs try to foul the
+dialog by providing incomplete or bogus input</li>
+  <li>Watch for view updating (package explorer, browsing perspective,
+outliner) when source content gets changed</li>
+</ul>
+<ul>
+  <li>change font for text editor and dialogs to different font</li>
+  <li>check that dialogs are rendered correctly
+    <ul>
+      <li>specified dialog font is used</li>
+      <li>no buttons and labels clipped</li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>detached views</li>
+  <li>dialogs pop up on correct monitor</li>
+</ul>
 <h2>Platforms</h2>
 <table border="1" width="821">
   <tbody>
@@ -64,7 +95,7 @@ Platforms</font></b> </div>
 <li><a href="#checkoutwizard00001.html">Check Out Wizard</a>
 <ul>
 </ul>
-<li><a href="#datetags_repoview00001.html">Date Tags</a>
+<li><a href="#datetags_repoview00001.html">Tags</a>
 <ul>
 </ul>
 </ul>
@@ -121,13 +152,10 @@ Platforms</font></b> </div>
 </ul>
 <li><a href="#00010.html">Synchronizing</a>
 <ul>
-<li><a href="#00011.html">Sync View operations and selection</a>
-<ul>
-</ul>
-<li><a href="#00016.html">Sync View modes and working sets</a>
-<ul>
-</ul>
 <li><a href="#00048.html">Performing a Synchronize</a>
+<ul>
+</ul>
+<li><a href="#00011.html">Synchronize View</a>
 <ul>
 </ul>
 <li><a href="#00049.html">Decorations</a>
@@ -136,13 +164,16 @@ Platforms</font></b> </div>
 <li><a href="#commit_stes00001.html">Commit Sets Layout</a>
 <ul>
 </ul>
+<li><a href="#sync00001.html">Scenarios</a>
+<ul>
+</ul>
 </ul>
 <li><a href="#00012.html">Merging</a>
 <ul>
-<li><a href="#00013.html">Sync View operations and selection</a>
+<li><a href="#00022.html">Performing a Merge</a>
 <ul>
 </ul>
-<li><a href="#00022.html">Performing a Merge</a>
+<li><a href="#00013.html">Synchronize View</a>
 <ul>
 </ul>
 </ul>
@@ -262,25 +293,49 @@ Platforms</font></b> </div>
 <a name="repoview_basics00001.html">
 <h2>Basics</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
-<p>You should be able to create a repo connection from the toolbar of the view or via the context menu. Try expanding, searching for branches. Also, 
-try the failures cases from <a href="html/connections00001.html">Connections</a>.
+<h3>Adding and Discarding Locations</h3>
+
+<p>You should be able to create a repository location from the toolbar of the view or via the context menu. 
+Try expanding the location, the HEAD, Versions and Branches categories. Also, 
+try the failures cases from <a href="connections00001.html">Connections</a>.
 Things to try:
 <ul>
 <li>Create repo locations for different connection types: ext, pserver, extssh.
-<li>Expanding project nodes should process the children in the background and the view should remain responsive while this is happening. When children nodes are added to the 
+<li>Expanding project nodes should process the children in the background and the 
+view should remain responsive while this is happening. When children nodes are added to the 
 tree the tree shouldn't be too jumpy.
+<li>Discard a location and ensure it is removed. Also ensure that discarding is not permitted when 
+projects in the local workspace are shared with the location.
 </ul>
 </p>
+
+<h3>Repository Location Properties</h3>
+
+View a location's properties page and ensure that information is correct and can be changed. 
+Ensure that the sharing information for any projects mapped to the location are also changed.
+
+<h3>Modules</h3>
+
+<h3>Working with modules</h3>
+
+<ul>
+  <li>Expanding HEAD or the Versions category should display the modules defined in the CVSROOT/modules file</li>
+  <li>Check Out and Checkout As should be availabel on modules and should work as expected</li>
+  <li>Performing a "Configure Branches and Versions" on the module allows the user to set the autorefresh file and add some tags.
+  Ensure that the module now appears properly in association with those tags.</li>
+</ol>
 
 
 
 <a name="00007.html">
 <h2>Check Out - prompts</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
-<ul>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+
+<h3>Scenario 1</h3>
+<ol>
   <li>Select a project in HEAD</li>
   <li>Perform a Checkout</li>
   <li>Ensure project was checked out properly</li>
@@ -288,23 +343,116 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
   <li>Use the same name and specify a custom location</li>
   <li>Ensure that the user is prompted to overwrite</li>
   <li>Ensure OK and Cancel have proper behavior</li>
-</ul>
+</ol>
+
+<h3>Scenario 2</h3>
+<ol>
+  <li>Select a project in HEAD</li>
+  <li>Perform a Checkout</li>
+  <li>Ensure project was checked out properly</li>
+  <li>Delete the project but leave the contents on disk</li>
+  <li>Perform a Checkout of the same project again</li>
+  <li>Ensure that the user is prompted to overwrite</li>
+  <li>Ensure OK and Cancel have proper behavior</li>
+</ol>
+
+<h3>Scenario 3</h3>
+<ol>
+  <li>Select a project in HEAD</li>
+  <li>Perform a Checkout As</li>
+  <li>Use the same name and specify a custom location</li>
+  <li>Ensure project was checked out properly</li>
+  <li>Delete the project but leave the contents on disk</li>
+  <li>Perform a Checkout As of the same project to the same location as in step 3</li>
+  <li>Ensure that the user is prompted to overwrite</li>
+  <li>Ensure OK and Cancel have proper behavior</li>
+</ol>
+
+<h3>Scenario 4</h3>
+<ol>
+  <li>Select a project in HEAD</li>
+  <li>Perform a Checkout As</li>
+  <li>Use the same name and specify a custom location</li>
+  <li>Ensure project was checked out properly</li>
+  <li>Delete the project but leave the contents on disk</li>
+  <li>Perform a Checkout on the project</li>
+  <li>Ensure project was checked out properly</li>
+  <li>Perform a Checkout As of the same project to the same location as in step 3</li>
+  <li>Ensure that the user is prompted twice: once to overwrite project and once to overwrite custom location</li>
+  <li>Ensure OK and Cancel have proper behavior</li>
+</ol>
+
 
 <a name="checkoutwizard00001.html">
 
 <h2>Checkout Wizard</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p><body>
-<p>The checkout wizard should be available from the following parts of the workbench: import, new project, empty workspace CVS synchronize action, toolbar in CVS perspective.</p>
-<h3>Sniff</h3>
-<p>You should be able to create a new repo location and checkout a project entirely from the wizard.</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p><body>
+
+<p>The checkout wizard should be available from the following parts of the workbench: 
+import, new project, empty workspace CVS synchronize action, toolbar in CVS perspective.
+The checkout wiard is also available from the context menu of the repositories view
+as the Checkout As menu item.</p>
+
+<p>The following variants should be tested:
+<ul>
+<li>Create a new repository location and checkout a project entirely from the wizard.
+<li>Check out a tag
+<li>Check out a project that does not contain a .project file. This should result in
+a second wizard that allows projct configuration (e.g. Java project).
+</ul>
+
+<h3>Repositories View Checkout Variants</h3>
+These test require an existing repository which contains projects, at least one of which 
+does not contain a .project file.
+<ol>
+  <li>Perform "Check Out" on a single project. Ensure that repeating results in overwrite prompt.</li>
+  <li>Perform "Check Out" on multiple projects.</li>
+  <li>Perform "Check Out As..." on a single project (that contains a .project file) and enter custom name and/or custom location.</li>
+  <li>Perform "Check Out As..." on a single remote project that does not have a .project file and
+  ensure that the user is prompted for the project type to create.</li>
+  <li>Perform "Check Out As..." on multipe projects and enter a custom parent location.</li>
+  <li>Perform "Check Out As..." and specify a tag.</li>
+</ol>
 
 <a name="datetags_repoview00001.html">
-<h2>Date Tags</h2>
-<p>Since: <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p><body>
+<h2>Tags</h2>
+<p>Since: 3.0<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p><body>
+
+<h3>Refresh Branches and Versions</h3>
+<ol>
+  <li>Select a repository location and perform "Refresh Branches and Versions...".
+  <li>Select one or more projects that contain a .project file and have been tagged with branch and version tags and click finish.</li>
+  <li>Expand the respository entry to view ...
+  <ul>
+  <li>projects in HEAD,</li>
+  <li>branches and projects in BRANCHES,</li>
+  <li>projects and versions in VERSIONS.</li>
+  </ul>
+</ol>
+
+<h3>Configure Branches and Versions</h3>
+<ol>
+  <li>Select a project in the repositories view and perform "Configure Branches and Versions...".
+  <li>Select some branch and version tags to be remembered.</li>
+  <li>Expand the respository entry to view ...
+  <ul>
+  <li>projects in HEAD,</li>
+  <li>branches and projects in BRANCHES,</li>
+  <li>projects and versions in VERSIONS.</li>
+  </ul>
+</ol>
 
 <h3>Date Tags</h3>
+The ability to create Date tags should be available from the following locations:
+
+<ul>
+<li>Repositories view</li>
+<li>Configure Branches and Versions dialog
+<li>Tag selection dialogs (Compare with and Replace with Branch or Version)
+</ul>
+
 
 
 <h1>Sharing</h1>
@@ -326,20 +474,21 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <a name="sharingbasics00001.html">
 <h2>Basics</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 <p>Single select a project and select share.</p>
 <ul>
 <li>Should only be available if the project is not shared.
 <li>Menu item should be available from the Project top level menu.
 <li>Wizard should allow you to cancel at any time and un-map the project. Note that some resources may of been committed via the wizard that will remain committed.
+<li>Should be able to share as a repository root {".") or a folder at any level (i.e. a folder name with one or more paths).
 </ul>
 
 
 <a name="00028.html">
 <h2>Reconnecting an existing project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <p>
 The following scenario represents how a user would reconnect a project that does
 not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
@@ -388,7 +537,7 @@ the remote may have been modified since then.
 <a name="00050.html">
 <h2>Sharing a new project</h2>
 <p>Since: 3.0 M8<br>
-Last Modified: $Date: 2004/03/18 21:04:58 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Scenario 1: Existing location using project name</h3>
 <p>Perform the following steps:</p>
@@ -420,7 +569,7 @@ Last Modified: $Date: 2004/03/18 21:04:58 $</p>
 <a name="project_sets00001.html">
 <h2>Project Sets</h2>
 <p>Since: 2.1 <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ul>
 <li>Create a project set from a workspace with multiple projects shared with CVS. The shared projects in the workspace should include projects shared with the following: branch, version, date, and HEAD.
@@ -434,7 +583,7 @@ Last Modified: $Date: 2004/05/31 20:01:23 $</p>
 <a name="00045.html">
 <h2>With latest</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/03/09 20:51:17 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Ensure that replace srubs the local resources leaving to outgoing changes. And verify the following:
 <ul>
@@ -445,7 +594,7 @@ Last Modified: $Date: 2004/03/09 20:51:17 $</p>
 <a name="00046.html">
 <h2>With another branch of version</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/03/09 20:51:17 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Check the following for all cases of replace:
 <ul>
@@ -458,7 +607,7 @@ Last Modified: $Date: 2004/03/09 20:51:17 $</p>
 <a name="00047.html">
 <h2>With file revision</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/03/15 22:00:31 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ul>
 <li>If the file isn't managed the action should no appear.
@@ -474,7 +623,7 @@ Last Modified: $Date: 2004/03/15 22:00:31 $</p>
 <a name="update_command00001.html">
 <h2>Updating</h2>
 <p>Since: 2.0 <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>You can run an update and open the console to see the files that are being updated.</p>
 <p>You can run the update and switch to another branch, this should keep your outgoing changes and update all other non-changed files.</p>
@@ -484,7 +633,7 @@ Last Modified: $Date: 2004/05/31 14:22:48 $</p>
 <a name="00009.html">
 <h2>Remote resources</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/03/15 22:00:31 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <h4>Compare With... in Repositories view </h4>
 <p>Perform the following steps:</p>
 <ol>
@@ -518,7 +667,7 @@ Last Modified: $Date: 2004/03/15 22:00:31 $</p>
 <a name="00039.html">
 <h2>Compare with another branch or version</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/15 22:00:31 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <p>
 You should be able to select a project/folder/resource and compare againts
 another branch or version. Multi-select should work across projects in 
@@ -555,16 +704,16 @@ be made to the following cases:
 <a name="00040.html">
 <h2>Reverting deleted resources</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/09 20:51:17 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
-You should be able to restore a deleted revision from the CVS server. 
+You should be able to restore a deleted revision from the CVS server Team>Restore from Repository
 
 
 <a name="quickdiff00001.html">
 
 <h2>Quick Diff</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Enable CVS quick diff for text and java files via the Workbench > Editors > QuickDiff preference. Then try the following
 scenarios.</p>
@@ -589,65 +738,10 @@ annotations are removed and the file is clean.
 
 
 <h1>Synchronizing</h1>
-<a name="00011.html">
-<h2>Sync View operations and selection</h2>
-<p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
-<p>Ensure Commit and Update buttons:</p>
-<ul>
-  <li>operate on all applicable visible changes</li>
-  <li>exclude filtered changes</li>
-  <li>exclude conflicts</li>
-</ul>
-<p>Ensure Update menu action:</p>
-<ul>
-  <li>is enabled when selection contains incoming or conflicting changes</li>
-  <li>operates only on selected changes</li>
-  <li>silently handles mergable conflicts</li>
-  <li>will prompt if conflicts are no mergable</li>
-</ul>
-<p>Ensure Commit menu action</p>
-<ul>
-  <li>is enable only when selection contains outgoing changes</li>
-  <li>prompts form unadded resources</li>
-  <li>operates only on selected changes</li>
-</ul>
-<p>Ensure Override and Commit and Override and Update</p>
-<ul>
-  <li>are only enabled for conflicts or changes in the opposite direction</li>
-  <li>operates only on selected changes</li>
-</ul>
-<p>Ensure Refresh button refreshes all projects regardless of mode, selection 
-  or working set.</p>
-<p>Ensure Refresh menu action refreshes only the selection</p>
-<h4>Modes and Working Sets</h4>
-<p>Ensure that choosing modes and working sets </p>
-<ul>
-  <li>result in proper filtering</li>
-  <li>updates status bar properly</li>
-</ul>
-<p>All actions on large sets (Mark as Merged as well)</p>
-
-
-
-<a name="00016.html">
-<h2>Sync View modes and working sets</h2>
-
-<p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
-Ensure that choosing modes and working sets 
-<ul>
-<li>result in proper filtering 
-<li>updates status bar properly 
-<li>All actions on large sets (Mark as Merged as well)
-</ul>
-
-
 <a name="00048.html">
 <h2>Performing a Synchronize</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/25 16:39:41 $</p>
-
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 <p>
 Synchronizing means to compare your local workspace contents with the contents 
@@ -695,10 +789,201 @@ Assumption, the sync view may or may not be open when the synchronize is perform
 each case. One for Team > Sync and another for refresh from the sync view.
 
 
+<a name="00011.html">
+<h2>Synchronize View</h2>
+<p>Since: 3.0 M5<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+
+<h3>Synchronize View Modes</h3>
+
+Ensure that choosing modes 
+<ul>
+<li>result in proper filtering 
+<li>updates status bar properly 
+</ul>
+
+<h3>Synchronize View Operations</h3>
+<p>Ensure Commit and Update buttons:</p>
+<ul>
+  <li>operate on all applicable visible changes</li>
+  <li>exclude filtered changes</li>
+  <li>exclude conflicts</li>
+</ul>
+<p>Ensure Update menu action:</p>
+<ul>
+  <li>is enabled when selection contains incoming or conflicting changes</li>
+  <li>operates only on selected changes</li>
+  <li>silently handles mergable conflicts</li>
+  <li>will prompt if conflicts are no mergable</li>
+</ul>
+<p>Ensure Commit menu action</p>
+<ul>
+  <li>is enable only when selection contains outgoing changes</li>
+  <li>prompts form unadded resources</li>
+  <li>operates only on selected changes</li>
+</ul>
+<p>Ensure Override and Commit and Override and Update</p>
+<ul>
+  <li>are only enabled for conflicts or changes in the opposite direction</li>
+  <li>operates only on selected changes</li>
+</ul>
+<p>Ensure Refresh button refreshes all projects regardless of mode, selection 
+  or working set.</p>
+<p>Ensure Refresh menu action refreshes only the selection</p>
+<h4>Modes and Working Sets</h4>
+<p>Ensure that choosing modes and working sets </p>
+<ul>
+  <li>result in proper filtering</li>
+  <li>updates status bar properly</li>
+</ul>
+<p>All actions on large sets (Mark as Merged as well)</p>
+
+The following table can be used to determine what operations are appropriate and what result to expect.
+
+<table height="124" border="1" width="99%">
+  <tbody>
+    <tr>
+      <td width="25%"><b>Change Type</b></td>
+      <td width="25%"><b>Action</b></td>
+      <td width="50%"><b>Result</b></td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Change</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Remote contents become local. Try with both Text and
+ Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Change</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Addition</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Remote contents become local. Try with both Text and
+ Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Addition</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits deletion to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Deletion</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Local file is deleted.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Deletion</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Change</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. Remote contents become local. Try
+ with both Text and Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Add to Version Control</td>
+      <td width="50%">Adds the file to version control. The icon should change
+ in the sync view, and Commit should now be enabled.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Add to .cvsignore</td>
+      <td width="50%">Adds the file to .cvsignore. The file should disappear
+ from the sync view. The .cvsignore file should appear (if it wasn't visible
+ already). The file should not appear in subsequent syncs.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Commit is only enabled on an outgoing addition if it
+ has first been added to version control. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. Local file is deleted.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Deletion</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ deletion to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Deletion</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. File is re-created, remote contents
+ become local.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Change</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ local file to server. Applies to both auto-mergeable and non-mergeable conflicts.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Auto-mergeable Conflicting File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Auto-mergeable conflicts have a two-way red/green arrow.
+ Dialog prompts user to either auto-merge or replace. If user chooses auto-merge,
+ then remote changes are merged in with local changes. File should still
+be  dirty, local changes should still be present, CVS markup should not be
+present,  and no .# files should have been created. If user chooses replace,
+then local  changes are discarded and remote contents replace local. No .#
+files created,  no CVS markup, and the file is not dirty as a result. If
+the user chooses  cancel nothing happens.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Non-mergeable Conflicting File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Dialog prompts user to replace local changes. If user
+ cancels nothing happens. If user chooses OK, then local changes are discarded
+ and remote contents replace local. No .# files created, no CVS markup, and
+ the file is not dirty as a result.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Add to Version Control</td>
+      <td width="50%">Adds the file to version control. The icon should change
+ in the sync view, and Override and Commit should now be enabled.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Override and Commit is only enabled on an outgoing addition
+if it has first been added to version control. Prompt to warn of conflicting
+changes. If OK, prompt for release comment. Cancel aborts either dialog.
+OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Remote contents become local.</td>
+    </tr>
+  </tbody>
+</table>
+
+
 <a name="00049.html">
 <h2>Decorations</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/17 14:30:32 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 There are many standard decorations in the sync view. Most significant are the propagated flags.
 
@@ -722,59 +1007,89 @@ from the sync view the branch name should appear.
 
 <a name="commit_stes00001.html">
 <h2>Commit Sets Layout</h2>
-<p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+<p>Since: 3.0 M9<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
+
+
+<a name="sync00001.html">
+<h2>Scenarios</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+
+<h3>Making Manual Changes</h3>
+<p>Create a conflicting file change. Manually edit the left source pane in
+ the sync view. Hit "Save" on the popup menu. The file should remain a Conflict. Choose
+ Mark as Merged in the popup menu of the tree. The file should change to
+an  outgoing change. Commit the outgoing change.</p>
+<h3>Merging Conflicts</h3>
+<p>Try Override and Update with different combinations of Auto-Mergeable
+and Non-Mergeable conflicts in the selection. If all conflicts are Non-Mergeable,
+ then the only choice is to replace with remote or cancel. If one or more
+conflicts are Auto-Mergeable, the choices are (a) Auto-Merge any applicable
+files, and replace the rest with remote, (b) Replace all files with remote
+or (c) Cancel.</p>
+<h3>Removing from View</h3>
+<p>Choose Remove from View. Selected nodes should disappear. Refresh the
+view. The nodes should reappear.</p>
+
+<h3>Working with Branches</h3>
+<p>Try any and all of the above, but use a branch instead of HEAD. Behaviour
+ should be identical. The sync view decorator should show you the name of
+the branch.</p>
+<h3>Using Mixed Tags</h3>
+<p>Using Team-&gt;Branch, Replace With-&gt;Branch or Version, and Team-&gt;Tag
+ as Version, you can create a project which has different tags mixed into
+it. For example, one folder may be shared as V2_0, a single file may be attached
+ to the branch NEW_FEATURE_BRANCH, and the root of the project may be attached
+ to HEAD. We need to test usage of these projects in the sync view. For example,
+ if developer 1 has project P shared with HEAD, and folder P/F is shared
+with  branch B, have developer 2 release a change to folder F in HEAD, and
+have  developer 1 perform a sync. In this case developer 1 should not see
+the incoming  change.</p>
 
 
 <h1>Merging</h1>
-<a name="00013.html">
-<h2>Sync View operations and selection</h2>
-<p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
-<ul>
-<li>Same scenarios as <a href="html/00011.html">Sync View operations and selection</a> except you can't commit.
-<li>Test mark as merged (ensure that it can work on large data sets
-</ul>
-
 <a name="00022.html">
 <h2>Performing a Merge</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/25 16:39:41 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
-<h3>Scenario 1: Merge in Dialog</h3>
-<ol>
-<li>Select a project and perform a Team>Merge.
-<li>Choose the start and end tags in the wizard and finish.
-<li>The merge will run in the background.
-<li>Upon completion, the user is presented with a dialog of the incoming changes.
-<li>Update the incoming changes and ensure they worked.
-</ol>
 
-<p>After updating, reperform the same merge. A no-changes dialog should be 
-presented since the local contents match the end-poimt.
+<h3>Scenario 1: One Time Merge</h3>
 
-<h3>Scenario 1: Merge in Synchronize view</h3>
+<p>
+Using Team>Merge, merge the changes from a branch into HEAD. Once completed, in the synchronize view, 
+update the incoming changes, resolve any conflicts and ensure they worked, After updating, 
+redo the same merge. A no-changes dialog should be 
+presented since the local contents match the end-point.
 
-<ol>
-<li>Perform the previous scenario except for the last step
-<li>Choose to remember the merge 
-<li>Ensure that the merge appears in the Synchronize View
-<li>Exit and restart eclipse
-<li>The merge should still exist in the Synchronize View
-<li>Update to the incoming changes.
-<li>Optionally release new changes to the merge endpoint and refresh the merge. 
-The new updates should appear.
-<li>Delete the merge from the synchronize view using the remove toolbar button
-<li>The merge subscriber should be removed from the view.
-</ol>
+<h3>Scenario 2: Ongoing Merge</h3>
 
+After performing a one-time merge, pin the entry in the synchronize view. 
+Release changes to the end point (branch) and synchronize the merge.
+The new changes should appear in the synchronize view. Update to these
+changes as appropriate.
+ 
+<h3>Removing a Merge</h3>
+
+<p>Delete the merge from the synchronize view using the remove toolbar button. The merge subscriber should be removed from the view.
+
+
+<a name="00013.html">
+<h2>Synchronize View</h2>
+<p>Since: 3.0 M5<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+<ul>
+<li>Same scenarios as <a href="00011.html">CVS Synchronize View</a> except you can't commit.
+<li>Test mark as merged (ensure that it can work on large data sets)
+</ul>
 
 <h1>Patching</h1>
 <a name="00030.html">
 <h2>Importing a zip over a shared project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>This scenario captures one means of patching. It assumes that a zip file contains 
 a previous version of a project that has been modified in some way and added to
@@ -801,7 +1116,7 @@ a zip archive (without CVS directories).</p>
 <a name="00018.html">
 <h2>Editor Linking</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ol>
   <li>Open the Resource History view and enable editor linking</li>
@@ -818,7 +1133,7 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <a name="00024.html">
 <h2>Annotate</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Annotate action should be available from</h4>
 <ul>
@@ -857,7 +1172,7 @@ of the currently selected change in the annotate view.
 <a name="00021.html">
 <h2>Close and disconnect</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Background refresh and disconnect</h4>
 <ol>
@@ -904,7 +1219,7 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <a name="00019.html">
 <h2>Crash Recovery</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Scenario 1</p>
 <ol>
@@ -932,7 +1247,7 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <a name="00025.html">
 <h2>Synchronize View Settings</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Saved between sessions</h4>
 <p>The following GUI preferences in the Synchronize View are persisted between workbench 
@@ -949,7 +1264,7 @@ should be maintained for each participant. The persisted settings are:</p>
 <a name="00029a.html">
 <h2>Server version compatibiliity</h2>
 <p>Since: M6<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This test is to ensure that the ssh2 connection method properly delagates to ssh1
 when the server only supports ssh1. 
@@ -958,7 +1273,7 @@ when the server only supports ssh1.
 <a name="00030a.html">
 <h2>Proxies</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 Using HTTP and SOCKS5 proxies.
 
@@ -966,7 +1281,7 @@ Using HTTP and SOCKS5 proxies.
 <a name="00031.html">
 <h2>Key Generation</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/02/10 17:06:35 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 You should be able to generate private/public keys in the SSH2 preference
 page. Here are some scenarios for testing:
@@ -979,7 +1294,7 @@ page. Here are some scenarios for testing:
 <a name="00032.html">
 <h2>General use</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This tests the prompting and usage of the SSH2 connection method:
 <ul>
@@ -993,32 +1308,38 @@ your known_hosts file.
 <a name="00034.html">
 <h2>Show Annotation Action</h2>
 <p>Since: 3.0 M3<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
-Answer comes here.
+<p>Annotate a non-managed file, binary file, plugin.xml file... Be creative.</p>
+<p>Ensure that the annotate view, editor, and history view stay synched.</p>
 
 
 <h1>Label Decorations</h1>
 <a name="00036.html">
 <h2>Enablement at startup</h2>
-<p>Since: <br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+<p>Since: 3.0 M7<br>
+Last Modified: $Date: 2004/06/02 16:07:33 $</p>
 
-Answer comes here.
-
+<p>The CVS decorators should not be enabled at start-up. Verify the label decorator preference page.</p>
+<p>When sharing or checking out a project, the decorators will be enabled automatically.</p>
+<p>Disabling after they have been enabled and restarting. The decorators should be disabled. Checkout should not enable them again.</p>
+<p>Enable the decorations again, then disconnecting a project should clear the decorators on the project.</p>
 
 <a name="00037.html">
 <h2>Customizations</h2>
-<p>Since: <br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+<p>Since: 2.0 <br>
+Last Modified: $Date: 2004/06/02 16:07:33 $</p>
 
-Answer comes here.
+<p>You should be able to customize the label decorations via the preference page. The customizations will
+take effect when apply is pressed. Resetting the defaults should work.
+
+</p>
 
 
 <a name="00038.html">
 <h2>Decorations in the Synchronize pages</h2>
-<p>Since: M8<br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+<p>Since: 3.0 M8<br>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 <p>
 CVS text label decorations should be visible in the CVS synchronize participants. We don't bother to show
 the images because the sync view already shows the state images. The labels should also update if the
@@ -1027,31 +1348,62 @@ the images because the sync view already shows the state images. The labels shou
 <p>
 Also, in the CVS synchronize view the revisions shown are the <local> - <remote>. So ensure that the correct
 remote is shown.</p>
-
-
+<p>
+Ensure that when the local tag changes the decorators in the sync view and navigator get updated.</p>
+<p>Ensure that there is no flicker in packages view when cvs decorator updated on commit, update.</p>
 
 <h1>Watch/Edit</h1>
 <a name="watch_edit_basic00001.html">
 <h2>Basic scenarios</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/02 16:07:33 $</p>
 
-<h3>Basic scenarios</h3>
+<p>To setup, goto the CVS preference page and enable watch edit for all projects checked out from CVS. And then set the prompt option to always prompt.</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+<li>Open a file and edit it. You should be prompted to edit it. Say yes. There should be a brief pause, then you can edit the file.
+<li>Open another file and start editing it. You should be prompted to edit it. Say no. The file will remain read-only and you won't be allowed to edit it.
+<li>Open a file and edit it. Say yes to the prompt. commit the file and edit again. You should be prompted a second time.
+<li>Open a file and edit it. Say yes to the prompt. Replace the file from the repository and edit again. You should be prompted to edit again.
+<li>Open a file and edit it. Un-plug your network connection. Say yes to the prompt to send a notification. There should be a pause, then the file should be editable.
+<li>Checkout another copy of the project. Edit a file, then try to edit the same file in the another project copy. You should be notified that the file is currently being edited by someone else.
+</ol>
+
+<p>Saving files - setup is the same as previous</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+<li>Open a file and edit it. You should be prompted to edit it. Say yes. There should be a brief pause, then you can edit the file.
+<li>Edit the file but don't save it. 
+<li>Edit the file in a system editor outside of Eclipse, then in the resource navigator, commit the file. The resource's decorator will change. Ignore all the prompts
+about saving the un-saved file.
+<li>Return to the unsaved editor and try typing. You should be prompted to call validate edit again.
+</ol>
+
+<p>validateEdit fails</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+<li>Disconnect from network so that the validateEdit would fail.
+<li>Open a file and edit it. You should be prompted to edit it. Say yes. There should be a pause then the error should be reported in the
+editor pane showing the exception that occured.
+</ol>
+
+<p>Refactoring</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+</ol>
 
 
 <a name="watch_edit_editorsview00001.html">
 <h2>Editors View</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
-
-<h3>Editors View</h3>
-
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
+<p>Test that you can properly show the editors on a file.</p>
 
 <h1>Performance</h1>
 <a name="perf00002.html">
 <h2>Timings</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This section contains various timing results and comparisons.
 
@@ -1167,7 +1519,7 @@ in 393 incoming changes.
 <a name="perf00004.html">
 <h2>Resource Data Structures</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This section contains results on memory footprint of CVS in the Core resource
 plugin data structures. More specifically, CVS uses the session and persistant property
@@ -1261,7 +1613,7 @@ should be in the synchronizer.
 <a name="perf00005.html">
 <h2>Looking For Leaks</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Removing synchronize view entries</h3>
 
@@ -1294,7 +1646,7 @@ of ISynchronizeView remain.
 <a name="perf00006.html">
 <h2>Team Data Structures</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 The Team component provides several data strucutures that can be used to 
 cache resource synchronization state and resource variants for improved 
@@ -1323,7 +1675,7 @@ size of these caches as well.
 <a name="connections00001.html">
 <h2>Connections</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 
 <p>Test that authentication, connection errors result in appropriate error messages and that these don't pollute the log file or console. to setup for these tests
 ensure there are a couple of shared projects in your workspace.</p>
@@ -1333,17 +1685,20 @@ ensure there are a couple of shared projects in your workspace.</p>
 <li>Disconnect from the network.
 <li>Open a file. The CVS quick diff will fail and an error should be in the log.
 <li>Synchronize all the shared projects. One error explaining the failures should be returned.
-<li>Change the connection properties of one of the projects to point to an 
-<li>Expand the location in the CVS repositories view.
+<li>Change the connection properties of one of the projects to point to an non-existing location. Then synchronize again, the error message should indicate that some succeeded and
+others failed. But the user should no that the operation did complete and skipped the failed projects.
+<li>Expand the invalid  location in the CVS repositories view. An appropriate error should be shown.
 </ul>
 
 
 <a name="auth_problems00001.html">
 <h2>Authentication Problems</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 
-<p>Test the error reporting when authentication fails due to either, invalid username, password, hostname. This should be
+<p>
+
+Test the error reporting when authentication fails due to either, invalid username, password, hostname. This should be
 tried with each CVS connection method: pserver, extssh, ext.
 
 </p>
@@ -1353,7 +1708,7 @@ tried with each CVS connection method: pserver, extssh, ext.
 <a name="00042.html">
 <h2>CVS Console</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 There are a couple of preferences that controls the behavior and presentation of the console. These are:
 <ul>
@@ -1364,7 +1719,7 @@ There are a couple of preferences that controls the behavior and presentation of
 <a name="encoding00001.html">
 <h2>Encoding Support</h2>
 <p>Since: 3.0 M9<br>
-Last Modified: $Date: 2004/05/31 20:05:52 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 Answer comes here.
 
@@ -1372,7 +1727,7 @@ Answer comes here.
 <a name="passwords00001.html">
 <h2>Password Management</h2>
 <p>Since: 3.0 M9<br>
-Last Modified: $Date: 2004/05/31 20:05:52 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Password Management</h3>
 
@@ -1380,7 +1735,7 @@ Last Modified: $Date: 2004/05/31 20:05:52 $</p>
 <a name="ext_connection_method00001.html">
 <h2>EXT</h2>
 <p>Since: 2.0 <br>
-Last Modified: $Date: 2004/05/31 20:05:52 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Ext connection method</h3>
 
