@@ -49,7 +49,7 @@ public class SyncAction extends WorkspaceAction {
 				participant = new WorkspaceSynchronizeParticipant(new ResourceScope(resources));
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			}
-			participant.refresh(resources, Policy.bind("Participant.synchronizing"), Policy.bind("Participant.synchronizingDetail", participant.getName()), getTargetPart().getSite()); //$NON-NLS-1$ //$NON-NLS-2$
+			participant.refresh(resources, getTargetPart().getSite());
 		}
 	}
 	

@@ -138,11 +138,15 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
 	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
 	 * running operation that will update the participants sync info sets with new changes detected on the
-	 * server.
+	 * server. Eother or both of the <code>shortTaskName</code> and <code>longTaskName</code> can be <code>null</code>
+	 * in whihc case, the default values for these are returned by the methods <code>getShortTaskName()</code> and
+	 * <code>getLongTaskName(IResource[])</code> will be used.
 	 * 
 	 * @param resources the resources to be refreshed.
-	 * @param shortTaskName the taskName of the background job that will run the synchronize.
-	 * @param longTaskName the taskName of the progress monitor running the synchronize
+	 * @param shortTaskName the taskName of the background job that will run the synchronize or <code>null</code>
+	 * if the default job name is desired.
+	 * @param longTaskName the taskName of the progress monitor running the synchronize or <code>null</code>
+	 * if the default job name is desired.
 	 * @param site the workbench site the synchronize is running from. This can be used to notify the site
 	 * that a job is running.
 	 */
@@ -150,8 +154,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
 		internalRefresh(resources, shortTaskName, longTaskName, site, listener);
 	}
-	
-	/**
+
+    /**
 	 * Refresh a participant. The returned status describes the result of the refresh.
 	 */
 	public final IStatus refreshNow(IResource[] resources, String taskName, IProgressMonitor monitor) {
@@ -177,6 +181,17 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	public String getName() {
 		String name = super.getName();
 		return Policy.bind("SubscriberParticipant.namePattern", name, scope.getName()); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the name of the participant as specified in the plugin manifest file. 
+	 * This method is provided to give access to this name since it is masked by
+	 * the <code>getName()</code> method defined in this class.
+	 * @return the name of the participant as specified in the plugin manifest file
+	 * @since 3.1
+	 */
+	protected final String getShortName() {
+	    return super.getName();
 	}
 	
 	/**
@@ -315,7 +330,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void run(IWorkbenchPart part) {
-		refresh(getResources(), getShortTaskName(), getLongTaskName(), part != null ? part.getSite() : null);
+		refresh(getResources(), null, null, part != null ? part.getSite() : null);
 	}
 	
 	/**
@@ -330,17 +345,46 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	/**
-	 * Returns the short task name (e.g. no more than 25 characters) to describe the behavior of the
+	 * Returns the long task name to describe the behavior of the
 	 * refresh operation to the user. This is typically shown in the status line when this subcriber is refreshed
-	 * in the backgroud. When refreshed in the foreground, only the long task name is shown.
+	 * in the background.
 	 * 
-	 * @return the short task name to show in the status line.
+	 * @return the long task name
+	 * @deprecated use <code>getLongTaskName(IResource[]) instead</code>
 	 */
 	protected String getLongTaskName() {
 		return Policy.bind("Participant.synchronizing"); //$NON-NLS-1$
 	}
-
+	
 	/**
+	 * Returns the long task name to describe the behavior of the
+	 * refresh operation to the user. This is typically shown in the status line when this subcriber is refreshed
+	 * in the backgroud.
+     * @param resources
+     * @return the long task name
+     */
+    protected String getLongTaskName(IResource[] resources) {
+        int resourceCount = 0;
+        if (getResources().length == resources.length) {
+            // Assume that the resources are the same as the roots.
+            // If we are wrong, the message may no mention the specific resources which is OK
+            ISynchronizeScope scope = getScope();
+	        if (scope instanceof ResourceScope) {
+	            resourceCount = scope.getRoots().length;
+	        }
+        } else {
+            resourceCount = resources.length;
+        }
+        if (resourceCount == 1) {
+            return Policy.bind("Participant.synchronizingMoreDetails", getShortName(), resources[0].getFullPath().toString()); //$NON-NLS-1$
+        } else if (resourceCount > 1) {
+            return Policy.bind("Participant.synchronizingResources", getShortName(), Integer.toString(resourceCount)); //$NON-NLS-1$
+        }
+        // A resource count of zero means that it is a non-resource scope so we can print the scope name
+        return Policy.bind("Participant.synchronizingDetails", getName()); //$NON-NLS-1$
+    }
+
+    /**
 	 * This method is invoked before the given configuration is used to
 	 * create the page (see <code>createPage(ISynchronizePageConfiguration)</code>).
 	 * The configuration would have been initialized by 
@@ -404,6 +448,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @param listener the listener to handle the refresh workflow
 	 */
 	private void internalRefresh(IResource[] resources, String jobName, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
+		if (jobName == null)
+		    jobName = getShortTaskName();
+		if (taskName == null)
+		    taskName = getLongTaskName(resources);
 		Platform.getJobManager().cancel(this);
 		RefreshSubscriberJob job = new RefreshSubscriberJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);

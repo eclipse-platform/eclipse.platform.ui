@@ -75,7 +75,7 @@ public class MergeWizard extends Wizard {
 				participant = new MergeSynchronizeParticipant(s);
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			}
-			participant.refresh(resources, Policy.bind("Participant.merging"), Policy.bind("Participant.mergingDetail", participant.getName()), null); //$NON-NLS-1$ //$NON-NLS-2$
+			participant.refresh(resources, null, null, null);
 		}
 		return true;
 	}

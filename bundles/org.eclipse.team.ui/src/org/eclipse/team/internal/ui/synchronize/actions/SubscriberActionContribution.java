@@ -14,14 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 
 /**
@@ -53,7 +49,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 						// Refresh all participant resources
 						resources = participant.getResources();
 					}
-					participant.refresh(resources, Policy.bind("Participant.synchronizing"), Policy.bind("Participant.synchronizingDetails", participant.getName()), site.getWorkbenchSite()); //$NON-NLS-1$ //$NON-NLS-2$
+					participant.refresh(resources, null, null, site.getWorkbenchSite()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			};
 			Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$

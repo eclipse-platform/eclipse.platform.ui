@@ -33,7 +33,7 @@ public class SynchronizeAction extends FileSystemAction {
 			participant = new FileSystemSynchronizeParticipant(new ResourceScope(resources));
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 		}
-		participant.refresh(resources, "Synchronizing", "Synchronizing " + participant.getName(), getTargetPart().getSite());
+		participant.refresh(resources, null, null, getTargetPart().getSite());
 
 	}
 

@@ -27,8 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
 public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipant {
 
@@ -252,4 +251,9 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
     protected boolean isViewerContributionsSupported() {
         return true;
     }
+
+    public void refresh(IResource[] resources, IWorkbenchPartSite site) {
+        refresh(resources, getShortTaskName(), getLongTaskName(resources), site);
+    }
+    
 }
