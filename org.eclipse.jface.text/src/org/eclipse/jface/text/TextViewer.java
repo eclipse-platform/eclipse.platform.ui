@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
@@ -660,7 +661,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * This viewer's find/replace target.
 	 */
-	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension {
+	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension3 {
 
 		/** The range for this target. */
 		private FindReplaceRange fRange;
@@ -668,6 +669,16 @@ public class TextViewer extends Viewer implements
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
 		private Map fRememberedPartitioners;
+
+		/**
+		 * Resets the find/replace document adapter.
+		 * 
+		 * @return the find/replace document adapter.
+		 * @since 3.0
+		 */
+		void resetFindRepalceDocumentAdapter() {
+			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(TextViewer.this.getVisibleDocument());
+		}
 		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
@@ -688,13 +699,23 @@ public class TextViewer extends Viewer implements
 		 * @see IFindReplaceTarget#replaceSelection(String)
 		 */
 		public void replaceSelection(String text) {
+			replaceSelection(text, false);
+		}
+
+		/*
+		 * @see IFindReplaceTarget#replaceSelection(String)
+		 */
+		public void replaceSelection(String text, boolean regExReplace) {
 			Point s= TextViewer.this.getSelectedRange();
 			if (s.x > -1 && s.y > -1) {
 				try {
-					IDocument document= TextViewer.this.getDocument();
-					document.replace(s.x, s.y, text);
-					if (text != null && text.length() > 0)
-						TextViewer.this.setSelectedRange(s.x, text.length());
+					IRegion matchRegion= TextViewer.this.getFindRepalceDocumentAdapter().replace(text, regExReplace);
+					int length= -1;
+					if (matchRegion != null)
+						length= matchRegion.getLength();
+					
+					if (text != null && length > 0)
+						TextViewer.this.setSelectedRange(s.x, length);
 				} catch (BadLocationException x) {
 				}
 			}
@@ -714,19 +735,26 @@ public class TextViewer extends Viewer implements
 			Point point= TextViewer.this.getSelectedRange();
 			return modelSelection2WidgetSelection(point);
 		}
-		
+
 		/*
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+			return findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, false);
+		}
+		
+		/*
+		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
+		 */
+		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 
 			int modelOffset= offset == -1 ? -1 : widgetOffset2ModelOffset(offset);
 			
 			if (fRange != null) {
 				IRegion range= fRange.getRange();
-				modelOffset= TextViewer.this.findAndSelectInRange(modelOffset, findString, searchForward, caseSensitive, wholeWord, range.getOffset(), range.getLength());
+				modelOffset= TextViewer.this.findAndSelectInRange(modelOffset, findString, searchForward, caseSensitive, wholeWord, range.getOffset(), range.getLength(), regExSearch);
 			} else {
-				modelOffset= TextViewer.this.findAndSelect(modelOffset, findString, searchForward, caseSensitive, wholeWord);
+				modelOffset= TextViewer.this.findAndSelect(modelOffset, findString, searchForward, caseSensitive, wholeWord, regExSearch);
 			}
 
 			offset= modelOffset == -1 ? -1 : modelOffset2WidgetOffset(modelOffset);
@@ -1192,6 +1220,12 @@ public class TextViewer extends Viewer implements
 	 */
 	private IRegion fLastSentPostSelectionChange;
 
+	/**
+	 * The find/replace document adapter.
+	 * 
+	 * @since 3.0
+	 */
+	private FindReplaceDocumentAdapter fFindRepalceDocumentAdapter;
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -2892,8 +2926,11 @@ public class TextViewer extends Viewer implements
 		initializeWidgetContents();
 		resetPlugins();
 		
-		if (fVisibleDocument != null && fDocumentListener != null)
-			fVisibleDocument.addDocumentListener(fDocumentListener);
+		if (fVisibleDocument != null) {
+			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
+			if (fDocumentListener != null)
+				fVisibleDocument.addDocumentListener(fDocumentListener);
+		}
 	}
 	
 	/**
@@ -3715,21 +3752,35 @@ public class TextViewer extends Viewer implements
 		IDocument d= getVisibleDocument();
 		return (fTextWidget != null && d != null && d.getLength() > 0);
 	}
-	
+
 	/**
 	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
+	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
+		try { 
+			return findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false);
+		} catch (IllegalStateException ex) {
+			return -1;
+		} catch (PatternSyntaxException ex) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 */
+	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTextWidget == null)
 			return -1;
 			
 		try {
 			
 			int widgetOffset= (startPosition == -1 ? startPosition : modelOffset2WidgetOffset(startPosition));
-			int widgetPos= getVisibleDocument().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord);
-			if (widgetPos > -1) {
-				
-				int length= findString.length();
+			IRegion matchRegion= getFindRepalceDocumentAdapter().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			if (matchRegion != null) {
+				int widgetPos= matchRegion.getOffset();
+				int length= matchRegion.getLength();
 				if (redraws()) {
 					fTextWidget.setSelectionRange(widgetPos, length);
 					internalRevealRange(widgetPos, widgetPos + length);
@@ -3750,10 +3801,10 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
-	 * @since 2.0
+	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * @since 3.0
 	 */
-	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength) {
+	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
 		if (fTextWidget == null)
 			return -1;
 			
@@ -3772,10 +3823,15 @@ public class TextViewer extends Viewer implements
 			if (widgetOffset == -1)
 				return -1;
 
-			int widgetPos= getVisibleDocument().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord);
+			IRegion matchRegion= getFindRepalceDocumentAdapter().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			int widgetPos= -1;
+			int length= 0;
+			if (matchRegion != null) {
+				widgetPos= matchRegion.getOffset();
+				length= matchRegion.getLength();
+			}
 			int modelPos= widgetPos == -1 ? -1 : widgetOffset2ModelOffset(widgetPos);
 			
-			int length =  findString.length();
 			if (widgetPos != -1 && (modelPos < rangeOffset || modelPos + length > rangeOffset + rangeLength))
 				widgetPos= -1;
 
@@ -3953,6 +4009,18 @@ public class TextViewer extends Viewer implements
 		if (fFindReplaceTarget == null)
 			fFindReplaceTarget= new FindReplaceTarget();
 		return fFindReplaceTarget;
+	}
+
+	/**
+	 * Returns the find/replace document adapter.
+	 * 
+	 * @return the find/replace document adapter.
+	 * @since 3.0
+	 */
+	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
+		if (fFindRepalceDocumentAdapter == null)
+			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
+		return fFindRepalceDocumentAdapter;
 	}
 
 	/*
