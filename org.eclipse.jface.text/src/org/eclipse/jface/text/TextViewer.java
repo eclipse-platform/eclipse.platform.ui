@@ -3840,16 +3840,10 @@ public class TextViewer extends Viewer implements
 		return fPaintManager;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.TextViewer#addPainter(org.eclipse.jface.text.IPainter)
-	 */
 	public void addPainter(IPainter painter) {
 		getPaintManager().addPainter(painter);
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.TextViewer#removePainter(org.eclipse.jface.text.IPainter)
-	 */
 	public void removePainter(IPainter painter) {
 		getPaintManager().removePainter(painter);
 	}

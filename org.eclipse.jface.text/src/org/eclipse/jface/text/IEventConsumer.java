@@ -20,7 +20,11 @@ import org.eclipse.swt.events.VerifyEvent;
  * they are registered with. If the event consumer marks events
  * as processed by turning their <code>doit</code> field to 
  * <code>false</code> the text viewer subsequently ignores them.
- * Clients may implement this interface.
+ * Clients may implement this interface.<p>
+ * 
+ * <code>ITextViewerExtension2</code> allows clients to manage the
+ * <code>VerifyListener</code>s of a <code>TextViewer</code>. This makes
+ * <code>IEventConsumer</code> obsolete.
  * 
  * @see ITextViewer
  * @see org.eclipse.swt.events.VerifyEvent

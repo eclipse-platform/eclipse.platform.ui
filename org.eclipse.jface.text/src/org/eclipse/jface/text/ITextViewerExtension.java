@@ -89,6 +89,8 @@ public interface ITextViewerExtension {
 	 * When redrawing is disabled the viewer does not send out any selection or 
 	 * view port change notification. When redrawing is enabled again, a selection 
 	 * change notification is sent out for the selected range and this range is revealed.
+	 * 
+	 * @param redraw <code>true</code> to enable redrawing, <code>false</code> otherwise
 	 */
 	void setRedraw(boolean redraw);
 	

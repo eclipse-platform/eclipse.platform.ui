@@ -30,5 +30,4 @@ public interface IAutoEditStrategy {
 	 * @param command the document command describing the change
 	 */
 	void customizeDocumentCommand(IDocument document, DocumentCommand command);	
-
 }

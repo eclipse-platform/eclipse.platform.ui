@@ -26,7 +26,7 @@ public interface IMarkRegionTarget {
 	void setMarkAtCursor(boolean set);
 	
 	/**
-	 * Swaps the mark and cursor position if the mark is in visible region.
+	 * Swaps the mark and cursor position if the mark is in the visible region.
 	 */
 	void swapMarkAndCursor();
 }

@@ -28,8 +28,9 @@ public interface IFindReplaceTarget {
 	boolean canPerformFind();
 	
  	/**
- 	 * Finds and selects a string starting at the given offset using the specified search
- 	 * directives.
+ 	 * Searches for a string starting at the given offset and using the specified search
+ 	 * directives. If a string has been found it is selected and its start offset is 
+ 	 * returned.
  	 *
  	 * @param offset the offset at which searching starts
  	 * @param findString the string which should be found

@@ -32,7 +32,7 @@ public interface IDocumentAdapterExtension {
 	/**
 	 * Resumes forwarding document changes to the styled text.
 	 * Also forces the styled text to catch up with all the changes
-	 * that have been applied since <code>stopTranslatingDocumentChanges</code>
+	 * that have been applied since <code>stopForwardingDocumentChanges</code>
 	 * has been called.
 	 */
 	void resumeForwardingDocumentChanges();

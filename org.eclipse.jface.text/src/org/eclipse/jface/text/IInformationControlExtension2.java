@@ -12,9 +12,10 @@ package org.eclipse.jface.text;
 
  
 /**
- * Extension interface for <code>IInformationControl</code>. An information control
- * which implements this interface displays the given input but ignores the text
- * which can be set using <code>setInformation(String)</code>.
+ * Extension interface for <code>IInformationControl</code>. Replaces the concept of
+ * textual information to be displayed with the more general concept of an input of the
+ * information control. Text to be displayed set with <code>setInformation(String)</code>
+ * is ignored.
  * 
  * @see org.eclipse.jface.text.IInformationControl
  * @since 2.1
@@ -24,7 +25,7 @@ public interface IInformationControlExtension2 {
 	/**
 	 * Sets the input to be presented in this information control.
 	 * 
-	 * @param input		the object to be used as input for this control
+	 * @param input the object to be used as input for this control
 	 */
 	void setInput(Object input);
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * Interface of a control presenting information. The information is given
- * in textual form. It can either be the content itself or a description
+ * in textual form. It can  be either the content itself or a description
  * of the content. This specification is left to the implementers of this interface.<p>
  * The information control may not grap focus when made visible  using
  * <code>setVisible(true)</code>.
@@ -30,7 +30,7 @@ import org.eclipse.swt.graphics.Point;
 public interface IInformationControl {
 
 	/**
-	 * Sets the information to be presented in this information control.
+	 * Sets the information to be presented by this information control.
 	 * 
 	 * @param information the information to be presented
 	 */
@@ -38,7 +38,7 @@ public interface IInformationControl {
 	
 	/**
 	 * Sets the information control's size constraints. A constraint value of
-	 * <code>-1</code> indicates no constraint. This method is called before 
+	 * <code>-1</code> indicates no constraint. This method must be called before 
 	 * <code>computeSizeHint</code> is called.
 	 * 
 	 * @param maxWidth the maximal width of the control  to present the information, or <code>-1</code> for not constraint
@@ -92,7 +92,7 @@ public interface IInformationControl {
 	
 	/**
 	 * Removes the given listeners from the list of dispose listeners.
-	 * If the listener is not registered this call has no affect.
+	 * If the listener is not registered this call has no effect.
 	 * 
 	 * @param listener the listener to be removed 
 	 */

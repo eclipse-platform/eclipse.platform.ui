@@ -14,7 +14,7 @@ package org.eclipse.jface.text;
 /**
  * Extension interface for <code>IInformationControl</code>. As it is the responsibility of
  * the implementer of <code>IInformationControl</code> to specify whether the information
- * set is the information itself or a description of the information, only the infomation control
+ * set is the information itself or a description of the information, only the information control
  * can decide whether there is something that must be displayed.
  * 
  * @since 2.0

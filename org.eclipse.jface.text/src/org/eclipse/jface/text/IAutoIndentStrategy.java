@@ -13,12 +13,8 @@ package org.eclipse.jface.text;
 
 
 /**
- * An auto indent strategy can adapt changes that will be applied to
- * a text viewer's document. The strategy is informed by the text viewer
- * about each upcoming change in form of a document command. By manipulating
- * this document command, the strategy can influence in which way the text 
- * viewer's document is changed. Clients may implement this interface or
- * use the standard implementation <code>DefaultAutoIndentStrategy</code>.
+ * Exists for backward compatibility.
+ * Please use <code>IAutoEditStrategy</code> directly.
  */
 public interface IAutoIndentStrategy extends IAutoEditStrategy {	
 }

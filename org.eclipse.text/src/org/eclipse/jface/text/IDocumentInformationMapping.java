@@ -86,7 +86,7 @@ public interface IDocumentInformationMapping {
 	 * original document or <code>null</code> if there is no such region.
 	 * 
 	 * @param originRegion the region of the original document
-	 * @return the minimal region of the image document comprising the given region of the original document
+	 * @return the minimal region of the image document comprising the given region of the original document or <code>null</code>
 	 * @throws BadLocationException if <code>originRegion</code> is not a valid region of the original document
 	 */
 	IRegion toImageRegion(IRegion originRegion) throws BadLocationException;

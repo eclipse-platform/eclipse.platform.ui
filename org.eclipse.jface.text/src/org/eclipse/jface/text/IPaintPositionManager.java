@@ -15,16 +15,18 @@ package org.eclipse.jface.text;
 import org.eclipse.jface.text.Position;
 
 /**
- * Manager that manages and updates positions used by <code>IPainter</code>
- * objects.
+ * Manager that manages and updates positions used by <code>IPainter</code>s.
+ * 
+ * @see org.eclipse.jface.text.IPainter
+ * @since 2.1
  */
 public interface IPaintPositionManager {
 	
 	/**
-	 * Starts managing the given position until
-	 * <code>unmanagePosition</code> is called.
+	 * Starts managing the given position until <code>unmanagePosition</code> is called.
 	 * 
-	 * @param position
+	 * @param position the position to manage
+	 * @see #unmanagePosition(Position)
 	 */
 	void managePosition(Position position);
 	
@@ -32,7 +34,7 @@ public interface IPaintPositionManager {
 	 * Stops managing the given position. If the position is not managed 
 	 * by this managed, this call has no effect.
 	 * 
-	 * @param position
+	 * @param position the position that should no longer be managed
 	 */
 	void unmanagePosition(Position position);
 }

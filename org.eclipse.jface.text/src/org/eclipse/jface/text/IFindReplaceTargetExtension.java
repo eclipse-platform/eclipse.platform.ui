@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * Extension interface for <code>IFindReplaceTarget</code>. Extends the find replace target with
- * the concept of searching in a limiting scope and introduces the state of a replace-all mode.
+ * the concept of searching in a limiting scope and introduces a replace-all mode.
  * 
  * @since 2.0
  */
