@@ -31,8 +31,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.commands.KeyBindingMatch;
-import org.eclipse.ui.internal.commands.KeyMachine;
-import org.eclipse.ui.internal.commands.KeyManager;
+import org.eclipse.ui.internal.commands.Machine;
+import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
 import org.eclipse.ui.internal.commands.Util;
@@ -90,8 +90,8 @@ public class WWinKeyBindingService {
 	}
 
 	public void clear() {		
-		KeyManager keyManager = KeyManager.getInstance();
-		KeyMachine keyMachine = keyManager.getKeyMachine();
+		Manager keyManager = Manager.getInstance();
+		Machine keyMachine = keyManager.getKeyMachine();
 		
 		/*if (*/keyMachine.setMode(KeySequence.create());//) {
 			setStatusLineMessage(null);	
@@ -101,8 +101,8 @@ public class WWinKeyBindingService {
 	
 	public void pressed(KeyStroke keyStroke, Event event) { 
 		//System.out.println("pressed(" + keyStroke.getAccelerator() + ")");
-		KeyManager keyManager = KeyManager.getInstance();
-		KeyMachine keyMachine = keyManager.getKeyMachine();
+		Manager keyManager = Manager.getInstance();
+		Machine keyMachine = keyManager.getKeyMachine();
 		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
 		KeySequence mode = keyMachine.getMode();
 		List keyStrokes = new ArrayList(mode.getKeyStrokes());
@@ -262,8 +262,8 @@ public class WWinKeyBindingService {
    			newScopeIds = activeService.getScopeIds();
 
     	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-			KeyManager keyManager = KeyManager.getInstance();
-			KeyMachine keyMachine = keyManager.getKeyMachine();
+			Manager keyManager = Manager.getInstance();
+			Machine keyMachine = keyManager.getKeyMachine();
 	    	
 	    	// TBD: remove this later
 	    	if (newScopeIds == null || newScopeIds.length == 0)
@@ -287,8 +287,8 @@ public class WWinKeyBindingService {
     	if (activeService == null) 
     		return null;
 
-		KeyManager keyManager = KeyManager.getInstance();
-		KeyMachine keyMachine = keyManager.getKeyMachine();        
+		Manager keyManager = Manager.getInstance();
+		Machine keyMachine = keyManager.getKeyMachine();        
 		KeySequence mode = keyMachine.getMode();
 		List keyStrokes = new ArrayList(mode.getKeyStrokes());
 		keyStrokes.add(KeyStroke.create(accelerator));
@@ -308,8 +308,8 @@ public class WWinKeyBindingService {
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
 	public void updateAccelerators() {
-		KeyManager keyManager = KeyManager.getInstance();
-		KeyMachine keyMachine = keyManager.getKeyMachine();      		
+		Manager keyManager = Manager.getInstance();
+		Machine keyMachine = keyManager.getKeyMachine();      		
 		KeySequence mode = keyMachine.getMode();
 		List keyStrokes = mode.getKeyStrokes();
 		int size = keyStrokes.size();
@@ -336,9 +336,11 @@ public class WWinKeyBindingService {
 
 		if (accMenu == null || accMenu.isDisposed()) {		
 			Menu parent = window.getShell().getMenuBar();
+			
 			if (parent == null || parent.getItemCount() < 1)
 				return;
-			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
+			
+			MenuItem parentItem = parent.getItem(0);
 			parent = parentItem.getMenu();
 			accMenu = new AcceleratorMenu(parent);
 		}

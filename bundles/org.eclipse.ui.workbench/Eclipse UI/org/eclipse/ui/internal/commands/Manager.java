@@ -25,18 +25,18 @@ import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 
-public class KeyManager {
+public class Manager {
 
 	private final static String KEY_SEQUENCE_SEPARATOR = ", "; //$NON-NLS-1$
 	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 	private final static java.util.Locale SYSTEM_LOCALE = java.util.Locale.getDefault();
 	private final static String SYSTEM_PLATFORM = SWT.getPlatform(); // "carbon"
 
-	private static KeyManager instance;
+	private static Manager instance;
 
-	public static KeyManager getInstance() {
+	public static Manager getInstance() {
 		if (instance == null)
-			instance = new KeyManager();
+			instance = new Manager();
 			
 		return instance;	
 	}
@@ -359,15 +359,15 @@ public class KeyManager {
 		return pathForPlatform(SYSTEM_PLATFORM);
 	}
 
-	private KeyMachine keyMachine;	
+	private Machine keyMachine;	
 	
-	private KeyManager() {
+	private Manager() {
 		super();
-		keyMachine = KeyMachine.create();
+		keyMachine = Machine.create();
 		update();		
 	}
 
-	public KeyMachine getKeyMachine() {
+	public Machine getKeyMachine() {
 		return keyMachine;
 	}
 

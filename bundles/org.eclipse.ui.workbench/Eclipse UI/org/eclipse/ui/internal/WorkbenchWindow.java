@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -74,9 +75,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.KeyManager;
+import org.eclipse.ui.internal.commands.KeyBindingMatch;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
+import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSet;
@@ -96,6 +98,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
+	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
 	private Label separator2;
@@ -348,9 +351,8 @@ protected void addShortcutBar(int style) {
  * This method must be called before this window's shell is created.
  */
 protected void addToolBar(int style) {
-	if (getShell() == null)  {
+	if (getShell() == null)
 		coolBarManager = new CoolBarManager(style);
-	}
 }
 /**
  * Close the window.
@@ -599,114 +601,104 @@ protected MenuManager createMenuManager() {
 	final MenuManager result = super.createMenuManager();
 	result.setOverrides(new IContributionManagerOverrides() {
 		
-		public Integer getAccelerator(IContributionItem item) {
-			if (!(item instanceof ActionContributionItem))
+		public Integer getAccelerator(IContributionItem contributionItem) {
+			if (!(contributionItem instanceof ActionContributionItem))
 				return null;	
 						
-			ActionContributionItem aci = (ActionContributionItem)item;
-			String defId = aci.getAction().getActionDefinitionId();
+			ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
+			String commandId = actionContributionItem.getAction().getActionDefinitionId();
 
-			if (defId == null) {
-				int accelerator = aci.getAction().getAccelerator();
+			if (commandId == null) {
+				int accelerator = actionContributionItem.getAction().getAccelerator();
 				
-				if (accelerator != 0) {				
+				if (accelerator != 0) {		
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
-					KeyManager keyManager = KeyManager.getInstance();
-					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
+					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
-
-				return new Integer(0);
-			} 
+			} else if ("carbon".equals(SWT.getPlatform())) { 			
+				Map actionMap = Manager.getInstance().getKeyMachine().getActionMap();		
+				SortedSet matchSet = (SortedSet) actionMap.get(commandId);
+		
+				if (matchSet != null && !matchSet.isEmpty()) {
+					KeyBindingMatch match = (KeyBindingMatch) matchSet.first();
+		
+					if (match != null) {
+						KeySequence keySequence = match.getKeyBinding().getKeySequence();
+						List keyStrokes = keySequence.getKeyStrokes();
+							
+						if (keyStrokes.size() == 1) {
+							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+							return new Integer(keyStroke.getValue());
+						}
+					}
+				}
+			}
 
 			return new Integer(0);
-			//TBD: later we can move the accelerator from the hidden menu to here:
-			//String acceleratorText = KeyBindingManager.getInstance().getAcceleratorTextForAction(defId);			
-			//return (acceleratorText != null ? acceleratorText : new Integer(0));	
 		}
 		
-		public String getAcceleratorText(IContributionItem item) {
-			if (!(item instanceof ActionContributionItem))
+		public String getAcceleratorText(IContributionItem contributionItem) {
+			if (!(contributionItem instanceof ActionContributionItem))
 				return null;	
 						
-			ActionContributionItem aci = (ActionContributionItem)item;
-			String defId = aci.getAction().getActionDefinitionId();
+			ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
+			String commandId = actionContributionItem.getAction().getActionDefinitionId();
 
-			if (defId == null) {
-				int accelerator = aci.getAction().getAccelerator();
+			if (commandId == null) {
+				int accelerator = actionContributionItem.getAction().getAccelerator();
 				
 				if (accelerator != 0) {				
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
-					KeyManager keyManager = KeyManager.getInstance();
-					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
+					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
-
-				return ""; //$NON-NLS-1$
-			} 
-
-			String acceleratorText = KeyManager.getInstance().getTextForAction(defId);			
-			
-			if (acceleratorText != null && "carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-				acceleratorText = replaceSubstring(acceleratorText, "Alt", "\u2325"); //$NON-NLS-1$ //$NON-NLS-2$
-				acceleratorText = replaceSubstring(acceleratorText, "Command", "\u2318"); //$NON-NLS-1$ //$NON-NLS-2$
-				acceleratorText = replaceSubstring(acceleratorText, "Ctrl", "\u2303"); //$NON-NLS-1$ //$NON-NLS-2$
-				acceleratorText = replaceSubstring(acceleratorText, "Shift", "\u21E7"); //$NON-NLS-1$ //$NON-NLS-2$
-				acceleratorText = "   " + replaceSubstring(acceleratorText, "+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-			
-			return (acceleratorText != null ? acceleratorText : "");			 //$NON-NLS-1$
-		}
-		
-		private /*static*/ String replaceSubstring(String str, String pattern, String replace) {
-			int slen = str.length();
-			int plen = pattern.length();
-			int s = 0, e = 0;
-			StringBuffer result = new StringBuffer(slen * 2);
-			char[] chars = new char[slen];
-
-			while ((e = str.indexOf(pattern, s)) >= 0) {
-				str.getChars(s, e, chars, 0);
-				result.append(chars, 0, e - s).append(replace);
-				s = e + plen;
+			} else {
+				String acceleratorText = Manager.getInstance().getTextForAction(commandId);
+				
+				if (acceleratorText != null)
+					return acceleratorText;
 			}
 
-			str.getChars(s, slen, chars, 0);
-			result.append(chars, 0, slen - s);
-			return result.toString();
+			return ""; //$NON-NLS-1$ 
 		}
-		
-		public String getText(IContributionItem item) {
-			if(!(item instanceof MenuManager))
+				
+		public String getText(IContributionItem contributionItem) {
+			if (!(contributionItem instanceof MenuManager))
 				return null;
-			MenuManager itemManager = (MenuManager)item;
-			IContributionManager parent = itemManager.getParent();
-			if(parent != result) {
-				if(parent instanceof SubMenuManager) {
-					parent = ((SubMenuManager)parent).getParent();
+				
+			MenuManager menuManager = (MenuManager) contributionItem;
+			IContributionManager parent = menuManager.getParent();
+			
+			if (parent != result) {
+				if (parent instanceof SubMenuManager) {
+					parent = ((SubMenuManager) parent).getParent();
+
 					if (parent != result) 
 						return null;
-				} else {
+				} else
  					return null;		
-				}
 			}
 			
-			String text = itemManager.getMenuText();
+			String text = menuManager.getMenuText();
 			int index = text.indexOf('&');
-			if (index < 0 || index == (text.length() -1))
+			
+			if (index < 0 || index == (text.length() - 1))
 				return text;
 				
 			char altChar = Character.toUpperCase(text.charAt(index + 1));
-			String defId = keyBindingService.getDefinitionId(SWT.ALT | altChar);
-			if(defId == null)
+			String commandId = keyBindingService.getDefinitionId(SWT.ALT | altChar);
+			
+			if (commandId == null)
 				return text;
 				
 			if (index == 0)
 				return text.substring(1);
+
 			return text.substring(0, index) + text.substring(index + 1);
 		}
 		
@@ -714,6 +706,7 @@ protected MenuManager createMenuManager() {
 			return null;
 		}
 	});
+
 	return result;
 }
 /**

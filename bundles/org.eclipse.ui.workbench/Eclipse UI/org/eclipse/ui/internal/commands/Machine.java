@@ -22,10 +22,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public final class KeyMachine {
+public final class Machine {
 
-	public static KeyMachine create() {
-		return new KeyMachine();
+	public static Machine create() {
+		return new Machine();
 	}
 
 	private Map commandMap;
@@ -43,7 +43,7 @@ public final class KeyMachine {
 	private boolean solved;
 	private SortedMap tree;
 
-	private KeyMachine() {
+	private Machine() {
 		super();
 		keyConfigurationMap = new TreeMap();
 		scopeMap = new TreeMap();

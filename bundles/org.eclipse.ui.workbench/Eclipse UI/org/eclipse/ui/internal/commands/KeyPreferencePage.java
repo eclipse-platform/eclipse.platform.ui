@@ -283,8 +283,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
 		List pathItems = new ArrayList();
-		pathItems.add(KeyManager.systemPlatform());
-		pathItems.add(KeyManager.systemLocale());
+		pathItems.add(Manager.systemPlatform());
+		pathItems.add(Manager.systemLocale());
 		states = new State[] { State.create(pathItems) };
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
@@ -314,7 +314,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		if (workbench instanceof Workbench) {
 			Workbench workbench = (Workbench) this.workbench;
-			KeyManager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
+			Manager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
 			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 
 			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
@@ -328,7 +328,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 		}
 
-		KeyManager.getInstance().update();
+		Manager.getInstance().update();
 		return super.performOk();
 	}
 
@@ -497,19 +497,19 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		coreKeyBindingSet.addAll(coreKeyBindings);			
 		SortedSet coreRegionalKeyBindingSet = new TreeSet();
 		coreRegionalKeyBindingSet.addAll(coreRegionalKeyBindings);
-		coreKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegionalKeyBindingSet, states));
+		coreKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(coreRegionalKeyBindingSet, states));
 
 		SortedSet localKeyBindingSet = new TreeSet();
 		localKeyBindingSet.addAll(localKeyBindings);			
 		SortedSet localRegionalKeyBindingSet = new TreeSet();
 		localRegionalKeyBindingSet.addAll(localRegionalKeyBindings);
-		localKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegionalKeyBindingSet, states));
+		localKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(localRegionalKeyBindingSet, states));
 
 		SortedSet preferenceKeyBindingSet = new TreeSet();
 		preferenceKeyBindingSet.addAll(preferenceKeyBindings);			
 		SortedSet preferenceRegionalKeyBindingSet = new TreeSet();
 		preferenceRegionalKeyBindingSet.addAll(preferenceRegionalKeyBindings);
-		preferenceKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindingSet, states));
+		preferenceKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindingSet, states));
 
 		tree = new TreeMap();
 		SortedSet keyBindingSet = new TreeSet();

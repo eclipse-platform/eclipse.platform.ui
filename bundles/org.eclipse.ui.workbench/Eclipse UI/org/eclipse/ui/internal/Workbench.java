@@ -94,8 +94,8 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.commands.ActiveKeyConfiguration;
 import org.eclipse.ui.internal.commands.CoreRegistry;
 import org.eclipse.ui.internal.commands.KeyConfiguration;
-import org.eclipse.ui.internal.commands.KeyManager;
 import org.eclipse.ui.internal.commands.LocalRegistry;
+import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.PreferenceRegistry;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -682,7 +682,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs) {
-		KeyManager.getInstance();
+		Manager.getInstance();
 		
 		this.commandLineArgs = commandLineArgs;
 
@@ -838,9 +838,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			configurationId = activeKeyConfiguration.getValue();
 		}
 
-		KeyManager keyManager = KeyManager.getInstance();
-		keyManager.getKeyMachine().setKeyConfiguration(configurationId);
-		keyManager.update();
+		Manager manager = Manager.getInstance();
+		manager.getKeyMachine().setKeyConfiguration(configurationId);
+		manager.update();
 
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
@@ -1344,7 +1344,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (configuration != null) {
 			acceleratorConfiguration = configuration;
 			String id = configuration.getId();
-			KeyManager keyManager = KeyManager.getInstance();
+			Manager keyManager = Manager.getInstance();
 			keyManager.getKeyMachine().setKeyConfiguration(id);
 			keyManager.update();
 			IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
