@@ -239,7 +239,7 @@ public class CommitCommentArea extends DialogArea {
                 final String toggleMessage= Policy.bind("CommitCommentArea.4"); //$NON-NLS-1$
                 
                 final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
-                if (dialog.getReturnCode() == IDialogConstants.NO_ID) {
+                if (dialog.getReturnCode() != IDialogConstants.YES_ID) {
                     fTextBox.setFocus();
                     return null;
                 }
