@@ -336,6 +336,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(label);
+		labelControl.setFont(composite.getFont());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		labelControl.setLayoutData(gd);
@@ -345,6 +346,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
+		textControl.setFont(composite.getFont());
 		fTextFields.put(textControl, key);
 		if (isNumber) {
 			fNumberFields.add(textControl);
@@ -357,14 +359,14 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	}
 		
 	private Control createContentAssistPage(Composite parent) {
-
+		Font font= parent.getFont();
 		Composite contentAssistComposite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout(); 
 		layout.numColumns= 2;
 		contentAssistComposite.setLayout(layout);
+		contentAssistComposite.setFont(font);
 
-		String text;		
-		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Insert"); //$NON-NLS-1$
+		String text= AntPreferencesMessages.getString("AntEditorPreferencePage.Insert"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
 
 		//text= "&Fill parameters automatically";
@@ -391,6 +393,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		Label label= new Label(contentAssistComposite, SWT.LEFT);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
+		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
@@ -401,6 +404,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
+		editorComposite.setFont(font);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);		
@@ -409,6 +413,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fContentAssistColorList.setLayoutData(gd);
+		fContentAssistColorList.setFont(font);
 						
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
@@ -417,9 +422,11 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		stylesComposite.setFont(font);
 		
 		label= new Label(stylesComposite, SWT.LEFT);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Col&or__6")); //$NON-NLS-1$
+		label.setFont(font);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		label.setLayoutData(gd);
