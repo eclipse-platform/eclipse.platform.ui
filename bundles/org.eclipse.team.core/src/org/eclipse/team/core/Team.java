@@ -1,5 +1,3 @@
-package org.eclipse.team.core;
-
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -10,6 +8,7 @@ package org.eclipse.team.core;
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
+package org.eclipse.team.core;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
