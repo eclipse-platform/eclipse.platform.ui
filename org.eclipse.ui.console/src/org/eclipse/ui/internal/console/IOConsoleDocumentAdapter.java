@@ -27,24 +27,34 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         document = doc;
         document.addDocumentListener(this);
         lines = new ArrayList();
-        calculateLines();
+        calculateLines(0);
     }
     
-    private void calculateLines() {
-        lines.clear();
+    private void calculateLines(int eventOffset) {
+        int eventLine = getLineAtOffset(eventOffset);
+        for (int i=eventLine; i<lines.size(); i++) {
+            lines.remove(eventLine);
+        }
+        
         try {
-            int docLines = document.getNumberOfLines();
+            int docLine = document.getLineOfOffset(eventOffset);
+            int numLinesInDoc = document.getNumberOfLines();
             String line = null;
-            for (int i = 0; i<docLines; i++) {
+            for (int i = docLine; i<numLinesInDoc; i++) {
                 int offset = document.getLineOffset(i);
                 int length = document.getLineLength(i);
                 
-                while (length > 0) {
-                    int wrappedLength = consoleWidth > 0 ? Math.min(consoleWidth, length) : length;
-                    line = document.get(offset, wrappedLength);
+                if (length == 0) {
+                    line = ""; //$NON-NLS-1$
                     lines.add(line);
-                    offset += wrappedLength;
-                    length -= wrappedLength;
+                } else {
+                    while (length > 0) {
+                        int wrappedLength = consoleWidth > 0 ? Math.min(consoleWidth, length) : length;
+                        line = document.get(offset, wrappedLength);
+                        lines.add(line);
+                        offset += wrappedLength;
+                        length -= wrappedLength;
+                    }
                 }
             }
             if (line != null && line.endsWith(DELIMITER)) {
@@ -65,7 +75,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
     public void setDocument(IDocument doc) {
         document = doc;
         if (document != null) {
-            calculateLines();
+            calculateLines(0);
         }
     }
 
@@ -105,19 +115,26 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.swt.custom.StyledTextContent#getLineAtOffset(int)
      */
     public int getLineAtOffset(int offset) {
+        if (offset == 0) {
+            return 0;
+        }
         //offset can be greater than length when user is deleting.
         if (offset >= document.getLength()) {
-            return lines.size()-1;
+            int size = lines.size();
+            return size > 0 ? size-1 : 0;
         }
         
         int len = 0;
-        int line = -1;
-        while (len <= offset) {
-            line++;
-            String s = (String) lines.get(line);
+        int line = 0;
+        for (Iterator i = lines.iterator(); i.hasNext(); ) {
+            String s = (String)i.next();
             len += s.length();
+            if (len > offset) {
+                return line;
+            }
+            line++;
         }
-        return line > -1 ? line : 0;
+        return lines.size() - 1;
     }
 
     /* (non-Javadoc)
@@ -182,62 +199,50 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public synchronized void documentAboutToBeChanged(DocumentEvent event) {
+        fireTextChangingEvent(event);
+    }
+    
+    private void fireTextChangingEvent(DocumentEvent event) {
         try {
-        TextChangingEvent changeEvent = new TextChangingEvent(this);
-        changeEvent.start = event.fOffset;
-        changeEvent.newText = (event.fText == null ? "" : event.fText); //$NON-NLS-1$
-        changeEvent.replaceCharCount = event.fLength;
-        changeEvent.newCharCount = (event.fText == null ? 0 : event.fText.length());
-        
-        int replacedLineCount = 0;
-        String replacedText = document.get(event.fOffset, event.fLength);
-        if (replacedText.length() > 0) {
-            String[] replacedLines = replacedText.split(DELIMITER);
-            for (int i = 0; i < replacedLines.length; i++) {
-                String line = replacedLines[i];
-                int len = line.length();
-                if (len < consoleWidth) {
-                    replacedLineCount++;
-                } else {
-                    replacedLineCount =+ consoleWidth%len;
-                }
+            TextChangingEvent changeEvent = new TextChangingEvent(this);
+            changeEvent.start = event.fOffset;
+            changeEvent.newText = (event.fText == null ? "" : event.fText); //$NON-NLS-1$
+            changeEvent.replaceCharCount = event.fLength;
+            changeEvent.newCharCount = (event.fText == null ? 0 : event.fText.length());
+            
+            
+            String replacedText = document.get(event.fOffset, event.fLength);
+            changeEvent.replaceLineCount= countLines(replacedText);
+            
+            changeEvent.newLineCount = countLines(event.fText);
+            
+            for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
+                TextChangeListener element = (TextChangeListener) iter.next();
+                element.textChanging(changeEvent);
             }
-        }
-        changeEvent.replaceLineCount= replacedLineCount;
-        
-        int newLineCount = 0;
-        String newText = event.fText;
-        if (newText.length() > 0) {
-            String[] newLines = newText.split(DELIMITER);
-            if (consoleWidth <= 0) { //no wrapping
-                newLineCount = newLines.length;
-            } else {
-                for (int i = 0; i < newLines.length; i++) {
-                    String line = newLines[i];
-                    int len = line.length();
-                    if (len == 0 || len < consoleWidth) {
-                        newLineCount++;
-                    } else {
-                        newLineCount += consoleWidth%len;
-                    }
-                }
-            }
-        }
-        changeEvent.newLineCount = newLineCount;
-
-        for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
-            TextChangeListener element = (TextChangeListener) iter.next();
-            element.textChanging(changeEvent);
-        }
         } catch (BadLocationException e){
         }
+    }
+
+    private int countLines(String string) {
+        int count = 0;
+        int index = 0;
+        while (index != -1) {
+            index = string.indexOf(DELIMITER, index);
+            if (index != -1) {
+                count++;
+                index++;
+            }
+        }
+        return count;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public synchronized void documentChanged(DocumentEvent event) {
-        calculateLines();
+        calculateLines(event.fOffset);
+        
         TextChangedEvent changeEvent = new TextChangedEvent(this);
 
         for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
@@ -251,7 +256,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      */
     public void setWidth(int width) {
         consoleWidth = width;
-        calculateLines();
+        calculateLines(0);
         TextChangedEvent changeEvent = new TextChangedEvent(this);
         for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
             TextChangeListener element = (TextChangeListener) iter.next();

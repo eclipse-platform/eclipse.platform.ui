@@ -109,7 +109,6 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
                     return;
                 } 
             }
-            
         } catch (BadLocationException e1) {
         }
         
@@ -121,33 +120,16 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
                 doc.replace(length, 0, text);
             } catch (BadLocationException e1) {
             }
-            getTextWidget().setCaretOffset(doc.getLength());
+//            getTextWidget().setCaretOffset(doc.getLength());
             e.doit = false;
         }
     }
     
     protected void revealEndOfDocument() {
         if (autoScroll) {
-            IDocument doc = getDocument();
-            if (doc == null) {
-                return;
-            }
-            int lines = doc.getNumberOfLines();
-            try {
-                // lines are 0-based
-                int lineStartOffset = doc.getLineOffset(lines - 1);
-                StyledText widget= getTextWidget();
-                if (lineStartOffset > 0) {
-                    widget.setCaretOffset(lineStartOffset);
-                    widget.showSelection();
-                }
-                int lineEndOffset = lineStartOffset + doc.getLineLength(lines - 1);
-                if (lineEndOffset > 0) {
-                    widget.setCaretOffset(lineEndOffset);
-                }
-            } catch (BadLocationException e) {
-            }
-//            getTextWidget().setCaretOffset(doc.getLength());
+            StyledText text = getTextWidget();
+            int charCount = text.getCharCount();
+            text.setCaretOffset(charCount);
         }
     }
     
