@@ -65,32 +65,8 @@ public ITreeContentProvider getRootContentProvider(String partId) {
 	return null;
 }
 public NavigatorContentDescriptor[] getDescriptors(String partId) {
-	Collection descriptors = find(partId);
+	Collection descriptors = find(partId);	//TODO: handle null case
 	
 	return (NavigatorContentDescriptor[]) descriptors.toArray(new NavigatorContentDescriptor[descriptors.size()]); //TODO: handle null descriptor (no extension for targeted view)
 }
-
-/*
-public ITreeContentProvider getContentProvider(String targetId, Object element) {
-	List descriptors = find(targetId);
-	Iterator iterator = descriptors.iterator();
-	IStructuredContentProvider contentProvider = null;
-	
-	
-	if (project != null)  {
-		String[] natures = project.getDescription().getNatureIds();
-		while (iterator.hasNext() && contentProvider == null)  {
-			NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-			contentProvider = descriptor.getContentProvider(natures);
-		}
-		
-	}
-	while (iterator.hasNext() && contentProvider == null)  {
-		NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-		contentProvider = descriptor.getContentProvider(null);
-	}
-	if (contentProvider != null)
-		return contentProvider;
-	return new WorkbenchContentProvider();
-}*/
 }

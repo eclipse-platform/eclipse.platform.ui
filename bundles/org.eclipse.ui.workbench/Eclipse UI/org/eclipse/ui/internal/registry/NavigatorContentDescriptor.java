@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * 

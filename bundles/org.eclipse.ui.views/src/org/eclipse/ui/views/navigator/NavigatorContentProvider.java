@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
