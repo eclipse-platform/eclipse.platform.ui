@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.stringsubstitution;
+package org.eclipse.debug.ui;
 
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
@@ -17,7 +17,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableLabelProvider;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariablePresentationManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -43,8 +46,10 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * A dialog that prompts the user to choose and configure a string
  * substitution variable.
- * 
- * @since 3,0 
+ * <p>
+ * Clients may instantiate this class; not intended to be subclassed.
+ * </p>
+ * @since 3.1
  */
 public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	

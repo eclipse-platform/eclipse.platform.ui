@@ -14,7 +14,7 @@ import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.jface.viewers.LabelProvider;
 
 
-class StringVariableLabelProvider extends LabelProvider {
+public class StringVariableLabelProvider extends LabelProvider {
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)

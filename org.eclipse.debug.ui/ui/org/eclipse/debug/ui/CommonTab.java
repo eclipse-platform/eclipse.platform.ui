@@ -37,7 +37,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
-import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
