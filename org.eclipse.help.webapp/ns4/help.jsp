@@ -1,120 +1,79 @@
-<%@ page  errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
-<% 
-	
+<%
+	 String  ContentStr = WebappResources.getString("Content", request);
+	 String  SearchStr = WebappResources.getString("SearchResults", request);
+	 String  LinksStr = WebappResources.getString("Links", request);
+
 	// Paramters allowed:
 	// tab = toc | search | links
 	// toc
 	// topic
-	// query
+	// searchWord
 	// contextId
+	// lang
 	
-	// url of NavFrame
-	String srcNavFrame;
-
-	if ("toc".equals(request.getParameter("tab")))
-	{
-		if (request.getParameter("toc") != null || request.getParameter("topic") != null)
-			srcNavFrame = "toc.jsp?" + request.getQueryString();
-		else
-			srcNavFrame = "tocs.jsp";
-	}
-	else if ("search".equals(request.getParameter("tab")))
-	{
-		srcNavFrame = "search.html?" + request.getQueryString();
-	}
-	else if ("links".equals(request.getParameter("tab")))
-	{
-		srcNavFrame = "links.jsp?" + request.getQueryString();
-	}
-	else
-		srcNavFrame = "tocs.jsp";
-		
+	
+	String query = "";
+	if (request.getQueryString() != null && request.getQueryString().length() > 0)
+		query = "?" + request.getQueryString();
+	
 	// url of MainFrame
 	String srcMainFrame = "home.jsp";
 	if(request.getParameter("topic")!=null)
-		srcMainFrame=request.getParameter("topic");
+	{
+		String topic = request.getParameter("topic");
+		if (topic.startsWith("/"))
+		{	
+			topic = request.getContextPath() + "/content/help:" + topic;
+		}
+		srcMainFrame=topic;
+	}
 	
-	// url of TabsFrame
-	String srcTabsFrame = "tabs.jsp";
-	if(request.getParameter("tab")!=null)
-		srcTabsFrame=srcTabsFrame+"?tab="+request.getParameter("tab");
 %>
 
 
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Help</title>
-	<script language="JavaScript">
 	
-	/**
-	 * Parses the parameters passed to the url
-	 */
-	function parseQueryString (str) 
-	{
-	    str = str ? str : window.location.href;
-	    var longquery = str.split("?");
-	    if (longquery.length <= 1) return "";
-	    var query = longquery[1];
-	    var args = new Object();
-	    if (query) 
-	    {
-	        var fields = query.split('&');
-	        for (var f = 0; f < fields.length; f++) 
-	        {
-	            var field = fields[f].split('=');
-	            args[unescape(field[0].replace(/\+/g, ' '))] = unescape(field[1].replace(/\+/g, ' '));
-	        }
-	    }
-	    return args;
-	}
-
-	var args = parseQueryString();
-	var queryString = <%=request.getQueryString()%>;
-	var loadedTOC = null;
-	var currentTab = null;
-	
-	/**
- 	 * Shows the TOC frame, loads appropriate TOC, and selects the topic
- 	 */
-	function displayTocFor(topic)
-	{
-		// first ensure the TOC frame is loaded
-		// TO DO....
-	
-		frames["TabsFrame"].switchTab("toc");
-
-		// remove the query, if any
-		var i = topic.indexOf('?');
-		if (i != -1)
-			topic = topic.substring(0, i);
-	
-		var selected = frames["NavFrame"].selectTopic(topic);
-
-		if (!selected)
-			frames["NavFrame"].location = "toc.jsp?topic="+topic;
-	}
-	</script>
+	<script language="Javascript">
+		// Global for the nav frame script
+		var titleArray = new Array();
+		titleArray["toc"] = "<%=ContentStr%>";
+		titleArray["search"] = "<%=SearchStr%>";
+		titleArray["links"] = "<%=LinksStr%>";
+		</script>
+		
+	<script language="JavaScript" src="help.js"></script>
 	
 </head>
 
-
-<!-- frames -->
-<frameset  rows="27,*,24">
-	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-    <frameset id="contentFrameset" cols="25%,*">
-        <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="auto" frameborder="0">
-        <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
-    </frameset>
-    <frame name="TabsFrame" src="<%=srcTabsFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-</frameset>
-
+<frameset onload="onloadFrameset()"  rows="48,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+	<frame name="BannerFrame" src='<%="banner.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  framebroder="0" spacing="0" resize=no scrolling=no>
+		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
+		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		        <frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="auto" frameborder="0" resize=yes>
+		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		</frameset>
+        <frameset id="contentFrameset" rows="27,*", frameborder=0 framespacing=0 border=0>
+        	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0"  frameborder="0" resize=yes>
+             <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
+        </frameset>
+     </frameset>
+ </frameset>
 
 </html>
 

@@ -1,152 +1,60 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
+<%
+	 String  ContentStr = WebappResources.getString("Content", request);
+	 String  SearchStr = WebappResources.getString("SearchResults", request);
+	 String  LinksStr = WebappResources.getString("Links", request);
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Tabs</title>
- 
-<style>
+    
+<style type="text/css">
+
+/* need this one for Mozilla */
+
 BODY {
-	/*background-color:ActiveBorder;*/
-	background-color:#D4D0C8;
-	background-image:url(../images/eclipse_tabbackground.gif);
-	background-repeat:repeat-x;
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
-	margin-width:0;
-	margin-left:0px;
-	border-bottom: 2px solid #848284;
-	cursor:default;
+	margin:0px;
+	padding:0px;
+	background:#000000;
 }
 
-TABLE
-{
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
-}
-
-A 
-{
-	text-decoration:none;
-	color:WindowText;
-	font: 8pt Tahoma;
-	cursor:default;
-	top:0;
-	padding:0px 2px 0px 2px;
-}
-
-.tab {
-	height:20;
-	margin-top:2;
-	border:0;
-}
-
-.pressed {
-	margin-top:1;
-	height:20;
-	border:1;
-	border-bottom:1px solid #ffffff;
-	border-top:1px solid #ffffff;
+TABLE , TD{
+	background:#D4D0C8;
+	padding:0px;
+	margin:0px;
+	border:0px;
 }
 
 
-IMG {
-	margin:0;
-	border:0;
-	padding-left:0;
-}
 </style>
-     
-<script language="JavaScript">
  
-// input parameters
-var args = parent.parseQueryString();
-
-
-/* 
- * Switch tabs.
- */ 
-function switchTab(nav)
-{
-	if (nav == parent.currentTab)
-		return;
-	else
-		parent.currentTab = nav;
-		
- 	// show the appropriate pressed tab
-  	var buttons = document.links;
-  	for (var i=0; i<buttons.length; i++)
-  	{
-  		if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
-			buttons[i].className = "pressed";
-		else
-			buttons[i].className = "tab";
- 	 }
-  
-  	// set the images for borders
-  	var tocI = document.images["tocI"];
-  	var searchI = document.images["searchI"];
-  	var linksI = document.images["linksI"];
-  	
-  	if (nav == "toc")
-  	{
-  		if (parent.loadedTOC == null)
-  			parent.frames["NavFrame"].location = "tocs.jsp";
-  		else
-  			parent.frames["NavFrame"].location = "toc.jsp?toc="+parent.loadedTOC;
-  			
-  		tocI.src = "../images/rightBorder.gif";
-		searchI.src = "../images/middleBorder.gif";
-		linksI.src = "../images/noBorder.gif";
-		parent.frames["ToolbarFrame"].setTitle("Content");
-  	}
-  	else if (nav == "search")
-  	{
-  		parent.frames["NavFrame"].location = "search.html";
-  		tocI.src = "../images/leftBorder.gif";
-		searchI.src = "../images/rightBorder.gif";
-		linksI.src = "../images/noBorder.gif";
-		parent.frames["ToolbarFrame"].setTitle("Search");
-  	}
-  	else if (nav == "links")
-  	{
-  		parent.frames["NavFrame"].location = "links.jsp";
-  		tocI.src = "../images/middleBorder.gif";
-		searchI.src = "../images/leftBorder.gif";
-		linksI.src = "../images/rightBorder.gif";
-		parent.frames["ToolbarFrame"].setTitle("Links");
-  	}	
-}
- 
-function onloadHandler()
-{	
-	var tab = "toc";
-	if (args && args["tab"])
-	    tab = args["tab"];
-	switchTab(tab);
-}
- 
-</script>
-
-
 </head>
    
-<body onload="onloadHandler()">
-   <table cellspacing="0" cellpadding="0" border="0">
-   <tr>
-   <td align=centre><a class="tab" name="toc" href="javascript:switchTab('toc')">&nbsp;<%=WebappResources.getString("Content", null)%></a></td>
-   <td><img name="tocI" src="../images/rightBorder.gif" width="2" height="20"></td>
-   <td align=center><a class="tab" name="search" href="javascript:switchTab('search')"><%=WebappResources.getString("Search", null)%></a></td>
-   <td><img name="searchI" src="../images/middleBorder.gif" width="2" height="20"></td>
-   <td align=top><a class="tab" name="links" href="javascript:switchTab('links')"><%=WebappResources.getString("Links", null)%></a></td>
-   <td><img name="linksI" src="../images/noBorder.gif" width="2" height="20"></td>
+<body>
+
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
+   <tr cols=5>
+   <td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
+   <td width=1><img src="../images/separator.gif" border=0 width=0 height=23></td>
+   <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="alert(window.document.foo);parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
+   <td width=1 border=0><img src="../images/separator.gif" border=0 width=0 height=23></td>
+   <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' ><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
    </tr>
    </table>
-   
+
 </body>
 </html>
 

@@ -1,73 +1,91 @@
-<%@ page import="org.eclipse.help.servlet.Tocs,org.w3c.dom.*"%>
+<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" contentType="text/html; charset=UTF-8"%>
 
 <% 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
-    <script language="JavaScript" src="toc.js"></script>
-      
-<script language="JavaScript">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-/**
- * Loads the specified table of contents
- */		
-function loadTOC(tocId)
-{
-	// keep track of it
-	parent.loadedTOC = tocId;
-	// navigate to this toc
-	window.location.replace("toc.jsp?toc="+tocId);
+<style type="text/css" >
+
+BODY {
+	font: 8pt Tahoma;
+	margin-top:5px;
+	padding:0;
+	border:0;
 }
 
-/**
- * This method is called when synchronizing the toc
- */
-function selectTopic(topic)
-{
-	return false;
+A {
+	text-decoration:none; 
+	color:black;
+	height:18;
+	padding:0px;
+	white-space: nowrap;
 }
 
-</script>
+DIV {
+	padding-left:20px;
+}
+
+DIV {
+	background-image: url("../images/container_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+    
+DIV.active { 
+	background-image: url("../images/container_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+
+#bookshelf {
+	background-image: url("../images/home_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+   
+#bookshelf.active { 
+	background-image: url("../images/home_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+
+
+</style>
 
 </head>
 
-<body onload="onloadHandler('', 'Content');parent.loadedTOC=null;">
+<body >
 
-<ul class='expanded'>
 <% 
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs == null)
-		return;
-	
-	// Populate the combo box and select the appropriate infoset.
-	// If this is the first time, pick the first one, else the one from request
-	Element selectedTOC = (Element)session.getAttribute("org.eclipse.help.selectedTOC");
-	Element[] tocNodes = tocs.getTocs();
-	
-	for (int i=0; i<tocNodes.length; i++)
-	{
-		String label = tocNodes[i].getAttribute("label");
-		String id = tocNodes[i].getAttribute("href");
-		
-		if (tocNodes[i] == selectedTOC)
-		{
+ContentUtil content = new ContentUtil(application, request);
+String bookshelf = WebappResources.getString("Bookshelf", request);
 %>
-		<li class='node'><a class="active" href='javascript:loadTOC("<%=id%>")' > <nobr> <%=label%> </nobr> </a></li>
+	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
 <%
-		}else{
+Element tocsElement = content.loadTocs();
+if (tocsElement == null) return;
+NodeList tocs = tocsElement.getElementsByTagName("toc");
+for (int i=0; i<tocs.getLength(); i++)
+{
+	Element toc = (Element)tocs.item(i);
+	String label = toc.getAttribute("label");
+	String id = toc.getAttribute("href");
 %>
-		<li class='node'><a href='javascript:loadTOC("<%=id%>");' ><nobr> <%=label%> </nobr> </a></li>
-<%
-		}		
-	}
-
+		<div class='list'><a  href='javascript:parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></div>
+<%		
+}
 %>
-</ul>
 
 </body>
 </html>
