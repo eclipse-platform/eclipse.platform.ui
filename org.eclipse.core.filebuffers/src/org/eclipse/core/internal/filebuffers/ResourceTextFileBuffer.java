@@ -19,8 +19,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +27,9 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -173,6 +174,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		IStatus status= null;
 		
 		try {
+			cacheEncodingState();
 			original= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(original, fFile.getContents(), fEncoding);
 		} catch (CoreException x) {
@@ -250,15 +252,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					// log problem because we could not migrate the property successfully
 					handleCoreException(ex);
 				}
+				setHasBOM();
 			} else {
-				fExplicitEncoding= fFile.getCharset(false);
-				if (fExplicitEncoding != null)
-					fEncoding= fExplicitEncoding;
-				else
-					fEncoding= fFile.getCharset();
+				cacheEncodingState();
 			}
 			
-			setHasBOM();
 			
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
@@ -416,6 +414,21 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 	
 	/**
+	 * Internally caches the text resource's encoding.
+	 * 
+	 * @throws CoreException if the encoding cannot be retrieved from the resource
+	 * @since 3.1
+	 */
+	protected void cacheEncodingState() throws CoreException {
+		fExplicitEncoding= fFile.getCharset(false);
+		if (fExplicitEncoding != null)
+			fEncoding= fExplicitEncoding;
+		else
+			fEncoding= fFile.getCharset();
+		setHasBOM();
+	}
+	
+	/**
 	 * Updates the element info to a change of the file content and sends out appropriate notifications.
 	 */
 	protected void handleFileContentChanged() {
@@ -426,6 +439,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		IStatus status= null;
 		
 		try {
+			cacheEncodingState();
 			setDocumentContent(document, fFile.getContents(false), fEncoding);
 		} catch (CoreException x) {
 			status= x.getStatus();

@@ -12,13 +12,6 @@ package org.eclipse.core.internal.filebuffers;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
@@ -26,6 +19,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -83,7 +83,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		/**
 		 * Synchronizes the document with external resource changes.
 		 */
-		private class FileSynchronizer implements IResourceChangeListener, IResourceDeltaVisitor {
+		private class FileSynchronizer implements IResourceChangeListener {
 				
 			/** A flag indicating whether this synchronizer is installed or not. */
 			private boolean fIsInstalled= false;
@@ -115,63 +115,58 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			 */
 			public void resourceChanged(IResourceChangeEvent e) {
 				IResourceDelta delta= e.getDelta();
-				try {
-					if (delta != null && fIsInstalled)
-						delta.accept(this);
-				} catch (CoreException x) {
-					handleCoreException(x); 
-				}
+				delta= delta.findMember(fFile.getFullPath());
+					if (delta != null && fIsInstalled) {
+						SafeFileChange fileChange= null;
+					
+						switch (delta.getKind()) {
+							case IResourceDelta.CHANGED:
+								if ((IResourceDelta.ENCODING & delta.getFlags()) != 0) {
+									if (!isDisposed() && !fCanBeSaved && isSynchronized()) {
+										fileChange= new SafeFileChange() {
+											protected void execute() throws Exception {
+												handleFileContentChanged();
+											}
+										};
+									}
+								}
+								if (fileChange == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+									if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
+										fileChange= new SafeFileChange() {
+											protected void execute() throws Exception {
+												handleFileContentChanged();
+											}
+										};
+									}
+								}
+								break;
+							case IResourceDelta.REMOVED:
+								if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+									final IPath path= delta.getMovedToPath();
+									fileChange= new SafeFileChange() {
+										protected void execute() throws Exception {
+											handleFileMoved(path);
+										}
+									};
+								} else {
+									if (!isDisposed() && !fCanBeSaved) {
+										fileChange= new SafeFileChange() {
+											protected void execute() throws Exception {
+												handleFileDeleted();
+											}
+										};
+									}
+								}
+								break;
+						}
+							
+						if (fileChange != null) {
+							fileChange.preRun();
+							fManager.execute(fileChange, fSynchronizationContextCount > 0);
+						}
+					}
 			}
 				
-			/*
-			 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-			 */
-			public boolean visit(IResourceDelta delta) throws CoreException {
-								
-				if (delta != null && fFile.equals(delta.getResource())) {
-						
-					SafeFileChange fileChange= null;
-						
-					switch (delta.getKind()) {
-						case IResourceDelta.CHANGED:
-							if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-								if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
-									fileChange= new SafeFileChange() {
-										protected void execute() throws Exception {
-											handleFileContentChanged();
-										}
-									};
-								}
-							}
-							break;
-						case IResourceDelta.REMOVED:
-							if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-								final IPath path= delta.getMovedToPath();
-								fileChange= new SafeFileChange() {
-									protected void execute() throws Exception {
-										handleFileMoved(path);
-									}
-								};
-							} else {
-								if (!isDisposed() && !fCanBeSaved) {
-									fileChange= new SafeFileChange() {
-										protected void execute() throws Exception {
-											handleFileDeleted();
-										}
-									};
-								}
-							}
-							break;
-					}
-						
-					if (fileChange != null) {
-						fileChange.preRun();
-						fManager.execute(fileChange, fSynchronizationContextCount > 0);
-					}
-				}
-					
-				return true; // because we are sitting on files anyway
-			}
 		}
 		
 		
@@ -206,7 +201,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	}
 	
 	abstract protected void handleFileContentChanged();
-	
+
 	abstract protected void addFileBufferContentListeners();
 	
 	abstract protected void removeFileBufferContentListeners();
