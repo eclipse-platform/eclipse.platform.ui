@@ -17,7 +17,7 @@ public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
 	private IFeature feature;
 	private IConfiguredSite site;
-	
+
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
 		this.adapter = adapter;
 		if (adapter.isConfigured()) {
@@ -26,12 +26,12 @@ public class FeatureStateAction extends Action {
 			setText("Enable");
 		}
 	}
-	
+
 	public void run() {
 		try {
 			if (adapter == null)
 				return;
-				
+
 			feature = adapter.getFeature(null);
 			site = adapter.getConfiguredSite();
 			boolean isConfigured = adapter.isConfigured();
@@ -53,13 +53,19 @@ public class FeatureStateAction extends Action {
 				try {
 					boolean restartNeeded = false;
 					if (isConfigured) {
-						restartNeeded = addPendingChange(PendingChange.UNCONFIGURE,PendingChange.CONFIGURE);
+						restartNeeded =
+							addPendingChange(
+								PendingChange.UNCONFIGURE,
+								PendingChange.CONFIGURE);
 					} else {
-						restartNeeded = addPendingChange(PendingChange.CONFIGURE, PendingChange.UNCONFIGURE);
+						restartNeeded =
+							addPendingChange(
+								PendingChange.CONFIGURE,
+								PendingChange.UNCONFIGURE);
 					}
 					if (restartNeeded)
 						UpdateUI.informRestartNeeded();
-						
+
 					SiteManager.getLocalSite().save();
 					UpdateUI.getDefault().getUpdateModel().fireObjectChanged(adapter, "");
 				} catch (CoreException e) {
@@ -69,10 +75,11 @@ public class FeatureStateAction extends Action {
 			}
 
 		} catch (CoreException e) {
+			UpdateUI.logException(e);
 		}
 
 	}
-	
+
 	private void revert(boolean originallyConfigured) throws CoreException {
 		if (originallyConfigured) {
 			site.configure(feature);
@@ -80,17 +87,16 @@ public class FeatureStateAction extends Action {
 			site.unconfigure(feature);
 		}
 	}
-	
-	
+
 	private boolean addPendingChange(int newJobType, int obsoleteJobType) {
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		PendingChange job = model.findPendingChange(feature);
 		if (job != null && obsoleteJobType == job.getJobType()) {
-				model.removePendingChange(job);
-				return false;
+			model.removePendingChange(job);
+			return false;
 		} else {
 			model.addPendingChange(new PendingChange(feature, newJobType));
-			return true;	
+			return true;
 		}
 	}
 
