@@ -547,17 +547,6 @@ public void openTracker(ViewPane pane) {
 		persp.openTracker(pane);
 }
 /**
- * Cycles the editors forward or backward.
- * 
- * @param forward true to cycle forward, false to cycle backward
- */
-public void cycleEditors(boolean forward) {
-	IEditorPart editor = activationList.cycleEditors(forward);
-	if (editor != null) {
-		activate(editor);
-	}
-}
-/**
  * Add a editor to the activation list.
  */
 protected void addPart(IWorkbenchPart part) {
