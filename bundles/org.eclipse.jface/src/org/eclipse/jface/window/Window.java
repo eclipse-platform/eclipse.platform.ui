@@ -283,29 +283,13 @@ protected void configureShell(Shell newShell) {
 		else
 			newShell.setImage(defaultImage);
 	}
-	Layout layout = getLayout();
-	
-	if (layout != null) {
-		newShell.setLayout(layout);
-	}
+	newShell.setLayout(getLayout());
 }
 
 
 /**
- * Creates the layout for the shell. The layout
- * created here will be attached to the composite
- * passed into createContents. The default implementation
- * returns a GridLayout with no margins. Subclasses
- * that change the layout type by overriding this method
- * should also override createContents.
- * 
- * <p>A return value of null indicates that no layout 
- * should be attached to the composite. In this case, the
- * layout may be attached within createContents.</p>
- * 
- * @return a newly created Layout or null if no layout should be 
- * attached. 
- * @since 3.0
+ * Get the layout for the shell.
+ * @return Layout
  */
 protected Layout getLayout() {
 	GridLayout layout = new GridLayout();
@@ -321,7 +305,7 @@ protected Layout getLayout() {
 protected void constrainShellSize() {
 	// limit the shell size to the display size
 	Rectangle bounds = shell.getBounds();
-	Rectangle constrained = getConstrainedShellBounds(bounds);
+	Rectangle constrained = getConstrainedShellSize(bounds);
 	if (!bounds.equals(constrained)) {
 		shell.setBounds(constrained);
 	}
@@ -344,26 +328,14 @@ public void create() {
 	initializeBounds();
 }
 /**
- * Creates and returns this window's contents. Subclasses may attach
- * any number of children to the parent. As a convenience, the return value 
- * of this method will be remembered and returned by subsequent calls to
- * getControl(). Subclasses may modify the parent's layout if they overload
- * getLayout() to return null. 
- * 
- * <p>It is common practise to create and return a single composite that
- * contains the entire window contents.</p>   
- * 
+ * Creates and returns this window's contents.
  * <p>
  * The default implementation of this framework method
  * creates an instance of <code>Composite</code>.
  * Subclasses may override.
  * </p>
  * 
- * @param parent the parent composite for the controls in
- * this window. The type of layout used is determined by getLayout()
- * 
- * @return the control that will be returned by subsequent calls to
- * getControl()
+ * @return the control
  */
 protected Control createContents(Composite parent) {
 	// by default, just create a composite 
@@ -443,7 +415,7 @@ public static Image getDefaultImage() {
 protected Point getInitialLocation(Point initialSize) {
 	Composite parent = shell.getParent();
 	
-	Monitor monitor = shell.getDisplay().getPrimaryMonitor();
+	Monitor monitor = Display.getCurrent().getPrimaryMonitor();
 	if (parent != null) {
 		monitor = parent.getMonitor();
 	}
@@ -592,7 +564,7 @@ protected void initializeBounds() {
 	Point size = getInitialSize();
 	Point location = getInitialLocation(size);
 
-	shell.setBounds(getConstrainedShellBounds(new Rectangle(location.x, location.y, size.x, size.y)));
+	shell.setBounds(getConstrainedShellSize(new Rectangle(location.x, location.y, size.x, size.y)));
 }
 /**
  * Opens this window, creating it first if it has not yet been created.
@@ -702,7 +674,7 @@ protected void setReturnCode(int code) {
  * 
  * @since 3.0
  */
-protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
+protected Rectangle getConstrainedShellSize(Rectangle preferredSize) {
 	Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, 
 			preferredSize.width, preferredSize.height);
 	

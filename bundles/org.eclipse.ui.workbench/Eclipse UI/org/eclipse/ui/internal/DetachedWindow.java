@@ -220,7 +220,7 @@ public class DetachedWindow extends Window   {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getConstrainedShellSize(org.eclipse.swt.graphics.Rectangle)
 	 */
-	protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
+	protected Rectangle getConstrainedShellSize(Rectangle preferredSize) {
 		Rectangle displayBounds = getShell().getDisplay().getBounds();
 		
 		// As long as the initial position is somewhere on the display, don't mess with it.
@@ -228,6 +228,6 @@ public class DetachedWindow extends Window   {
 			return preferredSize;
 		}
 		
-		return super.getConstrainedShellBounds(preferredSize);
+		return super.getConstrainedShellSize(preferredSize);
 	}
 }
