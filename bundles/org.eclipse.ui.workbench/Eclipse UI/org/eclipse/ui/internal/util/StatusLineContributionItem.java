@@ -13,9 +13,11 @@ package org.eclipse.ui.internal.util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -38,6 +40,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	private Composite statusLine = null;
 	private String text = Util.ZERO_LENGTH_STRING;
 	private int widthHint = -1;
+	private int heightHint = -1;
 
 	public StatusLineContributionItem(String id) {
 		this(id, DEFAULT_CHAR_WIDTH);
@@ -51,19 +54,28 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	public void fill(Composite parent) {
 		statusLine = parent;
-		label = new CLabel(statusLine, SWT.SHADOW_IN);
-		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-
+		
+		Label sep = new Label(parent, SWT.SEPARATOR);
+		label = new CLabel(statusLine, SWT.SHADOW_NONE);
+		
 		if (widthHint < 0) {
 			GC gc = new GC(statusLine);
 			gc.setFont(statusLine.getFont());
-			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
+			FontMetrics fm = gc.getFontMetrics();
+			widthHint = fm.getAverageCharWidth() * charWidth;
+			heightHint = fm.getHeight();
 			gc.dispose();
 		}
-
-		statusLineLayoutData.widthHint = widthHint;
-		label.setLayoutData(statusLineLayoutData);
+		
+		StatusLineLayoutData data = new StatusLineLayoutData();
+		data.widthHint = widthHint;
+		label.setLayoutData(data);
 		label.setText(text);
+		
+		data = new StatusLineLayoutData();
+		data.heightHint= heightHint;
+		sep.setLayoutData(data);
+
 	}
 
 	/**
