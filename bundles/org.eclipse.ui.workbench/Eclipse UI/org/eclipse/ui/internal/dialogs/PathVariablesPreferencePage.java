@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
- * IBM - Initial API and implementation
+ *	 IBM - Initial API and implementation
  **********************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -34,14 +34,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class PathVariablesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private PathVariablesBlock pathVariablesBlock;
+	private PathVariablesGroup pathVariablesBlock;
 
 	/**
 	 * Constructs a preference page of path variables.
 	 * Omits "Restore Defaults"/"Apply Changes" buttons.
 	 */
 	public PathVariablesPreferencePage() {
-		pathVariablesBlock = new PathVariablesBlock(true, IResource.FILE | IResource.FOLDER);
+		pathVariablesBlock = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
 
 		this.noDefaultAndApplyButton();
 	}
@@ -89,7 +89,7 @@ public class PathVariablesPreferencePage extends PreferencePage implements IWork
 	 * confirmation.
 	 * 
 	 * @see PreferencePage#performOk()
-	 * @see PathVariablesBlock#performOk()
+	 * @see PathVariablesGroup#performOk()
 	 */
 	public boolean performOk() {
 		return pathVariablesBlock.performOk();

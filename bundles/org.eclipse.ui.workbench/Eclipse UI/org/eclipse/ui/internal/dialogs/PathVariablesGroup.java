@@ -1,14 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.*;
@@ -35,7 +34,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * A widget group that displays path variables. 
  * Includes buttons to edit, remove existing variables and create new ones.
  */
-public class PathVariablesBlock {
+public class PathVariablesGroup {
 	// sizing constants
 	private static final int SIZING_SELECTION_PANE_WIDTH = 400;
 
@@ -67,14 +66,14 @@ public class PathVariablesBlock {
 	private final Image FOLDER_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
 
 	/**
-	 * Creates a new PathVariablesBlock.
+	 * Creates a new PathVariablesGroup.
 	 *
 	 * @param multiSelect create a multi select tree
 	 * @param variableType the type of variables that are displayed in 
 	 * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
 	 * 	logically ORed together.
 	 */
-	public PathVariablesBlock(boolean multiSelect, int variableType) {
+	public PathVariablesGroup(boolean multiSelect, int variableType) {
 		this.multiSelect = multiSelect;
 		this.variableType = variableType;
 		pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();

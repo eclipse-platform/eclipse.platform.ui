@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * </p>
  */
 public class PathVariableSelectionDialog extends SelectionDialog {
-	private PathVariablesBlock pathVariablesBlock;
+	private PathVariablesGroup pathVariablesBlock;
 
 /**
  * Creates a path variable selection dialog.
@@ -45,7 +45,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
 public PathVariableSelectionDialog(Shell parentShell, int variableType) {
 	super(parentShell);
 	setTitle(WorkbenchMessages.getString("PathVariableSelectionDialog.title")); //$NON-NLS-1$
-	pathVariablesBlock = new PathVariablesBlock(false, variableType);
+	pathVariablesBlock = new PathVariablesGroup(false, variableType);
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /* (non-Javadoc)
