@@ -78,7 +78,8 @@ private void openLogFile() {
 	try {
 		log = new PrintWriter(new FileOutputStream(InternalPlatform.getMetaArea().getLogLocation().toOSString(), true));
 	} catch (IOException e) {
-		log = null;
+		// there was a problem opening the log file so log to the console
+		log = new PrintWriter(System.out);
 	}
 }
 /**
