@@ -226,6 +226,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		defaultEncodingButton.setSelection(useDefault);
 		otherEncodingButton.setSelection(!useDefault);
 		encodingCombo.setEnabled(!useDefault);
+		setErrorMessage(null);
+		setValid(true);
 	}
 	
 		/**

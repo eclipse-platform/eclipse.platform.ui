@@ -237,6 +237,7 @@ protected void doLoadDefault() {
 		String value = getPreferenceStore().getDefaultString(getPreferenceName());
 		textField.setText(value);
 	}
+	valueChanged();
 }
 /* (non-Javadoc)
  * Method declared on FieldEditor.

@@ -92,6 +92,7 @@ protected void doLoadDefault() {
 		int value = getPreferenceStore().getDefaultInt(getPreferenceName());
 		text.setText("" + value);//$NON-NLS-1$
 	}
+	valueChanged();
 }
 /* (non-Javadoc)
  * Method declared on FieldEditor.
