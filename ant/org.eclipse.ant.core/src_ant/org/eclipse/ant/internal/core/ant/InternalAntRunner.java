@@ -62,6 +62,7 @@ http://www.eclipse.org/legal/cpl-v10.html
  */
  
 import java.io.*;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -195,7 +196,7 @@ public class InternalAntRunner {
 		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
-		
+		//project.setProperty("ant.home", AntCorePlugin.getPlugin().getPreferences().getAntHome());
 		if (userProperties == null) {
 			return;
 		}
@@ -440,7 +441,7 @@ public class InternalAntRunner {
 		PrintStream originalErr = System.err;
 		PrintStream originalOut = System.out;
 		SecurityManager originalSM= System.getSecurityManager();
-		
+		setJavaClassPath();
 		scriptExecuted= true;
 		try {
 			getCurrentProject().init();
@@ -1252,4 +1253,27 @@ public class InternalAntRunner {
         project.setInputHandler(handler);
     }
 
+	/**
+	 * Sets the Java class path in org.apache.tools.ant.types.Path
+	 */
+	private void setJavaClassPath() {
+		
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		URL[] antClasspath= prefs.getDefaultCustomURLs();
+		StringBuffer buff= new StringBuffer();
+		for (int i = 0; i < antClasspath.length; i++) {
+			URL url = antClasspath[i];
+			IPath path= null;
+			try {
+				path = new org.eclipse.core.runtime.Path(Platform.asLocalURL(url).getFile());
+			} catch (IOException e) {
+				continue;
+			}
+			buff.append(path.toOSString());
+			buff.append("; ");
+		}
+
+		org.apache.tools.ant.types.Path systemClasspath= new org.apache.tools.ant.types.Path(null, buff.substring(0, buff.length() - 2));
+		org.apache.tools.ant.types.Path.systemClasspath= systemClasspath;
+	}
 }

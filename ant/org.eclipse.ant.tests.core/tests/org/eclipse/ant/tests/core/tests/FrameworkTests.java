@@ -14,7 +14,10 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 public class FrameworkTests extends AbstractAntTest {
 	
@@ -60,7 +63,6 @@ public class FrameworkTests extends AbstractAntTest {
 		msg= (String)AntTestChecker.getDefault().getMessages().get(1);
 		assertTrue("Message incorrect: " + msg, msg.equals("classpathOrdering2"));
 		assertSuccessful();
-		
 	}
 	
 	public void testNoDefaultTarget() {
@@ -72,5 +74,23 @@ public class FrameworkTests extends AbstractAntTest {
 			return;
 		}
 		assertTrue("Build files with no default targets should not be accepted", false);
+	}
+	
+	/**
+	 * Ensures that tasks like javac work when includeAntRuntime is specified
+	 * bug 20857
+	 */
+	public void testIncludeAntRuntime() throws CoreException {
+		run("javac.xml", new String[]{"build","refresh"}, false); //standard compiler
+		assertSuccessful();
+		String path= "org.eclipse.ant.tests.core.tasks";
+		path= path.replace('.', Path.SEPARATOR);
+		path= "temp.folder" + Path.SEPARATOR + "javac.bin" + Path.SEPARATOR + path + Path.SEPARATOR + "AntTestTask.class";
+		IFile classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFolder("org").getFolder("eclipse").getFolder("ant").getFolder("tests").getFolder("core").getFolder("tasks").getFile("AntTestTask.class");
+		assertTrue("Class file was not generated", classFile.exists());
+		run("javac.xml", new String[]{"-Duse.eclipse.compiler=true", "clean", "build", "refresh"}, false); //JDTCompiler
+		assertSuccessful();
+		classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFolder("org").getFolder("eclipse").getFolder("ant").getFolder("tests").getFolder("core").getFolder("tasks").getFile("AntTestTask.class");
+		assertTrue("Class file was not generated", classFile.exists());
 	}
 }
