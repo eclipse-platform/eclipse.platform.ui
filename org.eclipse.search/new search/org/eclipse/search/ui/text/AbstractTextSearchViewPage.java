@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.search.ui.text;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
@@ -25,6 +29,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -72,10 +78,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.progress.UIJob;
 /**
  * An abstract base implementation for classes showing
  * <code>AbstractTextSearchResult</code> instances. This class assumes that
@@ -92,6 +100,35 @@ import org.eclipse.ui.part.PageBook;
  * @since 3.0
  */
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
+	class UpdateUIJob extends UIJob {
+		
+		public UpdateUIJob() {
+			super(SearchMessages.getString("AbstractTextSearchViewPage.update_job.name")); //$NON-NLS-1$
+			setSystem(true);
+		}
+		
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			runBatchedUpdates();
+			if (hasMoreUpdates() || isQueryRunning()) {
+				fIsUIUpdateScheduled= false;
+				schedule(500);
+			} else {
+				fIsUIUpdateScheduled= false;
+				turnOnDecoration();
+			}
+			return Status.OK_STATUS;
+		}
+		
+		/* 
+		 * Undocumented for testing only. Used to find UpdateUIJobs.
+		 */
+		public boolean belongsTo(Object family) {
+			return family == AbstractTextSearchViewPage.this;
+		}
+
+	}
+
+	private boolean fIsUIUpdateScheduled= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
@@ -124,8 +161,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag (<code>value 2</code>) denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
-	private boolean fIsUpdatePosted;
-
+	private boolean fUpdateTracing;
+	
 	/**
 	 * This constructor must be passed a combination of layout flags combined
 	 * with bitwise or. At least one flag must be passed in (i.e. 0 is not a
@@ -168,6 +205,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected AbstractTextSearchViewPage() {
 		this(FLAG_LAYOUT_FLAT | FLAG_LAYOUT_TREE);
+	}
+	
+	public void setUpdateTracing(boolean on) {
+		fUpdateTracing= on;
 	}
 
 	private void createLayoutActions() {
@@ -348,12 +389,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return busyLabel;
 	}
 
+	private synchronized void scheduleUIUpdate() {
+		if (!fIsUIUpdateScheduled) {
+			fIsUIUpdateScheduled= true;
+			new UpdateUIJob().schedule();
+		}
+	}
+
 	private IQueryListener createQueryListener() {
-		final Runnable runnable = new Runnable() {
-			public void run() {
-				updateBusyLabel();
-			}
-		};
 		return new IQueryListener() {
 			public void queryAdded(ISearchQuery query) {
 				// ignore
@@ -363,12 +406,40 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				// ignore
 			}
 
-			public void queryStarting(ISearchQuery query) {
-				asyncExec(runnable);
+			public void queryStarting(final ISearchQuery query) {
+				final Runnable runnable1 = new Runnable() {
+					public void run() {
+						updateBusyLabel();
+						AbstractTextSearchResult result = getInput();
+
+						if (result == null || !result.getQuery().equals(query)) {
+							return;
+						}
+						turnOffDecoration();
+						scheduleUIUpdate();
+					}
+
+
+				};
+				asyncExec(runnable1);
 			}
 
-			public void queryFinished(ISearchQuery query) {
-				asyncExec(runnable);
+			public void queryFinished(final ISearchQuery query) {
+				final Runnable runnable2 = new Runnable() {
+					public void run() {
+						updateBusyLabel();
+						AbstractTextSearchResult result = getInput();
+
+						if (result == null || !result.getQuery().equals(query)) {
+							return;
+						}
+						
+						if (fViewer.getSelection().isEmpty()) {
+							navigateNext(true);
+						}
+					}
+				};
+				asyncExec(runnable2);
 			}
 		};
 	}
@@ -478,7 +549,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		});
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				fCurrentMatchIndex = 0;
+				fCurrentMatchIndex = -1;
 				fRemoveSelectedMatches.setEnabled(!event.getSelection().isEmpty());
 			}
 		});
@@ -545,6 +616,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				gotoNextMatch();
 		}
 		updateBusyLabel();
+		turnOffDecoration();
+		scheduleUIUpdate();
 	}
 
 	/**
@@ -736,13 +809,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (e instanceof MatchEvent) {
 			MatchEvent me = (MatchEvent) e;
 			postUpdate(me.getMatches());
-			AbstractTextSearchResult result = (AbstractTextSearchResult) me.getSearchResult();
-			if (result.getMatchCount() == 1)
-				asyncExec(new Runnable() {
-					public void run() {
-						navigateNext(true);
-					}
-				});
 		} else if (e instanceof RemoveAllEvent) {
 			postClear();
 		}
@@ -752,22 +818,30 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		for (int i = 0; i < matches.length; i++) {
 			fBatchedUpdates.add(matches[i].getElement());
 		}
-		if (!fIsUpdatePosted) {
-			fIsUpdatePosted = true;
-			asyncExec(new Runnable() {
-				public void run() {
-					runBatchedUpdates();
-				}
-			});
-		}
+		scheduleUIUpdate();
 	}
 
-	private void runBatchedUpdates() {
-		synchronized (this) {
+	private synchronized void runBatchedUpdates() {
+		if (fBatchedUpdates.size() > 100) {
+			Object[] hundredUpdates= new Object[100];
+			Iterator elements= fBatchedUpdates.iterator();
+			for (int i= 0; i < hundredUpdates.length; i++) {
+				hundredUpdates[i]= elements.next();
+				elements.remove();
+			}
+			elementsChanged(hundredUpdates);
+		} else {
 			elementsChanged(fBatchedUpdates.toArray());
 			fBatchedUpdates.clear();
-			updateBusyLabel();
-			fIsUpdatePosted = false;
+		}
+		updateBusyLabel();
+	}
+
+	private void setSelectionIndex() {
+		if (fViewer instanceof TableViewer) {	
+			((TableViewer)fViewer).getTable().showSelection();
+		} else if (fViewer instanceof TreeViewer) {
+			((TreeViewer)fViewer).getTree().showSelection();
 		}
 	}
 
@@ -777,6 +851,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				runClear();
 			}
 		});
+	}
+
+	private synchronized boolean hasMoreUpdates() {
+		return fBatchedUpdates.size() > 0;
+	}
+
+	private boolean isQueryRunning() {
+		AbstractTextSearchResult result= getInput();
+		if (result != null) {
+			return NewSearchUI.isQueryRunning(result.getQuery());
+		}
+		return false;
 	}
 
 	private void runClear() {
@@ -880,4 +966,20 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			collectAllMatchesBelow(result, set, cp, children);
 		}
 	}
+	
+	private void turnOffDecoration() {
+		IBaseLabelProvider lp= fViewer.getLabelProvider();
+		if (lp instanceof DecoratingLabelProvider) {
+			((DecoratingLabelProvider)lp).setLabelDecorator(null);			
+		}
+	}
+
+	private void turnOnDecoration() {
+		IBaseLabelProvider lp= fViewer.getLabelProvider();
+		if (lp instanceof DecoratingLabelProvider) {
+			((DecoratingLabelProvider)lp).setLabelDecorator(PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());			
+			
+		}
+	}
+
 }

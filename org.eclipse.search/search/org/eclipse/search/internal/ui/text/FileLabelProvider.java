@@ -11,20 +11,14 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
-
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 public class FileLabelProvider extends LabelProvider {
@@ -37,15 +31,15 @@ public class FileLabelProvider extends LabelProvider {
 	private static final String fgSeparatorFormat= "{0} - {1}"; //$NON-NLS-1$
 	
 	private WorkbenchLabelProvider fLabelProvider;
-	private ILabelDecorator fDecorator;
+	private AbstractTextSearchViewPage fPage;
 		
 	private int fOrder;
 	private String[] fArgs= new String[2];
 
-	public FileLabelProvider(int orderFlag) {
-		fDecorator= PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+	public FileLabelProvider(AbstractTextSearchViewPage page, int orderFlag) {
 		fLabelProvider= new WorkbenchLabelProvider();
 		fOrder= orderFlag;
+		fPage= page;
 	}
 
 	public void setOrder(int orderFlag) {
@@ -90,13 +84,12 @@ public class FileLabelProvider extends LabelProvider {
 			}
 		}
 		
-		// Do the decoration
-		if (fDecorator != null) {
-			String decoratedText= fDecorator.decorateText(text, resource);
-		if (decoratedText != null)
-			return decoratedText;
-		}
-		return text;
+		int matchCount= fPage.getInput().getMatchCount(element);
+		if (matchCount == 0)
+			return text;
+		if (matchCount == 1)
+			return fLabelProvider.getText(element)+ " (" + 1 + " match)"; //$NON-NLS-1$ //$NON-NLS-2$
+		return text + " (" + matchCount + " matches)"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public Image getImage(Object element) {
@@ -105,11 +98,6 @@ public class FileLabelProvider extends LabelProvider {
 
 		IResource resource= (IResource)element;
 		Image image= fLabelProvider.getImage(resource);
-		if (fDecorator != null) {
-			Image decoratedImage= fDecorator.decorateImage(image, resource);
-			if (decoratedImage != null)
-				return decoratedImage;
-		}
 		return image;
 	}
 

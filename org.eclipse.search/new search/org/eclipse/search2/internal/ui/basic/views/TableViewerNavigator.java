@@ -37,5 +37,6 @@ public class TableViewerNavigator implements INavigate {
 			}
 		}
 		fViewer.getTable().setSelection(nextIndex);
+		fViewer.getTable().showSelection();
 	}
 }

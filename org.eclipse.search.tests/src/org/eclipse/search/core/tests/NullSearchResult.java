@@ -13,6 +13,8 @@ package org.eclipse.search.core.tests;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
 
 /**
  * @author Thomas Mäder
@@ -44,6 +46,20 @@ public class NullSearchResult extends AbstractTextSearchResult {
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
 	public ISearchQuery getQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
+	 */
+	public IEditorMatchAdapter getEditorMatchAdapter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
+	 */
+	public IFileMatchAdapter getFileMatchAdapter() {
 		// TODO Auto-generated method stub
 		return null;
 	}

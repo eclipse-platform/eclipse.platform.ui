@@ -11,18 +11,23 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -30,15 +35,6 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
-import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 /**
@@ -64,14 +60,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	}
 
 	protected void configureTableViewer(TableViewer viewer) {
-		viewer.setLabelProvider(new DelegatingLabelProvider(this, new FileLabelProvider(FileLabelProvider.SHOW_LABEL)));
+		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), null));
 		viewer.setContentProvider(new FileTableContentProvider(viewer));
 		setSortOrder(fCurrentSortAction);
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
-		viewer.setLabelProvider(new DelegatingLabelProvider(this, new FileLabelProvider(FileLabelProvider.SHOW_LABEL)));
+		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), null));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
@@ -154,7 +150,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	public void setSortOrder(SortAction action) {
 		fCurrentSortAction= action;
 		StructuredViewer viewer= getViewer();
-		DelegatingLabelProvider lpWrapper= (DelegatingLabelProvider) viewer.getLabelProvider();
+		DecoratingLabelProvider lpWrapper= (DecoratingLabelProvider) viewer.getLabelProvider();
 		((FileLabelProvider)lpWrapper.getLabelProvider()).setOrder(action.getSortOrder());
 		if (action.getSortOrder() == FileLabelProvider.SHOW_LABEL_PATH) {
 			viewer.setSorter(new NameSorter());

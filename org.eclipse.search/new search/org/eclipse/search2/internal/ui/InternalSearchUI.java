@@ -63,11 +63,12 @@ public class InternalSearchUI {
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
+			ThrottlingProgressMonitor realMonitor= new ThrottlingProgressMonitor(monitor, 0.5f);
 			fSearchJobRecord.fJob= this;
 			searchJobStarted(fSearchJobRecord);
 			IStatus status= null;
 			try{
-				status= fSearchJobRecord.fQuery.run(monitor); 
+				status= fSearchJobRecord.fQuery.run(realMonitor); 
 			} finally {
 				searchJobFinished(fSearchJobRecord);
 			}
