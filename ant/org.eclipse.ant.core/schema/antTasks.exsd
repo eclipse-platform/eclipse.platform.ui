@@ -99,10 +99,10 @@ for the library containing the task.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an object declaration: 
+         The following is an example of an Ant tasks extension point: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antTask"&gt;
+   &lt;extension point="org.eclipse.ant.core.antTasks"&gt;
       &lt;antTask name="coolTask" class="com.example.CoolTask"/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -116,7 +116,7 @@ for the library containing the task.
       </appInfo>
       <documentation>
          The platform itself supplies a number of tasks including 
-incremental, javac and refreshLocal.
+eclipse.incrementalBuild and eclipse.refreshLocal.
       </documentation>
    </annotation>
 
@@ -125,7 +125,7 @@ incremental, javac and refreshLocal.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href="hglegal2003.htm"&gt;&lt;img SRC="ngibmcpy2003.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

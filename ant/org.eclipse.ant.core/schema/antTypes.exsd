@@ -100,10 +100,10 @@ for the library containing the type.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an object declaration: 
+         The following is an example of an Ant types extension point: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antType"&gt;
+   &lt;extension point="org.eclipse.ant.core.antTypes"&gt;
       &lt;antType name="coolType" class="com.example.CoolType"/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -113,20 +113,10 @@ for the library containing the type.
 
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         The platform itself supplies a number of datatypes 
-including commaPatternSet.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href="hglegal2003.htm"&gt;&lt;img SRC="ngibmcpy2003.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
