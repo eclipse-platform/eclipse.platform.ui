@@ -169,7 +169,7 @@ public boolean isVisible() {
 			return callback.isActive(commandId);
 	}
 	
-	return true;	
+	return super.isVisible();	
 }
 
 /**
