@@ -33,15 +33,8 @@ public class HelpServer extends Thread {
 		} catch (Exception e1) {
 			ssocket = null;
 			Logger.logError(e1.getMessage(), e1);
+			return;
 		}
-		//catch (UnknownHostException e)
-		//{
-		//System.out.println("*** cannot find IP for local host ***");
-		//}
-
-		// do a dummy accept() to trigger the listen().
-		// Java does not provide a listen() method, so we need to make
-		// sure the server is listening before waking up the client
 		int timeout = 0;
 		try {
 			timeout = ssocket.getSoTimeout();
