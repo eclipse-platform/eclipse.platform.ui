@@ -3,6 +3,8 @@
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
+
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -31,12 +33,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
-
+
 /**
  * A special viewer to present search results. The viewer implements an
  * optimized adding and removing strategy. Furthermore it manages
@@ -47,7 +46,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 class SearchResultViewer extends TableViewer {
 	
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-
+
 	private SearchResultView fOuterPart;
 	private boolean fFirstTime= true;
 	private ShowNextResultAction fShowNextResultAction;
@@ -56,7 +55,6 @@ class SearchResultViewer extends TableViewer {
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveAllSearchesAction fRemoveAllSearchesAction;
 	private RemoveMatchAction fRemoveMatchAction;
-	private RemoveResultAction fRemoveEntriesAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
@@ -78,9 +76,9 @@ class SearchResultViewer extends TableViewer {
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
 		setLabelProvider(new SearchResultLabelProvider());
-
+
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
-
+
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
 		fShowPreviousResultAction= new ShowPreviousResultAction(this);
@@ -89,8 +87,6 @@ class SearchResultViewer extends TableViewer {
 		fGotoMarkerAction.setEnabled(false);
 		fRemoveMatchAction= new RemoveMatchAction(this);
 		fRemoveMatchAction.setEnabled(false);
-		fRemoveEntriesAction= new RemoveResultAction(this);
-		fRemoveEntriesAction.setEnabled(false);
 		fRemoveAllSearchesAction= new RemoveAllSearchesAction();
 		fSearchAgainAction= new SearchAgainAction();
 		fSearchAgainAction.setEnabled(hasSearch);
@@ -99,7 +95,7 @@ class SearchResultViewer extends TableViewer {
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
 		fSearchDropDownAction.setEnabled(hasSearch);
-
+
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
@@ -122,7 +118,7 @@ class SearchResultViewer extends TableViewer {
 				}
 			}
 		);
-
+
 		getTable().addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				showResult();
@@ -151,7 +147,7 @@ class SearchResultViewer extends TableViewer {
 			fShowPreviousResultAction.setEnabled(state);
 		if (state != fSortDropDownAction.isEnabled())
 			fSortDropDownAction.setEnabled(state);
-
+
 		state= SearchManager.getDefault().getCurrentSearch() != null;
 		if (state != fRemoveAllSearchesAction.isEnabled())
 			fRemoveAllSearchesAction.setEnabled(state);
@@ -159,14 +155,14 @@ class SearchResultViewer extends TableViewer {
 			fSearchDropDownAction.setEnabled(state);
 		if (state != fSearchAgainAction.isEnabled())
 			fSearchAgainAction.setEnabled(state);
-
+
 		state= !getSelection().isEmpty();
 		if (state != fGotoMarkerAction.isEnabled())
 			fGotoMarkerAction.setEnabled(state);
 		if (state != fRemoveMatchAction.isEnabled())
 			fRemoveMatchAction.setEnabled(state);
 	}
-
+
 	protected void inputChanged(Object input, Object oldInput) {
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
@@ -174,7 +170,7 @@ class SearchResultViewer extends TableViewer {
 		updateTitle();
 		enableActions();
 	}
-
+
 	protected int getSelectedEntriesCount() {
 		ISelection s= getSelection();
 		if (s == null || s.isEmpty() || !(s instanceof IStructuredSelection))
@@ -182,10 +178,10 @@ class SearchResultViewer extends TableViewer {
 		IStructuredSelection selection= (IStructuredSelection)s;
 		return selection.size();
 	}
-
+
 
 	//--- Contribution management -----------------------------------------------
-
+
 	protected boolean enableRemoveMatchMenuItem() {
 		if (getSelectedEntriesCount() != 1)
 			return false;
@@ -207,7 +203,7 @@ class SearchResultViewer extends TableViewer {
 			menu.add(fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
 				menu.add(fRemoveMatchAction);
-			menu.add(fRemoveEntriesAction);
+			menu.add(new RemoveResultAction(this));
 			menu.add(new Separator());
 		}
 		// If we have elements
@@ -217,27 +213,27 @@ class SearchResultViewer extends TableViewer {
 		menu.add(fSearchAgainAction);
 		menu.add(fSortDropDownAction);
 	}
-
+
 
 	IAction getGotoMarkerAction() {
 		// null as return value is covered (no action will take place)
 		return fgGotoMarkerAction;
 	}
-
+
 
 	void setGotoMarkerAction(IAction gotoMarkerAction) {
 		fgGotoMarkerAction= gotoMarkerAction;
 	}
-
+
 
 	void setContextMenuTarget(IContextMenuContributor contributor) {
 		fgContextMenuContributor= contributor;
 	}
-
+
 	void setPageId(String pageId) {
 		fSortDropDownAction.setPageId(pageId);
 	}
-
+
 	void fillToolBar(IToolBarManager tbm) {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
@@ -256,17 +252,17 @@ class SearchResultViewer extends TableViewer {
 					return;	// performance
 				}
 				if (e.character == SWT.DEL) {
-					fRemoveEntriesAction.run();
+					new RemoveResultAction(SearchResultViewer.this).run();
 					return; // performance
 				}
 			}
 		});
 	}	
-
+
 	int getItemCount() {
 		return SearchManager.getDefault().getCurrentItemCount();
 	}
-
+
 	void internalSetLabelProvider(ILabelProvider provider) {
 		IBaseLabelProvider tableLabelProvider= getLabelProvider();
 		if (tableLabelProvider instanceof SearchResultLabelProvider)
@@ -287,10 +283,10 @@ class SearchResultViewer extends TableViewer {
 		Table table= getTable();
 		if (!canDoShowResult(table))
 			return;
-
+
 		int index= table.getSelectionIndex();
 		SearchResultViewEntry entry= (SearchResultViewEntry)getTable().getItem(index).getData();
-
+
 		fMarkerToShow= 0;
 		entry.setSelectedMarkerIndex(0);
 		openCurrentSelection();
@@ -304,12 +300,12 @@ class SearchResultViewer extends TableViewer {
 		Table table= getTable();
 		if (!canDoShowResult(table))
 			return;
-
+
 		int index= table.getSelectionIndex();
 		SearchResultViewEntry entry= null;
 		if (index > -1)
 			entry= (SearchResultViewEntry)table.getItem(index).getData();
-
+
 		fMarkerToShow++;
 		if (entry == null || fMarkerToShow >= entry.getMatchCount()) {
 			// move selection
@@ -339,7 +335,7 @@ class SearchResultViewer extends TableViewer {
 				
 		int index= table.getSelectionIndex();
 		SearchResultViewEntry entry;
-
+
 		fMarkerToShow--;
 		if (fMarkerToShow >= 0)
 			entry= (SearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();			
@@ -372,7 +368,7 @@ class SearchResultViewer extends TableViewer {
 		table.setSelection(index);
 		table.showSelection();
 	}
-
+
 	private void openCurrentSelection() {
 		IAction action= getGotoMarkerAction();
 		if (action != null)
@@ -396,7 +392,7 @@ class SearchResultViewer extends TableViewer {
 		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
 			fOuterPart.setTitleToolTip(toolTip);
 	}
-
+
 	/**
 	 * Sets the message text to be displayed on the status line.
 	 * The image on the status line is cleared.
@@ -404,14 +400,14 @@ class SearchResultViewer extends TableViewer {
 	private void setStatusLineMessage(String message) {
 		fOuterPart.getViewSite().getActionBars().getStatusLineManager().setMessage(message);
 	}
-
+
 	protected void handleDispose(DisposeEvent event) {
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
 		super.handleDispose(event);
 	}
-
+
 	//--- Change event handling -------------------------------------------------
 	
 	/**

@@ -123,16 +123,8 @@ public class TypeFilteringDialog extends SelectionDialog {
 		//Allow the *. and . prefix and strip out the extension
 		while (tokenizer.hasMoreTokens()) {
 			String currentExtension= tokenizer.nextToken().trim();
-			if (!currentExtension.equals("")) { //$NON-NLS-1$
-				if (currentExtension.startsWith("*.")) //$NON-NLS-1$
-					result.add(currentExtension.substring(2));
-				else {
-					if (currentExtension.startsWith(".")) //$NON-NLS-1$
-						result.add(currentExtension.substring(1));
-					else
-						result.add(currentExtension);
-				}
-			}
+			if (!currentExtension.equals("")) //$NON-NLS-1$
+				result.add(currentExtension);
 		}
 	}
 
