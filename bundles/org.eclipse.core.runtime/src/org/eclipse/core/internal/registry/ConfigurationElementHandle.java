@@ -47,7 +47,7 @@ public class ConfigurationElementHandle extends Handle implements IConfiguration
 		try {
 			return getConfigurationElement().createExecutableExtension(propertyName);
 		} catch (InvalidRegistryObjectException e) {
-			Status status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, ConfigurationElement.PLUGIN_ERROR, e.getMessage(), e);
+			Status status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, ConfigurationElement.PLUGIN_ERROR, "Invalid registry object", e); //$NON-NLS-1$
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 			throw new CoreException(status);
 		}
