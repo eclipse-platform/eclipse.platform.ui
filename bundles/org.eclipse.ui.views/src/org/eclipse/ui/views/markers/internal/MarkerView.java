@@ -55,6 +55,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -181,11 +182,11 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#registerGlobalActions(org.eclipse.ui.IActionBars)
 	 */
 	protected void registerGlobalActions(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, pasteAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), deleteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), selectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertiesAction);
 	}
 
 	protected void initDragAndDrop() {

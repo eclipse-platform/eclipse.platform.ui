@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -58,7 +57,6 @@ public abstract class TableView extends ViewPart {
 	public static final String FILTERS_ACTION_ID = "filters"; //$NON-NLS-1$
 	
 	private TableViewer viewer;
-	private Clipboard clipboard;
 	private IMemento memento;
 	protected ColumnLayoutData[] columnLayouts;
 	

@@ -21,6 +21,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.ide.IDE;
 
 public class ActionRevealMarker extends SelectionProviderAction {
 
@@ -53,7 +54,7 @@ public class ActionRevealMarker extends SelectionProviderAction {
 			IFile file = ((IFileEditorInput) input).getFile();
 			if (marker.getResource().equals(file)) {
 				try {
-					part.getSite().getPage().openEditor(marker, false);
+					IDE.openEditor(part.getSite().getPage(), marker, false);
 				}
 				catch (CoreException e) {
 				}
