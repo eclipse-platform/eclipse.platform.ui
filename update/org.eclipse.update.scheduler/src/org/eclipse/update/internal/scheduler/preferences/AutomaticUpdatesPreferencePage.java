@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.scheduler.preferences;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -79,7 +80,7 @@ public class AutomaticUpdatesPreferencePage
 		dayCombo = new Combo(group, SWT.READ_ONLY);
 		dayCombo.setItems(UpdateScheduler.DAYS);
 		gd = new GridData();
-		gd.widthHint = 100;
+		gd.widthHint = 200;
 		gd.horizontalIndent = 30;
 		dayCombo.setLayoutData(gd);
 		
@@ -89,7 +90,7 @@ public class AutomaticUpdatesPreferencePage
 		hourCombo = new Combo(group, SWT.READ_ONLY);
 		hourCombo.setItems(UpdateScheduler.HOURS);
 		gd = new GridData();
-		gd.widthHint = 60;
+		gd.widthHint = 100;
 		hourCombo.setLayoutData(gd);
 	
 		createSpacer(container, 1);
@@ -133,6 +134,7 @@ public class AutomaticUpdatesPreferencePage
 			}
 		});
 
+		Dialog.applyDialogFont(container);
 		return container;
 	}
 
