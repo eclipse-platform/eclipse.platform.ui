@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -134,6 +135,11 @@ public class DebugActionGroupsManager implements IMenuListener {
 			String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
 
 			if (id != null && name != null) {
+				if (fDebugActionGroups.get(id) != null) {
+					//duplicate id..report error and ignore extension
+					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id}));
+					continue;
+				}
 				DebugActionGroup viewActionSet = new DebugActionGroup(id, name, isVisible);
 				fDebugActionGroups.put(id, viewActionSet);
 				IConfigurationElement[] children = configurationElement.getChildren();
