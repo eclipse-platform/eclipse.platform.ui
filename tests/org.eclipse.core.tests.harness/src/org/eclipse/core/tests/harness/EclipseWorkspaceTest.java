@@ -49,6 +49,8 @@ public class EclipseWorkspaceTest extends TestCase {
 	protected static final String NATURE_MISSING= "no.such.nature.Missing";
 	//missing pre-req nature
 	protected static final String NATURE_MISSING_PREREQ= "org.eclipse.core.tests.resources.missingPrerequisiteNature";
+	//nature that installs and runs a builder (regression test for bug 29116)
+	protected static final String NATURE_29116 = "org.eclipse.core.tests.resources.nature29116";
 
 	/** delta change listener if requested */
 	public static IResourceChangeListener deltaListener;
