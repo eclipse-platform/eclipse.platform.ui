@@ -109,8 +109,8 @@ public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber i
 	}
 	
 	/**
-	 * Create the resource variant for the given loicla resource from the 
-	 * given bytes. The bytes are those that were prviously returned
+	 * Create the resource variant for the given local resource from the 
+	 * given bytes. The bytes are those that were previously returned
 	 * from a call to <code>IResourceVariant#asBytes()</code>.
 	 * @param resource the local resource
 	 * @param bytes the bytes that identify a variant of the resource
