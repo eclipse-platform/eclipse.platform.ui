@@ -900,7 +900,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	class BreakpointManagerNotifier implements ISafeRunnable {
 		
 		private IBreakpointManagerListener fListener;
-		private boolean fEnabled;
+		private boolean fManagerEnabled;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -914,7 +914,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fListener.breakpointManagerEnablementChanged(fEnabled);
+			fListener.breakpointManagerEnablementChanged(fManagerEnabled);
 		}
 
 		/**
@@ -925,7 +925,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @param update the type of change
 		 */
 		public void notify(boolean enabled) {
-			fEnabled= enabled;
+			fManagerEnabled= enabled;
 			Object[] copiedListeners = fBreakpointManagerListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IBreakpointManagerListener)copiedListeners[i];
