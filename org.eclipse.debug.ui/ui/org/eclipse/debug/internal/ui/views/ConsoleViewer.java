@@ -1,10 +1,13 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.internal.ui.ConsolePreferencePage;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;

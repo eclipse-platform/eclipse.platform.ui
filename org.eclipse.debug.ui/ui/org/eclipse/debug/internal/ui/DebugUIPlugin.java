@@ -55,6 +55,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
+import org.eclipse.debug.internal.ui.views.ConsoleDocument;
+import org.eclipse.debug.internal.ui.views.ConsoleView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;

@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.internal.ui.views.ConsoleViewer;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;

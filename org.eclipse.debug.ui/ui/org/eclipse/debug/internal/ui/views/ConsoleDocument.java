@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -17,6 +17,9 @@ import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.internal.ui.ConsoleOutputTextStore;
+import org.eclipse.debug.internal.ui.ConsolePreferencePage;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -159,7 +162,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		fLastStreamWriteEnd= fNewStreamWriteEnd;
 	}
 
-	protected void startReading() {
+	public void startReading() {
 		if (fProxy == null) {
 			return;
 		}

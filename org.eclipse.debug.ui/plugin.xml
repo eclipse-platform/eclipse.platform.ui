@@ -89,7 +89,7 @@
          name="%ConsoleView.name"
          icon="icons/full/cview16/console_view.gif"
          category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.ConsoleView"
+         class="org.eclipse.debug.internal.ui.views.ConsoleView"
          id="org.eclipse.debug.ui.ConsoleView">
    </view>
 </extension>

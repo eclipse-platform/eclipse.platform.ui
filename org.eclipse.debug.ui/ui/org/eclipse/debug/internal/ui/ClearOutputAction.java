@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.internal.ui.views.ConsoleViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;

@@ -47,7 +47,7 @@ public class TextViewerAction extends Action implements IUpdate {
 		}
 	}
 	
-	protected void configureAction(String text, String toolTipText, String description) {
+	public void configureAction(String text, String toolTipText, String description) {
 		setText(text);
 		setToolTipText(toolTipText);
 		setDescription(description);

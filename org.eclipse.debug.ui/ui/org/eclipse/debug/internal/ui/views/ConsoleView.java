@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -13,16 +13,18 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.views.AbstractDebugSelectionProvider;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
+import org.eclipse.debug.internal.ui.ClearOutputAction;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.TextViewerAction;
+import org.eclipse.debug.internal.ui.TextViewerGotoLineAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -31,7 +33,6 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -40,13 +41,9 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.help.ViewContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -84,7 +81,7 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 	 * Sets the input of the viewer of this view in the
 	 * UI thread.
 	 */
-	protected void setViewerInput(final IProcess process) {
+	public void setViewerInput(final IProcess process) {
 		if (getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
 			return;
 		}

@@ -67,7 +67,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * Returns the a color based on the type.
 	 */
-	protected static Color getPreferenceColor(String type) {
+	public static Color getPreferenceColor(String type) {
 		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
 		RGB outRGB= PreferenceConverter.getColor(pstore, type);
 		ColorManager colorManager= DebugUIPlugin.getDefault().getColorManager();
@@ -77,7 +77,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * Returns the font data that describes the font to use for the console
 	 */
-	protected static FontData getConsoleFontData() {
+	public static FontData getConsoleFontData() {
 		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
 		FontData fontData= PreferenceConverter.getFontData(pstore, CONSOLE_FONT);
 		return fontData;
