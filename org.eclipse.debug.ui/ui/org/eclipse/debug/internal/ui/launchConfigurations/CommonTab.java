@@ -39,7 +39,8 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 /**
  * This tab appears in the LaunchConfigurationDialog for all launch configuration
  * types.  It collects information that governs where the configuration is stored,
- * and whether or not it is shared via standard VCM mechanisms.
+ * whether or not it is shared via standard VCM mechanisms, and which perspectives to
+ * open/switch to on a run or debug launch.
  */
 public class CommonTab implements ILaunchConfigurationTab {
 
