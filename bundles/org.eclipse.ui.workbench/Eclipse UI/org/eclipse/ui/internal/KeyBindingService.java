@@ -12,26 +12,28 @@
 package org.eclipse.ui.internal;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
 import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
-
-	private IActionService actionService;
+	private Map handlersByCommandId = new HashMap();
+	private IMutableCommandHandlerService mutableCommandHandlerService;
 	private IMutableContextActivationService mutableContextActivationService;
 
 	KeyBindingService(
-		IActionService actionService,
+		IMutableCommandHandlerService mutableCommandHandlerService,
 		IMutableContextActivationService mutableContextActivationService) {
 		super();
+		this.mutableCommandHandlerService = mutableCommandHandlerService;
 		this.mutableContextActivationService = mutableContextActivationService;
-		this.actionService = actionService;
 	}
 
 	public String[] getScopes() {
@@ -45,16 +47,22 @@ final class KeyBindingService implements IKeyBindingService {
 	}
 
 	public void registerAction(IAction action) {
-		String command = action.getActionDefinitionId();
+		String commandId = action.getActionDefinitionId();
 
-		if (command != null)
-			actionService.addAction(command, new ActionHandler(action));
+		if (commandId != null) {
+			handlersByCommandId.put(commandId, new ActionHandler(action));
+			mutableCommandHandlerService.setHandlersByCommandId(
+				handlersByCommandId);
+		}
 	}
 
 	public void unregisterAction(IAction action) {
-		String command = action.getActionDefinitionId();
+		String commandId = action.getActionDefinitionId();
 
-		if (command != null)
-			actionService.removeAction(command);
+		if (commandId != null) {
+			handlersByCommandId.remove(commandId);
+			mutableCommandHandlerService.setHandlersByCommandId(
+				handlersByCommandId);
+		}
 	}
 }

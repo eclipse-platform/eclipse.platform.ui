@@ -10,12 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
@@ -27,8 +38,8 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * @see org.eclipse.ui.IWorkingSet
  * @since 2.0
  */
-public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet {
-	private static final String FACTORY_ID = "org.eclipse.ui.internal.WorkingSetFactory";//$NON-NLS-1$
+public class WorkingSet implements IAdaptable, IWorkingSet {
+	static final String FACTORY_ID = "org.eclipse.ui.internal.WorkingSetFactory"; //$NON-NLS-1$
 	
 	private String name;
 	private ArrayList elements;
@@ -37,20 +48,21 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	private IMemento workingSetMemento;
 	
 	/**
-	 * Creates a new working set
+	 * Creates a new working set.
 	 * 
 	 * @param name the name of the new working set. Should not have 
 	 * 	leading or trailing whitespace.
 	 * @param element the content of the new working set. 
-	 * 	May be empty but not null.
+	 * 	May be empty but not <code>null</code>.
 	 */
 	public WorkingSet(String name, IAdaptable[] elements) {
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		internalSetElements(elements);
 	}
+	
 	/**
-	 * Creates a new working set
+	 * Creates a new working set from a memento.
 	 * 
 	 * @param name the name of the new working set. Should not have 
 	 * 	leading or trailing whitespace.
@@ -62,6 +74,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		this.name = name;
 		workingSetMemento = memento; 
 	}
+	
 	/**
 	 * Tests the receiver and the object for equality
 	 * 
@@ -82,6 +95,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		return false;
 	}
+	
 	/**
 	 * Returns the receiver if the requested type is either IWorkingSet 
 	 * or IPersistableElement.
@@ -96,16 +110,15 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		return null;
 	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#getElements()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public IAdaptable[] getElements() {
-		ArrayList elements = getElementsArray();
-		
-		return (IAdaptable[]) elements.toArray(new IAdaptable[elements.size()]);
+		ArrayList list = getElementsArray();
+		return (IAdaptable[]) list.toArray(new IAdaptable[list.size()]);
 	}
+	
 	/**
 	 * Returns the elements array list. Lazily restores the elements from
 	 * persistence memento. 
@@ -119,24 +132,21 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		return elements;
 	}
-	/**
-	 * Implements IPersistableElement
-	 * 
-	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPersistableElement
 	 */
 	public String getFactoryId() {
 		return FACTORY_ID;
 	}
-	/**
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#getId()
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
-	 * @since 2.1
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public String getId() {
 		return editPageId;
 	}
+	
 	/**
 	 * Returns the working set icon.
 	 * Currently, this is one of the icons specified in the extensions 
@@ -161,14 +171,14 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}					
 		return descriptor.getIcon();
 	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#getName()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public String getName() {
 		return name;
 	}
+	
 	/**
 	 * Returns the hash code.
 	 * 
@@ -182,6 +192,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		return hashCode;
 	}
+	
 	/**
 	 * Recreates the working set elements from the persistence memento.
 	 */
@@ -210,11 +221,12 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		internalSetElements((IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
 	}
+	
 	/**
 	 * Implements IPersistableElement.
 	 * Persist the working set name and working set contents. 
 	 * The contents has to be either IPersistableElements or provide 
-	 * adapters for it to be persistet.
+	 * adapters for it to be persistent.
 	 * 
 	 * @see org.eclipse.ui.IPersistableElement#saveState(IMemento)
 	 */
@@ -240,16 +252,16 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 			}
 		}
 	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#setElements(IAdaptable[])
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public void setElements(IAdaptable[] newElements) {
 		internalSetElements(newElements);
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
 		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);
 	}
+	
 	/**
 	 * Create a copy of the elements to store in the receiver.
 	 * 
@@ -264,20 +276,16 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 			elements.add(newElements[i]);
 		}
 	}
-	/**
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#setId(String)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
-	 * @since 2.1
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public void setId(String pageId) {
 		editPageId = pageId;
 	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#setName(String)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet
 	 */
 	public void setName(String newName) {
 

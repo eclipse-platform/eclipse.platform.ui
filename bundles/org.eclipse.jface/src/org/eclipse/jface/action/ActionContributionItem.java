@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -44,57 +43,13 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ActionContributionItem extends ContributionItem {
 
-	private static boolean USE_COLOR_ICONS = true;
-
-	private static ImageCache globalImageCache;
-
 	/** a string inserted in the middle of text that has been shortened */
 	private static final String ellipsis = "..."; //$NON-NLS-1$
-
-	/**
-	 * The action.
-	 */
-	private IAction action;
-
-	/**
-	 * The widget created for this item; <code>null</code> before creation
-	 * and after disposal.
-	 */
-	private Widget widget = null;
-
-	/**
-	 * Listener for action property change notifications.
-	 */
-	private final IPropertyChangeListener propertyListener =
-		new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			actionPropertyChange(event);
-		}
-	};
-
-	/**
-	 * Listener for SWT button widget events.
-	 */
-	private Listener buttonListener;
-
-	/**
-	 * Listener for SWT tool item widget events.
-	 */
-	private Listener toolItemListener;
-
-	/**
-	 * Listener for SWT menu item widget events.
-	 */
-	private Listener menuItemListener;
-
 	private static class ImageCache {
-		/** Map from ImageDescriptor to Entry */
-		private Map entries = new HashMap(11);
-		private Image missingImage;
 
 		private class Entry {
-			Image image;
 			Image grayImage;
+			Image image;
 
 			void dispose() {
 				if (image != null) {
@@ -107,6 +62,17 @@ public class ActionContributionItem extends ContributionItem {
 				}
 			}
 		}
+		/** Map from ImageDescriptor to Entry */
+		private Map entries = new HashMap(11);
+		private Image missingImage;
+
+		void dispose() {
+			for (Iterator i = entries.values().iterator(); i.hasNext();) {
+				Entry entry = (Entry) i.next();
+				entry.dispose();
+			}
+			entries.clear();
+		}
 
 		Entry getEntry(ImageDescriptor desc) {
 			Entry entry = (Entry) entries.get(desc);
@@ -115,17 +81,6 @@ public class ActionContributionItem extends ContributionItem {
 				entries.put(desc, entry);
 			}
 			return entry;
-		}
-
-		Image getImage(ImageDescriptor desc) {
-			if (desc == null) {
-				return null;
-			}
-			Entry entry = getEntry(desc);
-			if (entry.image == null) {
-				entry.image = desc.createImage();
-			}
-			return entry.image;
 		}
 
 		Image getGrayImage(ImageDescriptor desc) {
@@ -142,54 +97,34 @@ public class ActionContributionItem extends ContributionItem {
 			return entry.grayImage;
 		}
 
+		Image getImage(ImageDescriptor desc) {
+			if (desc == null) {
+				return null;
+			}
+			Entry entry = getEntry(desc);
+			if (entry.image == null) {
+				entry.image = desc.createImage();
+			}
+			return entry.image;
+		}
+
 		Image getMissingImage() {
 			if (missingImage == null) {
-				missingImage =
-					getImage(ImageDescriptor.getMissingImageDescriptor());
+				missingImage = getImage(ImageDescriptor.getMissingImageDescriptor());
 			}
 			return missingImage;
 		}
-
-		void dispose() {
-			for (Iterator i = entries.values().iterator(); i.hasNext();) {
-				Entry entry = (Entry) i.next();
-				entry.dispose();
-			}
-			entries.clear();
-		}
 	}
 
-	/**
-	 * The <code>ActionContributionItem</code> implementation of this <code>ContributionItem</code>
-	 * method extends the super implementation by also checking whether the
-	 * command corresponding to this action is active.
-	 */
-	public boolean isVisible() {
-		return super.isVisible() && isCommandActive();
-	}
+	private static ImageCache globalImageCache;
 
-	/**
-	 * Returns whether the command corresponding to this action is active.
-	 */
-	private boolean isCommandActive() {
-		IAction action = getAction();
-
-		if (action != null) {
-			String commandId = action.getActionDefinitionId();
-			CommandResolver.ICallback callback =
-				CommandResolver.getInstance().getCommandResolver();
-
-			if (callback != null)
-				return callback.isActive(commandId);
-		}
-		return true;
-	}
+	private static boolean USE_COLOR_ICONS = true;
 
 	/**
 	 * Returns whether color icons should be used in toolbars.
 	 * 
-	 * @return <code>true</code> if color icons should be used in toolbars,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if color icons should be used in toolbars, 
+	 *   <code>false</code> otherwise
 	 */
 	public static boolean getUseColorIconsInToolbars() {
 		return USE_COLOR_ICONS;
@@ -198,28 +133,60 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Sets whether color icons should be used in toolbars.
 	 * 
-	 * @param useColorIcons
-	 *            <code>true</code> if color icons should be used in
-	 *            toolbars, <code>false</code> otherwise
+	 * @param useColorIcons <code>true</code> if color icons should be used in toolbars, 
+	 *   <code>false</code> otherwise
 	 */
 	public static void setUseColorIconsInToolbars(boolean useColorIcons) {
 		USE_COLOR_ICONS = useColorIcons;
 	}
 
 	/**
-	 * Creates a new contribution item from the given action. The id of the
-	 * action is used as the id of the item.
-	 * 
-	 * @param action
-	 *            the action
+	 * The action.
+	 */
+	private IAction action;
+
+	/**
+	 * Listener for SWT button widget events.
+	 */
+	private Listener buttonListener;
+
+	/**
+	 * Listener for SWT menu item widget events.
+	 */
+	private Listener menuItemListener;
+
+	/**
+	 * Listener for action property change notifications.
+	 */
+	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			actionPropertyChange(event);
+		}
+	};
+
+	/**
+	 * Listener for SWT tool item widget events.
+	 */
+	private Listener toolItemListener;
+
+	/**
+	 * The widget created for this item; <code>null</code>
+	 * before creation and after disposal.
+	 */
+	private Widget widget = null;
+
+	/**
+	 * Creates a new contribution item from the given action.
+	 * The id of the action is used as the id of the item.
+	 *
+	 * @param action the action
 	 */
 	public ActionContributionItem(IAction action) {
 		super(action.getId());
 		this.action = action;
 	}
 	/**
-	 * Handles a property change event on the action (forwarded by nested
-	 * listener).
+	 * Handles a property change event on the action (forwarded by nested listener).
 	 */
 	private void actionPropertyChange(final PropertyChangeEvent e) {
 		// This code should be removed. Avoid using free asyncExec
@@ -240,8 +207,8 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * Compares this action contribution item with another object. Two action
-	 * contribution items are equal if they refer to the identical Action.
+	 * Compares this action contribution item with another object.
+	 * Two action contribution items are equal if they refer to the identical Action.
 	 */
 	public boolean equals(Object o) {
 		if (!(o instanceof ActionContributionItem)) {
@@ -250,10 +217,11 @@ public class ActionContributionItem extends ContributionItem {
 		return action.equals(((ActionContributionItem) o).action);
 	}
 	/**
-	 * The <code>ActionContributionItem</code> implementation of this <code>IContributionItem</code>
-	 * method creates an SWT <code>Button</code> for the action using the
-	 * action's style. If the action's checked property has been set, the
-	 * button is created and primed to the value of the checked property.
+	 * The <code>ActionContributionItem</code> implementation of this
+	 * <code>IContributionItem</code> method creates an SWT <code>Button</code> for
+	 * the action using the action's style. If the action's checked property has
+	 * been set, the button is created and primed to the value of the checked
+	 * property.
 	 */
 	public void fill(Composite parent) {
 		if (widget == null && parent != null) {
@@ -280,12 +248,12 @@ public class ActionContributionItem extends ContributionItem {
 		}
 	}
 	/**
-	 * The <code>ActionContributionItem</code> implementation of this <code>IContributionItem</code>
-	 * method creates an SWT <code>MenuItem</code> for the action using the
-	 * action's style. If the action's checked property has been set, a button
-	 * is created and primed to the value of the checked property. If the
-	 * action's menu creator property has been set, a cascading submenu is
-	 * created.
+	 * The <code>ActionContributionItem</code> implementation of this
+	 * <code>IContributionItem</code> method creates an SWT <code>MenuItem</code>
+	 * for the action using the action's style. If the action's checked property has
+	 * been set, a button is created and primed to the value of the checked
+	 * property. If the action's menu creator property has been set, a cascading
+	 * submenu is created.
 	 */
 	public void fill(Menu parent, int index) {
 		if (widget == null && parent != null) {
@@ -330,10 +298,10 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * The <code>ActionContributionItem</code> implementation of this ,
 	 * <code>IContributionItem</code> method creates an SWT <code>ToolItem</code>
-	 * for the action using the action's style. If the action's checked
-	 * property has been set, a button is created and primed to the value of
-	 * the checked property. If the action's menu creator property has been
-	 * set, a drop-down tool item is created.
+	 * for the action using the action's style. If the action's checked property has
+	 * been set, a button is created and primed to the value of the checked
+	 * property. If the action's menu creator property has been set, a drop-down
+	 * tool item is created.
 	 */
 	public void fill(ToolBar parent, int index) {
 		if (widget == null && parent != null) {
@@ -366,18 +334,43 @@ public class ActionContributionItem extends ContributionItem {
 	}
 	/**
 	 * Returns the action associated with this contribution item.
-	 * 
+	 *
 	 * @return the action
 	 */
 	public IAction getAction() {
 		return action;
 	}
 	/**
-	 * Returns the image cache. The cache is global, and is shared by all
-	 * action contribution items. This has the disadvantage that once an image
-	 * is allocated, it is never freed until the display is disposed. However,
-	 * it has the advantage that the same image in different contribution
-	 * managers is only ever created once.
+	 * Returns the listener for SWT button widget events.
+	 * 
+	 * @return a listener for button events
+	 */
+	private Listener getButtonListener() {
+		if (buttonListener == null) {
+			buttonListener = new Listener() {
+				public void handleEvent(Event event) {
+					switch (event.type) {
+						case SWT.Dispose :
+							handleWidgetDispose(event);
+							break;
+						case SWT.Selection :
+							Widget ew = event.widget;
+							if (ew != null) {
+								handleWidgetSelection(event, ((Button) ew).getSelection());
+							}
+							break;
+					}
+				}
+			};
+		}
+		return buttonListener;
+	}
+	/**
+	 * Returns the image cache.
+	 * The cache is global, and is shared by all action contribution items.
+	 * This has the disadvantage that once an image is allocated, it is never freed until the display
+	 * is disposed.  However, it has the advantage that the same image in different contribution managers
+	 * is only ever created once.
 	 */
 	private ImageCache getImageCache() {
 		ImageCache cache = globalImageCache;
@@ -398,13 +391,13 @@ public class ActionContributionItem extends ContributionItem {
 		return cache;
 	}
 	/**
-	 * Returns the listener for SWT button widget events.
+	 * Returns the listener for SWT menu item widget events.
 	 * 
-	 * @return a listener for button events
+	 * @return a listener for menu item events
 	 */
-	private Listener getButtonListener() {
-		if (buttonListener == null) {
-			buttonListener = new Listener() {
+	private Listener getMenuItemListener() {
+		if (menuItemListener == null) {
+			menuItemListener = new Listener() {
 				public void handleEvent(Event event) {
 					switch (event.type) {
 						case SWT.Dispose :
@@ -413,16 +406,14 @@ public class ActionContributionItem extends ContributionItem {
 						case SWT.Selection :
 							Widget ew = event.widget;
 							if (ew != null) {
-								handleWidgetSelection(
-									event,
-									((Button) ew).getSelection());
+								handleWidgetSelection(event, ((MenuItem) ew).getSelection());
 							}
 							break;
 					}
 				}
 			};
 		}
-		return buttonListener;
+		return menuItemListener;
 	}
 	/**
 	 * Returns the listener for SWT tool item widget events.
@@ -440,9 +431,7 @@ public class ActionContributionItem extends ContributionItem {
 						case SWT.Selection :
 							Widget ew = event.widget;
 							if (ew != null) {
-								handleWidgetSelection(
-									event,
-									((ToolItem) ew).getSelection());
+								handleWidgetSelection(event, ((ToolItem) ew).getSelection());
 							}
 							break;
 					}
@@ -452,35 +441,7 @@ public class ActionContributionItem extends ContributionItem {
 		return toolItemListener;
 	}
 	/**
-	 * Returns the listener for SWT menu item widget events.
-	 * 
-	 * @return a listener for menu item events
-	 */
-	private Listener getMenuItemListener() {
-		if (menuItemListener == null) {
-			menuItemListener = new Listener() {
-				public void handleEvent(Event event) {
-					switch (event.type) {
-						case SWT.Dispose :
-							handleWidgetDispose(event);
-							break;
-						case SWT.Selection :
-							Widget ew = event.widget;
-							if (ew != null) {
-								handleWidgetSelection(
-									event,
-									((MenuItem) ew).getSelection());
-							}
-							break;
-					}
-				}
-			};
-		}
-		return menuItemListener;
-	}
-	/**
-	 * Handles a widget dispose event for the widget corresponding to this
-	 * item.
+	 * Handles a widget dispose event for the widget corresponding to this item.
 	 */
 	private void handleWidgetDispose(Event e) {
 		if (e.widget == widget) {
@@ -517,11 +478,9 @@ public class ActionContributionItem extends ContributionItem {
 					if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
 						IMenuCreator mc = action.getMenuCreator();
 						ToolItem ti = (ToolItem) item;
-						// we create the menu as a sub-menu of "dummy" so that
-						// we can use
+						// we create the menu as a sub-menu of "dummy" so that we can use
 						// it in a cascading menu too.
-						// If created on a SWT control we would get an SWT
-						// error...
+						// If created on a SWT control we would get an SWT error...
 						//Menu dummy= new Menu(ti.getParent());
 						//Menu m= mc.getMenu(dummy);
 						//dummy.dispose();
@@ -530,11 +489,8 @@ public class ActionContributionItem extends ContributionItem {
 							if (m != null) {
 								// position the menu below the drop down item
 								Rectangle b = ti.getBounds();
-								Point p =
-									ti.getParent().toDisplay(
-										new Point(b.x, b.y + b.height));
-								m.setLocation(p.x, p.y);
-								// waiting for SWT 0.42
+								Point p = ti.getParent().toDisplay(new Point(b.x, b.y + b.height));
+								m.setLocation(p.x, p.y); // waiting for SWT 0.42
 								m.setVisible(true);
 								return; // we don't fire the action
 							}
@@ -544,8 +500,7 @@ public class ActionContributionItem extends ContributionItem {
 			}
 
 			// Ensure action is enabled first.
-			// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be
-			// executed while disabled.
+			// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be executed while disabled.
 			if (action.isEnabled()) {
 				boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
 				long ms = System.currentTimeMillis();
@@ -559,8 +514,8 @@ public class ActionContributionItem extends ContributionItem {
 			}
 		}
 	}
-	/*
-	 * (non-Javadoc) Method declared on Object.
+	/* (non-Javadoc)
+	 * Method declared on Object.
 	 */
 	public int hashCode() {
 		return action.hashCode();
@@ -569,10 +524,8 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Returns whether the given action has any images.
 	 * 
-	 * @param action
-	 *            the action
-	 * @return <code>true</code> if the action has any images, <code>false</code>
-	 *         if not
+	 * @param action the action
+	 * @return <code>true</code> if the action has any images, <code>false</code> if not
 	 */
 	private boolean hasImages(IAction action) {
 		return action.getImageDescriptor() != null
@@ -580,11 +533,21 @@ public class ActionContributionItem extends ContributionItem {
 			|| action.getDisabledImageDescriptor() != null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContributionItem.
+	/**
+	 * Returns whether the command corresponding to this action
+	 * is active.
 	 */
-	public boolean isEnabled() {
-		return action != null && action.isEnabled();
+	private boolean isCommandActive() {
+		IAction action = getAction();
+
+		if (action != null) {
+			String commandId = action.getActionDefinitionId();
+			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
+
+			if (callback != null)
+				return callback.isActive(commandId);
+		}
+		return true;
 	}
 	/**
 	 * The action item implementation of this <code>IContributionItem</code>
@@ -593,24 +556,27 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	public boolean isDynamic() {
 		if (widget instanceof MenuItem) {
-			//Optimization. Only recreate the item is the check or radio style
-			// has changed.
+			//Optimization. Only recreate the item is the check or radio style has changed. 
 			boolean itemIsCheck = (widget.getStyle() & SWT.CHECK) != 0;
 			boolean actionIsCheck =
-				getAction() != null
-					&& getAction().getStyle() == IAction.AS_CHECK_BOX;
+				getAction() != null && getAction().getStyle() == IAction.AS_CHECK_BOX;
 			boolean itemIsRadio = (widget.getStyle() & SWT.RADIO) != 0;
 			boolean actionIsRadio =
-				getAction() != null
-					&& getAction().getStyle() == IAction.AS_RADIO_BUTTON;
-			return (itemIsCheck != actionIsCheck)
-				|| (itemIsRadio != actionIsRadio);
+				getAction() != null && getAction().getStyle() == IAction.AS_RADIO_BUTTON;
+			return (itemIsCheck != actionIsCheck) || (itemIsRadio != actionIsRadio);
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * Method declared on IContributionItem.
+	 */
+	public boolean isEnabled() {
+		return action != null && action.isEnabled();
+	}
 	/**
-	 * Returns <code>true</code> if this item is allowed to enable, <code>false</code>
-	 * otherwise.
+	 * Returns <code>true</code> if this item is allowed to enable,
+	 * <code>false</code> otherwise.
 	 * 
 	 * @return if this item is allowed to be enabled
 	 * @since 2.0
@@ -623,6 +589,15 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	/**
+	 * The <code>ActionContributionItem</code> implementation of this 
+	 * <code>ContributionItem</code> method extends the super implementation
+	 * by also checking whether the command corresponding to this action is active.
+	 */
+	public boolean isVisible() {
+		return super.isVisible() && isCommandActive();
+	}
+
+	/**
 	 * The action item implementation of this <code>IContributionItem</code>
 	 * method calls <code>update(null)</code>.
 	 */
@@ -631,31 +606,25 @@ public class ActionContributionItem extends ContributionItem {
 	}
 	/**
 	 * Synchronizes the UI with the given property.
-	 * 
-	 * @param propertyName
-	 *            the name of the property, or <code>null</code> meaning all
-	 *            applicable properties
+	 *
+	 * @param propertyName the name of the property, or <code>null</code> meaning all applicable
+	 *   properties 
 	 */
 	public void update(String propertyName) {
 		if (widget != null) {
-			// determine what to do
-			boolean textChanged =
-				propertyName == null || propertyName.equals(IAction.TEXT);
-			boolean imageChanged =
-				propertyName == null || propertyName.equals(IAction.IMAGE);
+			// determine what to do			
+			boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
+			boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
 			boolean tooltipTextChanged =
-				propertyName == null
-					|| propertyName.equals(IAction.TOOL_TIP_TEXT);
+				propertyName == null || propertyName.equals(IAction.TOOL_TIP_TEXT);
 			boolean enableStateChanged =
 				propertyName == null
 					|| propertyName.equals(IAction.ENABLED)
-					|| propertyName.equals(
-						IContributionManagerOverrides.P_ENABLED);
+					|| propertyName.equals(IContributionManagerOverrides.P_ENABLED);
 			boolean checkChanged =
 				(action.getStyle() == IAction.AS_CHECK_BOX
 					|| action.getStyle() == IAction.AS_RADIO_BUTTON)
-					&& (propertyName == null
-						|| propertyName.equals(IAction.CHECKED));
+					&& (propertyName == null || propertyName.equals(IAction.CHECKED));
 
 			if (widget instanceof ToolItem) {
 				ToolItem ti = (ToolItem) widget;
@@ -684,8 +653,7 @@ public class ActionContributionItem extends ContributionItem {
 				}
 
 				if (enableStateChanged) {
-					boolean shouldBeEnabled =
-						action.isEnabled() && isEnabledAllowed();
+					boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
 
 					if (ti.getEnabled() != shouldBeEnabled)
 						ti.setEnabled(shouldBeEnabled);
@@ -704,14 +672,15 @@ public class ActionContributionItem extends ContributionItem {
 				MenuItem mi = (MenuItem) widget;
 
 				if (textChanged) {
-					Integer accelerator = null;
+					int accelerator = 0;
 					String acceleratorText = null;
 					IAction action = getAction();
 					String text = null;
 
-					if (action != null) {
-						// Set the accelerator using the action's accelerator.
-						accelerator = new Integer(action.getAccelerator());
+					// Set the accelerator using the action's accelerator.
+					accelerator = action.getAccelerator();
+
+					if (accelerator == 0) {
 						CommandResolver.ICallback callback =
 							CommandResolver.getInstance().getCommandResolver();
 
@@ -719,15 +688,11 @@ public class ActionContributionItem extends ContributionItem {
 							String commandId = action.getActionDefinitionId();
 
 							if (commandId != null) {
-								accelerator = null;
-								acceleratorText =
-									callback.getAcceleratorText(commandId);
-							} else if (
-								callback.isAcceleratorInUse(
-									accelerator.intValue())) {
-								accelerator = null;
+								acceleratorText = callback.getAcceleratorText(commandId);
 							}
 						}
+					} else {
+						acceleratorText = Action.convertAccelerator(accelerator);
 					}
 
 					IContributionManagerOverrides overrides = null;
@@ -738,8 +703,7 @@ public class ActionContributionItem extends ContributionItem {
 					if (overrides != null)
 						text = getParent().getOverrides().getText(this);
 
-					mi.setAccelerator(
-						accelerator != null ? accelerator.intValue() : 0);
+					mi.setAccelerator(accelerator);
 
 					if (text == null)
 						text = action.getText();
@@ -759,8 +723,7 @@ public class ActionContributionItem extends ContributionItem {
 					updateImages(false);
 
 				if (enableStateChanged) {
-					boolean shouldBeEnabled =
-						action.isEnabled() && isEnabledAllowed();
+					boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
 
 					if (mi.getEnabled() != shouldBeEnabled)
 						mi.setEnabled(shouldBeEnabled);
@@ -780,8 +743,7 @@ public class ActionContributionItem extends ContributionItem {
 				Button button = (Button) widget;
 
 				if (imageChanged && updateImages(false))
-					textChanged = false;
-				// don't update text if it has an image
+					textChanged = false; // don't update text if it has an image
 
 				if (textChanged) {
 					String text = action.getText();
@@ -794,8 +756,7 @@ public class ActionContributionItem extends ContributionItem {
 					button.setToolTipText(action.getToolTipText());
 
 				if (enableStateChanged) {
-					boolean shouldBeEnabled =
-						action.isEnabled() && isEnabledAllowed();
+					boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
 
 					if (button.getEnabled() != shouldBeEnabled)
 						button.setEnabled(shouldBeEnabled);
@@ -813,13 +774,10 @@ public class ActionContributionItem extends ContributionItem {
 	}
 	/**
 	 * Updates the images for this action.
-	 * 
-	 * @param forceImage
-	 *            <code>true</code> if some form of image is compulsory, and
-	 *            <code>false</code> if it is acceptable for this item to
-	 *            have no image
-	 * @return <code>true</code> if there are images for this action, <code>false</code>
-	 *         if not
+	 *
+	 * @param forceImage <code>true</code> if some form of image is compulsory,
+	 *  and <code>false</code> if it is acceptable for this item to have no image
+	 * @return <code>true</code> if there are images for this action, <code>false</code> if not
 	 */
 	private boolean updateImages(boolean forceImage) {
 
@@ -831,21 +789,19 @@ public class ActionContributionItem extends ContributionItem {
 				if (image == null) {
 					image = cache.getImage(action.getImageDescriptor());
 				}
-				Image disabledImage =
-					cache.getImage(action.getDisabledImageDescriptor());
+				Image disabledImage = cache.getImage(action.getDisabledImageDescriptor());
 
 				// Make sure there is a valid image.
 				if (image == null && forceImage) {
 					image = cache.getMissingImage();
 				}
 
-				// performance: more efficient in SWT to set disabled and hot
-				// image before regular image
+				// performance: more efficient in SWT to set disabled and hot image before regular image
 				if (disabledImage != null) {
 					// Set the disabled image if we were able to create one.
 					// Assumes that SWT.ToolItem will use platform's default
 					// behavior to show item when it is disabled and a disabled
-					// image has not been set.
+					// image has not been set. 
 					 ((ToolItem) widget).setDisabledImage(disabledImage);
 				}
 				((ToolItem) widget).setImage(image);
@@ -853,20 +809,15 @@ public class ActionContributionItem extends ContributionItem {
 				return image != null;
 			} else {
 				Image image = cache.getImage(action.getImageDescriptor());
-				Image hoverImage =
-					cache.getImage(action.getHoverImageDescriptor());
-				Image disabledImage =
-					cache.getImage(action.getDisabledImageDescriptor());
+				Image hoverImage = cache.getImage(action.getHoverImageDescriptor());
+				Image disabledImage = cache.getImage(action.getDisabledImageDescriptor());
 
 				// If there is no regular image, but there is a hover image,
-				// convert the hover image to gray and use it as the regular
-				// image.
+				// convert the hover image to gray and use it as the regular image.
 				if (image == null && hoverImage != null) {
-					image =
-						cache.getGrayImage(action.getHoverImageDescriptor());
+					image = cache.getGrayImage(action.getHoverImageDescriptor());
 				} else {
-					// If there is no hover image, use the regular image as the
-					// hover image,
+					// If there is no hover image, use the regular image as the hover image,
 					// and convert the regular image to gray
 					if (hoverImage == null && image != null) {
 						hoverImage = image;
@@ -879,13 +830,12 @@ public class ActionContributionItem extends ContributionItem {
 					image = cache.getMissingImage();
 				}
 
-				// performance: more efficient in SWT to set disabled and hot
-				// image before regular image
+				// performance: more efficient in SWT to set disabled and hot image before regular image
 				if (disabledImage != null) {
 					// Set the disabled image if we were able to create one.
 					// Assumes that SWT.ToolItem will use platform's default
 					// behavior to show item when it is disabled and a disabled
-					// image has not been set.
+					// image has not been set. 
 					 ((ToolItem) widget).setDisabledImage(disabledImage);
 				}
 				((ToolItem) widget).setHotImage(hoverImage);

@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -87,6 +89,14 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	private StatusLineManager statusLineManager = null;
 	
 	/**
+	 * Cool bar manager, or <code>null</null> if none (default).
+	 * 
+	 * @see #addCoolBar
+	 * @since 3.0
+	 */
+	private CoolBarManager coolBarManager = null;
+	
+	/**
 	 * The seperator between the menu bar and the rest of the window.
 	 */
 	protected Label seperator1;
@@ -105,7 +115,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	/*package*/ class ApplicationWindowLayout extends Layout {
 	
 		static final int VGAP = 2;
-			
+		static final int BAR_SIZE = 23;
+		
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 				return new Point(wHint, hHint);
@@ -160,7 +171,14 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 						clientArea.y+= e.y + VGAP;
 						clientArea.height-= e.y + VGAP;
 					} 
-				} else if (statusLineManager != null && statusLineManager.getControl() == w) {
+				}else if (getCoolBarControl() == w) {
+					if (coolBarChildrenExist()) {
+						Point e= w.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
+						w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
+						clientArea.y+= e.y + VGAP;
+						clientArea.height-= e.y + VGAP;
+					}
+				}else if (statusLineManager != null && statusLineManager.getControl() == w) {
 					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					w.setBounds(clientArea.x, clientArea.y+clientArea.height-e.y, clientArea.width, e.y);
 					clientArea.height-= e.y + VGAP;
@@ -216,9 +234,22 @@ protected void addStatusLine() {
  * This method must be called before this window's shell is created.
  */
 protected void addToolBar(int style) {
-	if ((getShell() == null) && (toolBarManager == null)) {
+	if ((getShell() == null) && (toolBarManager == null) && (coolBarManager == null)) {
 		toolBarManager = createToolBarManager(style);
 	}
+}
+/**
+ * Configures this window to have a cool bar.
+ * Does nothing if it already has one.
+ * This method must be called before this window's shell is created.
+ * 
+ * @param style the cool bar style
+ * @since 3.0
+ */
+protected void addCoolBar(int style) {
+	if ((getShell() == null) && (coolBarManager == null) && (coolBarManager == null)) {
+		coolBarManager = createCoolBarManager(style);
+	} 
 }
 /* (non-Javadoc)
  * Method declared on Window.
@@ -237,6 +268,7 @@ public boolean close() {
 		menuBarManager = null;
 		toolBarManager = null;
 		statusLineManager = null;
+		coolBarManager = null;
 		return true;
 	}
 	return false;
@@ -256,12 +288,30 @@ protected void configureShell(Shell shell) {
 		menuBarManager.updateAll(true);
 		shell.setMenuBar(menuBarManager.createMenuBar((Decorations)shell));
 	}
-	
-	if (showTopSeperator()) 
-		seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-	
+
+	shell.setLayout(getLayout());
+	if (showTopSeperator()) //$NON-NLS-1$
+		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+
 	createTrimWidgets(shell);
+}
+
+/**
+ * Create the widgets around the work area.
+ * @param parent
+ */
+protected void createTrimWidgets(Shell parent){
+// will create either a cool bar or a tool bar
+	if (toolBarManager != null) {
+		createToolBarControl(parent);
+	}
+	if (coolBarManager != null) {
+		createCoolBarControl(parent);
+	}
 	
+	if (statusLineManager != null) {
+		statusLineManager.createControl(parent);
+	}
 }
 
 /* (non-Javadoc)
@@ -270,13 +320,14 @@ protected void configureShell(Shell shell) {
 protected Layout getLayout() {
 	return new ApplicationWindowLayout();
 }
+
+
 /**
- * Create the widgets around the perimeter of the window.
- * @param shell
+ * Return whether or not the top seperator is being shown.
+ * @return boolean
  */
-protected void createTrimWidgets(Shell shell) {
-	createToolBarControl(shell);
-	createStatusLine(shell);
+protected boolean showTopSeperator() {
+	return ! "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 }
 
 /**
@@ -287,14 +338,6 @@ protected void createStatusLine(Shell shell) {
 	if (statusLineManager != null) {
 		statusLineManager.createControl(shell);
 	}
-}
-
-/**
- * Return whether or not the top seperator is being shown.
- * @return boolean
- */
-protected boolean showTopSeperator() {
-	return ! "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 }
 
 /**
@@ -328,16 +371,45 @@ protected ToolBarManager createToolBarManager(int style) {
 	return new ToolBarManager(style);
 }
 /**
+ * Returns a new cool bar manager for the window.
+ * <p>
+ * Subclasses may override this method to customize the cool bar manager.
+ * </p>
+ * 
+ * @return a cool bar manager
+ * @since 3.0
+ */
+protected CoolBarManager createCoolBarManager(int style) {
+	return new CoolBarManager(style);
+}
+
+/**
  * Creates the control for the tool bar manager.
  * <p>
  * Subclasses may override this method to customize the tool bar manager.
  * </p>
  * @return a Control
  */
-protected Control createToolBarControl(Shell shell) {
+protected Control createToolBarControl(Composite parent) {
 	if (toolBarManager instanceof ToolBarManager) {
-		return ((ToolBarManager)toolBarManager).createControl(shell);
+		return ((ToolBarManager)toolBarManager).createControl(parent);
 	} 
+	return null;
+}
+
+/**
+ * Creates the control for the cool bar manager.
+ * <p>
+ * Subclasses may override this method to customize the cool bar manager.
+ * </p>
+ * 
+ * @return an instance of <code>CoolBar</code>
+ * @since 3.0
+ */
+protected Control createCoolBarControl(Composite composite) {
+	if (coolBarManager instanceof CoolBarManager) {
+		return ((CoolBarManager)coolBarManager).createControl(composite);
+	}
 	return null;
 }
 /**
@@ -402,6 +474,17 @@ public ToolBarManager getToolBarManager() {
 	return toolBarManager;
 }
 /**
+ * Returns the cool bar manager for this window.
+ *
+ * @return the cool bar manager, or <code>null</code> if
+ *   this window does not have a cool bar
+ * @see #addCoolBar
+ * @since 3.0
+ */
+public CoolBarManager getCoolBarManager() {
+	return coolBarManager;
+}
+/**
  * Returns the control for the window's toolbar.
  * <p>
  * Subclasses may override this method to customize the tool bar manager.
@@ -415,6 +498,23 @@ protected Control getToolBarControl() {
 	}
 	return null;
 }
+/**
+ * Returns the control for the window's cool bar.
+ * <p>
+ * Subclasses may override this method to customize the cool bar manager.
+ * </p>
+ * 
+ * @return an instance of <code>CoolBar</code>
+ * @since 3.0
+ */
+protected Control getCoolBarControl() {
+	if (coolBarManager == null) return null;
+	if (coolBarManager instanceof CoolBarManager) {
+		return ((CoolBarManager)coolBarManager).getControl();
+	}
+	return null;
+}
+
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
  */
@@ -447,6 +547,11 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		if (toolbarControl != null) 
 			toolbarWasEnabled = toolbarControl.getEnabled();
 	
+		Control coolbarControl = getCoolBarControl();
+		boolean coolbarWasEnabled = false;
+		if (coolbarControl != null) 
+			coolbarWasEnabled = coolbarControl.getEnabled();
+		
 		// Disable the rest of the shells on the current display
 		Shell[] shells = display.getShells();
 		boolean[] enabled = new boolean[shells.length];
@@ -464,6 +569,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 			contents.setEnabled(false);
 			if (menuBar != null) menuBar.setEnabled(false);
 			if (toolbarControl != null) toolbarControl.setEnabled(false);
+			if (coolbarControl != null) coolbarControl.setEnabled(false);
 			mgr.setCancelEnabled(cancelable);
 			final Exception[] holder = new Exception[1];
 			BusyIndicator.showWhile(display, new Runnable() {
@@ -500,6 +606,8 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 				menuBar.setEnabled(menuBarWasEnabled);
 			if (toolbarControl != null && !toolbarControl.isDisposed())
 				toolbarControl.setEnabled(toolbarWasEnabled);
+			if (coolbarControl != null && !coolbarControl.isDisposed())
+				coolbarControl.setEnabled(coolbarWasEnabled);
 			mgr.setCancelEnabled(cancelWasEnabled);
 			if (currentFocus != null && !currentFocus.isDisposed()) currentFocus.setFocus();
 		}
@@ -529,6 +637,21 @@ protected boolean toolBarChildrenExist() {
 	Control toolControl = getToolBarControl();
 	if (toolControl instanceof ToolBar) {
 		return ((ToolBar)toolControl).getItemCount() > 0;
+	}
+	return false;
+}
+
+/**
+ * Returns whether or not children exist for this application window's
+ * cool bar control.
+ * 
+ * @return boolean true if children exist, false otherwise
+ * @since 3.0
+ */
+protected boolean coolBarChildrenExist() {
+	Control coolControl = getCoolBarControl();
+	if (coolControl instanceof CoolBar) {
+		return ((CoolBar)coolControl).getItemCount() > 0;
 	}
 	return false;
 }

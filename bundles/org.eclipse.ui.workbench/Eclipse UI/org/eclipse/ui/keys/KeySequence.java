@@ -69,7 +69,7 @@ public final class KeySequence implements Comparable {
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed
 	 * during parsing of the formal string representation.
 	 */
-	public final static String KEY_STROKE_DELIMITERS = KeyFormatter.KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
+	public final static String KEY_STROKE_DELIMITERS = IKeyFormatter.KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**
 	 * Gets an instance of <code>KeySequence</code>.
@@ -236,28 +236,13 @@ public final class KeySequence implements Comparable {
 	}
 
 	/**
-	 * Formats this key sequence into the native look.
+	 * Formats this key sequence into the current default look.
 	 * 
-	 * @return A string representation for this key sequence using the native
+	 * @return A string representation for this key sequence using the default
 	 *         look; never <code>null</code>.
 	 */
 	public String format() {
-		return format(FormatManager.NATIVE);
-	}
-
-	/**
-	 * Formats this key sequence into the given <code>format</code>.
-	 * 
-	 * @param format
-	 *            The integer constant representing the format you want. This
-	 *            value must be one of the constants defined in the <code>FormatManager</code>.
-	 *            If it is not, then it the <code>FormalKeyFormatter</code>
-	 *            is used.
-	 * @return A string representation for this key sequence in the given
-	 *         format; never <code>null</code>.
-	 */
-	public String format(int format) {
-		return FormatManager.getFormatter(format).format(this);
+		return KeyFormatterFactory.getDefault().format(this);
 	}
 
 	/**
@@ -334,6 +319,6 @@ public final class KeySequence implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return format(FormatManager.FORMAL);
+		return KeyFormatterFactory.getFormalKeyFormatter().format(this);
 	}
 }

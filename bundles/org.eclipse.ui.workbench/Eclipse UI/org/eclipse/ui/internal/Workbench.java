@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,19 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -42,25 +56,18 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -87,21 +94,22 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.progress.IProgressService;
+
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.colors.ColorDefinition;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -283,36 +291,6 @@ public final class Workbench implements IWorkbench {
 			testableObject = new WorkbenchTestable();
 		}
 		return testableObject;
-	}
-
-
-	private volatile boolean keyFilterDisabled;
-	private final Object keyFilterMutex = new Object();
-
-	public final void disableKeyFilter() {
-		synchronized (keyFilterMutex) {
-			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getKeyDownFilter();
-			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
-			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-			keyFilterDisabled = true;
-		}
-	}
-
-	public final void enableKeyFilter() {
-		synchronized (keyFilterMutex) {
-			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getKeyDownFilter();
-			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
-			currentDisplay.addFilter(SWT.Traverse, keyFilter);
-			keyFilterDisabled = false;
-		}
-	}
-
-	public final boolean isKeyFilterEnabled() {
-		synchronized (keyFilterMutex) {
-			return !keyFilterDisabled;
-		}
 	}
 
 	/*
@@ -530,12 +508,12 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
 		windowManager.add(newWindow);
+		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 		// Create the initial page.
 		try {
 			newWindow.busyOpenPage(perspID, input);
-		}
-		catch (WorkbenchException e) {
+		} catch (WorkbenchException e) {
 			windowManager.remove(newWindow);
 			throw e;
 		}
@@ -757,40 +735,41 @@ public final class Workbench implements IWorkbench {
 
 		// create workbench window manager
 		windowManager = new WindowManager();
-		
-		
-		// begin the initialization of the activity, command, and context mangers
-		
+
+		// begin the initialization of the activity, command, and context
+		// mangers
+
 		workbenchActivitySupport = new WorkbenchActivitySupport();
-		workbenchCommandSupport = new WorkbenchCommandSupport();
+		workbenchCommandSupport = new WorkbenchCommandSupport(this);
 		workbenchContextSupport = new WorkbenchContextSupport();
-		
+
 		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
-				workbenchCommandsAndContexts.commandManagerListener);
-				
+			workbenchCommandsAndContexts.commandManagerListener);
+
 		workbenchContextSupport.getContextManager().addContextManagerListener(
-				workbenchCommandsAndContexts.contextManagerListener);
+			workbenchCommandsAndContexts.contextManagerListener);
 
 		// establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 
 			public Integer getAccelerator(String commandId) {
 				Integer accelerator = null;
-				ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
+				ICommand command =
+					workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 				if (command.isDefined()) {
 					List keySequenceBindings = command.getKeySequenceBindings();
 
 					if (!keySequenceBindings.isEmpty()) {
 						IKeySequenceBinding keySequenceBinding =
-						(IKeySequenceBinding) keySequenceBindings.get(0);
+							(IKeySequenceBinding) keySequenceBindings.get(0);
 						KeySequence keySequence = keySequenceBinding.getKeySequence();
 						List keyStrokes = keySequence.getKeyStrokes();
 
 						if (keyStrokes.size() == 1) {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 							accelerator =
-							new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+								new Integer(SWTKeySupport.convertKeyStrokeToAccelerator(keyStroke));
 						}
 					}
 				}
@@ -800,14 +779,15 @@ public final class Workbench implements IWorkbench {
 
 			public String getAcceleratorText(String commandId) {
 				String acceleratorText = null;
-				ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
+				ICommand command =
+					workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 				if (command.isDefined()) {
 					List keySequenceBindings = command.getKeySequenceBindings();
 
 					if (!keySequenceBindings.isEmpty()) {
 						IKeySequenceBinding keySequenceBinding =
-						(IKeySequenceBinding) keySequenceBindings.get(0);
+							(IKeySequenceBinding) keySequenceBindings.get(0);
 						acceleratorText = keySequenceBinding.getKeySequence().format();
 					}
 				}
@@ -817,14 +797,16 @@ public final class Workbench implements IWorkbench {
 
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence =
-				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+					KeySequence.getInstance(
+						SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
 				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
-				|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
+					|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
 			}
 
 			public final boolean isActive(final String commandId) {
 				if (commandId != null) {
-					final ICommand command = workbenchCommandSupport.getCommandManager().getCommand(commandId);
+					final ICommand command =
+						workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 					if (command != null)
 						return command.isDefined() && command.isActive();
@@ -834,25 +816,20 @@ public final class Workbench implements IWorkbench {
 			}
 		});
 
-		workbenchCommandsAndContexts.updateActiveContextIds();
-		keyboard = new WorkbenchKeyboard(this);
-		Listener keyFilter = keyboard.getKeyDownFilter();
-		display.addFilter(SWT.Traverse, keyFilter);
-		display.addFilter(SWT.KeyDown, keyFilter);
-		display.addFilter(SWT.FocusOut, keyFilter);
-		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
-		workbenchCommandsAndContexts.updateActiveIds();		
+		workbenchCommandsAndContexts.commandHandlerServiceChanged();		
+		workbenchCommandsAndContexts.contextActivationServiceChanged();
 
-		// end the initialization of the activity, command, and context managers
+		// end the initialization of the activity, command, and context
+		// managers
 
-		
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
 
 		initializeImages(windowImage);
 		initializeFonts();
 		initializeColors();
+		initializeApplicationColors();
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
@@ -880,7 +857,8 @@ public final class Workbench implements IWorkbench {
 			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
 
-		// initialize activity helper. TODO why does this belong here and not up further in the main initialization section for activities?
+		// initialize activity helper. TODO why does this belong here and not
+		// up further in the main initialization section for activities?
 		activityHelper = ActivityPersistanceHelper.getInstance();
 
 		// attempt to restore a previous workbench state
@@ -906,6 +884,73 @@ public final class Workbench implements IWorkbench {
 		return true;
 	}
 
+	/**
+	 * Initialize colors defined by the new colorDefinitions extension point.
+	 * Note this will be rolled into initializeColors() at some point.
+	 * 
+	 * @since 3.0
+	 */
+	private void initializeApplicationColors() {
+		IPreferenceStore store = getPreferenceStore();
+		ColorRegistry registry = JFaceResources.getColorRegistry();
+
+		//Iterate through the definitions and initialize thier
+		//defaults in the preference store.
+		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
+		
+		// sort the definitions by dependant ordering so that we process 
+		// ancestors before children.		
+		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
+		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
+		Arrays.sort(copyOfDefinitions, ColorDefinition.HIERARCHY_COMPARATOR);
+
+		for (int i = 0; i < copyOfDefinitions.length; i++) {
+			ColorDefinition definition = copyOfDefinitions[i];
+			installColor(definition, registry, store);
+		}
+	}
+
+	/**
+	 * Installs the given color in the color registry.
+	 * 
+	 * @param definition
+	 *            the color definition
+	 * @param registry
+	 *            the color registry
+	 * @param store
+	 *            the preference store from which to obtain color data
+	 */
+	private void installColor(
+		ColorDefinition definition,
+		ColorRegistry registry,
+		IPreferenceStore store) {
+				
+		String id = definition.getId();
+		RGB color = PreferenceConverter.getColor(store, id);
+		if (color == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+			// process RGB if no good value is set.
+			color = StringConverter.asRGB(definition.getValue(), null);
+
+			if (color != null) 
+				PreferenceConverter.setDefault(
+						store, 
+						id, 
+						color);
+			else { // we have a default value.  Get it.
+				color = PreferenceConverter.getColor(store, definition.getDefaultsTo());
+				if (color != null) 
+					PreferenceConverter.setDefault(
+							store, 
+							id, 
+							color);
+				}
+		}
+
+		if (color != null) {
+			registry.put(id, color);
+		}
+	}
+
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
@@ -924,6 +969,10 @@ public final class Workbench implements IWorkbench {
 
 	/*
 	 * Initializes the workbench fonts with the stored values.
+	 * 
+	 * TODO: Investigate fix for Bug 45943.  Because of how the font values are 
+	 * loaded, the provided fix may be adequate but it proved insufficient for 
+	 * the color registry.  
 	 */
 	private void initializeFonts() {
 		IPreferenceStore store = getPreferenceStore();
@@ -970,8 +1019,9 @@ public final class Workbench implements IWorkbench {
 	/*
 	 * Installs the given font in the font registry.
 	 * 
-	 * @param fontKey the font key @param registry the font registry @param
-	 * store the preference store from which to obtain font data
+	 * @param fontKey the font key 
+	 * @param registry the font registry 
+	 * @param store the preference store from which to obtain font data
 	 */
 	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
 		if (store.isDefault(fontKey))
@@ -1085,6 +1135,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 		windowManager.add(newWindow);
+		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 		// Create the initial page.
 		try {
@@ -1260,6 +1311,7 @@ public final class Workbench implements IWorkbench {
 			childMem = children[x];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
+			getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
@@ -1821,18 +1873,6 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * An accessor for the keyboard interface this workbench is using. This can
-	 * be used by external class to get a reference with which they can
-	 * simulate key presses in the key binding architecture. This is used for
-	 * testing purposes currently.
-	 * 
-	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
-	 */
-	public WorkbenchKeyboard getKeyboard() {
-		return keyboard;
-	}
-
-	/**
 	 * Returns the id of the preference page that should be presented most
 	 * prominently.
 	 * 
@@ -1862,7 +1902,7 @@ public final class Workbench implements IWorkbench {
 	public IProgressService getProgressService() {
 		return ProgressManager.getInstance();
 	}
-	
+
 	private IWorkbenchActivitySupport workbenchActivitySupport;
 	private IWorkbenchCommandSupport workbenchCommandSupport;
 	private IWorkbenchContextSupport workbenchContextSupport;
@@ -1882,7 +1922,6 @@ public final class Workbench implements IWorkbench {
 	/* TODO: reduce visibility, or better - get rid of entirely */
 	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
 		new WorkbenchCommandsAndContexts(this);
-	private WorkbenchKeyboard keyboard;
 	private ActivityPersistanceHelper activityHelper;
 
 	public Object getAdapter(Class adapter) {
@@ -1906,5 +1945,5 @@ public final class Workbench implements IWorkbench {
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		getActivitySupport().setEnabledActivityIds(enabledActivityIds);
-	}	
+	}
 }

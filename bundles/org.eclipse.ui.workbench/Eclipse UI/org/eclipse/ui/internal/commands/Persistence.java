@@ -23,7 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.keys.ParseException;
 
 import org.eclipse.ui.internal.util.Util;
@@ -109,7 +109,7 @@ final class Persistence {
 	}
 
 	private static KeyStroke deprecatedStrokeToKeyStroke(int stroke) {
-		return KeySupport.convertAcceleratorToKeyStroke(stroke);
+		return SWTKeySupport.convertAcceleratorToKeyStroke(stroke);
 	}
 
 	private static int[] parseDeprecatedSequence(String string) {
@@ -526,6 +526,9 @@ final class Persistence {
 		// TODO deprecated start
 		if (commandId == null)
 			commandId = memento.getString("command"); //$NON-NLS-1$ 
+
+		if (commandId == null)
+			commandId = memento.getString("id"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);

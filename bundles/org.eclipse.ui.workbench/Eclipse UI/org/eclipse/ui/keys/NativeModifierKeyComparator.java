@@ -19,6 +19,8 @@ import org.eclipse.swt.SWT;
  * A comparator that sorts the modifier keys based on the native environment.
  * Currently, this is only the windowing toolkit, but in the future it might
  * expand to include the window manager.
+ * 
+ * @since 3.0
  */
 class NativeModifierKeyComparator implements Comparator {
 

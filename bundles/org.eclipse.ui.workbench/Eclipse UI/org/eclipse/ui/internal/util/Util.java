@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public final class Util {
-
 	public final static SortedMap EMPTY_SORTED_MAP =
 		Collections.unmodifiableSortedMap(new TreeMap());
 	public final static SortedSet EMPTY_SORTED_SET =
@@ -35,6 +34,16 @@ public final class Util {
 	public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	public static void assertInstance(Object object, Class c) {
+		assertInstance(object, c, false);
+	}
+
+	public static void assertInstance(
+		Object object,
+		Class c,
+		boolean allowNull) {
+		if (object == null && allowNull)
+			return;
+
 		if (object == null || c == null)
 			throw new NullPointerException();
 		else if (!c.isInstance(object))
@@ -200,6 +209,13 @@ public final class Util {
 	}
 
 	public static List safeCopy(List list, Class c) {
+		return safeCopy(list, c, false);
+	}
+
+	public static List safeCopy(
+		List list,
+		Class c,
+		boolean allowNullElements) {
 		if (list == null || c == null)
 			throw new NullPointerException();
 
@@ -207,12 +223,21 @@ public final class Util {
 		Iterator iterator = list.iterator();
 
 		while (iterator.hasNext())
-			assertInstance(iterator.next(), c);
+			assertInstance(iterator.next(), c, allowNullElements);
 
 		return list;
 	}
 
 	public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
+		return safeCopy(map, keyClass, valueClass, false, false);
+	}
+
+	public static Map safeCopy(
+		Map map,
+		Class keyClass,
+		Class valueClass,
+		boolean allowNullKeys,
+		boolean allowNullValues) {
 		if (map == null || keyClass == null || valueClass == null)
 			throw new NullPointerException();
 
@@ -221,14 +246,18 @@ public final class Util {
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			assertInstance(entry.getKey(), keyClass);
-			assertInstance(entry.getValue(), valueClass);
+			assertInstance(entry.getKey(), keyClass, allowNullKeys);
+			assertInstance(entry.getValue(), valueClass, allowNullValues);
 		}
 
 		return map;
 	}
 
 	public static Set safeCopy(Set set, Class c) {
+		return safeCopy(set, c, false);
+	}
+
+	public static Set safeCopy(Set set, Class c, boolean allowNullElements) {
 		if (set == null || c == null)
 			throw new NullPointerException();
 
@@ -236,7 +265,7 @@ public final class Util {
 		Iterator iterator = set.iterator();
 
 		while (iterator.hasNext())
-			assertInstance(iterator.next(), c);
+			assertInstance(iterator.next(), c, allowNullElements);
 
 		return set;
 	}
@@ -245,6 +274,15 @@ public final class Util {
 		SortedMap sortedMap,
 		Class keyClass,
 		Class valueClass) {
+		return safeCopy(sortedMap, keyClass, valueClass, false, false);
+	}
+
+	public static SortedMap safeCopy(
+		SortedMap sortedMap,
+		Class keyClass,
+		Class valueClass,
+		boolean allowNullKeys,
+		boolean allowNullValues) {
 		if (sortedMap == null || keyClass == null || valueClass == null)
 			throw new NullPointerException();
 
@@ -253,14 +291,21 @@ public final class Util {
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			assertInstance(entry.getKey(), keyClass);
-			assertInstance(entry.getValue(), valueClass);
+			assertInstance(entry.getKey(), keyClass, allowNullKeys);
+			assertInstance(entry.getValue(), valueClass, allowNullValues);
 		}
 
 		return sortedMap;
 	}
 
 	public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
+		return safeCopy(sortedSet, c, false);
+	}
+
+	public static SortedSet safeCopy(
+		SortedSet sortedSet,
+		Class c,
+		boolean allowNullElements) {
 		if (sortedSet == null || c == null)
 			throw new NullPointerException();
 
@@ -268,7 +313,7 @@ public final class Util {
 		Iterator iterator = sortedSet.iterator();
 
 		while (iterator.hasNext())
-			assertInstance(iterator.next(), c);
+			assertInstance(iterator.next(), c, allowNullElements);
 
 		return sortedSet;
 	}

@@ -15,9 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -105,11 +106,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * This implementation keeps track of of cool bar items
 	 */
 	class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
-
-		/**
-		 * Holds onto the cool item ids added by the application.
-		 */
-		private ArrayList coolItemIds = new ArrayList(4);
 	
 		/**
 		 * Returns whether the given id is for a cool item.
@@ -119,7 +115,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		 * and <code>false</code> otherwise
 		 */
 		/* package */ boolean containsCoolItem(String id) {
-			return coolItemIds.contains(id);
+			ICoolBarManager cbManager = getCoolBarManager();
+			if (cbManager == null) return false; 
+			IContributionItem cbItem = cbManager.find(id);
+			if (cbItem == null) return false;
+			//@ issue: maybe we should check if cbItem is visible?
+			return true;
 		}
 
 		/* (non-Javadoc)
@@ -139,15 +140,8 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
 		 */
-		public CoolBarManager getCoolBarManager() {
+		public ICoolBarManager getCoolBarManager() {
 			return window.getCoolBarManager();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public void addEditorToolBarGroup() {
-			// @issue missing implementation
 		}
 		
 		/* (non-Javadoc)
@@ -155,23 +149,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		 */
 		public void registerGlobalAction(IAction action) {
 			window.registerGlobalAction(action);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public IToolBarManager addToolBar(String id) {
-			IToolBarManager manager = super.addToolBar(id);
-			coolItemIds.add(id);
-			return manager;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public void removeToolBar(String id) {
-			super.removeToolBar(id);
-			coolItemIds.remove(id);
 		}
 	}
 	
@@ -281,14 +258,14 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowToolBar
 	 */
-	public boolean getShowToolBar() {
+	public boolean getShowCoolBar() {
 		return showToolBar;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowToolBar
 	 */
-	public void setShowToolBar(boolean show) {
+	public void setShowCoolBar(boolean show) {
 		showToolBar = show;
 		// @issue need to be able to reconfigure after window's controls created
 	}

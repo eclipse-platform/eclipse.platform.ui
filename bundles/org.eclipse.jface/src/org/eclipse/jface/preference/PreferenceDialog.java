@@ -744,7 +744,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		}
 
 		if (node != null) {
-			getTreeViewer().setSelection(new StructuredSelection(node));
+			getTreeViewer().setSelection(new StructuredSelection(node), true);
 			// Keep focus in tree.  See bugs 2692, 2621, and 6775.            
 			getTreeViewer().getControl().setFocus();
 		}

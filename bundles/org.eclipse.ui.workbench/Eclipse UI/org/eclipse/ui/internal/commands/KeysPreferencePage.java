@@ -28,6 +28,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,15 +63,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -75,23 +73,22 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage
 	extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 
 	private final static class CommandAssignment implements Comparable {
-		private String contextId;
 
 		private KeySequenceBindingNode.Assignment assignment;
+		private String contextId;
 		private KeySequence keySequence;
 
 		public int compareTo(Object object) {
@@ -122,9 +119,9 @@ public class KeysPreferencePage
 	}
 
 	private final static class KeySequenceAssignment implements Comparable {
-		private String contextId;
 
 		private KeySequenceBindingNode.Assignment assignment;
+		private String contextId;
 
 		public int compareTo(Object object) {
 			KeySequenceAssignment castedObject = (KeySequenceAssignment) object;
@@ -159,11 +156,7 @@ public class KeysPreferencePage
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 	private final static RGB RGB_MINUS = new RGB(160, 160, 160);
-
-	private Map contextIdsByCommandId;
-	private Map contextIdsByUniqueName;
-	private IContextManager contextManager;
-	private Map contextUniqueNamesById;
+	
 	private Map assignmentsByContextIdByKeySequence;
 	private Button buttonAdd;
 	private Button buttonAddKey;
@@ -172,31 +165,36 @@ public class KeysPreferencePage
 	private Map categoryIdsByUniqueName;
 	private Map categoryUniqueNamesById;
 	private Button checkBoxMultiKeyAssist;
-	private Button checkBoxMultiKeyRocker;
-	private Combo comboContext;
 	private Combo comboCategory;
 	private Combo comboCommand;
+	private Combo comboContext;
 	private Combo comboKeyConfiguration;
 	private Set commandAssignments;
 	private Map commandIdsByCategoryId;
 	private Map commandIdsByUniqueName;
 	private CommandManager commandManager;
 	private Map commandUniqueNamesById;
+	private Map contextIdsByCommandId;
+	private Map contextIdsByUniqueName;
+	private IContextManager contextManager;
+	private Map contextUniqueNamesById;
 	private Group groupCommand;
 	private Group groupKeySequence;
 	private Map keyConfigurationIdsByUniqueName;
 	private Map keyConfigurationUniqueNamesById;
 	private Set keySequenceAssignments;
-	private Label labelContext;
-	private Label labelContextExtends;
 	private Label labelAssignmentsForCommand;
 	private Label labelAssignmentsForKeySequence;
 	private Label labelCategory;
 	private Label labelCommand;
+	private Label labelContext;
+	private Label labelContextExtends;
 	private Label labelKeyConfiguration;
 	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;
 	private Menu menuButtonAddKey;
+	private Button radioFormatNative;
+	private Button radioFormat;
 	private Table tableAssignmentsForCommand;
 	private Table tableAssignmentsForKeySequence;
 	private Text textKeySequence;
@@ -418,7 +416,7 @@ public class KeysPreferencePage
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// The multi key assit button.
+		// The multi   -key assist button.
 		checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
 		checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
 		checkBoxMultiKeyAssist.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$
@@ -447,24 +445,13 @@ public class KeysPreferencePage
 			}
 		});
 
-		// The multi-key rocker button.
-		checkBoxMultiKeyRocker = new Button(composite, SWT.CHECK);
-		checkBoxMultiKeyRocker.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyRocker.Text")); //$NON-NLS-1$
-		checkBoxMultiKeyRocker.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyRocker.ToolTipText")); //$NON-NLS-1$
-		checkBoxMultiKeyRocker.setFont(composite.getFont());
-		checkBoxMultiKeyRocker.setSelection(
-			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		checkBoxMultiKeyRocker.setLayoutData(gridData);
-
 		// Conigure the layout of the composite.
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = 5;
 		gridLayout.marginWidth = 5;
 		gridLayout.numColumns = 2;
 		composite.setLayout(gridLayout);
-		
+
 		return composite;
 	}
 
@@ -808,12 +795,6 @@ public class KeysPreferencePage
 		update();
 	}
 
-	private String getContextId() {
-		return comboContext.getSelectionIndex() > 0
-			? (String) contextIdsByUniqueName.get(comboContext.getText())
-			: null;
-	}
-
 	private String getCategoryId() {
 		return !commandIdsByCategoryId.containsKey(null)
 			|| comboCategory.getSelectionIndex() > 0
@@ -823,6 +804,12 @@ public class KeysPreferencePage
 
 	private String getCommandId() {
 		return (String) commandIdsByUniqueName.get(comboCommand.getText());
+	}
+
+	private String getContextId() {
+		return comboContext.getSelectionIndex() > 0
+			? (String) contextIdsByUniqueName.get(comboContext.getText())
+			: null;
 	}
 
 	private String getKeyConfigurationId() {
@@ -837,7 +824,8 @@ public class KeysPreferencePage
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
+		IWorkbenchContextSupport workbenchContextSupport =
+			(IWorkbenchContextSupport) workbench.getContextSupport();
 		contextManager = workbenchContextSupport.getContextManager();
 		// TODO remove blind cast
 		commandManager = (CommandManager) workbench.getCommandManager();
@@ -868,7 +856,7 @@ public class KeysPreferencePage
 			restoreDefaultsMessageBox.setMessage(Util.translateString(RESOURCE_BUNDLE, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
 
 			if (restoreDefaultsMessageBox.open() == SWT.YES) {
-				setKeyConfigurationId(null);
+				setKeyConfigurationId(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
 				Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
 
 				while (iterator.hasNext()) {
@@ -893,8 +881,6 @@ public class KeysPreferencePage
 			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
 		textMultiKeyAssistTime.setStringValue(
 			Integer.toString(store.getDefaultInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
-		checkBoxMultiKeyRocker.setSelection(
-			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 
 		update();
 	}
@@ -930,19 +916,6 @@ public class KeysPreferencePage
 		store.setValue(
 			IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
 			textMultiKeyAssistTime.getIntValue());
-		store.setValue(
-			IPreferenceConstants.MULTI_KEY_ROCKER,
-			checkBoxMultiKeyRocker.getSelection());
-
-		// TODO remove the dependancy on Workbench. have Workbench rely on
-		// events from CommandManager.
-		if (workbench instanceof Workbench) {
-			((Workbench) workbench).workbenchCommandsAndContexts.updateActiveContextIds();
-			((Workbench) workbench)
-				.workbenchCommandsAndContexts
-				.updateActiveWorkbenchWindowMenuManager(true);
-		}
-
 		return super.performOk();
 	}
 
@@ -1078,15 +1051,15 @@ public class KeysPreferencePage
 		update();
 	}
 
-	private void selectedComboContext() {
-		update();
-	}
-
 	private void selectedComboCategory() {
 		update();
 	}
 
 	private void selectedComboCommand() {
+		update();
+	}
+
+	private void selectedComboContext() {
 		update();
 	}
 
@@ -1126,48 +1099,6 @@ public class KeysPreferencePage
 		}
 
 		update();
-	}
-
-	private void setContextsForCommand() {
-		String commandId = getCommandId();
-		String contextId = getContextId();
-		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
-		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);
-
-		// TODO for context bound commands, this code retains only those
-		// contexts explictly bound. what about assigning key bindings to
-		// implicit descendant contexts?
-		if (contextIds != null)
-			contextIdsByUniqueName.values().retainAll(contextIds);
-
-		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
-		Collections.sort(contextNames, Collator.getInstance());
-
-		if (contextIds == null)
-			contextNames.add(0, Util.translateString(RESOURCE_BUNDLE, "general")); //$NON-NLS-1$
-
-		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
-		setContextId(contextId);
-
-		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
-			comboContext.select(0);
-	}
-
-	private void setContextId(String contextId) {
-		comboContext.clearSelection();
-		comboContext.deselectAll();
-		String contextUniqueName = (String) contextUniqueNamesById.get(contextId);
-
-		if (contextUniqueName != null) {
-			String items[] = comboContext.getItems();
-
-			for (int i = 1; i < items.length; i++)
-				if (contextUniqueName.equals(items[i])) {
-					comboContext.select(i);
-					break;
-				}
-		} else
-			comboContext.select(0);
 	}
 
 	private void setAssignmentsForCommand() {
@@ -1249,6 +1180,48 @@ public class KeysPreferencePage
 
 		if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
 			comboCommand.select(0);
+	}
+
+	private void setContextId(String contextId) {
+		comboContext.clearSelection();
+		comboContext.deselectAll();
+		String contextUniqueName = (String) contextUniqueNamesById.get(contextId);
+
+		if (contextUniqueName != null) {
+			String items[] = comboContext.getItems();
+
+			for (int i = 1; i < items.length; i++)
+				if (contextUniqueName.equals(items[i])) {
+					comboContext.select(i);
+					break;
+				}
+		} else
+			comboContext.select(0);
+	}
+
+	private void setContextsForCommand() {
+		String commandId = getCommandId();
+		String contextId = getContextId();
+		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);
+
+		// TODO for context bound commands, this code retains only those
+		// contexts explictly bound. what about assigning key bindings to
+		// implicit descendant contexts?
+		if (contextIds != null)
+			contextIdsByUniqueName.values().retainAll(contextIds);
+
+		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
+		Collections.sort(contextNames, Collator.getInstance());
+
+		if (contextIds == null)
+			contextNames.add(0, Util.translateString(RESOURCE_BUNDLE, "general")); //$NON-NLS-1$
+
+		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
+		setContextId(contextId);
+
+		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
+			comboContext.select(0);
 	}
 
 	private void setKeyConfigurationId(String keyConfigurationId) {
@@ -1518,8 +1491,7 @@ public class KeysPreferencePage
 				boolean validKeySequence =
 					keySequence != null && CommandManager.validateKeySequence(keySequence);
 				boolean validContextId =
-					contextId == null
-						|| contextManager.getDefinedContextIds().contains(contextId);
+					contextId == null || contextManager.getDefinedContextIds().contains(contextId);
 				boolean validCommandId =
 					commandId == null || commandManager.getDefinedCommandIds().contains(commandId);
 				boolean validKeyConfigurationId =
@@ -1552,8 +1524,7 @@ public class KeysPreferencePage
 				boolean validKeySequence =
 					keySequence != null && CommandManager.validateKeySequence(keySequence);
 				boolean validContextId =
-					contextId == null
-						|| contextManager.getDefinedContextIds().contains(contextId);
+					contextId == null || contextManager.getDefinedContextIds().contains(contextId);
 				boolean validCommandId =
 					commandId == null || commandManager.getDefinedCommandIds().contains(commandId);
 				boolean validKeyConfigurationId =

@@ -962,6 +962,13 @@ public abstract class Action implements IAction {
 	 * Fires a property change event for the <code>TEXT</code> property
 	 * if the text actually changes as a consequence.
 	 * </p>
+	 * <p>
+	 * The accelerator is identified by the last index of a tab character.  If
+	 * there are no tab characters, then it is identified by the last index of
+	 * a '@' character.  If neither, then there is no accelerator text.  Note
+	 * that if you want to insert a '@' character into the text (but no 
+	 * accelerator, you can simply insert a '@' or a tab at the end of the text. 
+	 * </p>
 	 *
 	 * @param text the text, or <code>null</code> if none
 	 */

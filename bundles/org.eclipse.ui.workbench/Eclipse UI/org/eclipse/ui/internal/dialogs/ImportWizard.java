@@ -18,12 +18,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -42,11 +45,7 @@ public class ImportWizard extends Wizard {
 
 	//the list selection page
 	class SelectionPage extends WorkbenchWizardListSelectionPage {
-		SelectionPage(
-			IWorkbench w,
-			IStructuredSelection ss,
-			AdaptableList e,
-			String s) {
+		SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e, String s) {
 			super(w, ss, e, s);
 		}
 		public void createControl(Composite parent) {
@@ -58,12 +57,12 @@ public class ImportWizard extends Wizard {
 		public IWizardNode createWizardNode(WorkbenchWizardElement element) {
 			return new WorkbenchWizardNode(this, element) {
 				public IWorkbenchWizard createWizard() throws CoreException {
-					return (IWorkbenchWizard) wizardElement
-						.createExecutableExtension();
+					return (IWorkbenchWizard) wizardElement.createExecutableExtension();
 				}
 			};
 		}
 	}
+
 	private IStructuredSelection selection;
 	private IWorkbench workbench;
 
@@ -71,33 +70,36 @@ public class ImportWizard extends Wizard {
 	 * Creates the wizard's pages lazily.
 	 */
 	public void addPages() {
-		addPage(new SelectionPage(this.workbench, this.selection, getAvailableImportWizards(), WorkbenchMessages.getString("ImportWizard.selectSource"))); //$NON-NLS-1$
+		addPage(
+			new SelectionPage(
+				this.workbench,
+				this.selection,
+				getAvailableImportWizards(),
+				WorkbenchMessages.getString("ImportWizard.selectSource"))); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the import wizards that are available for invocation.
 	 */
 	protected AdaptableList getAvailableImportWizards() {
-		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT)
-			.getWizards();
+		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
 	}
+
 	/**
 	 * Initializes the wizard.
 	 */
-	public void init(
-		IWorkbench aWorkbench,
-		IStructuredSelection currentSelection) {
+	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 
 		setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
+			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
 		setNeedsProgressMonitor(true);
 	}
-	/**
-	 * Subclasses must implement this <code>IWizard</code> method to perform
-	 * any special finish processing for their wizard.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
@@ -110,13 +112,18 @@ public class ImportWizard extends Wizard {
 			return true;
 
 		IActivityManager activityManager = support.getActivityManager();
-		IIdentifier identifier =
-			activityManager.getIdentifier(
-				first.getSelectedNode().getWizard().getClass().getName());
-		Set activities = new HashSet(activityManager.getEnabledActivityIds());
-		if (activities.addAll(identifier.getActivityIds())) {
-			support.setEnabledActivityIds(activities);
+
+		if (first.getSelectedNode() instanceof IPluginContribution) {
+			IIdentifier identifier =
+				activityManager.getIdentifier(
+					WorkbenchActivityHelper.createUnifiedId(
+						(IPluginContribution) first.getSelectedNode()));
+			Set activities = new HashSet(activityManager.getEnabledActivityIds());
+			if (activities.addAll(identifier.getActivityIds())) {
+				support.setEnabledActivityIds(activities);
+			}
 		}
+
 		return true;
 	}
 }

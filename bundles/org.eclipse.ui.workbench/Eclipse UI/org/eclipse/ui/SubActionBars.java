@@ -24,7 +24,6 @@ import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.internal.CoolItemToolBarManager;
 
 /**
  * Generic implementation of the <code>IActionBars</code> interface.
@@ -306,6 +305,7 @@ public class SubActionBars implements IActionBars {
 
 		if (toolBarMgr != null)
 			toolBarMgr.setVisible(set);
+		
 	}
 	
 	/**
@@ -334,10 +334,6 @@ public class SubActionBars implements IActionBars {
 	 */
 	public void updateActionBars() {
 		IToolBarManager mgr = getToolBarManager();
-		if (mgr instanceof CoolItemToolBarManager) {
-			// fix for 20988
-			mgr.update(false);
-		} 
 		parent.updateActionBars();
 		fireActionHandlersChanged();
 	}

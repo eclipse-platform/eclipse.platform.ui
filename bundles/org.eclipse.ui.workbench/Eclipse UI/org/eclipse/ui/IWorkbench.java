@@ -13,9 +13,12 @@ package org.eclipse.ui;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.ICommandManager;
@@ -204,9 +207,7 @@ public interface IWorkbench {
 	 * 
 	 * @see IWorkbench#showPerspective
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(
-		String perspID,
-		IAdaptable input)
+	public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
 		throws WorkbenchException;
 	/**
 	 * Creates and opens a new workbench window with one page. The perspective
@@ -234,8 +235,7 @@ public interface IWorkbench {
 	 * 
 	 * @see IWorkbench#showPerspective
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
-		throws WorkbenchException;
+	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException;
 	/**
 	 * Closes then restarts this workbench.
 	 * <p>
@@ -289,9 +289,7 @@ public interface IWorkbench {
 	 * 
 	 * @since 2.0
 	 */
-	public IWorkbenchPage showPerspective(
-		String perspectiveId,
-		IWorkbenchWindow window)
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
 		throws WorkbenchException;
 
 	/**

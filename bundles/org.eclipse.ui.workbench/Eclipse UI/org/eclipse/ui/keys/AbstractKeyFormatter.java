@@ -27,7 +27,18 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public abstract class AbstractKeyFormatter implements KeyFormatter {
+public abstract class AbstractKeyFormatter implements IKeyFormatter {
+	/**
+	 * The key for the delimiter between keys. This is used in the
+	 * internationalization bundles.
+	 */
+	protected final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
+
+	/**
+	 * The key for the delimiter between key strokes. This is used in the
+	 * internationalization bundles.
+	 */
+	protected final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
 
 	/**
 	 * The bundle in which to look up the internationalized text for all of the
@@ -43,12 +54,22 @@ public abstract class AbstractKeyFormatter implements KeyFormatter {
 	 * 
 	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
 	 */
+	public String format(Key key) {
+		String name = key.name;
+		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 */
 	public String format(KeySequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
 
 		Iterator keyStrokeItr = keySequence.getKeyStrokes().iterator();
 		while (keyStrokeItr.hasNext()) {
-			stringBuffer.append(formatKeyStroke((KeyStroke) keyStrokeItr.next()));
+			stringBuffer.append(format((KeyStroke) keyStrokeItr.next()));
 
 			if (keyStrokeItr.hasNext()) {
 				stringBuffer.append(getKeyStrokeDelimiter());
@@ -58,26 +79,12 @@ public abstract class AbstractKeyFormatter implements KeyFormatter {
 		return stringBuffer.toString();
 	}
 
-	/**
-	 * Formats an individual key into a human readable format. This uses an
-	 * internationalization resource bundle to look up the key. This does not
-	 * do any platform-specific formatting (e.g., Carbon's command character).
-	 * 
-	 * @param key
-	 *            The key to format; must not be <code>null</code>.
-	 * @return The key formatted as a string; should not be <code>null</code>.
-	 */
-	protected String formatKey(Key key) {
-		String name = key.name;
-		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.keys.KeyFormatter#formatKeyStroke(org.eclipse.ui.keys.KeyStroke)
 	 */
-	public String formatKeyStroke(KeyStroke keyStroke) {
+	public String format(KeyStroke keyStroke) {
 		String keyDelimiter = getKeyDelimiter();
 
 		// Format the modifier keys, in sorted order.
@@ -86,14 +93,14 @@ public abstract class AbstractKeyFormatter implements KeyFormatter {
 		StringBuffer stringBuffer = new StringBuffer();
 		Iterator modifierKeyItr = modifierKeys.iterator();
 		while (modifierKeyItr.hasNext()) {
-			stringBuffer.append(formatKey((ModifierKey) modifierKeyItr.next()));
+			stringBuffer.append(format((ModifierKey) modifierKeyItr.next()));
 			stringBuffer.append(keyDelimiter);
 		}
 
 		// Format the natural key, if any.
 		NaturalKey naturalKey = keyStroke.getNaturalKey();
 		if (naturalKey != null) {
-			stringBuffer.append(formatKey(naturalKey));
+			stringBuffer.append(format(naturalKey));
 		}
 
 		return stringBuffer.toString();

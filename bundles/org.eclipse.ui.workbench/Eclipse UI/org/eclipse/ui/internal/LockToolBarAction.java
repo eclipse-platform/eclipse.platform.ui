@@ -50,7 +50,7 @@ public class LockToolBarAction
 		window.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (workbenchWindow != null) {
-					setChecked(((WorkbenchWindow) workbenchWindow).isToolBarLocked());
+					setChecked(((WorkbenchWindow) workbenchWindow).isCoolBarLocked());
 				}
 			}
 		});
@@ -66,7 +66,7 @@ public class LockToolBarAction
 			return;
 		}
 		boolean locked = isChecked();
-		((WorkbenchWindow) workbenchWindow).lockToolBar(locked);
+		((WorkbenchWindow) workbenchWindow).lockCoolBar(locked);
 	}
 	
 	/* (non-Javadoc)

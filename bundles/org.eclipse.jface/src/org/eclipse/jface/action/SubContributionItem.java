@@ -139,4 +139,17 @@ public void update() {
 public void update(String id) {
 	innerItem.update(id);
 }
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+ */
+public void fill(CoolBar parent, int index) {
+	
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
+ */
+public void saveWidgetState() {	
+}
+
 }

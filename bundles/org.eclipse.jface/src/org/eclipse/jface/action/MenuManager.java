@@ -195,6 +195,7 @@ public void fill(Menu parent, int index) {
 			menuItem = new MenuItem(parent, SWT.CASCADE, index);
 		else
 			menuItem = new MenuItem(parent, SWT.CASCADE);
+
 		menuItem.setText(menuText);
 
 		if (!menuExist())
@@ -213,6 +214,11 @@ public void fill(Menu parent, int index) {
  * Method declared on IContributionItem.
  */
 public void fill(ToolBar parent, int index) {}
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+ */
+public void fill(CoolBar parent, int index) {
+}
 /* (non-Javadoc)
  * Method declared on IMenuManager.
  */
@@ -655,6 +661,13 @@ private void updateMenuItem() {
 				menuItem.setEnabled(enabled);
 		}
 	}
+}
+
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
+ */
+public void saveWidgetState() {	
 }
 
 }

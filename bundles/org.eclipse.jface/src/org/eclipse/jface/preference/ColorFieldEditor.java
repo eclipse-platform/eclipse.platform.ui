@@ -120,7 +120,7 @@ public ColorSelector getColorSelector() {
 protected Button getChangeControl(Composite parent) {
 	if (colorSelector == null) {
 		colorSelector = new ColorSelector(parent);
-		colorSelector.setPropertyChangeListener(new IPropertyChangeListener() {
+		colorSelector.addListener(new IPropertyChangeListener() {
 			// forward the property change of the color selector
 			public void propertyChange(PropertyChangeEvent event) {
 				ColorFieldEditor.this.fireValueChanged(event.getProperty(), event.getOldValue(), event.getNewValue());

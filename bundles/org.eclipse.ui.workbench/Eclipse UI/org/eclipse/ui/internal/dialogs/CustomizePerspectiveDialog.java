@@ -16,7 +16,18 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
+
+//import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -31,7 +42,19 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.AbstractActionBarConfigurer;
+import org.eclipse.ui.internal.ActionSetActionBars;
+import org.eclipse.ui.internal.ActionSetContributionItem;
+import org.eclipse.ui.internal.ActionSetMenuManager;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.Perspective;
+import org.eclipse.ui.internal.PluginActionContributionItem;
+import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
+import org.eclipse.ui.internal.PluginActionSet;
+import org.eclipse.ui.internal.PluginActionSetBuilder;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -168,25 +191,27 @@ public class CustomizePerspectiveDialog extends Dialog {
 		public void fillToolsFor(String actionSetId, CoolBarManager mgr) {
 			IContributionItem[] items = mgr.getItems();
 			for (int i=0; i<items.length; i++) {
-				CoolBarContributionItem cbItem = (CoolBarContributionItem)items[i];
-				IContributionItem[] subItems = cbItem.getToolBarManager().getItems();
-				for (int j=0; j<subItems.length; j++) {
-					IContributionItem subItem = subItems[j];
-					if (subItem instanceof PluginActionCoolBarContributionItem) {
-						PluginActionCoolBarContributionItem actionItem = (PluginActionCoolBarContributionItem)subItem;
-						if (actionItem.getActionSetId().equals(actionSetId)) {
-							String toolbarId = cbItem.getId();
-							ActionSetDisplayItem toolbar = find(toolbarId); 
-							if (toolbar == null) {
-								String toolbarText = window.getToolbarLabel(toolbarId);
-								toolbar = new ActionSetDisplayItem(this, toolbarId, toolbarText, TOOLITEM);
+				if (items[i] instanceof ToolBarContributionItem) {
+					ToolBarContributionItem cbItem = (ToolBarContributionItem)items[i];
+					IContributionItem[] subItems = cbItem.getToolBarManager().getItems();
+					for (int j=0; j<subItems.length; j++) {
+						IContributionItem subItem = subItems[j];
+						if (subItem instanceof PluginActionCoolBarContributionItem) {
+							PluginActionCoolBarContributionItem actionItem = (PluginActionCoolBarContributionItem)subItem;
+							if (actionItem.getActionSetId().equals(actionSetId)) {
+								String toolbarId = cbItem.getId();
+								ActionSetDisplayItem toolbar = find(toolbarId); 
+								if (toolbar == null) {
+									String toolbarText = window.getToolbarLabel(toolbarId);
+									toolbar = new ActionSetDisplayItem(this, toolbarId, toolbarText, TOOLITEM);
+								}
+								IAction action = actionItem.getAction();
+								String toolItemText = action.getToolTipText();
+								if (toolItemText == null) toolItemText = action.getText();
+								ActionSetDisplayItem toolItem = new ActionSetDisplayItem(toolbar, action.getId(), toolItemText, TOOLITEM);
+								toolItem.imageDescriptor = action.getImageDescriptor();
+								toolItem.description = action.getDescription();
 							}
-							IAction action = actionItem.getAction();
-							String toolItemText = action.getToolTipText();
-							if (toolItemText == null) toolItemText = action.getText();
-							ActionSetDisplayItem toolItem = new ActionSetDisplayItem(toolbar, action.getId(), toolItemText, TOOLITEM);
-							toolItem.imageDescriptor = action.getImageDescriptor();
-							toolItem.description = action.getDescription();
 						}
 					}
 				}
@@ -224,7 +249,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 		}
 	}
 	
-	public class CustomizeActionBars extends AbstractActionBarConfigurer implements IActionBars {
+	public class CustomizeActionBars extends AbstractActionBarConfigurer implements IActionBars2 {
 		/**
 		 * Fake action bars to use to build the menus and toolbar contributions for the
 		 * workbench.  We cannot use the actual workbench action bars, since doing so would
@@ -241,32 +266,59 @@ public class CustomizePerspectiveDialog extends Dialog {
 			this.coolBarManager = coolBarManager;
 		}
 		
-		public void clearGlobalActionHandlers() {
-		}
-		public CoolBarManager getCoolBarManager() {
-			return coolBarManager;
-		}
-		public IAction getGlobalActionHandler(String actionID) {
-			return null;
-		}
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#getMenuManager()
+		 */
 		public IMenuManager getMenuManager() {
 			return menuManager;
 		}
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#getStatusLineManager()
+		 */
 		public IStatusLineManager getStatusLineManager() {
 			return null;
 		}
-		public IToolBarManager getToolBarManager() {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.AbstractActionBarConfigurer#getCoolBarManager()
+		 */
+		public ICoolBarManager getCoolBarManager() {
 			return coolBarManager;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IActionBars#getToolBarManager()
+		 */
+		public IToolBarManager getToolBarManager() {
+			return null;
+		}
+		
 		public void setGlobalActionHandler(String actionID, IAction handler) {
 		}
 		public void updateActionBars() {
 		}
-
-		public void addEditorToolBarGroup() {
-			// do nothing
-		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IActionBars#clearGlobalActionHandlers()
+		 */
+		public void clearGlobalActionHandlers() {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IActionBars#getGlobalActionHandler(java.lang.String)
+		 */
+		public IAction getGlobalActionHandler(String actionId) {
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer#registerGlobalAction(org.eclipse.jface.action.IAction)
+		 */
+		public void registerGlobalAction(IAction action) {
+		}
+
 	}
 	
 	class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
@@ -700,8 +752,8 @@ public boolean close() {
 	StructuredSelection selection = (StructuredSelection)actionSetsViewer.getSelection();
 	if (selection.isEmpty()) lastSelectedActionSetId = null;
 	else lastSelectedActionSetId = ((ActionSetDescriptor)selection.getFirstElement()).getId();
-	((CoolBarManager)customizeWorkbenchActionBars.getToolBarManager()).dispose();
-	customizeWorkbenchActionBars.getMenuManager().dispose();
+	customizeWorkbenchActionBars.coolBarManager.dispose();
+	customizeWorkbenchActionBars.menuManager.dispose();
 	return super.close();
 }
 protected void configureShell(Shell shell) {
@@ -1003,6 +1055,8 @@ void handleActionSetSelected(SelectionChangedEvent event) {
 		toolbarStructure = new ActionSetDisplayItem("Toolbar"); //$NON-NLS-1$
 		MenuManager windowMenuMgr = window.getMenuManager();
 		CoolBarManager windowCoolBarManager = window.getCoolBarManager();
+		// Update internal structure
+		windowCoolBarManager.refresh();
 		if (containsActionSet(windowMenuMgr, actionSetId)) {
 			// if the action set is active, we can use the workbench menu and coolbar managers
 			// to figure out the action set structure.

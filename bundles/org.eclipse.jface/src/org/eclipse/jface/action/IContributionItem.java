@@ -23,7 +23,8 @@ import org.eclipse.swt.widgets.*;
  * <p>
  * A contribution item can realize itself in different SWT widgets, using the different 
  * <code>fill</code> methods.  The same type of contribution item can be used with a 
- * <code>MenuBarManager</code>, <code>ToolBarManager</code>, or a <code>StatusLineManager</code>.
+ * <code>MenuBarManager</code>, <code>ToolBarManager</code>, <code>CoolBarManager</code>, 
+ * </code>or a <code>StatusLineManager</code>.
  * </p>
  * <p>
  * This interface is internal to the framework; it should not be implemented outside
@@ -67,6 +68,16 @@ public interface IContributionItem {
 	 *   or <code>-1</code> to insert at the end
 	 */
 	public void fill(ToolBar parent, int index);
+	/**
+	 * Fills the given cool bar with controls representing this contribution item.
+	 * Used by <code>CoolBarManager</code>.
+	 *
+	 * @param parent the parent cool bar
+	 * @param index the index where the controls are inserted,
+	 *   or <code>-1</code> to insert at the end
+	 * @since 3.0
+	 */
+	public void fill(CoolBar parent, int index);
 	/**
 	 * Returns the identifier of this contribution item.
 	 * The id is used for retrieving an item from its manager.
@@ -125,6 +136,13 @@ public interface IContributionItem {
 	 */
 	public boolean isVisible();
 	/**
+	 * Saves any state information of the control(s) owned by this contribution item.
+	 * The contribution manager calls this method before disposing of the controls.
+	 * 
+	 * @since 3.0
+	 */
+	public void saveWidgetState();
+	/**
 	 * Sets the parent manager of this item
 	 * 
 	 * @param parent the parent contribution manager
@@ -148,7 +166,7 @@ public interface IContributionItem {
 	 * Updates any SWT controls cached by this contribution item with changes
 	 * for the the given property. 
 	 * 
-	 * @param String id the di of the changed property
+	 * @param id the id of the changed property
 	 * @since 2.0
 	 */
 	public void update(String id);

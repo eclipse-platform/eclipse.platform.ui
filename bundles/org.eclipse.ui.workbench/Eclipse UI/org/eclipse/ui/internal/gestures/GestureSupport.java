@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.gestures;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 public final class GestureSupport {
 
@@ -39,7 +39,7 @@ public final class GestureSupport {
 		capture.addCaptureListener(new ICaptureListener() {
 			public void capture(CaptureEvent captureEvent) {
 				System.out.println("Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
-				" Key Stroke: " + KeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
+				" Key Stroke: " + SWTKeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
 				" Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
 				" Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
 			}

@@ -73,6 +73,22 @@ public void fill(Menu menu, int index) {
  */
 public void fill(ToolBar parent, int index) {
 }
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method does nothing. Subclasses may override.
+ * 
+ * @since 3.0
+ */
+public void fill(CoolBar parent, int index) {
+}
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method does nothing. Subclasses may override.
+ * 
+ * @since 3.0
+ */
+public void saveWidgetState() {	
+}
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
@@ -93,6 +109,7 @@ public IContributionManager getParent() {
  * method returns <code>false</code>. Subclasses may override.
  */
 public boolean isDirty() {
+	// @issue should this be false instead of calling isDynamic()?
 	return isDynamic();
 }
 /**

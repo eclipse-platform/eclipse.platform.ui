@@ -21,6 +21,8 @@ import org.eclipse.ui.internal.util.Util;
  * Formats the key sequences and key strokes into the native human-readable
  * format. This is typically what you would see on the menus for the given
  * platform and locale.
+ * 
+ * @since 3.0
  */
 public class NativeKeyFormatter extends AbstractKeyFormatter {
 
@@ -84,7 +86,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	 *            The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
-	protected String formatKey(Key key) {
+	public String format(Key key) {
 		String name = key.name;
 
 		// TODO consider platform-specific resource bundles
@@ -95,7 +97,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			}
 		}
 
-		return super.formatKey(key);
+		return super.format(key);
 	}
 
 	/*
@@ -109,7 +111,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			return Util.translateString(
 				RESOURCE_BUNDLE,
 				CARBON_KEY_DELIMITER_KEY,
-				KEY_DELIMITER,
+				Util.ZERO_LENGTH_STRING,
 				false,
 				false);
 		} else {
@@ -154,5 +156,4 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	protected Comparator getModifierKeyComparator() {
 		return MODIFIER_KEY_COMPARATOR;
 	}
-
 }

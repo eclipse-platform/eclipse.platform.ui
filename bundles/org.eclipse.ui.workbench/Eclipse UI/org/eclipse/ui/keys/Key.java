@@ -131,6 +131,6 @@ public abstract class Key implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return name;
+		return KeyFormatterFactory.getFormalKeyFormatter().format(this);
 	}
 }

@@ -10,38 +10,58 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 /**
- * The ColorSelector is a wrapper for a button that displays
- * a selected Color and allows the user to change the selection.
+ * The <code>ColorSelector</code> is a wrapper for a button that displays
+ * a selected <code>Color</code> and allows the user to change the selection.
  */
 public class ColorSelector {
 
-	Point fExtent;
-	Image fImage;
-	RGB fColorValue;
-	Color fColor;
-	Button fButton;
-	private IPropertyChangeListener propertyChangeListener;
-	static String VALUE = "VALUE";
-	
+	/**
+	 * Property name that signifies the selected color of this 
+	 * <code>ColorSelector</code> has changed.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PROP_COLORCHANGE = "colorValue"; //$NON-NLS-1$
+	private Button fButton;
+	private Color fColor;
+	private RGB fColorValue;
+	private Point fExtent;
+	private Image fImage;
+
+	private ListenerList listeners;
+
 	/**
 	 * Create a new instance of the reciever and the
-	 * button that it wrappers in the supplied parent Composite
+	 * button that it wrappers in the supplied parent <code>Composite</code>.
+	 * 
 	 * @param parent. The parent of the button.
 	 */
 	public ColorSelector(Composite parent) {
+		listeners = new ListenerList();
 
 		fButton = new Button(parent, SWT.PUSH);
 		fExtent = computeImageSize(parent);
@@ -59,10 +79,25 @@ public class ColorSelector {
 				colorDialog.setRGB(fColorValue);
 				RGB newColor = colorDialog.open();
 				if (newColor != null) {
-					RGB oldColor = fColorValue;
+					RGB oldValue = fColorValue;
 					fColorValue = newColor;
+					final Object[] listeners =
+						ColorSelector.this.listeners.getListeners();
+					if (listeners.length > 0) {
+						PropertyChangeEvent pEvent =
+							new PropertyChangeEvent(
+								this,
+								PROP_COLORCHANGE,
+								oldValue,
+								newColor);
+						for (int i = 0; i < listeners.length; ++i) {
+							IPropertyChangeListener listener =
+								(IPropertyChangeListener) listeners[i];
+							listener.propertyChange(pEvent);
+						}
+					}
+
 					updateColorImage();
-					fireValueChanged(VALUE, oldColor, newColor);
 				}
 			}
 		});
@@ -79,9 +114,8 @@ public class ColorSelector {
 				}
 			}
 		});
-		
-		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter()
-		{
+
+		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 			 */
@@ -92,15 +126,67 @@ public class ColorSelector {
 	}
 
 	/**
+	 * Adds a property change listener to this <code>ColorSelector</code>.  
+	 * Events are fired when the color in the control changes via the user 
+	 * clicking an selecting a new one in the color dialog.  No event is fired 
+	 * in the case where <code>setColorValue(RGB)</code> is invoked.
+	 * 
+	 * @param listener a property change listener
+	 * @since 3.0
+	 */
+	public void addListener(IPropertyChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * Compute the size of the image to be displayed.
+	 * 
+	 * @param window - the window used to calculate
+	 * @return <code>Point</code>
+	 */
+	private Point computeImageSize(Control window) {
+		GC gc = new GC(window);
+		Font f =
+			JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+		gc.setFont(f);
+		int height = gc.getFontMetrics().getHeight();
+		gc.dispose();
+		Point p = new Point(height * 3 - 6, height);
+		return p;
+	}
+
+	/**
+	 * Get the button control being wrappered by the selector.
+	 * 
+	 * @return <code>Button</code>
+	 */
+	public Button getButton() {
+		return fButton;
+	}
+
+	/**
 	 * Return the currently displayed color.
-	 * @return RGB
+	 * 
+	 * @return <code>RGB</code>
 	 */
 	public RGB getColorValue() {
 		return fColorValue;
 	}
 
 	/**
+	 * Removes the given listener from this <code>ColorSelector</code>. Has no 
+	 * affect if the listener is not registered.
+	 * 
+	 * @param listener a property change listener
+	 * @since 3.0
+	 */
+	public void removeListener(IPropertyChangeListener listener) {
+		listeners.remove(listener);
+	}
+
+	/**
 	 * Set the current color value and update the control.
+	 * 
 	 * @param rgb. The new color.
 	 */
 	public void setColorValue(RGB rgb) {
@@ -109,11 +195,13 @@ public class ColorSelector {
 	}
 
 	/**
-	 * Get the button control being wrappered by the selector.
-	 * @return Button
+	 * Set whether or not the button is enabled.
+	 * 
+	 * @param state the enabled state.
 	 */
-	public Button getButton() {
-		return fButton;
+
+	public void setEnabled(boolean state) {
+		getButton().setEnabled(state);
 	}
 
 	/**
@@ -139,58 +227,4 @@ public class ColorSelector {
 
 		fButton.setImage(fImage);
 	}
-
-	/**
-	 * Compute the size of the image to be displayed.
-	 * @return Point
-	 * @param window - the window used to calculate
-	 */
-
-	private Point computeImageSize(Control window) {
-		GC gc = new GC(window);
-		Font f =
-			JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
-		gc.setFont(f);
-		int height = gc.getFontMetrics().getHeight();
-		gc.dispose();
-		Point p = new Point(height * 3 - 6, height);
-		return p;
-	}
-
-	/**
-	 * Set whether or not the button is enabled.
-	 */
-
-	public void setEnabled(boolean state) {
-		getButton().setEnabled(state);
-	}
-
-	/**
-	 * Sets or removes the property change listener for this field editor.
-	 * <p>
-	 * Note that field editors can support only a single listener.
-	 * </p>
-	 *
-	 * @param listener a property change listener, or <code>null</code>
-	 *  to remove
-	 */
-	public void setPropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListener = listener;
-	}
-	
-	/**
-	 * Informs this field editor's listener, if it has one, about a change to
-	 * one of this field editor's properties.
-	 *
-	 * @param property the field editor property name, 
-	 *   such as <code>VALUE</code> or <code>IS_VALID</code>
-	 * @param oldValue the old value object, or <code>null</code>
-	 * @param newValue the new value, or <code>null</code>
-	 */
-	protected void fireValueChanged(String property, Object oldValue, Object newValue) {
-		if (propertyChangeListener == null)
-			return;
-		propertyChangeListener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
-	}
-	
 }

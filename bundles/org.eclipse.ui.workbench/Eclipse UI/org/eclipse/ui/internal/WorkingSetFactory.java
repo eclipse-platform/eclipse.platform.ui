@@ -11,21 +11,18 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 
 /**
  * A WorkingSetFactory is used to recreate a persisted WorkingSet 
  * object.
- *
- * @see IElementFactory
  */
 public class WorkingSetFactory implements IElementFactory {
 
-	/**
-	 * Implements IElementFactory.
-	 * 
-	 * @see IElementFactory#createElement(IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IElementFactory
 	 */
 	public IAdaptable createElement(IMemento memento) {
 		String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);

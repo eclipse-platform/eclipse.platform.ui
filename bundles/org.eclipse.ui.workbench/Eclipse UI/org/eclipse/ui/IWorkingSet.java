@@ -11,6 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -21,9 +22,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @since 2.0
+ * @since 2.0 initial version
+ * @since 3.0 now extends IPersistableElement
  */
-public interface IWorkingSet {
+public interface IWorkingSet extends IPersistableElement {
 	/**
 	 * Returns the elements that are contained in this working set.
 	 * 

@@ -116,24 +116,24 @@ public interface IWorkbenchWindowConfigurer {
 	public void setShowMenuBar(boolean show);
 
 	/**
-	 * Returns whether the underlying workbench window has a tool bar.
+	 * Returns whether the underlying workbench window has a cool bar.
 	 * <p>
 	 * The initial value is controlled by the preference
 	 * {@link IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR SHOULD_SHOW_TOOL_BAR}
 	 * </p>
 	 * 
-	 * @return <code>true</code> for a tool bar, and <code>false</code>
-	 * for no tool bar
+	 * @return <code>true</code> for a cool bar, and <code>false</code>
+	 * for no cool bar
 	 */
-	public boolean getShowToolBar();
+	public boolean getShowCoolBar();
 
 	/**
-	 * Sets whether the underlying workbench window has a tool bar.
+	 * Sets whether the underlying workbench window has a cool bar.
 	 * 
-	 * @param show <code>true</code> for a tool bar, and <code>false</code>
-	 * for no tool bar
+	 * @param show <code>true</code> for a cool bar, and <code>false</code>
+	 * for no cool bar
 	 */
-	public void setShowToolBar(boolean show);
+	public void setShowCoolBar(boolean show);
 
 	/**
 	 * Returns whether the underlying workbench window has a shortcut bar.

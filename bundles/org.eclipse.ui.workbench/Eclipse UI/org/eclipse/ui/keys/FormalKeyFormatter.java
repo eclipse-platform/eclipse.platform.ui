@@ -14,29 +14,35 @@ package org.eclipse.ui.keys;
 import java.util.Comparator;
 
 /**
- * TODO javadoc
+ * Formats the keys in the internal key sequence grammar. This is used for
+ * persistence, and is not really intended for display to the user.
+ * 
+ * @since 3.0
  */
 public class FormalKeyFormatter extends AbstractKeyFormatter {
 
 	/**
-	 * A comparator that guarantees that modifier keys will be sorted the same 
+	 * A comparator that guarantees that modifier keys will be sorted the same
 	 * across different platforms.
 	 */
-	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new Comparator() {
-		public int compare(Object left, Object right) {
-			ModifierKey modifierKeyLeft = (ModifierKey) left;
-			ModifierKey modifierKeyRight = (ModifierKey) right;
-			return modifierKeyLeft.name.compareTo(modifierKeyRight.name);
-		}
-	};
+	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 */
+	public String format(Key key) {
+		return key.name;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
-		return KeyFormatter.KEY_DELIMITER;
+		return IKeyFormatter.KEY_DELIMITER;
 	}
 
 	/*
@@ -45,7 +51,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
 	protected String getKeyStrokeDelimiter() {
-		return KeyFormatter.KEY_STROKE_DELIMITER;
+		return IKeyFormatter.KEY_STROKE_DELIMITER;
 	}
 
 	/*

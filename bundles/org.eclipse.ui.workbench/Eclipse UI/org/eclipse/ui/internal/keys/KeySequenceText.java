@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.keys.NaturalKey;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SpecialKey;
@@ -180,9 +180,9 @@ public final class KeySequenceText {
 				 * pressed.
 				 */
 				int key =
-					KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
+					SWTKeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
 				KeyStroke remainingStroke =
-					KeySupport.convertAcceleratorToKeyStroke(key);
+					SWTKeySupport.convertAcceleratorToKeyStroke(key);
 				if (!keyStrokes.isEmpty()) {
 					keyStrokes.remove(keyStrokes.size() - 1);
 				}
@@ -224,8 +224,8 @@ public final class KeySequenceText {
 		 */
 		private void insertKeyStroke(Event event, List keyStrokes) {
 			// Compute the key stroke to insert.
-			int key = KeySupport.convertEventToUnmodifiedAccelerator(event);
-			KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
+			int key = SWTKeySupport.convertEventToUnmodifiedAccelerator(event);
+			KeyStroke stroke = SWTKeySupport.convertAcceleratorToKeyStroke(key);
 
 			/*
 			 * Only insert the stroke if it is *not ScrollLock. Let's not get
@@ -406,10 +406,10 @@ public final class KeySequenceText {
 
 	static {
 		TreeSet trappedKeys = new TreeSet();
-		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
+		trappedKeys.add(SWTKeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
 		trappedKeys.add(
-			KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
-		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.BS));
+			SWTKeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
+		trappedKeys.add(SWTKeySupport.convertAcceleratorToKeyStroke(SWT.BS));
 		List trappedKeyList = new ArrayList(trappedKeys);
 		TRAPPED_KEYS = Collections.unmodifiableList(trappedKeyList);
 	}
