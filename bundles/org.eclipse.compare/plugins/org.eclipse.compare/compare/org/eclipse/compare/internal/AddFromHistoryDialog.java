@@ -386,8 +386,8 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		int n= Math.max(l1, l2);
 		
 		for (int i= 0; i < n; i++) {
-			String s1= i < l1 ? ss1[i] : "";
-			String s2= i < l2 ? ss2[i] : "";
+			String s1= i < l1 ? ss1[i] : ""; //$NON-NLS-1$
+			String s2= i < l2 ? ss2[i] : ""; //$NON-NLS-1$
 			int rc= s1.compareToIgnoreCase(s2);
 			if (rc != 0)
 				return rc < 0;

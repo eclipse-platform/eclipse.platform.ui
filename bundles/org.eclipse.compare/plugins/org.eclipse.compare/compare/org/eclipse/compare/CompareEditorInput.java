@@ -627,7 +627,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		Viewer newViewer= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
 		
 		boolean isNewViewer= newViewer != oldViewer;
-		if (DEBUG) System.out.println("CompareEditorInput.findContentViewer: " + isNewViewer);
+		if (DEBUG) System.out.println("CompareEditorInput.findContentViewer: " + isNewViewer); //$NON-NLS-1$
 		
 		if (isNewViewer && newViewer instanceof IPropertyChangeNotifier) {
 			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) newViewer;
@@ -689,7 +689,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		else
 			fDirtyViewers.remove(source);
 		boolean newDirty= fDirtyViewers.size() > 0;
-		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty);
+		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (oldDirty != newDirty)
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(newDirty));
 	}	
