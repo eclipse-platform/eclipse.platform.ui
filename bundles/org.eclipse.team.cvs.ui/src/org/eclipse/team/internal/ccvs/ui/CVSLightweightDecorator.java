@@ -90,6 +90,7 @@ public class CVSLightweightDecorator
 
 	public CVSLightweightDecorator() {
 		CVSProviderPlugin.addResourceStateChangeListener(this);
+		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 	}
 
 	// Keep track of deconfigured projects
@@ -530,4 +531,13 @@ public class CVSLightweightDecorator
 			}
 		});
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		super.dispose();
+		CVSProviderPlugin.broadcastDecoratorEnablementChanged(false /* disabled */);
+	}
+
 }

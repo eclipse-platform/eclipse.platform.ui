@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	
 	private QualifiedName FOLDER_DIRTY_STATE_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-dirty-state-cached"); //$NON-NLS-1$
 	private boolean isDecoratorEnabled = true;
+	private boolean hasBeenSaved = false;
 	
 	/*package*/ SessionPropertySyncInfoCache() {
 		try {
@@ -232,7 +233,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	}
 		
 	/*
-	 * Flush all cached info for the container and it's ancestors
+	 * Flush dirty cache for the resource
 	 */
 	/*package*/ void flushDirtyCache(IResource resource) throws CVSException {
 		if (resource.exists()) {
@@ -395,6 +396,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					});
 				}
 			}
+			hasBeenSaved = true;
 		}
 	}
 
@@ -402,39 +404,36 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @see ICVSDecoratorEnablementListener#decoratorEnablementChanged(boolean)
 	 */
 	public void decoratorEnablementChanged(boolean enabled) {
-		// DECORATOR enable this code once PR 32354 is fixed.
-		// In addition, try and remove any code paths that are not required if the decorators
-		// are turned off.
-//		isDecoratorEnabled = enabled;
-//		if(!enabled) {
-//			flushDirtyStateFromDisk();		
-//		}
-	}
-	
-	/* 
-	 * Called to clear the folder dirty state from the resource sync tree and stop persisting
-	 * these values to disk.
-	 */
-	private void flushDirtyStateFromDisk() {
-		final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
-	
-		IProject[] projects;
-		projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			RepositoryProvider provider = RepositoryProvider.getProvider(
-													project,
-													CVSProviderPlugin.getTypeId());
-													
-			try {
-				synchronizer.flushSyncInfo(FOLDER_DIRTY_STATE_KEY, project, IResource.DEPTH_INFINITE);
-			} catch (CoreException e) {
-				CVSProviderPlugin.log(e.getStatus());
-			}
+		isDecoratorEnabled = enabled;
+		if(!enabled && !hasBeenSaved) {
+			// flush the dirty state cache for all managed resources
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = projects[i];
+				RepositoryProvider provider = RepositoryProvider.getProvider(
+														project,
+														CVSProviderPlugin.getTypeId());
+														
+				if (provider != null) {
+					try {
+						project.accept(new IResourceVisitor() {
+							public boolean visit(IResource resource) throws CoreException {
+								try {
+									flushDirtyCache(resource);
+								} catch(CVSException e) {
+									throw new CoreException(e.getStatus());
+								}
+								return true;
+							}
+						});
+					} catch (CoreException e) {
+						CVSProviderPlugin.log(e.getStatus());
+					}
+				}
+			}		
 		}
 	}
-	
+		
 	/* 
 	 * Called to clear the folder dirty state from the resource sync tree and stop persisting
 	 * these values to disk.
