@@ -37,7 +37,6 @@ public class ConfigurationActivator implements BundleActivator {
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
 	private String[] allArgs;
-	private Set ignore;
 	private BundleListener reconcilerListener;
 	private IPlatform platform;
 	private PlatformConfiguration configuration;
@@ -71,7 +70,7 @@ public class ConfigurationActivator implements BundleActivator {
 		loadOptions();
 		if (DEBUG)
 			System.out.println("Starting update configurator...");
-		computeIgnoredBundles();
+
 		installBundles();
 	}
 
@@ -93,14 +92,6 @@ public class ConfigurationActivator implements BundleActivator {
 		} catch (IOException e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
 		}
-	}
-
-	private void computeIgnoredBundles() {
-		String ignoreList = System.getProperty("eclipse.ignore", "org.eclipse.osgi,org.eclipse.core.boot,org.eclipse.core.runtime.adaptor");
-		ignore = new HashSet();
-		StringTokenizer tokenizer = new StringTokenizer(ignoreList, ",");
-		while (tokenizer.hasMoreTokens())
-			ignore.add(tokenizer.nextToken().trim());
 	}
 
 
