@@ -345,6 +345,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		
 		// Clear existing model, but keep the root node
 		resourceMap.clear();
+		pendingLabelUpdates.clear();
 		clearModelObjects(getModelRoot());
 		// remove all from tree viewer
 		IDiffElement[] elements = getModelRoot().getChildren();
