@@ -807,9 +807,8 @@ public interface IWorkbenchActionConstants {
      * Help menu: name of standard About action 
      * (value <code>"about"</code>).
      * 
-     * @deprecated in 3.0. Use
-     * <code>org.eclipse.ui.ide.IDEActionFactory.ABOUT.getId()</code>
-     * instead.
+     * @deprecated in 3.0. Use {@link org.eclipse.ui.actions.ActionFactory#ABOUT
+     * ActionFactory.ABOUT.getId()} instead.
      */
     public static final String ABOUT = "about"; //$NON-NLS-1$
 
