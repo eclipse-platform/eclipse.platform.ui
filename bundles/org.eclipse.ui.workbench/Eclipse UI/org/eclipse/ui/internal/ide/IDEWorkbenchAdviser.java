@@ -39,11 +39,17 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -90,6 +96,12 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private boolean autoBuild;
 
 	/**
+	 * Contains the workspace location if the -showlocation command line
+	 * argument is specified, or <code>null</code> if not specified.
+	 */
+	private String workspaceLocation = null;
+	
+	/**
 	 * Preference change listener
 	 */
 	private final IPropertyChangeListener preferenceChangeListener =
@@ -98,7 +110,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				handlePreferenceChange(event);
 			}
 	};
-	
+
 	/**
 	 * Creates a new workbench adviser instance.
 	 */
@@ -124,9 +136,20 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			getShowTasksChangeListener(),
 			IResourceChangeEvent.POST_CHANGE);
 
+		// get the command line arguments
+		String[] cmdLineArgs = Platform.getCommandLineArgs();
+
+		// include the workspace location in the title 
+		// if the command line option -showlocation is specified
+		for (int i = 0; i < cmdLineArgs.length; i++) {
+			if ("-showlocation".equalsIgnoreCase(cmdLineArgs[i])) { //$NON-NLS-1$
+				workspaceLocation = Platform.getLocation().toOSString();
+				break;
+			}
+		}
+
 		// anti-deadlocking code
 		boolean avoidDeadlock = true;
-		String[] cmdLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < cmdLineArgs.length; i++) {
 			if (cmdLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
@@ -140,8 +163,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				// @issue UISynchronizer should be in IDE-specific package
 				display.setSynchronizer(new UISynchronizer(display, uiLock));
 			} catch (CoreException e) {
-				// @issue dump to log
-				e.printStackTrace(System.out);
+				IDEWorkbenchPlugin.log("Failed to setup workspace lock.", e.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -195,20 +217,52 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowOpen
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer windowConfigurer) {
+		// setup the action builder to populate the toolbar and menubar
 		WorkbenchActionBuilder actionBuilder = new WorkbenchActionBuilder(windowConfigurer);
 		windowConfigurer.setData(ACTION_BUILDER, actionBuilder);
 		actionBuilder.buildActions();
-
-		// include the workspace location in the title 
-		// if the command line option -showlocation is specified
-		// @issue find a home for this
-		String[] commandLineArgs = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if ("-showlocation".equalsIgnoreCase(commandLineArgs[i])) { //$NON-NLS-1$
-				String workspaceLocation = Platform.getLocation().toOSString();
-				break;
+		
+		// hook up the listeners to update the window title
+		windowConfigurer.getWindow().addPageListener(new IPageListener () {
+			public void pageActivated(IWorkbenchPage page) {
 			}
-		}
+			public void pageClosed(IWorkbenchPage page) {
+				updateTitle(page.getWorkbenchWindow());
+			}
+			public void pageOpened(IWorkbenchPage page) {
+			}
+		});
+		windowConfigurer.getWindow().addPerspectiveListener(new IPerspectiveListener() {
+			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+				updateTitle(page.getWorkbenchWindow());
+			}
+			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+			}
+		});
+		windowConfigurer.getWindow().getPartService().addPartListener(new IPartListener2() {
+			public void partActivated(IWorkbenchPartReference ref) {
+				if (ref instanceof IEditorReference || ref.getPage().getActiveEditor() == null) {
+					updateTitle(ref.getPage().getWorkbenchWindow());
+				}
+			}
+			public void partBroughtToTop(IWorkbenchPartReference ref) {
+				if (ref instanceof IEditorReference || ref.getPage().getActiveEditor() == null) {
+					updateTitle(ref.getPage().getWorkbenchWindow());
+				}
+			}
+			public void partClosed(IWorkbenchPartReference ref) {
+			}
+			public void partDeactivated(IWorkbenchPartReference ref) {
+			}
+			public void partOpened(IWorkbenchPartReference ref) {
+			}
+			public void partHidden(IWorkbenchPartReference ref) {
+			}
+			public void partVisible(IWorkbenchPartReference ref) {
+			}
+			public void partInputChanged(IWorkbenchPartReference ref) {
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -580,5 +634,49 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 */	
 	private IAdaptable getDefaultWindowInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
+	/**
+	 * Updates the window title. Format will be:
+	 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+	 */
+	private void updateTitle(IWorkbenchWindow window) {
+		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
+		
+		String title = null;
+		try {
+			title = windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo().getProductName();
+		} catch (WorkbenchException e) {
+			// do nothing
+		}
+		if (title == null) {
+			title = ""; //$NON-NLS-1$
+		}
+		
+		if (workspaceLocation != null) {
+			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
+		}
+
+		IWorkbenchPage currentPage = window.getActivePage();
+		if (currentPage != null) {
+			IEditorPart editor = currentPage.getActiveEditor();
+			if (editor != null) {
+				String editorTitle = editor.getTitle();
+				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { editorTitle, title }); //$NON-NLS-1$
+			}
+			IPerspectiveDescriptor persp = currentPage.getPerspective();
+			String label = ""; //$NON-NLS-1$
+			if (persp != null)
+				label = persp.getLabel();
+			IAdaptable input = currentPage.getInput();
+			if (input != null && !input.equals(getDefaultWindowInput())) {
+				label = currentPage.getLabel();
+			}
+			if (label != null && !label.equals("")) { //$NON-NLS-1$	
+				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
+			}
+		}
+		
+		windowConfigurer.setTitle(title);
 	}
 }
