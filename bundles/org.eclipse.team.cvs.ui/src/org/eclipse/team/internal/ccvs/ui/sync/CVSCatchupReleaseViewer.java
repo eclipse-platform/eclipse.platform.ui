@@ -9,6 +9,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -29,6 +30,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -278,8 +280,16 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		IRemoteResource remote = syncTree.getRemote();
 		if (remote != null) {
 			try {
-				String revision = ((ICVSRemoteFile)remote).getRevision();
-				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision}));
+				ICVSRemoteFile remoteFile = (ICVSRemoteFile)remote;
+				String revision = remoteFile.getRevision();
+				ILogEntry logEntry = remoteFile.getLogEntry();
+				if (logEntry == null) {
+					// Hack: call getContents() so that the log entry is available.
+					remoteFile.getContents(new NullProgressMonitor());
+					logEntry = remoteFile.getLogEntry();
+				}
+				String author = logEntry.getAuthor();
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author}));
 			} catch (TeamException e) {
 				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name));
