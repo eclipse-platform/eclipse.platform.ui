@@ -66,21 +66,26 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
 	public void visitFolder(ICVSFolder folder) throws CVSException {
-		// Visit the children of the folder as appropriate
-		if (depth == IResource.DEPTH_INFINITE) {
-			folder.acceptChildren(this);
-		} else if (depth == IResource.DEPTH_ONE) {
-			ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS);
-			for (int i = 0; i < files.length; i++) {
-				files[i].accept(this);
+		// Delete unmanaged folders if the user wants them deleted
+		if (!folder.isCVSFolder() && CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
+			folder.delete();
+		} else {
+			// Visit the children of the folder as appropriate
+			if (depth == IResource.DEPTH_INFINITE) {
+				folder.acceptChildren(this);
+			} else if (depth == IResource.DEPTH_ONE) {
+				ICVSResource[] files = folder.members(ICVSFolder.FILE_MEMBERS);
+				for (int i = 0; i < files.length; i++) {
+					files[i].accept(this);
+				}
 			}
-		}
-		// Also delete ignored child files that start with .#
-		ICVSResource[] ignoredFiles = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.IGNORED_MEMBERS);
-		for (int i = 0; i < ignoredFiles.length; i++) {
-			ICVSResource cvsResource = ignoredFiles[i];
-			if (cvsResource.getName().startsWith(".#")) { //$NON-NLS-1$
-				cvsResource.delete();
+			// Also delete ignored child files that start with .#
+			ICVSResource[] ignoredFiles = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.IGNORED_MEMBERS);
+			for (int i = 0; i < ignoredFiles.length; i++) {
+				ICVSResource cvsResource = ignoredFiles[i];
+				if (cvsResource.getName().startsWith(".#")) { //$NON-NLS-1$
+					cvsResource.delete();
+				}
 			}
 		}
 		monitor.worked(1);
