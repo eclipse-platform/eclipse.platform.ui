@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<HTML>
+<BODY>
+<H1><CENTER>Action Sets</CENTER></H1>
+<b><i>Identifier: </i></b>org.eclipse.ui.actionSets<p>
+<b><i>Description: </i></b>This extension point is used to add menus, menu items 
+and toolbar buttons to the common areas in the Workbench
+window. These contributions are collectively known 
+as an <i>action set</i> and appear within the 
+Workbench window by the user customizing a perspective.<p>
+<p>
+An action's enablement and/or visibility can be defined using the elements <samp>enablement</samp> and <samp>visibility</samp> respectively. These two elements contain a boolean expression that is evaluated to determine the enablement and/or visibility.
+<p>
+The syntax is the same for the <samp>enablement</samp> and <samp>visibility</samp> elements. Both contain only one boolean expression sub-element. In the simplest case, this will be an <samp>objectClass</samp>, <samp>objectState</samp>, <samp>pluginState</samp>, or <samp>systemProperty</samp> element. In the more complex case, the <samp>and</samp>, <samp>or</samp>, and <samp>not</samp> elements can be combined to form a boolean expression. Both the <samp>and</samp>, and <samp>or</samp> elements must contain 2 sub-elements. The <samp>not</samp> element must contain only 1 sub-element.
+</p><p><b><i>Configuration Markup:</i></b><p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (actionSet+)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT actionSet (menu* , action* , description?)&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to define a group of actions and/or menus.</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST actionSet</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visible&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier for this action set.</li><li><b>label</b> - a translatable name used by the Workbench to represent this action set to the user.</li><li><b>visible</b> - an optional attribute indicating whether the action set is initially visible when a perspective is open. This option is only honoured when the user opens a perspective which has not been customized. The user can override this option from the "Customize Perspective Dialog". This attribute should be used with great care so as not to overwhelm the user with too many actions.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action (selection* | enablement?)&gt;</samp>
+<p>&nbsp;&nbsp; This element defines an action that the user can invoke in the UI.</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accelerator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;definitionId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menubarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toolbarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disabledIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hoverIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pulldown&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;retarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allowLabelUpdate&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(push|radio|toggle|pulldown) "push"</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier used as a reference for this action.</li><li><b>label</b> - a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.</li><li><b>accelerator</b> - <b><font color="#FF0000">Deprecated:</font></b> Use the <samp>definitionId</samp> attribute instead.</li><li><b>definitionId</b> - the action definition unique identifier that this action is semantically similar to. Allows the key binding service to assign an accelerator key to this action. See the extension points <a href="org_eclipse_ui_actionDefinitions.html">org.eclipse.ui.actionDefinitions</a> and <a href="org_eclipse_ui_acceleratorSets.html">org.eclipse.ui.acceleratorSets</a> for more information.</li><li><b>menubarPath</b> - a slash-delimited path ('/') used to specify the location of this action in the menu bar.
+Each token in the path, except the last one, must represent a valid identifier of an existing menu in the hierarchy. The last token represents the named group into which this action will be added. If the path is omitted, this action will not appear in the menu bar.</li><li><b>toolbarPath</b> - a slash-delimited path ('/') that is used to specify the location of this action in the toolbar. The first token represents the toolbar identifier (with "Normal" being the default toolbar), while the second token is the named group within the toolbar that this action will be added to. If the group does not exist in the toolbar, it will be created.
+If toolbarPath is omitted, the action will not appear in the toolbar.</li><li><b>icon</b> - a relative path of an icon used to visually represent the action in its context.
+If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.</li><li><b>disabledIcon</b> - a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.</li><li><b>hoverIcon</b> - a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>tooltip</b> - a translatable text representing the action's tool tip. Only used if the action appears in the toolbar.</li><li><b>helpContextId</b> - a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.</li><li><b>state</b> - an optional attribute indicating the initial state (either <samp>true</samp> or <samp>false</samp>). Used only when the <samp>style</samp> attribute has the value <samp>radio</samp> or <samp>toggle</samp>.</li><li><b>pulldown</b> - <b><font color="#FF0000">Deprecated:</font></b> Use the <samp>style</samp> attribute with the value <samp>pulldown</samp>.</li><li><b>class</b> - a fully qualified name of a class which implements <samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp> or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>. The latter should be implemented in cases where the <samp>style</samp> attribute has the value <samp>pulldown</samp>. This class is the handler responsible for performing the action. If the <samp>retarget</samp> attribute is true, this attribute is ignored and should not be supplied.</li><li><b>retarget</b> - an optional attribute to retarget this action. When true, view and editor parts may supply a handler for this action using the standard mechanism for setting a global action handler on their site using this action's identifier. If this attribute is true, the <samp>class</samp> attribute should not be supplied.</li><li><b>allowLabelUpdate</b> - optional attribute indicating whether the retarget action allows the handler to override it's label and tooltip. Only applies if <samp>retarget</samp> attribute is true.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action. If specified and the condition is not met, the action is disabled. If omitted, the action enablement state is not affected. The following attribute formats are supported: 
+    <table border="0" width="80%">
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>!</b></td>
+        <td valign="top">- 0 items selected</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>?</b></td>
+        <td valign="top">- 0 or 1 items selected</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>+</b></td>
+        <td valign="top">- 1 or more items selected</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>multiple, 2+</b></td>
+        <td valign="top">- 2 or more items selected</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>n</b></td>
+        <td valign="top">- a precise number of items selected.a precise number of items selected.&nbsp;
+          For example: enablesFor=&quot; 4&quot; enables the action only when 4
+          items are selected</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>*</b></td>
+        <td valign="top">- any number of items selected</td>
+      </tr>
+    </table></li><li><b>style</b> - an attribute to define the user interface style type for the action. If omitted, then it is <samp>push</samp> by default. The attribute value will be one of the following:
+    <table border="0" width="80%">
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>push</b></td>
+        <td valign="top">- as a regular menu item or tool item.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>radio</b></td>
+        <td valign="top">- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the <samp>state</samp> attribute.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>toggle</b></td>
+        <td valign="top">- as a checked style menu item or as a toggle tool item. The initial value is specified by the <samp>state</samp> attribute.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>pulldown</b></td>
+        <td valign="top">- as a cascading style menu item or as a drop down menu beside the tool item.</td>
+      </tr>
+    </table></li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
+<p>&nbsp;&nbsp; This optional element contains, in it's body, translatable text providing a short description of the action set.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT menu (separator+ , groupMarker*)&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to defined a new menu.</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this menu.</li><li><b>label</b> - a translatable name used by the Workbench for this new menu. The name should include mnemonic information.</li><li><b>path</b> - the location of the new menu starting from the root of the menu. Each token in the path must refer to an existing menu, except the last token which should represent a named group in the last menu in the path. If omitted, the new menu will be added to the <samp>additions</samp> named group of the menu.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT separator EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to create a menu separator in the new menu.</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of the menu separator. This name can later be referenced as the last token in a menu path. Therefore, a separator also serve as named group into which actions and menus can be added.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT groupMarker EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST groupMarker</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of the group marker. This name can later be referenced as the last token in the menu path. It serves as named group into which actions and menus can be added.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT selection EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to help determine the action enablement based on the current selection. Ignored if the</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>class</b> - a fully qualified name of the class or interface that each object in the selection must implement in order to enable the action.</li><li><b>name</b> - an optional wild card filter for the name that can be applied to all objects in the selection. If specified and the match fails, the action will be disabled.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT enablement (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to define the enablement for the action.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT visibility (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to define the visibility for the action.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT and (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p>&nbsp;&nbsp; This element represent a boolean AND operation on the result of evaluating it's two sub-element expressions.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT or (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p>&nbsp;&nbsp; This element represent a boolean OR operation on the result of evaluating it's two sub-element expressions.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT not (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p>&nbsp;&nbsp; This element represent a boolean NOT operation on the result of evaluating it's sub-element expressions.</p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectClass EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the class or interface of each object in the current selection. If each object in the selection implements the specified class or interface, the expression is evaluated as true.</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST objectClass</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - a fully qualified name of a class or interface.  The expression is evaluated as true only if all objects within the selection implement this class or interface.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectState EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, the</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST objectState</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of an object's attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.</li><li><b>value</b> - the required value of the object's attribute. The acceptable values for the object's attribute should be publicly declared.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT pluginState EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the state of a plug-in. The state of the plug-in may be</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST pluginState</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;(installed|activated) "installed"</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - the identifier of a plug-in which may or may not exist in the plug-in registry.</li><li><b>value</b> - the required state of the plug-in. The state of the plug-in may be <samp>installed</samp> or <samp>activated</samp>.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT systemProperty EMPTY&gt;</samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the state of some system property.  The property value is retrieved from</p>
+<p></p>
+<samp>&nbsp;&nbsp; &lt;!ATTLIST systemProperty</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of the system property.</li><li><b>value</b> - the required value of the system property.</li></ul>
+<b><i>Examples: </i></b>The following is an example of an action set (note 
+the sub-elements and the way attributes are used): 
+
+<p>
+<pre>
+    &lt;extension point = &quot;org.eclipse.ui.actionSets&quot;&gt; 
+        &lt;actionSet
+            id=&quot;com.xyz.actionSet&quot; 
+            label=&quot;My Actions&quot;&gt; 
+            &lt;menu
+               id=&quot;com.xyz.xyzMenu&quot; 
+               label=&quot;XYZ Menu&quot;
+               path=&quot;additions&quot;&gt; 
+               &lt;separator name=&quot;group1&quot;/&gt;
+               &lt;separator name=&quot;option1&quot;/&gt;
+            &lt;/menu&gt;
+            
+            &lt;action
+               id=&quot;com.xyz.runXYZ&quot; 
+               label=&quot;&amp;amp;Run XYZ Tool&quot;
+               style=&quot;toggle&quot;
+               state=&quot;false&quot;
+               menubarPath=&quot;com.xyz.xyzMenu/group1&quot; 
+               icon=&quot;icons/runXYZ.gif&quot; 
+               tooltip=&quot;Run XYZ Tool&quot; 
+               helpContextId=&quot;com.xyz.run_action_context&quot; 
+               class=&quot;com.xyz.actions.RunXYZ&quot; 
+               enablesFor=&quot;1&quot;&gt; 
+               &lt;selection class=&quot;org.eclipse.core.resources.IFile&quot; name=&quot;*.java&quot;/&gt; 
+            &lt;/action&gt;
+            &lt;action 
+               id=&quot;com.xyz.runABC&quot;
+               label=&quot;&amp;amp;Run ABC Tool&quot;
+               style=&quot;push&quot;
+               menubarPath=&quot;com.xyz.xyzMenu/group1&quot;
+               toolbarPath=&quot;Normal/XYZ&quot;
+               icon=&quot;icons/runABC.gif&quot;
+               tooltip=&quot;Run ABC Tool&quot;
+               helpContextId=&quot;com.xyz.run_abc_action_context&quot;
+               retarget=&quot;true&quot;
+               allowLabelUpdate=&quot;true&quot;&gt;
+               &lt;enablement&gt;
+                  &lt;and&gt;
+                     &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+                     &lt;not&gt;
+                        &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
+                     &lt;/not&gt;
+                  &lt;/and&gt;
+               &lt;/enablement&gt;
+            &lt;/action&gt;             
+
+            &lt;action 
+               id=&quot;com.xyz.runDEF&quot;
+               label=&quot;&amp;amp;Run DEF Tool&quot;
+               style=&quot;radio&quot;
+               state=&quot;true&quot;
+               menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
+               icon=&quot;icons/runDEF.gif&quot;
+               tooltip=&quot;Run DEF Tool&quot;
+               class=&quot;com.xyz.actions.RunDEF&quot; 
+               helpContextId=&quot;com.xyz.run_def_action_context&quot;&gt;
+            &lt;/action&gt;             
+            &lt;action 
+               id=&quot;com.xyz.runGHI&quot;
+               label=&quot;&amp;amp;Run GHI Tool&quot;
+               style=&quot;radio&quot;
+               state=&quot;false&quot;
+               menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
+               icon=&quot;icons/runGHI.gif&quot;
+               tooltip=&quot;Run GHI Tool&quot;
+               class=&quot;com.xyz.actions.RunGHI&quot; 
+               helpContextId=&quot;com.xyz.run_ghi_action_context&quot;&gt;
+            &lt;/action&gt;             
+            &lt;action 
+               id=&quot;com.xyz.runJKL&quot;
+               label=&quot;&amp;amp;Run JKL Tool&quot;
+               style=&quot;radio&quot;
+               state=&quot;false&quot;
+               menubarPath=&quot;com.xyz.xyzMenu/option1&quot;
+               icon=&quot;icons/runJKL.gif&quot;
+               tooltip=&quot;Run JKL Tool&quot;
+               class=&quot;com.xyz.actions.RunJKL&quot; 
+               helpContextId=&quot;com.xyz.run_jkl_action_context&quot;&gt;
+            &lt;/action&gt;             
+        &lt;/actionSet&gt; 
+    &lt;/extension&gt; 
+</pre>
+</p>
+<p>
+In the example above, the specified action set, named "My Actions", is not initially visible within each perspective because the <samp>visible</samp> attribute is not specified.
+</p>
+<p>
+The XYZ action will appear as a check box menu item, initially not checked. It is enabled only if the selection count is 1 and if the selection contains a Java file resource.
+</p>
+<p>
+The ABC action will appear both in the menu and on the toolbar. It is enabled only if the selection does not contain any Java file resources. Note also this is a label retarget action therefore it does not supply a <samp>class</samp> attribute.
+</p>
+<p>
+The actions DEF, GHI, and JKL appear as radio button menu items. They are enabled all the time, independent of the current selection state.
+</p><p>
+<b><i>API Information: </i></b>The value of the class attribute must be the fully qualified name of a class that implements <samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp> or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>. The latter should be implemented in cases where the <samp>style</samp> attribute has the value <samp>pulldown</samp>. This class is the handler responsible for performing the action. If the <samp>retarget</samp> attribute is true, this attribute is ignored and should not be supplied. This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed.
+<p>
+The enablement criteria for an action extension is initially defined by <samp>enablesFor</samp>, and also either <samp>selection</samp> or <samp>enablement</samp>. However, once the action delegate has been instantiated, it may control the action enable state directly within its <samp>selectionChanged</samp> method.
+<p>
+It is important to note that the workbench does not generate menus on a plug-in's behalf. Menu paths must reference menus that already exist.
+<p>
+Action and menu labels may contain special characters that encode mnemonics using the following rules:
+<ol>
+<li>
+Mnemonics are specified using the ampersand ('&amp;') character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use <samp>&amp;amp;</samp> character entity.</li>
+</ol>
+If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the Eclipse Platform API was frozen. Changing the behavior now would break every plug-in which relies upon the existing behavior.
+<p>
+The <samp>selection</samp> and <samp>enablement</samp> elements are mutually exclusive. The <samp>enablement</samp> element can replace the <samp>selection</samp> element using the sub-elements <samp>objectClass</samp> and <samp>objectState</samp>. For example, the following:
+<pre>
+ &lt;selection
+  class=&quot;org.eclipse.core.resources.IFile&quot;
+  name=&quot;*.java&quot;&gt;
+ &lt;/selection&gt;
+</pre>
+can be expressed using:
+<pre>
+ &lt;enablement&gt;
+  &lt;and&gt;
+   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
+  &lt;/and&gt;
+ &lt;/enablement&gt;
+</pre><p>
+<b><i>Supplied Implementation: </i></b>Plug-ins may use this extension point to add new top level menus. Plug-ins can also define named groups which allow other plug-ins to contribute their actions into them. 
+<p>
+Top level menus are created by using the following values
+for the path attribute: 
+<ul>
+<li>additions - represents a group immediately to the left of the <samp>Window</samp> menu. 
+</ul>
+Omitting the path attribute will result in adding the new menu into the additions menu bar group. 
+</p>
+<p>
+The default groups in a workbench window are defined in the
+<samp>IWorkbenchActionConstants</samp> interface. These
+constants can be used in code for dynamic contribution.
+The values can also be copied into an XML file for fine
+grained integration with the existing workbench menus
+and toolbar. 
+</p>
+<p>
+Various menu and toolbar items within the workbench 
+window are defined algorithmically.  In these cases 
+a separate mechanism must be used to extend the 
+window. For example, adding a new workbench view 
+results in a new menu item appearing in the
+Perspective menu. Import, Export, and New Wizards 
+extensions are also added automatically to the window.
+</p><p>
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html<p>
+</BODY>
+</HTML>
