@@ -63,26 +63,24 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on IncrementalProjectBuilder.
+	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {				
-		if (kind == FULL_BUILD) {
-			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args);
-			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
-				launchBuild(kind, config, monitor);
-			}
-			return getProjectsWithinScope();
-		}
-	
 		//need to build all external tools from one builder (see bug 39713)
 		//if not a full build
 		ICommand[] commands = getProject().getDescription().getBuildSpec();
-		projectsWithinScope= new ArrayList();
+		if (kind != FULL_BUILD) {
+			projectsWithinScope= new ArrayList();
+		}
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
 				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments());
 				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
-					doBuild(kind, config, monitor);
+					if (kind == FULL_BUILD) {
+						launchBuild(kind, config, monitor);
+					} else {
+						doBuildBasedOnScope(kind, config, monitor);
+					}
 				}
 			}
 		}
@@ -112,7 +110,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		return (IProject[])projectsWithinScope.toArray(new IProject[projectsWithinScope.size()]);
 	}
 
-	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+	private void doBuildBasedOnScope(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
 		if (resources != null && resources.length > 0) {
