@@ -145,9 +145,9 @@ public class AntModel {
 
 	private void reset() {
 		fCurrentTargetNode= null;
-		fStillOpenElements= new Stack();
-		fTaskToNode= new HashMap();
-		fProjectNode= null;
+			fStillOpenElements= new Stack();
+			fTaskToNode= new HashMap();
+			fProjectNode= null;
 		//removeProblems();
 	}
 
@@ -161,9 +161,7 @@ public class AntModel {
 	}
 
 	/**
-	 * Gets the content outline for a given input element.
-	 * Returns the root Project, or <code>null</code> if the
-	 * outline could not be generated.
+	 * Contructs the content outline for a given input element.
 	 */
 	private void parseDocument(IDocument input) {
 		if (input.getLength() == 0) {
@@ -865,11 +863,6 @@ public class AntModel {
 	}
 	
 	public AntProjectNode getProjectNode() {
-		AntElementNode[] nodes= getRootElements();
-		if (nodes.length == 0) {
-			return null;
-		}
-		AntProjectNode projectNode= (AntProjectNode)nodes[0];
-		return projectNode;
+		return fProjectNode;
 	}
 }
