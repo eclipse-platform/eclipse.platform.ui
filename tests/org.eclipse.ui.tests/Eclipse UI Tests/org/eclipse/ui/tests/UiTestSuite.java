@@ -9,27 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.util.PlatformUtil;
-
 /**
  * Test all areas of the UI.
  */
 public class UiTestSuite extends TestSuite {
-
 	/**
 	 * Returns the suite. This is required to use the JUnit Launcher.
 	 */
 	public static Test suite() {
 		return new UiTestSuite();
 	}
-
 	/**
 	 * Construct the test suite.
 	 */
@@ -49,6 +44,7 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
 		addTest(new KeysTestSuite());
 		addTest(new MultiPageEditorTestSuite());
-//		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
+		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
+		addTest(new org.eclipse.ui.tests.activities.ActivitiesTestSuite());
 	}
 }

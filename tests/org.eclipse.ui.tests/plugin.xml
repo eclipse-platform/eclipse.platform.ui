@@ -81,8 +81,8 @@
             id="org.eclipse.ui.tests.api.MockViewPart4">
       </view>
       <view
-            allowMultiple="true"
             name="Mock View Mult"
+            allowMultiple="true"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPartMult">
@@ -140,54 +140,54 @@
          point="org.eclipse.ui.editors">
       <editor
             name="Mock Editor 1"
-            extensions="mock1"
             icon="icons\mockeditorpart1.gif"
+            extensions="mock1"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart1">
       </editor>
       <editor
             name="Mock Editor 2"
-            extensions="mock2"
             icon="icons\mockeditorpart2.gif"
+            extensions="mock2"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart2">
       </editor>
       <editor
             name="IEditorActionBarContributorTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.IEditorActionBarContributorTest">
       </editor>
       <editor
             name="IEditorActionDelegateTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.IEditorActionDelegateTest">
       </editor>
       <editor
             name="IEditorActionBarsTest"
-            extensions="mock3"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            extensions="mock3"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
+            class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.internal.EditorActionBarsTest">
       </editor>
       <editor
             name="ExtendedTextEditor"
-            extensions="exttxt"
             icon="icons\mockeditorpart2.gif"
-            class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
+            extensions="exttxt"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
             id="org.eclipse.ui.tests.ExtendedTextEditor">
       </editor>
       <editor
             name="Test Multi-Page Editor"
-            extensions="multi"
             icon="icons\mockeditorpart1.gif"
+            extensions="multi"
             class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
@@ -304,8 +304,8 @@
       </objectContribution>
 <!-- Adaptable test-->
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             id="org.eclipse.ui.tests.adaptable.ResourceContributions">
          <action
                label="Resource Action"
@@ -750,19 +750,19 @@
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             label="Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             state="false"
+            class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             id="org.eclipse.ui.tests.adaptable.decorator">
          <description>
             The test decorator
          </description>
       </decorator>
       <decorator
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             label="Null Decorator"
-            class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             state="false"
+            class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             id="org.eclipse.ui.tests.adaptable.nulldecorator">
          <description>
             A null test decorator
@@ -772,8 +772,8 @@
             lightweight="true"
             adaptable="true"
             label="Lightweight Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             state="false"
+            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             id="org.eclipse.ui.tests.navigator.lightweightdecorator">
          <enablement>
             <objectClass
@@ -786,8 +786,8 @@
       </decorator>
       <decorator
             lightweight="true"
-            quadrant="TOP_LEFT"
             adaptable="true"
+            quadrant="TOP_LEFT"
             label="Declarative Test Decorator"
             icon="icons/binary_co.gif"
             state="false"
@@ -916,6 +916,194 @@
             class="org.eclipse.ui.tests.intro.MockIntroPart"
             id="org.eclipse.ui.testintro">
       </intro>
+   </extension>
+<!-- Activities testing -->
+   <extension
+         point="org.eclipse.ui.activities">
+      <category
+            name="Category 1"
+            description="description"
+            id="org.eclipse.category1">
+      </category>
+      <category
+            name="Category 2"
+            description="description"
+            id="org.eclipse.category2">
+      </category>
+      <category
+            name="Category 3"
+            description="description"
+            id="org.eclipse.category3">
+      </category>
+      <category
+            name="Category 4"
+            description="description"
+            id="org.eclipse.category4">
+      </category>
+      <category
+            name="Category 5"
+            description="description"
+            id="org.eclipse.category5">
+      </category>
+      <category
+            name="Category 6"
+            description="description"
+            id="org.eclipse.category6">
+      </category>
+      <activity
+            name="Activity 1"
+            description="description"
+            id="org.eclipse.activity1">
+      </activity>
+      <activity
+            name="Activity 2"
+            description="description"
+            id="org.eclipse.activity2">
+      </activity>
+      <activity
+            name="Activity 3"
+            description="description"
+            id="org.eclipse.activity3">
+      </activity>
+      <activity
+            name="Activity 4"
+            description="description"
+            id="org.eclipse.activity4">
+      </activity>
+      <activity
+            name="Activity 5"
+            description="description"
+            id="org.eclipse.activity5">
+      </activity>
+      <activity
+            name="Activity 6"
+            description="description"
+            id="org.eclipse.activity6">
+      </activity>
+      <activity
+            name="Activity 7"
+            description="description"
+            id="org.eclipse.activity7">
+      </activity>
+      <activity
+            name="Activity 8"
+            description="description"
+            id="org.eclipse.activity8">
+      </activity>
+      <activity
+            name="Activity 9"
+            description="description"
+            id="org.eclipse.activity9">
+      </activity>
+      <activity
+            name="Activity 10"
+            description="description"
+            id="org.eclipse.activity10">
+      </activity>
+      <activity
+            name="Activity 11"
+            description="description"
+            id="org.eclipse.activity11">
+      </activity>
+      <activity
+            name="Activity 12"
+            description="description"
+            id="org.eclipse.activity12">
+      </activity>
+      <activity
+            name="Activity 13"
+            description="description"
+            id="org.eclipse.activity13">
+      </activity>
+      <activity
+            name="Activity 14"
+            description="description"
+            id="org.eclipse.activity14">
+      </activity>
+      <activity
+            name="Activity 15"
+            description="description"
+            id="org.eclipse.activity15">
+      </activity>
+      <activity
+            name="Activity 16"
+            description="description"
+            id="org.eclipse.activity16">
+      </activity>
+      <activity
+            name="Activity 17"
+            description="description"
+            id="org.eclipse.activity17">
+      </activity>
+      <activity
+            name="Activity 18"
+            description="description"
+            id="org.eclipse.activity18">
+      </activity>
+      <activityPatternBinding
+            activityId="org.eclipse.activity1"
+            pattern="org.eclipse.pattern1">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.activity2"
+            pattern="org.eclipse.pattern1">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.activity3"
+            pattern="org.eclipse.pattern1">
+      </activityPatternBinding>
+      <defaultEnablement
+            id="org.eclipse.activity1">
+      </defaultEnablement>
+      <defaultEnablement
+            id="org.eclipse.activity2">
+      </defaultEnablement>
+      <defaultEnablement
+            id="org.eclipse.activity3">
+      </defaultEnablement>
+      <defaultEnablement
+            id="org.eclipse.activity4">
+      </defaultEnablement>
+      <categoryActivityBinding
+            activityId="org.eclipse.activity1"
+            categoryId="org.eclipse.category1">
+      </categoryActivityBinding>
+      <categoryActivityBinding
+            activityId="org.eclipse.activity2"
+            categoryId="org.eclipse.category1">
+      </categoryActivityBinding>
+      <categoryActivityBinding
+            activityId="org.eclipse.activity3"
+            categoryId="org.eclipse.category1">
+      </categoryActivityBinding>
+      <categoryActivityBinding
+            activityId="org.eclipse.activity4"
+            categoryId="org.eclipse.category1">
+      </categoryActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity2"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity3"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity4"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity5"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity6"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
+      <activityActivityBinding
+            childActivityId="org.eclipse.activity7"
+            parentActivityId="org.eclipse.activity1">
+      </activityActivityBinding>
    </extension>
 
 </plugin>
