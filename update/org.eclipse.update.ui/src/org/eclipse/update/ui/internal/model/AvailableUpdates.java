@@ -146,7 +146,6 @@ class SearchAdapter extends MonitorAdapter {
 		asyncFireObjectChanged(this, P_REFRESH);
 		
 		IFeature [] candidates = getInstalledFeatures();
-		if (candidates.length==0) return;
 		backgroundProgress.beginTask(UpdateUIPlugin.getResourceString(KEY_BEGIN), candidates.length);
 		for (int i=0; i<candidates.length; i++) {
 			if (monitor.isCanceled()) {
