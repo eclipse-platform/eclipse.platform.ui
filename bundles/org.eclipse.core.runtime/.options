@@ -38,5 +38,4 @@ org.eclipse.core.runtime/url/debug/cachelookup=false
 org.eclipse.core.runtime/url/debug/cachecopy=false
 
 # Turn on debugging for install/update.
-org.eclipse.core.runtime/update/debug=false
 org.eclipse.core.runtime/config/debug=false

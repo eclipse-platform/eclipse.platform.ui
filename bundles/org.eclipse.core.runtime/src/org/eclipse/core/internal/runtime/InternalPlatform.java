@@ -160,29 +160,6 @@ public static URL asLocalURL(URL url) throws IOException {
 private static void assertInitialized() {
 	Assert.isTrue(initialized, "meta.appNotInit");
 }
-private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String name, String version) {
-	LaunchInfo.VersionedIdentifier result = null;
-	for (int i = 0; i < list.length; i++) {
-		if (list[i].getIdentifier().equals(name)) {
-			if (version != null)
-				// we are looking for a particular version, compare.  If the current element 
-				// has no version, save it for later in case we don't fine what we are looking for.
-				if (list[i].getVersion().equals(version))
-					return list[i].toString();
-				else
-					if (result == null && list[i].getVersion().length() == 0)
-						result = list[i];
-			else 
-				// remember the element with the latest version number.
-				if (result == null)
-					result = list[i];
-				else 
-					if (result.getVersion().compareTo(list[i].getVersion()) == -1)
-						result = list[i];
-		}
-	}
-	return result == null ? null : result.toString();
-}
 /**
  * Closes the open lock file handle, and makes a silent best
  * attempt to delete the file.
@@ -240,13 +217,10 @@ private static void createXMLClassLoader() {
 	descriptor.setVersion(XML_VERSION);
 
 	try {
-		LaunchInfo launch = LaunchInfo.getCurrent();
-		String plugin = findPlugin(launch.getPlugins(), PI_XML, XML_VERSION);
-		URL url = null;
-		if (plugin == null)
+		PlatformConfiguration config = InternalBootLoader.getCurrentPlatformConfiguration();
+		URL url = config.getPluginPath(PI_XML, XML_VERSION);
+		if (url == null)
 			url = new URL(BootLoader.getInstallURL(), XML_LOCATION);
-		else
-			url = new URL(BootLoader.getInstallURL(), PLUGINSDIR + plugin + "/");
 		descriptor.setLocation(url.toExternalForm());
 	} catch (MalformedURLException e) {
 		// ISSUE: What to do when this fails.  It's pretty serious

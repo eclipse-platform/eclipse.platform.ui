@@ -253,7 +253,7 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 		String localeStamp = in.readUTF();
 
 		return ((version == REGISTRY_CACHE_VERSION) &&
-			(installStamp.equals(LaunchInfo.getCurrent().getIdentifier())) &&
+			(installStamp.equals(Long.toString(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp()))) &&
 			(osStamp.equals(BootLoader.getOS())) &&
 			(windowsStamp.equals(BootLoader.getWS())) &&
 			(localeStamp.equals(BootLoader.getNL())) );
