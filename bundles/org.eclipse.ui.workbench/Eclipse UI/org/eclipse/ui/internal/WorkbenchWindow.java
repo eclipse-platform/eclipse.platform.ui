@@ -48,7 +48,6 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -518,7 +517,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PAGES));
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PERSPECTIVES));
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
-			shortcutBar.add(ContributionItemFactory.FAST_VIEWS.create(this));
+			shortcutBar.add(new ShowFastViewContribution(this));
 		}
 	}
 	/**

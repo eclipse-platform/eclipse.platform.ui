@@ -46,7 +46,7 @@ public class PerspectiveContributionItem extends ContributionItem {
 	public PerspectiveContributionItem(IWorkbenchWindow window) {
 		super();
 		menuMgr = new MenuManager();
-		menuMgr.add(ContributionItemFactory.PERSPECTIVES.create(window));
+		menuMgr.add(ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window));
 	}
 	
 	/* (non-Javadoc)

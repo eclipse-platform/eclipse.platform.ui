@@ -26,9 +26,9 @@ import org.eclipse.ui.internal.SwitchToWindowMenu;
  * Example usage:
  * <pre>
  * MenuManager menu = ...;
- * IContributionItem perspectives
- * 	  = ContributionItemFactory.PERSPECTIVES.create(window);
- * menu.add(perspectives);
+ * IContributionItem reEdit
+ * 	  = ContributionItemFactory.REOPEN_EDITORS.create(window);
+ * menu.add(reEdit);
  * </pre>
  * </p>
  * <p>
@@ -81,8 +81,9 @@ public abstract class ContributionItemFactory {
 	}
 
 	/**
-	 * Workbench contribution item: An list of windows currently open
-	 * in the workbench. Selecting one of the items makes it the active window.
+	 * Workbench contribution item (id "openWindows"): An list of windows
+	 * currently open in the workbench. Selecting one of the items makes the
+	 * corresponding window the active window.
 	 * This action dynamically maintains the list of windows.
 	 */
 	public static final ContributionItemFactory OPEN_WINDOWS = new ContributionItemFactory("openWindows") { //$NON-NLS-1$
@@ -97,13 +98,13 @@ public abstract class ContributionItemFactory {
 	};
 	
 	/**
-	 * Workbench contribution item: An list of views available to be opened
-	 * in the window. Selecting one of the views opens that view in the window.
-	 * This action dynamically maintains the list of views.
-	 * 
-	 * @issue views_shortlist
+	 * Workbench contribution item (id "viewsShortlist"): An list of views
+	 * available to be opened in the window, arranged as a shortlist of 
+	 * promising views and an "Other" subitem. Selecting
+	 * one of the items opens the corresponding view in the active window.
+	 * This action dynamically maintains the view shortlist.
 	 */
-	public static final ContributionItemFactory OPEN_VIEWS = new ContributionItemFactory("openViews") { //$NON-NLS-1$
+	public static final ContributionItemFactory VIEWS_SHORTLIST = new ContributionItemFactory("viewsShortlist") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
 		public IContributionItem create(IWorkbenchWindow window) {
 			if (window == null) {
@@ -113,31 +114,12 @@ public abstract class ContributionItemFactory {
 			return item;
 		}
 	};
-	
+		
 	/**
-	 * Workbench contribution item: An list of fast views available to be opened
-	 * in the window. Selecting one of the fast views opens it.
-	 * This action dynamically maintains the list of fast views.
-	 * 
-	 * @issue remove
-	 */
-	public static final ContributionItemFactory FAST_VIEWS = new ContributionItemFactory("fastViews") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ContributionItemFactory */
-		public IContributionItem create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IContributionItem item = new ShowFastViewContribution(window, getId());
-			return item;
-		}
-	};
-	
-	/**
-	 * Workbench contribution item: An list of recent editors available to be opened
-	 * in the window. Selecting one of the fast views opens it.
-	 * This action dynamically maintains the list of editors.
-	 * 
-	 * @issue fix comment - ref to fast views
+	 * Workbench contribution item (id "reopenEditors"): An list of recent
+	 * editors (with inputs) available to be reopened in the window. Selecting
+	 * one of the items reopens the corresponding editor on its input in the
+	 * active window. This action dynamically maintains the list of editors.
 	 */
 	public static final ContributionItemFactory REOPEN_EDITORS = new ContributionItemFactory("reopenEditors") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
@@ -151,14 +133,15 @@ public abstract class ContributionItemFactory {
 	};
 	
 	/**
-	 * Workbench contribution item: An list of perspectives. Selecting one of
-	 * the perspectives changes the perspective of the current window, or
-	 * opens a new window set to that perspective.
-	 * This action dynamically maintains the list of perspectives.
-	 * 
-	 * @issue perspectives_shortlist
+	 * Workbench contribution item (id "perspectivesShortlist"): An list of
+	 * perspectives available to be opened, arranged as a shortlist of 
+	 * promising perspectives and an "Other" subitem. Selecting
+	 * one of the items makes the corresponding perspective active. Should a 
+	 * new perspective need to be opened, a workbench user preference controls
+	 * whether the prespective is opened in the active window or a new window.
+	 * This action dynamically maintains the perspectives shortlist.
 	 */
-	public static final ContributionItemFactory PERSPECTIVES = new ContributionItemFactory("perspective") { //$NON-NLS-1$
+	public static final ContributionItemFactory PERSPECTIVES_SHORTLIST = new ContributionItemFactory("perspectivesShortlist") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
 		public IContributionItem create(IWorkbenchWindow window) {
 			if (window == null) {
