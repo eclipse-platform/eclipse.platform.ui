@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.browser;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.WorkbenchResources;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -22,6 +23,9 @@ public class BrowsersPreferencePage
 	implements IWorkbenchPreferencePage {
 	private String defaultBrowserID;
 	private Table browsersTable;
+	private Label customBrowserPathLabel;
+	private Text customBrowserPath;
+	private Button customBrowserBrowse;
 	/**
 	 * Creates preference page controls on demand.
 	 *
@@ -44,7 +48,8 @@ public class BrowsersPreferencePage
 		description.setText(WorkbenchResources.getString("select_browser"));
 		createSpacer(mainComposite);
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
-		tableDescription.setText(WorkbenchResources.getString("current_browser"));
+		tableDescription.setText(
+			WorkbenchResources.getString("current_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
 		browsersTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);
@@ -68,6 +73,7 @@ public class BrowsersPreferencePage
 						// Do not allow deselection
 						item.setChecked(true);
 					}
+					setEnabledCustomBrowserPath();
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent selEvent) {
@@ -88,7 +94,63 @@ public class BrowsersPreferencePage
 				item.setChecked(false);
 			item.setGrayed(aDescs.length == 1);
 		}
+
+		createCustomBrowserPathPart(mainComposite);
+
 		return mainComposite;
+	}
+	protected void createCustomBrowserPathPart(Composite mainComposite) {
+		// vertical space
+		new Label(mainComposite, SWT.NULL);
+
+		Composite bPathComposite = new Composite(mainComposite, SWT.NULL);
+		WorkbenchHelp.setHelp(
+			bPathComposite,
+			IHelpUIConstants.PREF_PAGE_CUSTOM_BROWSER_PATH);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 3;
+		bPathComposite.setLayout(layout);
+		bPathComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		customBrowserPathLabel = new Label(bPathComposite, SWT.LEFT);
+		customBrowserPathLabel.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Program")); //$NON-NLS-1$
+
+		customBrowserPath = new Text(bPathComposite, SWT.BORDER);
+		customBrowserPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		customBrowserPath.setText(
+			WorkbenchHelpPlugin.getDefault().getPluginPreferences().getString(
+				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
+
+		customBrowserBrowse = new Button(bPathComposite, SWT.NONE);
+		customBrowserBrowse.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.heightHint =
+			convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint =
+			convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint =
+			Math.max(
+				widthHint,
+				customBrowserBrowse.computeSize(
+					SWT.DEFAULT,
+					SWT.DEFAULT,
+					true).x);
+		customBrowserBrowse.setLayoutData(data);
+		customBrowserBrowse.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+			}
+			public void widgetSelected(SelectionEvent event) {
+				FileDialog d = new FileDialog(getShell());
+				d.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
+				String file = d.open();
+				if (file != null) {
+					customBrowserPath.setText(file);
+				}
+			}
+		});
+		setEnabledCustomBrowserPath();
 	}
 	/**
 	 * @see IWorkbenchPreferencePage
@@ -99,20 +161,27 @@ public class BrowsersPreferencePage
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
+		Preferences pref =
+			WorkbenchHelpPlugin.getDefault().getPluginPreferences();
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
 				// set new default browser
 				String browserID =
-					BrowserManager.getInstance().getBrowserDescriptors()[i].getID();
+					BrowserManager
+						.getInstance()
+						.getBrowserDescriptors()[i]
+						.getID();
 				BrowserManager.getInstance().setDefaultBrowserID(browserID);
 				// save id in help ui preferences
-				Preferences pref = WorkbenchHelpPlugin.getDefault().getPluginPreferences();
 				pref.setValue(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
-				WorkbenchHelpPlugin.getDefault().savePluginPreferences();
-				return true;
+				break;
 			}
 		}
+		pref.setValue(
+			CustomBrowser.CUSTOM_BROWSER_PATH_KEY,
+			customBrowserPath.getText());
+		WorkbenchHelpPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	/**
@@ -126,6 +195,24 @@ public class BrowsersPreferencePage
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		spacer.setLayoutData(data);
+	}
+	private void setEnabledCustomBrowserPath() {
+		TableItem[] items = browsersTable.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getChecked()) {
+				boolean enabled =
+					"org.eclipse.help.ui.custombrowser".equals(
+						BrowserManager
+							.getInstance()
+							.getBrowserDescriptors()[i]
+							.getID());
+				customBrowserPathLabel.setEnabled(enabled);
+				customBrowserPath.setEnabled(enabled);
+				customBrowserBrowse.setEnabled(enabled);
+				break;
+			}
+		}
+
 	}
 
 }

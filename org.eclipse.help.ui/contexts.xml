@@ -31,6 +31,12 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
       <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
    </context>
 
+   <context  id="prefPageCustomBrowserPath" >
+      <description>When custom web browser is selected from the list, specify path to the browser program or script that launches the browser.  If the program is available on your system path, you may specify only the program name.
+
+The program will be passed one paramter - a URL of a page to display.</description>
+   </context>
+
 <!-- Search dialog Search Help -->
    <context  id="searchPage" >
       <description>Type a search term or terms in the search expression field, and then click <b>Search</b>. This will open Search view that contains all the search results.
