@@ -72,12 +72,12 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	/**
 	 * The maximum width of the popup
 	 */
-	private int maxWidth = -1;
+	private int maxWidth = 300;
 	
 	/**
 	 * The maximum height of the popup
 	 */
-	private int maxHeight = -1;
+	private int maxHeight = 300;
 		
 	/**
 	 * ActionHandler for closeAction
@@ -278,8 +278,8 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 * @see org.eclipse.jface.text.IInformationControl#setSizeContraints(int, int)
 	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		this.maxWidth = 300;
-		this.maxHeight = 175;
+		this.maxWidth = maxWidth;
+		this.maxHeight = maxHeight;
 	}
 	
 	/* (non-Javadoc)

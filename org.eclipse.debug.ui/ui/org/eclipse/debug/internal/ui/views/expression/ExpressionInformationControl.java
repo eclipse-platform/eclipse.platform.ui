@@ -265,6 +265,12 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		width += 40; // give a little extra space
 		
 		height = itemCount * tree.getItemHeight() + 90;
+		if (width > 300) {
+			width = 300;
+		}
+		if (height > 300) {
+			height = 300;
+		}
 		return shell.computeSize(width, height, true);
 	}
 	
