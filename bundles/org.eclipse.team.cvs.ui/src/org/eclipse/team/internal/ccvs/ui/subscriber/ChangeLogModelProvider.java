@@ -161,7 +161,6 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				}
 				SynchronizeModelElement element = new FullPathSyncInfoElement(changeRoot, infos[i]);
 				associateDiffNode(element);
-				changeRoot.add(element);
 			}
 			monitor.worked(100);
 		}

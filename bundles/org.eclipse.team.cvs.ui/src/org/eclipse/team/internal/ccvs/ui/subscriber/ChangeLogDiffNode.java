@@ -47,9 +47,9 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getName()
 	 */
-	public String getLabel(Object o) {
+	public String getName() {
 		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
 		return date + ": " + logEntry.getComment() + " (" + logEntry.getAuthor() +")";
 	}
@@ -58,14 +58,13 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	 * @see org.eclipse.team.ui.synchronize.SyncInfoModelElement#toString()
 	 */
 	public String toString() {
-		return getLabel(null);
+		return getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement#getResource()
 	 */
 	public IResource getResource() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

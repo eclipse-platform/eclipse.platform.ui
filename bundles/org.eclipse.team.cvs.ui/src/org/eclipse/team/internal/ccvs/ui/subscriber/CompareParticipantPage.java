@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
@@ -22,7 +25,7 @@ public class CompareParticipantPage extends CVSSynchronizeViewPage {
 
 	private RemoveSynchronizeParticipantAction removeAction;
 	private Action groupByCommentAction;
-	private boolean groupByComment = true;
+	private boolean groupByComment = false;
 
 	private class CompareAdvisor extends CVSSynchronizeViewerAdvisor {
 		public CompareAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
@@ -44,11 +47,17 @@ public class CompareParticipantPage extends CVSSynchronizeViewPage {
 	public CompareParticipantPage(SubscriberParticipant participant, ISynchronizeView view) {
 		super(participant, view);
 		removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
-		groupByCommentAction = new Action("Show as Change Log", Action.AS_CHECK_BOX) { //$NON-NLS-1$
+		groupByCommentAction = new Action("Group by comments", Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				groupByComment = ! groupByComment;
 				setChecked(groupByComment);
-				((CompareAdvisor)CompareParticipantPage.this.getViewerConfiguration()).refreshModel();
+				CompareAdvisor advisor = ((CompareAdvisor)CompareParticipantPage.this.getViewerConfiguration());
+				try {
+					advisor.prepareInput(new NullProgressMonitor());
+				} catch (TeamException e) {
+					Utils.handle(e);
+				}
+				advisor.refreshModel();
 			}
 		};
 	}
@@ -63,8 +72,8 @@ public class CompareParticipantPage extends CVSSynchronizeViewPage {
 			toolbar.add(new Separator());
 			toolbar.add(removeAction);
 			IMenuManager mgr = actionBars.getMenuManager();
-			mgr.add(new Separator());
-			mgr.add(groupByCommentAction);
+			//mgr.add(new Separator());
+			//mgr.add(groupByCommentAction);
 		}
 	}
 		
