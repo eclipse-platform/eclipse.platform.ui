@@ -111,11 +111,11 @@ public class ImageCacheTest extends TestCase {
 
 		Image image1 = imageCache.getImage(anythingImageDescriptor);
 		Image image2 = imageCache.getImage(viewImageDescriptor);
-		Image grayImage1 = imageCache.getGrayImage(anythingImageDescriptor);
-		Image grayImage2 = imageCache.getGrayImage(viewImageDescriptor);
+		Image grayImage1 = imageCache.getImage(anythingImageDescriptor, ImageCache.GRAY);
+		Image grayImage2 = imageCache.getImage(viewImageDescriptor, ImageCache.GRAY);
 		Image disabledImage1 = imageCache
-				.getDisabledImage(anythingImageDescriptor);
-		Image disabledImage2 = imageCache.getDisabledImage(viewImageDescriptor);
+				.getImage(anythingImageDescriptor, ImageCache.DISABLE);
+		Image disabledImage2 = imageCache.getImage(viewImageDescriptor, ImageCache.DISABLE);
 		Image missingImage = imageCache.getMissingImage();
 
 		imageCache.dispose();
@@ -133,10 +133,10 @@ public class ImageCacheTest extends TestCase {
 
 		image1 = imageCache.getImage(anythingImageDescriptor);
 		image2 = imageCache.getImage(viewImageDescriptor);
-		grayImage1 = imageCache.getGrayImage(anythingImageDescriptor);
-		grayImage2 = imageCache.getGrayImage(viewImageDescriptor);
-		disabledImage1 = imageCache.getDisabledImage(anythingImageDescriptor);
-		disabledImage2 = imageCache.getDisabledImage(viewImageDescriptor);
+		grayImage1 = imageCache.getImage(anythingImageDescriptor, ImageCache.GRAY);
+		grayImage2 = imageCache.getImage(viewImageDescriptor, ImageCache.GRAY);
+		disabledImage1 = imageCache.getImage(anythingImageDescriptor, ImageCache.DISABLE);
+		disabledImage2 = imageCache.getImage(viewImageDescriptor, ImageCache.DISABLE);
 		missingImage = imageCache.getMissingImage();
 
 		// Manually dispose the images
@@ -160,10 +160,10 @@ public class ImageCacheTest extends TestCase {
         BadImageDescriptor badImageDescriptor = new BadImageDescriptor();
         Image missingImage = imageCache.getMissingImage();
 
-        Image badImage = imageCache.getDisabledImage(badImageDescriptor);
+        Image badImage = imageCache.getImage(badImageDescriptor, ImageCache.DISABLE);
         assertSame(badImage, missingImage);
 
-        badImage = imageCache.getGrayImage(badImageDescriptor);
+        badImage = imageCache.getImage(badImageDescriptor, ImageCache.GRAY);
         assertSame(badImage, missingImage);
 
         badImage = imageCache.getImage(badImageDescriptor);
@@ -182,12 +182,12 @@ public class ImageCacheTest extends TestCase {
         Image image2 = imageCache.getImage(imageDescriptor2);
         assertSame(image1, image2);
 
-        image1 = imageCache.getGrayImage(imageDescriptor1);
-        image2 = imageCache.getGrayImage(imageDescriptor1);
+        image1 = imageCache.getImage(imageDescriptor1, ImageCache.GRAY);
+        image2 = imageCache.getImage(imageDescriptor1, ImageCache.GRAY);
         assertSame(image1, image2);
 
-        image1 = imageCache.getDisabledImage(imageDescriptor1);
-        image2 = imageCache.getDisabledImage(imageDescriptor1);
+        image1 = imageCache.getImage(imageDescriptor1, ImageCache.DISABLE);
+        image2 = imageCache.getImage(imageDescriptor1, ImageCache.DISABLE);
         assertSame(image1, image2);
 
     }
@@ -200,11 +200,22 @@ public class ImageCacheTest extends TestCase {
         Image image = imageCache.getImage(null);
         assertNull(image);
 
-        image = imageCache.getDisabledImage(null);
+        image = imageCache.getImage(null,ImageCache.DISABLE);
         assertNull(image);
 
-        image = imageCache.getGrayImage(null);
+        image = imageCache.getImage(null,ImageCache.GRAY);
         assertNull(image);
+        
+        image = imageCache.getImage(null, 4);
+        assertNull(image);
+        
+        image = imageCache.getImage(getImageDescriptor(anythingImage), 3);
+        assertNull(image);
+        
+        image = imageCache.getImage(getImageDescriptor(anythingImage), -1);
+        assertNull(image);
+        
+        
 
     }
 
@@ -219,12 +230,12 @@ public class ImageCacheTest extends TestCase {
         Image image2 = imageCache.getImage(imageDescriptor);
         assertSame(image1, image2);
 
-        image1 = imageCache.getDisabledImage(imageDescriptor);
-        image2 = imageCache.getDisabledImage(imageDescriptor);
+        image1 = imageCache.getImage(imageDescriptor,ImageCache.DISABLE);
+        image2 = imageCache.getImage(imageDescriptor,ImageCache.DISABLE);
         assertSame(image1, image2);
 
-        image1 = imageCache.getGrayImage(imageDescriptor);
-        image2 = imageCache.getGrayImage(imageDescriptor);
+        image1 = imageCache.getImage(imageDescriptor,ImageCache.GRAY);
+        image2 = imageCache.getImage(imageDescriptor,ImageCache.GRAY);
         assertSame(image1, image2);
 
     }
@@ -241,12 +252,12 @@ public class ImageCacheTest extends TestCase {
         Image image2 = imageCache.getImage(imageDescriptor2);
         assertNotSame(image1, image2);
 
-        image1 = imageCache.getGrayImage(imageDescriptor1);
-        image2 = imageCache.getGrayImage(imageDescriptor2);
+        image1 = imageCache.getImage(imageDescriptor1,ImageCache.GRAY);
+        image2 = imageCache.getImage(imageDescriptor2,ImageCache.GRAY);
         assertNotSame(image1, image2);
 
-        image1 = imageCache.getDisabledImage(imageDescriptor1);
-        image2 = imageCache.getDisabledImage(imageDescriptor2);
+        image1 = imageCache.getImage(imageDescriptor1,ImageCache.DISABLE);
+        image2 = imageCache.getImage(imageDescriptor2,ImageCache.DISABLE);
         assertNotSame(image1, image2);
 
     }
