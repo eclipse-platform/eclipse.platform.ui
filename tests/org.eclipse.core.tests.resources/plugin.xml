@@ -2,7 +2,7 @@
 <plugin
   name="Eclipse Core Tests Resources"
   id="org.eclipse.core.tests.resources"
-  version="2.0"
+  version="1.9.0"
   provider-name="Object Technology International, Inc.">
 
   <requires>

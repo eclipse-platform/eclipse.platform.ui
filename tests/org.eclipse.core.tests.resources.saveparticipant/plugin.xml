@@ -2,7 +2,7 @@
 <plugin
   name="Eclipse Core Tests Save Participant"
   id="org.eclipse.core.tests.resources.saveparticipant"
-  version="2.0"
+  version="1.9.0"
   provider-name="Object Technology International, Inc.">
 
   <requires>
