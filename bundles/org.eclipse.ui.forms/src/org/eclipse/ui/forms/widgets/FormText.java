@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.internal.forms.Policy;
 import org.eclipse.ui.internal.forms.widgets.*;
 
 /**
@@ -141,6 +142,8 @@ public final class FormText extends Canvas {
 	private Action copyShortcutAction;
 
 	private boolean loading = true;
+	
+	private static final String INTERNAL_MENU = "__internal_menu__";
 
 	// TODO translate this text
 	private String loadingText = "Loading...";
@@ -221,6 +224,7 @@ public final class FormText extends Canvas {
 		}
 
 		protected void layout(Composite composite, boolean flushCache) {
+			selData = null;
 		}
 	}
 
@@ -337,6 +341,7 @@ public final class FormText extends Canvas {
 		initAccessible();
 		makeActions();
 		ensureBoldFontPresent(getFont());
+		createMenu();
 	}
 
 	/**
@@ -560,6 +565,39 @@ public final class FormText extends Canvas {
 		 * if (!model.hasFocusSegments()) return false;
 		 */
 		return super.setFocus();
+	}
+
+	public void setMenu(Menu menu) {
+		if (menu==null) return;
+		Menu currentMenu = super.getMenu();
+		if (currentMenu!=null && INTERNAL_MENU.equals(currentMenu.getData())) {
+			currentMenu.dispose();
+		}
+		super.setMenu(menu);
+	}
+
+	private void createMenu() {
+		Menu menu = new Menu(this);
+		final MenuItem copyItem = new MenuItem(menu, SWT.PUSH);
+		copyItem.setText(Policy.getMessage("FormText.copy"));
+		
+		SelectionListener listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (e.widget == copyItem) {
+					copy();
+				}
+			}
+		};
+		copyItem.addSelectionListener(listener);
+		menu.addMenuListener(new MenuListener() {
+			public void menuShown(MenuEvent e) {
+				copyItem.setEnabled(canCopy());
+			}
+			public void menuHidden(MenuEvent e) {
+			}
+		});
+		menu.setData(INTERNAL_MENU);
+		super.setMenu(menu);
 	}
 
 	/**
@@ -801,11 +839,23 @@ public final class FormText extends Canvas {
 		mouseDown = true;
 		selData = new SelectionData(e);
 		redraw();
+		Form form = FormUtil.getForm(this);
+		if (form!=null)
+			form.setSelectionText(this);
 	}
 	private void endSelection(MouseEvent e) {
 		mouseDown = false;
 		if (selData!=null && !selData.isEnclosed())
 			selData = null;
+		notifySelectionChanged();
+	}
+	void clearSelection() {
+		selData = null;
+		redraw();
+		notifySelectionChanged();
+	}
+
+	private void notifySelectionChanged() {
 		Event event = new Event();
 		event.widget = this;
 		event.display = this.getDisplay();

@@ -400,4 +400,14 @@ public class FormUtil {
 		}
 		return c.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
 	}
+	public static Form getForm(Control c) {
+		Composite parent = c.getParent();
+		while (parent!=null) {
+			if (parent instanceof Form) {
+				return (Form)parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
 }

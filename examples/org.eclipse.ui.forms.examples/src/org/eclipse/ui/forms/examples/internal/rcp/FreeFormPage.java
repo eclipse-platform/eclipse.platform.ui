@@ -131,6 +131,21 @@ public class FreeFormPage extends FormPage {
 		});
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		rtext.setImage("image1", ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_LARGE));
+		Menu menu = new Menu(rtext);
+		final MenuItem item = new MenuItem(menu, SWT.PUSH);
+		item.setText("&Copy");
+		item.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				rtext.copy();
+			}
+		});
+		rtext.setMenu(menu);
+		item.setEnabled(false);
+		rtext.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				item.setEnabled(rtext.canCopy());
+			}
+		});
 		InputStream is = FreeFormPage.class.getResourceAsStream("index.xml");
 		if (is!=null) {
 			rtext.setContents(is, true);

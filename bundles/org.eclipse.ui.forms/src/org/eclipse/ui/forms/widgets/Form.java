@@ -67,6 +67,7 @@ public class Form extends Composite {
 	private ToolBarManager toolBarManager;
 	private SizeCache bodyCache = new SizeCache();
 	private SizeCache toolbarCache = new SizeCache();
+	private FormText selectionText;
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
@@ -411,5 +412,11 @@ public class Form extends Composite {
 	 */
 	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
 		this.backgroundImageClipped = backgroundImageClipped;
+	}
+	void setSelectionText(FormText text) {
+		if (selectionText!=null && selectionText!=text) {
+			selectionText.clearSelection();
+		}
+		this.selectionText = text;
 	}
 }

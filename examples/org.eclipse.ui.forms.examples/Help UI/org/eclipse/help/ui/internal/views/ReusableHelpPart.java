@@ -57,6 +57,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	private ArrayList pages;
 	private Action backAction;
 	private Action nextAction;
+	private CopyAction copyAction;
 	private Action openInfoCenterAction;
 	private OpenHrefAction openAction;
 	private OpenHrefAction openInHelpAction;
@@ -93,6 +94,21 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		}
 		public Object getTarget() {
 			return target;
+		}
+	}
+	
+	private class CopyAction extends Action {
+		private FormText target;
+		public CopyAction() {
+			super("copy");
+		}
+		public void setTarget(FormText target) {
+			this.target = target;
+			setEnabled(target.canCopy());
+		}
+		public void run() {
+			if (target!=null)
+				target.copy();
 		}
 	}
 
@@ -362,6 +378,8 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			}
 		};
 		openInHelpAction.setText("Open in Help &Contents");
+		copyAction = new CopyAction();
+		copyAction.setText("&Copy");
 	}
 	
 	private void doBack() {
@@ -602,6 +620,9 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	}
 	boolean fillFormContextMenu(FormText text, IMenuManager manager) {
 		fillOpenActions(text, manager);
+		manager.add(new Separator());
+		manager.add(copyAction);
+		copyAction.setTarget(text);
 		return true;
 	}
 	private String getHref(Object target) {
