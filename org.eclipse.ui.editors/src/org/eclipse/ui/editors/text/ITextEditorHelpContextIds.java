@@ -34,18 +34,18 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
 	
 	/**
-	 * Help context id for the Add Task action.
+	 * Help context id for the Add Bookmark action.
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
 	 * 
 	 * @since 3.0
 	 */
-	public static final String BOOKMARK_ACTION= PREFIX + IDEActionFactory.ADD_TASK.getId() + ACTION_POSTFIX;
+	public static final String BOOKMARK_ACTION= PREFIX + IDEActionFactory.BOOKMARK.getId() + ACTION_POSTFIX;
 
 	/**
-	 * Help context id for the Bookmark action.
+	 * Help context id for the Add Task action.
 	 * Value: <code>"org.eclipse.ui.addTask_action_context"</code>
 	 * 
 	 * @since 3.0
 	 */
-	public static final String ADD_TASK_ACTION= PREFIX + IDEActionFactory.BOOKMARK.getId() + ACTION_POSTFIX;
+	public static final String ADD_TASK_ACTION= PREFIX + IDEActionFactory.ADD_TASK.getId() + ACTION_POSTFIX;
 }
