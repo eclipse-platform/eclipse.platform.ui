@@ -67,7 +67,7 @@ public class ProductInfo extends ConfigurationInfo {
 	private ImageDescriptor splashImage = null;
 	private ImageDescriptor aboutImage = null;
 	private Hashtable configurationPreferences;
-
+	
 	/**
 	 * The name of the default preference settings file (value
 	 * <code>"preferences.ini"</code>).
@@ -96,7 +96,7 @@ public Image getAboutImage() {
 	return aboutImage == null ? null : aboutImage.createImage();
 }
 /**
- * Returns the app name. 
+ * Returns the app name or <code>null</code>. 
  * <p>
  * On Motif, for example, this can be used
  * to set the name used for resource lookup.
@@ -118,7 +118,7 @@ public String getAppName() {
  * @return the build id
  */
 public String getBuildID() {
-	return buildID;
+	return (buildID == null ? "" : buildID);
 }
 /**
  * Returns the default preferences obtained from the configuration.
@@ -137,7 +137,7 @@ public Hashtable getConfigurationPreferences() {
  * @return the copyright notice
  */
 public String getCopyright() {
-	return copyright;
+	return (copyright == null ? "" : copyright);
 }
 /**
  * Returns the default perpective id.  This value will be used
@@ -159,7 +159,7 @@ public String getDefaultPerspective() {
  * @return the full name of this product
  */
 public String getDetailedName() {
-	return detailedName;
+	return (detailedName == null ? "" : detailedName);
 }
 /**
  * Returns the base information set identifiers for this product.
@@ -180,7 +180,7 @@ public String getInformationSetIds() {
  * @return the name of this product
  */
 public String getName() {
-	return name;
+	return (name == null ? "" : name);
 }
 /**
  * Returns an image descriptor for this product's icon.
@@ -202,7 +202,7 @@ public ImageDescriptor getProductImageDescriptor() {
  * @return the product URL
  */
 public String getProductURL() {
-	return productURL;
+	return (productURL == null ? "" : productURL);
 }
 /**
  * Returns a new image like the one that would have been shown in a "splash" 
@@ -230,7 +230,7 @@ public Image getSplashImage() {
  * @return the product version number
  */
 public String getVersion() {
-	return version;
+	return (version == null ? "" : version);
 }
 /**
  * Returns a <code>URL</code> for the welcome page.
@@ -242,11 +242,12 @@ public URL getWelcomePageURL() {
 	return welcomePageURL;
 }
 private Hashtable readConfigurationPreferences() {
+	Hashtable table= new Hashtable();
 	URL preferenceURL= null;
 	try {
 		preferenceURL= new URL(getBaseURL(), DEFAULT_PREFERENCES);
 	} catch(MalformedURLException e) {
-		return null;
+		return table;
 	}
 	Properties ini = new Properties();
 	InputStream is = null;
@@ -255,37 +256,36 @@ private Hashtable readConfigurationPreferences() {
 		ini.load(is);
 	}
 	catch (IOException e) {
-		return null;
+		return table;
 	}
 	finally {
 		try { if (is != null) is.close(); } catch (IOException e) {}
 	}
 	
 	Enumeration i= ini.propertyNames();
-	Hashtable table= new Hashtable();
 	while (i.hasMoreElements()) {
 		String e= (String) i.nextElement();
 		//System.out.println(e);
 		int index = e.indexOf("/");//$NON-NLS-1$
 		if (index == -1) {
-			// corrupt entry: log error and answer null
-			return null;
-		}
-		String pluginName = e.substring(0, index);
-		String propertyName = e.substring(index+1, e.length());
-		Object entry= table.get(pluginName);
-		if (entry == null) {
-			entry= new String[] {propertyName , ini.getProperty(e)};
+			reportINIFailure(null, "Invalid preference name: " + e);//$NON-NLS-1$
 		} else {
-			String[] old = (String[]) entry;
-			int oldLength= old.length;
-			String[] newEntry = new String[oldLength + 2];
-			System.arraycopy(old, 0, newEntry, 0, oldLength);
-			newEntry[oldLength]= propertyName;
-			newEntry[oldLength+1]= ini.getProperty(e);
-			entry= newEntry;
+			String pluginName = e.substring(0, index);
+			String propertyName = e.substring(index+1, e.length());
+			Object entry= table.get(pluginName);
+			if (entry == null) {
+				entry= new String[] {propertyName , ini.getProperty(e)};
+			} else {
+				String[] old = (String[]) entry;
+				int oldLength= old.length;
+				String[] newEntry = new String[oldLength + 2];
+				System.arraycopy(old, 0, newEntry, 0, oldLength);
+				newEntry[oldLength]= propertyName;
+				newEntry[oldLength+1]= ini.getProperty(e);
+				entry= newEntry;
+			}
+			table.put(pluginName, entry);
 		}
-		table.put(pluginName, entry);
 	}
 	return table;
 	
@@ -304,6 +304,7 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 	}
 	catch (IOException e) {
 		reportINIFailure(e, "Cannot read product info file " + iniURL);//$NON-NLS-1$
+		return;
 	}
 	finally {
 		try { 
@@ -322,6 +323,7 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 		}
 		catch (IOException e) {
 			reportINIFailure(e, "Cannot read platform properties file " + propertiesURL);//$NON-NLS-1$
+			bundle = null;
 		}
 		finally {
 			try { 

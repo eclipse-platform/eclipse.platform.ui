@@ -80,7 +80,7 @@ public PlatformInfo() {
  * @return the build id
  */
 public String getBuildID() {
-	return buildID;
+	return (buildID == null ? "" : buildID);
 }
 /**
  * Returns the copyright notice for this platform.
@@ -91,7 +91,7 @@ public String getBuildID() {
  * @return the copyright notice
  */
 public String getCopyright() {
-	return copyright;
+	return (copyright == null ? "" : copyright);
 }
 /**
  * Returns the full name of this platform.
@@ -103,7 +103,7 @@ public String getCopyright() {
  * @return the full name of this platform
  */
 public String getDetailedName() {
-	return detailedName;
+	return (detailedName == null ? "" : detailedName);
 }
 /**
  * Returns the name of this platform.
@@ -111,7 +111,7 @@ public String getDetailedName() {
  * @return the name of this platform
  */
 public String getName() {
-	return name;
+	return (name == null ? "" : name);
 }
 /**
  * Returns the URL for this platform's main page on the world wide web.
@@ -119,7 +119,7 @@ public String getName() {
  * @return the platform URL
  */
 public String getplatformURL() {
-	return platformURL;
+	return (platformURL == null ? "" : platformURL);
 }
 /**
  * Returns the version number of this platform.
@@ -132,7 +132,7 @@ public String getplatformURL() {
  * @return the platform version number
  */
 public String getVersion() {
-	return version;
+	return (version == null ? "" : version);
 }
 
 
@@ -149,6 +149,7 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 	}
 	catch (IOException e) {
 		reportINIFailure(e, "Cannot read platform info file " + iniURL);//$NON-NLS-1$
+		return;
 	}
 	finally {
 		try { 
@@ -167,6 +168,7 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 		}
 		catch (IOException e) {
 			reportINIFailure(e, "Cannot read platform properties file " + propertiesURL);//$NON-NLS-1$
+			bundle = null;
 		}
 		finally {
 			try { 
