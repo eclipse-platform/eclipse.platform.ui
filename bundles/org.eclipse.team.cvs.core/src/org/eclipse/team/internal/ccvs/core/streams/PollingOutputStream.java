@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  * much of the operation completed; conversely, at what point to resume.
  */
 public class PollingOutputStream extends FilterOutputStream {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = Policy.DEBUG_STREAMS;
 	private int numAttempts;
 	private IProgressMonitor monitor;
 	
