@@ -169,14 +169,16 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		if (fAction == null) {
 			
 			setEnabled(false);
-			setChecked(false);
+			if (getStyle() == AS_CHECK_BOX || getStyle() == AS_RADIO_BUTTON)
+			   setChecked(false);
 			setText(fDefaultText);
 			setToolTipText(""); //$NON-NLS-1$
 		
 		} else {
 						
 			setEnabled(fAction.isEnabled());
-			super.setChecked(fAction.isChecked());
+			if (fAction.getStyle() == AS_CHECK_BOX || fAction.getStyle() ==  AS_RADIO_BUTTON)
+			   super.setChecked(fAction.isChecked());
 			setText(fAction.getText());
 			setToolTipText(fAction.getToolTipText());
 			fAction.addPropertyChangeListener(fListener);
