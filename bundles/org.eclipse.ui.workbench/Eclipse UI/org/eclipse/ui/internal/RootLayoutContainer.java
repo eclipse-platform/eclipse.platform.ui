@@ -234,9 +234,11 @@ protected LayoutPart createStack(LayoutPart sourcePart) {
  * @see org.eclipse.ui.internal.PartSashContainer#setVisiblePart(org.eclipse.ui.internal.ILayoutContainer, org.eclipse.ui.internal.LayoutPart)
  */
 protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart) {
-	PartTabFolder tabFolder = (PartTabFolder)container;
-	
-	tabFolder.setSelection(visiblePart);
+	if (container instanceof PartTabFolder) {
+		PartTabFolder tabFolder = (PartTabFolder)container;
+		
+		tabFolder.setSelection(visiblePart);
+	}
 }
 
 
