@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dnd;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.ui.internal.DragCursors;
 import org.eclipse.ui.internal.IPartDropListener;
 import org.eclipse.ui.internal.IWorkbenchDragSource;
 import org.eclipse.ui.internal.IWorkbenchDropTarget;
 import org.eclipse.ui.internal.LayoutPart;
 import org.eclipse.ui.internal.PartDropEvent;
+import org.eclipse.ui.internal.PerspectivePresentation;
 
 /**
  * Compatibility layer for the old-style drag-and-drop. Adapts an old-style
@@ -78,7 +77,10 @@ public class CompatibilityDragTarget implements IDragOverListener {
 			
 			int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(direction));
 			
-			return Geometry.getExtrudedEdge(targetBounds, distance / 2, direction);
+			return Geometry.getExtrudedEdge(targetBounds, (int) (distance
+					* PerspectivePresentation.getDockingRatio(dropEvent.dragSource.getPart(),
+							dropEvent.dropTarget.getPart())),
+							direction);
 		}
 	}
 	
@@ -181,10 +183,7 @@ public class CompatibilityDragTarget implements IDragOverListener {
 				//for it
 				IWorkbenchDropTarget dropTarget = (IWorkbenchDropTarget) data;
 
-				if (isValid(sourcePart, dropTarget))
-					return dropTarget.targetPartFor(sourcePart);
-				else
-					return null;
+				return dropTarget.targetPartFor(sourcePart);
 			}
 			target = target.getParent();
 		}

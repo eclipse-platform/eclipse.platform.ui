@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 	private Composite windowComposite;
 	private WorkbenchWindow window;
 		
-	private static final float edgeDockRatio = 0.25f;
+	private static final float edgeDockRatio = 0.20f;
 	
 	public TrimDropTarget(Composite someComposite, WorkbenchWindow theWindow) {
 		layout = (TrimLayout)someComposite.getLayout();
@@ -118,16 +118,14 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 			return new AbstractDropTarget() {
 				public void drop() {
 					// Drop the part on this border
-					float ratio = (relativePosition == SWT.LEFT || relativePosition == SWT.TOP) ? edgeDockRatio : 1 - edgeDockRatio; 
-					
 					window.getActiveWorkbenchPage().getPerspectivePresentation().derefPart(draggedPane);
 					
 					// Create a new folder and add both items
 					PartTabFolder folder = new PartTabFolder(window.getActiveWorkbenchPage());
-					sashContainer.add(
+					sashContainer.addEnhanced(
 						folder,
-						layoutPosition,
-						ratio,
+						relativePosition,
+						edgeDockRatio,
 						null);
 					folder.add(draggedPane);
 				}

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -21,10 +22,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tracker;
-
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.ui.internal.DragCursors;
 
 
@@ -234,15 +233,18 @@ public class DragUtil {
 		for (Control current = toSearch; current != null; current = current.getParent()) {
 			IDragOverListener target = (IDragOverListener)current.getData(DROP_TARGET_ID);
 						
-			if (target == null) {
-				continue;
+			if (target != null) {
+				IDropTarget dropTarget = target.drag(toSearch, draggedObject, position, dragRectangle);
+				
+				if (dropTarget != null) {
+					return dropTarget;
+				}
 			}
 			
-			IDropTarget dropTarget = target.drag(toSearch, draggedObject, position, dragRectangle);
-			
-			if (dropTarget != null) {
-				return dropTarget;
-			}			
+			// Don't look to parent shells for drop targets
+			if (current instanceof Shell) {
+				break;
+			}
 		}
 		
 		// No controls could handle this event -- check for default targets

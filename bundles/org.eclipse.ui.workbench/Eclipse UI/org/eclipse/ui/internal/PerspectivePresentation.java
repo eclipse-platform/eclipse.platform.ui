@@ -784,7 +784,24 @@ public class PerspectivePresentation {
 		} else {
 			page.addFastView(((ViewPane) part).getViewReference());
 		}
+	}	
+
+	/**
+	 * Returns the ratio that should be used when docking the given source
+	 * part onto the given target
+	 * 
+	 * @param source newly added part
+	 * @param target existing part being dragged over
+	 * @return the final size of the source part (wrt the current size of target)
+	 * after it is docked
+	 */
+	public static float getDockingRatio(LayoutPart source, LayoutPart target) {
+		if ((source instanceof ViewPane || source instanceof PartTabFolder) && target instanceof EditorArea) {
+			return 0.25f;
+		}
+		return 0.5f;
 	}
+	
 	/**
 	 * Move a part from one position to another. Supports moving a part within
 	 * the same window and moving a part from a detach window into the main
@@ -803,11 +820,10 @@ public class PerspectivePresentation {
 		if (newContainer instanceof RootLayoutContainer) {
 			// Determine the position
 			RootLayoutContainer sashContainer =
-				(RootLayoutContainer) newContainer;
-			
-			int relativePosition = PageLayout.swtConstantToLayoutPosition(
-					DragCursors.dragCursorToSwtConstant(position)); 
+				(RootLayoutContainer) newContainer; 
 				
+			int swtPosition = DragCursors.dragCursorToSwtConstant(position); 
+			
 			// folder part from detach window is special
 			if (part instanceof PartTabFolder) {
 				Window window = part.getWindow();
@@ -818,10 +834,10 @@ public class PerspectivePresentation {
 						((PartTabFolder) part).getVisiblePart();
 					// create a new folder and add the children to it
 					PartTabFolder folder = new PartTabFolder(page);
-					sashContainer.add(
+					sashContainer.addEnhanced(
 						folder,
-						relativePosition,
-						(float) 0.5,
+						swtPosition,
+						getDockingRatio(part, relativePart),
 						relativePart);
 					LayoutPart[] children =
 						((PartTabFolder) part).getChildren();
@@ -847,18 +863,20 @@ public class PerspectivePresentation {
 				// just a normal move
 				derefPart(part);
 
+				
 				// Create a new folder and add both items
 				PartTabFolder folder = new PartTabFolder(page);
-				sashContainer.add(
+				sashContainer.addEnhanced(
 					folder,
-					relativePosition,
-					(float) 0.5,
+					swtPosition,
+					getDockingRatio(part, relativePart),
 					relativePart);
 				folder.add(part);
 			} else {
 				//Move the part to its new position but keep its bounds if
 				// possible.
-				sashContainer.move(part, relativePosition, relativePart);
+				sashContainer.move(part, PageLayout.swtConstantToLayoutPosition(swtPosition), 
+						relativePart);
 			}
 			part.setFocus();
 		} else if (newContainer instanceof PartTabFolder) {

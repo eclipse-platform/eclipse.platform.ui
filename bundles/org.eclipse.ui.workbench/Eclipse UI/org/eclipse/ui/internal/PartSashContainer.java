@@ -90,8 +90,44 @@ public void add(LayoutPart child) {
 	}
 	addChild(info);
 }
+
 /**
- * Add on part relative to another
+ * Add a new part relative to another. This should be used in place of <code>add</code>. 
+ * It differs as follows:
+ * <ul>
+ * <li>relationships are specified using SWT direction constants</li>
+ * <li>the ratio applies to the newly added child -- not the upper-left child</li>
+ * </ul>
+ * 
+ * @param child new part to add to the layout
+ * @param swtDirectionConstant one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
+ * @param ratioForNewPart a value between 0.0 and 1.0 specifying how much space will be allocated for the newly added part
+ * @param relative existing part indicating where the new child should be attached
+ * @since 3.0
+ */
+void addEnhanced(LayoutPart child, int swtDirectionConstant, float ratioForNewPart, LayoutPart relative) {
+	int relativePosition = PageLayout.swtConstantToLayoutPosition(swtDirectionConstant);
+	
+	float ratioForUpperLeftPart;
+	
+	if (relativePosition == PageLayout.RIGHT || relativePosition == PageLayout.BOTTOM) {
+		ratioForUpperLeftPart = 1.0f - ratioForNewPart;
+	} else {
+		ratioForUpperLeftPart = ratioForNewPart;
+	}
+	
+	add(child, relativePosition, ratioForUpperLeftPart, relative);
+}
+
+/**
+ * Add a part relative to another. For compatibility only. New code should use
+ * addEnhanced, above.
+ * 
+ * @param child the new part to add
+ * @param relationship one of PageLayout.TOP, PageLayout.BOTTOM, PageLayout.LEFT, or PageLayout.RIGHT
+ * @param ratio a value between 0.0 and 1.0, indicating how much space will be allocated to the UPPER-LEFT pane
+ * @param relative part where the new part will be attached
+ * 
  */
 public void add(LayoutPart child, int relationship, float ratio, LayoutPart relative) {
 	if (isZoomed())
