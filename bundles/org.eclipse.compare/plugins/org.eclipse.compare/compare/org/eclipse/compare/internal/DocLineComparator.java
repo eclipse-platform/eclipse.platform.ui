@@ -4,10 +4,9 @@
  */
 package org.eclipse.compare.internal;
 
-import org.eclipse.swt.SWTError;
 import org.eclipse.jface.text.*;
-import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
+import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
 /**
  * Implements the <code>IRangeComparator</code> interface for lines in a document.
@@ -24,7 +23,6 @@ public class DocLineComparator implements ITokenComparator {
 	private int fLineCount;
 	private int fLength;
 	private boolean fIgnoreWhiteSpace;
-	private IRegion fRegion;
 
 	/**
 	 * Creates a <code>DocLineComparator</code> for the given document range.
@@ -41,7 +39,6 @@ public class DocLineComparator implements ITokenComparator {
 		fIgnoreWhiteSpace= ignoreWhiteSpace;
 
 		fLineOffset= 0;
-		fRegion= region;
 		if (region != null) {
 			fLength= region.getLength();
 			int start= region.getOffset();
@@ -93,19 +90,7 @@ public class DocLineComparator implements ITokenComparator {
 	 * see ITokenComparator.getTokenLength
 	 */
 	public int getTokenLength(int line) {
-		int s= getTokenStart(line);
-		int e= getTokenStart(line+1);
-		if (fRegion != null) {
-			if (e > fRegion.getOffset()+fRegion.getLength())
-				e= fRegion.getOffset()+fRegion.getLength();
-		}
-		return e - s;
-//		try {
-//			IRegion r= fDocument.getLineInformation(fLineOffset + line);
-//			return r.getLength();
-//		} catch (BadLocationException ex) {
-//		}
-//		return 0;
+		return getTokenStart(line+1) - getTokenStart(line);
 	}
 
 	/**
@@ -160,18 +145,7 @@ public class DocLineComparator implements ITokenComparator {
 		if (line < fLineCount) {
 			try {
 				IRegion r= fDocument.getLineInformation(fLineOffset + line);
-				int s= r.getOffset();
-				int l= r.getLength();
-				if (fRegion != null) {
-					int e= s+l;
-					int ee= fRegion.getOffset()+fRegion.getLength();
-					if (e > ee) {
-						System.out.println("********** extract");
-						e= ee;
-						l= e-s;
-					}
-				}
-				return fDocument.get(s, l);
+				return fDocument.get(r.getOffset(), r.getLength());
 			} catch(BadLocationException e) {
 			}
 		}
