@@ -152,8 +152,9 @@ public class CVSProviderPlugin extends Plugin {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
-		CVSProvider.startup();
+		// Start the synchronizer first as the startup of CVSProvider may use it.
 		EclipseSynchronizer.startup();
+		CVSProvider.startup();
 		ProjectDescriptionManager.initializeChangeListener();
 		new OrphanedFolderListener().register();
 	}
