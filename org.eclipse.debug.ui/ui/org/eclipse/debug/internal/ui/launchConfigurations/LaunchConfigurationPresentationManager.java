@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -21,7 +20,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Manages contributed launch configuration tabs
@@ -37,7 +38,7 @@ public class LaunchConfigurationPresentationManager {
 	 * The key associated with launch configuration tab extensions
 	 * that are applicable to all launch configurations.
 	 */
-	protected static String GENERIC_TABS = "*"; //$NON-NLS-1$
+	protected static String GENERIC_TABS = "*";
 	
 	/**
 	 * Collection of launch configuration tab extensions
@@ -129,7 +130,7 @@ public class LaunchConfigurationPresentationManager {
 				if (lct == null) {
 					IExtension ext = tabs[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.Launch_configuration_tab_extension_{0}_refers_to_non-existant_launch_configuration_type_{1}_2"), (new String[] {ext.getUniqueIdentifier(), typeId})), null); //$NON-NLS-1$
+					 MessageFormat.format("Launch configuration tab extension {0} refers to non-existant launch configuration type {1}", (new String[] {ext.getUniqueIdentifier(), typeId})), null);
 					DebugUIPlugin.logError(new CoreException(status));
 				}
 			}

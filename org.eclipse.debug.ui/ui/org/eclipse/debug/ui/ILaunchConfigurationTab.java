@@ -7,7 +7,7 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
  
 /**
  * Note: This interface is yet experimental.
@@ -62,15 +62,15 @@ public interface ILaunchConfigurationTab {
 
 	/**
 	 * Creates and returns the control to be used for this
-	 * tab, in the given tab folder. Marks the beginning
+	 * tab, in the given tab item. Marks the beginning
 	 * of this tabs lifecycle. This is called once after
 	 * the tab is created.
 	 * 
-	 * @param folder the tab folder to be used as the parent
+	 * @param tabItem the tabItem in which to create
 	 *   for this tab's control
 	 * @return the control to be used for this tab
 	 */
-	public Control createTabControl(TabFolder folder);
+	public Control createTabControl(TabItem tabItem);
 	
 	/**
 	 * Sets the launch configuration (working copy) that this

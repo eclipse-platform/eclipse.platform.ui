@@ -5,20 +5,31 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
+import java.util.Arrays;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -26,6 +37,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,6 +45,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -41,7 +55,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * The dialog used to edit and launch launch configurations.
  */
-public class LaunchConfigurationDialog extends Dialog {
+public class LaunchConfigurationDialog extends Dialog implements ISelectionChangedListener {
 	
 	/**
 	 * Context in which to display/select
@@ -69,7 +83,61 @@ public class LaunchConfigurationDialog extends Dialog {
 	/**
 	 * The (radio) button used to select a project
 	 */
-	private Button fProjectButton;	
+	private Button fProjectButton;		
+	
+	/**
+	 * The (initial) selection for the launch configuration
+	 * tree.
+	 */
+	private ISelection fSelection = new StructuredSelection();
+	
+	/**
+	 * The 'new' button to create a new configuration
+	 */
+	private Button fNewButton;
+	
+	/**
+	 * The 'delete' button to delete selected configurations
+	 */
+	private Button fDeleteButton;
+	
+	/**
+	 * The 'copy' button to create a copy of the selected config
+	 */
+	private Button fCopyButton;
+	
+	/**
+	 * The 'save & launch' button
+	 */
+	private Button fSaveAndLaunchButton;
+	
+	/**
+	 * The 'save' button
+	 */
+	private Button fSaveButton;	
+	
+	/**
+	 * The 'launch' button
+	 */
+	private Button fLaunchButton;
+	
+	/**
+	 * The text widget displaying the name of the
+	 * lanuch configuration under edit
+	 */
+	private Text fNameText;	
+	
+	/**
+	 * The tab folder
+	 */
+	private TabFolder fTabFolder;
+	
+	/**
+	 * The current (working copy) launch configuration
+	 * being displayed/edited or <code>null</code> if
+	 * none
+	 */
+	private ILaunchConfigurationWorkingCopy fWorkingCopy;
 	
 	/**
 	 * Id for 'Save & Launch' button.
@@ -100,19 +168,29 @@ public class LaunchConfigurationDialog extends Dialog {
 	/**
 	 * A launch configuration dialog overrides this method
 	 * to create a custom set of buttons in the button bar.
-	 * This dialog has 'Save & Launch', 'Launch', and 'Cancel'
+	 * This dialog has 'Save & Lanuch', 'Lanuch', and 'Cancel'
 	 * buttons.
 	 * 
-	 * @see Dialog#createButtonsForButtonBar(Composite)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.S&ave_and_Launch_1"), false); //$NON-NLS-1$
-		createButton(parent, ID_LAUNCH_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Launch_2"), true); //$NON-NLS-1$
+		setSaveAndLaunchButton(createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "S&ave and Launch", false));
+		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, "&Launch", true));
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}	
 
 	/**
-	 * @see Dialog#createDialogArea(Composite)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContenst(Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		initializeSettings();
+		return contents;
+	}
+	
+
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		GridData gd;
@@ -131,24 +209,19 @@ public class LaunchConfigurationDialog extends Dialog {
 		// and put it into the composite.
 		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(composite);
 		gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = 175;
-		gd.heightHint = 300;
 		launchConfigSelectionArea.setLayoutData(gd);
 	
 		// Build the launch configuration edit area
 		// and put it into the composite.
-		Composite launchConfigurationEditArea = createLaunchConfigurationEditArea(composite);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = 300;
-		launchConfigurationEditArea.setLayoutData(gd);
+		Composite launchConfigrationEditArea = createLaunchConfigurationEditArea(composite);
+		gd = new GridData(GridData.FILL_BOTH);
+		launchConfigSelectionArea.setLayoutData(gd);
 			
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
-	
-		initializeSettings();
 		
 		return composite;
 	}
@@ -159,6 +232,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	protected void initializeSettings() {
 		// set the default project setting, if any
 		setContext(getContext());
+		getTreeViewer().setSelection(getSelection());
 	}
 	
 	/**
@@ -177,13 +251,13 @@ public class LaunchConfigurationDialog extends Dialog {
 		GridData gd;
 		
 		Label scopeLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		scopeLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Show_Launch_Configurations_from__3")); //$NON-NLS-1$
+		scopeLabel.setText("Show Launch Configurations from:");
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		scopeLabel.setLayoutData(gd);
 
 		Button projectButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		projectButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Project__4")); //$NON-NLS-1$
+		projectButton.setText("&Project:");
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 1;
 		projectButton.setLayoutData(gd);
@@ -228,7 +302,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		);
 		
 		Button browseProjectsButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		browseProjectsButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Browse..._5")); //$NON-NLS-1$
+		browseProjectsButton.setText("&Browse...");
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
 		browseProjectsButton.setLayoutData(gd);
@@ -242,7 +316,7 @@ public class LaunchConfigurationDialog extends Dialog {
 						ResourcesPlugin.getWorkspace().getRoot(),
 						new WorkbenchContentProvider(),
 						new WorkbenchLabelProvider(),
-						LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Choose_a_project_6") //$NON-NLS-1$
+						"Choose a project"
 					);
 					dialog.open();
 					Object[] result = dialog.getResult();
@@ -254,7 +328,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		);
 				
 		Button workspaceButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		workspaceButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Workspace_7")); //$NON-NLS-1$
+		workspaceButton.setText("&Workspace");
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		workspaceButton.setLayoutData(gd);	
@@ -291,28 +365,33 @@ public class LaunchConfigurationDialog extends Dialog {
 		TreeViewer tree = new TreeViewer(c);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 3;
+		gd.widthHint = 175;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		setTreeViewer(tree);
+		tree.addSelectionChangedListener(this);
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		newButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&New_8")); //$NON-NLS-1$
+		newButton.setText("&New");
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 1;
 		newButton.setLayoutData(gd);
+		setNewButton(newButton);
 		
 		Button removeButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		removeButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Delete_9")); //$NON-NLS-1$
+		removeButton.setText("&Delete");
 		gd = new GridData(GridData.CENTER);
 		gd.horizontalSpan = 1;
-		removeButton.setLayoutData(gd);			
+		removeButton.setLayoutData(gd);
+		setDeleteButton(removeButton);
 		
 		Button copyButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		copyButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Copy_10")); //$NON-NLS-1$
+		copyButton.setText("&Copy");
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
-		copyButton.setLayoutData(gd);		
+		copyButton.setLayoutData(gd);
+		setCopyButton(copyButton);
 		
 		return c;
 	}	
@@ -327,8 +406,37 @@ public class LaunchConfigurationDialog extends Dialog {
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
-		c.setLayout(new GridLayout());
-		createButton(c, 2000, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.edit_area_11"), false); //$NON-NLS-1$
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		c.setLayout(layout);
+		
+		GridData gd;
+		
+		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
+		nameLabel.setText("Name:");
+		gd = new GridData(GridData.BEGINNING);
+		nameLabel.setLayoutData(gd);		
+		
+		Text nameText = new Text(c, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		nameText.setLayoutData(gd);
+		setNameTextWidget(nameText);	
+		
+		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		gd.heightHint = 300;
+		gd.widthHint = 325;
+		tabFolder.setLayoutData(gd);
+		setTabFolder(tabFolder);
+		
+		Button saveButton = new Button(c, SWT.PUSH | SWT.CENTER);
+		saveButton.setText("&Save");
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd.horizontalSpan = 2;
+		saveButton.setLayoutData(gd);
+		setSaveButton(saveButton);
+		
 		return c;
 	}	
 	
@@ -339,8 +447,8 @@ public class LaunchConfigurationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_12")); //$NON-NLS-1$
-		newShell.setSize(400, 400);
+		newShell.setText("Launch Configurations");
+		//newShell.setSize(400, 400);
 	}
 	
 	/**
@@ -443,7 +551,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns the button used to select a project from a list
+	 * Retruns the button used to select a project from a list
 	 * 
 	 * @return the button used to select a project from a list
 	 */
@@ -461,7 +569,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns the (radio) button used to select a project
+	 * Retruns the (raido) button used to select a project
 	 * 
 	 * @return the button used to select a project
 	 */
@@ -469,7 +577,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		return fProjectButton;
 	}	
 	/**
-	 * Content provider for launch configuration tree
+	 * Content prodiver for launch configuration tree
 	 */
 	class LaunchConfigurationContentProvider implements ITreeContentProvider {
 		
@@ -490,7 +598,7 @@ public class LaunchConfigurationDialog extends Dialog {
 						return getLaunchManager().getLaunchConfigurations(getProject(), type);
 					}
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_13"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations._14"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
 				}
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();
@@ -506,7 +614,7 @@ public class LaunchConfigurationDialog extends Dialog {
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_15"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations._16"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return getContext();
@@ -532,13 +640,13 @@ public class LaunchConfigurationDialog extends Dialog {
 			return getLaunchManager().getLaunchConfigurationTypes();
 		}
 
-		/**
+		/*
 		 * @see IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
 
-		/**
+		/*
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -580,4 +688,258 @@ public class LaunchConfigurationDialog extends Dialog {
 		}
 		return null;
 	}
+	
+	/**
+	 * Sets the specified selection in the launch configuration
+	 * selection tree.
+	 * 
+	 * @param selection the items to select
+	 */
+	public void setSelection(ISelection selection) {
+		fSelection = selection;
+		if (isVisible()) {
+			getTreeViewer().setSelection(selection);
+		}
+	}
+	
+	/**
+	 * Returns the current selection in the launch configuration
+	 * tree (or what should be initially selected on startup
+	 * 
+	 * @return selection
+	 */
+	protected ISelection getSelection() {
+		return fSelection;
+	}
+	
+	/**
+	 * Notification selection has changed in the lanuch configuration
+	 * tree. 
+	 * <p>
+	 * If the currently displayed configuration is not saved,
+	 * prompt for saving before moving on to the new selection.
+	 * </p>
+	 * 
+	 * @param event selection changed event
+	 */
+ 	public void selectionChanged(SelectionChangedEvent event) {
+ 		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+ 		fSelection = selection;
+ 		
+ 		// save current configuration
+ 		if (getWorkingCopy() != null && getWorkingCopy().isDirty()) {
+ 			// prompt for save before moving on
+ 			System.out.println("dirty");
+ 		}
+ 			
+ 		// dispose old tabs
+ 		TabItem[] tabs = getTabFolder().getItems();
+ 		for (int i = 0; i < tabs.length; i++) {
+ 			tabs[i].dispose();
+ 		}
+ 		
+ 		// enable buttons
+ 		boolean singleSelection = selection.size() == 1;
+ 		
+		getLaunchButton().setEnabled(singleSelection);
+ 		getSaveAndLaunchButton().setEnabled(singleSelection);
+ 		getNewButton().setEnabled(singleSelection);
+ 		getCopyButton().setEnabled(singleSelection);
+
+ 		getDeleteButton().setEnabled(selection.size() >= 1);
+ 		
+ 		getSaveButton().setEnabled(false);
+ 		if (singleSelection && selection.getFirstElement() instanceof ILaunchConfiguration) {
+ 			setLaunchConfiguration((ILaunchConfiguration)selection.getFirstElement());
+ 		} 
+
+ 	}
+ 
+ 	/**
+ 	 * Sets the 'save & lanuch' button.
+ 	 * 
+ 	 * @param button the 'save & launch' button.
+ 	 */	
+ 	private void setSaveAndLaunchButton(Button button) {
+ 		fSaveAndLaunchButton = button;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the 'save & launch' button
+ 	 * 
+ 	 * @return the 'save & launch' button
+ 	 */
+ 	protected Button getSaveAndLaunchButton() {
+ 		return fSaveAndLaunchButton;
+ 	}
+ 	
+ 	/**
+ 	 * Sets the 'lanuch' button.
+ 	 * 
+ 	 * @param button the 'launch' button.
+ 	 */	
+ 	private void setLaunchButton(Button button) {
+ 		fLaunchButton = button;
+ 	} 	
+ 	
+ 	/**
+ 	 * Returns the 'launch' button
+ 	 * 
+ 	 * @return the 'launch' button
+ 	 */
+ 	protected Button getLaunchButton() {
+ 		return fLaunchButton;
+ 	} 	
+ 	
+ 	/**
+ 	 * Sets the 'new' button.
+ 	 * 
+ 	 * @param button the 'new' button.
+ 	 */	
+ 	private void setNewButton(Button button) {
+ 		fNewButton = button;
+ 	} 	
+ 	
+  	/**
+ 	 * Returns the 'new' button
+ 	 * 
+ 	 * @return the 'new' button
+ 	 */
+ 	protected Button getNewButton() {
+ 		return fNewButton;
+ 	}
+ 	
+ 	/**
+ 	 * Sets the 'delete' button.
+ 	 * 
+ 	 * @param button the 'delete' button.
+ 	 */	
+ 	private void setDeleteButton(Button button) {
+ 		fDeleteButton = button;
+ 	} 	
+ 	
+ 	/**
+ 	 * Returns the 'delete' button
+ 	 * 
+ 	 * @return the 'delete' button
+ 	 */
+ 	protected Button getDeleteButton() {
+ 		return fDeleteButton;
+ 	}
+ 	 	
+ 	/**
+ 	 * Sets the 'copy' button.
+ 	 * 
+ 	 * @param button the 'copy' button.
+ 	 */	
+ 	private void setCopyButton(Button button) {
+ 		fCopyButton = button;
+ 	} 	
+ 	
+ 	/**
+ 	 * Returns the 'copy' button
+ 	 * 
+ 	 * @return the 'copy' button
+ 	 */
+ 	protected Button getCopyButton() {
+ 		return fCopyButton;
+ 	} 	
+ 	
+ 	/**
+ 	 * Sets the configuration to display/edit.
+ 	 * Updates the tab folder to the appropriate
+ 	 * pages.
+ 	 * 
+ 	 * @param config the launch configuration to display/edit
+ 	 */
+ 	protected void setLaunchConfiguration(ILaunchConfiguration config) {
+ 		try {
+	 		fWorkingCopy = config.getWorkingCopy();
+	 		getNameTextWidget().setText(config.getName());
+	 		LaunchConfigurationTabExtension[] tabs = LaunchConfigurationPresentationManager.getDefault().getTabs(config.getType());
+	 		
+	 		for (int i = 0; i < tabs.length; i++) {
+	 			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
+	 			String name = tabs[i].getName();
+	 			if (name == null) {
+	 				name = "unspecified";
+	 			}
+	 			tab.setText(name);
+	 		}
+	 		
+ 		} catch (CoreException e) {
+ 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating working copy of lanuch configuration.",e.getStatus());
+ 			return;
+ 		}
+ 		
+ 	} 
+ 	
+ 	/**
+ 	 * Returns the current launch configuration that is being
+ 	 * displayed/edited.
+ 	 * 
+ 	 * @return current configuration being displayed
+ 	 */
+ 	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
+ 		return fWorkingCopy;
+ 	}
+ 	
+	/**
+	 * Sets the text widget used to display the name
+	 * of the configuration being displayed/edited
+	 * 
+	 * @param widget the text widget used to display the name
+	 *  of the configuration being displayed/edited
+	 */
+	private void setNameTextWidget(Text widget) {
+		fNameText = widget;
+	}
+	
+	/**
+	 * Returns the text widget used to display the name
+	 * of the configuration being displayed/edited
+	 * 
+	 * @return the text widget used to display the name
+	 *  of the configuration being displayed/edited
+	 */
+	protected Text getNameTextWidget() {
+		return fNameText;
+	} 
+	
+ 	/**
+ 	 * Sets the 'save' button.
+ 	 * 
+ 	 * @param button the 'save' button.
+ 	 */	
+ 	private void setSaveButton(Button button) {
+ 		fSaveButton = button;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the 'save' button
+ 	 * 
+ 	 * @return the 'save' button
+ 	 */
+ 	protected Button getSaveButton() {
+ 		return fSaveButton;
+ 	}	
+ 	
+ 	/**
+ 	 * Sets the tab folder
+ 	 * 
+ 	 * @param folder the tab folder
+ 	 */	
+ 	private void setTabFolder(TabFolder folder) {
+ 		fTabFolder = folder;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the tab folder
+ 	 * 
+ 	 * @return the tab folder
+ 	 */
+ 	protected TabFolder getTabFolder() {
+ 		return fTabFolder;
+ 	}	 	
 }
+

@@ -24,6 +24,7 @@
 <!-- Extension points -->
 <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
 <extension-point id="breakpointPropertyAdapters" name="%BreakpointPropertyAdapterName"/>
+<extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabExtensionName"/>
 
 <!-- Extensions -->
 <extension
@@ -250,4 +251,18 @@
          value="false">
    </persistent>
 </extension>
+
+<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
+	<launchConfigurationTab
+		id="org.eclipse.debug.ui.launchConfigurationTab.team"
+		class="org.eclipse.debug.internal.ui.launchConfigurations.TeamTab"
+		name="Team">
+	</launchConfigurationTab>
+	<launchConfigurationTab
+		id="org.eclipse.debug.ui.launchConfigurationTab.team"
+		class="org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveTab"
+		name="Perspective">
+	</launchConfigurationTab>	
+</extension>
+
 </plugin>

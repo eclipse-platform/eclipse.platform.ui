@@ -8,6 +8,8 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.internal.core.LaunchManager;
+
 
 /**
  * Proxy to a launch configuration tab element
@@ -86,7 +88,17 @@ public class LaunchConfigurationTabExtension {
 	 *  tab is intended for, or <code>null</code> if this tab is generic
 	 */	
 	protected String getTypeIdentifier() {
-		return getConfigurationElement().getAttribute("type"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute("type");
+	}
+	
+	/**
+	 * Returns the name of this tab
+	 * 
+	 * @return the name of this tab, or <code>null</code> if not
+	 *  specified
+	 */
+	public String getName() {
+		return getConfigurationElement().getAttribute("name");
 	}
 
 }
