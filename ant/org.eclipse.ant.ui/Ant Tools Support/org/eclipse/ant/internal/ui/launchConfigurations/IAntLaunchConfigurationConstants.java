@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -29,6 +30,35 @@ public interface IAntLaunchConfigurationConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 */
 	public static final String ATTR_ANT_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute indicating the Ant targets to execute after a clean (full build) for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_AFTER_CLEAN_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_AFTER_CLEAN_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute indicating the Ant targets to execute during a manual build for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_MANUAL_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_MANUAL_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute indicating the Ant targets to execute during an auto build for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_AUTO_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_AUTO_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute indicating the Ant targets to execute during a clean for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_CLEAN_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_CLEAN_TARGETS"; //$NON-NLS-1$
+	
 	/**
 	 * Map attribute indicating the Ant properties to be defined during the
 	 * build. Default value is <code>null</code> which indicates no additional
