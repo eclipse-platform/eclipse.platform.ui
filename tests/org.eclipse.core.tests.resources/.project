@@ -8,7 +8,6 @@
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.core.tests.harness</project>
 		<project>org.eclipse.osgi.services</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
