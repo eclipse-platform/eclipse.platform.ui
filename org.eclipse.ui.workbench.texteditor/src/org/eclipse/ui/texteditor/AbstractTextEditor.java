@@ -362,6 +362,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementMoved(final Object originalElement, final Object movedElement) {
 			if (originalElement != null && originalElement.equals(getEditorInput())) {
+				final boolean doValidationAsync= Display.getCurrent() != null;
 				Runnable r= new Runnable() {
 					public void run() {
 						enableSanityChecking(true);
@@ -377,28 +378,37 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						if (movedElement == null || movedElement instanceof IEditorInput) {	
 							rememberSelection();
 												
-							IDocumentProvider d= getDocumentProvider();
+							final IDocumentProvider d= getDocumentProvider();
+							final String previousContent;
 							IDocument changed= null;
-							String previousContent= null;
 							if (isDirty()) {
 								changed= d.getDocument(getEditorInput());
 								if (changed != null)
 									previousContent= changed.get();
-							}
+								else
+									previousContent= null;
+							} else
+								previousContent= null;
 							
 							setInput((IEditorInput) movedElement);
 							
 							if (changed != null) {
-								validateState(getEditorInput());
-								d.getDocument(getEditorInput()).set(previousContent);
-								updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-							}					
+								Runnable r2= new Runnable() {
+									public void run() {
+										validateState(getEditorInput());
+										d.getDocument(getEditorInput()).set(previousContent);
+										updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+										restoreSelection();
+									}
+								};
+								execute(r2, doValidationAsync);
+							} else
+								restoreSelection();
 								
-							restoreSelection();
 						}
 					}
 				};
-				execute(r, true);
+				execute(r, false);
 			}
 		}
 		
@@ -424,16 +434,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * Executes the given runnable in the UI thread.
 		 * <p>
 		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=76765 for details
-		 * about why the parameter <code>forcePosting</code> has been
+		 * about why the parameter <code>postAsync</code> has been
 		 * introduced in the course of 3.1.
 		 * 
 		 * @param runnable runnable to be executed
-		 * @param runnablePerformsValidateState <code>true</code> if the
-		 *            runnable contains a call to {@link AbstractTextEditor#validateState(IEditorInput)}, <code>false</code> otherwise
+		 * @param postAsync <code>true</code> if the runnable must be posted asynchronous, <code>false</code> otherwise
 		 * @since 3.0
 		 */
-		private void execute(Runnable runnable, boolean runnablePerformsValidateState) {
-			if (runnablePerformsValidateState || Display.getCurrent() == null) {
+		private void execute(Runnable runnable, boolean postAsync) {
+			if (postAsync || Display.getCurrent() == null) {
 				if (fDisplay == null)
 					fDisplay= getSite().getShell().getDisplay();
 				fDisplay.asyncExec(runnable);
