@@ -178,7 +178,7 @@ public final class ChildDocument extends AbstractDocument {
 	/**
 	 * <p>Transforms a document event of the parent document into a child document
 	 * based document event. </p>
-	 * This method is public for text purposes only.
+	 * This method is public for test purposes only.
 	 *
 	 * @param e the parent document event
 	 * @return the child document event
@@ -190,64 +190,52 @@ public final class ChildDocument extends AbstractDocument {
 		if (isAutoExpandEvent(event)) {
 						
 			if (delta < 0) {
+				int eventEndOffset= event.getOffset() + event.getLength();
 				
-				if (event.getOffset() + event.getLength() <= fRange.getOffset()) {
-					// case 1
-					int offset= 0;
-					int length= 0;
+				if (eventEndOffset <= fRange.getOffset()) {
 					
+					// case 1
 					StringBuffer buffer= new StringBuffer();
 					if (event.getText() != null)
 						buffer.append(event.getText());
-					
 					try {
-						buffer.append(fParentDocument.get(event.getOffset() + event.getLength(), -delta - event.getLength()));
+						buffer.append(fParentDocument.get(eventEndOffset, -delta - event.getLength()));
 					} catch (BadLocationException e) {
 						// should not happen as the event is a valid parent document event
 					}
 					
-					String text= buffer.toString();
-					
-					return new SlaveDocumentEvent(this, offset, length, text, event);
+					return new SlaveDocumentEvent(this, 0, 0, buffer.toString(), event);
 				
 				} else {
+					
 					// cases 2 and 3
-					int offset= 0;
-					int length= Math.min(event.getOffset() + event.getLength() - fRange.getOffset(), fRange.getLength());
-					String text= event.getText();
-					
-					return new SlaveDocumentEvent(this, offset, length, text, event);
+					int length= Math.min(eventEndOffset - fRange.getOffset(), fRange.getLength());
+					return new SlaveDocumentEvent(this, 0, length, event.getText(), event);
 				}
-			} else {
 				
-				if (event.getOffset() >= fRange.getOffset() + fRange.getLength()) {
+			} else {
+				int rangeEndOffset= fRange.getOffset() + fRange.getLength();
+				
+				if (event.getOffset() >= rangeEndOffset) {
+					
 					// case 5
-					
-					int offset= fRange.getLength();
-					int length= 0;
-					
 					StringBuffer buffer= new StringBuffer();
-					
 					try {
-						buffer.append(fParentDocument.get(fRange.getOffset() + fRange.getLength(), event.getOffset() - fRange.getOffset() - fRange.getLength()));
+						buffer.append(fParentDocument.get(rangeEndOffset, event.getOffset() - rangeEndOffset));
 					} catch (BadLocationException e) {
 						// should not happen as this event is a valid parent document event
 					}
-					
 					if (event.getText() != null)
 						buffer.append(event.getText());
-					String text= buffer.toString();
-					
-					return new SlaveDocumentEvent(this, offset, length, text, event);
+						
+					return new SlaveDocumentEvent(this, fRange.getLength(), 0, buffer.toString(), event);
 				
 				} else {
+					
 					// case 4 and 6
-					
 					int offset= event.getOffset() - fRange.getOffset();
-					int length= Math.min(fRange.getOffset() + fRange.getLength() - event.getOffset(), event.getLength());
-					String text= event.getText();
-					
-					return new SlaveDocumentEvent(this, offset, length, text, event);
+					int length= Math.min(rangeEndOffset - event.getOffset(), event.getLength());
+					return new SlaveDocumentEvent(this, offset, length, event.getText(), event);
 				}
 			}
 		
@@ -274,24 +262,7 @@ public final class ChildDocument extends AbstractDocument {
 	public void parentDocumentAboutToBeChanged(DocumentEvent event) {
 		
 		fParentEvent= event;
-				
-//		if (fRange.overlapsWith(event.fOffset, event.fLength)) {			
-//			
-//			fEvent= normalize(event);
-//			
-//			StringBuffer buffer= new StringBuffer(get());
-//			fRememberedLength= buffer.length();
-//			buffer.replace(fEvent.fOffset, fEvent.fOffset+ fEvent.fLength, fEvent.fText == null ? "" : fEvent.fText);  //$NON-NLS-1$
-//			fExpectedContent= buffer.toString();
-//			
-//			delayedFireDocumentAboutToBeChanged();
-//		
-//		} else {
-//			fEvent= null;
-//			fExpectedContent= get();
-//			fRememberedLength= fExpectedContent.length();
-//		}
-
+		
 		fEvent= normalize(event);
 		if (fEvent != null) {			
 			
@@ -301,7 +272,6 @@ public final class ChildDocument extends AbstractDocument {
 			fExpectedContent= buffer.toString();
 			
 			delayedFireDocumentAboutToBeChanged();
-			
 		}
 	}
 		
