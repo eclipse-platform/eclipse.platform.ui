@@ -139,8 +139,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				String propertyName= e.getProperty();
-				if (CompareEditorInput.DIRTY_STATE.equals(propertyName))
-					setDirty(e.getSource(), Utilities.getValue(e, false));					
+				if (CompareEditorInput.DIRTY_STATE.equals(propertyName)) {
+					boolean changed= false;
+					Object newValue= e.getNewValue();
+					if (newValue instanceof Boolean)
+						changed= ((Boolean)newValue).booleanValue();
+					setDirty(e.getSource(), changed);
+				}			
 			}
 		};
 

@@ -5,29 +5,20 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
 import java.text.MessageFormat;
+import java.util.*;
 
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.*;
 
 import org.eclipse.compare.CompareConfiguration;
 
@@ -64,16 +55,6 @@ public class Utilities {
 			if (value instanceof Boolean)
 				return ((Boolean) value).booleanValue();
 		}
-		return dflt;
-	}
-	
-	/**
-	 * Retrieves the value from a property change event as a boolean.
-	 */
-	public static boolean getValue(PropertyChangeEvent event, boolean dflt) {
-		Object newValue= event.getNewValue();
-		if (newValue instanceof Boolean)
-			return ((Boolean)newValue).booleanValue();
 		return dflt;
 	}
 	
@@ -120,7 +101,7 @@ public class Utilities {
 	 */
 	public static IResource[] getResources(ISelection selection) {
 		
-		List tmp= new ArrayList();
+		ArrayList tmp= new ArrayList();
 
 		if (selection instanceof IStructuredSelection) {
 		
