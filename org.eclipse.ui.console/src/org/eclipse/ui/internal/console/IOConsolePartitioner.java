@@ -20,18 +20,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitionerExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
-import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -251,27 +249,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 		return lastPartition;
 	}
-	
-	/**
-	 * Returns the region occupied by the hyperlink
-	 */
-	public IRegion getRegion(IHyperlink link) {
-		try {
-		    IDocument doc = getDocument();
-		    if (doc != null) {
-				Position[] positions = doc.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-				for (int i = 0; i < positions.length; i++) {
-					ConsoleHyperlinkPosition position = (ConsoleHyperlinkPosition)positions[i];
-					if (position.getHyperLink().equals(link)) {
-						return new Region(position.getOffset(), position.getLength());
-					}
-				}
-		    }
-		} catch (BadPositionCategoryException e) {
-		}
-		return null;
-	}
-	
+		
 	/**
 	 * Enforces the buffer size.
 	 * When the number of lines in the document exceeds the high water mark, the 
@@ -622,6 +600,33 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         	}
         	return Status.OK_STATUS;
         }
+    }
+
+
+
+
+
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
+     */
+    public boolean isReadOnly(int offset) {
+        return ((IOConsolePartition)getPartition(offset)).isReadOnly();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
+     */
+    public StyleRange[] getStyleRanges(int offset, int length) {
+        IOConsolePartition[] partitions = (IOConsolePartition[])computePartitioning(offset, length);
+        StyleRange[] styles = new StyleRange[partitions.length];        
+        for (int i = 0; i < partitions.length; i++) {                
+            int rangeStart = Math.max(partitions[i].getOffset(), offset);
+            int rangeLength = partitions[i].getLength();
+            styles[i] = partitions[i].getStyleRange(rangeStart, rangeLength);
+        }
+        return styles;
     }
     
 	

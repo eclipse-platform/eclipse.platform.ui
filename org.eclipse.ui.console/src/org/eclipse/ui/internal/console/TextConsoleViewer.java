@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 
@@ -119,23 +120,20 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         String[] legalLineDelimiters = doc.getLegalLineDelimiters();
         String eventString = e.text;
         
-        try {
-            IConsolePartition partition = (IConsolePartition) doc.getPartition(e.start);
-            if (!partition.isReadOnly()) {
-                boolean isCarriageReturn = false;
-                for (int i = 0; i < legalLineDelimiters.length; i++) {
-                    if(e.text.equals(legalLineDelimiters[i])) {
-                        isCarriageReturn = true;
-                        break;
-                    }
+        IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
+        if (!partitioner.isReadOnly(e.start)) {
+            boolean isCarriageReturn = false;
+            for (int i = 0; i < legalLineDelimiters.length; i++) {
+                if(e.text.equals(legalLineDelimiters[i])) {
+                    isCarriageReturn = true;
+                    break;
                 }
-           
-                if (!isCarriageReturn) {
-                    super.handleVerifyEvent(e);
-                    return;
-                } 
             }
-        } catch (BadLocationException e1) {
+            
+            if (!isCarriageReturn) {
+                super.handleVerifyEvent(e);
+                return;
+            } 
         }
         
         int length = doc.getLength();
@@ -165,13 +163,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     public void lineGetStyle(LineStyleEvent event) {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0){
-            IOConsolePartition[] partitions = (IOConsolePartition[]) document.getDocumentPartitioner().computePartitioning(event.lineOffset, event.lineText.length());
-            StyleRange[] styles = new StyleRange[partitions.length];        
-            for (int i = 0; i < partitions.length; i++) {                
-                int rangeStart = Math.max(partitions[i].getOffset(), event.lineOffset);
-                int rangeLength = partitions[i].getLength();
-                styles[i] = partitions[i].getStyleRange(rangeStart, rangeLength);
-            }
+            StyleRange[] styles = ((IConsoleDocumentPartitioner)document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
             event.styles = styles;
         }
     }
@@ -195,12 +187,12 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                 return;
             }
             
-            IOConsolePartitioner partitioner = (IOConsolePartitioner)doc.getDocumentPartitioner();
+            IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner)doc.getDocumentPartitioner();
             if (partitioner == null) {
                 return;
             }
             
-            IRegion linkRegion = partitioner.getRegion(hyperlink);
+            IRegion linkRegion = console.getRegion(hyperlink);
             if (linkRegion != null) {
                 int start = linkRegion.getOffset();
                 int end = start + linkRegion.getLength();

@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IConsole;
 
 /**
  * Tests if an IOConsole's type matches the expected value
@@ -24,7 +24,7 @@ public class ConsoleTypePropertyTester extends PropertyTester {
      * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
      */
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        IOConsole console = (IOConsole) receiver;
+        IConsole console = (IConsole) receiver;
         String type = console.getType();
         return type != null ? type.equals(expectedValue) : false;
     }

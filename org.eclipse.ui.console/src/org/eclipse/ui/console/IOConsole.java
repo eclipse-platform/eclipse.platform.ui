@@ -13,15 +13,10 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
@@ -44,13 +39,6 @@ public class IOConsole extends TextConsole {
      * The stream from which user input may be read
      */
     private IOConsoleInputStream inputStream;
-    
-        
-    /**
-     * Map of client defined attributes
-     */
-    private HashMap attributes = new HashMap();
-   
         
     /**
      * A collection of open streams connected to this console.
@@ -122,30 +110,6 @@ public class IOConsole extends TextConsole {
         this(name, null, imageDescriptor);
     }
     
-    /**
-     * Returns the attribue associated with the specified key.
-     * 
-     * @param key attribute key
-     * @return Returns the attribue associated with the specified key
-     */
-    public Object getAttribute(String key) {
-        synchronized (attributes) {
-            return attributes.get(key);
-        }
-    }
-    
-    /**
-     * Sets an attribute value.
-     * 
-     * @param key attribute key
-     * @param value attribute value
-     */
-    public void setAttribute(String key, Object value) {
-        synchronized(attributes) {
-            attributes.put(key, value);
-        }
-    }
-
     /**
      * Creates and returns a new output stream which may be used to write to this console.
      * A console may be connected to more than one output stream at once. Clients are
@@ -256,32 +220,6 @@ public class IOConsole extends TextConsole {
     }
     
 
-    /**
-     * Adds a hyperlink to this console.
-     * 
-     * @param hyperlink the hyperlink to add
-     * @param offset the offset in the console document at which the hyperlink should be added
-     * @param length the length of the text which should be hyperlinked
-     * @throws BadLocationException if the specified location is not valid.
-     */
-    public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
-		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
-		try {
-			getDocument().addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
-		} catch (BadPositionCategoryException e) {
-			ConsolePlugin.log(e);
-		} 
-    }
-    
-    /**
-     * Returns the region assocaited with the given hyperlink.
-     * 
-     * @param link hyperlink
-     * @return the region associated witht the hyperlink
-     */
-    public IRegion getRegion(IHyperlink link) {
-        return partitioner.getRegion(link);
-    }
     
     /**
      * Disposes this console.
@@ -294,8 +232,5 @@ public class IOConsole extends TextConsole {
         } catch (IOException ioe) {
         }
         inputStream = null;
-        synchronized(attributes) {
-            attributes.clear();
-        }
     }
 }

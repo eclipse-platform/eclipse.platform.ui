@@ -34,8 +34,8 @@ import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * The singleton console manager.
@@ -143,8 +143,8 @@ public class ConsoleManager implements IConsoleManager {
 		List added = new ArrayList(consoles.length);
 		for (int i = 0; i < consoles.length; i++) {
 		    IConsole console = consoles[i];
-		    if(console instanceof IOConsole) {
-		        IOConsole ioconsole = (IOConsole)console;
+		    if(console instanceof TextConsole) {
+		        TextConsole ioconsole = (TextConsole)console;
 		        IPatternMatchListener[] matchListeners = getPatternMatchListeners(ioconsole);
 		        for (int j = 0; j < matchListeners.length; j++) {
 		            ioconsole.addPatternMatchListener(matchListeners[j]);

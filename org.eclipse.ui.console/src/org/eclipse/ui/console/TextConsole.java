@@ -11,11 +11,16 @@
 
 package org.eclipse.ui.console;
 
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.ConsoleDocument;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
@@ -82,6 +87,21 @@ public abstract class TextConsole extends AbstractConsole {
      */
     private boolean fCompleteFired = false;
 
+    
+    /**
+     * Map of client defined attributes
+     */
+    private HashMap fAttributes = new HashMap();
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.AbstractConsole#dispose()
+     */
+    protected void dispose() {
+        super.dispose();
+		synchronized(fAttributes) {
+		    fAttributes.clear();
+		}
+    }
     /**
      * Constructs a console with the given name, image descriptor, and lifecycle
      * 
@@ -394,6 +414,70 @@ public abstract class TextConsole extends AbstractConsole {
         if (!fCompleteFired && fPartitionerFinished && fMatcherFinished ) {
             fCompleteFired = true;
             firePropertyChange(this, IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+        }
+    }
+    
+    /**
+     * Adds a hyperlink to this console.
+     * 
+     * @param hyperlink the hyperlink to add
+     * @param offset the offset in the console document at which the hyperlink should be added
+     * @param length the length of the text which should be hyperlinked
+     * @throws BadLocationException if the specified location is not valid.
+     */
+    public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
+		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
+		try {
+			getDocument().addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
+		} catch (BadPositionCategoryException e) {
+			ConsolePlugin.log(e);
+		} 
+    }
+    
+    /**
+     * Returns the region assocaited with the given hyperlink.
+     * 
+     * @param link hyperlink
+     * @return the region associated witht the hyperlink
+     */
+    public IRegion getRegion(IHyperlink link) {
+		try {
+		    IDocument doc = getDocument();
+		    if (doc != null) {
+				Position[] positions = doc.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+				for (int i = 0; i < positions.length; i++) {
+					ConsoleHyperlinkPosition position = (ConsoleHyperlinkPosition)positions[i];
+					if (position.getHyperLink().equals(link)) {
+						return new Region(position.getOffset(), position.getLength());
+					}
+				}
+		    }
+		} catch (BadPositionCategoryException e) {
+		}
+		return null;
+    }
+    
+    /**
+     * Returns the attribue associated with the specified key.
+     * 
+     * @param key attribute key
+     * @return Returns the attribue associated with the specified key
+     */
+    public Object getAttribute(String key) {
+        synchronized (fAttributes) {
+            return fAttributes.get(key);
+        }
+    }
+    
+    /**
+     * Sets an attribute value.
+     * 
+     * @param key attribute key
+     * @param value attribute value
+     */
+    public void setAttribute(String key, Object value) {
+        synchronized(fAttributes) {
+            fAttributes.put(key, value);
         }
     }
 }

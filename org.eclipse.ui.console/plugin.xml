@@ -72,7 +72,7 @@ M4 = Platform-specific fourth key
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
              namespace="org.eclipse.ui.console"
-             type="org.eclipse.ui.console.IOConsole"
+             type="org.eclipse.ui.console.IConsole"
              class="org.eclipse.ui.internal.console.ConsoleTypePropertyTester"
              properties="consoleTypeTest"
              id="org.eclipse.ui.console.ConsoleTypePropertyTester"/>

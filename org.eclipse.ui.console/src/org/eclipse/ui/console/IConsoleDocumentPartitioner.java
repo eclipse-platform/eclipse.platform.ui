@@ -12,7 +12,10 @@
 package org.eclipse.ui.console;
 
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.swt.custom.StyleRange;
 
 public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {
     public void clearBuffer();
+    public boolean isReadOnly(int offset);
+    public StyleRange[] getStyleRanges(int offset, int length);
 }
