@@ -15,7 +15,6 @@
    <requires>
       <import plugin="org.eclipse.osgi" export="true"/>
       <import plugin="org.eclipse.osgi.services" export="true"/>
-      <import plugin="org.eclipse.osgi.util" export="true"/>
    </requires>
 
 

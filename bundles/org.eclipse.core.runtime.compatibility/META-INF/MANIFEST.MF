@@ -15,7 +15,4 @@ Provide-Package:
  org.eclipse.core.boot
 Require-Bundle: 
  org.eclipse.core.runtime; reprovide=true,
- org.eclipse.osgi.util; reprovide=true,
- org.eclipse.osgi.services; reprovide=true,
- org.eclipse.osgi; reprovide=true,
  org.eclipse.update.configurator; reprovide=true
