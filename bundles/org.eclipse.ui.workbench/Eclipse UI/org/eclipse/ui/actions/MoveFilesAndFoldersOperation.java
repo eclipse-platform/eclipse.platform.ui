@@ -73,14 +73,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				if (existing != null)
 					moveExisting(source, existing, subMonitor);
 				else {
-					int flags = IResource.SHALLOW;
-					
-					if (source.isLinked() && checkDeep(source)) {
-						// do a deep move of the resource
-						flags = IResource.NONE;
-					}			
-					flags |= IResource.KEEP_HISTORY;		
-					source.move(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
+					source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {

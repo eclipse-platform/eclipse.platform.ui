@@ -69,15 +69,6 @@ public class CopyFilesAndFoldersOperation {
 	private boolean alwaysOverwrite = false;
 
 	/**
-	 * Auto deep copy flag
-	 */
-	private boolean alwaysDeepCopy = false;
-	
-	/**
-	 * Auto shallow copy flag
-	 */
-	private boolean neverDeepCopy = false;	
-	/**
 	 * Returns a new name for a copy of the resource at the given path in 
 	 * the given workspace. This name is determined automatically. 
 	 *
@@ -135,79 +126,6 @@ public class CopyFilesAndFoldersOperation {
 		return WorkbenchMessages.format(
 			"CopyFilesAndFoldersOperation.deepCopyQuestion", //$NON-NLS-1$
 			new Object[] {source.getFullPath().makeRelative()});
-	}
-	/**
-	 * Check if the user wishes to deep copy the supplied linked resource,  
-	 * 
-	 * @param source the resource to be copied
-	 * @return true the resource should be deep copied. false a shallow
-	 * 	copy of the resource should be made. 
-	 */
-	protected boolean checkDeep(final IResource source) {
-		final int[] result = new int[1];
-		IPath location = source.getLocation();
-		
-		if (location == null) {
-			//undefined path variable
-			return false;
-		}
-		if (location.toFile().exists() == false) {
-			//link target does not exist
-			return false;
-		}
-		if (alwaysDeepCopy) {
-			return true;
-		}
-		if (neverDeepCopy) {
-			return false;
-		}
-		// Dialogs need to be created and opened in the UI thread
-		Runnable query = new Runnable() {
-			public void run() {
-				String message;
-				int resultId[] = {
-					IDialogConstants.YES_ID,
-					IDialogConstants.YES_TO_ALL_ID,
-					IDialogConstants.NO_ID,
-					IDialogConstants.NO_TO_ALL_ID,
-					IDialogConstants.CANCEL_ID};
- 
-				message = WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.deepCopyQuestion", //$NON-NLS-1$
-					new Object[] {source.getFullPath().makeRelative()});
-				MessageDialog dialog = new MessageDialog(
-					parentShell, 
-					WorkbenchMessages.getString("CopyFilesAndFoldersOperation.linkedFolder"), //$NON-NLS-1$
-					null,
-					message,
-					MessageDialog.QUESTION,
-					new String[] {
-						IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.NO_TO_ALL_LABEL,
-						IDialogConstants.CANCEL_LABEL },
-					0);
-				dialog.open();
-				result[0] = resultId[dialog.getReturnCode()];
-			}
-		};
-		parentShell.getDisplay().syncExec(query);
-		if (result[0] == IDialogConstants.YES_TO_ALL_ID) {
-			alwaysDeepCopy = true;
-			return true;		
-		}
-		if (result[0] == IDialogConstants.YES_ID) {
-			return true;
-		}
-		if (result[0] == IDialogConstants.NO_TO_ALL_ID) {
-			neverDeepCopy = true;
-		}
-		if (result[0] == IDialogConstants.CANCEL_ID) {
-			canceled = true;
-			throw new OperationCanceledException();
-		}
-		return false;
 	}
 	/**
 	 * Checks whether the files with the given names exist. 
@@ -396,16 +314,10 @@ public class CopyFilesAndFoldersOperation {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
 				
-				if (existing != null)					
+				if (existing != null) {					
 					copyExisting(source, existing, subMonitor);
-				else {
-					int flags = IResource.SHALLOW;
-					
-					if (source.isLinked() && checkDeep(source)) {
-						// do a deep copy of the resource
-						flags = IResource.NONE;
-					}					
-					source.copy(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
+				} else {
+					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
@@ -443,8 +355,6 @@ public class CopyFilesAndFoldersOperation {
 		final IPath destinationPath = destination.getFullPath();
 		final IResource[][] copiedResources = new IResource[1][0];
 
-		alwaysDeepCopy = false;
-		neverDeepCopy = false;
 		// test resources for existence separate from validate API.
 		// Validate is performance critical and resource exists
 		// check is potentially slow. Fixes bugs 16129/28602. 
@@ -918,13 +828,7 @@ public class CopyFilesAndFoldersOperation {
 				}
 				if (destinationPath != null) {
 					try {
-						int flags = IResource.SHALLOW;
-						
-						if (source.isLinked() && checkDeep(source)) {
-							// do a deep copy of the resource
-							flags = IResource.NONE;
-						}					
-						source.copy(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
+						source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 					} catch (CoreException e) {
 						recordError(e); // log error
 						return false;
