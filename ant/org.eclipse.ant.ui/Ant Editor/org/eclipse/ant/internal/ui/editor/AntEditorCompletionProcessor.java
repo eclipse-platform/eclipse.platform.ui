@@ -1178,7 +1178,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         }
         return null;
     }
- 
 
     /**
      * Finds the enclosing target element in respect to the cursor position. 
