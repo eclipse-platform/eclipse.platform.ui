@@ -163,8 +163,8 @@ public class FileBufferOperationRunner {
 		
 		ISchedulingRule rule= fileBuffer.computeCommitRule();
 		IJobManager manager= Platform.getJobManager();
-		manager.beginRule(rule, progressMonitor);
 		try {
+			manager.beginRule(rule, progressMonitor);
 			
 			String name= fileBuffer.getLocation().lastSegment();
 			progressMonitor.beginTask(name, 100);
