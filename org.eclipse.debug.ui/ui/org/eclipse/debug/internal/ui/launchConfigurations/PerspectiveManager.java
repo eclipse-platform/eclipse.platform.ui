@@ -260,6 +260,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			return null;
 		}
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		if (config == null) {
+			return null;
+		}
 		String perspectiveId = null;
 		String mode = launch.getLaunchMode();
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
