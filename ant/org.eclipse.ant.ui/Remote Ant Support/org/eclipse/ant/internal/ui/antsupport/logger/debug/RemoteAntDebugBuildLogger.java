@@ -17,13 +17,18 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 
@@ -55,6 +60,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	private Task fLastTaskFinished;
 	
 	private List fBreakpoints= null;
+    
+     private Map fTargetToBuildSequence= null;
+     private Target fTargetToExecute= null;
+     private Target fTargetExecuting= null;
 	
 	//properties set before execution
 	private Map fInitialProperties= null;
@@ -197,12 +206,29 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		fBuildStartedSuspend= true;
 		waitIfSuspended();
 	}
+    
+     private void initializeBuildSequenceInformation(BuildEvent event) {
+         Project antProject= event.getProject();
+         Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+         fTargetToBuildSequence= new HashMap(targets.size());
+         Iterator itr= targets.iterator();
+         Hashtable allTargets= antProject.getTargets();
+         String targetName;
+         Vector sortedTargets;
+         while (itr.hasNext()) {
+             targetName= (String) itr.next();
+             sortedTargets= antProject.topoSort(targetName, allTargets);
+             fTargetToBuildSequence.put(allTargets.get(targetName), sortedTargets);
+         }
+         fTargetToExecute= (Target) allTargets.get(targets.remove(0));
+     }
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
 		if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
+            initializeBuildSequenceInformation(event);
 			fInitialProperties= event.getProject().getProperties();
 		}
 		super.taskStarted(event);
@@ -300,20 +326,39 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    
 	    for (int i = fTasks.size() - 1; i >= 0 ; i--) {
-	        Task task = (Task) fTasks.get(i);
-	        stackRepresentation.append(task.getOwningTarget().getName());
-	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	        stackRepresentation.append(task.getTaskName());
-	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	        
-	        Location location= task.getLocation();
-	        stackRepresentation.append(getFileName(location));
-	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	        stackRepresentation.append(getLineNumber(location));
-	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	        Task task= (Task) fTasks.get(i);
+            appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation(), true);
 	    }	
+        //target dependancy stack 
+         if (fTargetToExecute != null) {
+             Vector buildSequence= (Vector) fTargetToBuildSequence.get(fTargetToExecute);
+            int startIndex= buildSequence.indexOf(fTargetExecuting) + 1;
+            int dependancyStackDepth= buildSequence.indexOf(fTargetToExecute);
+          
+            Target stackTarget;
+            for (int i = startIndex; i <= dependancyStackDepth; i++) {
+               stackTarget= (Target) buildSequence.get(i);
+               appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation(), false); //$NON-NLS-1$
+           }
+        }
 	    sendRequestResponse(stackRepresentation.toString());
 	}
+    
+    private void appendToStack(StringBuffer stackRepresentation, String targetName, String taskName, Location location, boolean setLineNumber) {
+        stackRepresentation.append(targetName);
+        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+        stackRepresentation.append(taskName);
+        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+        
+        stackRepresentation.append(getFileName(location));
+        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+        if (setLineNumber) {
+            stackRepresentation.append(getLineNumber(location));
+        } else {   //TODO until targets have locations set properly 
+            stackRepresentation.append(-1);
+        }
+        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+    }
 	
 	protected void marshallProperties() {
 		
@@ -440,8 +485,18 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 */
 	public void targetStarted(BuildEvent event) {
 		if (fInitialProperties == null) {
+            initializeBuildSequenceInformation(event);
 			fInitialProperties= event.getProject().getProperties();
 		}
 		super.targetStarted(event);
+		fTargetExecuting= event.getTarget();
+		if (event.getTarget().getName().equals(fTargetToExecute)) {
+		    //the dependancies of the target to execute have been met
+		    //prepare for the next target
+		    Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+		    if (!targets.isEmpty()) {
+		        fTargetToExecute= (Target) event.getProject().getTargets().get(targets.remove(0));
+		    }
+		}
 	}
 }
