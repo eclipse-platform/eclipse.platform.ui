@@ -98,6 +98,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		topLayout.marginHeight = 5;
 		topLayout.marginWidth = 0;
 		topComp.setLayout(topLayout);
+		topComp.setFont(dialogComp.getFont());
 	
 		// Set the things that TitleAreaDialog takes care of 
 		setTitle("Edit launch configuration properties");
@@ -109,6 +110,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		setEditArea(editAreaComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
+		editAreaComp.setFont(dialogComp.getFont());
 			
 		// Build the separator line that demarcates the button bar
 		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -117,6 +119,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		separator.setLayoutData(gd);
 		
 		dialogComp.layout(true);
+		applyDialogFont(dialogComp);
 	}
 			
 	protected void createButtonsForButtonBar(Composite parent) {

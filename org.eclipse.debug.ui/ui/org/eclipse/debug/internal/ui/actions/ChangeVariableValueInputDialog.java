@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -126,6 +127,7 @@ protected void createButtonsForButtonBar(Composite parent) {
  * Method declared on Dialog.
  */
 protected Control createDialogArea(Composite parent) {
+	Font font = parent.getFont();
 	// create composite
 	Composite composite = (Composite)super.createDialogArea(parent);
 
@@ -139,7 +141,7 @@ protected Control createDialogArea(Composite parent) {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 	}
 
 	text= new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
@@ -147,6 +149,7 @@ protected Control createDialogArea(Composite parent) {
 		| GridData.GRAB_VERTICAL | GridData.VERTICAL_ALIGN_FILL);
 	gridData.heightHint= 50;
 	text.setLayoutData(gridData);
+	text.setFont(font);
 	text.addModifyListener(
 		new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -164,8 +167,9 @@ protected Control createDialogArea(Composite parent) {
 	errorMessageLabel.setLayoutData(new GridData(
 		GridData.GRAB_HORIZONTAL |
 		GridData.HORIZONTAL_ALIGN_FILL));
-	errorMessageLabel.setFont(parent.getFont());
+	errorMessageLabel.setFont(font);
 	
+	applyDialogFont(composite);
 	return composite;
 }
 /**

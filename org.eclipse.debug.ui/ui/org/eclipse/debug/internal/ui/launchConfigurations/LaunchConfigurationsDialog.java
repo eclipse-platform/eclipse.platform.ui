@@ -58,6 +58,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -583,6 +584,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		getSashForm().setLayoutData(gd);
+		getSashForm().setFont(dialogComp.getFont());
 		
 		// Build the launch configuration selection area and put it into the composite.
 		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
@@ -602,6 +604,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		separator.setLayoutData(gd);
 		
 		dialogComp.layout(true);
+		applyDialogFont(dialogComp);
 	}
 	
 	/**
@@ -637,6 +640,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the composite used for launch configuration selection area
 	 */ 
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
+		Font font = parent.getFont();
 		Composite comp = new Composite(parent, SWT.NONE);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
@@ -644,11 +648,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
+		comp.setFont(font);
 		
 		setTreeLabel(new Label(comp, SWT.NONE));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		getTreeLabel().setLayoutData(gd);
+		getTreeLabel().setFont(font);
 		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
 		// TODO: tooltip		
 		//updateTreeLabelTooltip();
@@ -664,6 +670,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
 		gd.widthHint = 0;
 		control.setLayoutData(gd);
+		control.setFont(font);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			/**
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
@@ -724,6 +731,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see Dialog#createButtonBar(Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
@@ -731,18 +739,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setFont(font);
 
 		GridLayout pmLayout = new GridLayout();
 		pmLayout.numColumns = 3;
 		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
 		Button cancelButton = createButton(getProgressMonitorPart(), ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
+		getProgressMonitorCancelButton().setFont(font);
 		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setCancelButtonPressed(true);
 			}
 		});
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		getProgressMonitorPart().setFont(font);
 		getProgressMonitorPart().setVisible(false);
 
 		return super.createButtonBar(composite);
