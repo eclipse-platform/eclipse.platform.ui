@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -998,26 +999,32 @@ public void updateEditorTab(PartPane pane,String title,boolean isDirty,Image ima
 		title = "*" + title;//$NON-NLS-1$
 	tab.setText(title);
 
+	boolean useColorIcons = ActionContributionItem.getUseColorIconsInToolbars();
+	
 	// Update the tab image
 	if (image == null || image.isDisposed()) {
 		// Normal image.
 		tab.setImage(null);
 		// Disabled image.
-		Image disableImage = tab.getDisabledImage();
-		if (disableImage != null) {
-			disableImage.dispose();
-			tab.setDisabledImage(null);
+		if (!useColorIcons) {
+			Image disableImage = tab.getDisabledImage();
+			if (disableImage != null) {
+				disableImage.dispose();
+				tab.setDisabledImage(null);
+			}
 		}
 	} else if (!image.equals(tab.getImage())) {
 		// Normal image.
 		tab.setImage(image);
 		// Disabled image.
-		Image disableImage = tab.getDisabledImage();
-		if (disableImage != null)
-			disableImage.dispose();
-		Display display = tab.getDisplay();
-		disableImage = new Image(display, image, SWT.IMAGE_DISABLE);
-		tab.setDisabledImage(disableImage);
+		if (!useColorIcons) {
+			Image disableImage = tab.getDisabledImage();
+			if (disableImage != null)
+				disableImage.dispose();
+			Display display = tab.getDisplay();
+			disableImage = new Image(display, image, SWT.IMAGE_DISABLE);
+			tab.setDisabledImage(disableImage);
+		}
 	}
 
 	// Tool tip.
