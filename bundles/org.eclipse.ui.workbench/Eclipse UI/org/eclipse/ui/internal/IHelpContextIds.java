@@ -98,6 +98,7 @@ public interface IHelpContextIds {
 	public static final String CYCLE_PERSPECTIVE_FORWARD_ACTION = PREFIX + "cycle_perspective_forward_action_context"; //$NON-NLS-1$
 	public static final String CYCLE_PERSPECTIVE_BACKWARD_ACTION = PREFIX + "cycle_perspective_backward_action_context"; //$NON-NLS-1$
 	public static final String ACTIVATE_EDITOR_ACTION = PREFIX + "activate_editor_action_context"; //$NON-NLS-1$
+	public static final String OPEN_WORKSPACE_FILE_ACTION = PREFIX + "open_workspace_file_action_context"; //$NON-NLS-1$	
 		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
@@ -127,7 +128,8 @@ public interface IHelpContextIds {
 	public static final String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_EDITORS_DIALOG = PREFIX + "workbench_editors_dialog"; //$NON-NLS-1$
 	public static final String WELCOME_PAGE_SELECTION_DIALOG = PREFIX + "welcome_page_selection_dialog"; //$NON-NLS-1$
-	
+	public static final String OPEN_RESOURCE_DIALOG = PREFIX + "open_resource_dialog"; //$NON-NLS-1$
+		
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$
 	
