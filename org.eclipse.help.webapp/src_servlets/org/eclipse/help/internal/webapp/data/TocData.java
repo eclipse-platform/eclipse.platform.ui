@@ -177,8 +177,6 @@ public class TocData extends RequestData {
 			out.write(
 				"<a href='"
 					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "' title='"
-					+ UrlUtil.htmlEncode(topic.getLabel())
 					+ "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
@@ -201,8 +199,6 @@ public class TocData extends RequestData {
 			out.write(
 				"<a href='"
 					+ UrlUtil.getHelpURL(topic.getHref())
-					+ "' title='"
-					+ UrlUtil.htmlEncode(topic.getLabel())
 					+ "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);

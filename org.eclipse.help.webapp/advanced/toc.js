@@ -7,7 +7,6 @@
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-var isIE50 = navigator.userAgent.indexOf('MSIE 5.0') != -1;
 
 var oldActive;
 var oldActiveClass = "";
@@ -401,17 +400,23 @@ function focusHandler(e)
  * display topic label in the status line on mouse over topic
  */
 function mouseMoveHandler(e) {
-  var overNode = getTarget(e);
-  if (!overNode) return;
+	var overNode = getTarget(e);
+ 	if (!overNode) return;
   	
-  overNode = getAnchorNode(overNode);
-  if (overNode == null)
-   return;
+	overNode = getAnchorNode(overNode);
+	if (overNode == null)
+		return;
  
-  if (isMozilla)
-     e.cancelBubble = false;
+	if (isMozilla)
+		e.cancelBubble = false;
   	 
-  window.status = overNode.title;
+	if (overNode.title == "") {
+		if (overNode.innerText)
+			overNode.title = overNode.innerText;
+		else if (overNode.text)
+			overNode.title = overNode.text;
+	}
+	window.status = overNode.title;
 }
 
 /**
