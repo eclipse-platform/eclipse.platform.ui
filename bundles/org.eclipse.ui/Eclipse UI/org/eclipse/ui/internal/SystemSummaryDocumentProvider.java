@@ -99,7 +99,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 * Appends a timestamp.
 	 */
 	private void appendTimestamp(PrintWriter writer) {
-		writer.print("Date: "); //$NON-NLS-1$
+		writer.print("*** Date: "); //$NON-NLS-1$
 		writer.println(new Date());
 	}
 	
@@ -108,7 +108,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendProperties(PrintWriter writer) {
 		writer.println();
-		writer.println("System properties:"); //$NON-NLS-1$
+		writer.println("*** System properties:"); //$NON-NLS-1$
 		Properties properties= System.getProperties();
 		SortedSet set= new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -132,7 +132,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendRegistry(PrintWriter writer) {
 		writer.println();
-		writer.println("Plugin Registry:"); //$NON-NLS-1$
+		writer.println("*** Plugin Registry:"); //$NON-NLS-1$
 		IPluginDescriptor[] descriptors= Platform.getPluginRegistry().getPluginDescriptors();
 		SortedSet set= new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -161,7 +161,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 					writer.print(" (");
 					writer.print(fragment.getVersion());
 					writer.print(")\t");
-					writer.println(fragment.getName());
+					writer.print(fragment.getName());
 				}
 				writer.println();
 			}
@@ -173,7 +173,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendUpdateManagerLog(PrintWriter writer) {
 		writer.println();
-		writer.println("Update Manager Log:"); //$NON-NLS-1$
+		writer.println("*** Update Manager Log:"); //$NON-NLS-1$
 		ILocalSite site;
 		try {
 			site = SiteManager.getLocalSite();
@@ -184,6 +184,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		IInstallConfiguration[] configurations = site.getConfigurationHistory();
 		for (int i = 0; i < configurations.length; i++) {
 			writer.println();
+			if (i>0)
+				writer.println("----------------------------------------------------"); //$NON-NLS-1$
 			writer.print("Configuration=");
 			writer.println(configurations[i].getLabel());
 			writer.print("Current configuration=");
@@ -210,7 +212,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		File log= new File(InternalPlatform.getMetaArea().getLogLocation().toOSString());
 		if (log.exists()) {
 			writer.println();
-			writer.println("Error Log:"); //$NON-NLS-1$
+			writer.println("*** Error Log:"); //$NON-NLS-1$
 			
 			FileReader reader= null;
 			try {
