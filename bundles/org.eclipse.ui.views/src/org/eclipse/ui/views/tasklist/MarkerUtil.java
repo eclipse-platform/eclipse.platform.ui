@@ -458,8 +458,7 @@ public static boolean isMarkerType(IMarker marker, String type) {
  * Returns whether the given marker is read-only.
  */
 public static boolean isReadOnly(IMarker marker) {
-	return marker.getAttribute("readOnly", false)
-	 || getMessage(marker).startsWith("[RO]");  // TODO: for debugging only 
+	return marker.getAttribute("readOnly", false);  // $NON-NLS$
 }
 
 /**
