@@ -1052,13 +1052,13 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+Space"
-            scope="org.eclipse.ui.textEditorScope"
+            scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+Space"
-            scope="org.eclipse.ui.textEditorScope"
+            scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
