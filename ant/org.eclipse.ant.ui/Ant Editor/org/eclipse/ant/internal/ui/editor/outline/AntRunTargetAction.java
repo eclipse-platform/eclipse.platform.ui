@@ -143,7 +143,12 @@ public class AntRunTargetAction extends Action {
 			if (structuredSelection.size() == 1) {
 				Object selectedResource = structuredSelection.getFirstElement();
 				if (selectedResource instanceof AntTargetNode) {
-					selectedTarget = ((AntTargetNode)selectedResource).getTarget().getName();
+					AntTargetNode targetNode= (AntTargetNode)selectedResource;
+					if (targetNode.isDefaultTarget()) {
+						selectedTarget= ""; //$NON-NLS-1$
+					} else {
+						selectedTarget= targetNode.getTarget().getName();
+					}
 				} else if (selectedResource instanceof AntProjectNode) {
 					selectedTarget = ""; //$NON-NLS-1$
 				}
