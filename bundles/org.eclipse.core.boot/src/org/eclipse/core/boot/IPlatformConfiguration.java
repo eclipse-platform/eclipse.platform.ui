@@ -217,9 +217,10 @@ public interface IPlatformConfiguration {
 		public String getFeatureApplication();
 		
 		/**
-		 * Returns URLs to the feature "root" locations. The rool
-		 * URL are install locations of the feature plugin and its
-		 * fragments
+		 * Returns URLs to the feature "root" locations. The root
+		 * URLs are install locations of the feature plugin and its
+		 * fragments.
+		 *
 		 * @return array of URLs, or an empty array
 		 * @since 2.0
 		 */
