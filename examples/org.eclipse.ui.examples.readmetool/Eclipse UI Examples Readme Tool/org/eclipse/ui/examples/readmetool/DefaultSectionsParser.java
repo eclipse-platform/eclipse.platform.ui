@@ -63,7 +63,9 @@ public class DefaultSectionsParser implements IReadmeFileParser {
             }
             return out.toString();
         } catch (CoreException e) {
+            // do nothing
         } catch (IOException e) {
+            // do nothing
         }
         return ""; //$NON-NLS-1$
     }

@@ -31,6 +31,7 @@ public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
      * Creates a new adaptable list with the given children.
      */
     public AdaptableList() {
+        // do nothing
     }
 
     /**

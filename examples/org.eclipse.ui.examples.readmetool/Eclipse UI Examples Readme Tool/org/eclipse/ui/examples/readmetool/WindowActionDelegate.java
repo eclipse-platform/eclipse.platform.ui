@@ -34,6 +34,7 @@ public class WindowActionDelegate implements IWorkbenchWindowActionDelegate {
      * Method declared on IWorkbenchActionDelegate
      */
     public void dispose() {
+        // do nothing
     }
 
     /* (non-Javadoc)

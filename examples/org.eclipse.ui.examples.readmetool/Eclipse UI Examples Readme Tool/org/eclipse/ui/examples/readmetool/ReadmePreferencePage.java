@@ -224,6 +224,7 @@ public class ReadmePreferencePage extends PreferencePage implements
      * Method declared on IWorkbenchPreferencePage
      */
     public void init(IWorkbench workbench) {
+        // do nothing
     }
 
     /**

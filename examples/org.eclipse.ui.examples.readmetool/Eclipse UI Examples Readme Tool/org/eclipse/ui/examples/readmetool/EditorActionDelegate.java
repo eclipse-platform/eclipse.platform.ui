@@ -27,6 +27,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
      * Creates a new EditorActionDelegate.
      */
     public EditorActionDelegate() {
+        // do nothing
     }
 
     /* (non-Javadoc)
@@ -40,7 +41,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
 
     /** 
      * The <code>EditorActionDelegate</code> implementation of this
-     * <code>IActionDelegate</code> method 
+     * <code>IActionDelegate</code> method does nothing.
      *
      * Selection in the desktop has changed. Plugin provider
      * can use it to change the availability of the action
@@ -54,11 +55,12 @@ public class EditorActionDelegate implements IEditorActionDelegate {
      * the delegate has been loaded.</p>
      */
     public void selectionChanged(IAction action, ISelection selection) {
+        // do nothing
     }
 
     /** 
      * The <code>EditorActionDelegate</code> implementation of this
-     * <code>IEditorActionDelegate</code> method 
+     * <code>IEditorActionDelegate</code> method remembers the active editor.
      *
      * The matching editor has been activated. Notification
      * guarantees that only editors that match the type for which 

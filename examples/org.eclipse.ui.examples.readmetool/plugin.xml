@@ -13,7 +13,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.jface.text"/>
@@ -382,6 +382,10 @@
                value="english">
          </attribute>
       </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.ui.examples.readmetool.ReadmePreferenceInitializer"/>
    </extension>
 
 </plugin>

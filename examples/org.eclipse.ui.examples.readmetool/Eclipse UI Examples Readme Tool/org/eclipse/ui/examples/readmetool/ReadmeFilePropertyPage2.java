@@ -213,11 +213,13 @@ public class ReadmeFilePropertyPage2 extends PropertyPage {
             } catch (CoreException e) {
                 length = 0;
             } catch (IOException e) {
+                // do nothing
             } finally {
                 if (contentStream != null) {
                     try {
                         contentStream.close();
                     } catch (IOException e) {
+                        // do nothing
                     }
                 }
             }

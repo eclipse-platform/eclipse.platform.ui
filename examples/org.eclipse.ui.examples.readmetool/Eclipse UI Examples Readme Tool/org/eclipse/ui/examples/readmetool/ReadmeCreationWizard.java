@@ -35,7 +35,7 @@ public class ReadmeCreationWizard extends Wizard implements INewWizard {
     }
 
     /** (non-Javadoc)
-     * Method declared on INewWizard
+     * Method declared on IWorkbenchWizard
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.workbench = workbench;

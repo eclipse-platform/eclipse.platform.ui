@@ -94,11 +94,13 @@ public class MarkElementProperties implements IPropertySource {
      * Method declared on IPropertySource
      */
     public void resetPropertyValue(Object property) {
+        // do nothing
     }
 
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
     public void setPropertyValue(Object name, Object value) {
+        // do nothing
     }
 }

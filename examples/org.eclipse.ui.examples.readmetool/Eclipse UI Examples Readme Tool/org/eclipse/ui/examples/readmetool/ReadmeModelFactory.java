@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joe Bowbeer (jozart@blarg.net) - removed dependency on runtime compatibility layer (bug 74526)
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
@@ -16,7 +17,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,6 +37,7 @@ public class ReadmeModelFactory {
      * Creates a new ReadmeModelFactory.
      */
     private ReadmeModelFactory() {
+        // do nothing
     }
 
     /**
@@ -130,8 +131,7 @@ public class ReadmeModelFactory {
      * elaborate tool, all the extensions would be processed.
      */
     private void loadParser() {
-        IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-        IExtensionPoint point = pluginRegistry.getExtensionPoint(
+        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(
                 IReadmeConstants.PLUGIN_ID, IReadmeConstants.PP_SECTION_PARSER);
         if (point != null) {
             IExtension[] extensions = point.getExtensions();

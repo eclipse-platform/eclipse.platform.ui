@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joe Bowbeer (jozart@blarg.net) - removed dependency on runtime compatibility layer (bug 74526)
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
@@ -20,8 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * used by the readme tool.
  */
 public class ReadmeImages {
-    static final URL BASE_URL = ReadmePlugin.getDefault().getDescriptor()
-            .getInstallURL();
+    static final URL BASE_URL = ReadmePlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 
     static final ImageDescriptor EDITOR_ACTION1_IMAGE;
 
@@ -81,6 +81,7 @@ public class ReadmeImages {
             URL url = new URL(BASE_URL, path);
             return ImageDescriptor.createFromURL(url);
         } catch (MalformedURLException e) {
+            // do nothing
         }
         return ImageDescriptor.getMissingImageDescriptor();
     }

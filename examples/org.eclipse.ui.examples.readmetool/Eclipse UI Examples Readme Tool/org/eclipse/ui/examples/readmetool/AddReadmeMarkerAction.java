@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joe Bowbeer (jozart@blarg.net) - removed dependency on runtime compatibility layer (bug 74528)
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
@@ -22,9 +23,9 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.osgi.framework.Bundle;
 
 /**
  * Action for creating a readme marker with a specfic id 
@@ -93,8 +94,8 @@ public class AddReadmeMarkerAction extends Action {
             MarkerUtilities
                     .createMarker(getResource(), attributes, MARKER_TYPE);
         } catch (CoreException x) {
-            Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog()
-                    .log(x.getStatus());
+            Bundle bundle = Platform.getBundle(ReadmePlugin.PLUGIN_ID);
+            Platform.getLog(bundle).log(x.getStatus());
 
             Shell shell = textEditor.getSite().getShell();
             String title = MessageUtil

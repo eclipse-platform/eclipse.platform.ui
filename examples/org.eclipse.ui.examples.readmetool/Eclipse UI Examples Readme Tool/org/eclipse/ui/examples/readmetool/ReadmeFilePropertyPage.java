@@ -122,6 +122,7 @@ public class ReadmeFilePropertyPage extends PropertyPage {
                     try {
                         contentStream.close();
                     } catch (IOException e) {
+                        // do nothing
                     }
                 }
             }
