@@ -87,10 +87,7 @@ public class DrillDownComposite extends Composite {
         toolBarMgr.update(true);
 
         // Set tree layout.
-        GridData gid = new GridData();
-        gid.grabExcessHorizontalSpace = gid.grabExcessVerticalSpace = true;
-        gid.horizontalAlignment = gid.verticalAlignment = GridData.FILL;
-        fChildTree.getTree().setLayoutData(gid);
+        fChildTree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout();
     }
 }

@@ -187,7 +187,7 @@ public class ContainerSelectionGroup extends Composite {
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
         setLayout(layout);
-        setLayoutData(new GridData(GridData.FILL_BOTH));
+        setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label label = new Label(this, SWT.WRAP);
         label.setText(message);
@@ -217,9 +217,7 @@ public class ContainerSelectionGroup extends Composite {
     protected void createTreeViewer(int heightHint) {
         // Create drill down.
         DrillDownComposite drillDown = new DrillDownComposite(this, SWT.BORDER);
-        GridData spec = new GridData(GridData.VERTICAL_ALIGN_FILL
-                | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
-                | GridData.GRAB_VERTICAL);
+        GridData spec = new GridData(SWT.FILL, SWT.FILL, true, true);
         spec.widthHint = SIZING_SELECTION_PANE_WIDTH;
         spec.heightHint = heightHint;
         drillDown.setLayoutData(spec);

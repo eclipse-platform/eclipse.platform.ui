@@ -160,8 +160,7 @@ public class ResourceAndContainerGroup implements Listener {
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.GRAB_HORIZONTAL));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         composite.setFont(font);
 
         // container group
