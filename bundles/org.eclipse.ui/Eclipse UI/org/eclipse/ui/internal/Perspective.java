@@ -1323,8 +1323,18 @@ void showFastView(IViewPart part) {
 public IViewPart showView(String viewID) 
 	throws PartInitException 
 {
-	IViewReference ref = getViewFactory().createView(viewID);
-	IViewPart part = (IViewPart)ref.getPart(true);
+	ViewFactory factory = getViewFactory();
+	IViewReference ref = factory.createView(viewID);
+	IViewPart part = (IViewPart)ref.getPart(false);
+	if(part == null) {
+		IStatus status = factory.restoreView(ref);
+		if(status.getSeverity() == IStatus.ERROR) {
+			if(status.getException() instanceof PartInitException)
+				throw (PartInitException)status.getException();
+			else
+				throw new PartInitException(status);
+		}
+	}
 	ViewSite site = (ViewSite)part.getSite();
 	ViewPane pane = (ViewPane)site.getPane();
 	
