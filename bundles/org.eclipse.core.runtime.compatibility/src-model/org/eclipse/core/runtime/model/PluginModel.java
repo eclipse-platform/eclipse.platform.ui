@@ -82,9 +82,8 @@ public abstract class PluginModel extends PluginModelObject {
 		return id;
 	}
 	/**
-	 * Returns the location of the plug-in manifest file (e.g., <code>plugin.xml</code>)
-	 * which corresponds to this plug-in descriptor.  The location is in the
-	 * form of a URL.
+	 * Returns the location of the plug-in corresponding to this plug-in 
+	 * descriptor.  The location is in the form of a URL.
 	 *
 	 * @return the location of this plug-in descriptor or <code>null</code>.
 	 */
