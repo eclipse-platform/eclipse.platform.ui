@@ -669,7 +669,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			getStepFilterManager().launchAdded(launch);
 		}
 		
-		DebugContextManager.getDefault().launchAdded(launch);
+		DebugContextManager.getDefault().launchesAdded(new ILaunch[] { launch });
 		
 		getLaunchConfigurationManager().startup();
 	}

@@ -74,7 +74,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.ILaunchListener2;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -1328,11 +1327,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				case CHANGED:
 					if (isRegistered(fLaunch)) {
 						fListener.launchChanged(fLaunch);
-					}
-					break;
-				case TERMINATE:
-					if (fListener instanceof ILaunchListener2 && isRegistered(fLaunch)) {
-						((ILaunchListener2)fListener).launchTerminated(fLaunch);
 					}
 					break;
 			}			

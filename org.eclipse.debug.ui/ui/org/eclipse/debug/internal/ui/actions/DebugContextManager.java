@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener2;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.EnabledSubmission;
@@ -30,7 +30,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
  * 
  * @since 3.0
  */
-public class DebugContextManager implements ILaunchListener2 {
+public class DebugContextManager implements ILaunchesListener2 {
 	
 	
 	private static final String DEBUG_SCOPE = "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
@@ -86,29 +86,39 @@ public class DebugContextManager implements ILaunchListener2 {
 		}
 	}
 	
-	public synchronized void launchAdded(ILaunch launch) {
-		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
-			setDebugging(true);
+	public synchronized void launchesAdded(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i].getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+				setDebugging(true);
+				return;
+			}
 		}
 	}
 		
-	public void launchRemoved(ILaunch launch) {
+	public void launchesRemoved(ILaunch[] launches) {
 	}	
 	
-	public void launchChanged(ILaunch launch) {
+	public void launchesChanged(ILaunch[] launches) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener2#launchTerminated(org.eclipse.debug.core.ILaunch)
 	 */
-	public synchronized void launchTerminated(ILaunch launch) {
-		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+	public synchronized void launchesTerminated(ILaunch[] launches) {
+		boolean debugLaunchTerminated = false;
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i].getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+				debugLaunchTerminated= true;
+				break;
+			}
+		}
+		if (debugLaunchTerminated) {
 			// if nothing left in debug mode, turn debugging off
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunch[] launches = manager.getLaunches();
-			for (int i = 0; i < launches.length; i++) {
-				ILaunch l = launches[i];
-				if (ILaunchManager.DEBUG_MODE.equals(l.getLaunchMode()) && !launch.isTerminated()) {
+			ILaunch[] remainingLaunches = manager.getLaunches();
+			for (int i = 0; i < remainingLaunches.length; i++) {
+				ILaunch l = remainingLaunches[i];
+				if (ILaunchManager.DEBUG_MODE.equals(l.getLaunchMode()) && !l.isTerminated()) {
 					// still debugging
 					return;
 				}
