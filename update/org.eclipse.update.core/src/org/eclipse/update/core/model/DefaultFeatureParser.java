@@ -790,9 +790,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				}
 				if (objectStack.peek() instanceof URLEntryModel) {
 					info = (URLEntryModel) objectStack.pop();
-					if (text == null || "".equalsIgnoreCase(text.trim())){
-						internalError(Policy.bind("DefaultFeatureParser.NoLicenseText"));//$NON-NLS-1$						
-					} else {
+					if (text !=null){
 						info.setAnnotation(text);
 					}
 
