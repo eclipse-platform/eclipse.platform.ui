@@ -88,9 +88,9 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	/**
 	 * A canvas that adds listeners to all its children.
 	 */
-	class CompositeRulerCanvas extends Canvas {
+	static class CompositeRulerCanvas extends Canvas {
 		
-		private class ListenerInfo {
+		private static class ListenerInfo {
 			Listener listener;
 			int eventType;
 		};
@@ -117,6 +117,14 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 					}
 				}
 			};
+			addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					if (fCachedListeners != null) {
+						fCachedListeners.clear();
+						fCachedListeners= null;
+					}
+				}
+			});
 		}
 		
 		/* 
@@ -197,10 +205,9 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	
 	private ITextViewer fTextViewer;
 	private CompositeRulerCanvas fComposite;
-	
-	private List fDecorators= new ArrayList(2);
 	private IAnnotationModel fModel;
 	
+	private List fDecorators= new ArrayList(2);	
 	private Point fLocation= new Point(-1, -1);
 	private int fLastMouseButtonActivityLine= -1;
 	
@@ -270,7 +277,10 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		
 		parent.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				fTextViewer= null;		
+				fTextViewer= null;
+				fComposite= null;
+				fModel= null;
+				fDecorators.clear();
 			}
 		});
 		
