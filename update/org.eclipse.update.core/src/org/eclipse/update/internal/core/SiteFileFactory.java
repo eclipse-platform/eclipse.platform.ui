@@ -114,7 +114,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, getResourceBundle(url));
-			site.markReadOnly();
+			
+			// Do not set read only as may install in it
+			//site.markReadOnly();
 
 		} finally {
 			try {

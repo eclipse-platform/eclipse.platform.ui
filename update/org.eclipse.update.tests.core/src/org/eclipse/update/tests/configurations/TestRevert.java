@@ -64,7 +64,7 @@ public class TestRevert extends UpdateManagerTestCase {
 
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration();
-		newConfig.setLabel("new Label");		
+		//newConfig.setLabel("new Label");		
 		IConfiguredSite anotherConfigSite = newConfig2.getConfiguredSites()[0];
 		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		
 		site.addConfiguration(newConfig2);		
