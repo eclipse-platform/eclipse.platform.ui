@@ -99,18 +99,19 @@ public class UserValidationDialog extends Dialog {
 			data.widthHint = 400;
 			messageLabel.setLayoutData(data);
 		}
-		
-		Label label = new Label(main, SWT.WRAP);
-		if (isUsernameMutable) {
-			label.setText(Policy.bind("UserValidationDialog.labelUser", domain)); //$NON-NLS-1$
-		} else {
-			label.setText(Policy.bind("UserValidationDialog.labelPassword", new Object[] {defaultUsername, domain})); //$NON-NLS-1$
+
+		if (domain != null) {
+			Label label = new Label(main, SWT.WRAP);
+			if (isUsernameMutable) {
+				label.setText(Policy.bind("UserValidationDialog.labelUser", domain)); //$NON-NLS-1$
+			} else {
+				label.setText(Policy.bind("UserValidationDialog.labelPassword", new Object[]{defaultUsername, domain})); //$NON-NLS-1$
+			}
+			GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+			data.horizontalSpan = 3;
+			data.widthHint = 400;
+			label.setLayoutData(data);
 		}
-		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 3;
-		data.widthHint = 400;
-		label.setLayoutData(data);
-		
 		createUsernameFields(main);
 		createPasswordFields(main);
 	

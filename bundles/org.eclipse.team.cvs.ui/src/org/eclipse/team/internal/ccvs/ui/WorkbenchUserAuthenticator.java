@@ -12,8 +12,8 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -101,7 +101,8 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	private void promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
-		UserValidationDialog dialog = new UserValidationDialog(shell, location.getLocation(), (username==null)?"":username, message);//$NON-NLS-1$
+		String domain = location == null ? null : location.getLocation();
+		UserValidationDialog dialog = new UserValidationDialog(shell, domain, (username==null)?"":username, message);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
 		dialog.open();
 		shell.dispose();
@@ -151,8 +152,9 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						   final boolean[] echo) {
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
+		String domain = location == null ? null : location.getLocation();
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
-										 location.getLocation(),
+										 domain,
 										 destination,
 										 name,
 										 instruction,
@@ -176,6 +178,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		if (result == Dialog.CANCEL) return null;
 		return dialog.getPassword();
 	}
+	
 	/**
 	 * Special alternate prompting.
 	 */

@@ -72,7 +72,8 @@ public interface IUserAuthenticator {
 	 * user name and password if there is no saved one, or if <code>retry</code>
 	 * is <code>true</code>.
 	 *
-	 * @param location The repository location to authenticate the user for.
+	 * @param location The repository location to authenticate the user for or <code>null</code>
+	 * if this authentication is not for a CVS repository location.
 	 * @param info The object to place user validation information into.
 	 * @param retry <code>true</code> if a previous attempt to log in failed.
 	 * @param message An optional message to display if, e.g., previous authentication failed.
@@ -85,7 +86,8 @@ public interface IUserAuthenticator {
 	 * the <core>prompt</code> array.  Implementors will return the entered values, or null if
 	 * the user cancel the prompt.
 	 *
-	 * @param location The repository location to authenticate the user for.
+	 * @param location The repository location to authenticate the user for or <code>null</code>
+	 * if this authentication is not for a CVS repository location.
 	 * @param destination The destination in the format like username@hostname:port
 	 * @param name A name about this dialog.
 	 * @param instruction A message for the instruction.
@@ -102,7 +104,8 @@ public interface IUserAuthenticator {
 	 * request. A default implementation of this method should return the <code>defaultResponse</code>,
 	 * whereas alternate implementations could prompt the user with a dialog.
 	 * 
-	 * @param location the repository location for this authentication
+	 * @param location the repository location for this authentication or <code>null</code>
+	 * if this authentication is not for a CVS repository location.
 	 * @param promptType one of the following values:
 	 * <ul>
 	 *	<li> <code>NONE</code> for a unspecified prompt type </li>
