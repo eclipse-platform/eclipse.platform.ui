@@ -328,10 +328,14 @@ public void setErrorMessage(String errorMessage) {
 		// show the message
 		// avoid calling setMessage in case it is overridden to call setErrorMessage, 
 		// which would result in a recursive infinite loop
-		messageLabel.setText(message == null ? "" : message);
+		if (message == null)	//this should probably never happen since setMessage does this conversion....
+			message = "";		//$NON-NLS-1$
+		messageLabel.setText(message);
+		messageLabel.setToolTipText(message);
 
 	} else {
 		messageLabel.setText(errorMessage);
+		messageLabel.setToolTipText(errorMessage);
 		if (!messageImage.getVisible()) {
 			// we were not previously showing an error
 
@@ -361,9 +365,11 @@ public void setMessage(String newMessage) {
 	message = newMessage;
 	if (message == null)
 		message = "";//$NON-NLS-1$
-	if (!messageImage.getVisible()) 
+	if (!messageImage.getVisible()) {
 		// we are not showing an error
 		messageLabel.setText(message);
+		messageLabel.setToolTipText(message);
+	}
 }
 /**
  * Sets the title to be shown in the title area of this dialog.
