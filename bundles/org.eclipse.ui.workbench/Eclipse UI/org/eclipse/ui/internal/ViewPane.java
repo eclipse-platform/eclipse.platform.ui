@@ -445,9 +445,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		status = new CLabel(control, SWT.LEFT);
 		status.setBackground(status.getParent().getBackground());
-		//status.setBackground(new Color(status.getDisplay(), 216, 224, 248));
-		status.setFont(new Font(status.getDisplay(), "Arial", 9, SWT.NORMAL)); //$NON-NLS-1$
-		
+	
 		updateTitles();
 
 		// Listen to title changes.
