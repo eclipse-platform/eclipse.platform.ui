@@ -183,6 +183,7 @@ public void shutdown() throws CoreException {
 	if (workspace == null) {
 		return;
 	}
+	getPlugin().savePluginPreferences();
 	workspace.close(null);
 	
 	/* Forget workspace only if successfully closed, to
