@@ -1,10 +1,11 @@
 package org.eclipse.ui.internal.progress;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * This singleton remembers all JobTreeElements that should be
@@ -45,8 +46,10 @@ class FinishedJobs {
     private FinishedJobs() {
         listener = new IJobProgressManagerListener() {
             public void addJob(JobInfo info) {
+            	checkForDuplicates(info);
             }
             public void addGroup(GroupInfo info) {
+            	checkForDuplicates(info);
             }
             public void refreshJobInfo(JobInfo info) {
                 checkTasks(info);
@@ -71,7 +74,7 @@ class FinishedJobs {
     /**
      * Returns true if JobInfo indicates that it must be kept.
      */
-    boolean keep(JobInfo info) {
+    static boolean keep(JobInfo info) {
         Job job = info.getJob();
         if (job != null) {
             Object prop = job.getProperty(NewProgressViewer.KEEP_PROPERTY);
@@ -79,6 +82,13 @@ class FinishedJobs {
                 if (((Boolean) prop).booleanValue())
                     return true;
             }
+            
+            prop = job.getProperty(NewProgressViewer.KEEPONE_PROPERTY);
+            if (prop instanceof Boolean) {
+                if (((Boolean) prop).booleanValue())
+                    return true;
+            }
+            
             IStatus status = job.getResult();
             if (status != null && status.getSeverity() == IStatus.ERROR)
                 return true;
@@ -99,12 +109,31 @@ class FinishedJobs {
     void removeListener(KeptJobsListener l) {
         listeners.remove(l);
     }
-
+    
+    private void checkForDuplicates(GroupInfo info) {
+    	Object[] objects = info.getChildren();
+    	for (int i= 0; i < objects.length; i++) {
+    		if (objects[i] instanceof JobInfo)
+    			checkForDuplicates((JobInfo) objects[i]);
+    	}
+    }
+    
+    private void checkForDuplicates(JobTreeElement info) {
+        JobTreeElement[] toBeRemoved= findJobsToRemove(info);        
+        if (toBeRemoved != null) {
+            for (int i = 0; i < toBeRemoved.length; i++) {
+				remove(null, toBeRemoved[i]);
+            }
+        }    	
+    }
+    
     /**
      * Add given Job to list of kept jobs.
      */
     private void add(JobInfo info) {
         boolean fire = false;
+        
+//        JobTreeElement[] toBeRemoved= null;
 
         synchronized (keptjobinfos) {
             if (!keptjobinfos.contains(info)) {
@@ -113,11 +142,19 @@ class FinishedJobs {
                 Object parent = info.getParent();
                 if (parent != null && !keptjobinfos.contains(parent))
                 	keptjobinfos.add(parent);
+  
+//            	toBeRemoved= findJobsToRemove(info);
 
                 timeStamp++;
                 fire = true;
             }
         }
+        
+//        if (toBeRemoved != null) {
+//            for (int i = 0; i < toBeRemoved.length; i++) {
+//				remove(null, toBeRemoved[i]);
+//            }
+//        }
 
         if (fire) {
             Object l[] = listeners.getListeners();
@@ -128,18 +165,90 @@ class FinishedJobs {
         }
     }
 
+	static void disposeAction(JobTreeElement jte) {
+		if (jte.isJobInfo()) {
+			JobInfo ji= (JobInfo) jte;
+			Job job= ji.getJob();
+			if (job != null) {
+				Object prop= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
+				if (prop instanceof ActionFactory.IWorkbenchAction)
+					((ActionFactory.IWorkbenchAction)prop).dispose();
+			}
+		}
+	}
+
+    private JobTreeElement[] findJobsToRemove(JobTreeElement info) {
+    	
+    	if (info.isJobInfo()) {
+    		Job myJob= null;
+    		if (info instanceof JobInfo)
+    			myJob= ((JobInfo)info).getJob();
+    		else if (info instanceof SubTaskInfo) {
+    			JobInfo parent= (JobInfo) ((SubTaskInfo)info).getParent();
+    			if (parent != null)
+    				myJob= parent.getJob();
+    		}
+    	
+	    	if (myJob != null) {
+
+	            Object prop = myJob.getProperty(NewProgressViewer.KEEPONE_PROPERTY);
+	            if (prop instanceof Boolean && ((Boolean) prop).booleanValue()) {
+		        	ArrayList found= null;
+		        	Object myRoot= getRoot(info);
+		        	JobTreeElement[] all;
+		    		synchronized (keptjobinfos) {
+		    			all= (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
+		    		}
+				    for (int i= 0; i < all.length; i++) {
+			    		JobTreeElement jte= all[i];
+			    		Object otherRoot= getRoot(jte);
+			    		if (otherRoot != myRoot && jte.isJobInfo()) {
+			    			JobInfo ji= (JobInfo) jte;
+			    			Job job= ji.getJob();
+			    			if (job != null && job.belongsTo(myJob)) {
+			    				if (NewProgressViewer.DEBUG) System.err.println("found other from family " + otherRoot);
+			    				if (found == null)
+			    					found= new ArrayList();
+			    				found.add(otherRoot);
+			    			}
+			    		}
+		    		}
+			    	if (found != null)
+			    		return (JobTreeElement[]) found.toArray(new JobTreeElement[found.size()]);
+	            }
+	    	}
+    	}
+    	return null;
+    }
+    
+    private static Object getRoot(JobTreeElement jte) {
+    	Object parent;
+    	while ((parent= jte.getParent()) != null)
+    		jte= (JobTreeElement) parent;
+    	return jte;
+    }
+
     private void checkTasks(JobInfo info) {
         if (keep(info)) {
 	        TaskInfo tinfo = info.getTaskInfo();
 	        if (tinfo != null) {
+	            JobTreeElement[] toBeRemoved= null;        
 	            boolean fire = false;
 	        	JobTreeElement element = (JobTreeElement) tinfo.getParent();
 	        	synchronized (keptjobinfos) {
-		        	if (element == info && !keptjobinfos.contains(tinfo)) {
+		        	if (element == info && !keptjobinfos.contains(tinfo)) {		        		
+		        		toBeRemoved= findJobsToRemove(element);
 		                keptjobinfos.add(tinfo);
 		                timeStamp++;
 		            }
 	        	}
+	        	
+	            if (toBeRemoved != null) {
+	                for (int i = 0; i < toBeRemoved.length; i++) {
+	    				remove(null, toBeRemoved[i]);
+	                }
+	            }    	
+
 	            if (fire) {
 	                Object l[] = listeners.getListeners();
 	                for (int i = 0; i < l.length; i++) {
@@ -156,6 +265,7 @@ class FinishedJobs {
    	
         synchronized (keptjobinfos) {
 	        if (keptjobinfos.remove(jte)) {
+	        	disposeAction(jte);
 	            if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
 	
 	            // delete all elements that have jte as their direct or indirect parent
@@ -163,8 +273,10 @@ class FinishedJobs {
 	            for (int i = 0; i < jtes.length; i++) {
 	            	JobTreeElement parent = (JobTreeElement) jtes[i].getParent();
 	                if (parent != null) {
-	                	if (parent == jte || parent.getParent() == jte)
-	                		keptjobinfos.remove(jtes[i]);
+	                	if (parent == jte || parent.getParent() == jte) {
+	                		if (keptjobinfos.remove(jtes[i]))
+	                			disposeAction(jtes[i]);
+	                	}
 	                }
 	            }
 	            fire = true;
@@ -176,7 +288,8 @@ class FinishedJobs {
 	        Object l[] = listeners.getListeners();
 	        for (int i = 0; i < l.length; i++) {
 	            KeptJobsListener jv = (KeptJobsListener) l[i];
-	            if (jv != sender) jv.removed(jte);
+	            if (jv != sender)
+	            	jv.removed(jte);
 	        }
         }
     }
