@@ -107,7 +107,7 @@ public class FeatureGeneralPropertyPage
 								| SWT.H_SCROLL
 								| SWT.BORDER
 								| SWT.WRAP);
-					//gd.heightHint = 300;
+					gd.heightHint = 200;
 					gd.widthHint = 350;
 					text.setEditable(false);
 					text.setText(annotation);
