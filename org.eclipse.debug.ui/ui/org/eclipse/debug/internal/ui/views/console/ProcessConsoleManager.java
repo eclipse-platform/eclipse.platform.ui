@@ -139,11 +139,19 @@ public class ProcessConsoleManager implements ILaunchListener {
                 if (process.getStreamsProxy() == null) {
                     continue;
                 }
+                ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+                if (launchConfiguration != null) {
+                    try {
+                        if ((!launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true)) && (launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null) == null)) {
+                            continue;
+                        }
+                    } catch (CoreException e1) {
+                    }
+                }
                 //create a new console.
                 IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
                 String encoding = null;
                 try {
-                    ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
                     if (launchConfiguration != null) {
                         encoding = launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
                     }

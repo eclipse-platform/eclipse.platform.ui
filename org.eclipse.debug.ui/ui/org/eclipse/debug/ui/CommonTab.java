@@ -20,10 +20,12 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -56,6 +58,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -102,6 +105,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private Button fDefaultEncodingButton;
     private Button fAltEncodingButton;
     private Combo fEncodingCombo;
+    private Button fConsoleOutput;
+    private Button fFileOutput;
+    private Text fFileText;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -187,6 +193,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					updateLaunchConfigurationDialog();
 				}
 			});
+		createVerticalSpacer(comp, 1);
+		addOutputCaptureBlock(comp);
 		
 		createVerticalSpacer(comp, 1);
 		addEncodingBlock(comp);
@@ -197,7 +205,68 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		Dialog.applyDialogFont(parent);
 	}
 	
-	private void addEncodingBlock(Composite parent) {
+    private void addOutputCaptureBlock(Composite parent) {
+        Group group = new Group(parent, SWT.NONE);
+        group.setText(LaunchConfigurationsMessages.getString("CommonTab.4")); //$NON-NLS-1$
+        GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+        group.setLayoutData(gd);
+        group.setLayout(new GridLayout(3, false));
+        
+        fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.5")); //$NON-NLS-1$
+        gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
+        gd.horizontalSpan = 3;
+        fConsoleOutput.setLayoutData(gd);
+        
+        fConsoleOutput.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fFileOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.6")); //$NON-NLS-1$
+        fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
+        fFileText.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, true, false));
+        final Button browse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
+        browse.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        
+        fFileOutput.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                boolean enabled = fFileOutput.getSelection();
+                fFileText.setEnabled(enabled);
+                browse.setEnabled(enabled);
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        browse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                String filePath = fFileText.getText();
+                FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+                
+                filePath = dialog.open();
+                if (filePath != null) {
+                    fFileText.setText(filePath);
+                }
+            }
+        });
+        
+        fFileText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                updateLaunchConfigurationDialog();
+            }
+        });
+    }
+
+    private boolean isValidFile(String file) {
+        IStatus status = ResourcesPlugin.getWorkspace().validateName(file, IResource.FILE);
+		if (status.getCode() != IStatus.OK) {
+		    return false;
+		}
+		return true;
+    }
+
+    private void addEncodingBlock(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	    
@@ -334,9 +403,32 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateFavoritesFromConfig(configuration);
 		updateLaunchInBackground(configuration);
 		updateEncoding(configuration);
+		updateConsoleOutput(configuration);
 	}
 	
-	protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
+	/**
+     * @param configuration
+     */
+    protected void updateConsoleOutput(ILaunchConfiguration configuration) {
+        boolean outputToConsole = true;
+        String outputFile = null;
+        
+        try {
+            outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+            outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+        } catch (CoreException e) {
+        }
+        
+        fConsoleOutput.setSelection(outputToConsole);
+        if (outputFile != null) {
+            fFileOutput.setSelection(true);
+            fFileText.setText(outputFile);
+        } else {
+            fFileOutput.setSelection(false);
+        }
+    }
+
+    protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
 	
@@ -501,10 +593,21 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		setErrorMessage(null);
 		
-		return validateLocalShared();		
+		return validateLocalShared() && validateConsoleOutputFile();
 	}
 	
-	private boolean validateLocalShared() {
+    private boolean validateConsoleOutputFile() {
+        if (fFileOutput.getSelection()) {
+            String file = fFileText.getText();
+            if (!isValidFile(file)) {
+                setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.8"));  //$NON-NLS-1$
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateLocalShared() {
 		if (isShared()) {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
@@ -540,7 +643,17 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		    encoding = fEncodingCombo.getText();
 		}
 		configuration.setAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, encoding);
-		
+		if (fConsoleOutput.getSelection()) {
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String)null);
+		} else {
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+		}
+		if (fFileOutput.getSelection()) {
+		    String file = fFileText.getText().replace('\\', '/');
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
+		} else {
+		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+		}
 	}
 
 	/* (non-Javadoc)
