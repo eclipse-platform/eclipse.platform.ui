@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
  
@@ -88,6 +89,10 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 			public void run() {
 				if (isAvailable()) {
 					getTreeViewer().refresh();
+					if (expressions.length > 0) {
+						ISelection selection = new StructuredSelection(expressions[0]); 
+						getTreeViewer().setSelection(selection, true);
+					}
 				}
 			}
 		};
