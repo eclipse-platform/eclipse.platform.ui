@@ -28,7 +28,9 @@ public class CompatibilityHelper {
 	public static Bundle compatibility = null;
 
 	public static Bundle initializeCompatibility() {
-		if (compatibility == null)
+		// if compatibility is stale (has been uninstalled or unresolved) 
+		// then we try to get a new resolved compatibility bundle
+		if (compatibility == null || (compatibility.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) != 0)
 			compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		return compatibility;
 	}
