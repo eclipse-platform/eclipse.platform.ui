@@ -513,7 +513,7 @@ public abstract class Action implements IAction {
      * or the <code>accelerator</code> tag in action definitions in 
      * plugin.xml.
      * 
-     * @see findModifier
+     * @see #findModifier
      */
     private static int findLocalizedModifier(String token) {
         if (LOCALIZED_CTRL == null)
@@ -982,6 +982,7 @@ public abstract class Action implements IAction {
      * Subclasses should override this method if they need information 
      * from the triggering event, or override <code>run()</code> if not.
      *
+     * @param event the SWT event which triggered this action being run 
      * @since 2.0
      */
     public void runWithEvent(Event event) {
