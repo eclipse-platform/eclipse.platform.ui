@@ -222,7 +222,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 					String mode = (String)fCombos[i].getData();
 					String def = DebugUIPlugin.getDefault().getPerspectiveManager().getDefaultLaunchPerspective(getLaunchConfigurationType(), mode);
 					if (def == null) {
-						fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.4")); //$NON-NLS-1$
+						fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.1")); //$NON-NLS-1$
 					} else {
 						IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(def);
 						fCombos[i].setText(descriptor.getLabel());
@@ -265,7 +265,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				}
 				if (persp == null) {
 					// select none
-					fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.5")); //$NON-NLS-1$
+					fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.1")); //$NON-NLS-1$
 				} else {
 					IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(persp);
 					fCombos[i].setText(descriptor.getLabel());
@@ -291,7 +291,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		if (!fInitializing) {
 			String mode = (String)combo.getData();
 			String persp = combo.getText();
-			if (persp.equals(LaunchConfigurationsMessages.getString("PerspectivesTab.6"))) { //$NON-NLS-1$
+			if (persp.equals(LaunchConfigurationsMessages.getString("PerspectivesTab.1"))) { //$NON-NLS-1$
 				persp = IDebugUIConstants.PERSPECTIVE_NONE;
 			} else {
 				persp = (String)fPerspectiveIds.get(persp);
