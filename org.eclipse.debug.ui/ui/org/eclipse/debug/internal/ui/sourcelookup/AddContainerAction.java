@@ -9,11 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * The action to add a new source container.

@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.swt.widgets.Shell;
 
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * THIS INTERFACE IS EXPERIMENTAL AND SUBJECT TO CHANGE
  * </p>
  * 
- *@see ISourceContainerType
+ *@see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType
  *@since 3.0
  */
 public interface ISourceContainerBrowser {
