@@ -302,22 +302,20 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 *  (FH: helper method)
 	 */
 	private int[] getLastItemIndices() {
-		int[] wrapIndices = coolBar.getWrapIndices();
-		int length = wrapIndices.length;
-		if ((length > 0) && (wrapIndices[0] == 0)) {
-			// remove entry for 0 wrap index if it exists
-			System.arraycopy(wrapIndices, 1, wrapIndices, 0, length - 1);
-		}
 		int count = coolBar.getItemCount();
-		if (count > 0) length++;
-		int[] lastIndices = new int [length];
-		for (int i = 0; i < wrapIndices.length; i++) {
-			lastIndices[i] =  wrapIndices[i] - 1;
-		}	
-		if (count > 0) {
-			lastIndices [lastIndices.length - 1] =  count - 1;
+		int[] indices = coolBar.getWrapIndices();
+		int n = indices.length;
+		if (n == 0) {
+			return count == 0 ? new int[0] : new int[] { count - 1 };
 		}
-		return lastIndices;
+		else {
+			// convert from first item indices to last item indices
+			for (int i = 0; i < n - 1; ++i) {
+				indices[i] = indices[i+1] - 1;
+			}
+			indices[n - 1] = count - 1;
+		}
+		return indices;
 	}
 	/**
 	 */
@@ -339,8 +337,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		//FH -> Save the preferred size as actual size for the last item on a row
 		int[] lastIndices = getLastItemIndices();
 		for (int i = 0; i < lastIndices.length; i++) {
-			CoolItem lastItem = coolBar.getItem(lastIndices[i]);	
-			layout.itemSizes [lastIndices[i]] = lastItem.getPreferredSize();		
+			int lastIndex = lastIndices[i];
+			if (lastIndex >= 0 && lastIndex < coolItems.length) {
+				CoolItem lastItem = coolItems[lastIndex];
+				layout.itemSizes[lastIndex] = lastItem.getPreferredSize();
+			}
 		}
 			
 		return layout;
