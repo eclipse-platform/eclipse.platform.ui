@@ -35,11 +35,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * resolve the conflicts. This action is temporary code; it will be removed
  * when a functional synchronize view has been implemented.
  */
-public class UpdateAction extends TeamAction {
+public class UpdateAction extends CVSAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					

@@ -32,7 +32,7 @@ import org.eclipse.team.ui.actions.TeamAction;
 /**
  * DefineTagAction remembers a tag by name
  */
-public class ConfigureTagsFromRepoView extends TeamAction {
+public class ConfigureTagsFromRepoView extends CVSAction {
 	IInputValidator validator = new IInputValidator() {
 		public String isValid(String newText) {
 			IStatus status = CVSTag.validateTagName(newText);
@@ -80,7 +80,7 @@ public class ConfigureTagsFromRepoView extends TeamAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
@@ -112,5 +112,12 @@ public class ConfigureTagsFromRepoView extends TeamAction {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		if (roots.length != 1) return false;
 		return true;
+	}
+	
+	/*
+	 * @see CVSAction#needsToSaveDirtyEditors()
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
 	}
 }

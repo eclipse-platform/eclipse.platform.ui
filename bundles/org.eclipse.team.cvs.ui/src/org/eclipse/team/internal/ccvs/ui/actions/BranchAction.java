@@ -23,9 +23,9 @@ import org.eclipse.team.internal.ccvs.ui.wizards.BranchWizard;
  */
 public class BranchAction extends CVSAction {
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute()
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		final Shell shell = getShell();
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {

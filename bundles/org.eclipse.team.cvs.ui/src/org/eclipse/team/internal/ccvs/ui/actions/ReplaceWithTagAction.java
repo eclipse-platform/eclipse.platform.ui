@@ -41,7 +41,7 @@ public class ReplaceWithTagAction extends CVSAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		
 		// Setup the holders
 		final IResource[] resource = new IResource[] {null};

@@ -24,19 +24,13 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	CVSTag[] tags;
 	
 	public CVSLocalCompareEditorInput(IResource[] resources, CVSTag[] tags) {
-		// we have to perform content comparison since files in different branches
-		// may have different revisions but the same contents. Consider these files
-		// for merge purposes as equal.
-		super(resources, IRemoteSyncElement.GRANULARITY_CONTENTS);
+		super(resources);
 		Assert.isTrue(resources.length == tags.length);
 		this.tags = tags;
 	}
 	
 	public CVSLocalCompareEditorInput(IResource[] resources, CVSTag tag) {
-		// we have to perform content comparison since files in different branches
-		// may have different revisions but the same contents. Consider these files
-		// for merge purposes as equal.
-		super(resources, IRemoteSyncElement.GRANULARITY_CONTENTS);
+		super(resources);
 		Assert.isTrue(tag != null);
 		this.tags = new CVSTag[] {tag};
 	}

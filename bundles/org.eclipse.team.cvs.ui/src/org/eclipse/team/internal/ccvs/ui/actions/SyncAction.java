@@ -19,11 +19,8 @@ import org.eclipse.ui.PartInitException;
 /**
  * Action for catchup/release in popup menus.
  */
-public class SyncAction extends TeamAction {
-	/*
-	 * Method declared on IActionDelegate.
-	 */
-	public void run(IAction action) {
+public class SyncAction extends CVSAction {
+	public void execute(IAction action) {
 		IResource[] resources = getSelectedResources();
 		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
 		if (view == null) {
@@ -39,10 +36,6 @@ public class SyncAction extends TeamAction {
 			view.showSync(new CVSSyncCompareInput(resources));
 		}
 	}
-	
-	/*
-	 * Method declared on IActionDelegate.
-	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		for (int i = 0; i < resources.length; i++) {

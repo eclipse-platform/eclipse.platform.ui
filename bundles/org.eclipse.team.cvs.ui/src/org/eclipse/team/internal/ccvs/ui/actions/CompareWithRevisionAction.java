@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 
-public class CompareWithRevisionAction extends TeamAction {
+public class CompareWithRevisionAction extends CVSAction {
 	/**
 	 * Returns the selected remote file
 	 */
@@ -39,10 +39,8 @@ public class CompareWithRevisionAction extends TeamAction {
 			return null;
 		}
 	}
-	/*
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
+
+	public void execute(IAction action) {
 		
 		// Setup holders
 		final ICVSRemoteFile[] file = new ICVSRemoteFile[] { null };
@@ -91,5 +89,12 @@ public class CompareWithRevisionAction extends TeamAction {
 		if (resources.length != 1) return false;
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
 		return cvsResource.isManaged();
+	}
+	
+	/*
+	 * @see CVSAction#needsToSaveDirtyEditors()
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
 	}
 }

@@ -21,13 +21,13 @@ import org.eclipse.team.ui.actions.TeamAction;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class SetKeywordSubstitutionAction extends TeamAction {
+public class SetKeywordSubstitutionAction extends CVSAction {
 	private KSubstOption previousOption = null; // automatic
 
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		final IResource[] resources = getSelectedResources();
 		KSubstWizard wizard = new KSubstWizard(resources, IResource.DEPTH_INFINITE, previousOption);
 		WizardDialog dialog = new ResizableWizardDialog(getShell(), wizard);

@@ -23,7 +23,7 @@ import org.eclipse.team.ui.actions.TeamAction;
  * NOTE: This is a temporary action and should eventually be replaced
  * by a create patch command in the compare viewer.
  */
-public class GenerateDiffFileAction extends TeamAction {
+public class GenerateDiffFileAction extends CVSAction {
 	/**
 	 * Makes sure that the projects of all selected resources are shared.
 	 * Returns true if all resources are shared, and false otherwise.
@@ -43,7 +43,7 @@ public class GenerateDiffFileAction extends TeamAction {
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		final String title = Policy.bind("GenerateCVSDiff.title"); //$NON-NLS-1$
 		final IResource[] resources = getSelectedResources();
 		GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(new StructuredSelection(resources), resources[0]);

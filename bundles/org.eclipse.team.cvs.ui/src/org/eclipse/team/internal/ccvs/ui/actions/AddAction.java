@@ -30,11 +30,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * AddAction performs a 'cvs add' command on the selected resources. If a
  * container is selected, its children are recursively added.
  */
-public class AddAction extends TeamAction {
+public class AddAction extends CVSAction {
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute()
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					

@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class CompareWithRemoteAction extends CompareWithTagAction {
 
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		IResource[] resources;
 		resources = getSelectedResources();
 		CVSTag[] tags = new CVSTag[resources.length];

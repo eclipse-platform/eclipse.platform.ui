@@ -25,8 +25,8 @@ import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class ReplaceWithRemoteAction extends TeamAction {
-	public void run(IAction action) {
+public class ReplaceWithRemoteAction extends CVSAction {
+	public void execute(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {

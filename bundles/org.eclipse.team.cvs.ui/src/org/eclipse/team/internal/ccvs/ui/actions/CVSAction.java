@@ -16,9 +16,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -33,16 +35,48 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
- * Contains helper methods for CVS actions.
- * 
- * [Note: it would be nice to have common CVS error handling
- * placed here and have all CVS actions subclass. For example
- * error handling UI could provide a retry facility for actions
- * if they have failed.]
+ * Superclass for all CVS actions. It provides helper enablement
+ * methods and common pre-run and post-run hadling.
  */
 abstract public class CVSAction extends TeamAction {
+	
+	/**
+	 * Common run method for all CVS actions.
+	 * 
+	 * [Note: it would be nice to have common CVS error handling
+	 * placed here and have all CVS actions subclass. For example
+	 * error handling UI could provide a retry facility for actions
+	 * if they have failed.]
+	 */
+	final public void run(IAction action) {
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors()) {
+				return;
+			}
+		}
+		execute(action);
+	}
+	
+	/**
+	 * Actions must override to do their work.
+	 */
+	abstract protected void execute(IAction action);
+	
+	/**
+	 * Answers if the action would like dirty editors to saved
+	 * based on the CVS preference before running the action. By
+	 * default most CVS action modify the workspace and thus should
+	 * save dirty editors.
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 	/**
 	 * Answers <code>true</code> if the current selection contains resource that don't
 	 * have overlapping paths and <code>false</code> otherwise. 
@@ -128,5 +162,32 @@ abstract public class CVSAction extends TeamAction {
 			}
 		}
 		return result[0];
+	}
+	
+	/**
+	 * Based on the CVS preference for saving dirty editors this method will either
+	 * ignore dirty editors, save them automatically, or prompt the user to save them.
+	 * 
+	 * @return <code>true</code> if the command succeeded, and <code>false</code>
+	 * if at least one editor with unsaved changes was not saved
+	 */
+	private boolean saveAllEditors() {
+		final int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
+		final boolean[] okToContinue = new boolean[] {true};
+		if(option != ICVSUIConstants.OPTION_NEVER) {		
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					boolean confirm = option == ICVSUIConstants.OPTION_PROMPT;
+					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						IWorkbenchPage[] pages = windows[i].getPages();
+						for (int j = 0; j < pages.length; j++) {	
+							okToContinue[0] = pages[j].saveAllEditors(confirm);
+						}
+					}
+				}
+			});
+		} 
+		return okToContinue[0];
 	}
 }

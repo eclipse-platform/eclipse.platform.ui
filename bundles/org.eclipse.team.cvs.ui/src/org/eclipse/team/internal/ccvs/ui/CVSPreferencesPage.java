@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -52,9 +54,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  *  1. The Repository view is not refreshed when the show CVSROOT option is changed
  *  2. There is no help associated with the page
  */
-public class CVSPreferencesPage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage, ICVSUIConstants {
 
 	private Button pruneEmptyDirectoriesField;
 	private Text timeoutValue;
@@ -68,6 +68,10 @@ public class CVSPreferencesPage
 	private Button promptOnFolderDelete;
 	private Button showMarkers;
 	private Button replaceUnmanaged;
+	
+	private Button never;
+	private Button prompt;
+	private Button auto;
 
 	public CVSPreferencesPage() {
 		// sort the options by display text
@@ -195,6 +199,8 @@ public class CVSPreferencesPage
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 		replaceUnmanaged.setToolTipText(Policy.bind("CVSPreferencePage.replaceUnmanagedTooltip")); //$NON-NLS-1$
 		
+		createSaveCombo(composite);
+				
 		initializeValues();
 		
 		quietnessCombo.addSelectionListener(new SelectionListener() {
@@ -265,6 +271,8 @@ public class CVSPreferencesPage
 		promptOnFolderDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
+		
+		initializeSaveRadios(store.getInt(PREF_SAVE_DIRTY_EDITORS));		
 	}
 
 	/**
@@ -296,6 +304,8 @@ public class CVSPreferencesPage
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, promptOnFolderDelete.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
+		store.setValue(PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
+		
 		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
@@ -317,9 +327,14 @@ public class CVSPreferencesPage
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 
+
+
+
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
 		if (! oldKSubst.equals(newKSubst)) CVSDecorator.refresh();
+
+
 
 		return true;
 	}
@@ -342,9 +357,31 @@ public class CVSPreferencesPage
 		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
+		initializeSaveRadios(store.getDefaultInt(PREF_SAVE_DIRTY_EDITORS));
 	}
 
-	/**
+   private void createSaveCombo(Composite composite) {
+		Group group = new Group(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		group.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		group.setLayoutData(data);
+		group.setText(Policy.bind("CVSPreferencePage.Save_dirty_editors_before_CVS_operations_1")); //$NON-NLS-1$
+		
+		never = new Button(group, SWT.RADIO | SWT.LEFT);
+		never.setLayoutData(new GridData());
+		never.setText(Policy.bind("CVSPreferencePage.&Never_2")); //$NON-NLS-1$
+		
+		prompt = new Button(group, SWT.RADIO | SWT.LEFT);
+		prompt.setLayoutData(new GridData());
+		prompt.setText(Policy.bind("CVSPreferencePage.&Prompt_3")); //$NON-NLS-1$
+		
+		auto = new Button(group, SWT.RADIO | SWT.LEFT);
+		auto.setLayoutData(new GridData());
+		auto.setText(Policy.bind("CVSPreferencePage.Auto-&save_4")); //$NON-NLS-1$
+   }
+   
+   /**
 	* Returns preference store that belongs to the our plugin.
 	* This is important because we want to store
 	* our preferences separately from the desktop.
@@ -376,5 +413,29 @@ public class CVSPreferencesPage
 		ksubstOptions.add(ksubst);
 		ksubstCombo.add(ksubst.getLongDisplayText());
 		return i;
+	}
+	
+	protected void initializeSaveRadios(int option) {
+		auto.setSelection(false);
+		never.setSelection(false);
+		prompt.setSelection(false);
+		switch(option) {
+			case OPTION_AUTOMATIC:
+				auto.setSelection(true); break;
+			case OPTION_NEVER:
+				never.setSelection(true); break;
+			case OPTION_PROMPT:
+				prompt.setSelection(true); break;
+		}
+	}
+	
+	protected int getSaveRadio() {
+		if(auto.getSelection()) {
+			return OPTION_AUTOMATIC;
+		} else if(never.getSelection()) {
+			return OPTION_NEVER;
+		} else {
+			return OPTION_PROMPT;
+		}
 	}
 }

@@ -56,8 +56,9 @@ public interface ICVSUIConstants {
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_MIXED_TAGS = "pref_prompt_on_mixed_tags"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_SAVING_IN_SYNC = "pref_prompt_on_saving_in_sync"; //$NON-NLS-1$
+	public final String PREF_SAVE_DIRTY_EDITORS = "pref_save_dirty_editors"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_CHANGE_GRANULARITY = "pref_prompt_on_change_granularity"; //$NON-NLS-1$
-	
+
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
@@ -100,5 +101,10 @@ public interface ICVSUIConstants {
 	public final String PROP_METHOD = "cvs.method"; //$NON-NLS-1$
 	public final String PROP_PORT = "cvs.port"; //$NON-NLS-1$
 	public final String PROP_ROOT = "cvs.root"; //$NON-NLS-1$
+	
+	// preference options
+	public final int OPTION_NEVER = 1; //$NON-NLS-1$
+	public final int OPTION_PROMPT = 2; //$NON-NLS-1$
+	public final int OPTION_AUTOMATIC = 3; //$NON-NLS-1$
 }
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
+ * IBM - Initial implementation
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
@@ -27,9 +27,18 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
 
 public class ContentAction extends ActionDelegate implements IEditorActionDelegate {
-	CVSSyncCompareInput syncInput;
 	
 	/**
+	 * Is <code>null</code> if the current active editor is not a compare editor
+	 * with a CVS editor input. Or else this input refer to the input in the active
+	 * CVS compare editor.
+	 */
+	private CVSSyncCompareInput syncInput;
+	
+	/**
+	 * Should only be called if action is enabled and the current active editor is a
+	 * CVS compare editor.
+	 * 
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
@@ -55,6 +64,9 @@ public class ContentAction extends ActionDelegate implements IEditorActionDelega
 	}
 
 	/**
+	 * Called when the active editor changes. Enablement of this action depends
+	 * on the editor type and editr input of the active editor.
+	 * 
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
@@ -70,5 +82,4 @@ public class ContentAction extends ActionDelegate implements IEditorActionDelega
 		syncInput = null;
 		action.setEnabled(false);
 	}
-
 }

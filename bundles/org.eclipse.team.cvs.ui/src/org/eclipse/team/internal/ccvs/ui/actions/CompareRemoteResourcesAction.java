@@ -24,11 +24,9 @@ import org.eclipse.team.ui.actions.TeamAction;
  * This action is used for comparing two arbitrary remote resources. This is
  * enabled in the repository explorer.
  */
-public class CompareRemoteResourcesAction extends TeamAction {
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate.
-	 */
-	public void run(IAction action) {
+public class CompareRemoteResourcesAction extends CVSAction {
+
+	public void execute(IAction action) {
 		ICVSRemoteResource[] editions = getSelectedRemoteResources();
 		if (editions == null || editions.length != 2) {
 			MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -80,5 +78,11 @@ public class CompareRemoteResourcesAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		ICVSRemoteResource[] resources = getSelectedRemoteResources();
 		return resources.length == 2;
+	}
+	/*
+	 * @see CVSAction#needsToSaveDirtyEditors()
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
 	}
 }

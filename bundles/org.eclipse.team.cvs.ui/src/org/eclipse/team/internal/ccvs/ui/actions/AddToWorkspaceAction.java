@@ -36,7 +36,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * -Works only for remote folders
  * -Does not prompt for project name; uses folder name instead
  */
-public class AddToWorkspaceAction extends TeamAction {
+public class AddToWorkspaceAction extends CVSAction {
 	/**
 	 * Returns the selected remote folders
 	 */
@@ -72,9 +72,9 @@ public class AddToWorkspaceAction extends TeamAction {
 	}
 
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute()
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {

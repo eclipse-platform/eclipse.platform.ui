@@ -23,7 +23,7 @@ import org.eclipse.team.ui.actions.TeamAction;
 
 public class CompareWithTagAction extends CVSAction {
 
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		final CVSTag tag;
 		final ICVSRemoteResource[] remoteResource = new ICVSRemoteResource[] { null };
 		final IResource[] resources = getSelectedResources();
@@ -43,6 +43,8 @@ public class CompareWithTagAction extends CVSAction {
 		CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tag));
 	}
 	
+	
+	
 	protected boolean isEnabled() {
 		try {
 			return isSelectionNonOverlapping();
@@ -50,5 +52,12 @@ public class CompareWithTagAction extends CVSAction {
 			CVSUIPlugin.log(e.getStatus());
 			return false;
 		}
+	}
+
+	/*
+	 * @see CVSAction#needsToSaveDirtyEditors()
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
 	}
 }

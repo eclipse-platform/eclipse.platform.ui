@@ -17,10 +17,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.merge.MergeWizard;
 
 public class MergeAction extends CVSAction {
+
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute()
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		final Shell shell = getShell();
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
