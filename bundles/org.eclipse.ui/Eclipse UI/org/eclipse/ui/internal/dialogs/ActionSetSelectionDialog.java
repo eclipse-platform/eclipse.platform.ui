@@ -64,6 +64,7 @@ private void checkInitialSelections() {
 		}
 	}
 
+/*
 	actions = perspective.getPerspectiveActions();
 	if (actions != null) {
 		for (int nX = 0; nX < actions.size(); nX ++) {
@@ -71,7 +72,7 @@ private void checkInitialSelections() {
 			actionSetViewer.setChecked(input.getPerspectiveActionSet(id), true);
 		}
 	}
-	
+*/	
 	actions = perspective.getNewWizardActions();
 	if (actions != null) {
 		for (int nX = 0; nX < actions.size(); nX ++) {
@@ -260,7 +261,9 @@ protected void okPressed() {
 	}
 
 	perspective.setShowViewActions(viewActions);
+/*
 	perspective.setPerspectiveActions(perspActions);
+*/
 	perspective.setNewWizardActions(wizardActions);
 
 	IActionSetDescriptor [] actionSetArray = new IActionSetDescriptor[actionSets.size()];
