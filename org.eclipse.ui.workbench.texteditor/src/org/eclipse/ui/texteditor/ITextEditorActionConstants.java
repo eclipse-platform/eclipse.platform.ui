@@ -315,4 +315,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 */
 	static final String STATUS_CATEGORY_ELEMENT_STATE= "ElementState"; //$NON-NLS-1$
+
+	/**
+	 * Status line category "findField".
+	 * Value: <code>"FindField"</code>
+	 * @since 3.0
+	 */
+	static final String STATUS_CATEGORY_FIND_FIELD= "findField"; //$NON-NLS-1$
 }
