@@ -536,7 +536,43 @@ private boolean existsInWorkspace(IResource resource, boolean phantom) {
  * @param e
  */
 public void fail(String message, Exception e) {
+	// If the exception is a CoreException with a multistatus
+	// then print out the multistatus so we can see all the info.
+	if (e instanceof CoreException) {
+		IStatus status = ((CoreException) e).getStatus();
+		if (status.getChildren().length > 0) {
+			write(status, 0);
+		}
+	}
 	fail(message + ": " + e);
+}
+protected void indent(OutputStream output, int indent) {
+	for (int i=0; i<indent; i++)
+		try {
+			output.write("\t".getBytes());
+		} catch(IOException e) {
+		}
+}
+protected void write(IStatus status, int indent) {
+	PrintStream output = System.out;
+	indent(output, indent);
+	output.println("Severity: " + status.getSeverity());
+
+	indent(output, indent);
+	output.println("Plugin ID: " + status.getPlugin());
+
+	indent(output, indent);
+	output.println("Code: " + status.getCode());
+
+	indent(output, indent);
+	output.println("Message: " + status.getMessage());
+
+	if (status.isMultiStatus()) {
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			write(children[i], indent + 1);
+		}
+	}
 }
 /**
  * Does some garbage collections to free unused resources
