@@ -63,7 +63,7 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 		FormData perspectiveData = new FormData();
 
 		perspectiveData.top = new FormAttachment(0);
-		perspectiveData.left = new FormAttachment(80);
+		perspectiveData.left = new FormAttachment(90);
 		perspectiveData.right = new FormAttachment(100);
 		perspectiveData.bottom =
 			new FormAttachment(getShortcutBar().getControl(), 0, SWT.BOTTOM);

@@ -73,7 +73,7 @@ public class PerspectiveControl {
 	 * @param parent
 	 */
 	void createControl(Composite parent) {
-		label = new CLabel(parent, SWT.NONE);
+		label = new CLabel(parent, SWT.RIGHT);
 	}
 
 	/**
