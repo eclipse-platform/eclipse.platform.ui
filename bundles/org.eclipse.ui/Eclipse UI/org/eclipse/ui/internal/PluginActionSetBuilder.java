@@ -32,16 +32,36 @@ public PluginActionSetBuilder() {}
 protected void addGroup(IContributionManager mgr, String name) {
 	// Find the insertion point for this group.
 	String actionSetId = actionSet.getDesc().getId();
-	IContributionItem refItem = findInsertionPoint(
-		IWorkbenchActionConstants.MB_ADDITIONS,
-		actionSetId, mgr, true);
-
-	// Insert the new group marker.
-	ActionSetSeparator group = new ActionSetSeparator(name, actionSetId);
-	if (refItem == null)
-		mgr.add(group);
-	else
-		mgr.insertAfter(refItem.getId(), group);
+	
+	if (mgr instanceof CoolItemToolBarManager) {
+		// In the coolbar case we need to create a CoolBarContributionItem
+		// for the group.
+		CoolItemToolBarManager tBarMgr = (CoolItemToolBarManager)mgr;
+		CoolBarManager cBarMgr = tBarMgr.getParentManager();
+		IContributionItem refItem = findSubInsertionPoint(
+			IWorkbenchActionConstants.MB_ADDITIONS,
+			actionSetId, cBarMgr, true);
+		// Add the CoolBarContributionItem to the CoolBarManager for this group.
+		if (refItem == null) {
+			cBarMgr.add(tBarMgr.getCoolBarItem());
+		} else {
+			cBarMgr.insertAfter(refItem.getId(), tBarMgr.getCoolBarItem());
+		}
+		// Insert the group marker into the group, not the CoolBarmanager.
+		ActionSetSeparator group = new ActionSetSeparator(name, actionSetId);
+		tBarMgr.add(group);
+	} else {
+		IContributionItem refItem = findInsertionPoint(
+			IWorkbenchActionConstants.MB_ADDITIONS,
+			actionSetId, mgr, true);
+		// Insert the new group marker.
+		ActionSetSeparator group = new ActionSetSeparator(name, actionSetId);
+		if (refItem == null) {
+			mgr.add(group);
+		} else {
+			mgr.insertAfter(refItem.getId(), group);
+		}
+	}
 }
 /**
  * This factory method returns a new ActionDescriptor for the
@@ -84,7 +104,7 @@ public static IContributionItem findInsertionPoint(String startId,
 			break;
 		++ insertIndex;
 	}
-	if (insertIndex >= items.length)
+	if (insertIndex >= items.length) 
 		return null;
 
 	// Calculate startVsEnd comparison value.
@@ -108,13 +128,60 @@ public static IContributionItem findInsertionPoint(String startId,
 			break;
 		}
 	}
-
 	// Return item.
 	return items[insertIndex];
 }
-/* (non-Javadoc)
- * Method defined in PluginActionBuilder.
- */
+public static IContributionItem findSubInsertionPoint(String startId, String sortId, CoolBarManager mgr, boolean startVsEnd) {
+	// Get items.
+	IContributionItem [] items = mgr.getItems();
+	
+	// Find the reference item.
+	int insertIndex = 0;
+	while (insertIndex < items.length) {
+		if (startId.equals(items[insertIndex].getId()))
+			break;
+		++ insertIndex;
+	}
+	// look at each the items in each of the CoolBarContribution items
+	if (insertIndex >= items.length) {
+		insertIndex = 0;
+		while (insertIndex < items.length) {
+			CoolBarContributionItem item = (CoolBarContributionItem)items[insertIndex];
+			IContributionItem foundItem = item.getToolBarManager().find(startId);
+			if (foundItem != null)
+				break;
+			++ insertIndex;
+		}
+	}
+	if (insertIndex >= items.length) 
+		return null;
+
+	// Calculate startVsEnd comparison value.
+	int compareMetric = 0;
+	if (startVsEnd)
+		compareMetric = 1;
+		
+	// Find the insertion point for the new item.  We do this by iterating 
+	// through all of the previous action set contributions.  This code 
+	// assumes action set contributions are done in alphabetical order.
+	for (int nX = insertIndex + 1; nX < items.length; nX ++) {
+		CoolBarContributionItem item = (CoolBarContributionItem)items[nX];
+		if (items.length == 0) break;
+		IContributionItem subItem = item.getItems()[0];
+		if (subItem instanceof IActionSetContributionItem) {
+			if (sortId != null) {
+				String testId = ((IActionSetContributionItem)subItem).getActionSetId();
+				if (sortId.compareTo(testId) < compareMetric)
+					break;
+			}
+			insertIndex = nX;
+		} else {
+			break;
+		}
+	}
+	// Return item.
+	return items[insertIndex];
+}
 /*
  * Inserts one action after another.  If there are any other extensions
  * for the same action the new action will be inserted into the group in

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
@@ -52,19 +53,22 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * Adds an action as a contribution item to this manager.
 	 * Equivalent to <code>add(new ActionContributionItem(action))</code>.
 	 * 
+	 * Not valid for CoolBarManager.  Only CoolBarContributionItems may be added
+	 * to this manager.
+	 * 
 	 * @param action the action
 	 */
 	public void add(IAction action) {
-		// not valid, only CoolBarContributionItems may be added
+		Assert.isTrue(false);
 	}
 	/**
 	 * Adds a CoolBarContributionItem to this manager.
 	 * 
-	 * @exception IllegalArgumentException if the type of item is
+	 * @exception AssertionFailedException if the type of item is
 	 * not valid
 	 */
 	public void add(IContributionItem item) {
-		validateItem(item);
+		Assert.isTrue(item instanceof CoolBarContributionItem);
 		super.add(item);
 	}
 	/**
@@ -75,30 +79,13 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 * Adds a contribution item to the start or end of the group 
-	 * with the given name.
-	 *
-	 * @param itemId the id of the CoolBarContributionItem
-	 * @param item the CoolBarContributionItem
-	 * @param append <code>true</code> to add to the end of the group, 
-	 *   and <code>false</code> to add the beginning of the group
-	 * @exception IllegalArgumentException if there is no group with
-	 *   the given name
+	 * with the given id.
+	 * 
+	 * Not valid for CoolBarManager.  Only CoolBarContributionItems are items
+	 * of this manager.
 	 */
 	private void addToGroup(String itemId, IContributionItem item, boolean append) {
-		IContributionItem[] items = getItems();
-		for (int i = 0; i < items.length; i++) {
-			CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
-			String id = cbItem.getId();
-			if (id != null && id.equalsIgnoreCase(itemId)) {
-				if (append) {
-					cbItem.getToolBarManager().add(item);
-				} else {
-					// ????
-				}
-				return;
-			}
-		}
-		throw new IllegalArgumentException("Group not found: " + itemId); //$NON-NLS-1$
+		Assert.isTrue(false);
 	}
 	/**
 	 */
@@ -122,9 +109,22 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					popupCoolBarMenu(e);
 				}
 			});
-			update(false);
 		}
 		return coolBar;
+	}
+	/**
+	 * Create the coolbar item for the given contribution item.
+	 */
+	private CoolItem createCoolItem(CoolBarContributionItem cbItem) {
+		CoolItem coolItem;
+		int index;
+		if (cbItem.isOrderBefore()) {
+			index = getInsertBeforeIndex(cbItem);
+		} else {
+			index = getInsertAfterIndex(cbItem);
+		}
+		coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, index);
+		return coolItem;
 	}
 	/**
 	 */
@@ -142,63 +142,15 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolBarMenuManager = null;
 		}
 	}
-	public CoolBar getControl() {
-		return coolBar;
-	}
 	/**
 	 */
-	public int getStyle() {
-		return style;
-	}
-	private void handleChevron(SelectionEvent event) {
-		CoolItem item = (CoolItem) event.widget;
-		Control control = item.getControl();
-		if ((control instanceof ToolBar) == false) {
-			return;
+	CoolItem findCoolItem(CoolBarContributionItem item) {
+		CoolItem[] items = coolBar.getItems();
+		for (int i = 0; i < items.length; i++) {
+			CoolItem coolItem = items[i];
+			if (coolItem.getData().equals(item)) return coolItem;
 		}
-
-		Rectangle itemBounds = item.getBounds();
-		Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
-		ToolBar toolBar = (ToolBar) control;
-		ToolItem[] tools = toolBar.getItems();
-		int toolCount = tools.length;
-		int visibleItemCount = 0;
-		while (visibleItemCount < toolCount) {
-			Rectangle toolBounds = tools[visibleItemCount].getBounds();
-			Point point = toolBar.toDisplay(new Point(toolBounds.x, toolBounds.y));
-			toolBounds.x = point.x;
-			toolBounds.y = point.y;
-
-			// stop if the tool is at least partially hidden by the drop down chevron
-			if (chevronPosition.x >= toolBounds.x && chevronPosition.x - toolBounds.x <= toolBounds.width) {
-				break;
-			}
-			visibleItemCount++;
-		}
-
-		/* Create a pop-up menu with items for each of the hidden buttons. */
-		if (chevronMenuManager != null) {
-			chevronMenuManager.dispose();
-		}
-		chevronMenuManager = new MenuManager();
-		for (int i = visibleItemCount; i < toolCount; i++) {
-			IContributionItem data = (IContributionItem) tools[i].getData();
-			if (data instanceof ActionContributionItem) {
-				ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) data).getAction());
-				chevronMenuManager.add(contribution);
-			} else if (data instanceof SubContributionItem) {
-				IContributionItem innerData = ((SubContributionItem)data).getInnerItem();
-				if (innerData instanceof ActionContributionItem) {
-					ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) innerData).getAction());
-					chevronMenuManager.add(contribution);
-				}
-			} else if (data.isSeparator()) {
-				chevronMenuManager.add(new Separator());
-			}
-		}
-		Menu popup = chevronMenuManager.createContextMenu(coolBar);
-		popup.setLocation(chevronPosition.x, chevronPosition.y);
-		popup.setVisible(true);
+		return null;
 	}
 	/**
 	 */
@@ -224,6 +176,74 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
+	private ArrayList getCoolItemIds() {
+		CoolItem[] coolItems = coolBar.getItems();
+		ArrayList ids = new ArrayList(coolItems.length);
+		for (int i = 0; i < coolItems.length; i++) {
+			CoolBarContributionItem group = (CoolBarContributionItem) coolItems[i].getData();
+			ids.add(group.getId());
+		}
+		return ids;
+	}
+	/**
+	 * Return the SWT control for this manager.
+	 */
+	public CoolBar getControl() {
+		return coolBar;
+	}
+	private int getInsertAfterIndex(CoolBarContributionItem coolBarItem) {
+		IContributionItem[] items = getItems();
+		int index = -1;
+		CoolBarContributionItem afterItem = null;
+		// find out which item should be after this item
+		for (int i=0; i<items.length; i++) {
+			if (items[i].equals(coolBarItem)) {
+				if (i > 0) {
+					afterItem = (CoolBarContributionItem)items[i-1];
+				} else {
+					afterItem = null;
+				}
+				break;
+			}
+		}
+		// get the coolbar location of the after item
+		if (afterItem != null) {
+			CoolItem afterCoolItem = findCoolItem(afterItem);
+			if (afterCoolItem != null) {
+				index = coolBar.indexOf(afterCoolItem);
+				index++;
+			}
+		}
+		if (index == -1) index = 0;
+		return index;
+	}
+	private int getInsertBeforeIndex(CoolBarContributionItem coolBarItem) {
+		IContributionItem[] items = getItems();
+		int index = -1;
+		CoolBarContributionItem beforeItem = null;
+		// find out which item should be before this item
+		for (int i=0; i<items.length; i++) {
+			if (items[i].equals(coolBarItem)) {
+				if (i < items.length - 1) {
+					beforeItem = (CoolBarContributionItem)items[i+1];
+				} else {
+					beforeItem = null;
+				}
+				break;
+			}
+		}
+		// get the coolbar location of the before item
+		if (beforeItem != null) {
+			CoolItem beforeCoolItem = findCoolItem(beforeItem);
+			if (beforeCoolItem != null) {
+				index = coolBar.indexOf(beforeCoolItem);
+			}
+		}
+		if (index == -1) index = coolBar.getItems().length;
+		return index;
+	}
+	/**
+	 */
 	public CoolBarLayout getLayout() {
 		if (!coolBarExist())
 			return null;
@@ -245,14 +265,59 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	private ArrayList getCoolItemIds() {
-		CoolItem[] coolItems = coolBar.getItems();
-		ArrayList ids = new ArrayList(coolItems.length);
-		for (int i = 0; i < coolItems.length; i++) {
-			CoolBarContributionItem group = (CoolBarContributionItem) coolItems[i].getData();
-			ids.add(group.getId());
+	public int getStyle() {
+		return style;
+	}
+	/**
+	 * Create and display the chevron menu.
+	 */
+	private void handleChevron(SelectionEvent event) {
+		CoolItem item = (CoolItem) event.widget;
+		Control control = item.getControl();
+		if ((control instanceof ToolBar) == false) {
+			return;
 		}
-		return ids;
+		Rectangle itemBounds = item.getBounds();
+		Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
+		ToolBar toolBar = (ToolBar) control;
+		ToolItem[] tools = toolBar.getItems();
+		int toolCount = tools.length;
+		int visibleItemCount = 0;
+		while (visibleItemCount < toolCount) {
+			Rectangle toolBounds = tools[visibleItemCount].getBounds();
+			Point point = toolBar.toDisplay(new Point(toolBounds.x, toolBounds.y));
+			toolBounds.x = point.x;
+			toolBounds.y = point.y;
+			// stop if the tool is at least partially hidden by the drop down chevron
+			if (chevronPosition.x >= toolBounds.x && chevronPosition.x - toolBounds.x <= toolBounds.width) {
+				break;
+			}
+			visibleItemCount++;
+		}
+
+		// Create a pop-up menu with items for each of the hidden buttons.
+		if (chevronMenuManager != null) {
+			chevronMenuManager.dispose();
+		}
+		chevronMenuManager = new MenuManager();
+		for (int i = visibleItemCount; i < toolCount; i++) {
+			IContributionItem data = (IContributionItem) tools[i].getData();
+			if (data instanceof ActionContributionItem) {
+				ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) data).getAction());
+				chevronMenuManager.add(contribution);
+			} else if (data instanceof SubContributionItem) {
+				IContributionItem innerData = ((SubContributionItem)data).getInnerItem();
+				if (innerData instanceof ActionContributionItem) {
+					ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) innerData).getAction());
+					chevronMenuManager.add(contribution);
+				}
+			} else if (data.isSeparator()) {
+				chevronMenuManager.add(new Separator());
+			}
+		}
+		Menu popup = chevronMenuManager.createContextMenu(coolBar);
+		popup.setLocation(chevronPosition.x, chevronPosition.y);
+		popup.setVisible(true);
 	}
 	/**
 	 * Inserts a contribution item for the given action after the item 
@@ -260,11 +325,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * Equivalent to
 	 * <code>insertAfter(id,new ActionContributionItem(action))</code>.
 	 *
+	 * Not valid for CoolBarManager.  Only CoolBarContributionItems may be added
+	 * to this manager.
+	 *
 	 * @param id the contribution item id
 	 * @param action the action to insert
 	 */
 	public void insertAfter(String id, IAction action) {
-		// not valid, only CoolBarContributionItems may be added
+		Assert.isTrue(false);
 	}
 	/**
 	 * Inserts a contribution item after the item with the given id.
@@ -277,8 +345,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * 	not valid
 	 */
 	public void insertAfter(String id, IContributionItem item) {
-		validateItem(item);
+		Assert.isTrue(item instanceof CoolBarContributionItem);
 		super.insertAfter(id, item);
+		((CoolBarContributionItem)item).setOrderAfter(true);
 	}
 	/**
 	 * Inserts a contribution item for the given action before the item 
@@ -286,11 +355,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * Equivalent to
 	 * <code>insertBefore(id,new ActionContributionItem(action))</code>.
 	 *
+	 * Not valid for CoolBarManager.  Only CoolBarContributionItems may be added
+	 * to this manager.
+	 *
 	 * @param id the contribution item id
 	 * @param action the action to insert
 	 */
 	public void insertBefore(String id, IAction action) {
-		// not valid, only CoolBarContributionItems may be added
+		Assert.isTrue(false);
 	}
 	/**
 	 * Inserts a contribution item before the item with the given id.
@@ -303,8 +375,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * 	not valid
 	 */
 	public void insertBefore(String id, IContributionItem item) {
-		validateItem(item);
+		Assert.isTrue(item instanceof CoolBarContributionItem);
 		super.insertBefore(id, item);
+		((CoolBarContributionItem)item).setOrderBefore(true);
 	}
 	/**
 	 */
@@ -348,7 +421,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * 	not valid
 	 */
 	public IContributionItem remove(IContributionItem item) {
-		validateItem(item);
+		Assert.isTrue(item instanceof CoolBarContributionItem);
 		return super.remove(item);
 	}
 	/**
@@ -375,10 +448,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			});
 			return;
 		}
-
-		//		System.out.println("setting layout");
-		//		System.out.println(layout.toString());
-
 		// Some of the layout items may not exist on the coolbar, for example, if we save
 		// the layout of editor action bars.  Similarly, items may exist on the coolbar that
 		// are not part of the saved layout.
@@ -573,18 +642,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 							if ((toolBar != null) && (!toolBar.isDisposed())) {
 								changed = true;
 								toolBar.setVisible(true);
-								CoolItem coolItem = new CoolItem(coolBar, SWT.DROP_DOWN);
+								CoolItem coolItem = createCoolItem(cbItem);
 								coolItem.setControl(toolBar);
 								coolItem.setData(cbItem);
 								cbItem.update(true);
 								int minWidth = toolBar.getItems()[0].getWidth();
 								Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 								Point coolSize = coolItem.computeSize(size.x, size.y);
-								//	System.out.println(cbItem.getId() + " toolbar size " + size);
 								coolItem.setSize(coolSize);
 								coolItem.setPreferredSize(coolSize);
 								coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
-								//	System.out.println("cool item size " + coolItem.getSize());
 								coolItem.addSelectionListener(new SelectionAdapter() {
 									public void widgetSelected(SelectionEvent event) {
 										if (event.detail == SWT.ARROW) {
@@ -623,14 +690,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				}
 			}
 
-		}
-	}
-	/**
-	 */
-	private void validateItem(IContributionItem item) {
-		if (!(item instanceof CoolBarContributionItem)) {
-			throw new IllegalArgumentException("Invalid item type " + item.getClass());
-			//$NON-NLS-1$
 		}
 	}
 }

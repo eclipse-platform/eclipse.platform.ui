@@ -573,6 +573,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			// Create a CoolBar item for the workbench
 			CoolBarManager cBarMgr = (CoolBarManager)manager;
 			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
+			cBarMgr.add(coolBarItem);
 			coolBarItem.setVisible(true);
 			toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
 			cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
@@ -953,15 +954,24 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (toolsMgr instanceof CoolBarManager) {
 			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
 			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
+			// we want to add the pin editor cool item before the editor cool item (if
+			// it exists)
+			IContributionItem refItem = cBarMgr.findSubId(EditorActionBars.getGroupMarkerId());
+			if (refItem == null) {
+				cBarMgr.add(coolBarItem);
+			} else {
+				cBarMgr.insertBefore(refItem.getId(), coolBarItem);
+			}
 			coolBarItem.setVisible(true);
+			IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
+			tBarMgr.add(new GroupMarker(pinEditorGroup));
 			pinEditorAction.setVisible(true);
-			IContributionManager toolBarMgr = (IContributionManager)coolBarItem.getToolBarManager();
-			toolBarMgr.add(pinEditorAction);
+			tBarMgr.insertAfter(pinEditorGroup,pinEditorAction);
 		} else {
 			toolsMgr.add(new GroupMarker(pinEditorGroup));
 			pinEditorAction.setVisible(true);
 			toolsMgr.insertAfter(pinEditorGroup,pinEditorAction);
-		} 
+		}
 		toolsMgr.update(true);
 	}
 	/*

@@ -227,11 +227,18 @@ protected void contributeToolbarAction(ActionDescriptor ad, IToolBarManager tool
 	// Find reference group.
 	if (tgroup == null)
 		tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
-	IContributionItem sep = toolbar.find(tgroup);
+	IContributionItem sep;
+	if (toolbar instanceof CoolItemToolBarManager) {
+		// in the coolbar case, MB_ADDITIONS is part of the org.eclipse.ui.internal
+		// CoolBarContributionItem
+		sep = ((CoolItemToolBarManager)toolbar).getParentManager().findSubId(tgroup);
+	} else {
+		sep = toolbar.find(tgroup);
+	}
 	if (sep == null) {
-		if (appendIfMissing)
+		if (appendIfMissing) {
 			addGroup(toolbar, tgroup);
-		else {
+		} else {
 			WorkbenchPlugin.log("Invalid Toolbar Extension (Group is invalid): " + ad.getId());//$NON-NLS-1$
 			return;
 		}

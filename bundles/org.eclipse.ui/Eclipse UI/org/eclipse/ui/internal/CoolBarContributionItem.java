@@ -24,11 +24,19 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	private boolean visible = true;
 
 	/**
-	 * The parent contribution manager.
+	 * The toolbar contribution manager.
 	 */
-	private CoolBarManager parentManager;
 	private CoolItemToolBarManager toolBarManager;
 
+	/**
+	 * Need to remember order information about the item since
+	 * item layout order is dynamic for coolbars.  We know the
+	 * order the of all of the CoolBarContribution items, but when 
+	 * an item is dynamically added and removed we need to remember 
+	 * its order relationship to the items around it.
+	 */
+	private boolean orderBefore = false;
+	private boolean orderAfter = false;
 	/**
 	 */
 	public CoolBarContributionItem() {
@@ -39,15 +47,21 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	public CoolBarContributionItem(CoolBarManager parent, String id) {
 		this(parent, new CoolItemToolBarManager(parent.getStyle()), id);
 	}
+	/**
+	 * Creates a CoolBarContributionItem for the given CoolBarManager and CoolItemToolBarManager.
+	 */
 	public CoolBarContributionItem(CoolBarManager parent, CoolItemToolBarManager tBarMgr, String id) {
 		super(id);
 		this.toolBarManager = tBarMgr;
-		this.parentManager = parent;
-		parent.add(this);
+		tBarMgr.setParentMgr(parent);
+		tBarMgr.setCoolBarItem(this);
 	}
+	/**
+	 * Creates the SWT control for the CoolBarContributionItem.
+	 */
 	protected ToolBar createControl() {
 		ToolBar tBar = null;
-		CoolBar parentControl = parentManager.getControl();
+		CoolBar parentControl = getParentManager().getControl();
 		if (parentControl != null) {
 			tBar = toolBarManager.createControl(parentControl);
 			// add support for popup menu
@@ -59,55 +73,21 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		}
 		return tBar;
 	}
+	/**
+	 */
+	public void dispose() {
+		if (toolBarManager != null) {
+			toolBarManager.removeAll();
+		}
+	}		
+	/**
+	 */
 	public boolean equals(Object object) {
 		if (object instanceof CoolBarContributionItem) {
 			CoolBarContributionItem item = (CoolBarContributionItem) object;
 			return getId().equals(item.getId());
 		}
 		return false;
-	}
-	public void dispose() {
-		if (toolBarManager != null) {
-			toolBarManager.removeAll();
-		}
-	}
-		
-	/**
-	 * Sets the visibility of the manager.  If the visibility is <code>true</code>
-	 * then each item within the manager appears within the parent manager.
-	 * Otherwise, the items are not visible.
-	 *
-	 * @param visible the new visibility
-	 */
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-		if (parentManager != null) 
-			parentManager.markDirty();
-	}
-	/**
-	 * Sets the visibility of the manager. If the visibility is <code>true</code>
-	 * then each item within the manager appears within the parent manager.
-	 * Otherwise, the items are not visible if force visibility is
-	 * <code>true</code>, or grayed out if force visibility is <code>false</code>
-	 * <p>
-	 * This is a workaround for the layout flashing when editors contribute
-	 * large amounts of items.</p>
-	 *
-	 * @param visible the new visibility
-	 * @param forceVisibility whether to change the visibility or just the
-	 * 		enablement state. This parameter is ignored if visible is 
-	 * 		<code>true</code>.
-	 */
-	public void setVisible(boolean visible, boolean forceVisibility) {
-		if (visible) {
-			if (!isVisible()) setVisible(true);
-		} else {
-			if (forceVisibility) {
-				if (isVisible()) setVisible(false);
-			} else {
-				if (!isVisible()) setVisible(true);
-			}
-		}
 	}
 	/**
 	 * Fills the given composite control with controls representing this 
@@ -140,6 +120,8 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	public void fill(ToolBar parent, int index) {
 		// invalid
 	}
+	/**
+	 */
 	public ToolBar getControl() {
 		ToolBar tBar = toolBarManager.getControl();
 		if (tBar == null) {
@@ -147,6 +129,8 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		}
 		return tBar;
 	}
+	/**
+	 */
 	public IContributionItem[] getItems() {
 		return toolBarManager.getItems();
 	}
@@ -156,11 +140,16 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 * @return the parent manager
 	 */
 	public CoolBarManager getParentManager() {
-		return parentManager;
+		return getToolBarManager().getParentManager();
 	}
-	public ToolBarManager getToolBarManager() {
+	/**
+	 * Returns the toolbar manager for this contribution item
+	 */
+	public CoolItemToolBarManager getToolBarManager() {
 		return toolBarManager;
 	}
+	/**
+	 */
 	public int hashCode() {
 		return getId().hashCode();
 	}
@@ -188,13 +177,19 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		return true;
 	}
 	/**
-	 * Returns whether this contribution item is a separator.
-	 * This information is used to enable hiding of unnecessary separators.
-	 *
-	 * @return <code>true</code> if this item is a separator, and
-	 *  <code>false</code> for normal items
-	 * @see Separator
+	 * Returns whether this contribution item is ordered after the 
+	 * the item before it.
 	 */
+	protected boolean isOrderAfter() {
+		return orderAfter;
+	}
+	/**
+	 * Returns whether this contribution item is ordered before a the
+	 * item after it.
+	 */
+	protected boolean isOrderBefore() {
+		return orderBefore;
+	}
 	/**
 	 * Returns whether this contribution item is a separator.
 	 * This information is used to enable hiding of unnecessary separators.
@@ -214,9 +209,60 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 * @return <code>true</code> if the manager is visible
 	 */
 	public boolean isVisible() {
-		if (parentManager == null)
+		if (getParentManager() == null)
 			return true;
 		return visible;
+	}
+	/**
+	 * Sets whether this contribution item is ordered after the
+	 * item before it.
+	 */
+	protected void setOrderAfter(boolean orderAfter) {
+		this.orderAfter = orderAfter;
+	}
+	/**
+	 * Sets whether this contribution item is ordered before the
+	 * item after it.
+	 */
+	protected void setOrderBefore(boolean orderBefore) {
+		this.orderBefore = orderBefore;
+	}
+	/**
+	 * Sets the visibility of the manager.  If the visibility is <code>true</code>
+	 * then each item within the manager appears within the parent manager.
+	 * Otherwise, the items are not visible.
+	 *
+	 * @param visible the new visibility
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+		if (getParentManager() != null) 
+			getParentManager().markDirty();
+	}
+	/**
+	 * Sets the visibility of the manager. If the visibility is <code>true</code>
+	 * then each item within the manager appears within the parent manager.
+	 * Otherwise, the items are not visible if force visibility is
+	 * <code>true</code>, or grayed out if force visibility is <code>false</code>
+	 * <p>
+	 * This is a workaround for the layout flashing when editors contribute
+	 * large amounts of items.</p>
+	 *
+	 * @param visible the new visibility
+	 * @param forceVisibility whether to change the visibility or just the
+	 * 		enablement state. This parameter is ignored if visible is 
+	 * 		<code>true</code>.
+	 */
+	public void setVisible(boolean visible, boolean forceVisibility) {
+		if (visible) {
+			if (!isVisible()) setVisible(true);
+		} else {
+			if (forceVisibility) {
+				if (isVisible()) setVisible(false);
+			} else {
+				if (!isVisible()) setVisible(true);
+			}
+		}
 	}
 	/**
 	 * Updates any SWT controls cached by this contribution item with any

@@ -12,8 +12,17 @@ import org.eclipse.swt.widgets.*;
  * Window>Preferences>Java>Templates.
  */
 public class CoolItemToolBarManager extends ToolBarManager {
+	CoolBarManager parentManager;
+	CoolBarContributionItem coolBarItem;
+	
 	public CoolItemToolBarManager(int style) {
 		super(style);
+	}
+	protected CoolBarContributionItem getCoolBarItem() {
+		return coolBarItem;
+	}
+	protected CoolBarManager getParentManager() {
+		return parentManager;
 	}
 	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 		if (oldCount == newCount) return;
@@ -38,4 +47,10 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		}
 		coolBar.layout();
 	} 
+	protected void setCoolBarItem(CoolBarContributionItem coolBarItem) {
+		this.coolBarItem = coolBarItem;
+	}
+	protected void setParentMgr(CoolBarManager parentManager) {
+		this.parentManager = parentManager;
+	}
 }      

@@ -18,6 +18,7 @@ public class EditorActionBars extends SubActionBars
 	private IEditorActionBarContributor editorContributor;
 	private IEditorActionBarContributor extensionContributor;
 	private CoolBarContributionItem coolBarItem;
+	private static String groupMarkerId = "org.eclipse.ui.internal.editorActionBars";
 /**
  * Constructs the EditorActionBars for an editor.  
  */
@@ -76,6 +77,12 @@ public String getEditorType() {
 	return type;
 }
 /**
+ * Returns the editor type.
+ */
+protected static String getGroupMarkerId() {
+	return groupMarkerId;
+}
+/**
  * Returns the tool bar manager.  If items are added or
  * removed from the manager be sure to call <code>updateActionBars</code>.
  * Overridden to support CoolBars.
@@ -91,8 +98,10 @@ public IToolBarManager getToolBarManager() {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
 			CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
+			tBarMgr.add(new GroupMarker(getGroupMarkerId()));
 			toolBarMgr = createSubToolBarManager(tBarMgr);
 			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, type);
+			cBarMgr.add(coolBarItem);
 			coolBarItem.setVisible(active);
 		}
 		return toolBarMgr;
