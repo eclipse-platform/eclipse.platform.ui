@@ -43,10 +43,8 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 	 */
 	protected void mouseDoubleClicked(int line) {
 		ProjectionAnnotation annotation= findAnnotation(line);
-		if (annotation != null) {
+		if (annotation != null)
 			annotation.run(getCachedTextViewer());
-			redraw();
-		}
 	}
 	
 	/**

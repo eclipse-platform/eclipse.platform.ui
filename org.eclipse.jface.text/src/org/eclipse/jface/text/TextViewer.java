@@ -2211,19 +2211,11 @@ public class TextViewer extends Viewer implements
 				
 				if (endLine > startLine) {
 					// reveal the beginning of the range in the start line
-//					IRegion line= doc.getLineInformation(startLine);
-//					startPixel= getWidthInPixels(line.getOffset(), start - line.getOffset());
-//					endPixel= getWidthInPixels(line.getOffset(), line.getLength());
-					
 					IRegion extent= getExtent(start, start);
 					startPixel= extent.getOffset();
 					endPixel= startPixel;
 					
 				} else {
-//					int lineStart= doc.getLineOffset(startLine);
-//					startPixel= getWidthInPixels(lineStart, start - lineStart);
-//					endPixel= getWidthInPixels(lineStart, end - lineStart);
-					
 					IRegion extent= getExtent(start, end);
 					startPixel= extent.getOffset();
 					endPixel= startPixel + extent.getLength();
@@ -3716,7 +3708,15 @@ public class TextViewer extends Viewer implements
 			return modelRange;
 			
 		try {
-			return fInformationMapping.toImageRegion(modelRange);
+			
+			if (modelRange.getLength() < 0) {
+				Region reveresed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
+				IRegion result= fInformationMapping.toImageRegion(reveresed);
+				return new Region(result.getOffset() + result.getLength(), -result.getLength());
+			} else {
+				return fInformationMapping.toImageRegion(modelRange);
+			}
+			
 		} catch (BadLocationException x) {
 		}
 		
@@ -3765,7 +3765,15 @@ public class TextViewer extends Viewer implements
 			return widgetRange;
 			
 		try {
-			return fInformationMapping.toOriginRegion(widgetRange);
+			
+			if (widgetRange.getLength() < 0) {
+				Region reveresed= new Region(widgetRange.getOffset() + widgetRange.getLength(), -widgetRange.getLength());
+				IRegion result= fInformationMapping.toOriginRegion(reveresed);
+				return new Region(result.getOffset() + result.getLength(), -result.getLength());
+			} else {
+				return fInformationMapping.toOriginRegion(widgetRange);
+			}
+			
 		} catch (BadLocationException x) {
 			int modelOffset= widgetOffset2ModelOffset(widgetRange.getOffset());
 			if (modelOffset > -1) {
