@@ -26,6 +26,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -98,6 +99,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private DropTargetListener dropTargetListener = null;
 	 
+	/**
+	 * Object for configuring this workbench window's action bars. 
+	 * Lazily initialized to an instance unique to this window.
+	 */
+	private IActionBarConfigurer actionBarConfigurer = null;
+
 	/**
 	 * Creates a new workbench configurer.
 	 * <p>
@@ -270,24 +277,14 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getMenuManager()
+	/**
+	 * Adds a tool bar item with the given id to the tool bar of this workbench
+	 * window. The new tool bar item is added after any existing ones.
+	 * 
+	 * @param id the id assigned to this tool bar
+	 * @return the tool bar manager for the new tool bar item
 	 */
-	public IMenuManager getMenuManager() {
-		return window.getMenuManager();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getStatusLineManager()
-	 */
-	public IStatusLineManager getStatusLineManager() {
-		return window.getStatusLineManager();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToolBar(java.lang.String)
-	 */
-	public IToolBarManager addToolBar(String id) {
+	/* package */ IToolBarManager addToolBar(String id) {
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -299,10 +296,13 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		return cBarItem.getToolBarManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#removeToolBar(java.lang.String)
+	/**
+	 * Removes the tool bar item with the given id from the tool bar of this
+	 * workbench window. Ignored if there is no tool bar item with the given id. 
+	 * 
+	 * @param id the tool bar id
 	 */
-	public void removeToolBar(String id) {
+	/* package */ void removeToolBar(String id) {
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -311,10 +311,15 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		cBarMgr.remove(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getToolBar(java.lang.String)
+	/**
+	 * Returns the tool bar manager for the tool bar item with the given id
+	 * to the tool bar of this workbench window. The new tool bar item is added
+	 * after any existing ones.
+	 * 
+	 * @param id the id of the tool bar item
+	 * @return the tool bar manager for the tool bar item with the given id
 	 */
-	public IToolBarManager getToolBar(String id) {
+	/* package */ IToolBarManager getToolBar(String id) {
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -327,37 +332,44 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorToolbarGroup()
+	/**
+	 * Adds the special editor tool bar group to the tool bar of this workbench
+	 * window. The new tool bar item is added after any existing ones. The id
+	 * of editor tool bar item is always 
+	 * {@link EDITOR_TOOLBAR_ID EDITOR_TOOLBAR_ID}, and consists of a canned
+	 * arrangement of buttons pre-bound to editor-specific commands.
+	 * 
+	 * @return the tool bar manager for the new tool bar item
+	 * @issue where is EDITOR_TOOLBAR_ID defined?
 	 */
-	public void addEditorToolbarGroup() {
+	/* package */ void addEditorToolbarGroup() {
 		// @issue need to provide implementation for this
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToolbarGroup(org.eclipse.jface.action.IToolBarManager, java.lang.String, boolean)
+	/**
+	 * Adds a group to the tool bar of this workbench window. The new group is 
+	 * added after any existing contributions to the tool bar.
+	 *
+	 * @param toolBarMgr the tool bar manager to add the group to 
+	 * @param id the unique group identifier
+	 * @param asSeparator whether the group should have a seperator
 	 */
-	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator) {
+	/* package */ void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator) {
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
 		if (!(toolBarMgr instanceof CoolItemToolBarManager)) {
 			throw new IllegalArgumentException();
 		}
-		((CoolItemToolBarManager) toolBarMgr).addBaseGroup(id, asSeperator);
+		((CoolItemToolBarManager) toolBarMgr).addBaseGroup(id, asSeparator);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#registerGlobalAction(org.eclipse.jface.action.IAction)
+	/**
+	 * Adds a menu item to the tool bar of this workbench menu.
+	 * 
+	 * @param menuItem the action contribution item to add to the menu
 	 */
-	public void registerGlobalAction(IAction action) {
-		window.registerGlobalAction(action);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToToolBarMenu(org.eclipse.jface.action.ActionContributionItem)
-	 */
-	public void addToToolBarMenu(ActionContributionItem menuItem) {
+	/* package */ void addToToolBarMenu(ActionContributionItem menuItem) {
 		if (menuItem == null) {
 			throw new IllegalArgumentException();
 		}
@@ -422,5 +434,53 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */	
 	/* package */ DropTargetListener getDropTargetListener() {
 		return dropTargetListener;
+	}
+
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public IActionBarConfigurer getActionBarConfigurer() {
+		if (actionBarConfigurer == null) {
+			// lazily initialize
+			actionBarConfigurer = new IActionBarConfigurer() {
+
+				public IMenuManager getMenuManager() {
+					return window.getMenuManager();
+				}
+
+				public IToolBarManager addToolBar(String id) {
+					return WorkbenchWindowConfigurer.this.addToolBar(id);
+				}
+
+				public void removeToolBar(String id) {
+					WorkbenchWindowConfigurer.this.removeToolBar(id);
+				}
+
+				public IToolBarManager getToolBar(String id) {
+					return WorkbenchWindowConfigurer.this.getToolBar(id);
+				}
+
+				public void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator) {
+					WorkbenchWindowConfigurer.this.addToolBarGroup(toolBarMgr, id, asSeparator);
+				}
+
+				public void registerGlobalAction(IAction action) {
+					window.registerGlobalAction(action);
+				}
+
+				public void addToToolBarMenu(ActionContributionItem menuItem) {
+					WorkbenchWindowConfigurer.this.addToToolBarMenu(menuItem);
+				}
+
+				public void addEditorToolBarGroup() {
+					WorkbenchWindowConfigurer.this.addEditorToolbarGroup();
+				}
+
+				public IStatusLineManager getStatusLineManager() {
+					return window.getStatusLineManager();
+				}
+			};
+		}
+		return actionBarConfigurer;
 	}
 }

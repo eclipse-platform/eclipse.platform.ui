@@ -150,6 +150,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	static final int BAR_SIZE = 23;
 
 	/**
+	 * Constant indicating that all the actions bars should be
+	 * filled.
+	 * 
+	 * @since 3.0
+	 */
+	private static final int FILL_ALL_ACTION_BARS = WorkbenchAdviser.FILL_MENU_BAR
+		| WorkbenchAdviser.FILL_TOOL_BAR
+		| WorkbenchAdviser.FILL_STATUS_LINE;
+
+	/**
 	 * The layout for the workbench window's shell.
 	 */
 	class WorkbenchWindowLayout extends Layout {
@@ -406,6 +416,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
 		// let the application do further configuration
 		getAdviser().preWindowOpen(getWindowConfigurer());
+		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 	}
 
 	private SortedMap actionsForActionSets = new TreeMap();
