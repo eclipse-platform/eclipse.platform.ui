@@ -263,8 +263,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                  */
             }
 
-            System.out.println(enabledContextIds);
-            
             /*
              * TODO switch to this from the old mechanism in
              * WorkbenchContextsAndContexts ((ContextManager)
