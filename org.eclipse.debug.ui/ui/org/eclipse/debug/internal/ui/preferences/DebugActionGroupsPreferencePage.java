@@ -49,10 +49,6 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 	private Label actionLabel;
 	private TableViewer actionViewer;
 	private boolean fStateChanged= false;
-
-	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 100;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
 	
 	/**
 	 * Creates an action set selection preference page.
@@ -121,8 +117,6 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 
 		fDebugActionGroupViewer = new CheckboxTableViewer(viewActionSetTable);
 		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		fDebugActionGroupViewer.getTable().setLayoutData(data);
 		fDebugActionGroupViewer.setLabelProvider(new DebugActionGroupsLabelProvider());
 		IContentProvider contentProvider= new DebugActionGroupsContentProvider(fDebugActionGroupViewer);
@@ -166,8 +160,6 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		// ...third the list of actions
 		actionViewer = new TableViewer(actionGroup, SWT.BORDER);
 		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		actionViewer.getTable().setLayoutData(data);
 		actionViewer.setLabelProvider(new DebugActionGroupsLabelProvider());
 		actionViewer.setContentProvider(new DebugActionGroupsActionContentProvider());

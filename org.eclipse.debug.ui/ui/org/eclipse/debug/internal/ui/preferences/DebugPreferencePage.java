@@ -68,6 +68,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 									   DebugUIMessages.getString("DebugPreferencePage.Default_perspective_for_Debug_2"), //$NON-NLS-1$
 									   perspectiveNamesAndIds,
 									   getFieldEditorParent()));
+									   
 		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT,
 									   DebugUIMessages.getString("DebugPreferencePage.Default_perspective_for_Run_3"), //$NON-NLS-1$
 									   perspectiveNamesAndIds,

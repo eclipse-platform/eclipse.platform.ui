@@ -64,7 +64,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fHistoryMaxEditor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.Maximum_launch_history_size_1"), composite); //$NON-NLS-1$
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;

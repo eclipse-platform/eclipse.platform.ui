@@ -77,10 +77,12 @@ public abstract class LaunchHistoryPreferenceTab {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		topComp.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		topComp.setLayoutData(gd);
 	
 		Label favoritesLabel = new Label(topComp, SWT.LEFT);
 		favoritesLabel.setText(getFavoritesLabel());
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		favoritesLabel.setLayoutData(gd);
 	
