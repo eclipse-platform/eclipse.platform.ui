@@ -365,7 +365,7 @@ private void checkUpdateEnabled() {
 		return;
 	if (!isFileProtocol(infoUrl)) // must be file URL
 		return;
-	if (!InternalBootLoader.inDevelopmentMode()) {
+//	if (!InternalBootLoader.inDevelopmentMode()) {
 		try {	// install must be r/w
 			File f = new File((new URL(infoUrl,UPDATE_MARKER)).getFile().replace('/',File.separatorChar));
 			uf = f;
@@ -379,7 +379,7 @@ private void checkUpdateEnabled() {
 		} catch(IOException e) {
 			return;
 		}
-	}
+//	}
 	isUpdateEnabled = true;
 }
 
@@ -522,6 +522,14 @@ public URL[] getFragmentPath() {
 	
 	URL[] result = new URL[path.size()];
 	path.toArray(result);
+
+	if (DEBUG) {
+		debug("Fragment-Path:");
+		for (int i=0; i<result.length; i++) {
+			debug("   "+result[i].toString());
+		}
+	}
+	
 	return result;
 
 }
@@ -635,7 +643,15 @@ public URL[] getPluginPath() {
 	}
 	
 	URL[] result = new URL[path.size()];
-	path.toArray(result);
+	path.toArray(result);	
+
+	if (DEBUG) {
+		debug("Plugin-Path:");
+		for (int i=0; i<result.length; i++) {
+			debug("   "+result[i].toString());
+		}
+	}
+	
 	return result;
 }
 
@@ -1462,11 +1478,10 @@ static void startup(URL base) {
 		profile.checkUpdateEnabled();		
 		if (DEBUG)
 			debug("Update mode "+(profile.isUpdateEnabled()?"enabled":"disabled"));
-		if (!profile.isUpdateEnabled())
-			return;
 
 		// clean up any pending deletes
-		profile.uninstallPendingDelete();
+		if (profile.isUpdateEnabled())
+			profile.uninstallPendingDelete();
 
 		// detect changes from last startup
 		String path;
@@ -1558,10 +1573,12 @@ static void startup(URL base) {
 			profile.setDefaultRuntime();
 		}
 
-		// try to see if we need to do cleanup pass
-		if (profile.newHistory)
-			profile.checkpoint();
-		profile.uninstall();
+		// try to see if we need to do cleanup pass		
+		if (profile.isUpdateEnabled()) {
+			if (profile.newHistory)
+				profile.checkpoint();
+			profile.uninstall();
+		}
 
 		// check if runtime path has changed
 		profile.checkRuntimePath();
