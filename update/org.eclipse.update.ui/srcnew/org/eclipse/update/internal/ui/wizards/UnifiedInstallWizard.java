@@ -40,7 +40,6 @@ public class UnifiedInstallWizard extends Wizard {
 	private IInstallConfiguration config;
 	private int installCount = 0;
 	private SearchRunner2 searchRunner;
-	private boolean updateMode = true;
 
 	public UnifiedInstallWizard() {
 		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
@@ -254,7 +253,6 @@ public class UnifiedInstallWizard extends Wizard {
 			job,
 			config,
 			targetSite,
-			optionalElements,
 			optionalFeatures,
 			getVerificationListener(),
 			monitor);

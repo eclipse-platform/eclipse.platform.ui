@@ -24,7 +24,7 @@ import org.eclipse.update.internal.ui.wizards.*;
  */
 public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
-	private static final String KEY_MESSAGE = "NewUpdates.noUpdates.message";
+
 	IWorkbenchWindow window;
 	SearchObject searchObject;
 	ISearchCategory category;
@@ -32,14 +32,6 @@ public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 	 * The constructor.
 	 */
 	public UnifiedWizardAction() {
-	}
-
-	private void initialize() {
-		searchObject = new DefaultUpdatesSearchObject();
-		String categoryId = searchObject.getCategoryId();
-		SearchCategoryDescriptor desc =
-			SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
-		category = desc.createCategory();
 	}
 
 	/**

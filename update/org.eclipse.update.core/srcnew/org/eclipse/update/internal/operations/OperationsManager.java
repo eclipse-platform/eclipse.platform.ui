@@ -269,7 +269,6 @@ public class OperationsManager implements IAdaptable {
 		PendingOperation job,
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		Object[] optionalElements,
 		IFeatureReference[] optionalFeatures,
 		IVerificationListener verifier,
 		IProgressMonitor monitor)

@@ -39,7 +39,6 @@ public class MultiOptionalFeaturesPage2 extends BannerPage2 implements IDynamicP
 	private CheckboxTreeViewer treeViewer;
 	private IInstallConfiguration config;
 	private JobRoot[] jobRoots;
-	private Hashtable elementTable;
 
 	class JobRoot {
 		private PendingOperation job;

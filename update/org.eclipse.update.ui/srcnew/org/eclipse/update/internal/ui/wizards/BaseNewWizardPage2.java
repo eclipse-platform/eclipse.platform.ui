@@ -36,7 +36,6 @@ public abstract class BaseNewWizardPage2 extends WizardPage {
 	private static final String KEY_INVALID = "BaseNewWizardPage.invalid";
 	private static final String KEY_MISSING_NAME = "BaseNewWizardPage.missingName";
 	private BookmarkFolder folder;
-	private String name;
 	private TreeViewer tree;
 	private Text nameText;
 	private Text containerText;

@@ -101,7 +101,7 @@ public class DuplicateConflictsValidator  {
 		IInstallConfiguration config) {
 		Hashtable featureTable = new Hashtable();
 		computePresentState(featureTable, config);
-		computeNewFeatures(jobSites, config, featureTable);
+		computeNewFeatures(jobSites, featureTable);
 		return computeConflicts(featureTable);
 	}
 
@@ -170,7 +170,6 @@ public class DuplicateConflictsValidator  {
 
 	private static void computeNewFeatures(
 		JobTargetSite[] jobSites,
-		IInstallConfiguration config,
 		Hashtable featureTable) {
 		for (int i = 0; i < jobSites.length; i++) {
 			JobTargetSite jobSite = jobSites[i];

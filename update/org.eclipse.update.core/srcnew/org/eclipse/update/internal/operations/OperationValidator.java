@@ -432,57 +432,6 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Handle one-click changes as a batch
-	 */
-	private static void validateOneClickUpdate(
-		PendingOperation[] jobs,
-		ArrayList status) {
-		try {
-			ArrayList features = computeFeatures();
-			ArrayList savedFeatures = features;
-
-			// pass 1: see if we can process the entire "batch"
-			ArrayList tmpStatus = new ArrayList();
-			for (int i = 0; i < jobs.length; i++) {
-				IFeature newFeature = jobs[i].getFeature();
-				IFeature oldFeature = jobs[i].getOldFeature();
-				features =
-					computeFeaturesAfterOperation(
-						features,
-						newFeature,
-						oldFeature);
-			}
-			checkConstraints(features, tmpStatus);
-			if (tmpStatus.size() == 0) // the whole "batch" is OK
-				return;
-
-			// pass 2: we have conflicts
-			features = savedFeatures;
-			for (int i = 0; i < jobs.length; i++) {
-				IFeature newFeature = jobs[i].getFeature();
-				IFeature oldFeature = jobs[i].getOldFeature();
-				features =
-					computeFeaturesAfterOperation(
-						features,
-						newFeature,
-						oldFeature);
-				checkConstraints(features, status);
-				checkLicense(newFeature, status);
-				if (status.size() > 0) {
-					IStatus conflict =
-						createStatus(
-							newFeature,
-							UpdateManager.getString(KEY_CONFLICT));
-					status.add(0, conflict);
-					return;
-				}
-			}
-		} catch (CoreException e) {
-			status.add(e.getStatus());
-		}
-	}
-
-	/*
 	 * Compute a list of configured features
 	 */
 	private static ArrayList computeFeatures() throws CoreException {
