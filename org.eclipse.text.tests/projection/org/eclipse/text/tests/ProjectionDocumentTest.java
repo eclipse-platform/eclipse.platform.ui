@@ -45,6 +45,13 @@ public class ProjectionDocumentTest extends TestCase {
 		}
 		
 		/*
+		 * @see org.eclipse.jface.text.projection.ProjectionDocument#getFragments()
+		 */
+		public Position[] getFragments2() {
+			return super.getFragments();
+		}
+		
+		/*
 		 * @see org.eclipse.jface.text.projection.ProjectionDocument#adaptProjectionToMasterChange(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public boolean adaptProjectionToMasterChange2(DocumentEvent masterEvent) throws BadLocationException {
@@ -193,17 +200,29 @@ public class ProjectionDocumentTest extends TestCase {
 		Position[] segmentation= fSlaveDocument.getSegments2();
 		assertNotNull(segmentation);
 
-		for (int i= 0; i < segmentation.length; i++)
+		Position previous= null;
+		for (int i= 0; i < segmentation.length; i++) {
 			assertFalse(segmentation[i].getLength() == 0);
+			if (previous != null)
+				assertTrue(previous.getOffset() + previous.getLength() == segmentation[i].getOffset());
+			previous= segmentation[i];
+		}
 	}
 	
 	private void assertWellFormedFragmentation() {
 		Position[] segmentation= fSlaveDocument.getSegments2();
+		assertNotNull(segmentation);
+		Position[] fragmention= fSlaveDocument.getFragments2();
+		assertNotNull(fragmention);
+		
+		assertTrue(fragmention.length == segmentation.length);
 		
 		Position previous= null;
 		for (int i= 0; i < segmentation.length; i++) {
 			Segment segment= (Segment) segmentation[i];
-			Fragment fragment= segment.fragment;
+			Fragment fragment= (Fragment) fragmention[i];
+			assertTrue(fragment == segment.fragment);
+			assertTrue(segment == fragment.segment);
 			assertFalse(fragment.getLength() == 0);
 			assertTrue(fragment.length == segment.length);
 			if (previous != null)
@@ -211,7 +230,7 @@ public class ProjectionDocumentTest extends TestCase {
 			previous= fragment;
 		}
 	}
-	
+		
 	private void assertFragmentation(Position[] expected) {
 		assertFragmentation(expected, true);
 	}
@@ -1759,5 +1778,70 @@ public class ProjectionDocumentTest extends TestCase {
 		
 		fSlaveDocumentManager.freeSlaveDocument(slave3);
 		fSlaveDocumentManager.freeSlaveDocument(slave2);
+	}
+	
+	public void test27() {
+		// test changing the projection until identical projection is reached
+		
+		createProjectionA();
+
+		Position[] expected= new Position[] {
+			new Position(0, 20),
+			new Position(40, 20),
+			new Position(80, 20),
+			new Position(120, 20),
+			new Position(160, 20)
+		};
+		assertFragmentation(expected);
+		
+		try {
+			fSlaveDocument.addMasterDocumentRange(20, 20);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		expected= new Position[] {
+			new Position(0, 60),
+			new Position(80, 20),
+			new Position(120, 20),
+			new Position(160, 20)
+		};
+		assertFragmentation(expected);
+
+		try {
+			fSlaveDocument.addMasterDocumentRange(60, 20);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		expected= new Position[] {
+			new Position(0, 100),
+			new Position(120, 20),
+			new Position(160, 20)
+		};
+		assertFragmentation(expected);
+	
+		try {
+			fSlaveDocument.addMasterDocumentRange(100, 20);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		expected= new Position[] {
+			new Position(0, 140),
+			new Position(160, 20)
+		};
+		assertFragmentation(expected);
+	
+		try {
+			fSlaveDocument.addMasterDocumentRange(140, 20);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+
+		expected= new Position[] {
+			new Position(0, fMasterDocument.getLength())
+		};
+		assertFragmentation(expected);
 	}
 }
