@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.variable;
+package org.eclipse.ui.externaltools.internal.variable;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
@@ -13,7 +13,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Expands a resource type variable into the desired
@@ -72,7 +72,8 @@ public class ResourceExpander implements IVariableExpander {
 	/**
 	 * Returns whether the given variable tag is a known path
 	 * variable tag. Path variable tags represent variables that
-	 * expand to paths relative to the workspace root.	 */
+	 * expand to paths relative to the workspace root.
+	 */
 	private boolean isPathVariable(String varTag) {
 		return varTag.equals(IExternalToolConstants.VAR_CONTAINER_PATH) ||
 				varTag.equals(IExternalToolConstants.VAR_PROJECT_PATH) ||
@@ -102,7 +103,8 @@ public class ResourceExpander implements IVariableExpander {
 	 * Returns a string representation of the path to a file or directory
 	 * for the given variable tag and value or <code>null</code>.
 	 * 
-	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)	 */
+	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
+	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) {
 		IPath path= getPath(varTag, varValue, context);
 		if (path != null) {

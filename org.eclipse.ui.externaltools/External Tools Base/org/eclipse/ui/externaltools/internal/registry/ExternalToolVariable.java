@@ -17,12 +17,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.externaltools.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
-import org.eclipse.ui.externaltools.variable.DefaultVariableExpander;
-import org.eclipse.ui.externaltools.variable.IVariableComponent;
-import org.eclipse.ui.externaltools.variable.IVariableExpander;
+import org.eclipse.ui.externaltools.internal.variable.DefaultVariableExpander;
+import org.eclipse.ui.externaltools.internal.variable.IVariableComponent;
+import org.eclipse.ui.externaltools.internal.variable.IVariableExpander;
 
 /**
  * Abtract representation of the different variables.

@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.model;
+package org.eclipse.ui.externaltools.internal.model;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
@@ -16,11 +16,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
-import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
  * General utility class dealing with external tools

@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.variable;
+package org.eclipse.ui.externaltools.internal.variable;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.

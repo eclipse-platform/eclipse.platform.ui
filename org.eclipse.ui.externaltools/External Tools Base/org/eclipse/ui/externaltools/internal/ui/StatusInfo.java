@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * A settable IStatus.

@@ -29,8 +29,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.model.ToolUtil;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 
 /**
  * Responsible reading an old external tool format and creating

@@ -26,8 +26,8 @@ import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**

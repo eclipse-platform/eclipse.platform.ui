@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Registry of all available refresh scope variables.

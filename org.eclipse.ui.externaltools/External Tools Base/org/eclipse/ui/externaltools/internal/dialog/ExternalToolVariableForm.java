@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.ui.externaltools.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
-import org.eclipse.ui.externaltools.model.ToolUtil;
-import org.eclipse.ui.externaltools.variable.IVariableComponent;
+import org.eclipse.ui.externaltools.internal.variable.IVariableComponent;
 
 /**
  * Visual grouping of controls that allows the user to

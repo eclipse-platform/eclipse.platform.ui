@@ -18,8 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 
 /**
  * This project builder implementation will run an external tool during the

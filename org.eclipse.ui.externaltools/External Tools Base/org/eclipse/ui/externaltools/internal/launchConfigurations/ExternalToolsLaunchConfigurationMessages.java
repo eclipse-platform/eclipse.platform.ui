@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.variable;
+package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -10,14 +10,14 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class ExternalToolsVariableMessages {
+public class ExternalToolsLaunchConfigurationMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.variable.ExternalToolsVariableMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private ExternalToolsVariableMessages() {
+	private ExternalToolsLaunchConfigurationMessages() {
 	}
 
 	public static String getString(String key) {

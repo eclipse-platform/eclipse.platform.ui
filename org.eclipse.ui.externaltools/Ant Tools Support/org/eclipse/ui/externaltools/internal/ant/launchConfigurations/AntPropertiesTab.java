@@ -46,9 +46,9 @@ import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AddPropertyDialog;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
  * Tab for setting Ant user properties per launch configuration. All properties

@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;

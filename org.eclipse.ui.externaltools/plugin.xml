@@ -368,59 +368,59 @@
 		<variable
 			tag="workspace_loc"
 			description="%workspace_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkspaceExpander">
 		</variable>
 		<variable
 			tag="project_loc"
 			description="%project_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
 		</variable>
 		<variable
 			tag="project_path"
 			description="%project_path.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
 		</variable>
 		<variable
 			tag="project_name"
 			description="%project_name.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectNameExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectNameExpander">
 		</variable>
 		<variable
 			tag="resource_loc"
 			description="%resource_loc.description"
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
+			componentClass="org.eclipse.ui.externaltools.internal.variable.SpecificFileResourceComponent"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
 		</variable>
 		<variable
 			tag="resource_path"
 			description="%resource_path.description"
-			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
+			componentClass="org.eclipse.ui.externaltools.internal.variable.SpecificFileResourceComponent"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
 		</variable>
 		<variable
 			tag="resource_name"
 			description="%resource_name.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceNameExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceNameExpander">
 		</variable>
 		<variable
 			tag="container_loc"
 			description="%container_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ContainerExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
 		</variable>
 		<variable
 			tag="container_path"
 			description="%container_path.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ContainerExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
 		</variable>
 		<variable
 			tag="container_name"
 			description="%container_name.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ContainerNameExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerNameExpander">
 		</variable>
 		<variable
 			tag="build_type"
 			description="%build_type.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.BuildTypeExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.BuildTypeExpander">
 		</variable>
 	</extension>
 
@@ -428,28 +428,28 @@
 		<variable
 			tag="workspace"
 			description="%workspace.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkspaceExpander">
 		</variable>
 		<variable
 			tag="project"
 			description="%project.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ProjectExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
 		</variable>
 		<variable
 			tag="container"
 			description="%container.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceContainerExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceContainerExpander">
 		</variable>
 		<variable
 			tag="resource"
 			description="%resource.description"
-			componentClass="org.eclipse.ui.externaltools.variable.ResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
+			componentClass="org.eclipse.ui.externaltools.internal.variable.ResourceComponent"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
 		</variable>
 		<variable
 			tag="working_set"
 			description="%working_set.description"
-			expanderClass="org.eclipse.ui.externaltools.variable.WorkingSetExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkingSetExpander">
 		</variable>
 	</extension>
 	

@@ -18,7 +18,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
  * The images provided by the external tools plugin.

@@ -15,11 +15,11 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsRefreshTab;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.model.ToolUtil;
-import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsRefreshTab;
+import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 
 public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {

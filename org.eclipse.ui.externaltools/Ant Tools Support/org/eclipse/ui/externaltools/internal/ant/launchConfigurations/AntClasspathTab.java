@@ -51,9 +51,9 @@ import org.eclipse.ui.externaltools.internal.ant.preferences.AntClasspathContent
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntClasspathLabelProvider;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 

@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.launchConfigurations;
+package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 

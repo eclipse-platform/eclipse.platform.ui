@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.group;
+package org.eclipse.ui.externaltools.internal.group;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
