@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -43,6 +44,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -154,6 +156,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration listeners
 	 */
 	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
+	
+	/**
+	 * Path to the local directory where local launch configurations
+	 * are stored with the workspace.
+	 */
+	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
+		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
@@ -514,16 +523,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IPath defaultConfigMapPath = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
 		restoreDefaultConfigTypeMap(defaultConfigMapPath);
 		
-		// restore project launch configuration indices
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen()) {
-				restoreIndex(projects[i]);
-			}
-		}	
-		// restore local launch configuration index	
-		IPath launchIndexPath = DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
-		restoreIndex(launchIndexPath);		
+		// restore launch configuration indices
+		restoreNonLocalIndex();
+		restoreLocalIndex();
 	}
 	
 	/**
@@ -1172,6 +1174,135 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}			
 	}	
+	
+	/**
+	 * Rebuilds the index of launch configurations by searching
+	 * the workspace for .launch files. This is only required when
+	 * no saved state is available from the workspace.
+	 * 
+	 * @exception CoreException if an exception occurrs building the
+	 *  index
+	 * @see DebugPlugin#startup()
+	 */
+	public void rebuildLaunchConfigIndex() throws CoreException {
+		fLaunchConfigurationIndex = new ArrayList(10);
+		rebuildLocalIndex();
+		rebuildNonLocalIndex();
+		// re-persist the indicies
+		persistLocalLaunchConfigIndex();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].isOpen()) {
+				persistIndex(projects[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Rebuilds the index of local launch configurations by
+	 * looking in the local file system for .launch files
+	 * 
+	 * @exception CoreException if there is a lower level
+	 *  IO exception
+	 */
+	protected void rebuildLocalIndex() throws CoreException {
+		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
+		final File directory = containerPath.toFile();
+		if (directory.isDirectory()) {
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return dir.equals(directory) && name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+				}
+			};
+			File[] configs = directory.listFiles(filter);
+			for (int i = 0; i < configs.length; i++) {
+				try {
+					LaunchConfiguration config = new LaunchConfiguration(new Path(configs[i].getCanonicalPath()));
+					fLaunchConfigurationIndex.add(config);
+				} catch (IOException e) {
+					throw new CoreException(
+						new Status(
+						 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while re-building local launch configuration index.", new String[]{e.toString()}), null
+						));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Rebuilds the index of non-local launch configurations by
+	 * traversing the workspace searching for .launch files.
+	 * 
+	 * @exception CoreException an exception occurrs traversing
+	 *  the workspace.
+	 */
+	protected void rebuildNonLocalIndex() throws CoreException {
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList(10);
+		searchForFiles(root, ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION, list);
+		Iterator iter = list.iterator();
+		while (iter.hasNext()) {
+			IFile file = (IFile)iter.next();
+			ILaunchConfiguration config = getLaunchConfiguration(file);
+			fLaunchConfigurationIndex.add(config);
+		}
+	}
+	
+	/**
+	 * Recursively searches the given container for files with the given
+	 * extension.
+	 * 
+	 * @param container the container to search in
+	 * @param extension the file extension being searched for
+	 * @param list the list to add the matching files to
+	 * @exception CoreException if an exception occurrs traversing
+	 *  the container
+	 */
+	protected void searchForFiles(IContainer container, String extension, List list) throws CoreException {
+		IResource[] members = container.members();
+		for (int i = 0; i < members.length; i++) {
+			if (members[i] instanceof IContainer) {
+				if (members[i] instanceof IProject && !((IProject)members[i]) .isOpen()) {
+					continue;
+				}
+				searchForFiles((IContainer)members[i], extension, list);
+			} else if (members[i] instanceof IFile) {
+				IFile file = (IFile)members[i];
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(file.getFileExtension())) {
+					list.add(file);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Restore launch configuration index for non-local
+	 * launch configurations.
+	 * 
+	 * @exception CoreException if an exception occurrs reading
+	 *  an index file
+	 */
+	protected void restoreNonLocalIndex() throws CoreException {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].isOpen()) {
+				restoreIndex(projects[i]);
+			}
+		}	
+	}
+	
+	/**
+	 * Restore launch configuration index for local
+	 * launch configurations.
+	 * 
+	 * @exception CoreExcetpion if an exception occurrs reading
+	 *  the index file
+	 */
+	protected void restoreLocalIndex() throws CoreException {
+		IPath launchIndexPath = DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
+		restoreIndex(launchIndexPath);		
+	}
 	
 	/**
 	 * Traverses the delta looking for added/removed/changed launch

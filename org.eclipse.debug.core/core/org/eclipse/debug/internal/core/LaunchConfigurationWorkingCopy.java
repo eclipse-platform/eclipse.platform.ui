@@ -408,8 +408,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (isMoved()) {
 			IPath path = null;
 			if (isLocal()) {
-				path = DebugPlugin.getDefault().getStateLocation();
-				path = path.append(".launches"); //$NON-NLS-1$
+				path = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
 			} else {
 				path = getContainer().getLocation();
 			}
