@@ -30,6 +30,7 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -55,6 +56,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	
 	static final boolean DEBUG= false;
 	static final boolean BRUTE_FORCE= false;
+	
+	static final boolean isCarbon = "carbon".equals(SWT.getPlatform());
     
 	static final String PROPERTY_PREFIX= "org.eclipse.ui.workbench.progress"; //$NON-NLS-1$
 
@@ -85,6 +88,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Cursor normalCursor;
 	private Image defaultJobIcon;
 	private Font defaultFont= JFaceResources.getDefaultFont();
+	private Font boldFont;
+	private Font smallerFont;
 	private HashMap map= new HashMap();
     private IJobProgressManagerListener progressManagerListener;
 
@@ -140,6 +145,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	
 	abstract class JobTreeItem extends Canvas implements Listener {
 		JobTreeElement jobTreeElement;
+		boolean jobTerminated;
 		boolean keepItem;
 		
 		JobTreeItem(Composite parent, JobTreeElement info, int flags) {
@@ -154,6 +160,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			jobTreeElement= info;
 			map.put(jobTreeElement, this);
 			refresh();
+		}
+		
+		void setKept() {
+			if (!jobTerminated) {
+				keepItem= jobTerminated= true;
+				remove();	// bring to keep mode
+			}
 		}
 		
 		public void handleEvent(Event e) {
@@ -267,7 +280,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			jobitem= parent;
 			
- 			setFont(defaultFont);
+ 			setFont(smallerFont);
 			
 			addListener(SWT.KeyDown, this);
 			addListener(SWT.Paint, this);
@@ -434,7 +447,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			return false;
 		}
+		public boolean remove() {
+			boolean b= super.remove();
+			return b;
+		}
 	}
+		
 
 	/*
 	 * An SWT widget representing a JobModel
@@ -443,11 +461,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 		static final int MARGIN= 2;
 		static final int HGAP= 7;
-		static final int VGAP= 2;
+		static final int VGAP= 1;
 		static final int MAX_PROGRESS_HEIGHT= 12;
 		static final int MIN_ICON_SIZE= 16;
 
-		boolean jobTerminated;
 		boolean selected;
 		int cachedWidth= -1;
 		int cachedHeight= -1;
@@ -485,7 +502,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				iconItem.setImage(defaultJobIcon);			
 			
 			nameItem= new Label(this, SWT.NONE);
-			nameItem.setFont(defaultFont);
+			nameItem.setFont(boldFont);
 			nameItem.addMouseListener(ml);
 			
 			actionBar= new ToolBar(this, SWT.FLAT);
@@ -619,12 +636,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				
 			int y= MARGIN;
 			int h= Math.max(e1.y, e2.y);
-			iconItem.setBounds(MARGIN, y+(h-e1.y)/2, e1.x, e1.y);
+			
 			nameItem.setBounds(MARGIN+e1.x+HGAP, y+(h-e2.y)/2, iw-e1.x-HGAP, e2.y);
 			y+= h;
 			if (progressBar != null && !progressBar.isDisposed()) {
 				Point e3= progressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
-				y+= VGAP;
+				y+= VGAP+1;
 				progressBar.setBounds(MARGIN+indent, y, iw-indent, e3.y);
 				y+= e3.y;
 			}
@@ -637,6 +654,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 					y+= e4.y;
 				}
 			}
+			
+			int hm= (MARGIN+HGAP)/2;
+			int vm= (y-e1.y)/2;
+			if (hm < (y-e1.y)/2)
+				vm= hm;
+			iconItem.setBounds(hm, vm, e1.x, e1.y);
 			
 			actionBar.setBounds(e.x-MARGIN-e5.x, (e.y-e5.y)/2, e5.x, e5.y);
 		}
@@ -651,6 +674,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 					
 				cachedHeight= MARGIN + Math.max(e1.y, e2.y);
 				if (progressBar != null && !progressBar.isDisposed()) {
+					cachedHeight+= 1;
 					Point e3= progressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 					cachedHeight+= VGAP + e3.y;
 				}
@@ -791,7 +815,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				if (children[i] instanceof Hyperlink)
 					n++;
 			
-			if (roots.length == n) {
+			if (roots.length == n) {	// reuse all children
 				int z= 0;
 				for (int i= 0; i < children.length; i++) {
 					if (children[i] instanceof Hyperlink) {
@@ -866,8 +890,17 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 
 		defaultJobIcon= getImage(display, "newprogress_circle.gif");
 		
-		boolean carbon= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
-		int shift= carbon ? -25 : -10; // Mac has different Gamma value
+		FontData fds[]= defaultFont.getFontData();
+		if (fds.length > 0) {
+			FontData fd= fds[0];
+			int h= fd.getHeight();
+			if (isCarbon)
+				h-=2;
+			boldFont= new Font(display, fd.getName(), h, fd.getStyle() | SWT.BOLD);
+			smallerFont= new Font(display, fd.getName(), h, fd.getStyle());
+		}
+		
+		int shift= isCarbon ? -25 : -10; // Mac has different Gamma value
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		darkColor= new Color(display, lightColor.getRed()+shift, lightColor.getGreen()+shift, lightColor.getBlue()+shift);
 		taskColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
@@ -992,14 +1025,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			Object element= infos[i];
 			JobTreeItem jte= findJobItem(element, true);
 			if (jte != null) {
-				jte.keepItem= true;
-				jte.remove();	// bring to keep mode
+				jte.setKept();
 				lastAdded= jte;
 				
 				if (jte instanceof Hyperlink) {
 					JobItem p= (JobItem) jte.getParent();
-					p.keepItem= true;
-					p.remove();
+					p.setKept();
 					lastAdded= p;
 				}
 				
