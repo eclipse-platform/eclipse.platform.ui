@@ -259,6 +259,10 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				.toArray(new FederatedSearchEntry[entries.size()]);
 		FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+		if (scopeSection.isExpanded()) {
+			scopeSection.setExpanded(false);
+			parent.reflow();
+		}
 		BaseHelpSystem.getSearchManager().search(text, array, results);
 		results.startNewSearch(text);
 	}

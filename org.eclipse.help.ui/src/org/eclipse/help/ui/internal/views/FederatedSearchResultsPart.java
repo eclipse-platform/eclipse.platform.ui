@@ -42,7 +42,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		searchResults.marginWidth = 10;
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
-		String topicKey = IHelpUIConstants.IMAGE_KEY_F1TOPIC;
+		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		String nwKey = IHelpUIConstants.IMAGE_NW;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
