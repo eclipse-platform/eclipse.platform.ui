@@ -64,9 +64,14 @@ public void setFullyLoaded(boolean fullyLoaded) {
 	this.fullyLoaded = fullyLoaded;
 }
 public ConfigurationElementModel[] getSubElements() {
-	// maybe it was lazily loaded
-	if (!fullyLoaded)
-		((PluginRegistry)this.getParent().getRegistry()).loadConfigurationElements(this);
+	// synchronization is needed to avoid two threads trying to load the same 
+	// extension at the same time (see bug 36659) 
+	synchronized (this) {
+		// maybe it was lazily loaded
+		if (!fullyLoaded)
+			((PluginRegistry)this.getParent().getRegistry()).loadConfigurationElements(this);
+		// fullyLoaded should be true and elements available now
+	}
 	return super.getSubElements();
 }
 /**
