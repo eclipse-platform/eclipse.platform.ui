@@ -85,12 +85,12 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 	public void testConstants() {
 		// make sure that the preference store constants are defined properly
-		assertTrue(Preferences.BOOLEAN_DEFAULT_DEFAULT == false);
-		assertTrue(Preferences.INT_DEFAULT_DEFAULT == 0);
-		assertTrue(Preferences.LONG_DEFAULT_DEFAULT == 0L);
-		assertTrue(Preferences.FLOAT_DEFAULT_DEFAULT == 0.0f);
-		assertTrue(Preferences.DOUBLE_DEFAULT_DEFAULT == 0.0);
-		assertTrue(Preferences.STRING_DEFAULT_DEFAULT.equals(""));
+		assertEquals("1.0", false, Preferences.BOOLEAN_DEFAULT_DEFAULT);
+		assertEquals("1.1", 0, Preferences.INT_DEFAULT_DEFAULT);
+		assertEquals("1.2", 0L, Preferences.LONG_DEFAULT_DEFAULT);
+		assertEquals("1.3", 0.0f, Preferences.FLOAT_DEFAULT_DEFAULT, 0.0f);
+		assertEquals("1.4", 0.0, Preferences.DOUBLE_DEFAULT_DEFAULT, 0.0);
+		assertEquals("1.5", "", Preferences.STRING_DEFAULT_DEFAULT);
 	}
 
 	public void testBasics() {
@@ -103,69 +103,69 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 		// check that a random property in a newly created store
 		// appearchs to have default-default values of whatever type asked for
-		assertTrue("1.0", ps.isDefault(k1) == true);
-		assertTrue("1.1", ps.getBoolean(k1) == Preferences.BOOLEAN_DEFAULT_DEFAULT);
-		assertTrue("1.2", ps.getInt(k1) == Preferences.INT_DEFAULT_DEFAULT);
-		assertTrue("1.3", ps.getLong(k1) == Preferences.LONG_DEFAULT_DEFAULT);
-		assertTrue("1.4", ps.getFloat(k1) == Preferences.FLOAT_DEFAULT_DEFAULT);
-		assertTrue("1.5", ps.getDouble(k1) == Preferences.DOUBLE_DEFAULT_DEFAULT);
-		assertTrue("1.6", ps.getString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("1.0", true, ps.isDefault(k1));
+		assertEquals("1.1", Preferences.BOOLEAN_DEFAULT_DEFAULT, ps.getBoolean(k1));
+		assertEquals("1.2", Preferences.INT_DEFAULT_DEFAULT, ps.getInt(k1));
+		assertEquals("1.3", Preferences.LONG_DEFAULT_DEFAULT, ps.getLong(k1));
+		assertEquals("1.4", Preferences.FLOAT_DEFAULT_DEFAULT, ps.getFloat(k1), 0.0f);
+		assertEquals("1.5", Preferences.DOUBLE_DEFAULT_DEFAULT, ps.getDouble(k1), 0.0);
+		assertEquals("1.6", Preferences.STRING_DEFAULT_DEFAULT, ps.getString(k1));
 
-		assertTrue("1.7", ps.getDefaultBoolean(k1) == Preferences.BOOLEAN_DEFAULT_DEFAULT);
-		assertTrue("1.8", ps.getDefaultInt(k1) == Preferences.INT_DEFAULT_DEFAULT);
-		assertTrue("1.9", ps.getDefaultLong(k1) == Preferences.LONG_DEFAULT_DEFAULT);
-		assertTrue("1.10", ps.getDefaultFloat(k1) == Preferences.FLOAT_DEFAULT_DEFAULT);
-		assertTrue("1.11", ps.getDefaultDouble(k1) == Preferences.DOUBLE_DEFAULT_DEFAULT);
-		assertTrue("1.12", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("1.7", Preferences.BOOLEAN_DEFAULT_DEFAULT, ps.getDefaultBoolean(k1));
+		assertEquals("1.8", Preferences.INT_DEFAULT_DEFAULT, ps.getDefaultInt(k1));
+		assertEquals("1.9", Preferences.LONG_DEFAULT_DEFAULT, ps.getDefaultLong(k1));
+		assertEquals("1.10", Preferences.FLOAT_DEFAULT_DEFAULT, ps.getDefaultFloat(k1), 0.0f);
+		assertEquals("1.11", Preferences.DOUBLE_DEFAULT_DEFAULT, ps.getDefaultDouble(k1), 0.0);
+		assertEquals("1.12", Preferences.STRING_DEFAULT_DEFAULT, ps.getDefaultString(k1));
 
 		// test set/getString
 		// give it a value
 		ps.setValue(k1, v1);
 		assertTrue("2.0", ps.isDefault(k1) == false);
-		assertTrue("2.1", ps.getString(k1).equals(v1));
-		assertTrue("2.2", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("2.1", v1, ps.getString(k1));
+		assertEquals("2.2", Preferences.STRING_DEFAULT_DEFAULT, ps.getDefaultString(k1));
 		// change the value
 		ps.setValue(k1, v2);
 		assertTrue("2.3", ps.isDefault(k1) == false);
-		assertTrue("2.4", ps.getString(k1).equals(v2));
-		assertTrue("2.5", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("2.4", v2, ps.getString(k1));
+		assertEquals("2.5", Preferences.STRING_DEFAULT_DEFAULT, ps.getDefaultString(k1));
 		// change to same value as default
 		ps.setValue(k1, ps.getDefaultString(k1));
 		assertTrue("2.6", ps.isDefault(k1) == true);
-		assertTrue("2.7", ps.getString(k1).equals(ps.getDefaultString(k1)));
-		assertTrue("2.8", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("2.7", ps.getDefaultString(k1), ps.getString(k1));
+		assertEquals("2.8", Preferences.STRING_DEFAULT_DEFAULT, ps.getDefaultString(k1));
 		// reset to default
 		ps.setValue(k1, v2);
 		ps.setToDefault(k1);
 		assertTrue("2.9", ps.isDefault(k1) == true);
-		assertTrue("2.10", ps.getString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
-		assertTrue("2.11", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
+		assertEquals("2.10", Preferences.STRING_DEFAULT_DEFAULT, ps.getString(k1));
+		assertEquals("2.11", Preferences.STRING_DEFAULT_DEFAULT, ps.getDefaultString(k1));
 		// change default
 		ps.setDefault(k1, v1);
 		assertTrue("2.12", ps.isDefault(k1) == true);
-		assertTrue("2.13", ps.getString(k1).equals(v1));
-		assertTrue("2.14", ps.getDefaultString(k1).equals(v1));
+		assertEquals("2.13", v1, ps.getString(k1));
+		assertEquals("2.14", v1, ps.getDefaultString(k1));
 		// set the value
 		ps.setValue(k1, v2);
 		assertTrue("2.15", ps.isDefault(k1) == false);
-		assertTrue("2.16", ps.getString(k1).equals(v2));
-		assertTrue("2.17", ps.getDefaultString(k1).equals(v1));
+		assertEquals("2.16", v2, ps.getString(k1));
+		assertEquals("2.17", v1, ps.getDefaultString(k1));
 		// change to same value as default
 		ps.setValue(k1, ps.getDefaultString(k1));
 		assertTrue("2.18", ps.isDefault(k1) == true);
-		assertTrue("2.19", ps.getString(k1).equals(ps.getDefaultString(k1)));
-		assertTrue("2.20", ps.getDefaultString(k1).equals(v1));
+		assertEquals("2.19", ps.getDefaultString(k1), ps.getString(k1));
+		assertEquals("2.20", v1, ps.getDefaultString(k1));
 		// reset to default
 		ps.setValue(k1, v2);
 		ps.setToDefault(k1);
 		assertTrue("2.21", ps.isDefault(k1) == true);
-		assertTrue("2.22", ps.getString(k1).equals(v1));
-		assertTrue("2.23", ps.getDefaultString(k1).equals(v1));
+		assertEquals("2.22", v1, ps.getString(k1));
+		assertEquals("2.23", v1, ps.getDefaultString(k1));
 		// change default
 		ps.setDefault(k1, v3);
 		assertTrue("2.24", ps.isDefault(k1) == true);
-		assertTrue("2.25", ps.getString(k1).equals(v3));
-		assertTrue("2.26", ps.getDefaultString(k1).equals(v3));
+		assertEquals("2.25", v3, ps.getString(k1));
+		assertEquals("2.26", v3, ps.getDefaultString(k1));
 
 	}
 
