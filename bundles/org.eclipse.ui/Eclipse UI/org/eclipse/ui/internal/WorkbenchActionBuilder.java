@@ -31,6 +31,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String printActionDefId = "org.eclipse.ui.file.print"; //$NON-NLS-1$
 	private static final String closeActionDefId = "org.eclipse.ui.file.close"; //$NON-NLS-1$
 	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll"; //$NON-NLS-1$
+	private static final String closeAllSavedActionDefId = "org.eclipse.ui.file.closeAllSaved"; //$NON-NLS-1$
 	private static final String undoActionDefId = "org.eclipse.ui.edit.undo"; //$NON-NLS-1$
 	private static final String redoActionDefId = "org.eclipse.ui.edit.redo"; //$NON-NLS-1$
 	private static final String cutActionDefId = "org.eclipse.ui.edit.cut"; //$NON-NLS-1$
@@ -63,6 +64,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private NewWizardMenu newWizardMenu;
 	private CloseEditorAction closeAction;
 	private CloseAllAction closeAllAction;
+	private CloseAllSavedAction closeAllSavedAction;
 	private ImportResourcesAction importResourcesAction;
 	private ExportResourcesAction exportResourcesAction;
 	private GlobalBuildAction rebuildAllAction; // Full build
@@ -302,6 +304,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		
 		menu.add(closeAction);
 		menu.add(closeAllAction);
+		menu.add(closeAllSavedAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
 		menu.add(new Separator());
 		menu.add(saveAction);
@@ -806,6 +809,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		partService.addPartListener(closeAllAction);
 		closeAllAction.setActionDefinitionId(closeAllActionDefId);
 		keyBindingService.registerGlobalAction(closeAllAction);
+
+		closeAllSavedAction = new CloseAllSavedAction(window);
+		partService.addPartListener(closeAllSavedAction);
+		closeAllSavedAction.setActionDefinitionId(closeAllSavedActionDefId);
+		keyBindingService.registerGlobalAction(closeAllSavedAction);
 
 		pinEditorAction = new PinEditorAction(window);
 		partService.addPartListener(pinEditorAction);

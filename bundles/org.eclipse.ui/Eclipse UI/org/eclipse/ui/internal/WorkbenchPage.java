@@ -583,6 +583,41 @@ public boolean close() {
 /**
  * See IWorkbenchPage
  */
+public boolean closeAllSavedEditors() {
+	// If part is added / removed always unzoom.
+	if (isZoomed())
+		zoomOut();
+		
+	// Deactivate part.
+	boolean deactivate = activePart instanceof IEditorPart;
+	if (deactivate)
+		setActivePart(null);
+	lastActiveEditor = null;
+	actionSwitcher.updateTopEditor(null);
+			
+	// Close all editors.
+	IEditorPart [] editors = getEditorManager().getEditors();
+	for (int i = 0; i < editors.length; i ++) {
+		IEditorPart editor = editors[i];
+		if(!editor.isDirty()) {
+			getEditorManager().closeEditor(editor);
+			activationList.remove(editor);
+			firePartClosed(editor);
+			editor.dispose();
+		}
+	}
+	if (deactivate)
+		activate(activationList.getActive());
+		
+	// Notify interested listeners
+	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+
+	// Return true on success.
+	return true;
+}
+/**
+ * See IWorkbenchPage
+ */
 public boolean closeAllEditors(boolean save) {
 	// If part is added / removed always unzoom.
 	if (isZoomed())
@@ -647,8 +682,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	firePartClosed(editor);
 	editor.dispose();
 
-	// Notify interested listeners
-	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+		// Notify interested listeners
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
 	// Activate new part.
 	if (partWasActive) {
