@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -384,7 +384,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			if (info != null) {
 					
 				info.fFileSynchronizer.uninstall();
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
+				refreshFile(input.getFile());
 				info.fFileSynchronizer.install();			
 				
 				handleElementContentChanged((IFileEditorInput) element);
@@ -492,7 +492,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput input= (IFileEditorInput) element;
 			
 			try {
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				refreshFile(input.getFile());
 			} catch (CoreException x) {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
 			}
@@ -550,7 +550,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		try {
 			
 			try {
-				fileEditorInput.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				refreshFile(fileEditorInput.getFile());
 			} catch (CoreException x) {
 				handleCoreException(x, "FileDocumentProvider.handleElementContentChanged"); //$NON-NLS-1$
 			}
@@ -670,12 +670,25 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			try {
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				refreshFile(input.getFile());
 			} catch (CoreException x) {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.resetDocument")); //$NON-NLS-1$
 			}
 		}
 		super.resetDocument(element);	
+	}
+	
+	/**
+	 * Refresh the given file resource.
+	 * 
+	 * @param file
+	 * @throws CoreException
+	 */
+	protected void refreshFile(IFile file) throws CoreException {
+		try {
+			file.refreshLocal(IResource.DEPTH_INFINITE, getProgressMonitor());
+		} catch (OperationCanceledException x) {
+		}
 	}
 	
 	// --------------- Encoding support ---------------

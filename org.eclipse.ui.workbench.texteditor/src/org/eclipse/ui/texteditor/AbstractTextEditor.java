@@ -98,6 +98,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -1717,17 +1720,53 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/*
 	 * @see IEditorPart#init
 	 */
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	protected final void internalInit(IWorkbenchWindow window, final IEditorSite site, final IEditorInput input) throws PartInitException {
+		
+		final PartInitException[] exceptions= new PartInitException[1];
+		
+		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					
+					if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
+						IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) getDocumentProvider();
+						extension.setProgressMonitor(monitor);
+					}
+					
+					doSetInput(input);
+					
+				} catch (CoreException x) {
+					exceptions[0]= new PartInitException(x.getStatus());
+				} finally {
+					if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
+						IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) getDocumentProvider();
+						extension.setProgressMonitor(null);
+					}
+				}
+			}
+		};
+					
+		try {
+			IRunnableContext context= (window instanceof IRunnableContext) ? (IRunnableContext) window : new ProgressMonitorDialog(window.getShell());
+			context.run(true, true, runnable);
+		} catch (InvocationTargetException x) {
+		} catch (InterruptedException x) {
+		}
+
+		if (exceptions[0] != null)
+			throw exceptions[0];
+	}
+	
+	/*
+	 * @see IEditorPart#init
+	 */
+	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		
 		setSite(site);
 		
-		try {
-			doSetInput(input);
-		} catch (CoreException x) {
-			throw new PartInitException(x.getStatus());
-		}
-		
 		IWorkbenchWindow window= getSite().getWorkbenchWindow();
+		internalInit(window, site, input);
+		
 		window.getPartService().addPartListener(fActivationListener);
 		window.getShell().addShellListener(fActivationListener);
 	}
@@ -2127,14 +2166,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param input the editor input.
 	 */
 	private void updateDocumentProvider(IEditorInput input) {
-		if (getDocumentProvider() != null)
-			getDocumentProvider().removeElementStateListener(fElementStateListener);
-			
+		
+		IProgressMonitor rememberedProgressMonitor= null;
+		
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider != null) {
+			provider.removeElementStateListener(fElementStateListener);
+			if (provider instanceof IDocumentProviderExtension2) {
+				IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) provider;
+				rememberedProgressMonitor= extension.getProgressMonitor();
+				extension.setProgressMonitor(null);
+			}
+		}
+		
 		if (fInternalDocumentProvider == null)
 			fExternalDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-			
-		if (getDocumentProvider() != null)
-			getDocumentProvider().addElementStateListener(fElementStateListener);
+		
+		provider= getDocumentProvider();	
+		if (provider != null) {
+			provider.addElementStateListener(fElementStateListener);
+			if (provider instanceof IDocumentProviderExtension2) {
+				IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) provider;
+				extension.setProgressMonitor(rememberedProgressMonitor);
+			}
+		}
 	}
 	
 	/**

@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 
@@ -44,9 +45,8 @@ import org.eclipse.core.runtime.Status;
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
  * </p>
  */
-public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension {
-	
-	
+public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2 {
+		
 		/**
 		 * Collection of all information managed for a connected element.
 		 */
@@ -162,6 +162,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	private Map fElementInfoMap= new HashMap();
 	/** The element state listeners */
 	private List fElementStateListeners= new ArrayList();
+	/** 
+	 * The current progress monitor
+	 * @since 2.1
+	 */
+	private IProgressMonitor fProgressMonitor;
 	
 	
 	/**
@@ -798,5 +803,21 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	public void synchronize(Object element) throws CoreException {
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#getProgressMonitor()
+	 * @since 2.1
+	 */
+	public IProgressMonitor getProgressMonitor() {
+		return fProgressMonitor == null ? new NullProgressMonitor() : fProgressMonitor;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 2.1
+	 */
+	public void setProgressMonitor(IProgressMonitor progressMonitor) {
+		fProgressMonitor= progressMonitor;
 	}
 }
