@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -80,16 +81,17 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	// Keep track of deconfigured projects
 	private Set deconfiguredProjects = new HashSet();
 	
-	private static class DecoratorOverlayIcon extends OverlayIcon {
-		private static final int HEIGHT = 16;
-		private static final int WIDTH = 16;
+	private static class DecoratorOverlayIcon extends OverlayIcon {		
 		public DecoratorOverlayIcon(Image base, ImageDescriptor[] overlays) {
-			super(base, overlays, new Point(WIDTH, HEIGHT));
+			super(base, overlays, new Point(base.getBounds().width, base.getBounds().height));
 		}
+		// all cvs overlays are shown on the rightmost portion
+		// of the base image
 		protected void drawOverlays(ImageDescriptor[] overlays) {
 			for (int i = overlays.length - 1; i >= 0; --i) {
 				ImageData imageData = overlays[i].getImageData();
-				drawImage(imageData, 0, 0);
+				Point p = getSize();
+				drawImage(imageData, p.x-imageData.width, 0);
 			}
 		}
 	}
