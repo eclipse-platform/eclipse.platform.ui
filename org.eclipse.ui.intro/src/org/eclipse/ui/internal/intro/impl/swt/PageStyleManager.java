@@ -10,6 +10,7 @@ package org.eclipse.ui.internal.intro.impl.swt;
 
 import java.util.*;
 
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
@@ -343,6 +344,10 @@ public class PageStyleManager extends SharedStyleManager {
                 return text.getStyleId().equals(value);
         }
         return false;
+    }
+
+    public static Font getDefaultFont() {
+        return JFaceResources.getBannerFont();
     }
 
 

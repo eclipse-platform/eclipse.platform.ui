@@ -269,7 +269,7 @@ public class RootPageForm implements IIntroConstants {
         // description label.
         Label linkLabel = toolkit.createLabel(container, link.getLabel());
         gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-        linkLabel.setFont(DEFAULT_FONT);
+        linkLabel.setFont(PageStyleManager.getDefaultFont());
         linkLabel.setLayoutData(gd);
     }
 
@@ -288,7 +288,7 @@ public class RootPageForm implements IIntroConstants {
             fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);
         label.setAlignment(SWT.CENTER);
-        label.setFont(DEFAULT_FONT);
+        label.setFont(PageStyleManager.getDefaultFont());
         return label;
     }
 }

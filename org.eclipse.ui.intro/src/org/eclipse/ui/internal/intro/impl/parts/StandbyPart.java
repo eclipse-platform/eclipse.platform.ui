@@ -31,6 +31,7 @@ public class StandbyPart {
     private Composite container;
     private Composite content;
     private IIntroPart introPart;
+    private EmptyStandbyContentPart emptyPart;
 
     // hastable has partIds as keys, and ControlKeys are values.
     private Hashtable cachedContentParts = new Hashtable();
@@ -121,7 +122,15 @@ public class StandbyPart {
         slayout.marginWidth = slayout.marginHeight = 0;
         content.setLayout(slayout);
 
+        // By default, we always have the Context Help standby content.
+        addEmptyPart();
         updateReturnLinkLabel();
+    }
+
+    private void addEmptyPart() {
+        emptyPart = new EmptyStandbyContentPart();
+        addStandbyContentPart("emptyPart", emptyPart);
+        setTopControl("emptyPart");
     }
 
     public void setInput(Object input) {

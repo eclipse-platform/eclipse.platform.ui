@@ -65,7 +65,7 @@ public class PageContentForm implements IIntroConstants {
         if (styleManager.getPageDescription() != null) {
             Label label = toolkit.createLabel(contentComposite, styleManager
                     .getPageDescription(), SWT.WRAP);
-            label.setFont(DEFAULT_FONT);
+            label.setFont(PageStyleManager.getDefaultFont());
             TableWrapData td = new TableWrapData();
             td.align = TableWrapData.FILL;
             label.setLayoutData(td);

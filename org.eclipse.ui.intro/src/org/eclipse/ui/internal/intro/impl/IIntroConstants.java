@@ -8,8 +8,6 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
 
 public interface IIntroConstants {
 
@@ -29,6 +27,5 @@ public interface IIntroConstants {
     // key to retrive page sub-title from PageContentForm
     String PAGE_SUBTITLE = "PageSubtitle"; //$NON-NLS-1$
 
-    // default fonts
-    Font DEFAULT_FONT = JFaceResources.getBannerFont();
+
 }
