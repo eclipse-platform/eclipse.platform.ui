@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="contextVariables" name="Context Variables"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="dynamicVariables" name="Dynamic Stirng Substitution Variables"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a context variable is resolved dynamically by a delegate (resolver), which can accept an argument.
+         This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a dynamic variable is resolved at the time a string substitution is performed, with an optional argument.
       </documentation>
    </annotation>
 
@@ -82,9 +82,9 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a definition of a context variable that resolves to the name of the selected resource:
+         The following is a definition of a dynamic variable that resolves to the name of the selected resource:
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.contextVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.dynamicVariables&quot;&gt;
    &lt;variable 
       name=&quot;resource_name&quot;
       expanderClass=&quot;com.example.ResourceNameExpander&quot;

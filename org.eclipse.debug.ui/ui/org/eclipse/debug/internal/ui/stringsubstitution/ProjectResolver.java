@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
 
 
 
@@ -28,7 +28,7 @@ public class ProjectResolver extends ResourceResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.stringsubstitution.AbstractResolver#getResource(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	protected IResource getResource(IContextVariable variable, String argument) throws CoreException {
+	protected IResource getResource(IDynamicVariable variable, String argument) throws CoreException {
 		return getWorkspaceRoot().getProject(argument);
 	}
 

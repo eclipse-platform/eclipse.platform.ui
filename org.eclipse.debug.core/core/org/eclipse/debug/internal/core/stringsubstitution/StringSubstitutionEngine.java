@@ -197,8 +197,8 @@ public class StringSubstitutionEngine {
 		IStringVariableManager manager = StringVariableManager.getDefault();
 		IValueVariable valueVariable = manager.getValueVariable(name);
 		if (valueVariable == null) {
-			IContextVariable contextVariable = manager.getContextVariable(name);
-			if (contextVariable == null) {
+			IDynamicVariable dynamicVariable = manager.getDynamicVariable(name);
+			if (dynamicVariable == null) {
 				// no variables with the given name
 				if (reportUndefinedVariables) {
 					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.getString("StringSubstitutionEngine.3"), new String[]{name}), null)); //$NON-NLS-1$
@@ -211,7 +211,7 @@ public class StringSubstitutionEngine {
 				}
 			} else {
 				fSubs = true;
-				return contextVariable.getValue(arg);
+				return dynamicVariable.getValue(arg);
 			}
 		} else {
 			if (arg == null) {

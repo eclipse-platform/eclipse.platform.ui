@@ -14,15 +14,15 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
  * Base implementation for variable resolvers that prompt the user
  * for their value.
  */
-abstract class PromptingResolver implements IContextVariableResolver {
+abstract class PromptingResolver implements IDynamicVariableResolver {
 
 	/**
 	 * A hint that helps the user choose their input. If a prompt
@@ -85,7 +85,7 @@ abstract class PromptingResolver implements IContextVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IContextVariable variable, String argument) throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		String value = null;
 		setupDialog(argument);
 

@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -29,12 +29,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.0
  */
-public class ResourceResolver implements IContextVariableResolver {
+public class ResourceResolver implements IDynamicVariableResolver {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IContextVariable variable, String argument) throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		IResource resource = null;
 		if (argument == null) {
 			resource = getSelectedResource(variable);
@@ -79,7 +79,7 @@ public class ResourceResolver implements IContextVariableResolver {
 	 * @param argument referenced argument or <code>null</code>
 	 * @return vraiable reference expression
 	 */
-	protected String getReferenceExpression(IContextVariable variable, String argument) {
+	protected String getReferenceExpression(IDynamicVariable variable, String argument) {
 		StringBuffer reference = new StringBuffer();
 		reference.append("${"); //$NON-NLS-1$
 		reference.append(variable.getName());
@@ -109,7 +109,7 @@ public class ResourceResolver implements IContextVariableResolver {
 	 * @return selected resource
 	 * @throws CoreException if there is no selection
 	 */
-	protected IResource getSelectedResource(IContextVariable variable) throws CoreException {
+	protected IResource getSelectedResource(IDynamicVariable variable) throws CoreException {
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 		if (resource == null) {
 			abort(MessageFormat.format(StringSubstitutionMessages.getString("ResourceResolver.7"), new String[]{getReferenceExpression(variable, null)}), null); //$NON-NLS-1$
@@ -125,7 +125,7 @@ public class ResourceResolver implements IContextVariableResolver {
 	 * @return variable value
 	 * @throws CoreException if the variable name is not recognized
 	 */
-	protected String translateToValue(IResource resource, IContextVariable variable) throws CoreException {
+	protected String translateToValue(IResource resource, IDynamicVariable variable) throws CoreException {
 		String name = variable.getName();
 		if (name.endsWith("_loc")) { //$NON-NLS-1$
 			return resource.getLocation().toOSString();

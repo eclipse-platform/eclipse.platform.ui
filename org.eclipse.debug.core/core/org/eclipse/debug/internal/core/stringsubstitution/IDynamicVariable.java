@@ -13,13 +13,15 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A context variable is a variable whose value is computed dynamically
- * by a context variable resolver. A context variable and and resolver is
- * contributed by an extension.
+ * A dynamic variable is a variable whose value is computed dynamically
+ * by a resolver at the time a string substitution is performed. A dynamic
+ * variable is contributed by an extension.
+ * 
+ * TODO: example extension
  * 
  * @since 3.0
  */
-public interface IContextVariable extends IStringVariable {
+public interface IDynamicVariable extends IStringVariable {
 
 	/**
 	 * Returns the value of this variable when referenced with the given

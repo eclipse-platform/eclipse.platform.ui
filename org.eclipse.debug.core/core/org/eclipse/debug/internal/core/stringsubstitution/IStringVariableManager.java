@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Regisitry for string variables and contexts.
+ * Regisitry for string variables.
  * 
  * @since 3.0
  */
@@ -44,21 +44,21 @@ public interface IStringVariableManager {
 	public IValueVariable getValueVariable(String name);
 	
 	/**
-	 * Returns all registered context variables.
+	 * Returns all registered dynamic variables.
 	 * 
-	 * @return a collection of all registered context variables
+	 * @return a collection of all registered dynamic variables
 	 */
-	public IContextVariable[] getContextVariables();	
+	public IDynamicVariable[] getDynamicVariables();	
 	
 	/**
-	 * Returns the context variable with the given name or <code>null</code>
+	 * Returns the dynamic variable with the given name or <code>null</code>
 	 * if none.
 	 * 
 	 * @param name variable name
-	 * @return the context variable with the given name or <code>null</code>
+	 * @return the dynamic variable with the given name or <code>null</code>
 	 * if none
 	 */
-	public IContextVariable getContextVariable(String name);
+	public IDynamicVariable getDynamicVariable(String name);
 	
 	/**
 	 * Recursively resolves and replaces all variable references in the given
@@ -130,8 +130,10 @@ public interface IStringVariableManager {
 	public void removeValueVariableListener(IValueVariableListener listener);
 	
 	/**
-	 * Returns an expression referencing the given variable and
-	 * optional argument.
+	 * Convenience method that returns an expression referencing the given
+	 * variable and optional argument. For example, calling the method with
+	 * a <code>varName</code> of <code>my_var</code> and an <code>argument</code>
+	 * of <code>my_arg</code> results in the string <code>$(my_var:my_arg}</code>.
 	 * 
 	 * @param varName variable name
 	 * @param arg argument text or <code>null</code>

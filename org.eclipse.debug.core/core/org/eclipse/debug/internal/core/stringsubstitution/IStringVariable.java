@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 
 /**
  * A variable that can be referenced in an expression, which resolves to a string
- * value. Variables are referenced in expressions via there name, in the following
+ * value. Variables are referenced in expressions via their name, in the following
  * format.
  * <pre>
  * ${varname} or ${varname:argument}
@@ -27,9 +27,11 @@ package org.eclipse.debug.internal.core.stringsubstitution;
  * kinds of variables.
  * <ul>
  * <li><code>IValueVariable</code> - variables that have a value (with getter and setter), and
- *       accept no arguments</li>
- * <li><code>IContextVariable</code> - variables whose value is determined by a combination of
- *       the context in which they are referenced and optionally accept an argument.
+ *       accept no arguments. The value of this type of variable is resolved at the time
+ *       its value is set via its setter API.</li>
+ * <li><code>IDynamicVariable</code> - variables whose value is resolved at the time
+ * 		a string substitution is performed by a contributed resolver. Dynamic variables
+ * 		may accept an argument.</li>
  * </ul>
  * </p>
  * @since 3.0

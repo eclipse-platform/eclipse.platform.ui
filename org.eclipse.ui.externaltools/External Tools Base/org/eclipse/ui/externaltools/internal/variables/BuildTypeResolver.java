@@ -11,17 +11,17 @@
 package org.eclipse.ui.externaltools.internal.variables;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 
 
-public class BuildTypeResolver implements IContextVariableResolver {
+public class BuildTypeResolver implements IDynamicVariableResolver {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IContextVariable variable, String argument) throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 			return ExternalToolBuilder.getBuildType();
 	}
 

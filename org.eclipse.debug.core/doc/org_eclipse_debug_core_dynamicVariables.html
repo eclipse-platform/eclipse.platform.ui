@@ -5,10 +5,10 @@
 </HEAD>
 <HTML>
 <BODY>
-<H1><CENTER>Context Variables</CENTER></H1>
-<h6 class=CaptionFigColumn id=header>Identifier: </h6>org.eclipse.debug.core.contextVariables<p>
+<H1><CENTER>Dynamic Stirng Substitution Variables</CENTER></H1>
+<h6 class=CaptionFigColumn id=header>Identifier: </h6>org.eclipse.debug.core.dynamicVariables<p>
 <h6 class=CaptionFigColumn id=header>Since: </h6>3.0<p>
-<h6 class=CaptionFigColumn id=header>Description: </h6>This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a context variable is resolved dynamically by a delegate (resolver), which can accept an argument.<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
+<h6 class=CaptionFigColumn id=header>Description: </h6>This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a dynamic variable is resolved at the time a string substitution is performed, with an optional argument.<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
 <p class=code id=dtd>&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.variable">variable</a>*)&gt;</p>
 <br><br><p class=code id=dtd>&nbsp;&nbsp; &lt;!ATTLIST extension</p>
 <br><p class=code id=dtd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</p>
@@ -31,9 +31,9 @@
 <li><b>resolver</b> - specifies a Java class which implements <samp>org.eclipse.debug.core.stringsubstitution.IContextVariableResolver</samp>, which is used to determine the value of the variable</li>
 <li><b>description</b> - specifies a human-readable description of this variable</li>
 </ul>
-<h6 class=CaptionFigColumn id=header>Examples: </h6>The following is a definition of a context variable that resolves to the name of the selected resource:
+<h6 class=CaptionFigColumn id=header>Examples: </h6>The following is a definition of a dynamic variable that resolves to the name of the selected resource:
 <pre>
- <p class=code id=tag>&lt;extension point=<p class=code id=cstring>&quot;org.eclipse.debug.core.contextVariables&quot;</p><p class=code id=tag>&gt;</p>
+ <p class=code id=tag>&lt;extension point=<p class=code id=cstring>&quot;org.eclipse.debug.core.dynamicVariables&quot;</p><p class=code id=tag>&gt;</p>
    <p class=code id=tag>&lt;variable 
       name=<p class=code id=cstring>&quot;resource_name&quot;</p><p class=code id=tag>
       expanderClass=<p class=code id=cstring>&quot;com.example.ResourceNameExpander&quot;</p><p class=code id=tag>

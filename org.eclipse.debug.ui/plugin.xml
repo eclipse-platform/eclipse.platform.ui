@@ -1289,9 +1289,9 @@
 	</extension>
 
 	
-<!-- Context (String Substitution) Variables -->	
+<!-- Dynamic (String Substitution) Variables -->	
    <extension
-         point="org.eclipse.debug.core.contextVariables">
+         point="org.eclipse.debug.core.dynamicVariables">
       <variable
             name="workspace_loc"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver"

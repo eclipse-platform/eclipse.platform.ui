@@ -45,9 +45,9 @@ import org.w3c.dom.NodeList;
 public class StringVariableManager implements IStringVariableManager {
 	
 	/**
-	 * Context variables - maps variable names to variables.
+	 * Dynamic variables - maps variable names to variables.
 	 */
-	private Map fContextVariables;
+	private Map fDynamicVariables;
 	
 	/**
 	 * Value varialbes - maps variable names to variables.
@@ -70,13 +70,13 @@ public class StringVariableManager implements IStringVariableManager {
 	private static StringVariableManager fgManager; 
 	
 	/**
-	 * Simple identifier constant (value <code>"contextVariables"</code>) for the
+	 * Simple identifier constant (value <code>"dynamicVariables"</code>) for the
 	 * context variables extension point.
 	 * 
 	 * @since 3.0
 	 * TODO: this should be public API
 	 */
-	public static final String EXTENSION_POINT_CONTEXT_VARIABLES = "contextVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_DYNAMIC_VARIABLES = "dynamicVariables"; //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"valueVariables"</code>) for the
@@ -195,33 +195,33 @@ public class StringVariableManager implements IStringVariableManager {
 	 * Load contributed variables and persisted variables
 	 */
 	private void initialize() {
-		if (fContextVariables == null) {
+		if (fDynamicVariables == null) {
 			fInitializing = true;
-			fContextVariables = new HashMap(5);
+			fDynamicVariables = new HashMap(5);
 			fValueVariables = new HashMap(5);
 			loadPersistedValueVariables();
 			loadContributedValueVariables();
-			loadContextVariables();
+			loadDynamicVariables();
 			fInitializing = false;
 		}
 	}
 	
 	/**
-	 * Loads contributed context variables
+	 * Loads contributed dynamic variables
 	 */
-	private void loadContextVariables() {
-		IExtensionPoint point= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_CONTEXT_VARIABLES);
+	private void loadDynamicVariables() {
+		IExtensionPoint point= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_DYNAMIC_VARIABLES);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
-				DebugPlugin.logMessage(MessageFormat.format("Value variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
+				DebugPlugin.logMessage(MessageFormat.format("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
 				continue;
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
-			ContextVariable variable= new ContextVariable(name, description, element);
-			fContextVariables.put(variable.getName(), variable);
+			DynamicVariable variable= new DynamicVariable(name, description, element);
+			fDynamicVariables.put(variable.getName(), variable);
 		}
 	}
 
@@ -284,7 +284,7 @@ public class StringVariableManager implements IStringVariableManager {
 			IConfigurationElement element = elements[i];
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
-				DebugPlugin.logMessage(MessageFormat.format("Value variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
+				DebugPlugin.logMessage(MessageFormat.format("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
 				continue;
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
@@ -305,8 +305,8 @@ public class StringVariableManager implements IStringVariableManager {
 	 */
 	public IStringVariable[] getVariables() {
 		initialize();
-		List list = new ArrayList(fContextVariables.size() + fValueVariables.size());
-		list.addAll(fContextVariables.values());
+		List list = new ArrayList(fDynamicVariables.size() + fValueVariables.size());
+		list.addAll(fDynamicVariables.values());
 		list.addAll(fValueVariables.values());
 		return (IStringVariable[]) list.toArray(new IStringVariable[list.size()]);
 	}
@@ -320,11 +320,11 @@ public class StringVariableManager implements IStringVariableManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getContextVariables()
+	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariables()
 	 */
-	public IContextVariable[] getContextVariables() {
+	public IDynamicVariable[] getDynamicVariables() {
 		initialize();
-		return (IContextVariable[]) fContextVariables.values().toArray(new IContextVariable[fContextVariables.size()]);
+		return (IDynamicVariable[]) fDynamicVariables.values().toArray(new IDynamicVariable[fDynamicVariables.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -389,11 +389,11 @@ public class StringVariableManager implements IStringVariableManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getContextVariable(java.lang.String)
+	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariable(java.lang.String)
 	 */
-	public IContextVariable getContextVariable(String name) {
+	public IDynamicVariable getDynamicVariable(String name) {
 		initialize();
-		return (IContextVariable) fContextVariables.get(name);
+		return (IDynamicVariable) fDynamicVariables.get(name);
 	}
 
 	/* (non-Javadoc)

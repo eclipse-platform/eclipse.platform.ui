@@ -19,14 +19,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
- * Context variable
+ * Dynamic variable
  */
-public class ContextVariable extends StringVariable implements IContextVariable {
+public class DynamicVariable extends StringVariable implements IDynamicVariable {
 	
 	/**
 	 * Resolver, or <code>null</code> until needed
 	 */
-	private IContextVariableResolver fResolver;
+	private IDynamicVariableResolver fResolver;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariable#getValue(java.lang.String)
@@ -38,8 +38,8 @@ public class ContextVariable extends StringVariable implements IContextVariable 
 				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Contributed context variable {0} must specify a resolver.",new String[]{getName()}), null)); //$NON-NLS-1$
 			}
 			Object object = getConfigurationElement().createExecutableExtension("resolver"); //$NON-NLS-1$
-			if (object instanceof IContextVariableResolver) {
-				fResolver = (IContextVariableResolver)object;
+			if (object instanceof IDynamicVariableResolver) {
+				fResolver = (IDynamicVariableResolver)object;
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Contributed context variable resolver for {0} must be an instance of IContextVariableResolver.",new String[]{getName()}), null)); //$NON-NLS-1$
 			}
@@ -54,7 +54,7 @@ public class ContextVariable extends StringVariable implements IContextVariable 
 	 * @param description variable description or <code>null</code>
 	 * @param configurationElement configuration element
 	 */
-	public ContextVariable(String name, String description, IConfigurationElement configurationElement) {
+	public DynamicVariable(String name, String description, IConfigurationElement configurationElement) {
 		super(name, description, configurationElement);
 	}
 
