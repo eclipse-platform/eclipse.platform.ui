@@ -121,7 +121,7 @@ public class EditorActionBarsTest extends UITestCase {
 	 */
 	protected void verifyToolItemState(IAction action, boolean enabled) {
 		String actionText = action.getText();
-		IToolBarManager tbm = ((WorkbenchWindow)fWindow).getToolsManager();
+		IToolBarManager tbm = ((WorkbenchWindow)fWindow).getCoolBarManager();
 		if (tbm instanceof ToolBarManager) {
 			ToolBar tb = ((ToolBarManager) tbm).getControl();
 			ToolItem [] items = tb.getItems();
