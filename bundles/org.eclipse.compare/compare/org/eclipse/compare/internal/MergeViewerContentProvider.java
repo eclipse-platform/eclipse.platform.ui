@@ -25,9 +25,16 @@ import org.eclipse.compare.contentmergeviewer.IMergeViewerContentProvider;
 public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	
 	private CompareConfiguration fCompareConfiguration;
+	private String fAncestorError;
+	private String fLeftError;
+	private String fRightError;
 		
 	public MergeViewerContentProvider(CompareConfiguration cc) {
 		fCompareConfiguration= cc;
+	}
+	
+	private boolean hasError() {
+		return fAncestorError != null || fLeftError != null || fRightError != null;
 	}
 	
 	public void dispose() {
@@ -39,11 +46,19 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	
 	//---- ancestor
 			
+	public void setAncestorError(String errorMessage) {
+		fAncestorError= errorMessage;
+	}
+	
 	public String getAncestorLabel(Object element) {
+		if (fAncestorError != null)
+			return fAncestorError;
 		return fCompareConfiguration.getAncestorLabel(element);
 	}
 	
 	public Image getAncestorImage(Object element) {
+		if (fAncestorError != null)
+			return null;
 		return fCompareConfiguration.getAncestorImage(element);
 	}
 	
@@ -62,11 +77,19 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 
 	//---- left
 					
+	public void setLeftError(String errorMessage) {
+		fLeftError= errorMessage;
+	}
+	
 	public String getLeftLabel(Object element) {
+		if (fLeftError != null)
+			return fLeftError;
 		return fCompareConfiguration.getLeftLabel(element);
 	}
 	
 	public Image getLeftImage(Object element) {
+		if (fLeftError != null)
+			return null;
 		return fCompareConfiguration.getLeftImage(element);
 	}
 	
@@ -77,6 +100,8 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	}
 		
 	public boolean isLeftEditable(Object element) {
+		if (hasError())
+			return false;
 		if (element instanceof ICompareInput) {
 			Object left= ((ICompareInput) element).getLeft();
 			if (left == null) {
@@ -112,11 +137,19 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	
 	//---- right
 	
+	public void setRightError(String errorMessage) {
+		fRightError= errorMessage;
+	}
+	
 	public String getRightLabel(Object element) {
+		if (fRightError != null)
+			return fRightError;
 		return fCompareConfiguration.getRightLabel(element);
 	}
 	
 	public Image getRightImage(Object element) {
+		if (fRightError != null)
+			return null;
 		return fCompareConfiguration.getRightImage(element);
 	}
 	
@@ -127,6 +160,8 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	}
 	
 	public boolean isRightEditable(Object element) {
+		if (hasError())
+			return false;
 		if (element instanceof ICompareInput) {
 			Object right= ((ICompareInput) element).getRight();
 			if (right == null) {

@@ -60,6 +60,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.internal.BufferedCanvas;
+import org.eclipse.compare.internal.MergeViewerContentProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.TokenComparator;
 import org.eclipse.compare.internal.DocLineComparator;
@@ -257,6 +258,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private IPositionUpdater fPositionUpdater;
 	private boolean fIsMotif;	
 	private boolean fIsCarbon;	
+	
+	private boolean fHasErrors;
 		
 
 	// SWT widgets
@@ -1664,16 +1667,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
 		fEndOfDocReached= false;
+		fHasErrors= false; // start with no errors
 		
 		CompareConfiguration cc= getCompareConfiguration();
 		IMergeViewerContentProvider cp= getMergeContentProvider();
 		
-		boolean rightEditable= cc.isRightEditable() && cp.isRightEditable(input);
-		boolean leftEditable= cc.isLeftEditable() && cp.isLeftEditable(input);
+		if (cp instanceof MergeViewerContentProvider) {
+			MergeViewerContentProvider mcp= (MergeViewerContentProvider) cp;
+			mcp.setAncestorError(null);
+			mcp.setLeftError(null);
+			mcp.setRightError(null);
+		}
 		
-		fRight.setEditable(rightEditable);
-		fLeft.setEditable(leftEditable);
-																					
 		// set new documents
 		setDocument(fLeft, 'L', left);
 		fLeftLineCount= fLeft.getLineCount();
@@ -1685,13 +1690,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		setDocument(fAncestor, 'A', ancestor);
 		
-	    doDiff();
-					
+		updateHeader();
+		updateControls();
+		updateToolItems();
+		
+		if (!fHasErrors)
+			doDiff();
+
+		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
+		fLeft.setEditable(cc.isLeftEditable() && cp.isLeftEditable(input));
+		
 		invalidateLines();
 		updateVScrollBar();
 		refreshBirdsEyeView();
 		
-		if (!emptyInput && !fComposite.isDisposed()) {
+		if (!fHasErrors && !emptyInput && !fComposite.isDisposed()) {
 			Diff selectDiff= null;
 			if (FIX_47640) {
 				if (leftRange != null)
@@ -1878,6 +1891,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return 0;
 	}
 	
+	private void setError(char type, String message) {
+		IMergeViewerContentProvider cp= getMergeContentProvider();
+		if (cp instanceof MergeViewerContentProvider) {
+			MergeViewerContentProvider mcp= (MergeViewerContentProvider) cp;
+			switch (type) {
+			case 'A':
+				mcp.setAncestorError(message);
+				break;
+			case 'L':
+				mcp.setLeftError(message);
+				break;
+			case 'R':
+				mcp.setRightError(message);
+				break;
+			}
+		}
+		fHasErrors= true;
+	}
+	
 	/**
 	 * Returns true if a new Document could be installed.
 	 */
@@ -1906,7 +1938,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				try {
 					s= Utilities.readString(sca);
 				} catch (CoreException ex) {
-					// NeedWork
+					setError(type, ex.getMessage());
 				}
 	
 				newDoc= new Document(s != null ? s : ""); //$NON-NLS-1$
@@ -3161,6 +3193,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 		if (fIgnoreAncestorItem != null)
 			fIgnoreAncestorItem.setVisible(isThreeWay());
+		
+		if (fCopyDiffLeftToRightItem != null) {
+			IAction a= fCopyDiffLeftToRightItem.getAction();
+			if (a != null)
+				a.setEnabled(a.isEnabled() && !fHasErrors);
+		}
+		if (fCopyDiffRightToLeftItem != null) {
+			IAction a= fCopyDiffRightToLeftItem.getAction();
+			if (a != null)
+				a.setEnabled(a.isEnabled() && !fHasErrors);
+		}
 		
 		super.updateToolItems();
 	}
