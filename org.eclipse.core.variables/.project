@@ -2,9 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.core.variables</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.core.runtime.compatibility</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.pde.ManifestBuilder</name>
