@@ -29,5 +29,8 @@ public interface IPreferenceConstants {
 
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
+	
+	//What is the number of tasks we display
+	public static final String DISPLAYED_TASKS_COUNT = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 
 }

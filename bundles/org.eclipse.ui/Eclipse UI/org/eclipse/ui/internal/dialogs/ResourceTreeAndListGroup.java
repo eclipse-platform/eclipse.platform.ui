@@ -123,8 +123,7 @@ protected void checkNewTreeElements(Object[] elements) {
 	for (int i = 0; i < elements.length; ++i) {
 		Object currentElement = elements[i];
 		boolean checked = checkedStateStore.containsKey(currentElement);
-		treeViewer.setChecked(currentElement,checked);
-		treeViewer.setGrayed(currentElement,checked && !whiteCheckedTreeItems.contains(currentElement));
+		treeViewer.setGrayChecked(currentElement,checked && !whiteCheckedTreeItems.contains(currentElement),checked);
 	}
 }
 /**
@@ -451,8 +450,7 @@ private void grayUpdateHierarchy(Object treeElement) {
 
 	boolean shouldBeAtLeastGray = determineShouldBeAtLeastGrayChecked(treeElement);
 
-	treeViewer.setChecked(treeElement, shouldBeAtLeastGray);
-	treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
+	treeViewer.setGrayChecked(treeElement, shouldBeAtLeastGray,shouldBeAtLeastGray);
 
 	if (whiteCheckedTreeItems.contains(treeElement))
 		whiteCheckedTreeItems.remove(treeElement);
@@ -688,8 +686,7 @@ protected void setTreeChecked(Object treeElement, boolean state) {
 		checkedStateStore.remove(treeElement);
 
 	setWhiteChecked(treeElement, state);
-	treeViewer.setChecked(treeElement, state);
-	treeViewer.setGrayed(treeElement, false);
+	treeViewer.setGrayChecked(treeElement, false,state);
 
 	// now logically check/uncheck all children as well if it has been expanded
 	if (expandedTreeNodes.contains(treeElement)) {
@@ -838,8 +835,7 @@ public void updateSelections(final Map items) {
 	while (checkedStateIterator.hasNext()) {
 		Object nextDeselection = checkedStateIterator.next();
 		if (!selectedNodes.contains(nextDeselection)) {
-			treeViewer.setChecked(nextDeselection, false);
-			treeViewer.setGrayed(nextDeselection, false);
+			treeViewer.setGrayChecked(nextDeselection, false,false);
 			setWhiteChecked(nextDeselection, false);
 			checkedStateStore.remove(nextDeselection);
 		}

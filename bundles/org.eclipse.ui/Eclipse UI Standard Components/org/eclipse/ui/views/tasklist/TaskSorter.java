@@ -15,6 +15,7 @@ import java.text.Collator;
 	private TaskList tasklist;
 	private boolean reversed = false;
 	private int columnNumber;
+	private MarkerAttributeCache cache;
 	
 	private static final int NUM_COLUMNS = 7;
 	
@@ -83,7 +84,7 @@ private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 			// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
 			if (m1.getResource() == m2.getResource())
 				return 0;
-			return collator.compare(MarkerUtil.getContainerName(m1), MarkerUtil.getContainerName(m2));
+			return collator.compare(this.cache.getContainerName(m1), this.cache.getContainerName(m2));
 		case 6: /* line and location */
 			return compareLineAndLocation(m1, m2);
 		default:
@@ -104,18 +105,18 @@ private int compareLineAndLocation(IMarker m1, IMarker m2) {
 			return line1 - line2;
 		}
 		else {
-			String loc1 = MarkerUtil.getLocation(m1);
-			String loc2 = MarkerUtil.getLocation(m2);
+			String loc1 = this.cache.getLocation(m1);
+			String loc2 = this.cache.getLocation(m2);
 			return collator.compare(loc1, loc2);
 		}
 	}
 	if (line1 == -1 && line2 == -1) {
-		String loc1 = MarkerUtil.getLocation(m1);
-		String loc2 = MarkerUtil.getLocation(m2);
+		String loc1 = this.cache.getLocation(m1);
+		String loc2 = this.cache.getLocation(m2);
 		return collator.compare(loc1, loc2);
 	}
-	String loc1 = MarkerUtil.getLineAndLocation(m1);
-	String loc2 = MarkerUtil.getLineAndLocation(m2);
+	String loc1 = this.cache.getLineAndLocation(m1);
+	String loc2 = this.cache.getLineAndLocation(m2);
 	return collator.compare(loc1, loc2);
 }
 /**
@@ -123,8 +124,8 @@ private int compareLineAndLocation(IMarker m1, IMarker m2) {
  * Lower numbers appear first.
  */
 private int getCategoryOrder(IMarker marker) {
-	if (MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
-		switch (MarkerUtil.getSeverity(marker)) {
+	if (this.cache.isMarkerType(marker, IMarker.PROBLEM)) {
+		switch (this.cache.getSeverity(marker)) {
 			case IMarker.SEVERITY_ERROR:
 				return 1;
 			case IMarker.SEVERITY_WARNING:
@@ -132,7 +133,7 @@ private int getCategoryOrder(IMarker marker) {
 			case IMarker.SEVERITY_INFO:
 				return 3;
 		}
-	} else if (MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
+	} else if (this.cache.isMarkerType(marker, IMarker.TASK)) {
 		return 0;
 	}
 	return 1000;
@@ -148,7 +149,7 @@ public int getColumnNumber() {
  * Lower numbers appear first.
  */
 private int getCompletedOrder(IMarker marker) {
-	return MarkerUtil.isComplete(marker) ? 0 : 1;
+	return this.cache.getCompletedOrder(marker);
 }
 /**
  * Returns the sort order for the given marker based on its priority.
@@ -156,7 +157,7 @@ private int getCompletedOrder(IMarker marker) {
  */
 private int getPriorityOrder(IMarker marker) {
 	// want HIGH to appear first
-	return IMarker.PRIORITY_HIGH - MarkerUtil.getPriority(marker);
+	return IMarker.PRIORITY_HIGH - this.cache.getPriority(marker);
 }
 /**
  * Returns true for descending, or false
@@ -171,4 +172,15 @@ public boolean isReversed() {
 public void setReversed(boolean newReversed) {
 	reversed = newReversed;
 }
+
+/**
+ * See ViewerSorter.sort()
+ * 
+ */
+public void sort(final Viewer viewer, Object[] elements) {
+	this.cache = new MarkerAttributeCache();
+	super.sort(viewer,elements);
+	this.cache = null;
+}
+
 }
