@@ -452,7 +452,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 			//set selection only works if the child exists
 			fViewer.refresh(element);
 		}
-		fViewer.setSelection(new StructuredSelection(selectee));
+		fViewer.setSelection(new StructuredSelection(selectee), true);
 		if (children != null && children.length > 0) {
 			//reveal the thread children of a debug target
 			fViewer.reveal(children[0]);
