@@ -31,7 +31,6 @@ public class LocalSiteSelector {
 	static String lastLocation = null;
 	public LocalSiteSelector() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public static SiteBookmark getLocaLSite(Shell parent) {
 		DirectoryDialog dialog = new DirectoryDialog(parent);

@@ -310,7 +310,6 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	 */
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		// TODO Auto-generated method stub
 		super.endElement(uri, localName, qName);
 		
 		// DEBUG:		

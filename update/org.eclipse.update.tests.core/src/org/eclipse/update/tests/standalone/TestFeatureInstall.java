@@ -50,7 +50,6 @@ public class TestFeatureInstall extends StandaloneManagerTestCase {
 					fromRemoteSiteUrl,
 					TARGET_FILE_SITE.getFile()));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			isInstalled = true;
