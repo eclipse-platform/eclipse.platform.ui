@@ -9,7 +9,6 @@
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="version.suffix" value="_3.1.0"/>
-		<property name="version.suffix.old" value="_3.0.0"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
