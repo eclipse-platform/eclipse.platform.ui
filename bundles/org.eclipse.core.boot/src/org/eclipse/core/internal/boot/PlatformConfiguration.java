@@ -14,12 +14,12 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.UnknownServiceException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -672,7 +672,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return null;
 		String key = url.toExternalForm();
 
-		return (ISiteEntry) sites.get(key);
+		ISiteEntry result = (ISiteEntry) sites.get(key);
+		if (result == null) // retry with decoded URL string
+			result = (ISiteEntry) sites.get(URLDecoder.decode(key));
+		return result;
 	}
 
 	/*
@@ -920,8 +923,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * method. Supported for R1.0 compatibility.
 	 */
 	static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app) throws Exception {			
-		// for 1.0 compatibility
-		LaunchInfo.startup(null);
 		
 		// initialize command line settings
 		cmdConfiguration = null;
@@ -953,9 +954,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 		
 	static synchronized void shutdown() throws IOException {
-		// for 1.0 compatibility
-		LaunchInfo.shutdown();
-		
+
 		// save platform configuration
 		PlatformConfiguration config = getCurrent();
 		if (config != null) {
@@ -981,11 +980,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			} catch(IOException e) {
 				ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 				ISiteEntry defaultSite = createSiteEntry(BootLoader.getInstallURL(), defaultPolicy);
-				configureSite(defaultSite);	
+				configureSite(defaultSite);
 				if (DEBUG)
 					debug("Creating configuration " + url.toString());			
 			}
 			configLocation = url;
+			verifyPath(configLocation);	
 			return;
 		}
 
@@ -1051,6 +1051,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		ISiteEntry defaultSite = createSiteEntry(siteURL, defaultPolicy);
 		configureSite(defaultSite);
 		configLocation = commonURL;
+		verifyPath(configLocation);
 		if (DEBUG)
 			debug("Creating configuration " + configLocation.toString());
 	}
@@ -1731,6 +1732,28 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return resolved.getProtocol().equals("file");
 		} else
 			return false;
+	}
+	
+	private static void verifyPath(URL url) {
+		String protocol = url.getProtocol();
+		String path = null;
+		if (protocol.equals("file"))
+			path = url.getFile();
+		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
+			URL resolved = null;
+			try {
+				resolved = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
+				if (resolved.getProtocol().equals("file"))
+					path = resolved.getFile();
+			} catch(IOException e) {
+			}
+		} 
+		
+		if (path != null) {
+			File dir = new File(path).getParentFile();
+			if (dir != null)
+				dir.mkdirs();
+		}
 	}
 
 	private static void debug(String s) {

@@ -197,13 +197,6 @@ public static PlatformConfiguration getCurrentPlatformConfiguration() {
 }
 /**
  * @see BootLoader
- * @deprecated will be removed before milestone 3
- */
-public static IInstallInfo getInstallationInfo() {
-	return LaunchInfo.getCurrent();
-}
-/**
- * @see BootLoader
  */
 public static URL getInstallURL() {
 	if (installURL != null)

@@ -6,7 +6,6 @@ package org.eclipse.core.internal.plugins;
  */
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.boot.LaunchInfo;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.IStatus;
