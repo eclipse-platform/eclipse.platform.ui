@@ -13,6 +13,7 @@ package org.eclipse.core.runtime.content;
 import java.io.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
  * Content types represent and provide information on file types, such as 
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * 
  * @since 3.0
  */
-public interface IContentType {
+public interface IContentType extends IContentTypeSettings {
 	/**
 	 * File spec type flag constant, indicating that pre-defined file 
 	 * specifications should not be taken into account.
@@ -42,46 +43,6 @@ public interface IContentType {
 	 * File spec type constant, indicating a file extension specification.
 	 */
 	public static final int FILE_EXTENSION_SPEC = 0x08;
-
-	/**
-	 * Adds a user-defined file specification to this content type. Has no 
-	 * effect if the given file specification has already been added by either
-	 * user or provider.
-	 * 
-	 * @param fileSpec the file specification
-	 * @param type the type of the file specification. One of 
-	 * <code>FILE_NAME_SPEC</code>, 
-	 * <code>FILE_EXTENSION_SPEC</code>.
-	 * @throws IllegalArgumentException if the type bit mask is  
-	 * incorrect
-	 * @throws CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li> An error occurred persisting this setting.</li>
-	 * </ul>
-	 * @see #FILE_NAME_SPEC
-	 * @see #FILE_EXTENSION_SPEC	 
-	 */
-	public void addFileSpec(String fileSpec, int type) throws CoreException;
-
-	/**
-	 * Removes a user-defined file specification from this content type. Has no 
-	 * effect if the given file specification does not exist, or was not defined
-	 * by the user.
-	 * 
-	 * @param fileSpec the file specification
-	 * @param type the type of the file specification. One of 
-	 * <code>FILE_NAME_SPEC</code>, 
-	 * <code>FILE_EXTENSION_SPEC</code>.
-	 * @throws IllegalArgumentException if the type bit mask is  
-	 * incorrect
-	 * @throws CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li> An error occurred persisting this setting.</li>
-	 * </ul>
-	 * @see #FILE_NAME_SPEC
-	 * @see #FILE_EXTENSION_SPEC
-	 */
-	public void removeFileSpec(String fileSpec, int type) throws CoreException;
 
 	/**
 	 * Returns a reference to this content type's base type. If this content type
@@ -148,6 +109,9 @@ public interface IContentType {
 	/**
 	 * Returns the default charset for this content type if one has been defined, 
 	 * <code>null</code> otherwise.
+	 * This refinement of the corresponding <code>IContentTypeSettings</code>
+	 * method also takes into account the charset defined by the content type
+	 * provider (or its base content type).
 	 * 
 	 * @return the default charset, or <code>null</code>
 	 */
@@ -156,7 +120,11 @@ public interface IContentType {
 	/**
 	 * Returns file specifications from this content type. The type mask 
 	 * is a bit-wise or of file specification type constants indicating the 
-	 * file specification types of interest.
+	 * file specification types of interest. 
+	 * This refinement of the corresponding <code>IContentTypeSettings</code>
+	 * method supports additional flags because it also takes into account the 
+	 * file specifications defined by the content type provider (or its base 
+	 * content type).
 	 * 
 	 * @param type a bit-wise or of file specification type constants. Valid
 	 * flags are:
@@ -195,9 +163,22 @@ public interface IContentType {
 	 * 
 	 * @param fileName the file name
 	 * @return <code>true</code> if this content type is associated with
-	 * the given file name, <code>false</code> otherwise 
+	 * the given file name, <code>false</code> otherwise
+	 * @see #isAssociatedWith(String, IScopeContext)
 	 */
 	public boolean isAssociatedWith(String fileName);
+
+	/**
+	 * Returns whether this content type is associated with the 
+	 * given file name in the given preference scope.
+	 * 
+	 * @param fileName the file name
+	 * @param context a preference scope context 
+	 * @return <code>true</code> if this content type is associated with
+	 * the given file name, <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	public boolean isAssociatedWith(String fileName, IScopeContext context);
 
 	/**
 	 * Returns whether this content type is a kind of the given content 
@@ -215,15 +196,17 @@ public interface IContentType {
 	public boolean isKindOf(IContentType another);
 
 	/**
-	 * Sets the default charset for this content type. If 
-	 * <code>null</code> is provided, restores the pre-defined default charset. 
+	 * Returns the settings for this content type in the given 
+	 * preference context. Content types provide a protocol
 	 * 
-	 * @param userCharset the new charset for this content type, or
-	 * <code>null</code>  
+	 * 
+	 * @param context a preference scope context 
+	 * @return setting in the given context
 	 * @throws CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> An error occurred persisting this setting.</li>
-	 * </ul>
+	 * <li> An error occurred obtaining the settings.</li>
+	 * </ul> 
+	 * @since 3.1
 	 */
-	public void setDefaultCharset(String userCharset) throws CoreException;
+	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException;
 }

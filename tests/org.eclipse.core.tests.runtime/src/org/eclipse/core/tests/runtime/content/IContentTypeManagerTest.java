@@ -190,7 +190,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 	public void testAssociationInheritance() throws CoreException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = manager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = manager.getMatcher(new LocalSelectionPolicy(), null);
 		IContentType text = manager.getContentType(Platform.PI_RUNTIME + ".text");
 		IContentType assoc1 = manager.getContentType(PI_RUNTIME_TESTS + ".assoc1");
 		IContentType assoc2 = manager.getContentType(PI_RUNTIME_TESTS + ".assoc2");
@@ -338,7 +338,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	 */
 	public void testContentDescription() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
 		IContentType xmlType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType mytext = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "mytext");
@@ -445,21 +445,21 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-specific-name");
 
 		// if only inappropriate is provided, none will be selected
-		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate}));
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate}), null);
 		assertNull("1.0", finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 
 		// if inappropriate and appropriate are provided, appropriate will be selected
-		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate}));
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate}), null);
 		assertEquals("2.0", appropriate, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 
 		// if inappropriate, appropriate and a more specific appropriate type are provided, the specific type will be selected		
-		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1}));
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1}), null);
 		assertEquals("3.0", appropriateSpecific1, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
-		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific2}), null);
 		assertEquals("3.1", appropriateSpecific2, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 
 		// if all are provided, the more specific types will appear before the more generic types
-		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}));
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}), null);
 		IContentType[] selected = finder.findContentTypesFor(getInputStream(MINIMAL_XML), null);
 		assertEquals("4.0", 3, selected.length);
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
@@ -485,7 +485,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		QualifiedName property4 = new QualifiedName(PI_RUNTIME_TESTS, "property4");
 
 		IContentDescription description;
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
 		description = getDescriptionFor(finder, "some contents", null, "abc.tzt", IContentDescription.ALL, true);
 		assertNotNull("1.0", description);
@@ -529,7 +529,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType subFooBarType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "subFooBar");
 		assertNotNull("1.1", subFooBarType);
 		// ensure we don't get fooBar twice
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 		IContentType[] fooBarAssociated = finder.findContentTypesFor(changeCase("foo.bar"));
 		assertEquals("2.1", 2, fooBarAssociated.length);
 		assertTrue("2.2", contains(fooBarAssociated, fooBarType));
@@ -686,7 +686,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 	public void testFindContentType() throws UnsupportedEncodingException, IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
@@ -707,7 +707,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 	public void testInvalidMarkup() {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 		assertEquals("1.0", 0, finder.findContentTypesFor("invalid.missing.identifier").length);
 		assertEquals("2.0", 0, finder.findContentTypesFor("invalid.missing.name").length);
 		assertNull("3.0", contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
@@ -939,7 +939,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 	public void testOrderWithEmptyFiles() throws IOException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = manager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = manager.getMatcher(new LocalSelectionPolicy(), null);
 
 		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
@@ -1049,7 +1049,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 	public void testRegistry() {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy());
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);

@@ -15,6 +15,7 @@ import java.io.Reader;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
@@ -126,7 +127,8 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return getCatalog().getContentType(contentTypeIdentifier);
 	}
 
-	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy) {
+	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy, final IScopeContext context) {
+		//TODO should honor context parameter
 		return new ContentTypeMatcher(customPolicy);
 	}
 

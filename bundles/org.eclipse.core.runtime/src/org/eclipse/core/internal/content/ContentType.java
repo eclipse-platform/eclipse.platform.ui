@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -558,6 +559,14 @@ public final class ContentType implements IContentType {
 	/**
 	 * @see IContentType
 	 */
+	public boolean isAssociatedWith(String fileName, IScopeContext context) {
+		//TODO should honor context parameter
+		return isAssociatedWith(fileName);
+	}
+
+	/**
+	 * @see IContentType
+	 */
 	public boolean isKindOf(IContentType another) {
 		return isKindOf(manager.getCatalog(), (ContentType) another);
 	}
@@ -680,5 +689,10 @@ public final class ContentType implements IContentType {
 
 	boolean isAlias(ContentTypeCatalog catalog) {
 		return getTarget(catalog, false) != null;
+	}
+
+	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
+		//TODO should honor context
+		return this;
 	}
 }

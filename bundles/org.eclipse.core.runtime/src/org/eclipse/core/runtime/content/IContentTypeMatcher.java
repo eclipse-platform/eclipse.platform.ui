@@ -12,6 +12,7 @@ package org.eclipse.core.runtime.content;
 
 import java.io.*;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
  * An object that performs content type matching queries. 
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see IContentTypeManager#getMatcher(IContentTypeManager.ISelectionPolicy)
+ * @see IContentTypeManager#getMatcher(IContentTypeManager.ISelectionPolicy, IScopeContext)
  * @since 3.1
  */
 public interface IContentTypeMatcher {

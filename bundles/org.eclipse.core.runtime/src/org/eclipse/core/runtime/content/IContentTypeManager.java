@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.content;
 
 import java.util.EventObject;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
  * The content type manager provides facilities for file name and content-based
@@ -38,6 +39,12 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+		/*
+		 * The context for the setting that changed.
+		 * 
+		 * @since 3.1
+		 */
+		private IScopeContext context;
 
 		/**
 		 * Constructor for a new content type change event.
@@ -49,12 +56,36 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 		}
 
 		/**
+		 * Constructor for a new content type change event.
+		 * 
+		 * @param source the content type that changed
+		 * @param context the context where a setting changed, or <code>null</code>
+		 * @since 3.1
+		 */
+		public ContentTypeChangeEvent(IContentType source, IScopeContext context) {
+			super(source);
+			this.context = context;
+		}
+
+		/**
 		 * Return the content type object associated with this change event.
 		 * 
 		 * @return the content type
 		 */
 		public IContentType getContentType() {
 			return (IContentType) source;
+		}
+
+		/**
+		 * Return the preference scope where the setting changed, or 
+		 * <code>null</code>, if the change happened in the content type manager 
+		 * default context. 
+		 * 
+		 * @return the context where the change happened, or <code>null</code>
+		 * @since 3.1
+		 */
+		public IScopeContext getContext() {
+			return context;
 		}
 	}
 
@@ -90,7 +121,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * Clients may implement this interface.
 	 * </p>
 	 * 
-	 * @see IContentTypeManager#getMatcher(ISelectionPolicy)
+	 * @see IContentTypeManager#getMatcher(ISelectionPolicy, IScopeContext)
 	 * @since 3.1
 	 */
 	public interface ISelectionPolicy {
@@ -166,9 +197,11 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * Returns a newly created content type matcher using the given content type selection policy.
 	 * 
 	 * @param customPolicy a selection policy
+	 * @param context a user preference context to be used by the matcher
 	 * @return a content type matcher that uses the given policy
+	 * @since 3.1 
 	 */
-	public IContentTypeMatcher getMatcher(ISelectionPolicy customPolicy);
+	public IContentTypeMatcher getMatcher(ISelectionPolicy customPolicy, IScopeContext context);
 
 	/**
 	 * De-register the given listener from receiving notification of content type changes. 
