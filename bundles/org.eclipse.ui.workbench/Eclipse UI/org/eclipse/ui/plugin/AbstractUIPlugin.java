@@ -41,6 +41,8 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -899,7 +901,28 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        refreshPluginActions();
+        // Should only attempt refreshPluginActions() when the bundle
+        // has been fully started.  Otherwise action delegates
+        // can be created while in the process of creating 
+        // a triggering action delegate.  Also, if the start throws
+        // an exception, the bundle will be shut down.  We don't
+        // want to have created any delegates if this happens.
+        // See bug 63324 for more details.
+        final BundleContext finalContext = context;
+        context.addBundleListener(new BundleListener() {
+            public void bundleChanged(BundleEvent event) {
+                if (event.getBundle() == finalContext.getBundle()) {
+                    switch (event.getType()) {
+                    	case BundleEvent.STARTED:
+                    	    refreshPluginActions();
+                    		// fall through
+                    	case BundleEvent.STOPPED:
+                    	    finalContext.removeBundleListener(this);
+                    		break;
+                    }
+                }
+            }
+        });
     }
 
     /**
