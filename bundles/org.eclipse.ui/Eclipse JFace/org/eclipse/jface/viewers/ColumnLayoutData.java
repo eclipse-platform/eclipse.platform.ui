@@ -13,7 +13,17 @@ package org.eclipse.jface.viewers;
  * </p>
  */
 public abstract class ColumnLayoutData {
+
+	/** 
+	 * Default width of a column (in pixels).
+	 */
+	public static final int MINIMUM_WIDTH = 20;
 	
+	/**
+	 * The column's minimum width in pixels.
+	 */
+	public int minimumWidth;
+		
 	/**
 	 * Indicates whether the column is resizable.
 	 */

@@ -18,12 +18,7 @@ public class ColumnWeightData extends ColumnLayoutData {
 	/** 
 	 * Default width of a column (in pixels).
 	 */
-	public static final int MINIMUM_WIDTH = 20;
-	
-	/**
-	 * The column's minimum width in pixels.
-	 */
-	public int minimumWidth;
+	public static final int MINIMUM_WIDTH = ColumnLayoutData.MINIMUM_WIDTH;
 	
 	/**
 	 * The column's weight.
