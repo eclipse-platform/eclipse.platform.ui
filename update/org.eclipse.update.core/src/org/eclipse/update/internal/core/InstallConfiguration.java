@@ -13,6 +13,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.model.*;
 
 /**
@@ -178,10 +179,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * Saves the configuration into its URL/location
 	 */
-	public void save() throws CoreException {
+	public void save(boolean isTransient) throws CoreException {
 
 		// save the configuration.xml file
-		saveConfigurationFile();
+		saveConfigurationFile(isTransient);
 
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
@@ -236,11 +237,12 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public void saveConfigurationFile() throws CoreException {
+	public void saveConfigurationFile(boolean isTransient) throws CoreException {
 		// save the configuration
 		if (getURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
+			if (isTransient) file.deleteOnExit();
 			export(file);
 		}
 	}

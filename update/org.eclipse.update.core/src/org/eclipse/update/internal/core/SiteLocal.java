@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
+	private static SiteLocal localSite;
 	private ListenersList listeners = new ListenersList();
 	private boolean isTransient = false;
 	
@@ -38,57 +39,61 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
+		
+		if (localSite!=null) return localSite;
+		
 		URL configXML = null;
-		SiteLocal site = new SiteLocal();
+		SiteLocal localSite = new SiteLocal();
 
 		// obtain read/write location
 		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		//localSite.isTransient(currentPlatformConfiguration.isTransient());
 		try {
 			URL location = getUpdateStateLocation(currentPlatformConfiguration);
 			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 
 			// set it into the ILocalSite
-			site.setLocationURLString(configXML.toExternalForm());
-			site.resolve(configXML, null);
+			localSite.setLocationURLString(configXML.toExternalForm());
+			localSite.resolve(configXML, null);
 
 			//attempt to parse the SITE_LOCAL_FILE file	
 			URL resolvedURL = URLEncoder.encode(configXML);
-			new SiteLocalParser(resolvedURL.openStream(), site);
+			new SiteLocalParser(resolvedURL.openStream(), localSite);
 
 			// check if we have to reconcile
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
-			if (site.getStamp() != bootStamp) {
+			if (localSite.getStamp() != bootStamp) {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().debug("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + site.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateManagerPlugin.getPlugin().debug("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + localSite.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				site.setStamp(bootStamp);
-				site.reconcile();
-				site.save();
+				localSite.setStamp(bootStamp);
+				localSite.reconcile();
+				localSite.save();
 			} else {
 				// no reconciliation, preserve the list of plugins from the platform anyway
-				site.preserveRuntimePluginPath();
+				localSite.preserveRuntimePluginPath();
 			}
 
 		} catch (FileNotFoundException exception) {
 			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
 			// and reconcile
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(site.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default."); //$NON-NLS-1$
+				UpdateManagerPlugin.getPlugin().debug(localSite.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default."); //$NON-NLS-1$
 			}
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
-			site.setStamp(bootStamp);
-			site.reconcile();
-			site.save();
+			localSite.setStamp(bootStamp);
+			localSite.reconcile();
+			localSite.save();
 
 		} catch (SAXException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState",site.getLocationURLString()), exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState",localSite.getLocationURLString()), exception); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", site.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {
 			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()), exception); //$NON-NLS-1$
 		}
 
-		return site;
+		return localSite;
 	}
 
 	private SiteLocal() {
@@ -163,7 +168,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// Save the current configuration as
 		// the other are already saved
 		// and set runtim info for next startup
-		 ((InstallConfiguration) getCurrentConfiguration()).save();
+		 ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 
 		// save the local site
 		if (getLocationURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
@@ -171,6 +176,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			try {
 				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
 				file = new File(newURL.getFile());
+				if (isTransient()) file.deleteOnExit();
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);
@@ -253,7 +259,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// save previous current configuration
 		if (getCurrentConfiguration() != null)
-			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile();
+			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(isTransient());
 
 		InstallConfiguration result = null;
 		Date currentDate = new Date();
@@ -343,7 +349,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
 			}
-			((InstallConfiguration) newConfiguration).saveConfigurationFile();
+			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
 
 			// add to the list			
 			addPreservedInstallConfigurationModel((InstallConfigurationModel) newConfiguration);
