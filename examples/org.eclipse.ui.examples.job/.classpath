@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/org.eclipse.core.runtime"/>
-	<classpathentry kind="src" path="/org.eclipse.swt"/>
-	<classpathentry kind="src" path="/org.eclipse.ui.workbench"/>
-	<classpathentry kind="src" path="/org.eclipse.jface"/>
-	<classpathentry kind="src" path="/org.eclipse.core.resources"/>
-	<classpathentry kind="output" path=""/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
