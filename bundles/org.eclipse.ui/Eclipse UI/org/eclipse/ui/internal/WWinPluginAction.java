@@ -60,11 +60,11 @@ public class WWinPluginAction extends PluginAction
 		Iterator iter = staticActionList.iterator();
 		while (iter.hasNext()) {
 			WWinPluginAction action = (WWinPluginAction)iter.next();
-			if ((action.getDelegate() == null) && action.isOkToCreateDelegate())
+			if ((action.getDelegate() == null) && action.isOkToCreateDelegate()) {
 				action.createDelegate();
-				action.refreshSelection();
+				// creating the delegate also refreshes its enablement
+			}
 		}
-		staticActionList.trimToSize();
 	}
 	
 	/** 
