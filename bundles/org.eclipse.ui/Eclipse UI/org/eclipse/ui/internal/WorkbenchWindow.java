@@ -954,7 +954,7 @@ private void showShortcutBarPopup(MouseEvent e) {
 		menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				closePage(page, true);
+				page.closeAllPerspectives(true);
 			}
 		});
 	}
@@ -1068,7 +1068,9 @@ public void updateTitle() {
 	WorkbenchPage currentPage = getActiveWorkbenchPage();
 	if (currentPage != null) {
 		IPerspectiveDescriptor persp = currentPage.getPerspective();
-		String label = persp.getLabel();
+		String label = "";
+		if (persp != null)
+			label = persp.getLabel();
 		IAdaptable input = currentPage.getInput();
 		if((input != null) && (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
 			label = currentPage.getLabel();

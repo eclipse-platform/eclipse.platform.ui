@@ -35,12 +35,13 @@ public void run() {
 	if (page == null)
 		return;
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)page.getPerspective();
-	if (desc.isSingleton())
-		saveSingleton();
-	else
-		saveNonSingleton();
+	if (desc != null) {
+		if (desc.isSingleton())
+			saveSingleton();
+		else
+			saveNonSingleton();
+	}
 }
-
 /** 
  * Save a singleton over itself.
  */

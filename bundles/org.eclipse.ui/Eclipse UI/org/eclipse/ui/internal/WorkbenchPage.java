@@ -436,6 +436,35 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	return true;
 }
 /**
+ * Closes all perspectives in the page. The page is kept so as
+ * not to lose the input.
+ * 
+ * @param save whether the page's editors should be saved
+ */
+/* package */ void closeAllPerspectives(boolean save) {
+	
+	if (perspList.isEmpty())
+		return;
+		
+	// Always unzoom
+	if (isZoomed())
+		zoomOut();
+		
+	// Close all editors
+	if (!closeAllEditors(save))
+		return;
+
+	// Deactivate the active perspective and part
+	setPerspective((Perspective)null);
+	
+	// Close each perspective in turn
+	PerspectiveList oldList = perspList;
+	perspList = new PerspectiveList();
+	Iterator enum = oldList.iterator();
+	while (enum.hasNext())
+		closePerspective((Perspective)enum.next(), false);
+}
+/**
  * Closes the specified perspective. If last perspective, then
  * entire page is closed.
  * 
@@ -443,15 +472,24 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
  * @param save whether the page's editors should be save if last perspective
  */
 /* package */ void closePerspective(Perspective persp, boolean save) {
-	if (perspList.size() < 2) {
-		window.closePage(this, save);
-	} else {
-		boolean isActive = (perspList.getActive() == persp);
-		window.removePerspectiveShortcut(persp, this);
-		if (isActive)
-			setPerspective(perspList.getNextActive());
-		disposePerspective(persp);
+
+	// Always unzoom
+	if (isZoomed())
+		zoomOut();
+		
+	// Close all editors on last perspective close
+	if (perspList.size() == 1 && getEditorManager().getEditorCount() > 0) {
+		// Close all editors
+		if (!closeAllEditors(save))
+			return;
 	}
+	
+	// Dispose of the perspective
+	boolean isActive = (perspList.getActive() == persp);
+	window.removePerspectiveShortcut(persp, this);
+	if (isActive)
+		setPerspective(perspList.getNextActive());
+	disposePerspective(persp);
 }
 /**
  * Creates the client composite.
@@ -1100,10 +1138,12 @@ protected void onActivate() {
 		Perspective perspective = (Perspective) enum.next();
 		window.addPerspectiveShortcut(perspective, this);
 	}
-	Perspective persp = getActivePerspective();
-	window.selectPerspectiveShortcut(persp, this, true);
 	composite.setVisible(true);
-	persp.onActivate();
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		window.selectPerspectiveShortcut(persp, this, true);
+		persp.onActivate();
+	}
 	if (activePart != null) {
 		activationList.setActive(activePart);
 		
@@ -1127,7 +1167,8 @@ protected void onDeactivate() {
 	}
 	deactivateLastEditor();
 	lastActiveEditor = null;
-	getActivePerspective().onDeactivate();
+	if (getActivePerspective() != null)
+		getActivePerspective().onDeactivate();
 	composite.setVisible(false);
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
@@ -1486,7 +1527,8 @@ public void saveState(IMemento memento) {
 
 	// Create persp block.
 	childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE, getPerspective().getId());
+	if (getPerspective() != null)
+		childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE, getPerspective().getId());
 	if (getActivePart() != null)
 	 	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,getActivePart().getSite().getId());
 
@@ -1603,17 +1645,25 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Activate the new layout
 	perspList.setActive(newPersp);
-	newPersp.onActivate();
+	if (newPersp != null) {
+		newPersp.onActivate();
 
-	// Notify listeners of activation
-	window.firePerspectiveActivated(this, newPersp.getDesc());
+		// Notify listeners of activation
+		window.firePerspectiveActivated(this, newPersp.getDesc());
 	
-	// Update MRU list.
-	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(newPersp.getDesc());
+		// Update MRU list.
+		Workbench wb = (Workbench)window.getWorkbench();
+		wb.getPerspectiveHistory().add(newPersp.getDesc());
 	
-	// Update the window	
-	window.selectPerspectiveShortcut(newPersp, this, true);
+		// Update the shortcut	
+		window.selectPerspectiveShortcut(newPersp, this, true);
+	} else {
+		// No need to remember old active part since there
+		// is no new active perspective to activate it in.
+		oldActivePart = null;
+	}
+	
+	// Update the window
 	window.updateActionSets();
 	window.updateTitle();
 	window.getShortcutBar().update(true);

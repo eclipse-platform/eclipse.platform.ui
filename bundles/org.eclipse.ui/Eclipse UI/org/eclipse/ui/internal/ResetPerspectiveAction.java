@@ -35,7 +35,7 @@ public ResetPerspectiveAction(IWorkbenchWindow window) {
  */
 public void run() {
 	IWorkbenchPage page = this.window.getActivePage();
-	if (page != null) {
+	if (page != null && page.getPerspective() != null) {
 		String message = WorkbenchMessages.format("ResetPerspective.message", new Object[] { page.getPerspective().getLabel() }); //$NON-NLS-1$
 		String [] buttons= new String[] { 
 			IDialogConstants.OK_LABEL,

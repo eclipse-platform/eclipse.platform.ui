@@ -247,14 +247,16 @@ private static void openInNewPage(IPerspectiveDescriptor desc) {
 	// If the active perspective is the same, then reuse it
 	IWorkbenchPage page = window.getActivePage();
 	if (page != null) {
-		if (page.getPerspective().getId().equals(desc.getId()))
+		IPerspectiveDescriptor persp = page.getPerspective();
+		if (persp != null && persp.getId().equals(desc.getId()))
 			return;
 	}
 
 	// If the perspective is already open, then reuse it.
 	IWorkbenchPage[] pages = window.getPages();
 	for (int i = 0; i < pages.length; i++) {
-		if (pages[i].getPerspective().getId().equals(desc.getId())) {
+		IPerspectiveDescriptor persp = pages[i].getPerspective();
+		if (persp != null && persp.getId().equals(desc.getId())) {
 			window.setActivePage(pages[i]);
 			return;
 		}
