@@ -97,7 +97,6 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		TableColumn[] columns = table.getColumns();
 		columns[0].setText(Policy.bind("PasswordManagementPreferencePage.3"));  //$NON-NLS-1$
 		columns[1].setText(Policy.bind("PasswordManagementPreferencePage.4"));  //$NON-NLS-1$
-		
 		viewer.setColumnProperties(new String[] {"location", "username"}); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.setLabelProvider(new TableLabelProvider());
 		viewer.setContentProvider(new IStructuredContentProvider() {
@@ -118,8 +117,8 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 			}
 		});
 		TableLayout tl = new TableLayout();
-		tl.addColumnData(new ColumnWeightData(50));
-		tl.addColumnData(new ColumnWeightData(50));
+		tl.addColumnData(new ColumnWeightData(15));
+		tl.addColumnData(new ColumnWeightData(1, 100));
 		table.setLayout(tl);
 		
 		Composite buttons = new Composite(parent, SWT.NULL);
