@@ -1,0 +1,65 @@
+package org.eclipse.help.internal.appserver;
+
+/*
+ * (c) Copyright IBM Corp. 2002. 
+ * All Rights Reserved.
+ */
+
+import org.eclipse.core.runtime.*;
+
+/**
+ * Interface to be implemented by the app servers that are contributed to the org.eclipse.webapp.server extension point.
+ * The implementors of this class should ensure that webapps are running in an environment in which they can see their classes, 
+ * the  J2SE/J2EE classes, as well as classes loaded by the custom  class loader.
+ * @since 2.1
+ */
+public interface IWebappServer {
+	/**
+	 * Starts the server on specified host/port. Must be called before running a
+	 * webapp.
+	 * @param port port to listen to. Pass 0 to let the system pick up a port.
+	 * @param host server host. Can be an IP address or a server name
+	 */
+	public void start(int port, String host) throws CoreException;
+
+	/**
+	 * Stops the app server.
+	 */
+	public void stop() throws CoreException;
+
+	/**
+	 * Checks if the app server is running
+	 */
+	public boolean isRunning();
+
+	/**
+	 * Runs a webapp on the server.
+	 * @param webappName the name of the web app (also knowns as application context)
+	 * @param path path to the webapp directory or WAR file.
+	 * @param customLoader optional class loader to add to the default webapp
+	 * class loader
+	 */
+	public void  start(
+		String webappName,
+		IPath path,
+		ClassLoader customLoader) throws CoreException;
+
+	/**
+	 * Stops the specified webapp.
+	 */
+	public void stop(String webappName) throws CoreException;
+
+	/**
+	 * Returns the port number the app server listens on.
+	 * @return integer port number,
+	 *  0 if server not started
+	 */
+	public int getPort();
+
+	/**
+	 * Returns the host name or ip the app server runs on.
+	 * @return String representaion of host name of IP,
+	 *  null if server not started yet
+	 */
+	public String getHost();
+}

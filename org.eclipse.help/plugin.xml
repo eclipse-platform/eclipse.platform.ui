@@ -15,7 +15,7 @@
    <requires>
       <import plugin="org.apache.lucene"/>
       <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.tomcat"/>
+      <import plugin="org.eclipse.help.appserver"/>
    </requires>
 
 

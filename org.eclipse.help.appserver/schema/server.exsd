@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.help.appserver">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.help.appserver" id="server" name="server"/>
+   </appInfo>
+   <documentation>
+      [Enter description of this extension point]
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            Internal extension point for plugging-in an application server to be used by eclipse components, such as help.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="server">
+      <annotation>
+         <documentation>
+             Internal extension point for plugging-in an application server to be used by eclipse components, such as help.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The contributors to this extension point must implement the org.eclipse.help.appserver.internal.IWebappServer interface.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                   When set to true, this is the default application server. Normally, only the platform contributed default implementation should set this attribute to true.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
