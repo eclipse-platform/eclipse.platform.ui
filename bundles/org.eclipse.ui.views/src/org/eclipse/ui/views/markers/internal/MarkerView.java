@@ -28,8 +28,10 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -126,7 +128,13 @@ public abstract class MarkerView extends TableView {
 		parent.setLayout(stackLayout);
 
 		checkMarkerLimit();
+		updateStatusMessage();
 		updateTitle();
+		getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+				updateStatusMessage(selection);
+			}});
 	}
 
 	/* (non-Javadoc)
@@ -370,6 +378,7 @@ public abstract class MarkerView extends TableView {
 		IResource[] focus = new IResource[resources.size()];
 		resources.toArray(focus);
 		updateFocusResource(focus);
+		updateStatusMessage();
 	}
 
 	void updateFocusResource(IResource[] resources) {
@@ -448,6 +457,7 @@ public abstract class MarkerView extends TableView {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				checkMarkerLimit();
+				updateStatusMessage();
 				updateTitle();
 			}
 		});
@@ -467,6 +477,7 @@ public abstract class MarkerView extends TableView {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				checkMarkerLimit();
+				updateStatusMessage();
 				updateTitle();
 			}
 		});
@@ -531,6 +542,61 @@ public abstract class MarkerView extends TableView {
 		if (!newTitle.equals(currentTitle)) {
 			setTitle(newTitle);
 		}
+	}
+	
+	/**
+	 * Updates the message displayed in the status line.  This method will
+	 * be invoked in the following cases:
+	 * - when this view is first created
+	 * - when new elements are added
+	 * - when something is deleted
+	 * - when the focus changes to this view
+	 * - when the filters change
+	 * <p>
+	 * By default, this method will call updateStatusMessage(IStructuredSelection)
+	 * with the current selection or null.  Classes wishing to override
+	 * this functionality, should just override the method
+	 * updateStatusMessage(IStructuredSelection).</p>
+	 */
+	protected void updateStatusMessage() {
+		ISelection selection = getViewer().getSelection();
+		
+		if (selection instanceof IStructuredSelection)
+			updateStatusMessage((IStructuredSelection) selection);
+		else 
+			updateStatusMessage(null);
+	}
+
+	/**
+	 * Updates that message displayed in the status line.  If the
+	 * selection parameter is null or its size is 0, the status 
+	 * area will be blanked out.  If only 1 marker is selected, the
+	 * status area will be updated with the contents of the message
+	 * attribute of this marker.  In other cases (more than one marker
+	 * is selected) the status area will indicate how many items have
+	 * been selected.
+	 * <p>
+	 * This method may be overwritten.
+	 * </p><p>
+	 * This method is called whenever a selection changes in this view.
+	 * </p><p>
+	 * @param selection may be null or a valid IStructuredSelection</p>
+	 */
+	protected void updateStatusMessage(IStructuredSelection selection) {
+		String message = ""; //$NON-NLS-1$
+		
+		if (selection == null || selection.size() == 0){
+			// Leave the message blank
+			message = ""; //$NON-NLS-1$
+		} else if (selection.size() == 1) {
+			// Use the Message attribute of the marker
+			IMarker marker = (IMarker)selection.getFirstElement();
+			message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		} else {
+			// Show how many items selected
+			message = Messages.format("marker.statusSummarySelected", new Object[] {new Integer(selection.size()), ""}); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		getViewSite().getActionBars().getStatusLineManager().setMessage(message);
 	}
 
 	public IStructuredSelection getSelection() {

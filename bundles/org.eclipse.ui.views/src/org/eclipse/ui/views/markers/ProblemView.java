@@ -47,6 +47,7 @@ import org.eclipse.ui.views.markers.internal.IField;
 import org.eclipse.ui.views.markers.internal.IFilter;
 import org.eclipse.ui.views.markers.internal.MarkerRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerView;
+import org.eclipse.ui.views.markers.internal.Messages;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.TableSorter;
 
@@ -61,8 +62,8 @@ public class ProblemView extends MarkerView {
 	};
 		
 	// Direction constants - use the ones on TableSorter to stay sane
-	public final static int ASCENDING = TableSorter.ASCENDING;
-	public final static int DESCENDING = TableSorter.DESCENDING;
+	private final static int ASCENDING = TableSorter.ASCENDING;
+	private final static int DESCENDING = TableSorter.DESCENDING;
 	
 	private final static IField[] VISIBLE_FIELDS = { 
 		new FieldSeverity(), 
@@ -85,14 +86,14 @@ public class ProblemView extends MarkerView {
 	// TableSorter, we use the method TableView.getFields() as it is 
 	// inherited and we don't override it.  TableView.getFields() will
 	// return VISIBLE_FIELDS and then HIDDEN_FIELDS
-	public final static int SEVERITY = 0;
-	public final static int DESCRIPTION = 1;
-	public final static int RESOURCE = 2;
-	public final static int FOLDER = 3;
-	public final static int LOCATION = 4;
-	public final static int CREATION_TIME = 5;
+	private final static int SEVERITY = 0;
+	private final static int DESCRIPTION = 1;
+	private final static int RESOURCE = 2;
+	private final static int FOLDER = 3;
+	private final static int LOCATION = 4;
+	private final static int CREATION_TIME = 5;
 	
-	final static int[] DEFAULT_PRIORITIES = 
+	private final static int[] DEFAULT_PRIORITIES = 
 		{ SEVERITY,
 		  FOLDER,
 		  RESOURCE,
@@ -100,7 +101,7 @@ public class ProblemView extends MarkerView {
 		  DESCRIPTION,
 		  CREATION_TIME };
 
-	final static int[] DEFAULT_DIRECTIONS = 
+	private final static int[] DEFAULT_DIRECTIONS = 
 		{ DESCENDING,	// severity
 		  ASCENDING,    // folder
 		  ASCENDING,	// resource
@@ -118,6 +119,10 @@ public class ProblemView extends MarkerView {
 	private ProblemFilter problemFilter;
 	private ActionResolveMarker resolveMarkerAction;
 	private TableSorter sorter;
+
+	private static final int ERRORS = 0;
+	private static final int WARNINGS = 1;
+	private static final int INFOS = 2;
 
 	public void dispose() {
 		if (resolveMarkerAction != null)
@@ -231,5 +236,118 @@ public class ProblemView extends MarkerView {
 	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
 		// TODO: added because nick doesn't like public API inherited from internal classes
 		super.setSelection(structuredSelection, reveal);
+	}
+	
+	/**
+	 * This method will take as parameter a list of all the markers we
+	 * wish to get statistical information on.  Each marker will be examined
+	 * to determine its severity.  The resulting int array will contain a
+	 * count of the total number of markers with each of the severities:  error,
+	 * warning or info.
+	 * <p>
+	 * @param regList the list of markers we wish to get stats for
+	 * @return a 3-element int array giving the number of markers in regList
+	 *   that have severity ERROR, WARNING, and INFO.</p>
+	 */
+	private int[] getMarkerCounts (Object[] regList) {
+		int[] visibleMarkerCounts = {0, 0, 0};
+		if (regList == null || regList.length == 0)
+			return visibleMarkerCounts;
+		for (int i = 0; i < regList.length; i++) {
+			IMarker marker = (IMarker)regList[i];
+			int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+			switch (severity) {
+				case IMarker.SEVERITY_ERROR:
+					visibleMarkerCounts[ERRORS]++;
+					break;
+				case IMarker.SEVERITY_INFO:
+					visibleMarkerCounts[INFOS]++;
+					break;
+				case IMarker.SEVERITY_WARNING:
+					visibleMarkerCounts[WARNINGS]++;
+					break;
+			}
+		}
+		return visibleMarkerCounts;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#updateStatusMessage(org.eclipse.jface.viewers.IStructuredSelection)
+	 * <p>
+	 * This method has been overwritten from the default version in 
+	 * MarkerView.  For Problem views, the status area will indicate the
+	 * total number of items in the view and how many of them have severity
+	 * 'error', 'warning' or 'info' if the selection passed in is null
+	 * or has a size of 0 (i.e. nothing is selected in the view).  If more
+	 * than 1 item is selected, the same information will be displayed but
+	 * only for the selected items.  If only 1 item is selected, the 'message'
+	 * attribute of this marker will be displayed.</p>
+	 */
+	protected void updateStatusMessage(IStructuredSelection selection) {
+		String message = ""; //$NON-NLS-1$
+		
+		if (selection == null || selection.size() == 0){
+			// Show stats on all items in the view
+			message = updateSummaryVisible();
+		} else if (selection.size() == 1) {
+			// Use the Message attribute of the marker
+			IMarker marker = (IMarker)selection.getFirstElement();
+			message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		} else if (selection.size() > 1) {
+			// Show stats on only those items in the selection
+			message = updateSummarySelected(selection);
+		}
+		getViewSite().getActionBars().getStatusLineManager().setMessage(message);
+	}
+
+	/**
+	 * updateSummaryVisible will retrieve statistical information (the
+	 * total number of markers with each severity type) for the markers
+	 * contained in the marker registry for this view.  This information
+	 * will then be massaged into a String which may be displayed by the
+	 * caller.
+	 * <p>
+	 * @return a String message ready for display</p>
+	 */
+	private String updateSummaryVisible() {
+		Object[] regList = getRegistry().getElements();
+		int[] visibleMarkerCounts = getMarkerCounts(regList);
+		String message = Messages.format(
+			"problem.statusSummaryVisible", //$NON-NLS-1$
+			new Object[] {
+				new Integer(visibleMarkerCounts[ERRORS] + visibleMarkerCounts[INFOS] + visibleMarkerCounts[WARNINGS]),
+				Messages.format(
+					"problem.statusSummaryBreakdown", //$NON-NLS-1$
+					new Object[] {
+						new Integer(visibleMarkerCounts[ERRORS]),
+						new Integer(visibleMarkerCounts[WARNINGS]),
+						new Integer(visibleMarkerCounts[INFOS])})
+			});
+		return message;
+	}
+	
+	/**
+	 * updateSummarySelected will retrieve statistical information (the
+	 * total number of markers with each severity type) for the markers
+	 * contained in the selection passed in.  This information will then
+	 * be massaged into a String which may be displayed by the caller.
+	 * <p>
+	 * @param selection may be null or a valid IStructuredSelection
+	 * @return a String message ready for display</p>
+	 */
+	private String updateSummarySelected(IStructuredSelection selection) {
+		int[] selectedMarkerCounts = getMarkerCounts(selection.toArray());
+		String message = Messages.format(
+			"problem.statusSummarySelected", //$NON-NLS-1$
+			new Object[] {
+				new Integer(selectedMarkerCounts[ERRORS] + selectedMarkerCounts[INFOS] + selectedMarkerCounts[WARNINGS]),
+				Messages.format(
+					"problem.statusSummaryBreakdown", //$NON-NLS-1$
+					new Object[] {
+						new Integer(selectedMarkerCounts[ERRORS]),
+						new Integer(selectedMarkerCounts[WARNINGS]),
+						new Integer(selectedMarkerCounts[INFOS])})
+			});
+		return message;
 	}
 }
