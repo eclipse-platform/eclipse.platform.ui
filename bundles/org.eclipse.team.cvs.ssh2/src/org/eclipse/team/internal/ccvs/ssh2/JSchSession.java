@@ -171,11 +171,6 @@ class JSchSession {
 
 			try {
 			  java.io.File file;
-			  java.io.File dir;
-			  dir = new java.io.File(ssh_home);
-			  if(! dir.exists()) { 
-			  	dir.mkdirs();
-			  }
 			  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
 			  jsch.setKnownHosts(file.getPath());
 
