@@ -261,6 +261,7 @@ protected void handleSourceBrowseButtonPressed() {
 			if (sourceFile != null) {
 				closeZipFile(sourceFile);
 				setSourceName(selectedFile);
+				selectionGroup.setFocus();
 			}
 		}
 	}
