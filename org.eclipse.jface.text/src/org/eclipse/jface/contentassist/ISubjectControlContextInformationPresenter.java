@@ -12,22 +12,23 @@
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 
 /**
- * Extends <code>IContentAssit</code> with the concept of a
- * content assist subject which provides the context for
+ * Extends <code>IContextInformationPresenter</code> with the concept of a
+ * content assist subject control which provides the context for
  * the content assistant.
  * 
  * @since 3.0
  */
-public interface IContextInformationPresenterExtension {
+public interface ISubjectControlContextInformationPresenter extends IContextInformationPresenter {
 	
 	/**
 	 * Installs this presenter for the given context information.
 	 *
 	 * @param info the context information which this presenter should style
-	 * @param contentAssistSubject the content assit subject
+	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param documentPosition the document position for which the information has been computed
 	 */
-	void install(IContextInformation info, IContentAssistSubject contentAssistSubject, int documentPosition);
+	void install(IContextInformation info, IContentAssistSubjectControl contentAssistSubjectControl, int documentPosition);
 }

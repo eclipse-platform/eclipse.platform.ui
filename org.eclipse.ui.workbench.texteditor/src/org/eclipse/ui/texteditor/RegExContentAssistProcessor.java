@@ -16,13 +16,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.contentassist.IContentAssistProcessorExtension;
-import org.eclipse.jface.contentassist.IContentAssistSubject;
+import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.contentassist.SubjectControlContextInformationValidator;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.jface.text.contentassist.ContextInformationValidator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  * 
  * @since 3.0
  */
-final class RegExContentAssistProcessor implements IContentAssistProcessor, IContentAssistProcessorExtension {
+final class RegExContentAssistProcessor implements IContentAssistProcessor, ISubjectControlContentAssistProcessor {
 
 	/**
 	 * The available proposal strings.
@@ -246,20 +246,20 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 	/**
 	 * The context information validator.
 	 */
-	private IContextInformationValidator fValidator= new ContextInformationValidator(this);
+	private IContextInformationValidator fValidator= new SubjectControlContextInformationValidator(this);
 	
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		return computeCompletionProposals((IContentAssistSubject)null, documentOffset);
+		return computeCompletionProposals((IContentAssistSubjectControl)null, documentOffset);
 	}
 	
 	/*
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
-		return computeContextInformation((IContentAssistSubject)null, documentOffset);
+		return computeContextInformation((IContentAssistSubjectControl)null, documentOffset);
 	}
 	
 	/*
@@ -292,38 +292,38 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 	}
 
 	/*
-	 * @see IContentAssistProcessorExtension#computeCompletionProposals(IContentAssistSubject, int)
+	 * @see ISubjectControlContentAssistProcessor#computeCompletionProposals(IContentAssistSubjectControl, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubject contentAssistSubject, int documentOffset) {
+	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
 		List results= new ArrayList(fgProposalKeys.size());
 		Iterator iter= fgProposalKeys.iterator();
 		while (iter.hasNext())
-			addProposal((String)iter.next(), contentAssistSubject, documentOffset, results, true);
+			addProposal((String)iter.next(), contentAssistSubjectControl, documentOffset, results, true);
 
 		if (results.isEmpty()) {
 			iter= fgProposalKeys.iterator();
 			while (iter.hasNext())
-				addProposal((String)iter.next(), contentAssistSubject, documentOffset, results, false);
+				addProposal((String)iter.next(), contentAssistSubjectControl, documentOffset, results, false);
 		}
 
 		return (ICompletionProposal[])results.toArray(new ICompletionProposal[results.size()]);
 	}
 
 	/*
-	 * @see IContentAssistProcessorExtension#computeContextInformation(IContentAssistSubject, int)
+	 * @see ISubjectControlContentAssistProcessor#computeContextInformation(IContentAssistSubjectControl, int)
 	 */
-	public IContextInformation[] computeContextInformation(IContentAssistSubject contentAssistSubject, int documentOffset) {
+	public IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
 		return null;
 	}
 	
-	private void addProposal(String proposalKey, IContentAssistSubject contentAssistSubject, int documentOffset, List results, boolean filter) {
+	private void addProposal(String proposalKey, IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset, List results, boolean filter) {
 		String proposal= (String)fgProposalStrings.get(proposalKey);
 
 		// compute correct replacement
 		if (filter) {
 			String selection= null;
 			try {
-				selection = contentAssistSubject.getDocument().get(documentOffset - 1, 1);
+				selection = contentAssistSubjectControl.getDocument().get(documentOffset - 1, 1);
 			} catch (BadLocationException e) {
 				return ;
 			}

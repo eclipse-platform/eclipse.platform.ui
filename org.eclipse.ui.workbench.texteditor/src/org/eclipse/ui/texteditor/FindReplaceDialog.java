@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.contentassist.ContentAssistant;
+import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceColors;
@@ -1732,12 +1732,13 @@ class FindReplaceDialog extends Dialog {
 	// ------------- content assistant -----------------
 	
 	/**
-	 * Create a new regex content assistant
+	 * Create a new regex content assistant.
+	 *
 	 * @return a new configured content assistant
 	 * @since 3.0
 	 */
-	private ContentAssistant createContentAssistant() {
-		final ContentAssistant contentAssistant= new ContentAssistant();
+	private SubjectControlContentAssistant createContentAssistant() {
+		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
 		
 		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size")); //$NON-NLS-1$
 		

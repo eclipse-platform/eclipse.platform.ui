@@ -60,7 +60,7 @@ import org.eclipse.jface.text.IEventConsumer;
  * 
  * @since 3.0
  */
-public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubject {
+public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubjectControl {
 
 	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/ContentAssistSubjectAdapters"));  //$NON-NLS-1$//$NON-NLS-2$
 	
@@ -87,12 +87,12 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getControl()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getControl()
 	 */
 	public abstract Control getControl();
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);

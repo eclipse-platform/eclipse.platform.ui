@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.contentassist.AbstractControlContentAssistSubjectAdapter;
 import org.eclipse.jface.contentassist.ComboContentAssistSubjectAdapter;
-import org.eclipse.jface.contentassist.ContentAssistant;
+import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.contentassist.TextContentAssistSubjectAdapter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -40,7 +40,6 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
@@ -61,7 +60,7 @@ public class ContentAssistHandler {
 	/**
 	 * The content assistant.
 	 */
-	private ContentAssistant fContentAssistant;
+	private SubjectControlContentAssistant fContentAssistant;
 	/**
 	 * The currently installed HandlerSubmission, or <code>null</code> iff none installed.
 	 * This is also used as flag to tell whether content assist is enabled
@@ -81,7 +80,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
-	public static ContentAssistHandler createHandlerForCombo(Combo combo, ContentAssistant contentAssistant) {
+	public static ContentAssistHandler createHandlerForCombo(Combo combo, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(combo, new ComboContentAssistSubjectAdapter(combo), contentAssistant);
 	}
 	
@@ -94,7 +93,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
-	public static ContentAssistHandler createHandlerForText(Text text, ContentAssistant contentAssistant) {
+	public static ContentAssistHandler createHandlerForText(Text text, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(text, new TextContentAssistSubjectAdapter(text), contentAssistant);
 	}
 	
@@ -108,7 +107,7 @@ public class ContentAssistHandler {
 	private ContentAssistHandler(
 			Control control,
 			AbstractControlContentAssistSubjectAdapter subjectAdapter,
-			ContentAssistant contentAssistant) {
+			SubjectControlContentAssistant contentAssistant) {
 		fControl= control;
 		fContentAssistant= contentAssistant;
 		fContentAssistSubjectAdapter= subjectAdapter;
@@ -149,9 +148,6 @@ public class ContentAssistHandler {
 	 */
 	private void enable() {
 		if (! fControl.isDisposed()) {
-			//TODO: workaround for bug 59049
-			PlatformUI.getWorkbench().getContextSupport().registerShell(fControl.getShell(), IWorkbenchContextSupport.TYPE_DIALOG);
-			
 			fContentAssistant.install(fContentAssistSubjectAdapter);
 			installCueLabelProvider();
 			installFocusListener();

@@ -12,42 +12,43 @@
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * Extends <code>IContentAssit</code> with the concept of a
- * content assist subject which provides the context for
+ * content assist subject control which provides the context for
  * the content assistant.
  * 
- * @see org.eclipse.jface.contentassist.IContentAssistSubject
+ * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
  */
-public interface IContentAssistProcessorExtension {
+public interface ISubjectControlContentAssistProcessor extends IContentAssistProcessor {
 	/**
 	 * Returns a list of completion proposals based on the specified location
 	 * within the document that corresponds to the current cursor position
 	 * within the text viewer.
 	 * 
-	 * @param contentAssistSubject the content assist subject whose
+	 * @param contentAssistSubjectControl the content assist subject control whose
 	 *           document is used to compute the proposals
 	 * @param documentOffset an offset within the document for which
 	 *           completions should be computed
 	 * @return an array of completion proposals or <code>null</code> if no
 	 *         proposals are possible
 	 */
-	ICompletionProposal[] computeCompletionProposals(IContentAssistSubject contentAssistSubject, int documentOffset);
+	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset);
 	
 	/**
 	 * Returns information about possible contexts based on the specified
 	 * location within the document that corresponds to the current cursor
-	 * position within the content assist subject.
+	 * position within the content assist subject control.
 	 * 
-	 * @param contentAssistSubject the content assist subject whose
+	 * @param contentAssistSubjectControl the content assist subject control whose
 	 *           document is used to compute the possible contexts
 	 * @param documentOffset an offset within the document for which context
 	 *           information should be computed
 	 * @return an array of context information objects or <code>null</code>
 	 *         if no context could be found
 	 */
-	IContextInformation[] computeContextInformation(IContentAssistSubject contentAssistSubject, int documentOffset);
+	IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset);
 }

@@ -15,16 +15,18 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * The standard implementation of the <code>IContentAssistant</code> interface.
+ * The standard implementation of the <code>IControlContentAssistant</code> interface.
  * Usually, clients instantiate this class and configure it before using it.
+ * 
+ * @since 3.0
  */
-public class ContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements IControlContentAssistant {
+public class SubjectControlContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements ISubjectControlContentAssistant {
 	
 	/*
-	 * @see IContentAssistantExtension#install(IContentAssistSubject)
+	 * @see ISubjectControlContentAssistant#install(IContentAssistSubjectControl)
 	 */
-	public void install(IContentAssistSubject contentAssistSubject) {
-		Assert.isNotNull(contentAssistSubject);
-		super.install(contentAssistSubject);
+	public void install(IContentAssistSubjectControl contentAssistSubjectControl) {
+		Assert.isNotNull(contentAssistSubjectControl);
+		super.install(contentAssistSubjectControl);
 	}
 }

@@ -30,10 +30,10 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Adapts a <code>Text</code> to an <code>IContentAssistSubject</code>.
+ * Adapts a <code>Text</code> to an <code>IContentAssistSubjectControl</code>.
  * 
  * @see org.eclipse.swt.widgets.Text
- * @see org.eclipse.jface.contentassist.IContentAssistSubject
+ * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
  */
 public class TextContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
@@ -78,7 +78,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	private HashMap fModifyListeners;
 	
 	/**
-	 * Creates a content assist subject adapter for the given text.
+	 * Creates a content assist subject control adapter for the given text.
 	 * 
 	 * @param text the text to adapt
 	 */

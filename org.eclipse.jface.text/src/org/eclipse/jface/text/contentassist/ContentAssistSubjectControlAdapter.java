@@ -29,31 +29,31 @@ import org.eclipse.jface.text.contentassist.ContextInformationPopup.ContextFrame
 
 /**
  * This content assist adapter delegates the calls either to
- * a text viewer or to a content assist subject.
+ * a text viewer or to a content assist subject control.
  * 
  * @since 3.0
  */
-final class ContentAssistSubjectAdapter implements IContentAssistSubject {
+final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl {
 
 	/**
-	 * The text viewer which is used as content assist subject.
+	 * The text viewer which is used as content assist subject control.
 	 */
 	private ITextViewer fViewer;
 	
 	/**
-	 * The content assist subject.
+	 * The content assist subject control.
 	 */
-	private IContentAssistSubject fContentAssistSubject;
+	private IContentAssistSubjectControl fContentAssistSubjectControl;
 
 	
 	/**
-	 * Creates an adapter for the given content assist subject.
+	 * Creates an adapter for the given content assist subject control.
 	 * 
-	 * @param contentAssistSubject the content assist subject
+	 * @param contentAssistSubjectControl the content assist subject control
 	 */
-	public ContentAssistSubjectAdapter(IContentAssistSubject contentAssistSubject) {
-		Assert.isNotNull(contentAssistSubject);
-		fContentAssistSubject= contentAssistSubject;
+	ContentAssistSubjectControlAdapter(IContentAssistSubjectControl contentAssistSubjectControl) {
+		Assert.isNotNull(contentAssistSubjectControl);
+		fContentAssistSubjectControl= contentAssistSubjectControl;
 	}
 
 	/**
@@ -61,117 +61,117 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * 
 	 * @param viewer the text viewer
 	 */
-	public ContentAssistSubjectAdapter(ITextViewer viewer) {
+	public ContentAssistSubjectControlAdapter(ITextViewer viewer) {
 		Assert.isNotNull(viewer);
 		fViewer= viewer;
 	}
 
 	/*
-	 * @see IContentAssistSubject#getLineHeight()
+	 * @see IContentAssistSubjectControl#getLineHeight()
 	 */
 	public int getLineHeight() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getLineHeight();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getLineHeight();
 		else
 			return fViewer.getTextWidget().getLineHeight();
 	}
 
 	/*
-	 * @see IContentAssistSubject#getControl()
+	 * @see IContentAssistSubjectControl#getControl()
 	 */
 	public Control getControl() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getControl();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getControl();
 		else
 			return fViewer.getTextWidget();
 	}
 
 	/*
-	 * @see IContentAssistSubject#getLocationAtOffset(int)
+	 * @see IContentAssistSubjectControl#getLocationAtOffset(int)
 	 */
 	public Point getLocationAtOffset(int offset) {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getLocationAtOffset(offset);
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getLocationAtOffset(offset);
 		else
 			return fViewer.getTextWidget().getLocationAtOffset(offset);
 	}
 
 	/*
-	 * @see IContentAssistSubject#getWidgetSelectionRange()
+	 * @see IContentAssistSubjectControl#getWidgetSelectionRange()
 	 */
 	public Point getWidgetSelectionRange() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getWidgetSelectionRange();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getWidgetSelectionRange();
 		else
 			return fViewer.getTextWidget().getSelectionRange();
 	}
 
 	/*
-	 * @see IContentAssistSubject#getSelectedRange()
+	 * @see IContentAssistSubjectControl#getSelectedRange()
 	 */
 	public Point getSelectedRange() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getSelectedRange();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getSelectedRange();
 		else
 			return fViewer.getSelectedRange();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getCaretOffset()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getCaretOffset()
 	 */
 	public int getCaretOffset() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getCaretOffset();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getCaretOffset();
 		else
 			return fViewer.getTextWidget().getCaretOffset();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineDelimiter()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getLineDelimiter()
 	 */
 	public String getLineDelimiter() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getLineDelimiter();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getLineDelimiter();
 		else
 			return fViewer.getTextWidget().getLineDelimiter();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener keyListener) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.addKeyListener(keyListener);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.addKeyListener(keyListener);
 		else
 			fViewer.getTextWidget().addKeyListener(keyListener);
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.removeKeyListener(keyListener);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.removeKeyListener(keyListener);
 		else
 			fViewer.getTextWidget().removeKeyListener(keyListener);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getDocument()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getDocument()
 	 */
 	public IDocument getDocument() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.getDocument();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.getDocument();
 		else
 			return fViewer.getDocument();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#prependVerifyKeyListener(VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#prependVerifyKeyListener(VerifyKeyListener)
 	 */
 	public boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
-		if (fContentAssistSubject != null) {
-			return fContentAssistSubject.prependVerifyKeyListener(verifyKeyListener);
+		if (fContentAssistSubjectControl != null) {
+			return fContentAssistSubjectControl.prependVerifyKeyListener(verifyKeyListener);
 		} else if (fViewer instanceof ITextViewerExtension) {
 			ITextViewerExtension e= (ITextViewerExtension) fViewer;
 			e.prependVerifyKeyListener(verifyKeyListener);
@@ -188,11 +188,11 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public boolean appendVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.appendVerifyKeyListener(verifyKeyListener);
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.appendVerifyKeyListener(verifyKeyListener);
 		else if (fViewer instanceof ITextViewerExtension) {
 			ITextViewerExtension extension= (ITextViewerExtension)fViewer;
 			extension.appendVerifyKeyListener(verifyKeyListener);
@@ -208,11 +208,11 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
-		if (fContentAssistSubject != null) {
-			fContentAssistSubject.removeVerifyKeyListener(verifyKeyListener);
+		if (fContentAssistSubjectControl != null) {
+			fContentAssistSubjectControl.removeVerifyKeyListener(verifyKeyListener);
 		} else if (fViewer instanceof ITextViewerExtension) {
 			ITextViewerExtension extension= (ITextViewerExtension) fViewer;
 			extension.removeVerifyKeyListener(verifyKeyListener);
@@ -224,41 +224,41 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setEventConsumer(org.eclipse.jface.text.contentassist.ContentAssistant.InternalListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setEventConsumer(org.eclipse.jface.text.contentassist.ContentAssistant.InternalListener)
 	 */
 	public void setEventConsumer(IEventConsumer eventConsumer) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.setEventConsumer(eventConsumer);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.setEventConsumer(eventConsumer);
 		else
 			fViewer.setEventConsumer(eventConsumer);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setSelectedRange(int, int)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
 	 */
 	public void setSelectedRange(int i, int j) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.setSelectedRange(i, j);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.setSelectedRange(i, j);
 		else
 			fViewer.setSelectedRange(i, j);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#revealRange(int, int)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#revealRange(int, int)
 	 */
 	public void revealRange(int i, int j) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.revealRange(i, j);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.revealRange(i, j);
 		else
 			fViewer.revealRange(i, j);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#canAddVerifyKeyListener()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#canAddVerifyKeyListener()
 	 */
 	public boolean supportsVerifyKeyListener() {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.supportsVerifyKeyListener();
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.supportsVerifyKeyListener();
 		else
 			return true;
 	}
@@ -273,8 +273,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubject != null)
-			return contentAssistant.getCompletionProposalAutoActivationCharacters(fContentAssistSubject, offset);
+		if (fContentAssistSubjectControl != null)
+			return contentAssistant.getCompletionProposalAutoActivationCharacters(fContentAssistSubjectControl, offset);
 		else
 			return contentAssistant.getCompletionProposalAutoActivationCharacters(fViewer, offset);
 	}
@@ -291,8 +291,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	char[] getContextInformationAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubject != null)
-			return contentAssistant.getContextInformationAutoActivationCharacters(fContentAssistSubject, offset);
+		if (fContentAssistSubjectControl != null)
+			return contentAssistant.getContextInformationAutoActivationCharacters(fContentAssistSubjectControl, offset);
 		else
 			return contentAssistant.getContextInformationAutoActivationCharacters(fViewer, offset);
 	}
@@ -305,8 +305,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	* @return the completion proposal popup
 	*/
 	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller) {
-		if (fContentAssistSubject != null)
-			return new CompletionProposalPopup(contentAssistant, fContentAssistSubject, controller);
+		if (fContentAssistSubjectControl != null)
+			return new CompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
 		else
 			return new CompletionProposalPopup(contentAssistant, fViewer, controller);
 		
@@ -319,8 +319,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @return the context info popup or <code>null</code>
 	 */
 	ContextInformationPopup createContextInfoPopup(ContentAssistant contentAssistant) {
-		if (fContentAssistSubject != null)
-			return new ContextInformationPopup(contentAssistant, fContentAssistSubject);
+		if (fContentAssistSubjectControl != null)
+			return new ContextInformationPopup(contentAssistant, fContentAssistSubjectControl);
 		else
 			return new ContextInformationPopup(contentAssistant, fViewer);
 		
@@ -332,8 +332,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @return
 	 */
 	public IContextInformationValidator getContextInformationValidator(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubject != null)
-			return contentAssistant.getContextInformationValidator(fContentAssistSubject, offset);
+		if (fContentAssistSubjectControl != null)
+			return contentAssistant.getContextInformationValidator(fContentAssistSubjectControl, offset);
 		else
 			return contentAssistant.getContextInformationValidator(fViewer, offset);
 	}
@@ -344,8 +344,8 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @return
 	 */
 	public IContextInformationPresenter getContextInformationPresenter(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubject != null)
-			return contentAssistant.getContextInformationPresenter(fContentAssistSubject, offset);
+		if (fContentAssistSubjectControl != null)
+			return contentAssistant.getContextInformationPresenter(fContentAssistSubjectControl, offset);
 		else
 			return contentAssistant.getContextInformationPresenter(fViewer, offset);
 	}
@@ -354,9 +354,9 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @param frame
 	 */
 	public void installValidator(ContextFrame frame) {
-		if (fContentAssistSubject != null) {
-			if (frame.fValidator instanceof IContextInformationValidatorExtension)
-				((IContextInformationValidatorExtension)frame.fValidator).install(frame.fInformation, fContentAssistSubject, frame.fOffset);
+		if (fContentAssistSubjectControl != null) {
+			if (frame.fValidator instanceof ISubjectControlContextInformationValidator)
+				((ISubjectControlContextInformationValidator)frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fOffset);
 		} else
 			frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
 	}
@@ -365,9 +365,9 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @param frame
 	 */
 	public void installContextInformationPresenter(ContextFrame frame) {
-		if (fContentAssistSubject != null) {
-			if (frame.fPresenter instanceof IContextInformationPresenterExtension)
-				((IContextInformationPresenterExtension)frame.fValidator).install(frame.fInformation, fContentAssistSubject, frame.fBeginOffset);
+		if (fContentAssistSubjectControl != null) {
+			if (frame.fPresenter instanceof ISubjectControlContextInformationPresenter)
+				((ISubjectControlContextInformationPresenter)frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fBeginOffset);
 		} else
 			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
 	}
@@ -378,18 +378,18 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @return
 	 */
 	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int position) {
-		if (fContentAssistSubject != null)
-			return contentAssistant.computeContextInformation(fContentAssistSubject, position);
+		if (fContentAssistSubjectControl != null)
+			return contentAssistant.computeContextInformation(fContentAssistSubjectControl, position);
 		else
 			return contentAssistant.computeContextInformation(fViewer, position);
 	}
 
 	/*
-	 * @see IContentAssistSubject#addSelectionListener(SelectionListener)
+	 * @see IContentAssistSubjectControl#addSelectionListener(SelectionListener)
 	 */
 	public boolean addSelectionListener(SelectionListener selectionListener) {
-		if (fContentAssistSubject != null)
-			return fContentAssistSubject.addSelectionListener(selectionListener);
+		if (fContentAssistSubjectControl != null)
+			return fContentAssistSubjectControl.addSelectionListener(selectionListener);
 		else {
 			fViewer.getTextWidget().addSelectionListener(selectionListener);
 			return true;
@@ -397,11 +397,11 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	}
 
 	/*
-	 * @see IContentAssistSubject#removeSelectionListener(SelectionListener)
+	 * @see IContentAssistSubjectControl#removeSelectionListener(SelectionListener)
 	 */
 	public void removeSelectionListener(SelectionListener selectionListener) {
-		if (fContentAssistSubject != null)
-			fContentAssistSubject.removeSelectionListener(selectionListener);
+		if (fContentAssistSubjectControl != null)
+			fContentAssistSubjectControl.removeSelectionListener(selectionListener);
 		else
 			fViewer.getTextWidget().removeSelectionListener(selectionListener);
 	}

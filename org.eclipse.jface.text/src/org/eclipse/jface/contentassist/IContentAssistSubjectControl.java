@@ -22,17 +22,17 @@ import org.eclipse.jface.text.IEventConsumer;
 
 
 /**
- * A content assist subject can request assistance provided by a
+ * A content assist subject control can request assistance provided by a
  * {@link org.eclipse.jface.text.contentassist.IContentAssistant content assistant}.
  * 
  * @since 3.0
  */
-public interface IContentAssistSubject {
+public interface IContentAssistSubjectControl {
 
 	/**
-	 * Returns the control of this content assist subject.
+	 * Returns the control of this content assist subject control.
 	 * 
-	 * @return the control of this content assist subject
+	 * @return the control of this content assist subject control
 	 */
 	Control getControl();
 
@@ -151,7 +151,7 @@ public interface IContentAssistSubject {
 	void revealRange(int offset, int length);
 
 	/**
-	 * Returns this content assist subject's document.
+	 * Returns this content assist subject control's document.
 	 * 
 	 * @return the viewer's input document
 	 */
@@ -162,9 +162,9 @@ public interface IContentAssistSubject {
 	 * listeners. If the listener is already registered with the viewer this
 	 * call moves the listener to the end of the list.
 	 * <p>
-	 * Note: This content assist subject may not support appending a verify
+	 * Note: This content assist subject control may not support appending a verify
 	 * listener, in which case <code>false</code> will be returned. If this
-	 * content assist subject only supports <code>addVerifyKeyListener</code>
+	 * content assist subject control only supports <code>addVerifyKeyListener</code>
 	 * then this method can be used but <code>prependVerifyKeyListener</code>
 	 * must return <code>false</code>.
 	 * </p>
@@ -177,10 +177,10 @@ public interface IContentAssistSubject {
 	/**
 	 * If supported, inserts the verify key listener at the beginning of this content assist
 	 * subject's list of verify key listeners. If the listener is already
-	 * registered with the viewer this call moves the listener to the beginnng
+	 * registered with the viewer this call moves the listener to the beginning
 	 * of the list.
 	 * <p>
-	 * Note: This content assist subject may not support prepending a verify
+	 * Note: This content assist subject control may not support prepending a verify
 	 * listener, in which case <code>false</code> will be returned. However,
 	 * <code>appendVerifyKeyListener</code> might work.
 	 * </p>
@@ -191,7 +191,7 @@ public interface IContentAssistSubject {
 	boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener);
 
 	/**
-	 * Removes the verify key listener from this content assist subject's
+	 * Removes the verify key listener from this content assist subject control's
 	 * list of verify key listeners. If the listener is not registered, this
 	 * call has no effect.
 	 * 
@@ -258,7 +258,7 @@ public interface IContentAssistSubject {
 	 * If supported, registers an event consumer with this content assist
 	 * subject.
 	 * 
-	 * @param eventConsumer the content assist subject's event consumer. <code>null</code>
+	 * @param eventConsumer the content assist subject control's event consumer. <code>null</code>
 	 *           is a valid argument.
 	 */
 	void setEventConsumer(IEventConsumer eventConsumer);

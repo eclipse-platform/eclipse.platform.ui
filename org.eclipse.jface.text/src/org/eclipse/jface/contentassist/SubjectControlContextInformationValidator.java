@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
 
 
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 
 
 /**
@@ -21,15 +23,17 @@ import org.eclipse.jface.text.ITextViewer;
  * assist processor for all  context information objects for the current position. If the 
  * currently displayed information is in the result set, the context information is 
  * considered valid.
+ * 
+ * @since 3.0
  */
-public final class ContextInformationValidator implements IContextInformationValidator {
+public final class SubjectControlContextInformationValidator implements ISubjectControlContextInformationValidator {
 	
-	/** The content assist processor */
+	/** The content assist processor. */
 	private IContentAssistProcessor fProcessor;
-	/** The context information to be validated */
+	/** The context information to be validated. */
 	private IContextInformation fContextInformation;
-	/** The associated text viewer */
-	private ITextViewer fViewer;
+	/** The content assist subject control. */
+	private IContentAssistSubjectControl fContentAssistSubjectControl;
 
 	/**
 	 * Creates a new context information validator which is ready to be installed on
@@ -37,7 +41,7 @@ public final class ContextInformationValidator implements IContextInformationVal
 	 * 
 	 * @param processor the processor to be used for validation
 	 */
-	public ContextInformationValidator(IContentAssistProcessor processor) {
+	public SubjectControlContextInformationValidator(IContentAssistProcessor processor) {
 		fProcessor= processor;
 	}
 
@@ -45,19 +49,29 @@ public final class ContextInformationValidator implements IContextInformationVal
 	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 	 */
 	public void install(IContextInformation contextInformation, ITextViewer viewer, int position) {
+		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * @see ISubjectControlContextInformationValidator#install(IContextInformation, IContentAssistSubjectControl, int)
+	 */
+	public void install(IContextInformation contextInformation, IContentAssistSubjectControl contentAssistSubjectControl, int position) {
 		fContextInformation= contextInformation;
-		fViewer= viewer;
+		fContentAssistSubjectControl= contentAssistSubjectControl;
 	}
 
 	/*
 	 * @see IContentAssistTipCloser#isContextInformationValid(int)
 	 */
 	public boolean isContextInformationValid(int position) {
-		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, position);
-		if (infos != null && infos.length > 0) {
-			for (int i= 0; i < infos.length; i++)
-				if (fContextInformation.equals(infos[i]))
-					return true;
+		if (fContentAssistSubjectControl != null && fProcessor instanceof ISubjectControlContentAssistProcessor) {
+			IContextInformation[] infos= ((ISubjectControlContentAssistProcessor)fProcessor).computeContextInformation(fContentAssistSubjectControl, position);
+			if (infos != null && infos.length > 0) {
+				for (int i= 0; i < infos.length; i++) {
+					if (fContextInformation.equals(infos[i]))
+						return true;
+				}
+			}
 		}
 		return false;
 	}

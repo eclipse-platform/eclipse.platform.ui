@@ -18,7 +18,7 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * A context information validator is used to determine if
  * a displayed context information is still valid or should
- * be dismissed. The interface can be implemented by clients. <p>
+ * be dismissed. The interface can be implemented by clients.
  * 
  * @see IContextInformationPresenter
  */

@@ -12,22 +12,30 @@
 package org.eclipse.jface.contentassist;
 
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
- * Extends <code>IContentAssit</code> with the concept of a content assist
- * subject which provides the context for the content assistant.
+ * A context information validator is used to determine if
+ * a displayed context information is still valid or should
+ * be dismissed. The interface can be implemented by clients.
+ * <p>
+ * A control context information validator can be installed
+ * on the given content assist subject control instead of a text viewer.
+ * </p>
  * 
+ * @see org.eclipse.jface.text.contentassist.IContextInformationValidator
+ * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter
  * @since 3.0
  */
-public interface IContextInformationValidatorExtension {
+public interface ISubjectControlContextInformationValidator extends IContextInformationValidator {
 
 	/**
 	 * Installs this validator for the given context information.
 	 * 
 	 * @param info the context information which this validator should check
-	 * @param contentAssistSubject the content assist subject
+	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param documentPosition the document position for which the information
 	 *           has been computed
 	 */
-	void install(IContextInformation info, IContentAssistSubject contentAssistSubject, int documentPosition);
+	void install(IContextInformation info, IContentAssistSubjectControl contentAssistSubjectControl, int documentPosition);
 }
