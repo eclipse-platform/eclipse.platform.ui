@@ -27,12 +27,40 @@ import org.osgi.framework.Bundle;
  * criteria for an action.  
  */
 public class ActionExpression {
+	/**
+	 * Constant definition for OR. 
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_OR = "or"; //$NON-NLS-1$
+	/**
+	 * Constant definition for AND.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_AND = "and"; //$NON-NLS-1$
+	/**
+	 * Constant definition for NOT.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_NOT = "not"; //$NON-NLS-1$
+	/**
+	 * Constant definition for objectState.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_OBJECT_STATE = "objectState"; //$NON-NLS-1$
+	/**
+	 * Constant definition for objectClass.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	/**
+	 * Constant definition for pluginState.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
+	/**
+	 * Constant definition for systemProperty.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
+	 */
 	public static final String EXP_TYPE_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$	
 
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
@@ -46,6 +74,7 @@ public class ActionExpression {
 
 	/**
 	 * Creates an action expression for the given configuration element.
+	 * @param element. The element to build the expression from.
 	 */
 	public ActionExpression(IConfigurationElement element) {
 		try {
@@ -57,9 +86,13 @@ public class ActionExpression {
 	}
 
 	/**
-	 * Create an instance of the receiver with the given expression type
+	 *  Create an instance of the receiver with the given expression type
 	 * and value. Currently the only supported expression type is
 	 * <code>EXP_TYPE_OBJECT_CLASS</code>.
+	 * @param expressionType The expression constant we are creating 
+	 *  an instance of.
+	 * @param expressionValue The name of the class we are creating
+	 * an expression for.
 	 */
 	public ActionExpression(String expressionType, String expressionValue) {
 		if (expressionType.equals(EXP_TYPE_OBJECT_CLASS)) {
@@ -120,6 +153,11 @@ public class ActionExpression {
 	/**
 	 * Create an expression from the attributes and sub-elements of the
 	 * configuration element.
+	 * @param element The IConfigurationElement with a tag 
+	 * defined in the public constants.
+	 * @return AbstractExpression based on the definition
+	 * @throws IllegalStateException if the expression tag is not defined in the schema.
+	 * @see org.eclipse.ui\schema\commonExpression.mxsd
 	 */
 	private static AbstractExpression createExpression(IConfigurationElement element) throws IllegalStateException {
 		String tag = element.getName();
@@ -173,6 +211,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element The composite element we will create the
+		 * expression from.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public CompositeExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -213,6 +255,9 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element The element to create the expression from.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public SingleExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -222,7 +267,14 @@ public class ActionExpression {
 				throw new IllegalStateException("Single expression does not contain only 1 expression"); //$NON-NLS-1$
 			child = createExpression(children[0]);
 		}
-
+		
+		/**
+		 * Create a single expression from the abstract definition.
+		 * @param expression The expression that will be the child of the 
+		 * new single expression.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
+		 */
 		public SingleExpression(AbstractExpression expression) throws IllegalStateException {
 			super();
 			
@@ -254,6 +306,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element The element that will be used to create
+		 * the definition for the receiver.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public NotExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
@@ -273,6 +329,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for Or.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public OrExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
@@ -297,6 +357,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for And.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public AndExpression(IConfigurationElement element) throws IllegalStateException {
 			super(element);
@@ -323,6 +387,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for objectState.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public ObjectStateExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -354,16 +422,17 @@ public class ActionExpression {
 			
 			if (resourceClass.isInstance(object)) {
 				return false;
-			} else {
-				Object res = null;
-				if (object instanceof IAdaptable) {
-					res = ((IAdaptable) object).getAdapter(resourceClass);
-				}
-				if (res == null) {
-					return false;
-				}
-				return preciselyMatches(res);
+			} 
+			
+			Object res = null;
+			if (object instanceof IAdaptable) {
+				res = ((IAdaptable) object).getAdapter(resourceClass);
 			}
+			if (res == null) 
+				return false;
+			
+			return preciselyMatches(res);
+		
 		}
 		
 		private boolean preciselyMatches(Object object) {
@@ -393,6 +462,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for objectClass.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public ObjectClassExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -402,6 +475,11 @@ public class ActionExpression {
 				throw new IllegalStateException("Object class expression missing name attribute"); //$NON-NLS-1$
 		}
 
+		/**
+		 * Create an ObjectClass expression based on the className.
+		 * Added for backwards compatibility.
+		 * @param className
+		 */
 		public ObjectClassExpression(String className) {
 			super();
 			
@@ -427,7 +505,7 @@ public class ActionExpression {
 				// test all the interfaces the class implements
 				Class[] interfaces = clazz.getInterfaces();
 				for (int i = 0; i < interfaces.length; i++) {
-					if (interfaces[i].getName().equals(className))
+					if (checkInterfaceHierarchy(interfaces[i]))
 						return true;
 				}
 				
@@ -438,14 +516,33 @@ public class ActionExpression {
 			return false;
 		}
 
+		/**
+		 * Check the interfaces the whole way up. If one of them
+		 * matches className return <code>true</code>.
+		 * @param interfaceToCheck The interface whose name
+		 *  we are testing against.
+		 * @return <code>true</code> if one of the interfaces
+		 *  in the hierarchy matches className, <code>false</code>
+		 *  otherwise.
+		 */
+		private boolean checkInterfaceHierarchy(Class interfaceToCheck) {
+			if(interfaceToCheck.getName().equals(className))
+				return true;
+			Class[] superInterfaces = interfaceToCheck.getInterfaces();
+			for (int i = 0; i < superInterfaces.length; i++) {
+				if(checkInterfaceHierarchy(superInterfaces[i]))
+					return true;
+			}
+			return false;
+		}
+
 		/* (non-Javadoc)
 		 * Method declared on AbstractExpression.
 		 */
 		public boolean isEnabledForExpression(Object object, String expressionType) {
 			if (expressionType.equals(EXP_TYPE_OBJECT_CLASS))
 				return isEnabledFor(object);
-			else
-				return false;
+			return false;
 		}
 	}
 
@@ -457,6 +554,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for pluginState.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public PluginStateExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -490,6 +591,10 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
+		 * @param element. The element that will be used to determine
+		 * the expressions for systemProperty.
+		 * @throws IllegalStateException if the expression tag is not defined in the schema.
+		 * @see org.eclipse.ui\schema\commonExpression.mxsd
 		 */
 		public SystemPropertyExpression(IConfigurationElement element) throws IllegalStateException {
 			super();
@@ -507,8 +612,7 @@ public class ActionExpression {
 			String str = System.getProperty(name);
 			if (str == null)
 				return false;
-			else
-				return value.equals(str);
+			return value.equals(str);
 		}
 	}
 }
