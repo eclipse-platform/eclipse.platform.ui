@@ -985,6 +985,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			IDocument previous= (IDocument) oldInput;
 			previous.removeDocumentListener(fDocumentListener);
 		}
+		
+		super.inputChanged(newInput, oldInput);
+		
 		if (newInput instanceof IDocument) {
 			IDocument current= (IDocument) newInput;
 			current.addDocumentListener(fDocumentListener);
