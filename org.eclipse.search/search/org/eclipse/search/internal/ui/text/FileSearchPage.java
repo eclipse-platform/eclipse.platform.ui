@@ -234,7 +234,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				int fileCount= getInput().getElements().length;
 				if (itemCount < fileCount) {
 					String format= SearchMessages.getString("FileSearchPage.limited.format"); //$NON-NLS-1$
-					return MessageFormat.format(format, new Object[]{FileSearchQuery.quote(label), new Integer(itemCount), new Integer(fileCount)});
+					return MessageFormat.format(format, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
 				}
 			}
 		}
