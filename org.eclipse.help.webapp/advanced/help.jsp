@@ -16,31 +16,12 @@
 <title><%=ServletResources.getString("Help", request)%></title>
 
 <style type="text/css">
-<% 
-if (data.isMozilla()) {
-%>
-HTML {
-	padding:0px 3px 3px 3px;
-	background:<%=prefs.getToolbarBackground()%>;
-}
 
-<% 
-} else {
-%>
-
-/*
-There is a bug that pushes everything to the right, so we don't use this style yet.
 HTML {
 	padding: 0px 3px 3px 3px;
-}
-*/
-HTML {
-	padding: 0px 0px 3px 0px;
 	background:<%=prefs.getToolbarBackground()%>;
 }
-<%
-}
-%>
+
 </style>
 
 <script language="JavaScript">
@@ -83,9 +64,13 @@ function toggleFrame(title)
 </script>
 </head>
 
-<frameset id="helpFrameset" cols="25%,*" framespacing="4" border="7"  frameborder="1"   scrolling="no">
-   <frame class="nav" name="NavFrame" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
-   <frame class="content" name="ContentFrame" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+<%--
+Add a dummy frame space to the right. IE only.
+--%>
+
+<frameset id="helpFrameset" cols='25%,*<%=data.isIE()?",1":""%>' framespacing="4" border="7"  frameborder="1"   scrolling="no">
+   	<frame class="nav" name="NavFrame" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
+   	<frame class="content" name="ContentFrame" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 </frameset>
 
 </html>
