@@ -1,7 +1,5 @@
 package org.eclipse.ui.internal.progress;
 
-import java.util.Iterator;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -12,7 +10,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
@@ -149,7 +146,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
-			public int compare(Viewer viewer, Object e1, Object e2) {
+			public int compare(Viewer testViewer, Object e1, Object e2) {
 				return ((JobTreeElement) e1).compareTo((JobTreeElement) e2);
 			}
 		};
