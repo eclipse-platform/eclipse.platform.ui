@@ -29,6 +29,18 @@
 	<extension-point id="refreshVariables" name="%ExtPoint.refreshVariables"/>
 
 <!-- Extensions -->
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            name="Planty"
+            icon="icons/full/obj16/ant.gif"
+            filenames="build.xml"
+            contributorClass="org.eclipse.ui.externaltools.internal.ant.editor.PlantyActionContributor"
+            class="org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor"
+            id="org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor">
+      </editor>
+   </extension>
+   
+   <!-- UI extensions -->
 	<extension point="org.eclipse.ui.actionSets">
 		<actionSet
 			id="org.eclipse.ui.externaltools.ExternalToolsSet"
@@ -116,6 +128,12 @@
 			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntConsolePreferencePage"
 			category="org.eclipse.ui.externaltools.AntPreferencePage">
 		</page>
+	    <page
+		    id="org.eclipse.ui.externaltools.internal.ant.editor.internal.ColoringPreferencePage"
+    	    name="%PreferencePage.antEditor"
+            class="org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyPreferencePage"
+            category="org.eclipse.ui.externaltools.AntPreferencePage">
+	    </page>
 	</extension>
 	
 	<extension point="org.eclipse.ui.popupMenus">
