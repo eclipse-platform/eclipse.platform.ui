@@ -59,7 +59,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	// The viewer this input is being displayed in
 	private StructuredViewer viewer;
 	
-	private Set pendingLabelUpdates = new HashSet();
+	private Set pendingLabelUpdates = Collections.synchronizedSet(new HashSet());
 	
 	private LabelUpdateJob labelUpdater = new LabelUpdateJob();
 	
