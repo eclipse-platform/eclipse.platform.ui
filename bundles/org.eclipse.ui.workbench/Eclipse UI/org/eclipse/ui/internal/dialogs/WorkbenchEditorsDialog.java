@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -60,6 +61,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.layout.CellData;
+import org.eclipse.ui.internal.layout.CellLayout;
+import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -183,27 +187,39 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		
 		Font font = parent.getFont();
 		
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
+		Composite dialogArea = new Composite(parent, SWT.NONE);
+		CellLayout dialogAreaLayout = new CellLayout(1)
+			.setMargins(convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN),
+					convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN))
+			.setSpacing(convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING),
+					convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING))
+			.setRow(1, Row.growing());
+		dialogArea.setLayout(dialogAreaLayout);
+		dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		
 		//Label over the table
 		Label l = new Label(dialogArea, SWT.NONE);
 		l.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.label")); //$NON-NLS-1$
 		l.setFont(font);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		l.setLayoutData(data);
+		l.setLayoutData(new CellData().align(SWT.FILL, SWT.CENTER));
 		//Table showing the editors name, full path and perspective
 		editorsTable = new Table(dialogArea, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		editorsTable.setLinesVisible(true);
 		editorsTable.setHeaderVisible(true);
 		editorsTable.setFont(font);
 		
-		final GridData tableData = new GridData(GridData.FILL_BOTH);
-		tableData.heightHint = 16 * editorsTable.getItemHeight();
-		tableData.widthHint = (int) (2.5 * tableData.heightHint);
+		final int height = 16 * editorsTable.getItemHeight();
+		final int width = (int) (2.5 * height);
+		
+		CellData tableData = new CellData()
+			.align(SWT.FILL, SWT.FILL)
+			.setHint(CellData.OVERRIDE, width, height);
 		
 		editorsTable.setLayoutData(tableData);
 		editorsTable.setLayout(new Layout() {
 			protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache){
-				return new Point(tableData.widthHint, tableData.heightHint);
+				return new Point(width, height);
 			}
 			protected void layout(Composite composite, boolean flushCache){
 				TableColumn c[] = editorsTable.getColumns();
@@ -347,6 +363,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		});
 		editorsTable.setFocus();
+		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
 	/**
