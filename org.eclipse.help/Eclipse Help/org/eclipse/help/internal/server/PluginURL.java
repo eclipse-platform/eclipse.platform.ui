@@ -3,7 +3,7 @@ package org.eclipse.help.internal.server;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 
 import java.io.*;
 import java.util.*;
@@ -11,15 +11,13 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
-
+
 /**
  * URL for documentation coming from a plugin.
  */
 public class PluginURL extends HelpURL {
 	private final static String lang = "lang";
 	private final static String INI = ".ini";
-	private final static String PROPERTIES = ".properties";
-
 	protected IPluginDescriptor plugin;
 	protected String file;
 	
@@ -30,24 +28,24 @@ public class PluginURL extends HelpURL {
 	public PluginURL(String url, String query) {
 		super(url, query);
 	}
-
+
 	private String getFile() {
 		if (file == null)
 		{
 			// Strip the plugin id
 			int start = url.indexOf("/") + 1;
-
+
 			// Strip query string or anchor bookmark
 			int end = url.indexOf("?");
 			if (end == -1)
 				end = url.indexOf("#");
 			if (end == -1)
 				end = url.length();
-
+
 			file = url.substring(start, end);
 		}
 		return file;
-
+
 	}
 	private String getLocation() {
 		// Assume the url is pluginID/path_to_topic.html
@@ -70,11 +68,11 @@ public class PluginURL extends HelpURL {
 		}
 		return plugin;
 	}
-
+
 	private Locale getLocale()
 	{	
 		String clientLocale = getValue(lang);
-
+
 		// The clientLocale takes precedence over the Help Server locale.
 		if (clientLocale != null) {
 			if (clientLocale.indexOf("_") != -1) {
@@ -131,7 +129,7 @@ public class PluginURL extends HelpURL {
 		else
 			return openStreamLocally();
 	}
-
+
 	/**
 	 * Opens an input stream to the plugin url specified, assuming
 	 * the plugin is obtained from the current eclipse session
@@ -139,10 +137,10 @@ public class PluginURL extends HelpURL {
 	public InputStream openStreamLocally(){
 		if (getPlugin() == null)
 			return null;
-
+
 		if (getFile() == null)
 			return null;
-
+
 		// When the platform supports find() with a locale specified, use this
 		//Locale locale = getLocale();
 					

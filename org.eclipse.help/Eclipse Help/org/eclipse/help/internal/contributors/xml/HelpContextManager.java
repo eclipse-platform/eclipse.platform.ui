@@ -3,7 +3,7 @@ package org.eclipse.help.internal.contributors.xml;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 
 import java.util.*;
 import org.w3c.dom.*;
@@ -15,7 +15,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.contributions.xml.*;
 import org.eclipse.help.internal.util.*;
-
+
 /**
  * Maintains the list of contexts
  * and performs look-ups.
@@ -47,7 +47,7 @@ public class HelpContextManager implements ContextManager {
 			plugin = contextId.substring(0, dot);
 			id = contextId.substring(dot + 1);
 		}
-
+
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
 			// parse the xml context contribution files and load the context
@@ -55,11 +55,11 @@ public class HelpContextManager implements ContextManager {
 			// by this plugin get loaded)
 			contexts = loadContext(plugin);
 		}
-
+
 		return (IContext) contexts.get(id);
-
+
 	}
-
+
 	/**
 	 * Finds the context to display (text and related topics), given
 	 * a an ordered list of (nested) context objects
@@ -67,7 +67,7 @@ public class HelpContextManager implements ContextManager {
 	public String getDescription(Object[] contexts) {
 		if (contexts == null)
 			return null;
-
+
 		// Scan the list and return the description from the first context containing data
 		for (int i = 0; i < contexts.length; i++) {
 			String description = getDescription(contexts[i]);
@@ -84,10 +84,10 @@ public class HelpContextManager implements ContextManager {
 	private String getDescription(Object context) {
 		if (context instanceof IContext)
 			return ((IContext) context).getText();
-
+
 		if (!(context instanceof String))
 			return null;
-
+
 		IContext contextNode = getContext((String)context);
 		if (contextNode != null)
 			return contextNode.getText();
@@ -105,7 +105,7 @@ public class HelpContextManager implements ContextManager {
 	public IHelpTopic[] getMoreRelatedTopics(Object[] contexts) {
 		if (contexts == null)
 			return null;
-
+
 		ArrayList relatedTopics = new ArrayList();
 		// Skip the first one the list and return the related topics from the other contexts
 		for (int i = 1; i < contexts.length; i++) {
@@ -118,21 +118,6 @@ public class HelpContextManager implements ContextManager {
 		IHelpTopic[] moreRelated = new IHelpTopic[relatedTopics.size()];
 		return (IHelpTopic[]) relatedTopics.toArray(moreRelated);
 	}
-	// NL enables a description string. 
-	private String getNLdescription(String pluginID, String description) {
-		if(description==null)
-			return description;
-		// if description starts with %, need to translate.
-		if (description.indexOf('%') == 0) {
-			// strip off the leading %
-			description = description.substring(1);
-			// now translate
-			description = ContextResources.getPluginString(pluginID, description);
-		}
-
-		return description;
-
-	}
 	/**
 	 * Finds the context to display (text and related topics), given
 	 * a an ordered list of (nested) context objects
@@ -140,13 +125,13 @@ public class HelpContextManager implements ContextManager {
 	public IHelpTopic[] getRelatedTopics(Object[] contexts) {
 		if (contexts == null)
 			return null;
-
+
 		// return the related topics from the first context
 		if(contexts.length>=1){
 			IHelpTopic[] topics = getRelatedTopics(contexts[0]);
 			return topics;
 		}
-
+
 		// worst case scenario. Could not find related Topics in any context object. 
 		return null;
 	}
@@ -158,10 +143,10 @@ public class HelpContextManager implements ContextManager {
 	private IHelpTopic[] getRelatedTopics(Object context) {
 		if (context instanceof IContext)
 			return ((IContext) context).getRelatedTopics();
-
+
 		if (!(context instanceof String))
 			return null;
-
+
 		IContext contextNode = getContext((String)context);
 		if (contextNode != null)
 			return contextNode.getRelatedTopics();
@@ -198,7 +183,7 @@ public class HelpContextManager implements ContextManager {
 			{
 				Contributor contextContributor = (Contributor) contextContributors.next();
 				Contribution contrib = contextContributor.getContribution();
-
+
 				// contrib could be null if there was an error parsing the manifest file!
 				if (contrib == null);
 				// do nothing here because we need to load other Context files.
@@ -207,12 +192,6 @@ public class HelpContextManager implements ContextManager {
 						contextIterator.hasNext();
 						) {
 						HelpContext contextNode = (HelpContext) contextIterator.next();
-						String description = contextNode.getDescription();
-						// NOTE: a context can be defined in another plugin, so we'd better
-						//       make sure we use the contributor plugin for properties files
-						//description = getNLdescription(plugin, description);
-						description = getNLdescription(contextNode.getContributor().getPlugin().getUniqueIdentifier(), description);
-						contextNode.setDescription(description);
 						contexts.put(contextNode.getID(), contextNode);
 					}
 				}
@@ -230,7 +209,7 @@ public class HelpContextManager implements ContextManager {
 			Platform.getPluginRegistry().getExtensionPoint(CONTEXT_EXTENSION);
 		if (xpt == null)
 			return; // no contributions...
-
+
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginDescriptor plugin = extensions[i].getDeclaringPluginDescriptor();

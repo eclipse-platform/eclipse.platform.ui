@@ -86,6 +86,10 @@ public class HelpNavigationManager {
 						.getDefault()
 						.getStateLocation()
 						.addTrailingSeparator()
+						.append("nl")
+						.addTrailingSeparator()
+						.append(Locale.getDefault().toString())
+						.addTrailingSeparator()
 						.append(infoset.getID()).toFile();
 				if (!navOutDir.exists()) {
 					navOutDir.mkdirs();
@@ -93,7 +97,7 @@ public class HelpNavigationManager {
 				File navOutFile = new File(navOutDir, NAV_XML_FILENAME);
 				new XMLNavGenerator(infoset, navOutFile).generate();
 
-				infosetsMap.put(infoset.getID(), infoset.getRawLabel());
+				infosetsMap.put(infoset.getID(), infoset.getLabel());
 			}
 			// Save a file with all the infosets ids and labels
 			infosetsMap.save();
@@ -209,13 +213,7 @@ public class HelpNavigationManager {
 	 * read in memory
 	 */
 	public String getInfoSetLabel(String infosetId) {
-		String label = (String)infosetsMap.get(infosetId);
-		if (label.indexOf('%') == 0) {
-			int lastPeriod = infosetId.lastIndexOf('.');
-			String pluginID = infosetId.substring(0, lastPeriod);
-			label =	DocResources.getPluginString(pluginID, label.substring(1));
-		}
-		return label;
+		return (String)infosetsMap.get(infosetId);
 	}
 	
 	/**

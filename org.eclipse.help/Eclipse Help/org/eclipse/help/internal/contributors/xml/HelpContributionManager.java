@@ -126,8 +126,9 @@ public class HelpContributionManager implements ContributionManager {
 		if (pluginVersions == null) {
 			// see what has changed since last time
 			pluginVersions =
-				new PluginVersionInfo(PLUGIN_VERSION_FILE, getContributingPlugins());
-		}
+				new PluginVersionInfo(
+					"nl/" + Locale.getDefault().toString() + "/" + PLUGIN_VERSION_FILE,
+					getContributingPlugins());		}
 		return pluginVersions.detectChange();
 	}
 	/**

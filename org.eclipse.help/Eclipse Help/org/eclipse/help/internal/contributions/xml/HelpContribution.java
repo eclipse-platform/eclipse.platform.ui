@@ -3,34 +3,33 @@ package org.eclipse.help.internal.contributions.xml;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 
 import java.util.*;
 import org.xml.sax.*;
 import org.eclipse.help.internal.contributions.Contribution;
 import org.eclipse.help.internal.contributions.Visitor;
 import org.eclipse.help.internal.util.*;
-
+
 /**
  * Common class for contribution data.
  */
 public class HelpContribution implements Contribution {
-
+
 	protected HelpContribution parent;
 	protected List children = new ArrayList(/* of HelpContribution */);
 	protected String id;
 	protected String label;
-	protected String translatedLabel;
 	// counter to track children with FIRST or LAST position preferences
 	protected int firstChildrenNo = 0;
 	protected int lastChildrenNo = 0;
-
+
 	/**
 	 */
 	public HelpContribution(Attributes attrs) {
 		if (attrs == null)
 			return;
-
+
 		// set the id
 		id = attrs.getValue("id");
 		
@@ -73,30 +72,15 @@ public class HelpContribution implements Contribution {
 		return id;
 	}
 	/**
-	 * Returns the translated label
+	 * Returns the label
 	 */
 	public String getLabel() {
-		if (translatedLabel == null) {
-			translatedLabel = label;
-			if (translatedLabel.indexOf('%') == 0) {
-				int lastPeriod = id.lastIndexOf('.');
-				String pluginID = id.substring(0, lastPeriod);
-				translatedLabel =
-					DocResources.getPluginString(pluginID, translatedLabel.substring(1));
-			}
-		}
-		return translatedLabel;
+		return label;
 	}
 	/**
 	 */
 	public Contribution getParent() {
 		return parent;
-	}
-	/**
-	 * Returns the label without translation, as it appears in the xml files
-	 */
-	public String getRawLabel() {
-		return label;
 	}
 	/**
 	 * Adds a child and returns it
@@ -156,11 +140,11 @@ public class HelpContribution implements Contribution {
 		this.id = id;
 	}
 	/**
-	 * Sets the label without translation, as it would appear if this was created from xml navigation file
-	 * @param label - raw label, which needs to appear in the property fille, or untranslatable label
+	 * Sets the label
+	 * @param newLlabel new Label to set
 	 */
-	public void setRawLabel(String rawLabel) {
-		this.label = rawLabel;
+	public void setLabel(String newLabel) {
+		this.label = newLabel;
 	}
 	/**
 	 */

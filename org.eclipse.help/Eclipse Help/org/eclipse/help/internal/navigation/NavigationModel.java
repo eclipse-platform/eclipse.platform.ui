@@ -85,6 +85,10 @@ public class NavigationModel {
 			HelpPlugin
 				.getDefault()
 				.getStateLocation()
+				.addTrailingSeparator()
+				.append("nl")
+				.addTrailingSeparator()
+				.append(Locale.getDefault().toString())
 				.append(infosetID)
 				.append(HelpNavigationManager.NAV_XML_FILENAME)
 				.toOSString();
@@ -143,6 +147,10 @@ public class NavigationModel {
 						+ "/"
 						+ infosetID
 						+ "/"
+						+ File.separator
+						+ "nl"
+						+ File.separator
+						+ Locale.getDefault().toString()
 						+ HelpNavigationManager.NAV_XML_FILENAME);
 
 			in = new BufferedInputStream(remoteNavFile.openStream());

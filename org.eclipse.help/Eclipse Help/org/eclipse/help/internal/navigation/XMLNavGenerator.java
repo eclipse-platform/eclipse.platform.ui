@@ -49,7 +49,7 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 		options.append("id=\"");
 		options.append(infoSet.getID());
 		options.append("\" label=\"");
-		String infosetLabel = ((HelpContribution) infoSet).getRawLabel();
+		String infosetLabel = ((HelpContribution) infoSet).getLabel();
 		options.append(xmlEscape(infosetLabel));
 		options.append("\" ");
 		if (!"".equals(href)) {
@@ -80,7 +80,7 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 		options.append("id=\"");
 		options.append(view.getID());
 		options.append("\" label=\"");
-		String viewLabel = ((HelpContribution) view).getRawLabel();
+		String viewLabel = ((HelpContribution) view).getLabel();
 		viewLabel = xmlEscape(viewLabel);
 		options.append(viewLabel);
 		options.append("\" ");
@@ -108,7 +108,7 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 
 		pad++;
 		StringBuffer anchor = new StringBuffer();
-		String topicLabel = xmlEscape(((HelpContribution) topic).getRawLabel());
+		String topicLabel = xmlEscape(((HelpContribution) topic).getLabel());
 		anchor
 			.append("<topic href=\"")
 			.append(href)

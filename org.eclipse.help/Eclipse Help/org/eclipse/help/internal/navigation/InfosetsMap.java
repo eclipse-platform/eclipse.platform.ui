@@ -32,6 +32,10 @@ public class InfosetsMap extends Hashtable {
 				.getDefault()
 				.getStateLocation()
 				.addTrailingSeparator()
+				.append("nl")
+				.addTrailingSeparator()
+				.append(Locale.getDefault().toString())
+				.addTrailingSeparator()
 				.append(INFOSETS_FILENAME)
 				.toFile();
 
@@ -108,7 +112,7 @@ public class InfosetsMap extends Hashtable {
 				if (o instanceof InfoSet) {
 					InfoSet iset = (InfoSet) o;
 					if (iset.getID() != null && iset.getID() != "" && iset.getLabel() != null)
-						put(iset.getID(), iset.getRawLabel());
+						put(iset.getID(), iset.getLabel());
 				}
 			}
 
