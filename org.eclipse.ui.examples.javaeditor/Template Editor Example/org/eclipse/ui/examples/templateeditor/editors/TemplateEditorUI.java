@@ -52,7 +52,7 @@ public class TemplateEditorUI  {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new TemplateStore(JavaEditorExamplePlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore= new TemplateStore(getContextTypeRegistry(), JavaEditorExamplePlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
 			} catch (IOException e) {

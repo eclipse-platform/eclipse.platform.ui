@@ -29,7 +29,6 @@ public class TemplatePersistenceData {
 	private Template fCustomTemplate= null;
 	private boolean fIsDeleted= false;
 	private boolean fCustomIsEnabled= true;
-	private boolean fIsCustom;
 	
 	/**
 	 * Creates a new, user-added instance that is not linked to a contributed
@@ -59,7 +58,6 @@ public class TemplatePersistenceData {
 		fOriginalIsEnabled= enabled;
 		fCustomIsEnabled= enabled;
 		fId= id;
-		fIsCustom= id == null;
 	}
 	
 	/**
@@ -88,7 +86,6 @@ public class TemplatePersistenceData {
 	 */
 	public void setDeleted(boolean isDeleted) {
 		fIsDeleted= isDeleted;
-		fIsCustom= fIsCustom || fIsDeleted;
 	}
 	
 	/**
@@ -108,7 +105,6 @@ public class TemplatePersistenceData {
 	 */
 	public void setTemplate(Template template) {
 		fCustomTemplate= template;
-		fIsCustom= fIsCustom || !fCustomTemplate.equals(fOriginalTemplate);
 	}
 	
 	/**
@@ -120,7 +116,10 @@ public class TemplatePersistenceData {
 	 *         templates
 	 */
 	public boolean isCustom() {
-		return fIsCustom;
+		return fId == null
+				|| fIsDeleted 
+				|| fOriginalIsEnabled != fCustomIsEnabled 
+				|| !fOriginalTemplate.equals(fCustomTemplate);
 	}
 	
 	/**
@@ -148,7 +147,6 @@ public class TemplatePersistenceData {
 	 * Reverts the template to its original setting. 
 	 */
 	public void revert() {
-		fIsCustom= fId == null;
 		fCustomTemplate= fOriginalTemplate;
 		fCustomIsEnabled= fOriginalIsEnabled;
 		fIsDeleted= false;
@@ -171,6 +169,5 @@ public class TemplatePersistenceData {
 	 */
 	public void setEnabled(boolean isEnabled) {
 		fCustomIsEnabled= isEnabled;
-		fIsCustom= fIsCustom || fCustomIsEnabled != fOriginalIsEnabled;
 	}
 }

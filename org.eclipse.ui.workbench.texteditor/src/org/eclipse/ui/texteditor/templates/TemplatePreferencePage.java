@@ -127,7 +127,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 
 	/** Qualified key for formatter preference. */ 
-	private static final String PREF_FORMAT_TEMPLATES= "org.eclipse.ui.texteditor.templates.preferences.format_templates"; //$NON-NLS-1$
+	private static final String DEFAULT_FORMATTER_PREFERENCE_KEY= "org.eclipse.ui.texteditor.templates.preferences.format_templates"; //$NON-NLS-1$
 
 	/** The table presenting the templates. */
 	private CheckboxTableViewer fTableViewer;
@@ -751,7 +751,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	protected void performDefaults() {
 		if (isShowFormatterSetting()) {
 			IPreferenceStore prefs= getPreferenceStore();
-			fFormatButton.setSelection(prefs.getDefaultBoolean(PREF_FORMAT_TEMPLATES));
+			fFormatButton.setSelection(prefs.getDefaultBoolean(getFormatterPreferenceKey()));
 		}
 
 		fTemplateStore.restoreDefaults();
@@ -768,7 +768,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	public boolean performOk() {
 		if (isShowFormatterSetting()) {
 			IPreferenceStore prefs= getPreferenceStore();
-			prefs.setValue(PREF_FORMAT_TEMPLATES, fFormatButton.getSelection());
+			prefs.setValue(getFormatterPreferenceKey(), fFormatButton.getSelection());
 		}
 		
 		try {
@@ -780,6 +780,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return super.performOk();
 	}	
 	
+	/**
+	 * Returns the key to use for the formatter preference.
+	 * @return
+	 */
+	protected String getFormatterPreferenceKey() {
+		return DEFAULT_FORMATTER_PREFERENCE_KEY;
+	}
+
 	/*
 	 * @see PreferencePage#performCancel()
 	 */

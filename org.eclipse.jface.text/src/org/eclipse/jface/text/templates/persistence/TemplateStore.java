@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 
 /**
@@ -41,9 +42,11 @@ import org.eclipse.jface.text.templates.Template;
  * user-defined (or overridden) templates stored in the preferences. Clients may
  * instantiate this class.
  * 
+ * <p>This class will become final.</p>
+ * 
  * @since 3.0
  */
-public final class TemplateStore {
+public class TemplateStore {
 	/* extension point string literals */
 	private static final String TEMPLATES_EXTENSION_POINT= "org.eclipse.ui.editors.templates"; //$NON-NLS-1$
 
@@ -62,9 +65,18 @@ public final class TemplateStore {
 
 	/** The stored templates. */
 	private final List fTemplates= new ArrayList();
-	
+	/** The preference store. */
 	private IPreferenceStore fPreferenceStore;
+	/**
+	 * The key into <code>fPreferenceStore</code> the value of which holds custom templates
+	 * encoded as XML.
+	 */
 	private String fKey;
+	/**
+	 * The context type registry, or <code>null</code> if all templates regardless
+	 * of context type should be loaded.
+	 */
+	private ContextTypeRegistry fRegistry;
 
 
 	/**
@@ -80,6 +92,23 @@ public final class TemplateStore {
 		Assert.isNotNull(key);
 		fPreferenceStore= store;
 		fKey= key;
+	}
+	
+	/**
+	 * Creates a new template store with a context type registry. Only templates
+	 * that specify a context type contained in the registry will be loaded by
+	 * this store if the registry is not <code>null</code>.
+	 * 
+	 * @param registry a context type registry, or <code>null</code> if all
+	 *        templates should be loaded
+	 * @param store the preference store in which to store custom templates
+	 *        under <code>key</code>
+	 * @param key the key into <code>store</code> where to store custom
+	 *        templates
+	 */
+	public TemplateStore(ContextTypeRegistry registry, IPreferenceStore store, String key) {
+		this(store, key);
+		fRegistry= registry;
 	}
 	
 	/**
@@ -119,6 +148,10 @@ public final class TemplateStore {
 	 * @param data the template to add
 	 */
 	public void add(TemplatePersistenceData data) {
+		
+		if (!validateTemplate(data.getTemplate()))
+			return;
+		
 		if (data.isUserAdded()) {
 			fTemplates.add(data);
 		} else {
@@ -131,7 +164,8 @@ public final class TemplateStore {
 					return;
 				}
 			}
-			// add an id which is not contributed as add on
+			
+			// add an id which is not contributed as add-on
 			if (data.getTemplate() != null) {
 				TemplatePersistenceData newData= new TemplatePersistenceData(data.getTemplate(), data.isEnabled());
 				fTemplates.add(newData);
@@ -176,19 +210,61 @@ public final class TemplateStore {
 	}
 	
 	/**
-	 * Returns all enabled templates that have not been deleted.
+	 * Returns all enabled templates.
 	 * 
 	 * @return all enabled templates
 	 */
 	public Template[] getTemplates() {
+		return getTemplates(null);
+	}
+	
+	/**
+	 * Returns all enabled templates for the given context type.
+	 * 
+	 * @param contextTypeId the id of the context type of the requested templates, or <code>null</code> if all templates should be returned
+	 * @return all enabled templates for the given context type
+	 */
+	public Template[] getTemplates(String contextTypeId) {
 		List templates= new ArrayList();
 		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
 			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
-			if (data.isEnabled() && !data.isDeleted())
+			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
 				templates.add(data.getTemplate());
 		}
 		
 		return (Template[]) templates.toArray(new Template[templates.size()]);
+	}
+	
+	/**
+	 * Returns the first enabled template that matches the name.
+	 *  
+	 * @param name the name of the template searched for
+	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
+	 */
+	public Template findTemplate(String name) {
+		return findTemplate(name, null);
+	}
+	
+	/**
+	 * Returns the first enabled template that matches both name and context type id.
+	 *  
+	 * @param name the name of the template searched for
+	 * @param contextTypeId the context type id to clip unwanted templates, or <code>null</code> if any context type is ok
+	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
+	 */
+	public Template findTemplate(String name, String contextTypeId) {
+		Assert.isNotNull(name);
+		
+		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+			Template template= data.getTemplate();
+			if (data.isEnabled() && !data.isDeleted() 
+					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
+					&& name.equals(template.getName()))
+				return template;
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -231,7 +307,7 @@ public final class TemplateStore {
 		fTemplates.addAll(readContributedTemplates(extensions));
 	}
 	
-	private static Collection readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
+	private Collection readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
 		Collection templates= new ArrayList();
 		for (int i= 0; i < extensions.length; i++) {
 			if (extensions[i].getName().equals(TEMPLATE))
@@ -244,7 +320,7 @@ public final class TemplateStore {
 		return templates;
 	}
 
-	private static void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
+	private void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
 		String file= element.getAttributeAsIs(FILE);
 		if (file != null) {
 			IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
@@ -266,7 +342,7 @@ public final class TemplateStore {
 					TemplatePersistenceData[] datas= reader.read(input, bundle);
 					for (int i= 0; i < datas.length; i++) {
 						TemplatePersistenceData data= datas[i];
-						if (!data.isCustom())
+						if (!data.isCustom() && validateTemplate(data.getTemplate()))
 							templates.add(data);
 					}
 				} catch (SAXException e) {
@@ -277,13 +353,41 @@ public final class TemplateStore {
 		}
 	}
 
+	/**
+	 * Validates a template against the context type registered in the context
+	 * type registry. Returns always <code>true</code> if no registry is
+	 * present.
+	 * 
+	 * @param template the template to validate
+	 * @return <code>true</code> if validation is successful or no context
+	 *         type registry is specified, <code>false</code> if validation
+	 *         fails
+	 */
+	private boolean validateTemplate(Template template) {
+		String contextTypeId= template.getContextTypeId();
+		return contextExists(contextTypeId) && (fRegistry == null || fRegistry.getContextType(contextTypeId).validate(template.getPattern()) == null);
+	}
+
+	/**
+	 * Returns <code>true</code> if a context type id specifies a valid context type
+	 * or if no context type registry is present.
+	 * 
+	 * @param contextTypeId the context type id to look for
+	 * @return <code>true</code> if the context type specified by the id
+	 *         is present in the context type registry, or if no registry is
+	 *         specified
+	 */
+	private boolean contextExists(String contextTypeId) {
+		return contextTypeId != null && (fRegistry == null || fRegistry.getContextType(contextTypeId) != null);
+	}
+
 	private static IConfigurationElement[] getTemplateExtensions() {
 		return Platform.getExtensionRegistry().getConfigurationElementsFor(TEMPLATES_EXTENSION_POINT);
 	}
 
-	private static void createTemplate(Collection map, IConfigurationElement element) {
+	private void createTemplate(Collection map, IConfigurationElement element) {
 		String contextTypeId= element.getAttributeAsIs(CONTEXT_TYPE_ID);
-		if (contextTypeId != null) {
+		if (contextExists(contextTypeId)) {
 			String id= element.getAttributeAsIs(ID);
 			if (isValidTemplateId(id)) {
 				
@@ -299,7 +403,8 @@ public final class TemplateStore {
 						
 						Template template= new Template(name, desc, contextTypeId, pattern);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
-						map.add(data);
+						if (validateTemplate(template))
+							map.add(data);
 					}
 				}
 			}
