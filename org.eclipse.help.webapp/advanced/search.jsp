@@ -74,7 +74,7 @@ A {
 	color:Window;
 	font-weight:bold;
 	border:1px solid ThreeDShadow;
-	margin-left:5px;
+	margin-left:1px;
 }
 
 #scopeLabel {

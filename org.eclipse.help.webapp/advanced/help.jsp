@@ -22,7 +22,7 @@ HTML {
 <%
 if (data.isMozilla()){
 %>
-	padding:0px 3px 3px 3px;
+	padding:0px 3px 2px 2px;
 <%
 }
 %>
@@ -70,11 +70,15 @@ function toggleFrame(title)
 </script>
 </head>
 
-<%--
-Add a dummy frame space to the right. IE only.
---%>
-
-<frameset style="border:0px 3px 3px 3px solid <%=prefs.getToolbarBackground()%>;" id="helpFrameset" cols='25%,*' framespacing="4" border="7"  frameborder="1"   scrolling="no">
+<frameset
+<% 
+if (data.isIE()) {
+%> 
+	style="border:0px 2px 2px 2px solid <%=prefs.getToolbarBackground()%>;"
+<%
+}
+%> 
+    id="helpFrameset" cols='28.5%,*' framespacing="4" border="7"  frameborder="1"   scrolling="no">
    	<frame class="nav" name="NavFrame" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
    	<frame class="content" name="ContentFrame" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 </frameset>
