@@ -34,10 +34,12 @@ public class LayoutTreeNode extends LayoutTree {
 	static class ChildSizes {
 		int left;
 		int right;
+		boolean resizable = true;
 		
-		public ChildSizes (int l, int r) {
+		public ChildSizes (int l, int r, boolean resize) {
 			left = l;
 			right = r;
+			resizable = resize;
 		}
 	};
 	
@@ -373,18 +375,18 @@ public class LayoutTreeNode extends LayoutTree {
     	boolean vertical = getSash().isVertical();
     	
         if (width <= SASH_WIDTH) {
-        	return new ChildSizes(0,0);
+        	return new ChildSizes(0,0, false);
         }
         
         if (width == INFINITE) {
         	if (preferredWidth == INFINITE) {
         		return new ChildSizes(children[0].computeMaximumSize(vertical, height),
-        				children[1].computeMaximumSize(vertical, height));
+        				children[1].computeMaximumSize(vertical, height), false);
         	}
         	
         	if (preferredWidth == 0) {
         		return new ChildSizes(children[0].computeMinimumSize(vertical, height),
-        				children[1].computeMinimumSize(vertical, height));
+        				children[1].computeMinimumSize(vertical, height), false);
         	}
         }
         
@@ -403,57 +405,50 @@ public class LayoutTreeNode extends LayoutTree {
             break;
         }
         double wTotal = wLeft + wRight;
-                
+        
+        // Subtract the SASH_WIDTH from preferredWidth and width. From here on, we'll deal with the
+        // width available to the controls and neglect the space used by the sash.
         preferredWidth = Math.max(0, subtract(preferredWidth, SASH_WIDTH));
         width = Math.max(0, subtract(width, SASH_WIDTH));
+        
         int redistribute = subtract(preferredWidth, total);
         
-    	int leftMinimum = 0;
+        // Compute the minimum and maximum sizes for each child
+    	int leftMinimum = children[0].computeMinimumSize(vertical, height);
+    	int rightMinimum = children[1].computeMinimumSize(vertical, height);
+    	int leftMaximum = children[0].computeMaximumSize(vertical, height);
+    	int rightMaximum = children[1].computeMaximumSize(vertical, height);
     	
-    	if (children[0].hasSizeFlag(vertical, SWT.MIN)) {
-    	    leftMinimum = children[0].computeMinimumSize(vertical, height);
-    	}
+    	// Keep track of the available space for each child, given the minimum size of the other child
+    	int leftAvailable = Math.min(leftMaximum, Math.max(0, subtract(width, rightMinimum)));
+    	int rightAvailable = Math.min(rightMaximum, Math.max(0, subtract(width, leftMinimum)));
     	
-    	int rightMinimum = 0;
-    	
-    	if (children[1].hasSizeFlag(vertical, SWT.MIN)) {
-    	    rightMinimum = children[1].computeMinimumSize(vertical, height);
-    	}
-    	
-    	int leftMaximum = Math.max(0, subtract(width, rightMinimum));
-    	int rightMaximum = Math.max(0, subtract(width, leftMinimum));
-
-    	if (children[0].hasSizeFlag(vertical, SWT.MAX)) {
-    		leftMaximum = Math.min(leftMaximum, children[0].computeMaximumSize(vertical, height));
-    	}
-
-    	if (children[1].hasSizeFlag(vertical, SWT.MAX)) {
-    		rightMaximum = Math.min(rightMaximum, children[1].computeMaximumSize(vertical, height));
-    	}
-    	
-        // First figure out the ideal sizes for each child
+        // Figure out the ideal size of the left child
     	int idealLeft = Math.max(leftMinimum, Math.min(preferredWidth,  
     			left + (int) Math.round(redistribute * wLeft / wTotal)));
     	
-    	idealLeft = Math.max(idealLeft, preferredWidth - rightMaximum);
-    	idealLeft = Math.min(idealLeft, leftMaximum);
-
-    	if (children[0].hasSizeFlag(vertical, SWT.FILL)) {
-    		idealLeft = children[0].computePreferredSize(vertical, leftMaximum, height, idealLeft);
-    	}
+    	// If the right child can't use all its available space, let the left child fill it in
+    	idealLeft = Math.max(idealLeft, preferredWidth - rightAvailable);
+    	// Ensure the left child doesn't get larger than its available space
+    	idealLeft = Math.min(idealLeft, leftAvailable);
+    	
+    	// Check if the left child would prefer to be a different size 
+    	idealLeft = children[0].computePreferredSize(vertical, leftAvailable, height, idealLeft);
+    	
+    	// Ensure that the left child is larger than its minimum size
     	idealLeft = Math.max(idealLeft, leftMinimum);
     	
+    	// Compute the right child width
     	int idealRight = Math.max(rightMinimum, preferredWidth - idealLeft);
     	
-		rightMaximum = Math.max(0, Math.min(rightMaximum, subtract(width, idealLeft)));
-    	idealRight = Math.min(idealRight, rightMaximum);
-    	
-    	if (children[1].hasSizeFlag(vertical, SWT.FILL)) {
-    		idealRight = children[1].computePreferredSize(vertical, rightMaximum, height, idealRight);
-    	}
+		rightAvailable = Math.max(0, Math.min(rightAvailable, subtract(width, idealLeft)));
+    	idealRight = Math.min(idealRight, rightAvailable);
+    	idealRight = children[1].computePreferredSize(vertical, rightAvailable, height, idealRight);
     	idealRight = Math.max(idealRight, rightMinimum);
     	
-    	return new ChildSizes(idealLeft, idealRight);    	    	
+    	return new ChildSizes(idealLeft, idealRight, leftMaximum > leftMinimum 
+    	        && rightMaximum > rightMinimum 
+    	        && leftMinimum + rightMinimum < width);    	    	
     }
     
     protected int doGetSizeFlags(boolean width) {
@@ -477,10 +472,12 @@ public class LayoutTreeNode extends LayoutTree {
     public void doSetBounds(Rectangle bounds) {
         if (!children[0].isVisible()) {
             children[1].setBounds(bounds);
+            getSash().setVisible(false);
             return;
         }
         if (!children[1].isVisible()) {
             children[0].setBounds(bounds);
+            getSash().setVisible(false);
             return;
         }
         
@@ -495,6 +492,9 @@ public class LayoutTreeNode extends LayoutTree {
         }
 
         ChildSizes childSizes = computeChildSizes(bounds.width, bounds.height, getSash().getLeft(), getSash().getRight(), bounds.width);
+        
+        getSash().setVisible(true);
+        getSash().setEnabled(childSizes.resizable);
         
         Rectangle leftBounds = new Rectangle(bounds.x, bounds.y, childSizes.left, bounds.height);
         Rectangle sashBounds = new Rectangle(leftBounds.x + leftBounds.width, bounds.y, SASH_WIDTH, bounds.height);
@@ -511,6 +511,17 @@ public class LayoutTreeNode extends LayoutTree {
         children[1].setBounds(rightBounds);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutTree#createControl(org.eclipse.swt.widgets.Composite)
+     */
+    public void createControl(Composite parent) {
+        children[0].createControl(parent);
+        children[1].createControl(parent);
+        getSash().createControl(parent);
+        
+        super.createControl(parent);
+    }
+    
     //Added by hudsonr@us.ibm.com - bug 19524
 
     public boolean isCompressible() {
@@ -580,21 +591,21 @@ public class LayoutTreeNode extends LayoutTree {
             result = result + children[1] + "]";//$NON-NLS-1$
         return result;
     }
-
+    
     /**
      * Create the sashes if the children are visible
      * and dispose it if they are not.
      */
-    public void updateSashes(Composite parent) {
-        if (parent == null)
-            return;
-        children[0].updateSashes(parent);
-        children[1].updateSashes(parent);
-        if (children[0].isVisible() && children[1].isVisible())
-            getSash().createControl(parent);
-        else
-            getSash().dispose();
-    }
+//    public void updateSashes(Composite parent) {
+//        if (parent == null)
+//            return;
+//        children[0].updateSashes(parent);
+//        children[1].updateSashes(parent);
+//        if (children[0].isVisible() && children[1].isVisible())
+//            getSash().createControl(parent);
+//        else
+//            getSash().dispose();
+//    }
 
     /**
      * Writes a description of the layout to the given string buffer.

@@ -396,9 +396,6 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
 
         addChild(newRelationshipInfo);
-        if (root != null) {
-            root.updateSashes(parent);
-        }
         flushLayout();
     }
 
@@ -465,7 +462,7 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
 
         if (root != null) {
-            root.updateSashes(parent);
+            root.createControl(parent);
         }
         active = true;
         resizeSashes(parent.getClientArea());
@@ -636,9 +633,6 @@ public abstract class PartSashContainer extends LayoutPart implements
         children.remove(child);
         if (root != null) {
             root = root.remove(child);
-            if (root != null) {
-                root.updateSashes(parent);
-            }
         }
         childRemoved(child);
 
@@ -687,9 +681,6 @@ public abstract class PartSashContainer extends LayoutPart implements
         childAdded(newChild);
 
         leaf.setPart(newChild);
-        if (root != null) {
-            root.updateSashes(parent);
-        }
 
         childRemoved(oldChild);
         if (active) {

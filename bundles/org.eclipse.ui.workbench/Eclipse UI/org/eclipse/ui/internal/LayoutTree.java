@@ -91,7 +91,7 @@ public class LayoutTree implements ISizeProvider {
      */
     public void disposeSashes() {
     }
-
+    
     /**
      * Find a LayoutPart in the tree and return its sub-tree. Returns
      * null if the child is not found.
@@ -208,6 +208,12 @@ public class LayoutTree implements ISizeProvider {
     		return computeMaximumSize(width, availablePerpendicular);
     	}
     	
+    	// Optimization: if this subtree doesn't have any size preferences beyond its minimum and maximum
+    	// size, simply return the preferred size
+    	if (!hasSizeFlag(width, SWT.FILL)) {
+    	    return preferredParallel;
+    	}
+    	
     	int result = doComputePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
 
     	return result;
@@ -255,6 +261,12 @@ public class LayoutTree implements ISizeProvider {
 	 */
     public final int computeMinimumSize(boolean width, int availablePerpendicular) {
     	assertValidSize(availablePerpendicular);
+    	
+    	// Optimization: if this subtree has no minimum size, then always return 0 as its
+    	// minimum size.
+        if (!hasSizeFlag(width, SWT.MIN)) {
+            return 0;
+        }
     	
     	// If this subtree doesn't contain any wrapping controls (ie: they don't care
     	// about their perpendicular size) then force the perpendicular
@@ -321,6 +333,12 @@ public class LayoutTree implements ISizeProvider {
     public final int computeMaximumSize(boolean width, int availablePerpendicular) {
     	assertValidSize(availablePerpendicular);
     	
+    	// Optimization: if this subtree has no maximum size, then always return INFINITE as its
+    	// maximum size.
+        if (!hasSizeFlag(width, SWT.MAX)) {
+            return INFINITE;
+        }
+    	
     	// If this subtree doesn't contain any wrapping controls (ie: they don't care
     	// about their perpendicular size) then force the perpendicular
     	// size to be INFINITE. This ensures that we will get a cache hit
@@ -362,7 +380,7 @@ public class LayoutTree implements ISizeProvider {
     	}
     }
     
-    protected int doComputeMaximumSize(boolean width, int availablePerpendicular) {
+    protected int doComputeMaximumSize(boolean width, int availablePerpendicular) {        
     	return doComputePreferredSize(width, INFINITE, availablePerpendicular, INFINITE);
     }
     
@@ -526,12 +544,15 @@ public class LayoutTree implements ISizeProvider {
     }
 
     /**
-     * Create the sashes if the children are visible
-     * and dispose it if they are not.
+     * Creates SWT controls owned by the LayoutTree (ie: the sashes). Does not affect the 
+     * LayoutParts that are being arranged by the LayoutTree. 
+     * 
+     * @param parent
+     * @since 3.1
      */
-    public void updateSashes(Composite parent) {
+    public void createControl(Composite parent) {        
     }
-
+        
     /**
      * Writes a description of the layout to the given string buffer.
      * This is used for drag-drop test suites to determine if two layouts are the

@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Sash;
 class LayoutPartSash extends LayoutPart {
 
     private Sash sash;
+    private boolean enabled = false;
 
     private PartSashContainer rootContainer;
 
@@ -49,6 +50,12 @@ class LayoutPartSash extends LayoutPart {
         }
         
     };
+    
+    /**
+     * Stores whether or not the sash is visible. (This is expected to have a meaningful
+     * value even if the underlying control doesn't exist).
+     */
+    private boolean isVisible;
     
     LayoutPartSash(PartSashContainer rootContainer, int style) {
         super(null);
@@ -95,7 +102,7 @@ class LayoutPartSash extends LayoutPart {
 
     	int eventX = eventRect.x;
     	int left = Math.max(0, eventX - nodeBounds.x);
-    	left = Math.min(left, nodeBounds.width); 
+    	left = Math.min(left, nodeBounds.width - LayoutTreeNode.SASH_WIDTH); 
     	int right = nodeBounds.width - left - LayoutTreeNode.SASH_WIDTH;
     	
     	LayoutTreeNode.ChildSizes sizes = node.computeChildSizes(nodeBounds.width, nodeBounds.height, left, right, nodeBounds.width);
@@ -112,15 +119,53 @@ class LayoutPartSash extends LayoutPart {
     }
 
     /**
-     * Creates the control
+     * Creates the control. As an optimization, creation of the control is deferred if
+     * the control is invisible.
      */
     public void createControl(Composite parent) {
+        // Defer creation of the control until it becomes visible
+        if (isVisible) {
+            doCreateControl();
+        }
+    }
+    
+    /**
+     * Creates the underlying SWT control.
+     * 
+     * @since 3.1
+     */
+    private void doCreateControl() {
         if (sash == null) {
-            sash = new Sash(parent, style);
-            sash.addSelectionListener(selectionListener);
+	        sash = new Sash(this.rootContainer.getParent(), style);
+	        sash.addSelectionListener(selectionListener);
+	        sash.setEnabled(enabled);
         }
     }
 
+    /**
+     * Makes the sash visible or invisible. Note: as an optimization, the actual widget is destroyed when the
+     * sash is invisible.
+     */
+    public void setVisible(boolean visible) {
+        if (visible == isVisible) {
+            return;
+        }
+        
+        if (visible) {
+            doCreateControl();
+        } else {
+            dispose();
+        }
+        
+        super.setVisible(visible);
+        
+        isVisible = visible;
+    }
+    
+    public boolean isVisible() {
+        return isVisible;
+    }
+    
     /**
      * See LayoutPart#dispose
      */
@@ -219,6 +264,10 @@ class LayoutPartSash extends LayoutPart {
     }
 
     private void widgetSelected(int x, int y, int width, int height) {
+        if (!enabled) {
+            return;
+        }
+        
         LayoutTree root = rootContainer.getLayoutTree();
         LayoutTreeNode node = root.findSash(this);
         Rectangle nodeBounds = node.getBounds();
@@ -232,6 +281,17 @@ class LayoutPartSash extends LayoutPart {
         }
 
         node.setBounds(nodeBounds);        
+    }
+
+    /**
+     * @param resizable
+     * @since 3.1
+     */
+    public void setEnabled(boolean resizable) {
+        this.enabled = resizable;
+        if (sash != null) {
+            sash.setEnabled(enabled);
+        }
     }
 
 }
