@@ -201,16 +201,9 @@ public class EclipseSynchronizer {
 	 * @see #setResourceSync, #deleteResourceSync
 	 */
 	public ResourceSyncInfo getResourceSync(IResource resource) throws CVSException {
-		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) return null;
-		try {
-			beginOperation(null);
-			// cache resource sync for siblings, then return for self
-			cacheResourceSyncForChildren(parent);
-			return getCachedResourceSync(resource);
-		} finally {
-			endOperation(null);
-		}
+		byte[] info = getSyncBytes(resource);
+		if (info == null) return null;
+		return new ResourceSyncInfo(info);
 	}
 
 	/**
@@ -272,8 +265,8 @@ public class EclipseSynchronizer {
 			beginOperation(null);
 			// cache resource sync for siblings, delete for self, then notify
 			cacheResourceSyncForChildren(parent);
-			if (getCachedResourceSync(resource) != null) { // avoid redundant notifications
-				setCachedResourceSync(resource, null);
+			if (getCachedSyncBytes(resource) != null) { // avoid redundant notifications
+				setCachedSyncBytes(resource, null);
 				changedResources.add(resource);
 			}
 		} finally {
@@ -806,22 +799,6 @@ public class EclipseSynchronizer {
 			CVSProviderPlugin.broadcastSyncInfoChanges(resources);
 		}
 	}
-	
-	/**
-	 * Returns the resource sync info for the resource; null if none.
-	 * Parent must exist and must not be the workspace root.
-	 * The resource sync info for the children of the parent container MUST ALREADY BE CACHED.
-	 * 
-	 * @param resource the resource
-	 * @return the resource sync info for the resource, or null
-	 * @see #cacheResourceSyncForChildren
-	 */
-	private ResourceSyncInfo getCachedResourceSync(IResource resource) throws CVSException {
-		// todo
-		byte[] info = getSyncInfoCacheFor(resource).getCachedSyncBytes(resource);
-		if (info == null) return null;
-		return new ResourceSyncInfo(info);
-	}
 
 	/**
 	 * Returns the resource sync info for the resource; null if none.
@@ -902,7 +879,7 @@ public class EclipseSynchronizer {
 			// deal with all files first and then folders to be otimized for caching scheme
 			for (int i = 0; i < children.length; i++) {
 				IResource child = children[i];
-				if(getCachedResourceSync(child)==null) {
+				if(getCachedSyncBytes(child)==null) {
 					possibleIgnores.add(child);
 				}
 				if(child.getType()!=IResource.FILE) {

@@ -278,7 +278,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 			}
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_NOT_OPEN) {
+			if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED) {
 				// This can occur if the resource sync is loaded during the POST_CHANGE delta phase.
 				// The sync info being set should match what is already in the synchronizer but it doesn't
 				// Log the error and leave the sync info as is
