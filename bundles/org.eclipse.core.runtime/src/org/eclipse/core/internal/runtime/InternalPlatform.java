@@ -792,27 +792,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		long start = System.currentTimeMillis();
 		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
-		
-// TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
-		boolean genericWorkbenchPresent = false;
-		PluginDescriptorModel[] plugins = registry.getPlugins("org.eclipse.ui"); //$NON-NLS-1$
-		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i].getSchemaVersion() != null) {
-				genericWorkbenchPresent = true;
-				break;
-			}
-		}
-		if (genericWorkbenchPresent) {
-// TODO - end temporary code
-			applyPre3CompatibilityTransform(registry, factory);
-// TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
-		} else {
-			if (DEBUG) {
-				System.out.println("Skipping pre-3.0 compatibility transformation."); //$NON-NLS-1$
-			}
-		}
-// TODO - end temporary code
-		
+		applyPre3CompatibilityTransform(registry, factory);
 		IStatus resolveStatus;		
 		if (isDynamic()) {
 			resolveStatus = registry.incrementalResolve();
@@ -1526,25 +1506,7 @@ public static void installPlugins(URL[] installURLs) throws CoreException {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null); //$NON-NLS-1$
 	Factory factory = new InternalFactory(problems);
 	PluginRegistryModel registryAdditions = parsePlugins(installURLs, factory);
-//	TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
-		 boolean genericWorkbenchPresent = false;
-		 PluginDescriptorModel[] plugins = registry.getPlugins("org.eclipse.ui"); //$NON-NLS-1$
-		 for (int i = 0; i < plugins.length; i++) {
-			 if (plugins[i].getSchemaVersion() != null) {
-				 genericWorkbenchPresent = true;
-				 break;
-			 }
-		 }
-		 if (genericWorkbenchPresent) {
-//	TODO - end temporary code
-			 applyPre3CompatibilityTransform(registry, factory);
-//	TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
-		 } else {
-			 if (DEBUG) {
-				 System.out.println("Skipping pre-3.0 compatibility transformation."); //$NON-NLS-1$
-			 }
-		 }
-//	TODO - end temporary code
+	applyPre3CompatibilityTransform(registry, factory);
 	registry.incrementalResolve(registryAdditions);
 	if (problems.isOK())
 		return;
