@@ -129,6 +129,12 @@ public class TreeViewer extends AbstractTreeViewer {
             provider.updateLabel(updateLabel, element);
             
             decorating = true;
+            if (item.isDisposed()) {
+                unmapElement(element);
+                Assert.isTrue(!item.isDisposed(),
+                        "Disposed element during label update" + element.toString());//$NON-NLS-1$
+                return;
+            }    
 
             if (updateLabel.hasNewImage())
                 item.setImage(updateLabel.getImage());
