@@ -4,6 +4,6 @@
   id="codePluginL"
   version="1.0"
   vendor-name="OTI"
-  class="org.eclipse.core.tests.internal.runtimetests.SampleLPR">
+  class="org.eclipse.core.tests.internal.runtimetests.SampleLPB">
 
 </plugin>

@@ -4,7 +4,7 @@
   id="codePluginC"
   version="1.0"
   vendor-name="OTI"
-  class="org.eclipse.core.tests.internal.runtimetests.SampleCPR">
+  class="org.eclipse.core.tests.internal.runtimetests.SampleCPB">
 
  <runtime>
     <library name="codePluginC.jar">

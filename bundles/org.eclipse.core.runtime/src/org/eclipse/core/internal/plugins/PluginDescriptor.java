@@ -335,7 +335,7 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	//
 	// The above results in a loader search path consisting of
 	//    Base API Project
-	//    another.jar
+	//    More Code
 	//    Base Project 1, Base Project 2
 	//
 	// Any library access filters specified in the plugin.xml are
@@ -345,18 +345,14 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	// compute the base of the classpath urls.  If <code>eclipseURLs</code> is
 	// true, we should use eclipse: URLs.  Otherwise the native URLs are used.
 	usePlatformURLs = platformURLFlag;
+	// If we are using platform URLs, install will look like
+	// platform:/plugin/<pluginId>_<pluginVersion>/
+	// If we aren't using platform URLs install will be the URL
+	// corresponding to the root directory of this plugin
 	URL install = usePlatformURLs ? getInstallURL() : getInstallURLInternal();
 	String execBase = install.toExternalForm();
-	String devBase = null;
-	// useDevURLs should always be false now as 
-	//		InternalPlatform.inVAJ() || InternalPlatform.inVAME()
-	// should never be true anymore
-	//if (useDevURLs)
-		//devBase = PlatformURLBaseConnection.PLATFORM_URL_STRING;
-	//else
-		devBase = execBase;
 	
-	String[] basePaths = buildBasePaths(devBase);
+	String[] basePaths = buildBasePaths(execBase);
 
 	String[] exportAll = new String[] { "*" };
 	ArrayList[] result = new ArrayList[4];
@@ -366,8 +362,12 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	result[3] = new ArrayList();
 
 	// add in any development mode class paths and the export all filter
+	// For example, if you specified "-dev bin" on the command line to
+	// launch Eclipse, you want to add the bin directory of each plugin
+	// to the classpath.
 	if (DelegatingURLClassLoader.devClassPath != null) {
 		String[] specs = getArrayFromList(DelegatingURLClassLoader.devClassPath);
+		Vector baseSpecs = new Vector(specs.length);
 		// convert dev class path into url strings
 		for (int j = 0; j < specs.length; j++) {
 			String spec = specs[j];
@@ -375,9 +375,25 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 			// if the spec is not a jar and does not have a trailing slash, add one
 			if (!(spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
 				spec = spec + "/";
+			if (!spec.endsWith(".jar"))
+				baseSpecs.add(spec);
 			// add the dev path for the plugin itself
-			addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, exportAll, ILibrary.CODE, false, result);
+			addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, exportAll, ILibrary.CODE, false, true, result);
 		}
+		// Now add all the spec directories to the basePaths so we 
+		// will look in these directories for jar files, etc.
+		String[] baseSuffix = (String[])baseSpecs.toArray(new String[baseSpecs.size()]);
+		String[] newBasePaths = new String[basePaths.length + (basePaths.length * baseSpecs.size())];
+		int newIdx = 0;
+		for (int j = 0; j < baseSuffix.length; j++) {
+			for (int i = 0; i < basePaths.length; i++) {
+				newBasePaths[newIdx++] = basePaths[i] + baseSuffix[j];
+			}
+		}
+		for (int i = 0; i < basePaths.length; i++) {
+			newBasePaths[newIdx++] = basePaths[i];
+		}
+		basePaths = newBasePaths;			
 	}
 
 	// add in the class path entries spec'd in the plugin.xml.  If in development mode, 
@@ -416,19 +432,29 @@ private boolean resolveAndAddLibrary(String spec, String[] filters, String[] bas
 		String first = path.segment(0);
 		String remainder = path.removeFirstSegments(1).toString();
 		if (first.equalsIgnoreCase("$ws$"))
-			return addLibraryWithFragments(basePaths, WS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, WS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
 		if (first.equalsIgnoreCase("$os$"))
-			return addLibraryWithFragments(basePaths, OS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, OS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
 		if (first.equalsIgnoreCase("$nl$"))
-			return addLibraryWithFragments(basePaths, NL_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, NL_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
 	}
-	return addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, filters, type, hasJarSpec, result);
+	return addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, filters, type, hasJarSpec, false, result);
 }
 
-private boolean addLibraryWithFragments(String[] basePaths, String[] variants, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean addLibraryWithFragments(String[] basePaths, String[] variants, String spec, String[] filters, String type, boolean hasJarSpec, boolean addAll, ArrayList[] result) {
+	// If addAll is set to false, only the first valid match will be
+	// added to the class path.  If addAll is set to true, all valid
+	// path permutations will be added to the class path.  Typically
+	// you will want addAll set to true for the development mode
+	// case.
 	boolean added = false;
-	for (int j = 0; j < variants.length && !added; j++) {
-		for (int i = 0; i < basePaths.length && !added; i++) {
+	// The only case where we want to stop looping is if 
+	// addAll = false and added = true.
+	// In all other cases, keep looping and adding (or attempting to
+	// add) path values.
+	// So keep looping if addAll = true OR added = false.
+	for (int j = 0; j < variants.length && (addAll || !added); j++) {
+		for (int i = 0; i < basePaths.length && (addAll || !added); i++) {
 			added = addLibrary(basePaths[i], spec, variants[j], filters, type, hasJarSpec, result);
 		}
 	}
@@ -779,33 +805,6 @@ private void pluginActivationExit(boolean errorExit) {
 	} else
 		active = true;
 }
-//private boolean resolveAndAddOSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-//	IPath path = new Path(spec).removeFirstSegments(1);
-//	String location = new Path("os/" + BootLoader.getOS()).append(path).toString();
-//	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
-//}
-//
-//private boolean resolveAndAddWSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-//	IPath path = new Path(spec).removeFirstSegments(1);
-//	String location = new Path("ws/" + BootLoader.getWS()).append(path).toString();
-//	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
-//}
-//
-//private boolean resolveAndAddNLLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-//	String path = new Path(spec).removeFirstSegments(1).toString();
-//	boolean added = addLibraryNL(base, path, filters, type, hasJarSpec, result);
-//	if (added) 
-//		return true;
-//	PluginFragmentModel[] fragments = getFragments();
-//	if (fragments == null)
-//		return false;
-//	for (int i = 0; !added && i < fragments.length; i++) {
-//		String subBase = getFragmentLocation (fragments[i]);
-//		added = addLibraryNL(subBase, path, filters, type, hasJarSpec, result);
-//	}
-//	return added;
-//}
-//
 private String getFragmentLocation(PluginFragmentModel fragment) {
 	if (useDevURLs) 
 		return PlatformURLBaseConnection.PLATFORM_URL_STRING;
@@ -813,23 +812,6 @@ private String getFragmentLocation(PluginFragmentModel fragment) {
 		return FragmentDescriptor.FRAGMENT_URL + fragment.toString() + "/";
 	return fragment.getLocation();
 }
-
-//private boolean addLibraryNL(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-//	String nl = BootLoader.getNL();
-//	boolean added = false;
-//	while (!added && nl.length() > 0) {
-//		String location = new Path("nl/" + nl).append(spec).addTrailingSeparator().toString();
-//		added = addLibrary(base, location, filters, type, hasJarSpec, result);
-//		int i = nl.lastIndexOf('_');
-//		if (i < 0)
-//			nl = "";
-//		else
-//			nl = nl.substring(0, i);
-//	}
-//	return added;
-//}
-
-
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
 	loader = value;
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Test 3093 Plugin A"
+  id="test3093PluginA"
+  version="1.0"
+  vendor-name="OTI">
+
+ <runtime>
+    <library name="$nl$/">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+</plugin>

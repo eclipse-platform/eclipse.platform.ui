@@ -4,7 +4,7 @@
   id="codePluginF"
   version="1.0"
   vendor-name="OTI"
-  class="org.eclipse.core.tests.internal.runtimetests.SampleFFR">
+  class="org.eclipse.core.tests.internal.runtimetests.SampleFFB">
 
  <runtime>
     <library name="codePluginF.jar">

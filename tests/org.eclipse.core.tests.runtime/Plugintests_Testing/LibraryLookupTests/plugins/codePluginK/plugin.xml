@@ -4,6 +4,6 @@
   id="codePluginK"
   version="1.0"
   vendor-name="OTI"
-  class="org.eclipse.core.tests.internal.runtimetests.SampleKPR">
+  class="org.eclipse.core.tests.internal.runtimetests.SampleKPB">
 
 </plugin>

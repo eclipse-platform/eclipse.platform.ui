@@ -4,6 +4,6 @@
   id="codePluginM"
   version="1.0"
   vendor-name="OTI"
-  class="org.eclipse.core.tests.internal.runtimetests.SampleMPR">
+  class="org.eclipse.core.tests.internal.runtimetests.SampleMFB">
 
 </plugin>
