@@ -35,6 +35,7 @@ public final class ContextsTestSuite extends TestSuite {
      * the relevent test cases.
      */
     public ContextsTestSuite() {
+        addTestSuite(Bug74990Test.class);
         addTestSuite(ExtensionTestCase.class);
     }
 }

@@ -33,6 +33,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.EnabledSubmission;
@@ -94,10 +95,22 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     };
 
     /**
+     * The identifier for the currently active part. This value may be
+     * <code>null</code> if this is no active part, or it the identifier for
+     * the active part is <code>null</code>.
+     */
+    private String activePartId;
+
+    /**
      * The currently active shell. This value is never <code>null</code>.
      */
     private Shell activeShell;
 
+    /**
+     * The site for the currently active part. This value may be
+     * <code>null</code> if there is no active part, or if the site cannot be
+     * determined for the active part.
+     */
     private IWorkbenchSite activeWorkbenchSite;
 
     /**
@@ -518,7 +531,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             return;
         }
 
-        IWorkbenchSite newActiveWorkbenchSite = null;
+        IWorkbenchPartSite newActiveWorkbenchSite = null;
+        String newActivePartId = null;
         final IWorkbenchWindow newActiveWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
         boolean update = false;
@@ -563,13 +577,34 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
 
-                if (activeWorkbenchPart != null)
+                if (activeWorkbenchPart != null) {
                     newActiveWorkbenchSite = activeWorkbenchPart.getSite();
+                    newActivePartId = newActiveWorkbenchSite.getId();
+                    if ((activeWorkbenchSite != newActiveWorkbenchSite)
+                            || (!activePartId.equals(newActivePartId))) {
+                        activeWorkbenchSite = newActiveWorkbenchSite;
+                        activePartId = newActivePartId;
+                        update = true;
+                    }
+                } else if ((activeWorkbenchSite != null)
+                        || (activePartId != null)) {
+                    activeWorkbenchSite = null;
+                    activePartId = null;
+                    update = true;
+                }
+            } else if ((activeWorkbenchSite != null) || (activePartId != null)) {
+                activeWorkbenchSite = null;
+                activePartId = null;
+                update = true;
             }
+
+        } else if ((activeWorkbenchSite != null) || (activePartId != null)) {
+            activeWorkbenchSite = null;
+            activePartId = null;
+            update = true;
         }
 
-        if (force || update || (activeWorkbenchSite != newActiveWorkbenchSite)) {
-            activeWorkbenchSite = newActiveWorkbenchSite;
+        if (force || update) {
             final Set enabledContextIds = new HashSet();
 
             for (Iterator iterator = enabledSubmissionsByContextId.entrySet()
@@ -579,21 +614,31 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 final List enabledSubmissions = (List) entry.getValue();
 
                 for (int i = 0; i < enabledSubmissions.size(); i++) {
-                    EnabledSubmission enabledSubmission = (EnabledSubmission) enabledSubmissions
+                    final EnabledSubmission enabledSubmission = (EnabledSubmission) enabledSubmissions
                             .get(i);
 
-                    Shell activeShell2 = enabledSubmission.getActiveShell();
-
-                    if (activeShell2 != null && activeShell2 != newActiveShell)
+                    // Check if the shell matches or is a wildcard.
+                    final Shell shellToMatch = enabledSubmission
+                            .getActiveShell();
+                    if (shellToMatch != null && shellToMatch != newActiveShell)
                         continue;
 
-                    IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
+                    // Check if the site matches or is a wildcard. 
+                    final IWorkbenchSite siteToMatch = enabledSubmission
                             .getActiveWorkbenchPartSite();
-
-                    if (activeWorkbenchSite2 != null
-                            && activeWorkbenchSite2 != newActiveWorkbenchSite)
+                    if (siteToMatch != null
+                            && siteToMatch != newActiveWorkbenchSite)
                         continue;
 
+                    // Check if the part matches or is a wildcard.
+                    final String partIdToMatch = enabledSubmission
+                            .getActivePartId();
+                    if ((partIdToMatch != null)
+                            && (!partIdToMatch.equals(activePartId))) {
+                        continue;
+                    }
+
+                    // The context is a match.
                     enabledContextIds.add(contextId);
                     break;
                 }
