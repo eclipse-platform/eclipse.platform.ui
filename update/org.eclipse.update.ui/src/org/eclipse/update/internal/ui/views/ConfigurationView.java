@@ -967,6 +967,8 @@ public class ConfigurationView
 			propertiesAction.setEnabled(true);
 			findUpdatesAction.setEnabled(true);
 			findUpdatesAction.setFeature(null);
+			ILocalSite site = getLocalSite();
+			revertAction.setEnabled(site != null && site.getConfigurationHistory().length > 1);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(
 				((IConfiguredSiteAdapter) obj).getConfiguredSite());
