@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
@@ -265,7 +266,10 @@ public class DebugUITools {
 	public static IProcess getCurrentProcess() {
 		IAdaptable context = getDebugContext();
 		if (context == null) {
-			return DebugUIPlugin.getDefault().getCurrentProcess();
+			ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+			if (launches.length > 0) {
+				context = launches[launches.length - 1];
+			}
 		}
 		if (context instanceof IDebugElement) {
 			return ((IDebugElement)context).getDebugTarget().getProcess();
