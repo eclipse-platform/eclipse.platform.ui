@@ -433,9 +433,8 @@
 	  </keyBinding>
       <keyBinding
             platform="gtk"
-            commandId="org.eclipse.ui.edit.text.delete.line.to.end"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="">
+            keySequence="Ctrl+Shift+E">
       </keyBinding>
       <keyBinding
             platform="gtk"
