@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * The job for performing workspace auto-builds. */
+ * The job for performing workspace auto-builds, and pre- and post- autobuild
+ * notification.  This job is run regardless of whether autobuild is on or off.
+ */
 class AutoBuildJob extends Job {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
@@ -57,12 +59,9 @@ class AutoBuildJob extends Job {
 			cancel();
 			return false;
 		}
-		//cancel the build job if another job is attempting to modify the
-		// workspace
+		//cancel the build job if another job is attempting to modify the workspace
 		//while the build job is running
-		if (state == Job.RUNNING && Platform.getJobManager().currentJob() != this)
-			return true;
-		return false;
+		return state == Job.RUNNING && Platform.getJobManager().currentJob() != this;
 	}
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor = Policy.monitorFor(monitor);
@@ -129,13 +128,11 @@ class AutoBuildJob extends Job {
 				return true;
 			if (avoidBuild)
 				return false;
-			//return whether there have been any changes to the workspace
-			// tree.
+			//return whether there have been any changes to the workspace tree.
 			return buildNeeded;
 		} finally {
 			//regardless of the result, clear the build flags for next time
 			forceBuild = avoidBuild = false;
 		}
 	}
-
 }
