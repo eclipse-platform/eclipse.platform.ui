@@ -233,6 +233,7 @@ public class ForceCommitSyncAction extends MergeAction {
 	
 	/**
 	 * Prompts the user to determine how conflicting changes should be handled.
+	 * Note: This method is designed to be overridden by test cases.
 	 * @return 0 to sync conflicts, 1 to sync all non-conflicts, 2 to cancel
 	 */
 	protected int promptForConflicts(SyncSet syncSet) {
@@ -256,6 +257,7 @@ public class ForceCommitSyncAction extends MergeAction {
 	
 	/**
 	 * Prompts the user for a release comment.
+	 * Note: This method is designed to be overridden by test cases.
 	 * @return the comment, or null to cancel
 	 */
 	protected String promptForComment(RepositoryManager manager) {

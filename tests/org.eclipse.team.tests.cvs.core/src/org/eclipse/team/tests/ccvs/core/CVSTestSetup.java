@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import junit.extensions.TestSetup;
@@ -14,7 +16,6 @@ import junit.framework.Test;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
@@ -66,32 +67,80 @@ public class CVSTestSetup extends TestSetup {
 		super(test);
 	}
 
-	public static void executeRemoteCommand(ICVSRepositoryLocation repository, String command) throws IOException, InterruptedException{
-		String repositoryHost = repository.getHost();
-		String userName = repository.getUsername();
-		String localCommand;
-		if (LOCAL_REPO) {
-			localCommand= new String(command);
-		} else {
-			localCommand = new String(RSH + " " + repositoryHost + " -l " + userName + " " + command);
+	public static void executeRemoteCommand(ICVSRepositoryLocation repository, String commandLine) {
+		if (! LOCAL_REPO) {
+			commandLine = RSH + " " + repository.getHost() + " -l " + repository.getUsername() + " " + commandLine;
 		}
-		Process p = Runtime.getRuntime().exec(localCommand);
-	p.waitFor();
+		int returnCode = executeCommand(commandLine, null, null);
+		if (returnCode != -1 && returnCode != 0) {
+			System.err.println("Remote command returned " + returnCode + ": " + commandLine);
+		}
 	}
 	
+	/**
+	 * Executes a command.
+	 * Returns the command's return code, or -1 on failure.
+	 * 
+	 * @param commandLine the local command line to run
+	 * @param environment the new environment variables, or null to inherit from parent process
+	 * @param workingDirectory the new workingDirectory, or null to inherit from parent process
+	 */
+	public static int executeCommand(String commandLine, String[] environment, File workingDirectory) {
+		PrintStream debugStream = CVSTestSetup.DEBUG ? System.out : null;
+		try {
+			if (debugStream != null) {
+				// while debugging, dump CVS command line client results to stdout
+				// prefix distinguishes between message source stream
+				debugStream.println();
+				debugStream.println("CMD> " + commandLine);
+				if (workingDirectory != null) debugStream.println("DIR> " + workingDirectory.toString());
+			}
+			Process cvsProcess = Runtime.getRuntime().exec(commandLine, environment, workingDirectory);
+			// stream output must be dumped to avoid blocking the process or causing a deadlock
+			startBackgroundPipeThread(cvsProcess.getErrorStream(), debugStream, "ERR> ");
+			startBackgroundPipeThread(cvsProcess.getInputStream(), debugStream, "MSG> ");
+
+			int returnCode = cvsProcess.waitFor();			
+			if (debugStream != null) debugStream.println("RESULT> " + returnCode);
+			return returnCode;
+		} catch (IOException e) {
+			System.err.println("Unable to execute command: " + commandLine);
+		} catch (InterruptedException e) {
+			System.err.println("Unable to execute command: " + commandLine);
+		}
+		return -1;
+	}
+
+	private static void startBackgroundPipeThread(final InputStream is, final PrintStream os,
+		final String prefix) {
+		new Thread() {
+			public void run() {
+				BufferedReader reader = null;
+				try {
+					try {
+						reader = new BufferedReader(new InputStreamReader(is));
+						for (;;) {
+							String line = reader.readLine();
+							if (line == null) break;
+							if (os != null) os.println(prefix + line);
+						}
+					} finally {
+						if (reader != null) reader.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+	}
+
 	/*
 	 * Use rsh to delete any contents of the repository and initialize it again
 	 */
 	private static void initializeRepository(CVSRepositoryLocation repository) {
 		String repoRoot = repository.getRootDirectory();
-		try {
-			executeRemoteCommand(repository, "rm -rf " + repoRoot);
-			executeRemoteCommand(repository, "cvs -d " + repoRoot + " init");
-		} catch (IOException e) {
-			System.out.println("Unable to initialize remote repository: " + repository.getLocation());
-		} catch (InterruptedException e) {
-			System.out.println("Unable to initialize remote repository: " + repository.getLocation());
-		}
+		executeRemoteCommand(repository, "rm -rf " + repoRoot);
+		executeRemoteCommand(repository, "cvs -d " + repoRoot + " init");
 	}
 	
 	public void setUp() throws CVSException {

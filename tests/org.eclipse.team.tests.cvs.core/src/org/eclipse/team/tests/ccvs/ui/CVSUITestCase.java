@@ -35,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
@@ -96,18 +97,18 @@ public class CVSUITestCase extends LoggingTestCase {
 		// disable CVS console
 		CVSProviderPlugin.getPlugin().setConsoleListener(null);
 		
-  // disable CVS markers and prompts
-  IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-  store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, false);
-  CVSProviderPlugin.getPlugin().setPromptOnFileDelete(false);
-  store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, false);
-  CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(false);
-  store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
-  CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(false);
+		// disable CVS markers and prompts
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, false);
+		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(false);
+		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, false);
+		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(false);
+		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
+		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(false);
 
-  // disable CVS GZIP compression
-  store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, 0);
-  CVSProviderPlugin.getPlugin().setCompressionLevel(0);
+		// disable CVS GZIP compression
+		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, 0);
+		CVSProviderPlugin.getPlugin().setCompressionLevel(0);
 
 		// wait for UI to settle
 		Util.processEventsUntil(100);
@@ -154,8 +155,8 @@ public class CVSUITestCase extends LoggingTestCase {
 	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {
 		ICVSRemoteFolder[] projects = lookupRemoteProjects(projectNames, tags);
 		AddToWorkspaceAction action = new AddToWorkspaceAction() {
-			protected int confirmOverwrite(IProject project) {
-				return 2; // yes to all
+			protected IPromptCondition getOverwriteLocalAndFileSystemPrompt() {
+				return new DummyPromptCondition();
 			}
 		};
 		runActionDelegate(action, projects, "Repository View Checkout action");
@@ -167,8 +168,8 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	protected void actionReplaceWithRemote(IResource[] resources) {
 		ReplaceWithRemoteAction action = new ReplaceWithRemoteAction() {
-			protected boolean confirmOverwrite(String message) {
-				return true;
+			protected IPromptCondition getPromptCondition() {
+				return new DummyPromptCondition();
 			}
 		};
 		runActionDelegate(action, resources, "Replace with Remote action");
@@ -217,6 +218,9 @@ public class CVSUITestCase extends LoggingTestCase {
 		TagAction action = new TagAction() {
 			protected String promptForTag() {
 				return name;
+			}
+			protected IPromptCondition getPromptCondition() {
+				return new DummyPromptCondition();
 			}
 		};
 		runActionDelegate(action, resources, "CVS Tag action");
@@ -354,6 +358,9 @@ public class CVSUITestCase extends LoggingTestCase {
 		// Commit ONLY NON-CONFLICTING changes
 		CommitSyncAction commitAction = new CommitSyncAction(input, selectionProvider, "Commit",
 			testWindow.getShell()) {
+			protected int promptForConflicts(SyncSet syncSet) {
+				return 0; // yes! sync conflicting changes
+			}
 			protected String promptForComment(RepositoryManager manager) {
 				return comment; // use our comment
 			}

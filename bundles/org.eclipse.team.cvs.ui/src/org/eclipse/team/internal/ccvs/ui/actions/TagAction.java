@@ -54,19 +54,8 @@ public class TagAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					
-					IPromptCondition condition = new IPromptCondition() {
-						public boolean needsPrompt(IResource resource) {
-							return CVSDecorator.isDirty(resource);
-						}
-						public String promptMessage(IResource resource) {
-							return Policy.bind("TagAction.uncommittedChanges", resource.getName());
-						}
-					};
-
-					PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(), 
-																  condition, 
-																  Policy.bind("TagAction.uncommittedChangesTitle"));
+					PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
+						getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));
 					IResource[] resources = prompt.promptForMultiple();
 					if(resources.length == 0) {
 						// nothing to do
@@ -160,6 +149,7 @@ public class TagAction extends TeamAction {
 
 	/**
 	 * Prompts the user for a tag name.
+	 * Note: This method is designed to be overridden by test cases.
 	 * @return the tag, or null to cancel
 	 */
 	protected String promptForTag() {
@@ -178,6 +168,19 @@ public class TagAction extends TeamAction {
 			Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != InputDialog.OK) return null;
 		return dialog.getValue();
+	}
+	/**
+	 * Note: This method is designed to be overridden by test cases.
+	 */
+	protected IPromptCondition getPromptCondition() {
+		return new IPromptCondition() {
+			public boolean needsPrompt(IResource resource) {
+				return CVSDecorator.isDirty(resource);
+			}
+			public String promptMessage(IResource resource) {
+				return Policy.bind("TagAction.uncommittedChanges", resource.getName());
+			}
+		};
 	}
 }
 

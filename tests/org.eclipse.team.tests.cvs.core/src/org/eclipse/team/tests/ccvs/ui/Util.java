@@ -32,6 +32,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -95,13 +97,41 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * @param file the file to delete
 	 */
 	public static void deleteFileAndPrune(IFile file) throws CoreException {
-		file.delete(true, null);
+		file.delete(false /*force*/, null);
 		IContainer container = file.getParent();
 		while (container != null && container instanceof IFolder &&
 			isFolderEmpty((IFolder) container)) {
-			container.delete(false /*force*/, null);
+			deleteFolder((IFolder) container);
 			container = container.getParent();
 		}
+	}
+	
+	/**
+	 * Deletes a folder.
+	 */
+	public static void deleteFolder(IFolder folder) throws CoreException {
+		try {
+			folder.delete(false /*force*/, null);
+		} catch (CoreException e) {
+			IStatus status = e.getStatus();
+			// ignore errors caused by attempting to delete folders that CVS needs to have around
+			if (findStatusByCode(status, CVSStatus.FOLDER_NEEDED_FOR_FILE_DELETIONS) == null) {
+				throw e;
+			}
+		}
+	}
+	
+	/**
+	 * Finds an IStatus instance in a multi-status by status code.
+	 */
+	public static IStatus findStatusByCode(IStatus status, int code) {
+		if (status.getCode() == code) return status;
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IStatus found = findStatusByCode(children[i], code);
+			if (found != null) return found;
+		}
+		return null;
 	}
 
 	/**
@@ -169,6 +199,17 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 				IProjectDescription desc = project.getDescription();
 				desc.setName(newName);
 				project.move(desc, false /*force*/, true /*keepHistory*/, null);
+			} break;
+			case IResource.FOLDER: {
+				try {
+					resource.move(new Path(newName), false /*force*/, null);
+				} catch (CoreException e) {
+					IStatus status = e.getStatus();
+					// ignore errors caused by attempting to delete folders that CVS needs to have around
+					if (findStatusByCode(status, CVSStatus.FOLDER_NEEDED_FOR_FILE_DELETIONS) == null) {
+						throw e;
+					}
+				}
 			} break;
 			default:
 				resource.move(new Path(newName), false /*force*/, null);

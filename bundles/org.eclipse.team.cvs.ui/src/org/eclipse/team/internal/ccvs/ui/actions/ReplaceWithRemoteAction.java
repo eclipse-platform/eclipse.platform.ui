@@ -19,6 +19,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -30,8 +31,7 @@ public class ReplaceWithRemoteAction extends TeamAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					PromptingDialog dialog = new PromptingDialog(getShell(), getSelectedResources(), 
-															   PromptingDialog.getOverwriteLocalChangesPrompt(),
-															   Policy.bind("ReplaceWithAction.confirmOverwrite"));
+						getPromptCondition(), Policy.bind("ReplaceWithAction.confirmOverwrite"));
 					IResource[] resources = dialog.promptForMultiple();
 					if(resources.length == 0) {
 						// nothing to do
@@ -67,5 +67,11 @@ public class ReplaceWithRemoteAction extends TeamAction {
 			if (!provider.hasRemote(resources[i])) return false;
 		}
 		return true;
+	}
+	/**
+	 * Note: This method is designed to be overridden by test cases.
+	 */
+	protected IPromptCondition getPromptCondition() {
+		return PromptingDialog.getOverwriteLocalChangesPrompt();
 	}
 }

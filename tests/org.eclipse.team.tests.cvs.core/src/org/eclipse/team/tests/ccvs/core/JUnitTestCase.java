@@ -59,15 +59,8 @@ public abstract class JUnitTestCase extends TestCase {
 	 */
 	protected static void magicDeleteRemote(ICVSRepositoryLocation location, String remoteName)
 		throws CVSException {
-
-		try {
-			CVSTestSetup.executeRemoteCommand(location, "rm -rf " + 
-				new Path(location.getRootDirectory()).append(remoteName).toString());
-		} catch (IOException e) {
-			throw new CVSException("IOException in magicDeleteProject");
-		} catch (InterruptedException e) {
-			throw new CVSException("InterruptedException in magicDeleteProject");
-		}		
+		CVSTestSetup.executeRemoteCommand(location, "rm -rf " + 
+			new Path(location.getRootDirectory()).append(remoteName).toString());
 	}
 
 	/**

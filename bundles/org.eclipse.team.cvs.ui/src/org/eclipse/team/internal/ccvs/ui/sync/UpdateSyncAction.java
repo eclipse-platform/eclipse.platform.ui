@@ -347,6 +347,7 @@ public class UpdateSyncAction extends MergeAction {
 	
 	/**
 	 * Prompt for mergeable conflicts.
+	 * Note: This method is designed to be overridden by test cases.
 	 * @return 0 to cancel, 1 to only update mergeable conflicts, 2 to overwrite if unmergeable
 	 */
 	protected int promptForMergeableConflicts() {
@@ -366,6 +367,7 @@ public class UpdateSyncAction extends MergeAction {
 	
 	/**
 	 * Prompt for non-automergeable conflicts.
+	 * Note: This method is designed to be overridden by test cases.
 	 * @return false to cancel, true to overwrite local changes
 	 */
 	protected boolean promptForConflicts() {
