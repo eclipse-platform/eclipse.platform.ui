@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.ide;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IWorkspace;
@@ -23,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
@@ -32,7 +30,6 @@ import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
 
 /**
  * This internal class represents the top of the IDE workbench.
@@ -350,13 +347,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		//Forward JFace messages to the receivers log
-		Policy.setLog(getLog());
-	}
+	
 	
 }
