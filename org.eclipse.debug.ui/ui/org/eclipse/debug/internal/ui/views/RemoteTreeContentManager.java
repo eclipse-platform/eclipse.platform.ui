@@ -10,17 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.framework.Bundle;
 /**
  * A remote content manager that merges content into a tree rather then replacing
  * its children with a "pending" node, and then the real children when they are available.
@@ -193,4 +197,45 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 	protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
 		return DebugUIViewsMessages.getString("RemoteTreeContentManager.0"); //$NON-NLS-1$
 	}
+	
+	
+    /**
+     * Returns the IDeferredWorkbenchAdapter for the element, or <code>null</code>.
+     * If a client has contributed an IWorkbenchAdapter for the element, it 
+     * should be used in place of the debug platform's IDeferredWorkbenchAdapter,
+     * in which case, <code>null</code> is returned.
+     * 
+     * @param element
+     * @return IDeferredWorkbenchAdapter or <code>null</code>
+     */
+    protected IDeferredWorkbenchAdapter getAdapter(Object element) {
+        if (element instanceof IDeferredWorkbenchAdapter)
+            return (IDeferredWorkbenchAdapter) element;
+        if (!(element instanceof IAdaptable))
+            return null;
+        IAdaptable adaptable = (IAdaptable) element;
+		IDeferredWorkbenchAdapter deferred = (IDeferredWorkbenchAdapter) adaptable.getAdapter(IDeferredWorkbenchAdapter.class);
+        if (deferred == null)
+            return null;
+        
+        DebugUIPlugin plugin = DebugUIPlugin.getDefault();
+    	Bundle bundle = plugin.getBundle(deferred.getClass());
+		Bundle debugBundle = plugin.getBundle();
+		if (!debugBundle.equals(bundle)) {
+    		// if client contributed, use it 
+    		return deferred;
+    	}
+    	// if the client provided an IWorkbenchAdapter, use it
+    	IWorkbenchAdapter nonDeferred = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
+    	if (nonDeferred != null) {
+    		bundle = plugin.getBundle(nonDeferred.getClass());
+    		if (!debugBundle.equals(bundle)) {
+    			// by returning null, we'll revert to using the the object's workbench adapter
+    			// by pretending it has no deffered adapter
+    			return null;
+    		}
+    	}
+        return deferred;
+    }	
+	
 }

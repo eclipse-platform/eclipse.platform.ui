@@ -94,6 +94,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 import org.w3c.dom.Document;
 
 /**
@@ -167,6 +169,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * @since 3.1
      */
     private ImageDescriptorRegistry fImageDescriptorRegistry;
+    
+    /**
+     * Service tracker and service used for finding plug-ins associated
+     * with a class.
+     */
+    private ServiceTracker fServiceTracker;
+    private PackageAdmin fPackageAdminService;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -177,6 +186,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public boolean isTraceMode() {
 		return fTrace;
+	}
+	
+	/**
+	 * Returns the bundle the given class originated from.
+	 * 
+	 * @param clazz a class
+	 * @return the bundle the given class originated from, or <code>null</code>
+	 * 	if unable to be determined
+	 * @since 3.1
+	 */
+	public Bundle getBundle(Class clazz) {
+		if (fPackageAdminService != null) {
+			return fPackageAdminService.getBundle(clazz);
+		}
+		return null;
 	}
 	
 	/**
@@ -352,6 +376,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			
 			DebugElementHelper.dispose();
 			
+			fServiceTracker.close();
+			fPackageAdminService = null;
+			
 		} finally {
 			super.stop(context);
 		}
@@ -394,6 +421,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					getLaunchConfigurationManager().getLaunchShortcuts();
 				}
 			});	
+		
+		fServiceTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+		fServiceTracker.open();
+		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
 		
 	}
 
