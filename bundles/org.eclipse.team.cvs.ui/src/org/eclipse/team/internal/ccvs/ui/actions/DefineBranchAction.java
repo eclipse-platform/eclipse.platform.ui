@@ -11,7 +11,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,6 +31,14 @@ import org.eclipse.team.ui.actions.TeamAction;
  * DefineTagAction remembers a tag by name
  */
 public class DefineBranchAction extends TeamAction {
+	IInputValidator validator = new IInputValidator() {
+		public String isValid(String newText) {
+			IStatus status = CVSTag.validateTagName(newText);
+			if (status.isOK()) return null;
+			return status.getMessage();
+		}
+	};
+
 	/**
 	 * Returns the selected remote roots
 	 */
@@ -75,7 +85,7 @@ public class DefineBranchAction extends TeamAction {
 				Shell shell = getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, null);
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, validator);
 						if (dialog.open() == InputDialog.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
 							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTags(roots[0], new BranchTag[] {new BranchTag(tag, roots[0])});

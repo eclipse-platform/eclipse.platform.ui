@@ -11,7 +11,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,6 +35,14 @@ import org.eclipse.team.ui.actions.TeamAction;
  * The selection object for this action is a RemoteModule.
  */
 public class DefineVersionAction extends TeamAction {
+	IInputValidator validator = new IInputValidator() {
+		public String isValid(String newText) {
+			IStatus status = CVSTag.validateTagName(newText);
+			if (status.isOK()) return null;
+			return status.getMessage();
+		}
+	};
+
 	/**
 	 * Returns the selected remote projects
 	 */
@@ -75,7 +85,7 @@ public class DefineVersionAction extends TeamAction {
 				Shell shell = getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineVersionAction.enterTag"), Policy.bind("DefineVersionAction.enterTagLong"), null, null);
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineVersionAction.enterTag"), Policy.bind("DefineVersionAction.enterTagLong"), null, validator);
 						if (dialog.open() == InputDialog.OK) {
 							ICVSRemoteResource resource = projects[0].getCVSResource();
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.VERSION);
