@@ -432,8 +432,15 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && CHARSET_UTF_8.equals(encoding))
-				contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
+			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+				int n= 0;
+				do {
+					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
+					if (bytes == -1)
+						throw new IOException();
+					n += bytes;
+				} while (n < IContentDescription.BOM_UTF_8.length);
+			}
 			
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
 			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);
