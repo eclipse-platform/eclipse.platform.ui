@@ -52,7 +52,9 @@
             name="%AntBuild"
             delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools"
-            modes="run"
+            modes="run, debug"
+            sourceLocatorId="org.eclipse.ant.ui.debug.sourceLookupDirector"
+            sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer"
             id="org.eclipse.ant.AntLaunchConfigurationType">
       </launchConfigurationType>
       <launchConfigurationType
@@ -107,9 +109,13 @@
        </context>
    </extension>
    
+<!--   NOTE:
+M1 = CTRL/COMMAND 
+M2 = SHIFT 
+M3 = ALT 
+M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.ui.commands">
-	 
       <command
             name="%ViewCommand.antView.name"
             description="%ViewCommand.antView.description"
@@ -391,6 +397,11 @@
       </launchConfigurationTypeImage>
    </extension>
    <extension point="org.eclipse.core.runtime.adapters">
+	   <factory 
+            class="" 
+            adaptableType="org.eclipse.ant.internal.ui.model.AntTaskNode">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+        </factory>
       <factory 
             class="" 
             adaptableType="org.eclipse.ant.internal.ui.model.AntTargetNode">
@@ -415,7 +426,7 @@
             category="org.eclipse.ui.externaltools"
             helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcut"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut"
-            modes="run"
+            modes="run, debug"
             id="org.eclipse.ant.ui.antShortcut">
         <contextualLaunch>
            <enablement>
@@ -435,6 +446,9 @@
            <contextLabel
          	  mode="run"
          	  label="%AntLaunchShortcut.label"/>
+         <contextLabel
+         	  mode="debug"
+         	  label="%AntLaunchShortcut.label"/>
   		 </contextualLaunch>
       </shortcut>
       <shortcut
@@ -443,7 +457,7 @@
             category="org.eclipse.ui.externaltools"
             helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcutWithDialog"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcutWithDialog"
-            modes="run"
+            modes="run, debug"
             id="org.eclipse.ant.ui.antShortcutWithDialog">
         <contextualLaunch>
            <enablement>
@@ -462,6 +476,9 @@
            </enablement>
            <contextLabel
          	  mode="run"
+         	  label="%AntLaunchShortcutWithDialog.label"/>
+          <contextLabel
+         	  mode="debug"
          	  label="%AntLaunchShortcutWithDialog.label"/>
   		 </contextualLaunch>
       </shortcut>
@@ -586,4 +603,75 @@
             class="org.eclipse.ant.internal.ui.editor.text.AnnotationModelFactory"
             extensions="xml, ant, ent, macrodef"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="Ant Source Lookup Director"
+            class="org.eclipse.ant.internal.ui.debug.AntSourceLookupDirector"
+            id="org.eclipse.ant.ui.debug.sourceLookupDirector">
+      </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.eclipse.ant.internal.ui.debug.AntSourcePathComputerDelegate"
+            id="org.eclipse.ant.ui.debug.sourcePathComputer">
+      </sourcePathComputer>
+   </extension>
+    <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.eclipse.ant.internal.ui.debug.ui.AntDebugModelPresentation"
+            id="org.eclipse.ant.ui.debug">
+      </debugModelPresentation>
+   </extension>
+   
+    <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            markerType="org.eclipse.ant.ui.antLineBreakpointMarker"
+            class="org.eclipse.ant.internal.ui.debug.model.AntLineBreakpoint"
+            id="org.eclipse.ant.ui.lineBreakpoint"
+            name="%antBreakpointGroupName">
+      </breakpoint>
+   </extension>
+   <extension point="org.eclipse.core.resources.markers"
+         id="antLineBreakpointMarker">
+      <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
+      <persistent value="true"/>
+   </extension>
+   
+    <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.ant.ui.internal.editor.AntEditor"
+            id="org.eclipse.ant.ui.BreakpointRulerActions">
+         <action
+               label="%AddBreakpoint.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.ant.ui.actions.ManageBreakpointRulerAction">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+   		<viewerContribution
+            targetID="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"
+            id="org.eclipse.ant.ui.RulerPopupActions">
+         <action
+               label="%EnableBreakpoint.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.EnableDisableBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.ant.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+         </action>
+         <action
+               label="%AddBreakpoint.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.ant.ui.actions.ManageBreakpointRulerActionDelegate">
+         </action>
+      </viewerContribution>
+       </extension>
 </plugin>
