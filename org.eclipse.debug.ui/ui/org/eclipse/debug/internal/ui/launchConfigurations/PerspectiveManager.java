@@ -129,8 +129,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 * Switches to the specified perspective
 	 * 
 	 * @param id perspective identifier
-	 * 
-	 * [Issue: what should we supply as input to a new page?] 
 	 */
 	protected void switchToPerspective(final String id) {
 		final IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
@@ -138,7 +136,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			async(new Runnable() {
 				public void run() {
 					try {
-						window.getWorkbench().openPage(id, ResourcesPlugin.getWorkspace().getRoot(),0);
+						window.getWorkbench().showPerspective(id, window);
 					} catch (WorkbenchException e) {
 						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 						"Error", 
@@ -155,7 +153,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 */
 	protected void async(Runnable r) {
 		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
-		if (d != null) {
+		if (d != null && !d.isDisposed()) {
 			d.asyncExec(r);
 		}
 	}
@@ -165,7 +163,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 */
 	protected void sync(Runnable r) {
 		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
-		if (d != null) {
+		if (d != null && !d.isDisposed()) {
 			d.syncExec(r);
 		}
 	}	
