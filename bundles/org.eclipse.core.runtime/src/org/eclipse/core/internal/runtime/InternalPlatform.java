@@ -372,10 +372,11 @@ public static IPluginRegistry getPluginRegistry() {
 /**
  * @see Platform#getPluginStateLocation
  */
-public static IPath getPluginStateLocation(Plugin plugin) {
+public static IPath getPluginStateLocation(Plugin plugin, boolean create) {
 	assertInitialized();
 	IPath result = metaArea.getPluginStateLocation(plugin);
-	result.toFile().mkdirs();
+	if (create)
+		result.toFile().mkdirs();
 	return result;
 }
 /**

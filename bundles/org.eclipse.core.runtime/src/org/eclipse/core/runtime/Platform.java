@@ -334,7 +334,7 @@ public static IPluginRegistry getPluginRegistry() {
  * @return a local file system path
  */
 public static IPath getPluginStateLocation(Plugin plugin) {
-	return InternalPlatform.getPluginStateLocation(plugin);
+	return InternalPlatform.getPluginStateLocation(plugin, true);
 }
 /**
  * Returns the protection space (realm) for the specified resource, or

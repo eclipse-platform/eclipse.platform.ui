@@ -306,7 +306,7 @@ public final ILog getLog() {
  * @return a local file system path
  */
 public final IPath getStateLocation() {
-	return InternalPlatform.getPluginStateLocation(this);
+	return InternalPlatform.getPluginStateLocation(this, true);
 }
 
 /**
@@ -368,9 +368,9 @@ public final Preferences getPluginPreferences() {
  * @since 2.0
  */
 private void loadPluginPreferences() {
-	// the preferences file is located in the plug-in's state area
-	// at a well-known name
-	File prefFile = getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
+	// the preferences file is located in the plug-in's state area at a well-known name
+	// don't need to create the directory if there are no preferences to load
+	File prefFile = InternalPlatform.getPluginStateLocation(this, false).append(PREFERENCES_FILE_NAME).toFile();
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
 		return;
