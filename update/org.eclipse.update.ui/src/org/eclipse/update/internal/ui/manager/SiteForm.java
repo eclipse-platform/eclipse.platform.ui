@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class SiteForm extends UpdateWebForm {
 	private Label url;
-	private SiteBookmark currentBookmark;
+	private ISiteWrapper currentSite;
 	
 public SiteForm(UpdateFormPage page) {
 	super(page);
@@ -57,25 +57,17 @@ protected void createContents(Composite parent) {
 
 	listener = new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
-			if (currentBookmark==null) return;
+			if (currentSite==null) return;
 			BusyIndicator.showWhile(getControl().getDisplay(),
 			new Runnable() {
 				public void run() {
-					try {
-						if (!currentBookmark.isSiteConnected()) {
-							currentBookmark.connect();
+					ISite site = currentSite.getSite();
+					if (site!=null) {
+						URL infoURL = site.getInfoURL();
+						if (infoURL!=null) {
+							DetailsView dv = (DetailsView)getPage().getView();
+							dv.showURL(infoURL.toString());
 						}
-						ISite site = currentBookmark.getSite();
-						if (site!=null) {
-							URL infoURL = site.getInfoURL();
-							if (infoURL!=null) {
-								DetailsView dv = (DetailsView)getPage().getView();
-								dv.showURL(infoURL.toString());
-							}
-						}
-					}
-					catch (CoreException e) {
-						System.out.println(e);
 					}
 				}
 			});
@@ -87,18 +79,18 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof SiteBookmark) {
-		inputChanged((SiteBookmark)obj);
+	if (obj instanceof ISiteWrapper) {
+		inputChanged((ISiteWrapper)obj);
 	}
 }
 
-private void inputChanged(SiteBookmark site) {
-	setHeadingText(site.getName());
+private void inputChanged(ISiteWrapper site) {
+	setHeadingText(site.getLabel());
 	url.setText(site.getURL().toString());
 	url.getParent().layout();
 	((Composite)getControl()).layout();
 	getControl().redraw();
-	currentBookmark = site;
+	currentSite = site;
 }
 
 }

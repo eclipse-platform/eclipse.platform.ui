@@ -74,6 +74,10 @@ public void createPartControl(Composite parent)  {
 	// Set help for the view 
 	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, INavigatorHelpContextIds.RESOURCE_VIEW));
 */
+	partControlCreated();
+}
+
+protected void partControlCreated() {
 }
 
 public void setFocus()  {

@@ -172,6 +172,9 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(UPDATES_PAGE, el);
 				return;
 			}
+			if (el instanceof UpdateSearchSite) {
+				showPageWithInput(SITE_PAGE, el);
+			}
 		}
 	}
 }

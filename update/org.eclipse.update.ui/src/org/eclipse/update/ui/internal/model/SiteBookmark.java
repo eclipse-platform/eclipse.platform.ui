@@ -10,8 +10,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
+import org.eclipse.update.internal.ui.*;
 
-public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
+public class SiteBookmark extends ModelObject 
+						implements IWorkbenchAdapter,
+									ISiteWrapper {
 	private String name;
 	private URL url;
 	private ISite site;
@@ -58,6 +61,14 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 	}
 	
 	public ISite getSite() {
+		if (site==null) {
+			try {
+				connect();
+			}
+			catch (CoreException e) {
+				UpdateUIPlugin.logException(e);
+			}
+		}
 		return site;
 	}
 	
@@ -170,4 +181,11 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 		}
 		return null;
 	}
+	/**
+	 * @see ISiteWrapper#getLabel()
+	 */
+	public String getLabel() {
+		return getName();
+	}
+
 }

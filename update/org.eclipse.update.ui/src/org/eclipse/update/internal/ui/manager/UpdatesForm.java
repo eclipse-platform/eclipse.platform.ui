@@ -21,6 +21,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.wizard.*;
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.jface.action.IStatusLineManager;
 
 public class UpdatesForm extends UpdateWebForm {
 	private Label descLabel;
@@ -31,6 +32,7 @@ public class UpdatesForm extends UpdateWebForm {
 	private PageBook pagebook;
 	private SearchMonitor monitor;
 	private AvailableUpdates updates;
+	private UpdateSearchProgressMonitor statusMonitor;
 	
 class SearchMonitor extends ProgressMonitorPart {
 	public SearchMonitor(Composite parent) {
@@ -53,6 +55,9 @@ public UpdatesForm(UpdateFormPage page) {
 }
 
 public void dispose() {
+	updates.detachProgressMonitor(monitor);
+	if (statusMonitor!=null)
+	   updates.detachProgressMonitor(statusMonitor);
 	super.dispose();
 }
 
@@ -137,6 +142,10 @@ protected void createContents(Composite parent) {
 	td.align = TableData.FILL;
 	td.colspan = 2;
 	monitor.setLayoutData(td);
+	if (updates.isSearchInProgress()) {
+		// sync up with the search
+		catchUp();
+	}
 }
 
 private void reflow() {
@@ -157,6 +166,7 @@ private void performSearch() {
 private boolean startSearch() {
 	try {
 	   updates.attachProgressMonitor(monitor);
+	   attachStatusLineMonitor();
 	   updates.startSearch(getControl().getDisplay());
 	   enableOptions(false);
 	}
@@ -171,9 +181,25 @@ private boolean startSearch() {
 	return true;
 }
 
+private void catchUp() {
+   updates.attachProgressMonitor(monitor);
+   attachStatusLineMonitor();
+   enableOptions(false);
+   updateButtonText();
+}
+
+private void attachStatusLineMonitor() {
+   IViewSite vsite = getPage().getView().getViewSite();
+   IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
+   statusMonitor = new UpdateSearchProgressMonitor(manager);
+   updates.attachProgressMonitor(statusMonitor);	
+}
+
 private void stopSearch() {
 	updates.stopSearch();
 	updates.detachProgressMonitor(monitor);
+	if (statusMonitor!=null)
+	   updates.detachProgressMonitor(statusMonitor);
 	enableOptions(true);
 }
 
@@ -187,6 +213,7 @@ private void updateButtonText() {
 		searchButton.setText("&Cancel");
 	else
 		searchButton.setText("&Search Now");
+	searchButton.getParent().layout(true);
 }
 
 public void expandTo(Object obj) {

@@ -10,12 +10,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.update.internal.ui.*;
 
 public class AvailableUpdates extends ModelObject implements IWorkbenchAdapter {
+	public static final String P_REFRESH = "p_refresh";
 
 	private Vector updates = new Vector();
 	private boolean searchInProgress;
@@ -54,6 +55,10 @@ class SearchAdapter extends MonitorAdapter {
 	 */
 	public Object[] getChildren(Object parent) {
 		return updates.toArray();
+	}
+	
+	public boolean hasUpdates() {
+		return updates.size()>0;
 	}
 
 	/**
@@ -132,18 +137,109 @@ class SearchAdapter extends MonitorAdapter {
 	}
 	
 	private void doSearch(IProgressMonitor monitor) {
-		backgroundProgress.beginTask("Searching...", 5);
-		for (int i=0; i<5; i++) {
+		updates.clear();
+		asyncFireObjectChanged(this, P_REFRESH);
+		
+		IFeature [] candidates = getInstalledFeatures();
+		if (candidates.length==0) return;
+		backgroundProgress.beginTask("Searching for updates:", candidates.length);
+		for (int i=0; i<candidates.length; i++) {
 			if (monitor.isCanceled()) {
 				break;
 			}
-			try {
-				Thread.currentThread().sleep(2000);
-				monitor.worked(1);
-			}
-			catch (InterruptedException e) {
-			}
+			IFeature feature = candidates[i];
+			String versionedLabel = feature.getLabel();
+			String version = feature.getIdentifier().getVersion().toString();
+			versionedLabel += " "+version+":";
+			backgroundProgress.setTaskName(versionedLabel);
+			findUpdates(candidates[i]);
 		}
 		monitor.done();
+		UpdateModel model = getModel();
+		asyncFireObjectChanged(this, P_REFRESH);
+	}
+	
+	private IFeature [] getInstalledFeatures() {
+		IFeature [] result = new IFeature[0];
+		try {
+			Vector candidates = new Vector();
+			ILocalSite localSite = SiteManager.getLocalSite();
+			IInstallConfiguration config = localSite.getCurrentConfiguration();
+			ISite [] isites = config.getInstallSites();
+			for (int i=0; i<isites.length; i++) {
+				ISite isite = isites[i];
+				IFeatureReference [] refs = isite.getFeatureReferences();
+				for (int j=0; j<refs.length; j++) {
+					IFeatureReference ref = refs[j];
+					candidates.add(ref.getFeature());
+				}
+			}
+			result=(IFeature[])candidates.toArray(new IFeature[candidates.size()]);
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e, false);
+		}
+		finally {
+			return result;
+		}
+	}
+	
+	private void findUpdates(IFeature feature) {
+		IInfo updateInfo = feature.getUpdateInfo();
+		if (updateInfo == null) return;
+		URL updateURL = updateInfo.getURL();
+		if (updateURL==null) return;
+		backgroundProgress.subTask("Contacting site "+updateURL.toString()+"...");
+		try {
+			ISite site = SiteManager.getSite(updateURL);
+			backgroundProgress.subTask("Checking for updates...");
+			IFeatureReference [] refs = site.getFeatureReferences();
+			UpdateSearchSite searchSite = null;
+			for (int i=0; i<refs.length; i++) {
+				IFeature candidate = refs[i].getFeature();
+				if (isNewerVersion(feature, candidate)) {
+					// bingo - add this
+					if (searchSite==null) {
+						searchSite = new UpdateSearchSite(updateInfo.getText(), site);
+						updates.add(searchSite);
+						asyncFireObjectAdded(this, searchSite);
+					}
+					searchSite.addCandidate(candidate);
+					asyncFireObjectAdded(searchSite, candidate);
+				}
+			}
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e, false);
+		}
+	}
+	
+	private void asyncFireObjectAdded(final Object parent, final Object child) {
+		Display display = backgroundProgress.getDisplay();
+		final UpdateModel model = getModel();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				model.fireObjectAdded(parent, child);
+			}
+		});
+	}
+	
+	private void asyncFireObjectChanged(final Object obj, final String property) {
+		Display display = backgroundProgress.getDisplay();
+		final UpdateModel model = getModel();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				model.fireObjectChanged(obj, property);
+			}
+		});
+	}
+	
+	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
+		VersionedIdentifier fvi = feature.getIdentifier();
+		VersionedIdentifier cvi = candidate.getIdentifier();
+		if (!fvi.getIdentifier().equals(cvi.getIdentifier())) return false;
+		Version fv = fvi.getVersion();
+		Version cv = cvi.getVersion();
+		return cv.compare(fv) > 0;
 	}
 }

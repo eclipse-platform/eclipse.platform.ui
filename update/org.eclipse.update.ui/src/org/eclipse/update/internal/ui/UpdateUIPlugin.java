@@ -120,6 +120,10 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void logException(Throwable e) {
+		logException(e, true);
+	}
+
+	public static void logException(Throwable e, boolean showErrorDialog) {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException)e).getTargetException();
 		}
@@ -127,7 +131,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		if (message==null)
 	 		message = e.toString();
 		Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
-		ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
+		if (showErrorDialog) 
+		   ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	

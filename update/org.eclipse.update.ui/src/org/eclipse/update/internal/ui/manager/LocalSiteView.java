@@ -36,11 +36,45 @@ import org.eclipse.swt.graphics.*;
 public class LocalSiteView extends BaseTreeView 
 				implements IInstallConfigurationChangedListener,
 							ISiteChangedListener {
-Image eclipseImage;
-Image updatesImage;
-Image featureImage;
-Image siteImage;
-boolean initialized;
+private Image eclipseImage;
+private Image updatesImage;
+private Image featureImage;
+private Image siteImage;
+private boolean initialized;
+private UpdateModelChangedListener modelListener;
+
+
+class UpdateModelChangedListener implements IUpdateModelChangedListener {
+	/**
+	 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
+	 */
+	public void objectAdded(Object parent, Object child) {
+		if (parent instanceof AvailableUpdates) {
+			viewer.add(parent, child);
+		}
+	}
+
+	/**
+	 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
+	 */
+	public void objectRemoved(Object parent, Object child) {
+		if (parent instanceof AvailableUpdates) {
+			viewer.remove(child);
+		}
+	}
+
+	/**
+	 * @see IUpdateModelChangedListener#objectChanged(Object, String)
+	 */
+	public void objectChanged(Object object, String property) {
+		if (object instanceof AvailableUpdates &&
+		    property.equals(AvailableUpdates.P_REFRESH)) {
+		   viewer.refresh(object);
+		   viewer.expandToLevel(object, 999);
+		}
+	}
+
+}
 	
 class LocalSiteProvider extends DefaultContentProvider 
 						implements ITreeContentProvider {
@@ -64,6 +98,9 @@ class LocalSiteProvider extends DefaultContentProvider
 		}
 		if (parent instanceof AvailableUpdates) {
 			return ((AvailableUpdates)parent).getChildren(parent);
+		}
+		if (parent instanceof UpdateSearchSite) {
+			return ((UpdateSearchSite)parent).getChildren(parent);
 		}
 		return new Object[0];
 	}
@@ -98,6 +135,14 @@ class LocalSiteProvider extends DefaultContentProvider
 	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object parent) {
+		if (parent instanceof AvailableUpdates) {
+			AvailableUpdates updates = (AvailableUpdates)parent;
+			return updates.hasUpdates();
+		}
+		if (parent instanceof UpdateSearchSite) {
+			UpdateSearchSite updateSearch = (UpdateSearchSite)parent;
+			return updateSearch.getChildren(parent).length>0;
+		}
 		return !(parent instanceof IFeature);
 	}
 
@@ -134,6 +179,8 @@ class LocalSiteLabelProvider extends LabelProvider {
 		   return featureImage;
 		if (obj instanceof ISite)
 		   return siteImage;
+		if (obj instanceof UpdateSearchSite)
+		   return siteImage;
 		return null;
 	}
 }
@@ -143,12 +190,18 @@ public LocalSiteView() {
 	updatesImage = UpdateUIPluginImages.DESC_UPDATES_OBJ.createImage();
 	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+	modelListener = new UpdateModelChangedListener();
 }
 
 public void initProviders() {
 	viewer.setContentProvider(new LocalSiteProvider());
 	viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 	viewer.setLabelProvider(new LocalSiteLabelProvider());
+}
+
+protected void partControlCreated() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	model.addUpdateModelChangedListener(modelListener);
 }
 
 private ILocalSite getLocalSite() {
@@ -195,6 +248,8 @@ public void dispose() {
 		}
 		initialized=false;
 	}
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	model.removeUpdateModelChangedListener(modelListener);
 	super.dispose();
 }
 

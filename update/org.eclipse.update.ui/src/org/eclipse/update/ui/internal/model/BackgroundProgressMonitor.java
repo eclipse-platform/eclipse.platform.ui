@@ -18,6 +18,10 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 		this.display = display;
 	}
 	
+	public Display getDisplay() {
+		return display;
+	}
+	
 	public void addProgressMonitor(final IProgressMonitor monitor) {
 		if (monitors.contains(monitor)==false) {
 		   monitors.add(monitor);
@@ -48,6 +52,7 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 		taskCount = count;
 		this.taskName = taskName;
 		subTaskName = null;
+		canceled = false;
 		display.asyncExec(new Runnable() {
 			public void run() {
 				for (Iterator iter=monitors.iterator(); iter.hasNext();) {
