@@ -663,7 +663,7 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.BreakpointRulerActions">
          <action
                label="%AddBreakpoint.label"
-               class="org.eclipse.ant.internal.ui.editor.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.ant.ui.actions.ManageBreakpointRulerAction">
          </action>
@@ -682,7 +682,7 @@ M4 = Platform-specific fourth key -->
          </action>
          <action
                label="%AddBreakpoint.label"
-               class="org.eclipse.ant.internal.ui.editor.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
                id="org.eclipse.ant.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
