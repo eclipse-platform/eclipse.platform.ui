@@ -11,8 +11,9 @@
 package org.eclipse.jface.text;
 
 /**
- * Extension to <code>IInformationControlCreator</code> which
- * tests if an existing information control can be reused.
+ * Extension interface for {@link org.eclipse.jface.text.IInformationControlCreator}<p>
+ * Introduces tests whether information controls can be reused and whether information
+ * control creators can replace each other.
  * 
  * @see org.eclipse.jface.text.IInformationControlCreator
  * @see org.eclipse.jface.text.IInformationControl

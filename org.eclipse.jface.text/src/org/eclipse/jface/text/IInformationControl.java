@@ -19,18 +19,43 @@ import org.eclipse.swt.graphics.Point;
 
 
 /**
- * Interface of a control presenting information. The information is given
- * in textual form. It can  be either the content itself or a description
- * of the content. This specification is left to the implementers of this interface.<p>
- * The information control may not grap focus when made visible  using
+ * Interface of a control presenting information. The information is given in
+ * the form of an input object. It can be either the content itself or a
+ * description of the content. The specification of what is required from an
+ * input object is left to the implementers of this interface.
+ * <p>
+ * The information control may not grab focus when made visible using
  * <code>setVisible(true)</code>.
  * 
+ * In order to provide backward compatibility for clients of
+ * <code>IInformationControl</code>, extension interfaces are used as a means
+ * of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension} since
+ *     version 2.0 introducing the predicate of whether the control has anything to
+ *     show or would be empty</li>
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension2} since
+ *     version 2.1 replacing the original concept of textual input by general input
+ *     objects.</li>
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension3}since
+ *     version 3.0 providing access to the control's bounds and introducing
+ *     the concept of persistent size and location.</li>
+ * </ul>
+ * <p>
+ * Clients can implements that interface and its extension interfaces or use the 
+ * provided default implementation {@link org.eclipse.jface.text.DefaultInformationControl}.
+ * 
+ * @see org.eclipse.jface.text.IInformationControlExtension
+ * @see org.eclipse.jface.text.IInformationControlExtension2
+ * @see org.eclipse.jface.text.IInformationControlExtension3
  * @since 2.0
  */
 public interface IInformationControl {
 
 	/**
 	 * Sets the information to be presented by this information control.
+	 * <p>
+	 * Replaced by {@link IInformationControlExtension2#setInput(Object)}.
 	 * 
 	 * @param information the information to be presented
 	 */
@@ -42,7 +67,7 @@ public interface IInformationControl {
 	 * <code>computeSizeHint</code> is called.
 	 * <p>
 	 * Note: An information control which implements {@link IInformationControlExtension3}
-	 * can ignore this method or use it as hint for its very first appearance.
+	 * may ignore this method or use it as hint for its very first appearance.
 	 * </p>
 	 * @param maxWidth the maximal width of the control  to present the information, or <code>-1</code> for not constraint
 	 * @param maxHeight the maximal height of the control to present the information, or <code>-1</code> for not constraint

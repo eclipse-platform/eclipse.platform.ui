@@ -15,18 +15,19 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.events.VerifyEvent;
 
 /**
- * Implementers can register with a text viewer and 
- * receive <code>VerifyEvent</code>s before the text viewer 
- * they are registered with. If the event consumer marks events
- * as processed by turning their <code>doit</code> field to 
- * <code>false</code> the text viewer subsequently ignores them.
- * Clients may implement this interface.<p>
+ * Implementers can register with a text viewer and receive
+ * <code>VerifyEvent</code>s before the text viewer they are registered with.
+ * If the event consumer marks events as processed by turning their
+ * <code>doit</code> field to <code>false</code> the text viewer
+ * subsequently ignores them. Clients may implement this interface.
+ * <p>
  * 
- * <code>ITextViewerExtension2</code> allows clients to manage the
- * <code>VerifyListener</code>s of a <code>TextViewer</code>. This makes
- * <code>IEventConsumer</code> obsolete.
+ * {@link org.eclipse.jface.text.ITextViewerExtension2}allows clients to manage
+ * the {@link org.eclipse.swt.events.VerifyListener}s of a text viewer. This
+ * makes <code>IEventConsumer</code> obsolete.
  * 
- * @see ITextViewer
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.ITextViewerExtension2
  * @see org.eclipse.swt.events.VerifyEvent
  */
 public interface IEventConsumer {

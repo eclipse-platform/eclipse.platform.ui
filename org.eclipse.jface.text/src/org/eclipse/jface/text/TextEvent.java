@@ -8,23 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
 /**
- * This event is sent to implementers of <code>ITextListener</code>. It represents a 
- * change applied to text viewer. The change is specified as a replace command using 
- * offset, length, inserted text, and replaced text. The text viewer issues a text event
- * after the viewer has been changed either in response to a change of the viewer's document
- * or when the viewer's visual content has been changed. In the first case, the text event
- * also carries the original document event. Depending on the viewer's presentation mode,
- * the text event coordinates are different from the document event's coordinates.
+ * This event is sent to implementers of
+ * {@link org.eclipse.jface.text.ITextListener}. It represents a change applied
+ * to text viewer. The change is specified as a replace command using offset,
+ * length, inserted text, and replaced text. The text viewer issues a text event
+ * after the viewer has been changed either in response to a change of the
+ * viewer's document or when the viewer's visual content has been changed. In
+ * the first case, the text event also carries the original document event.
+ * Depending on the viewer's presentation mode, the text event coordinates are
+ * different from the document event's coordinates.
+ * <p>
+ * An empty text event usually indicates a change of the viewer's redraw state.
+ * <p>
  * Clients other than text viewer's don't create instances of this class.
- *
- * @see ITextListener
- * @see ITextViewer
- * @see DocumentEvent
+ * 
+ * @see org.eclipse.jface.text.ITextListener
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.DocumentEvent
  */
 public class TextEvent {
 	

@@ -12,10 +12,13 @@
 package org.eclipse.jface.text;
  
 /**
- * Extension interface for <code>IInformationControl</code>. As it is the responsibility of
- * the implementer of <code>IInformationControl</code> to specify whether the information
- * set is the information itself or a description of the information, only the information control
- * can decide whether there is something that must be displayed.
+ * Extension interface {@link org.eclipse.jface.text.IInformationControl}.
+ * <p>
+ * As it is the responsibility of the implementer of
+ * {@link org.eclipse.jface.text.IInformationControl}and
+ * {@link org.eclipse.jface.text.IInformationControlExtension2}to specify the
+ * concrete nature of the information control's input, only the implementer can
+ * know whether it has something to show or not.
  * 
  * @since 2.0
  */ 
@@ -23,6 +26,7 @@ public interface IInformationControlExtension {
 	
 	/**
 	 * Returns whether this information control has contents to be displayed.
+	 * 
 	 * @return <code>true</code> if there is contents to be displayed.
 	 */
 	boolean hasContents();

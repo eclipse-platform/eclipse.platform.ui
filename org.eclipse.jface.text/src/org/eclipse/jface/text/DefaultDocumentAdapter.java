@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
  
@@ -23,7 +22,7 @@ import org.eclipse.swt.custom.TextChangingEvent;
 
 
 /**
- * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
+ * Default implementation of {@link org.eclipse.jface.text.IDocumentAdapter}.
  */
 class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {
 
@@ -116,6 +115,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	/**
 	 * Tries to repair the line information.
 	 * 
+	 * @param document the document
 	 * @see IRepairableDocument#repairLineInformation()
 	 * @since 3.0
 	 */
@@ -128,9 +128,10 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	
 	/**
 	 * Returns the line for the given line number.
-	 *  
+	 * 
+	 * @param document the document
 	 * @param line the line number
-	 * @return the line
+	 * @return the content of the line of the given number in the given document
 	 * @throws BadLocationException if the line number is invalid for the adapted document
 	 * @since 3.0
 	 */

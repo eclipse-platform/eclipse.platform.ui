@@ -23,10 +23,10 @@ import org.eclipse.swt.events.MouseListener;
 
 
 /**
- * Standard implementation of <code>IUndoManager</code>. It registers with
+ * Standard implementation of {@link org.eclipse.jface.text.IUndoManager}.<p> It registers with
  * the connected text viewer as text input listener and document listener and
  * logs all changes. It also monitors mouse and keyboard activities in order to
- * partition the stream of text changes into undoable edit commands.
+ * partition the stream of text changes into undo-able edit commands.
  * <p>
  * This class is not intended to be subclassed.
  * 
@@ -39,7 +39,7 @@ import org.eclipse.swt.events.MouseListener;
 public class DefaultUndoManager implements IUndoManager {
 
 	/**
-	 * Represents an undoable edit command.
+	 * Represents an undo-able edit command.
 	 */
 	class TextCommand {
 		
@@ -53,7 +53,7 @@ public class DefaultUndoManager implements IUndoManager {
 		protected String fPreservedText;
 		
 		/**
-		 * Reinitializes this text command.
+		 * Re-initializes this text command.
 		 */
 		protected void reinitialize() {
 			fStart= fEnd= -1;
@@ -165,7 +165,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/**
-	 * Represents an undoable edit command consisting of several
+	 * Represents an undo-able edit command consisting of several
 	 * individual edit commands.
 	 */
 	class CompoundTextCommand extends TextCommand {
@@ -431,7 +431,7 @@ public class DefaultUndoManager implements IUndoManager {
 	
 	/** Supported undo level */
 	private int fUndoLevel;
-	/** The list of undoable edit commands */
+	/** The list of undo-able edit commands */
 	private List fCommandStack;
 	/** The currently constructed edit command */
 	private TextCommand fCurrent;
@@ -564,6 +564,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * subsequently contains a white space only.
 	 *
 	 * @param text the text to check
+	 * @return <code>true</code> if the text is a line delimiter followed by whitespace, <code>false</code> otherwise
 	 */
 	private boolean isWhitespaceText(String text) {
 				
@@ -725,14 +726,14 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 		
 	/*
-	 * @see IUndoManager#setMaximalUndoLevel
+	 * @see org.eclipse.jface.text.IUndoManager#setMaximalUndoLevel(int)
 	 */
 	public void setMaximalUndoLevel(int undoLevel) {
 		fUndoLevel= undoLevel;
 	}
 
 	/*
-	 * @see IUndoManager#connect
+	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
 	 */
 	public void connect(ITextViewer textViewer) {
 		if (fTextViewer == null) {
@@ -745,7 +746,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#disconnect
+	 * @see org.eclipse.jface.text.IUndoManager#disconnect()
 	 */
 	public void disconnect() {
 		if (fTextViewer != null) {
@@ -764,7 +765,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#reset
+	 * @see org.eclipse.jface.text.IUndoManager#reset()
 	 */
 	public void reset() {
 		if (fCommandStack != null)
@@ -780,7 +781,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#redoable
+	 * @see org.eclipse.jface.text.IUndoManager#redoable()
 	 */
 	public boolean redoable() {
 		if (fCommandStack != null)  {
@@ -791,7 +792,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#undoable
+	 * @see org.eclipse.jface.text.IUndoManager#undoable()
 	 */
 	public boolean undoable() {
 		if (fCommandStack != null) {
@@ -802,7 +803,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#redo
+	 * @see org.eclipse.jface.text.IUndoManager#redo()
 	 */
 	public void redo() {
 		if (redoable()) {
@@ -812,7 +813,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/*
-	 * @see IUndoManager#undo
+	 * @see org.eclipse.jface.text.IUndoManager#undo()
 	 */
 	public void undo() {
 		if (undoable()) {
@@ -822,6 +823,13 @@ public class DefaultUndoManager implements IUndoManager {
 		}
 	}
 	
+	/**
+	 * Selects and reveals the specified range.
+	 * 
+	 * @param offset the offset of the range
+	 * @param length the length of the range
+	 * @since 3.0
+	 */
 	protected void selectAndReveal(int offset, int length) {
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;

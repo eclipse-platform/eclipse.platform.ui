@@ -11,14 +11,14 @@
 package org.eclipse.jface.text;
 
 
-
 /**
- * A text double click strategy defines the reaction of a text viewer
- * to mouse double click events. For that the strategy must be installed
- * on the text viewer.<p>
- * Clients may implements this interface or use the standard implementation
+ * A text double click strategy defines the reaction of a text viewer to mouse
+ * double click events. The strategy must be installed on an
+ * {@link org.eclipse.jface.text.ITextViewer}.
+ * <p>
+ * Clients may implement this interface or use the standard implementation
  * <code>DefaultTextDoubleClickStrategy</code>.
- *
+ * 
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
  */

@@ -13,7 +13,20 @@ package org.eclipse.jface.text;
 
 
 /**
- * Defines the target for a text operation.
+ * Defines the target for text operations. <code>canDoOperation</code> informs
+ * the clients about the ability of the target to perform the specified
+ * operation at the current point in time. <code>doOperation</code> executes
+ * the specified operation.
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>ITextOperationTarget</code>, extension interfaces are used as a
+ * means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.ITextOperationTargetExtension} since
+ *     version 2.0 introducing text operation enabling/disabling.</li>
+ * </ul>
+ * 
+ * @see org.eclipse.jface.text.ITextOperationTargetExtension
  */
 public interface ITextOperationTarget {
 	
@@ -39,7 +52,7 @@ public interface ITextOperationTarget {
 	static final int COPY= 4;
 	
 	/** 
-	 * Text operation code for inserting the clipboard content at the 
+	 * Text operation code for inserting the clipboard content at the
 	 * current position.
 	 */
 	static final int PASTE= 5;
@@ -61,7 +74,7 @@ public interface ITextOperationTarget {
 	static final int SHIFT_RIGHT= 8;
 	
 	/** 
-	 * Text operation code for unshifting the selected text block to the left. 
+	 * Text operation code for shifting the selected text block to the left. 
 	 */
 	static final int SHIFT_LEFT= 9;
 	

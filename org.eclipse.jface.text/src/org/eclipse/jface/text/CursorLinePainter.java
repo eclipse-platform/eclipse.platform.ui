@@ -26,8 +26,10 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * A painter the draws the background of the cursor line in a configured color.
- * Clients usually instantiate and configure object of this class.<p>
+ * A painter the draws the background of the caret line in a configured color.
+ * <p>
+ * Clients usually instantiate and configure object of this class.
+ * <p>
  * This class is not intended to be subclassed.
  * 
  * @since 2.1
@@ -72,7 +74,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 * @see LineBackgroundListener#lineGetBackground(LineBackgroundEvent)
 	 */
 	public void lineGetBackground(LineBackgroundEvent event) {
-		// don't use cached line information because of asynch painting
+		// don't use cached line information because of asynchronous painting
 
 		StyledText textWidget= fViewer.getTextWidget();
 		if (textWidget != null) {

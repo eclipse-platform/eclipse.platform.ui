@@ -28,15 +28,17 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 
 /**
- * Manages the painters of a text viewer. Clients usually instantiate and configure
- * objects of this type.
+ * Manages the {@link org.eclipse.jface.text.IPainter} object registered with an
+ * {@link org.eclipse.jface.text.ITextViewer}.
+ * <p>
+ * Clients usually instantiate and configure objects of this type.
  * 
  * @since 2.1
  */
 public final class PaintManager implements KeyListener, MouseListener, ISelectionChangedListener, ITextListener, ITextInputListener {		
 					
 	/**
-	 * Position updater used by the position manager. This position updater differes from the default position
+	 * Position updater used by the position manager. This position updater differs from the default position
 	 * updater in that it extends a position when an insertion happens at the position's offset and right behind
 	 * the position.
 	 */
@@ -84,7 +86,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 */
 	static class PositionManager implements IPaintPositionManager {
 		
-		/** The document this positon manager works on */
+//		/** The document this position manager works on */
 		private IDocument fDocument;
 		/** The position updater used for the managing position category */
 		private IPositionUpdater fPositionUpdater;
@@ -114,8 +116,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		}
 		
 		/**
-		 * Diposes this position manager. The position manager is automatically
-		 * uninstalled from the document it has previously been installed
+		 * Disposes this position manager. The position manager is automatically
+		 * removed from the document it has previously been installed
 		 * on.
 		 */
 		public void dispose() {

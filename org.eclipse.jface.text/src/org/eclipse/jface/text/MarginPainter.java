@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -22,8 +21,11 @@ import org.eclipse.swt.graphics.Rectangle;
 
 
 /**
- * Paints a vertical line (margin line) after a given column respecting the text viewer's font.
- * Clients usually instantiate and configure objects of this class. <p>
+ * Paints a vertical line (margin line) after a given column respecting the text
+ * viewer's font.
+ * <p>
+ * Clients usually instantiate and configure objects of this class.
+ * <p>
  * This class is not intended to be subclassed.
  * 
  * @since 2.1

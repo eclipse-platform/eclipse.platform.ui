@@ -13,10 +13,12 @@ package org.eclipse.jface.text;
 
 
 /**
- * Text input listeners registered with an text viewer are informed 
- * if the document serving as the text viewer's model is replaced.
+ * Text input listeners registered with an
+ * {@link org.eclipse.jface.text.ITextViewer} are informed if the document
+ * serving as the text viewer's model is replaced.
+ * <p>
  * Clients may implement this interface.
- *
+ * 
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.IDocument
  */

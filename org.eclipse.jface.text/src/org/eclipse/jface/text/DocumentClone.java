@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+
 /**
  * An {@link org.eclipse.jface.text.IDocument} that is a read-only clone of another document.
  * 
@@ -21,6 +22,11 @@ class DocumentClone extends AbstractDocument {
 		
 		private String fContent;
 		
+		/**
+		 * Creates a new string text store with the given content.
+		 * 
+		 * @param content the content
+		 */
 		public StringTextStore(String content) {
 			Assert.isNotNull(content);
 			fContent= content;
@@ -61,6 +67,12 @@ class DocumentClone extends AbstractDocument {
 		
 	}
 	
+	/**
+	 * Creates a new document clone with the given content.
+	 * 
+	 * @param content the content
+	 * @param lineDelimiters the line delimiters
+	 */
 	public DocumentClone(String content, String[] lineDelimiters) {
 		super();
 		setTextStore(new StringTextStore(content));

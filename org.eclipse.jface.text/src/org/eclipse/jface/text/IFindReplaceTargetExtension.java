@@ -16,8 +16,13 @@ import org.eclipse.swt.graphics.Point;
 
 
 /**
- * Extension interface for <code>IFindReplaceTarget</code>. Extends the find replace target with
- * the concept of searching in a limiting scope and introduces a replace-all mode.
+ * Extension interface for {@link org.eclipse.jface.text.IFindReplaceTarget}.
+ * <p>
+ * Introduces the concepts of find/replace sessions, searching in a limiting
+ * scope and a replace-all mode.
+ * <p>
+ * If a scope is set, <code>findAndSelect</code> is limited to the scope.
+ * Occurrences outside of the scope are not considered.
  * 
  * @since 2.0
  */

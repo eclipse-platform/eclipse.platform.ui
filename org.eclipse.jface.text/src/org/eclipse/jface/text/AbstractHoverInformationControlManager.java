@@ -30,14 +30,17 @@ import org.eclipse.swt.widgets.Display;
 
 
 /**
- * An information control manager that shows information on mouse hover events.
- * The mouse hover events are caught by registering a <code>MouseTrackListener</code>
- * on the manager's subject control. The manager has by default an information control closer
- * that closes the information control as soon as the mouse pointer leaves the subject area, the
- * user presses a key, or the subject control is resized, moved, or deactivated.<p>
- * When being activated by a mouse hover event, the manager disables itself, until the mouse
- * leaves the subject area. Thus, the manager is usually still disabled, when the information control
- * has already been closed by the closer.
+ * An information control manager that shows information in response to mouse
+ * hover events. The mouse hover events are caught by registering a
+ * {@link org.eclipse.swt.events.MouseTrackListener} on the manager's subject
+ * control. The manager has by default an information control closer that closes
+ * the information control as soon as the mouse pointer leaves the subject area,
+ * the user presses a key, or the subject control is resized, moved, or
+ * deactivated.
+ * <p>
+ * When being activated by a mouse hover event, the manager disables itself,
+ * until the mouse leaves the subject area. Thus, the manager is usually still
+ * disabled, when the information control has already been closed by the closer.
  * 
  * @see org.eclipse.swt.events.MouseTrackListener
  * @since 2.0
@@ -202,7 +205,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 */
 	class MouseTracker extends ShellAdapter implements MouseTrackListener, MouseMoveListener {
 				
-		/** Margin around the original hover event location for coputing the hover area. */
+		/** Margin around the original hover event location for computing the hover area. */
 		private final static int EPSILON= 3;
 		
 		/** The area in which the original hover event occurred. */
@@ -406,7 +409,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	}
 	
 	/*
-	 * @see AbstractInformationControlManager#presentInformation()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#presentInformation()
 	 */
 	protected void presentInformation() {
 		if (fMouseTracker == null) {
@@ -428,7 +431,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	}
 		
 	/*
-	 * @see AbstractInformationControlManager#setEnabled(boolean)
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
 		

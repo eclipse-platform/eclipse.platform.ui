@@ -11,12 +11,37 @@
 package org.eclipse.jface.text;
 
 
-
 import org.eclipse.swt.graphics.Point;
 
 
 /**
- * Defines the interface for finding and replacing strings.
+ * Defines the target for finding and replacing strings.
+ * <p>
+ * The two main methods are <code>findAndSelect</code> and
+ * <code>replaceSelection</code>. The target does not provide any way to
+ * modify the content other than replacing the selection.
+ * <p>
+ * 
+ * In order to provide backward compatibility for clients of
+ * <code>IFindReplaceTarget</code>, extension interfaces are used as a means
+ * of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension} since version
+ *     2.0 introducing the notion of find/replace session and of a find/replace
+ *     scope. In additions, in allows clients to replace all occurrences of a given
+ *     find query.</li>
+ * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension3} since
+ *     version 3.0 allowing clients to specify search queries as regular
+ *     expressions.</li>
+ * </ul>
+ * <p>
+ * Clients of a <code>IFindReplaceTarget</code> that also implements the
+ * <code>IFindReplaceTargetExtension</code> have to indicate the start of a find/replace
+ * session before using the target and to indicate the end of the session when the
+ * target is no longer used.
+ * 
+ * @see org.eclipse.jface.text.IFindReplaceTargetExtension
+ * @see org.eclipse.jface.text.IFindReplaceTargetExtension3
  */
 public interface IFindReplaceTarget {
 	
@@ -31,6 +56,8 @@ public interface IFindReplaceTarget {
  	 * Searches for a string starting at the given widget offset and using the specified search
  	 * directives. If a string has been found it is selected and its start offset is 
  	 * returned.
+ 	 * <p>
+ 	 * Replaced by {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
  	 *
  	 * @param widgetOffset the widget offset at which searching starts
  	 * @param findString the string which should be found
@@ -65,7 +92,9 @@ public interface IFindReplaceTarget {
 	/**
 	 * Replaces the currently selected range of characters with the given text.
 	 * This target must be editable. Otherwise nothing happens.
-	 *
+	 * <p>
+	 * Replaced by {@link IFindReplaceTargetExtension3#replaceSelection(String, boolean)}.
+	 * 
 	 * @param text the substitution text
 	 */
 	void replaceSelection(String text);

@@ -14,11 +14,14 @@ import org.eclipse.swt.graphics.Rectangle;
 
  
 /**
- * Extension interface for <code>IInformationControl</code>. Adds API which
- * allows to get this information control's bounds i.e. location and size.
+ * Extension interface for {@link org.eclipse.jface.text.IInformationControl}.
+ * Adds API which allows to get this information control's bounds and introduces
+ * the concept of persistent size and location by introducing predicates for
+ * whether the information control supports restoring of size and location.
  * <p>
- * Note: An information control which implements this interface can ignore
- * calls to {@link org.eclipse.jface.text.IInformationControl#setSizeConstraints(int, int)}
+ * Note: An information control which implements this interface can ignore calls
+ * to
+ * {@link org.eclipse.jface.text.IInformationControl#setSizeConstraints(int, int)}
  * or use it as hint for its very first appearance.
  * </p>
  * 

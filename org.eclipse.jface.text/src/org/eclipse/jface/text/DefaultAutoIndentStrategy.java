@@ -11,11 +11,12 @@
 package org.eclipse.jface.text;
 
 
-
-
 /**
- * Default implementation of <code>IAutoIndentStrategy</code>.
+ * Default implementation of {@link org.eclipse.jface.text.IAutoIndentStrategy}.
+ * <p>
  * This strategy always copies the indentation of the previous line.
+ * <p>
+ * This class is not intended to be subclassed.
  */
 public class DefaultAutoIndentStrategy implements IAutoIndentStrategy {
 	
@@ -34,7 +35,7 @@ public class DefaultAutoIndentStrategy implements IAutoIndentStrategy {
 	 * @param document the document to search in
 	 * @param offset the offset at which searching start
 	 * @param end the offset at which searching stops
-	 * @return the offset in the specifed range whose character is not a space or tab
+	 * @return the offset in the specified range whose character is not a space or tab
 	 * @exception BadLocationException if position is an invalid range in the given document
 	 */
 	protected int findEndOfWhiteSpace(IDocument document, int offset, int end) throws BadLocationException {

@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
 import org.eclipse.jface.text.Position;
 
 /**
- * Manager that manages and updates positions used by <code>IPainter</code>s.
+ * Manages and updates positions used by {@link IPainter}s.
  * 
  * @see org.eclipse.jface.text.IPainter
  * @since 2.1

@@ -16,9 +16,13 @@ import java.text.CharacterIterator;
 
 
 /**
- * Standard implementation of <code>ITextDoubleClickStrategy</code>.
- * Selects words using <code>java.text.BreakIterator</code> for the
- * default locale. This class is not intended to be subclassed.
+ * Standard implementation of
+ * {@link org.eclipse.jface.text.ITextDoubleClickStrategy}.
+ * <p>
+ * Selects words using <code>java.text.BreakIterator</code> for the default
+ * locale.
+ * <p>
+ * This class is not intended to be subclassed.
  * 
  * @see java.text.BreakIterator
  */
@@ -39,7 +43,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		private IDocument fDocument;
 		/** Start offset of iteration. */
 		private int fOffset= -1;
-		/** Endoffset of iteration. */
+		/** End offset of iteration. */
 		private int fEndOffset= -1;
 		/** Current offset of iteration. */
 		private int fIndex= -1;
@@ -49,7 +53,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		}
 		
 		/**
-		 * Configures this document iterator with the document section to be iteratored. 
+		 * Configures this document iterator with the document section to be visited. 
 		 *
 		 * @param document the document to be iterated
 		 * @param iteratorRange the range in the document to be iterated
@@ -173,7 +177,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	}
 	
 	/*
-	 * @see ITextDoubleClickStrategy#doubleClicked
+	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
 	 */
 	public void doubleClicked(ITextViewer text) {
 		

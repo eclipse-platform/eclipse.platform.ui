@@ -11,8 +11,10 @@
 package org.eclipse.jface.text;
 
 /**
- * Extension interface to <code>IWidgetTokenOwner</code>. Replaces the original
- * <code>requestWidgetToken</code> functionality with a new priority based approach.
+ * Extension interface for {@link org.eclipse.jface.text.IWidgetTokenOwner}.
+ * <p>
+ * Replaces the original <code>requestWidgetToken</code> functionality with a
+ * new priority based approach.
  * 
  * @since 3.0
  */
@@ -20,7 +22,7 @@ public interface IWidgetTokenOwnerExtension {
 	
 	/**
 	 * Requests the widget token from this token owner. Returns 
-	 * <code>true</code> if the token has been aquired or is
+	 * <code>true</code> if the token has been acquired or is
 	 * already owned by the requester. This method is non-blocking.
 	 * 
 	 * <p><code>priority</code> is forwarded to any existing token keeper 
@@ -30,7 +32,7 @@ public interface IWidgetTokenOwnerExtension {
 	 * 
 	 * @param requester the token requester
 	 * @param priority the priority of the request
-	 * @return <code>true</code> if requester aquires the token,
+	 * @return <code>true</code> if requester acquires the token,
 	 * 	<code>false</code> otherwise
 	 */
 	boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority);

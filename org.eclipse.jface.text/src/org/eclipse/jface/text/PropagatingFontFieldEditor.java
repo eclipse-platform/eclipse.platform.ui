@@ -77,7 +77,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	}
 	
 	/**
-	 * Checks whether this editor presents the default value "inheritated"
+	 * Checks whether this editor presents the default value "inherited"
 	 * from the workbench rather than its own font.
 	 */
 	private void checkForDefault() {

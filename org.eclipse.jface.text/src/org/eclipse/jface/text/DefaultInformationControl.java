@@ -32,10 +32,11 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * Text based implementation of <code>IInformationControl</code>. 
- * Displays information in a styled text widget. Before displaying, the 
- * information set to this information control is processed by an 
- * <code>IInformationPresenter</code>. 
+ * Default implementation of {@link org.eclipse.jface.text.IInformationControl}.
+ * <p>
+ * Displays textual information in a {@link org.eclipse.swt.custom.StyledText}
+ * widget. Before displaying, the information set to this information control is
+ * processed by an <code>IInformationPresenter</code>.
  * 
  * @since 2.0
  */

@@ -23,9 +23,12 @@ import org.eclipse.swt.events.VerifyEvent;
 
 
 /**
- * Represents a text modification as a document replace command. The text modification is given
- * as a <code>VerifyEvent</code> and translated into a document replace command relative
- * to a given offset. A document command can also be used to initialize a given <code>VerifyEvent</code>.<p>
+ * Represents a text modification as a document replace command. The text
+ * modification is given as a {@link org.eclipse.swt.events.VerifyEvent} and
+ * translated into a document replace command relative to a given offset. A
+ * document command can also be used to initialize a given
+ * <code>VerifyEvent</code>.
+ * <p>
  * A document command can also represent a list of related changes.
  */
 public class DocumentCommand {
@@ -41,7 +44,7 @@ public class DocumentCommand {
 		private final int fLength;
 		/** The replacement text */
 		private final String fText;
-		/** The listern who owns this command */
+		/** The listener who owns this command */
 		private final IDocumentListener fOwner;
 		
 		/**
@@ -265,7 +268,6 @@ public class DocumentCommand {
 	private final List fCommands= new ArrayList();
 	/**
 	 * Indicates whether the caret should be shifted by this command.
-	 *
 	 * @since 3.0
 	 */
 	public boolean shiftsCaret;
@@ -298,7 +300,7 @@ public class DocumentCommand {
 	}
 	
 	/**
-	 * Fills the given verify event with the replace text and the doit
+	 * Fills the given verify event with the replace text and the <code>doit</code>
 	 * flag of this document command. Returns whether the document command
 	 * covers the same range as the verify event considering the given offset.
 	 *
@@ -407,6 +409,7 @@ public class DocumentCommand {
 	 * Executes the document commands on a document.
 	 * 
 	 * @param document the document on which to execute the commands
+	 * @throws BadLocationException in case access to the given document fails
 	 * @since 2.1
 	 */	
 	void execute(IDocument document) throws BadLocationException {

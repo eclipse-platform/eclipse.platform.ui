@@ -12,15 +12,18 @@
 package org.eclipse.jface.text;
  
 /**
- * Extension interface for <code>IDocumentAdapter</code>. Introduces the concepts of 
- * batching a series of document changes into one styled text content change. Batching start
- * when a client calls <code>stopForwardingDocumentChanges</code>. After that call this document
- * adapter does not send out any styled text content change until 
- * <code>resumeForwardingDocumentChanges</code> is called. Then, it sends out one styled text
- * content change that covers all changes that have been applied to the document since calling
- * <code>stopForwardingDocumentChanges</code>.
+ * Extension interface for {@link org.eclipse.jface.text.IDocumentAdapter}.
+ * <p>
+ * Introduces the concepts of batching a series of document changes into a
+ * single styled text content change notification. Batching start when a client
+ * calls <code>stopForwardingDocumentChanges</code>. After that call this
+ * document adapter does not send out styled text content change notifications
+ * until <code>resumeForwardingDocumentChanges</code> is called. On
+ * <code>resumeForwardingDocumentChanges</code>, it sends out one styled text
+ * content change notification that covers all changes that have been applied to
+ * the document since calling <code>stopForwardingDocumentChanges</code>.
  * 
- * @since 2.0 
+ * @since 2.0
  */
 public interface IDocumentAdapterExtension {
 	

@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -16,8 +15,13 @@ import org.eclipse.jface.viewers.ISelection;
 
 
 /**
- * A mark selection. Can be returned by text viewers implementing the
- * <code>IMarkRegionTarget</code> interface.
+ * A mark selection. Is sent out by text viewers implementing the
+ * {@link org.eclipse.jface.text.IMarkRegionTarget} interface. By checking the
+ * type of the selection selection listeners can determine whether a selection
+ * event is about a mark or a normal text selection.
+ * <p>
+ * This interface is not intended to be implemented by clients others than
+ * {@link org.eclipse.jface.text.ITextViewer} implementers.
  * 
  * @since 2.0
  */

@@ -13,23 +13,37 @@ package org.eclipse.jface.text;
 
  
 /**
- * A widget token must be aquired in order to display
- * information in a temporary window.  The intent behind this concept is that
- * only one temporary window should be presented at any moment in time and
- * also to avoid overlapping temporary windows.
+ * In order to display information in a temporary window, a widget token must be
+ * acquired. The intent behind this concept is that only one temporary window
+ * should be presented at any moment in time and also to avoid overlapping
+ * temporary windows. This concept is utilized by the
+ * {@link org.eclipse.jface.text.ITextViewer}.
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>IWidgetTokenOwner</code>, extension interfaces are used as a means
+ * of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.IWidgetTokenOwnerExtension} since version
+ * 3.0 introducing priorities when requesting a widget token and thus replacing
+ * the unprioritized scheme.</li>
+ * </ul>
  * 
+ * @see org.eclipse.jface.text.IWidgetTokenOwnerExtension
  * @since 2.0
  */ 
 public interface IWidgetTokenOwner {
 	
 	/**
-	 * Requests the widget token from this token owner. Returns 
-	 * <code>true</code> if the token has been aquired or is
-	 * already owned by the requester. This method is non-blocking.
+	 * Requests the widget token from this token owner. Returns
+	 * <code>true</code> if the token has been acquired or is already owned by
+	 * the requester. This method is non-blocking.
+	 * <p>
+	 * Replaced by
+	 * {@link IWidgetTokenOwnerExtension#requestWidgetToken(IWidgetTokenKeeper, int)}.
 	 * 
 	 * @param requester the token requester
-	 * @return <code>true</code> if requester aquires the token,
-	 * 	<code>false</code> otherwise
+	 * @return <code>true</code> if requester acquires the token,
+	 *         <code>false</code> otherwise
 	 */
 	boolean requestWidgetToken(IWidgetTokenKeeper requester);
 	

@@ -11,14 +11,12 @@
 package org.eclipse.jface.text;
 
 
-
-
 /**
- * Standard implementation of <code>ITextSelection</code>.
- * Makes advantage of the weak contract of correctness of its
- * interface. If generated from a selection provider, it only
- * remembers its offset and length and computes the remaining
- * information on request.
+ * Standard implementation of {@link org.eclipse.jface.text.ITextSelection}.
+ * <p>
+ * Makes advantage of the weak contract of correctness of its interface. If
+ * generated from a selection provider, it only remembers its offset and length
+ * and computes the remaining information on request.
  */
 public class TextSelection implements ITextSelection {
 	
@@ -91,21 +89,21 @@ public class TextSelection implements ITextSelection {
 	}
 	
 	/*
-	 * @see ITextSelection#getOffset()
+	 * @see org.eclipse.jface.text.ITextSelection#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
 	
 	/*
-	 * @see ITextSelection#getLength()
+	 * @see org.eclipse.jface.text.ITextSelection#getLength()
 	 */
 	public int getLength() {
 		return fLength;
 	}
 	
 	/*
-	 * @see ITextSelection#getStartLine()
+	 * @see org.eclipse.jface.text.ITextSelection#getStartLine()
 	 */
 	public int getStartLine() {
 		
@@ -119,7 +117,7 @@ public class TextSelection implements ITextSelection {
 	}
 	
 	/*
-	 * @see ITextSelection#getEndLine()
+	 * @see org.eclipse.jface.text.ITextSelection#getEndLine()
 	 */
 	public int getEndLine() {
 		try {
@@ -136,7 +134,7 @@ public class TextSelection implements ITextSelection {
 	}
 	
 	/*
-	 * @see ITextSelection#getText()
+	 * @see org.eclipse.jface.text.ITextSelection#getText()
 	 */
 	public String getText() {
 		try {

@@ -13,20 +13,21 @@ package org.eclipse.jface.text;
 
 
 /**
- * Registered with a text viewer, viewport listeners are
- * informed about changes of a text viewer's viewport. The view port is that 
- * portion of the viewer's document which is visible in the viewer. <p>
+ * Registered with a text viewer, view port listeners are informed about changes
+ * of a text viewer's view port. The view port is that portion of the viewer's
+ * document which is visible in the viewer.
+ * <p>
  * Clients may implement this interface.
- *
- * @see org.eclipse.jface.text.ITextViewer 
+ * 
+ * @see org.eclipse.jface.text.ITextViewer
  */
 public interface IViewportListener {
 	
 	/**
-	 * Informs about viewport changes. The given vertical position
-	 * is the new vertical scrolling offset measured in pixels.
+	 * Informs about view port changes. The given vertical position is the new
+	 * vertical scrolling offset measured in pixels.
 	 * 
-	 * @param verticalOffset the vertical offset
+	 * @param verticalOffset the vertical offset measured in pixels
 	 */
 	void viewportChanged(int verticalOffset);
 }

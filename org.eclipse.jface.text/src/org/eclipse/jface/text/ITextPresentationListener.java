@@ -8,27 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
+
 /**
- * Text presentation listeners registered with a text viewer are informed 
- * when a text region is about to be drawn in order to get the text
- * presentation information.
+ * Text presentation listeners registered with an
+ * {@link org.eclipse.jface.text.ITextViewer} are informed when a
+ * {@link org.eclipse.jface.text.TextPresentation} is about to be applied to the
+ * text viewer. The listener can apply changed to the text presentation and thus
+ * participate in the process of text presentation creation.
  * 
  * @since 3.0
  */
 public interface ITextPresentationListener {
 	
 	/**
-	 * This method is called when a region is about to be
-	 * drawn in order to get the text presentation information.
-	 * Even though the given text presentation may cover a wider
-	 * region than the given one clients should not modify text
-	 * presentation outside the given region since this might be
-	 * ignored.
-	 *
-	 * @param textPresentation the current text presentation	
+	 * This method is called when a text presentation is about to be applied to
+	 * the text viewer. The receiver is allowed to change the text presentation
+	 * during that call.
+	 * 
+	 * @param textPresentation the current text presentation
 	 */
 	public void applyTextPresentation(TextPresentation textPresentation);
 }

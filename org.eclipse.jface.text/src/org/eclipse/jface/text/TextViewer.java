@@ -65,21 +65,26 @@ import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 /**
- * SWT based implementation of <code>ITextViewer</code>. Once the viewer and its SWT control
- * have been created the viewer can only indirectly be disposed by disposing its SWT control.<p>
- * Clients are supposed to instantiate a text viewer and subsequently to communicate with it 
- * exclusively using the <code>ITextViewer</code> interface or any of the implemented extension
- * interfaces. <p>
- * A text viewer serves as text operation target. It only partially supports the external control of
- * the enable state of its text operations. A text viewer is also a widget token owner. Anything that
- * wants to display an overlay window on top of a text viewer should implement the 
- * <code>IWidgetTokenKeeper</code> interface and participate in the widget token negotiation between
- * the text viewer and all its potential widget token keepers.<p>
- * Clients should not subclass this class as it is rather likely that subclasses will be broken by
- * future releases.
- * 
- * @see ITextViewer
- */  
+ * SWT based implementation of {@link ITextViewer} and its extension interfaces.
+ * Once the viewer and its SWT control have been created the viewer can only
+ * indirectly be disposed by disposing its SWT control.
+ * <p>
+ * Clients are supposed to instantiate a text viewer and subsequently to
+ * communicate with it exclusively using the
+ * {@link org.eclipse.jface.text.ITextViewer} interface or any of the
+ * implemented extension interfaces.
+ * <p>
+ * A text viewer serves as text operation target. It only partially supports the
+ * external control of the enable state of its text operations. A text viewer is
+ * also a widget token owner. Anything that wants to display an overlay window
+ * on top of a text viewer should implement the
+ * {@link org.eclipse.jface.text.IWidgetTokenKeeper} interface and participate
+ * in the widget token negotiation between the text viewer and all its potential
+ * widget token keepers.
+ * <p>
+ * Clients should not subclass this class as it is rather likely that subclasses
+ * will be broken by future releases.
+ */
 public class TextViewer extends Viewer implements
 					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4,
 					ITextOperationTarget, ITextOperationTargetExtension,
@@ -90,16 +95,21 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Represents a replace command that brings the text viewer's text widget
-	 * back in sync with text viewer's document after the document has been changed.
+	 * back in synchronization with text viewer's document after the document
+	 * has been changed.
 	 */
 	protected class WidgetCommand {
 		
 		/** The document event encapsulated by this command. */
 		public DocumentEvent event;
-		/** The start and length fields of <code>event</code>. */
-		public int start, length;
+		/** The start of the event. */
+		public int start;
+		/** The length of the event. */
+		public int length;
 		/** The inserted and replaced text segments of <code>event</code>. */ 
-		public String text, preservedText;
+		public String text;
+		/** The replaced text segments of <code>event</code>. */ 
+		public String preservedText;
 				
 		/**
 		 * Translates a document event into the presentation coordinates of this text viewer.
@@ -146,6 +156,9 @@ public class TextViewer extends Viewer implements
 		/** Internal flag to remember that a double clicked occurred. */
 		private boolean fDoubleClicked= false;
 		
+		/**
+		 * Creates a new text double click strategy adapter.
+		 */
 		public TextDoubleClickStrategyConnector() {
 		}
 				
@@ -1326,6 +1339,8 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Factory method to create the text widget to be used as the viewer's text widget.
 	 * 
+	 * @param parent the parent of the styled text
+	 * @param styles the styles for the styled text
 	 * @return the text widget to be used
 	 */
 	protected StyledText createTextWidget(Composite parent, int styles) {
@@ -1533,6 +1548,8 @@ public class TextViewer extends Viewer implements
 			
 	/**
 	 * Returns viewer's text widget.
+	 * 
+	 * @return the viewer's text widget
 	 */
 	public StyledText getTextWidget() {
 		return fTextWidget;
@@ -1556,7 +1573,7 @@ public class TextViewer extends Viewer implements
 	}
 			
 	/*
-	 * @see ITextViewer#setAutoIndentStrategy(IAutoIndentStrategy, String)
+	 * @see org.eclipse.jface.text.ITextViewer#setAutoIndentStrategy(org.eclipse.jface.text.IAutoIndentStrategy, java.lang.String)
 	 */
 	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
 
@@ -3168,11 +3185,12 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Selects from the given <code>plug-ins</code> this one which is registered for
-	 * the given content <code>type</code>.
+	 * Selects from the given <code>plug-ins</code> this one which is
+	 * registered for the given content <code>type</code>.
 	 * 
 	 * @param type the type to be used as lookup key
 	 * @param plugins the table to be searched
+	 * @return the plug-in in the map for the given content type
 	 */
 	private Object selectContentTypePlugin(String type, Map plugins) {
 		
@@ -3220,7 +3238,10 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
+	 * Handles the verify event issued by the viewer's text widget.
+	 * 
 	 * @see VerifyListener#verifyText(VerifyEvent)
+	 * @param e the verify event
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 				
@@ -3652,7 +3673,7 @@ public class TextViewer extends Viewer implements
 			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength(), false);
 
 			int lineCount= 0;			
-			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
+			int[] lines= new int[regions.length * 2]; // [start line, end line, start line, end line, ...]
 			for (int i= 0, j= 0; i < regions.length; i++, j+= 2) {
 				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i]);
@@ -3748,10 +3769,10 @@ public class TextViewer extends Viewer implements
 	 * left it tests whether each of the specified lines starts with one of the specified 
 	 * prefixes and if so, removes the prefix.
 	 *
-	 * @param prefixes the prefixes to be used for shifting
-	 * @param right if <code>true</code> shift to the right otherwise to the left
 	 * @param startLine the first line to shift
 	 * @param endLine the last line to shift
+	 * @param prefixes the prefixes to be used for shifting
+	 * @param ignoreWhitespace <code>true</code> if whitespace should be ignored, <code>false</code> otherwise
 	 * @since 2.0
 	 */
 	private void shiftLeft(int startLine, int endLine, String[] prefixes, boolean ignoreWhitespace) {
@@ -3794,7 +3815,7 @@ public class TextViewer extends Viewer implements
 				}
 			}
 			
-			// ok - change the document
+			// OK - change the document
 			int decrement= 0;
 			for (int i= 0; i < occurrences.length; i++) {
 				IRegion r= occurrences[i];
@@ -3850,7 +3871,9 @@ public class TextViewer extends Viewer implements
 	//------ find support
 	
 	/**
-	 * @see IFindReplaceTarget#canPerformFind
+	 * Adheres to the contract of {@link IFindReplaceTarget#canPerformFind()}.
+	 * 
+	 * @return <code>true</code> if find can be performed, <code>false</code> otherwise
 	 */
 	protected boolean canPerformFind() {
 		IDocument d= getVisibleDocument();
@@ -3858,7 +3881,14 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
+	 * Adheres to the contract of {@link IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)}.
+	 * 
+	 * @param startPosition the start position
+	 * @param findString the find string specification
+	 * @param forwardSearch the search direction
+	 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise
+	 * @param wholeWord <code>true</code> if match must be whole words, <code>false</code> otherwise
+	 * @return the widget offset of the first match
 	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)}
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
@@ -3872,7 +3902,17 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * Adheres to the contract of
+	 * {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
+	 * 
+	 * @param startPosition the start position
+	 * @param findString the find string specification
+	 * @param forwardSearch the search direction
+	 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise
+	 * @param wholeWord <code>true</code> if matches must be whole words, <code>false</code> otherwise
+	 * @param regExSearch <code>true</code> if <code>findString</code> is a regular expression, <code>false</code> otherwise
+	 * @return the widget offset of the first match
+	 *  
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTextWidget == null)
@@ -3905,7 +3945,17 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * Adheres to the contract of {@link IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)}.
+	 * 
+	 * @param startPosition the start position
+	 * @param findString the find string specification
+	 * @param forwardSearch the search direction
+	 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise
+	 * @param wholeWord <code>true</code> if matches must be whole words, <code>false</code> otherwise
+	 * @param rangeOffset the search scope offset
+	 * @param rangeLength the search scope length
+	 * @param regExSearch <code>true</code> if <code>findString</code> is a regular expression, <code>false</code> otherwise
+	 * @return the widget offset of the first match
 	 * @since 3.0
 	 */
 	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
@@ -4526,8 +4576,11 @@ public class TextViewer extends Viewer implements
 
 	// ----------------------------------- conversions -------------------------------------------------------			
 		
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelLine2WidgetLine(int)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#modelLine2WidgetLine(int)}.
+	 * 
+	 * @param modelLine the model line
+	 * @return the corresponding widget line or <code>-1</code>
 	 * @since 2.1
 	 */
 	public int modelLine2WidgetLine(int modelLine) {
@@ -4542,8 +4595,11 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelOffset2WidgetOffset(int)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#modelOffset2WidgetOffset(int)}.
+	 * 
+	 * @param modelOffset the model offset
+	 * @return the corresponding widget offset or <code>-1</code>
 	 * @since 2.1
 	 */
 	public int modelOffset2WidgetOffset(int modelOffset) {
@@ -4558,8 +4614,11 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#modelRange2WidgetRange(org.eclipse.jface.text.IRegion)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#modelRange2WidgetRange(IRegion)}.
+	 * 
+	 * @param modelRange the model range
+	 * @return the corresponding widget range or <code>null</code>
 	 * @since 2.1
 	 */
 	public IRegion modelRange2WidgetRange(IRegion modelRange) {
@@ -4582,8 +4641,11 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetlLine2ModelLine(int)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#widgetLine2ModelLine(int)}.
+	 * 
+	 * @param widgetLine the widget line
+	 * @return the corresponding model line
 	 * @since 2.1
 	 */
 	public int widgetlLine2ModelLine(int widgetLine) {
@@ -4591,7 +4653,10 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * @see ITextViewerExtension5#widgetLine2ModelLine(int)
+	 * Implements the contract of {@link ITextViewerExtension5#widgetLine2ModelLine(int)}.
+	 * 
+	 * @param widgetLine the widget line
+	 * @return the corresponding model line or <code>-1</code>
 	 * @since 3.0
 	 */
 	public int widgetLine2ModelLine(int widgetLine) {
@@ -4606,8 +4671,11 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetOffset2ModelOffset(int)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#widgetOffset2ModelOffset(int)}.
+	 * 
+	 * @param widgetOffset the widget offset
+	 * @return the corresponding model offset or <code>-1</code>
 	 * @since 2.1
 	 */
 	public int widgetOffset2ModelOffset(int widgetOffset) {
@@ -4626,8 +4694,11 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetRange2ModelRange(org.eclipse.jface.text.IRegion)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#widgetRange2ModelRange(IRegion)}.
+	 * 
+	 * @param widgetRange the widget range
+	 * @return the corresponding model range or <code>null</code>
 	 * @since 2.1
 	 */
 	public IRegion widgetRange2ModelRange(IRegion widgetRange) {
@@ -4656,8 +4727,10 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#getModelCoverage()
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#getModelCoverage()}.
+	 * 
+	 * @return the model coverage
 	 * @since 2.1
 	 */
 	public IRegion getModelCoverage() {
@@ -4673,10 +4746,10 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Returns the line of the widget whose corresponding line in the viewer's document
-	 * is closest to the given line in the viewer's document.
+	 * is closest to the given line in the viewer's document or <code>-1</code>.
 	 * 
 	 * @param modelLine the line in the viewer's document
-	 * @return the line in the widget that corresponds best to the given line in the viewer's document
+	 * @return the line in the widget that corresponds best to the given line in the viewer's document or <code>-1</code>
 	 * @since 2.1
 	 */
 	protected int getClosestWidgetLineForModelLine(int modelLine) {
@@ -4693,10 +4766,10 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Translates a style range given relative to the viewer's document into style
-	 * ranges relative to the viewer's widget.
+	 * ranges relative to the viewer's widget or <code>null</code>.
 	 * 
 	 * @param range the style range in the coordinates of the viewer's document
-	 * @return the style range in the coordinates of the viewer's widget
+	 * @return the style range in the coordinates of the viewer's widget or <code>null</code>
 	 * @since 2.1
 	 */
 	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
@@ -4711,7 +4784,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * @see #modelRange2WidgetRange(IRegion)
+	 * Same as {@link #modelRange2WidgetRange(IRegion)} just for a {@link Position}.
 	 * 
 	 * @param modelPosition the position describing a range in the viewer's document
 	 * @return a region describing a range in the viewer's widget
@@ -4742,10 +4815,10 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Translates the given widget selection into the corresponding region
-	 * of the viewer's document.
+	 * of the viewer's document or returns <code>null</code> if this fails.
 	 * 
 	 * @param widgetSelection the widget selection
-	 * @return the region of the viewer's document corresponding to the widget selection
+	 * @return the region of the viewer's document corresponding to the widget selection or <code>null</code>
 	 * @since 2.1
 	 */
 	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
@@ -4756,10 +4829,10 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Translates the given selection range of the viewer's document into
-	 * the corresponding widget range.
+	 * the corresponding widget range or returns <code>null</code> of this fails.
 	 * 
 	 * @param modelSelection the selection range of the viewer's document
-	 * @return the widget range corresponding to the selection range
+	 * @return the widget range corresponding to the selection range or <code>null</code>
 	 * @since 2.1
 	 */
 	protected Point modelSelection2WidgetSelection(Point modelSelection) {
@@ -4776,8 +4849,12 @@ public class TextViewer extends Viewer implements
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetLineOfWidgetOffset(int)
+	/**
+	 * Implements the contract of {@link ITextViewerExtension5#widgetLineOfWidgetOffset(int)}.
+	 * 
+	 * @param widgetOffset the widget offset
+	 * @return  the corresponding widget line or <code>-1</code>
+	 * @since 2.1
 	 */
 	public int widgetLineOfWidgetOffset(int widgetOffset) {
 		IDocument document= getVisibleDocument();

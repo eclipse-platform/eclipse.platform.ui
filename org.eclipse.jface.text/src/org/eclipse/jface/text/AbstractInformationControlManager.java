@@ -24,15 +24,17 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 
 /**
- * Manages the life cycle, visibility, layout, and contents of an <code>IInformationControl</code>.
- * This manager can be installed on and uninstalled from a control, refered to as the subject control, i.e.
- * the one from which the subject of the information to be shown is retrieved. Also a manager can 
- * be enabled or disabled. An installed and enabled manager can be forced to show information in 
- * its information control using <code>showInformation</code>.  An information control
- * manager uses an <code>IInformationControlCloser</code> to define the behavior when
- * a presented information control must be closed. The disposal of the subject and the information
- * control are internally handled by the information control manager and are not the responsibility
- * of the information control closer.
+ * Manages the life cycle, visibility, layout, and contents of an
+ * {@link org.eclipse.jface.text.IInformationControl}. This manager can be
+ * installed on and removed from a control, referred to as the subject control,
+ * i.e. the one from which the subject of the information to be shown is
+ * retrieved. Also a manager can be enabled or disabled. An installed and
+ * enabled manager can be forced to show information in its information control
+ * using <code>showInformation</code>. An information control manager uses an
+ * <code>IInformationControlCloser</code> to define the behavior when a
+ * presented information control must be closed. The disposal of the subject and
+ * the information control are internally handled by the information control
+ * manager and are not the responsibility of the information control closer.
  * 
  * @see org.eclipse.jface.text.IInformationControl
  * @since 2.0
@@ -40,10 +42,11 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 abstract public class AbstractInformationControlManager {
 	
 	/**
-	 * Interface of a information control closer. An information control closer
-	 * monitors its information control and its subject control and closes
-	 * the information control if necessary. <p>
-	 * Clients must implement this interface in order to equipe an information
+	 * Interface of an information control closer. An information control closer
+	 * monitors its information control and its subject control and closes the
+	 * information control if necessary.
+	 * <p>
+	 * Clients must implement this interface in order to equip an information
 	 * control manager accordingly.
 	 */
 	public static interface IInformationControlCloser {
@@ -162,19 +165,19 @@ abstract public class AbstractInformationControlManager {
 	/** Cached, computed size constraints of the information control in points */
 	private Point fSizeConstraints;
 	
-	/** The y margin when laying out the information control */
+	/** The vertical margin when laying out the information control */
 	private int fMarginY= 5;
 	
-	/** The x margin when laying out the information control */
+	/** The horizontal margin when laying out the information control */
 	private int fMarginX= 5;
 	
-	/** The width contraint of the information control in characters */
+	/** The width constraint of the information control in characters */
 	private int fWidthConstraint= 60;
 	
 	/** The height constraint of the information control  in characters */
 	private int fHeightConstraint= 6;
 	
-	/** Indicates wether the size constraints should be enforced as minimal control size */
+	/** Indicates whether the size constraints should be enforced as minimal control size */
 	private boolean fEnforceAsMinimalSize= false;
 	
 	/** Indicates whether the size constraints should be enforced as maximal control size */
@@ -203,7 +206,6 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * The dialog settings for the control's bounds.
-	 * 
 	 * @since 3.0
 	 */
 	private IDialogSettings fDialogSettings;
@@ -232,14 +234,14 @@ abstract public class AbstractInformationControlManager {
 	 * By default the following configuration is given:
 	 * <ul>
 	 * <li> enabled == false
-	 * <li> x-margin == 5 points
-	 * <li> y-margin == 5 points
+	 * <li> horizontal margin == 5 points
+	 * <li> vertical margin == 5 points
 	 * <li> width constraint == 60 characters
 	 * <li> height constraint == 6 characters
 	 * <li> enforce constraints as minimal size == false
 	 * <li> enforce constraints as maximal size == false
 	 * <li> layout anchor == ANCHOR_BOTTOM
-	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT, ANCHOR_GLOBAL }
+	 * <li> fall back anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT, ANCHOR_GLOBAL }
 	 * <li> takes focus when visible == false
 	 * </ul>
 	 *
@@ -298,7 +300,7 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Sets the x- and y- margin to be used when laying out the information control
+	 * Sets the horizontal and vertical margin to be used when laying out the information control
 	 * relative to the subject control.
 	 * 
 	 * @param xMargin the x-margin
@@ -714,7 +716,7 @@ abstract public class AbstractInformationControlManager {
 	 * Computes the location of the information control depending on the 
 	 * subject area and the size of the information control. This method attempts
 	 * to find a location at which the information control lies completely in the display's
-	 * client area honoring the manager's default anchor. If this isn't possible using the
+	 * client area while honoring the manager's default anchor. If this isn't possible using the
 	 * default anchor, the fallback anchors are tried out.
 	 * 
 	 * @param subjectArea the information area

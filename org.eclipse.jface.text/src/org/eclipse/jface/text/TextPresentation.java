@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -21,16 +20,17 @@ import org.eclipse.swt.custom.StyledText;
 
  
 /**
- * Describes the presentation styles for a section of an indexed text 
- * such as a document or string. A text presentation defines a default style
- * for the whole section and in addition style differences for individual 
- * subsections. Text presentations can be narrowed down to a particular
- * result window. All methods are result window aware, i.e. ranges outside
- * the result window are always ignored.<p>
- * All iterators provided by a text presentation assume that they enumerate
- * non overlapping, consecutive ranges inside the default range. Thus, all
- * these iterators do not include the default range. The default style range
- * must be explicitly asked for using <code>getDefaultStyleRange</code>.
+ * Describes the presentation styles for a section of an indexed text such as a
+ * document or string. A text presentation defines a default style for the whole
+ * section and in addition style differences for individual subsections. Text
+ * presentations can be narrowed down to a particular result window. All methods
+ * are result window aware, i.e. ranges outside the result window are always
+ * ignored.
+ * <p>
+ * All iterators provided by a text presentation assume that they enumerate non
+ * overlapping, consecutive ranges inside the default range. Thus, all these
+ * iterators do not include the default range. The default style range must be
+ * explicitly asked for using <code>getDefaultStyleRange</code>.
  */
 public class TextPresentation {
 	
@@ -452,7 +452,7 @@ public class TextPresentation {
 	 * default style range.
 	 *
 	 * @param range the range to be checked
-	 * @exception IllegalArgumentAxception if range is not a subrange of the presentation's default range
+	 * @exception IllegalArgumentException if range is not a subrange of the presentation's default range
 	 */
 	private void checkConsistency(StyleRange range) {
 		

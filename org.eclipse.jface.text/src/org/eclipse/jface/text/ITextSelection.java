@@ -16,22 +16,27 @@ import org.eclipse.jface.viewers.ISelection;
 
 
 /**
- * This interface represents a textual selection. A text selection is
- * a range of characters. Although a text selection is a snapshot taken
- * at a particular point in time, it must not copy the line information
- * and the selected text from the selection provider.<p>
- * If, for example, the selection provider is a source viewer, and a text 
- * selection is created for the range [5, 10], the line formation for 
- * the 5th character must not be determined and remembered at the point 
- * of creation. It can  rather be determined at the point, when 
- * <code>getStartLine</code> is called. If the source viewer range [0, 15] 
- * has been changed in the meantime between the creation of the text 
- * selection object and the invocation of <code>getStartLine</code>, the returned
- * line number may differ from the line number of the 5th character at the
- * point of creation of the text selection object.<p> The contract of this
- * interface is that weak in order to allow for efficient implementations.<p>
- * Clients may implement this interface or use the default implementation provided
- * by <code>TextSelection</code>.
+ * This interface represents a textual selection. A text selection is a range of
+ * characters. Although a text selection is a snapshot taken at a particular
+ * point in time, it must not copy the line information and the selected text
+ * from the selection provider.
+ * <p>
+ * If, for example, the selection provider is a text viewer (
+ * {@link org.eclipse.jface.text.ITextViewer}), and a text selection is created
+ * for the range [5, 10], the line formation for the 5th character must not be
+ * determined and remembered at the point of creation. It can rather be
+ * determined at the point, when <code>getStartLine</code> is called. If the
+ * source viewer range [0, 15] has been changed in the meantime between the
+ * creation of the text selection object and the invocation of
+ * <code>getStartLine</code>, the returned line number may differ from the
+ * line number of the 5th character at the point of creation of the text
+ * selection object.
+ * <p>
+ * The contract of this interface is that weak in order to allow for efficient
+ * implementations.
+ * <p>
+ * Clients may implement this interface or use the default implementation
+ * provided by {@link org.eclipse.jface.text.TextSelection}.
  * 
  * @see org.eclipse.jface.text.TextSelection
  */
@@ -57,7 +62,7 @@ public interface ITextSelection extends ISelection {
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
-	 * @return the start line of this selection or -1 if there is no valid line information
+	 * @return the start line of this selection or <code>-1</code> if there is no valid line information
 	 */
 	int getStartLine();
 	
@@ -67,7 +72,7 @@ public interface ITextSelection extends ISelection {
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
-	 * @return the end line of this selection or -1 if there is no valid line information
+	 * @return the end line of this selection or <code>-1</code> if there is no valid line information
 	 */
 	int getEndLine();
 	

@@ -13,13 +13,15 @@ package org.eclipse.jface.text;
 
 
 /**
- * An undo manager is connected to at most one text viewer.
- * It monitors the text viewer and keeps a history of the 
- * changes applied to the viewer. The undo manager groups those
- * changes into user interactions which on an undo request are 
- * rolled back in one atomic change. <p>
- * Clients may implement this interface or use the standard
- * implementation <code>DefaultUndoManager</code>.
+ * An undo manager is connected to at most one
+ * {@link org.eclipse.jface.text.ITextViewer}.
+ * <p>
+ * It monitors the text viewer and keeps a history of the changes applied to the
+ * viewer. The undo manager groups those changes into user interactions which on
+ * an undo request are rolled back in one atomic change.
+ * <p>
+ * Clients may implement this interface or use the standard implementation
+ * <code>DefaultUndoManager</code>.
  * 
  * @see org.eclipse.jface.text.DefaultUndoManager
  */
@@ -48,13 +50,13 @@ public interface IUndoManager {
 	/**
 	 * Signals the undo manager that the sequence of changes which started with 
 	 * <code>beginCompoundChange</code> has been finished. All subsequent changes
-	 * are considered to be individually undoable.
+	 * are considered to be individually undo-able.
 	 */
 	void endCompoundChange();
 	
 	/**
 	 * Resets the history of the undo manager. After that call,
-	 * there aren't any undoable or redoable text changes.
+	 * there aren't any undo-able or redo-able text changes.
 	 */
 	void reset();
 	

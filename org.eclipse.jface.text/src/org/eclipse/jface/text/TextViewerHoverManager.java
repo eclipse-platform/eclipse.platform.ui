@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -63,7 +62,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	private MouseMoveListener fMouseMoveListener;
 	/**
-	 * Internal viewport listener.
+	 * Internal view port listener.
 	 * @since 3.0
 	 */
 	private IViewportListener fViewportListener;
@@ -204,7 +203,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	/**
 	 * As computation is done in the background, this method is
 	 * also called in the background thread. Delegates the control
-	 * flow back into the ui thread, in order to allow displaying the
+	 * flow back into the UI thread, in order to allow displaying the
 	 * information in the information control.
 	 */
 	protected void presentInformation() {
@@ -236,10 +235,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * Computes the document offset underlying the given text widget coordinates.
 	 * This method uses a linear search as it cannot make any assumption about
 	 * how the document is actually presented in the widget. (Covers cases such
-	 * as bidi text.)
+	 * as bidirectional text.)
 	 *
-	 * @param x the x coordinate inside the text widget
-	 * @param y the y coordinate inside the text widget
+	 * @param x the horizontal coordinate inside the text widget
+	 * @param y the vertical coordinate inside the text widget
 	 * @return the document offset corresponding to the given point
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
@@ -326,7 +325,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/*
-	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
@@ -334,7 +333,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 
 	/*
-	 * @see AbstractInformationControlManager#hideInformationControl()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 */
 	protected void hideInformationControl() {
 		try {
@@ -347,7 +346,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 
 	/*
-	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#handleInformationControlDisposed()
 	 */
 	protected void handleInformationControlDisposed() {
 		try {
@@ -359,7 +358,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/*
-	 * @see IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		fTextHover= null;

@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -17,8 +16,10 @@ import org.eclipse.swt.graphics.Color;
 
 
 /**
- * Description of textual attributes such as color and style.
- * Text attributes are considered value objects.
+ * Description of textual attributes such as color and style. Text attributes
+ * are considered value objects.
+ * <p>
+ * Clients usually instantiate object of the class.
  */
 public class TextAttribute {
 	

@@ -11,8 +11,10 @@
 package org.eclipse.jface.text;
 
 /**
- * Extension to <code>ITextHover</code> for providing its own information
- * control creator.
+ * Extension interface for {@link org.eclipse.jface.text.ITextHover}.
+ * <p>
+ * It provides a way for hovers to specify the information control creator they
+ * want to have used in order to create the hover control.
  * 
  * @see org.eclipse.jface.text.IInformationControlCreator
  * @see org.eclipse.jface.text.ITextHover
@@ -21,9 +23,9 @@ package org.eclipse.jface.text;
 public interface ITextHoverExtension {
 
 	/**
-	 * Returns the hover control creator of this text hover.
+	 * Returns the hover control creator of this text hover or <code>null</code>
 	 * 
-	 * @return the hover control creator
+	 * @return the hover control creator or <code>null</code>
 	 */
 	IInformationControlCreator getHoverControlCreator();
 }

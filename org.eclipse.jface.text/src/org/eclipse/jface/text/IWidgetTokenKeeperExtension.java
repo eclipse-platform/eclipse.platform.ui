@@ -11,9 +11,10 @@
 package org.eclipse.jface.text;
 
 /**
- * Extension interface to <code>IWidgetTokenKeeper</code>. Replaces the original
- * <code>requestWidgetToken</code> functionality with a new priority based approach.
- * Adds the concept of focus handling.
+ * Extension interface for {@link org.eclipse.jface.text.IWidgetTokenKeeper}.
+ * <p>
+ * Replaces the original <code>requestWidgetToken</code> functionality with a
+ * new priority based approach. Adds the concept of focus handling.
  * 
  * @since 3.0
  */

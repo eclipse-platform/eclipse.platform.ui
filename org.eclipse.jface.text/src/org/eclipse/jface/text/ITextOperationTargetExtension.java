@@ -13,8 +13,10 @@ package org.eclipse.jface.text;
 
  
 /**
- * Extension interface to <code>ITextOperationTarget</code>. Allows a client to control
- * the enable state of operations provided by this target.
+ * Extension interface for {@link org.eclipse.jface.text.ITextOperationTarget}.
+ * <p>
+ * Allows a client to control the enable state of operations provided by this
+ * target.
  * 
  * @see org.eclipse.jface.text.ITextOperationTarget
  * @since 2.0

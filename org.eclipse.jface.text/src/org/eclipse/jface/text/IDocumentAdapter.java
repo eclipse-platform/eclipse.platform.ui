@@ -11,20 +11,30 @@
 package org.eclipse.jface.text;
 
 
-
 import org.eclipse.swt.custom.StyledTextContent;
 
 
 /**
- * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
- * The document adapter is used by <code>TextViewer</code> to translate document changes
- * into styled text content changes and vice versa.
- * Clients may implement this interface and override <code>TextViewer.createDocumentAdapter</code>
- * if they want to intercept the communication between the viewer's text widget and
- * the viewer's document.
+ * Adapts an {@link org.eclipse.jface.text.IDocument}to the
+ * {@link org.eclipse.swt.custom.StyledTextContent} interface. The document
+ * adapter is used by {@link org.eclipse.jface.text.TextViewer} to translate
+ * document changes into styled text content changes and vice versa.
+ * <p>
+ * Clients may implement this interface and override
+ * <code>TextViewer.createDocumentAdapter</code> if they want to intercept the
+ * communication between the viewer's text widget and the viewer's document.
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>IDocumentAdapter</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.IDocumentAdapterExtension} since version
+ *     2.0 introducing a way of batching a sequence of document changes into a
+ *     single styled text content notification</li>
+ * </ul>
  * 
- * @see IDocument
- * @see StyledTextContent
+ * @see org.eclipse.jface.text.IDocumentAdapterExtension
+ * @see org.eclipse.jface.text.IDocument
  */
 public interface IDocumentAdapter extends StyledTextContent {
 	

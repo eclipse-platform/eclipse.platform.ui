@@ -13,21 +13,35 @@ package org.eclipse.jface.text;
 
 
 /**
- * Provides a hover popup which appears on top of the text viewer with
- * relevant display information. If the text hover does not provide information
- * no hover popup is shown. Any implementer of this interface must be capable of
- * operating in a non-UI thread.<p>
+ * Computes the information to be shown in a hover popup which appears on top of
+ * the text viewer's text widget when a hover event occurs. If the text hover
+ * does not provide information no hover popup is shown. Any implementer of this
+ * interface must be capable of operating in a non-UI thread.
+ * <p>
+ * 
+ * In order to provide backward compatibility for clients of
+ * <code>ITextHover</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.ITextHoverExtension} since version 3.0
+ *     allowing a text hover to provide a creator for the hover control. This allows
+ *     for sophisticated hovers in a way that information computed by the hover can
+ *     be displayed in the best possible form.</li>
+ * </ul>
+ * <p>
+ * 
  * Clients may implement this interface.
- *
+ * 
+ * @see org.eclipse.jface.text.ITextHoverExtension
  * @see org.eclipse.jface.text.ITextViewer
  */
 public interface ITextHover {
 	
 	/**
-	 * Returns the text which should be presented if a hover popup is shown
+	 * Returns the information which should be presented when a hover popup is shown
 	 * for the specified hover region. The hover region has the same semantics
 	 * as the region returned by <code>getHoverRegion</code>. If the returned
-	 * string is <code>null</code> or empty no hover popup will be shown.
+	 * information is <code>null</code> or empty no hover popup will be shown.
 	 * 
 	 * @param textViewer the viewer on which the hover popup should be shown
 	 * @param hoverRegion the text range in the viewer which is used to determine 

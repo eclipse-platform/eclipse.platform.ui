@@ -8,19 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
+
 
 import org.eclipse.jface.viewers.ISelection;
 
+
 /**
- * A selection validator allows clients to test
- * whether the selection they received during selection
- * changed notification is still valid.
+ * A selection validator allows clients to test whether the selection they
+ * received during selection changed notification is valid.
  * <p>
- * For example selection and document changes cause the
- * selection to be invalid.
+ * For example, selection and document changes that occur between the original
+ * selection and the point in time the validator is called cause the selection
+ * to be invalid.
  * </p>
+ * Clients may implement and use this interface.
  * 
  * @since 3.0
  */

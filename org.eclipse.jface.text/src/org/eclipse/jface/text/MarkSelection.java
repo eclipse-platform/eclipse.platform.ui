@@ -13,7 +13,8 @@ package org.eclipse.jface.text;
 
 
 /**
- * Default implementation of <code>IMarkSelection</code>.
+ * Default implementation of {@link org.eclipse.jface.text.IMarkSelection}.
+ * 
  * @since 2.0
  */
 public class MarkSelection implements IMarkSelection {
