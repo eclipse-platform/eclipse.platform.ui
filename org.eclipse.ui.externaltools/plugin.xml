@@ -330,20 +330,24 @@
       	</extraClasspathEntry>
     </extension>
     
-    <extension point="org.eclipse.debug.core.launchConfigurationTypes"
-    	id = "org.eclipse.ant.AntLaunchConfigurationType"
-    	name = "%AntScript.externalTools"
-    	delegate = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchDelegate"
-    	modes = "run"
-    	category = "org.eclipse.ui.externaltools">
+    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+	    <launchConfigurationType
+	    	id = "org.eclipse.ant.AntLaunchConfigurationType"
+    		name = "%AntScript.externalTools"
+    		delegate = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchDelegate"
+	    	modes = "run"
+    		category = "org.eclipse.ui.externaltools">
+    	</launchConfigurationType>
     </extension>
     
-    <extension point="org.eclipse.debug.core.launchConfigurationTypes"
-    	id = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
-    	name = "%Program.externalTools"
-    	delegate = "org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate"
-    	modes = "run"
-    	category = "org.eclipse.ui.externaltools">
+    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+    	<launchConfigurationType
+	    	id = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+    		name = "%Program.externalTools"
+    		delegate = "org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate"
+    		modes = "run"
+    		category = "org.eclipse.ui.externaltools">
+    	</launchConfigurationType>
     </extension>    
     
 	<extension point="org.eclipse.ui.preferencePages">
