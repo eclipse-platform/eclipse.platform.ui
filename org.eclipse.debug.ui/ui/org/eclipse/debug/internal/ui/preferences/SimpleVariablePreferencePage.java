@@ -36,6 +36,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -104,6 +106,10 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		return composite;
 	}
 	
+	/**
+	 * Creates and configures the table containing launch configuration variables
+	 * and their associated value.
+	 */
 	private void createTable(Composite parent) {
 		Font font= parent.getFont();
 		// Create table composite
@@ -138,6 +144,13 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		variableTable.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleEditButtonPressed();
+			}
+		});
+		variableTable.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					handleRemoveButtonPressed();
+				}
 			}
 		});
 				
