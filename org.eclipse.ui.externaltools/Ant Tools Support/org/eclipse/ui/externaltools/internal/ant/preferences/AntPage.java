@@ -43,7 +43,7 @@ public abstract class AntPage {
 			buttonPressed(((Integer) e.widget.getData()).intValue());
 		}
 	};
-	private AntPreferencePage preferencePage;
+	private AntRuntimePreferencePage preferencePage;
 	private TableViewer tableViewer;
 	private ExternalToolsContentProvider contentProvider;
 	
@@ -53,7 +53,7 @@ public abstract class AntPage {
 	/**
 	 * Creates an instance of this page.
 	 */
-	public AntPage(AntPreferencePage preferencePage) {
+	public AntPage(AntRuntimePreferencePage preferencePage) {
 		super();
 		this.preferencePage = preferencePage;
 	}
@@ -262,7 +262,7 @@ public abstract class AntPage {
 		return top;
 	}
 	
-	protected AntPreferencePage getPreferencePage() {
+	protected AntRuntimePreferencePage getPreferencePage() {
 		return preferencePage;
 	}
 	

@@ -90,7 +90,7 @@ public class AntClasspathPage extends AntPage {
 	/**
 	 * Creates an instance.
 	 */
-	public AntClasspathPage(AntPreferencePage preferencePage) {
+	public AntClasspathPage(AntRuntimePreferencePage preferencePage) {
 		super(preferencePage);
 		fDialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
 	}

@@ -43,7 +43,7 @@ public class AntTypesPage extends AntPage {
 	/**
 	 * Creates an instance.
 	 */
-	public AntTypesPage(AntPreferencePage preferencePage) {
+	public AntTypesPage(AntRuntimePreferencePage preferencePage) {
 		super(preferencePage);
 	}
 	

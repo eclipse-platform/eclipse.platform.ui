@@ -65,7 +65,7 @@ public class AntPropertiesPage extends AntPage {
 	/**
 	 * Creates an instance.
 	 */
-	public AntPropertiesPage(AntPreferencePage preferencePage) {
+	public AntPropertiesPage(AntRuntimePreferencePage preferencePage) {
 		super(preferencePage);
 		fDialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
 	}

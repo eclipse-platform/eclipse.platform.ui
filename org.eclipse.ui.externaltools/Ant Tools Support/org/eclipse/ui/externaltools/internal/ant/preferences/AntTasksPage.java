@@ -43,7 +43,7 @@ public class AntTasksPage extends AntPage {
 	/**
 	 * Creates an instance.
 	 */
-	public AntTasksPage(AntPreferencePage preferencePage) {
+	public AntTasksPage(AntRuntimePreferencePage preferencePage) {
 		super(preferencePage);
 	}
 	

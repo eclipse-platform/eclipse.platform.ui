@@ -87,8 +87,13 @@
 		<page 
 			id="org.eclipse.ui.externaltools.AntPreferencePage" 
 			name="%PreferencePage.antPreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencePage"
-			category="org.eclipse.ui.externaltools.ExternalToolsPreferencePage" >
+			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencePage">
+		</page>
+		<page 
+			id="org.eclipse.ui.externaltools.AntRuntimePreferencePage" 
+			name="%PreferencePage.antRuntimePreferences"
+			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntRuntimePreferencePage"
+			category="org.eclipse.ui.externaltools.AntPreferencePage">
 		</page>
 		<page 
 			id="org.eclipse.ui.externaltools.AntConsolePreferencePage" 
