@@ -20,6 +20,19 @@ import org.eclipse.swt.widgets.Composite;
  * normal state image.
  */
 public class ImageHyperlink extends Hyperlink {
+	/**
+	 * Aligns text with the top of the image (value is SWT.TOP)
+	 */
+	public static final int TOP = SWT.TOP;
+	/**
+	 * Aligns text with the bottom of the image (value is SWT.BOTTOM)
+	 */
+	public static final int BOTTOM = SWT.BOTTOM;
+	/**
+	 * Centers text vertically in respect to the image (value is SWT.BOTTOM
+	 * &lt;&lt; 1)
+	 */
+	public static final int MIDDLE = SWT.CENTER;
 	private Image image;
 	private Image hoverImage;
 	private Image activeImage;
@@ -36,7 +49,7 @@ public class ImageHyperlink extends Hyperlink {
 	 * @param parent
 	 *            the control parent
 	 * @param style
-	 *            the control style
+	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE)
 	 */
 	public ImageHyperlink(Composite parent, int style) {
 		super(parent, style);
@@ -64,11 +77,22 @@ public class ImageHyperlink extends Hyperlink {
 		int y = marginHeight + maxsize.y / 2 - ibounds.height / 2;
 		gc.drawImage(image, x, y);
 		if (getText() != null) {
-			Rectangle tbounds = new Rectangle(marginWidth + maxsize.x
-					+ textSpacing, marginHeight, clientArea.width - maxsize.x
-					- marginWidth - marginWidth, clientArea.height
-					- marginHeight - marginHeight);
-			paintText(gc, tbounds);
+			int textWidth = clientArea.width - maxsize.x - textSpacing
+					- marginWidth - marginWidth;
+			int textX = marginWidth + maxsize.x + textSpacing;
+			Point textSize = computeTextSize(textWidth, SWT.DEFAULT);
+			textWidth = textSize.x;
+			int slotHeight = clientArea.height - marginHeight - marginHeight;
+			int textY;
+			int textHeight = textSize.y;
+			if ((getStyle() & BOTTOM) != 0) {
+				textY = marginHeight + slotHeight - textHeight;
+			} else if ((getStyle() & MIDDLE) != 0) {
+				textY = marginHeight + slotHeight / 2 - textHeight / 2;
+			} else {
+				textY = marginHeight;
+			}
+			paintText(gc, new Rectangle(textX, textY, textWidth, textHeight));
 		}
 	}
 	/**
