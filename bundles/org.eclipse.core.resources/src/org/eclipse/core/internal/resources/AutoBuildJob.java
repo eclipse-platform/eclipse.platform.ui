@@ -27,6 +27,7 @@ class AutoBuildJob extends Job {
 
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
+		setRule(workspace.getRoot());
 		this.workspace = workspace;
 	}
 	/**
@@ -52,7 +53,7 @@ class AutoBuildJob extends Job {
       try {
          monitor.beginTask(null, Policy.opWork);
          try {
-            workspace.prepareOperation(null);
+            workspace.prepareOperation(workspace.getRoot());
             workspace.beginOperation(true);
             workspace.broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
             if (shouldBuild()) {
