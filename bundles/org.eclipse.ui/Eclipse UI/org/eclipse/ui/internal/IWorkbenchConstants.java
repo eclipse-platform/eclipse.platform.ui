@@ -37,10 +37,11 @@ public interface IWorkbenchConstants {
 	public static final String PL_ACCELERATOR_SCOPES ="acceleratorScopes"; //$NON-NLS-1$
 	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
 	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
+	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 	
 	// Key binding service defaults
-	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = ""; //$NON-NLS-1$
-	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = ""; //$NON-NLS-1$
+	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 	
 	//mappings for type/extension to an editor
 	public final static String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$

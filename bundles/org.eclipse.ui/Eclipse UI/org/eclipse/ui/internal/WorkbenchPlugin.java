@@ -16,8 +16,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -76,6 +81,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PerspectiveRegistry perspRegistry;
 	private ActionDefinitionRegistry actionDefinitionRegistry;
 	private AcceleratorRegistry acceleratorRegistry;
+	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
 	private MarkerImageProviderRegistry markerImageProviderRegistry;
@@ -170,6 +176,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			actionSetRegistry = new ActionSetRegistry();
 		}
 		return actionSetRegistry;
+	}
+	/**
+	 * Returns the capability registry for the workbench.
+	 * 
+	 * @return the capability registry
+	 */
+	public CapabilityRegistry getCapabilityRegistry() {
+		if (capabilityRegistry == null) {
+			capabilityRegistry = new CapabilityRegistry();
+			capabilityRegistry.load();
+		}
+		return capabilityRegistry;
 	}
 	/**
 	 * Returns the marker help registry for the workbench.
