@@ -27,6 +27,7 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 		SAXParserFactory.newInstance();
 	private SAXParser parser;
 	private PluginEntry pluginEntry;
+    private String location;
 
 	private class ParseCompleteException extends SAXException {
 		
@@ -74,6 +75,7 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 	 */
 	public synchronized PluginEntry parse(InputStream in, String bundleUrl) throws SAXException, IOException {
 		try {
+            location = bundleUrl;
 			pluginEntry = new PluginEntry();
 			pluginEntry.setURL(bundleUrl);
 			parser.parse(new InputSource(in), this);
@@ -110,8 +112,14 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 	private void processPlugin(Attributes attributes) throws ParseCompleteException {
 		String id = attributes.getValue("id"); //$NON-NLS-1$
 		String version = attributes.getValue("version"); //$NON-NLS-1$
-		if (id == null || id.trim().length() == 0)
+		if (id == null || id.trim().length() == 0) {
 			id = "_no_id_"; //$NON-NLS-1$
+            Utils.log(Messages.getString("PluginParser.plugin_no_id", location));
+        }
+        if (version == null || version.trim().length() == 0) {
+            version = "0.0.0"; //$NON-NLS-1$
+            Utils.log(Messages.getString("PluginParser.plugin_no_version", location));
+        }
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		
 		// stop parsing now
