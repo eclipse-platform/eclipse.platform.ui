@@ -51,6 +51,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	//The resource being edited if this is being done inline
 	private IResource inlinedResource;
 	
+	private boolean saving = false;
 	/**
 	 * The id of this action.
 	 */
@@ -406,6 +407,10 @@ protected void runWithNewPath(IPath path, IResource resource) {
  * @param resource - the resource to move.
  */
 private void saveChangesAndDispose(IResource resource) {
+    if (saving == true)
+        return;
+    
+    saving = true;
 	// Cache the resource to avoid selection loss since a selection of
 	// another item can trigger this method
 	inlinedResource = resource;
@@ -416,23 +421,28 @@ private void saveChangesAndDispose(IResource resource) {
 	// text widget to lose focus and trigger this method).
 	Runnable query = new Runnable() {
 		public void run() {
-			//Dispose the text widget regardless
-			disposeTextWidget();
-			if (!newName.equals(inlinedResource.getName())) {
-				IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-				IStatus status = workspace.validateName(newName, inlinedResource.getType());
-				if (!status.isOK()) {
-					displayError(status.getMessage());
+		    try {
+				if (!newName.equals(inlinedResource.getName())) {
+					IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+					IStatus status = workspace.validateName(newName, inlinedResource.getType());
+					if (!status.isOK()) {
+						displayError(status.getMessage());
+					}
+					else {
+						IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
+						runWithNewPath(newPath, inlinedResource);
+					}
 				}
-				else {
-					IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
-					runWithNewPath(newPath, inlinedResource);
-				}
-			}
-			inlinedResource = null;
+				inlinedResource = null;
+				//Dispose the text widget regardless
+				disposeTextWidget();
+		    }
+		    finally {
+		        saving = false;
+		    }
 		}
 	};
-	getTree().getShell().getDisplay().asyncExec(query);
+	getTree().getShell().getDisplay().asyncExec(query);	
 }
 /**
  * The <code>RenameResourceAction</code> implementation of this
