@@ -455,10 +455,12 @@ public class EditorPresentation {
 				((EditorWorkbook) refPart).setVisibleEditor(visibleEditor);
 			}
 		} else {
-			stackEditor(newPart, dropTarget.getContainer());
-			newPart.setFocus();
-			((EditorWorkbook) refPart).becomeActiveWorkbook(true);
-			((EditorWorkbook) refPart).setVisibleEditor((EditorPane) newPart);
+			if (dropTarget instanceof ILayoutContainer) {
+				stackEditor(newPart, (ILayoutContainer)dropTarget);
+				newPart.setFocus();
+				((EditorWorkbook) refPart).becomeActiveWorkbook(true);
+				((EditorWorkbook) refPart).setVisibleEditor((EditorPane) newPart);
+			}
 		}
 		editorArea.getControl().setRedraw(true);
 	}
