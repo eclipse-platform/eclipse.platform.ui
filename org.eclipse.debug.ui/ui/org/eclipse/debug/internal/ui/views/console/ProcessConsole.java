@@ -289,8 +289,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     public IOConsoleOutputStream getStream(String streamIdentifier) {
         for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
             StreamListener listener = (StreamListener) i.next();
-            if (listener.streamId.equals(streamIdentifier)) {
-                return listener.stream;
+            if (listener.fStreamId.equals(streamIdentifier)) {
+                return listener.fStream;
             }
         }
         return null;
@@ -511,21 +511,21 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
     private class StreamListener implements IStreamListener {
 
-        private IOConsoleOutputStream stream;
+        private IOConsoleOutputStream fStream;
 
-        private IStreamMonitor streamMonitor;
+        private IStreamMonitor fStreamMonitor;
 
-        private String streamId;
+        private String fStreamId;
 
-        private boolean flushed = false;
+        private boolean fFlushed = false;
 
-        private boolean listenerRemoved = false;
+        private boolean fListenerRemoved = false;
 
         public StreamListener(String streamIdentifier, IStreamMonitor monitor, IOConsoleOutputStream stream) {
-            this.streamId = streamIdentifier;
-            this.streamMonitor = monitor;
-            this.stream = stream;
-            streamMonitor.addListener(this);
+            this.fStreamId = streamIdentifier;
+            this.fStreamMonitor = monitor;
+            this.fStream = stream;
+            fStreamMonitor.addListener(this);
         }
 
         /*
@@ -535,10 +535,10 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          *      org.eclipse.debug.core.model.IStreamMonitor)
          */
         public void streamAppended(String text, IStreamMonitor monitor) {
-            if (flushed) {
+            if (fFlushed) {
                 try {
-                    if (stream != null) {
-                        stream.write(text);
+                    if (fStream != null) {
+                        fStream.write(text);
                     }
                     if (fFileOutputStream != null) {
                         synchronized (fFileOutputStream) {
@@ -550,19 +550,19 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 }
             } else {
                 String contents = null;
-                synchronized (monitor) {
-                    flushed = true;
-                    contents = monitor.getContents();
-                    if (streamMonitor instanceof IFlushableStreamMonitor) {
-                        IFlushableStreamMonitor m = (IFlushableStreamMonitor) streamMonitor;
+                synchronized (fStreamMonitor) {
+                    fFlushed = true;
+                    contents = fStreamMonitor.getContents();
+                    if (fStreamMonitor instanceof IFlushableStreamMonitor) {
+                        IFlushableStreamMonitor m = (IFlushableStreamMonitor) fStreamMonitor;
                         m.flushContents();
                         m.setBuffered(false);
                     }
                 }
                 try {
                     if (contents != null && contents.length() > 0) {
-                        if (stream != null) {
-                            stream.write(contents);
+                        if (fStream != null) {
+                            fStream.write(contents);
                         }
                         if (fFileOutputStream != null) {
                             synchronized (fFileOutputStream) {
@@ -577,20 +577,23 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         public IStreamMonitor getStreamMonitor() {
-            return streamMonitor;
+            return fStreamMonitor;
         }
 
         public void closeStream() {
-            synchronized (streamMonitor) {
-                streamMonitor.removeListener(this);
-                if (!flushed) {
-                    String contents = streamMonitor.getContents();
-                    streamAppended(contents, streamMonitor);
+            if (fStreamMonitor == null) {
+                return;
+            }
+            synchronized (fStreamMonitor) {
+                fStreamMonitor.removeListener(this);
+                if (!fFlushed) {
+                    String contents = fStreamMonitor.getContents();
+                    streamAppended(contents, fStreamMonitor);
                 }
-                listenerRemoved = true;
+                fListenerRemoved = true;
                 try {
-                    if (stream != null) {
-                        stream.close();
+                    if (fStream != null) {
+                        fStream.close();
                     }
                 } catch (IOException e) {
                 }
@@ -598,12 +601,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         public void dispose() {
-            if (!listenerRemoved) {
+            if (!fListenerRemoved) {
                 closeStream();
             }
-            stream = null;
-            streamMonitor = null;
-            streamId = null;
+            fStream = null;
+            fStreamMonitor = null;
+            fStreamId = null;
         }
     }
 
