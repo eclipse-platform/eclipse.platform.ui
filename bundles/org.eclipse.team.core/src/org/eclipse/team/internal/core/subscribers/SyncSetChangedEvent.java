@@ -25,9 +25,9 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 	
 	// List that accumulate changes
 	// SyncInfo
-	private Set changedResources = new HashSet();
+	private Map changedResources = new HashMap();
 	private Set removedResources = new HashSet();
-	private Set addedResources = new HashSet();
+	private Map addedResources = new HashMap();
 	
 	private boolean reset = false;
 
@@ -46,32 +46,38 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 			removedResources.remove(info.getLocal());
 			changed(info);
 		} else {
-			addedResources.add(info);
+			addedResources.put(info.getLocal(), info);
 		}
 	}
 	
 	public void removed(IResource resource, SyncInfo info) {
-		if (changedResources.contains(info)) {
+		if (changedResources.containsKey(resource)) {
 			// No use in reporting the change since it has subsequently been removed
-			changedResources.remove(info);
-		} else if (addedResources.contains(info)) {
+			changedResources.remove(resource);
+		} else if (addedResources.containsKey(resource)) {
 			// An addition followed by a removal can be dropped 
-			addedResources.remove(info);
+			addedResources.remove(resource);
 			return;
 		}
 		removedResources.add(resource);
 	}
 	
 	public void changed(SyncInfo info) {
-		changedResources.add(info);
+		IResource resource = info.getLocal();
+		if (addedResources.containsKey(resource)) {
+			// An addition followed by a change is an addition
+			addedResources.put(info.getLocal(), info);
+			return;
+		}
+		changedResources.put(info.getLocal(), info);
 	}
 	
 	public SyncInfo[] getAddedResources() {
-		return (SyncInfo[]) addedResources.toArray(new SyncInfo[addedResources.size()]);
+		return (SyncInfo[]) addedResources.values().toArray(new SyncInfo[addedResources.size()]);
 	}
 
 	public SyncInfo[] getChangedResources() {
-		return (SyncInfo[]) changedResources.toArray(new SyncInfo[changedResources.size()]);
+		return (SyncInfo[]) changedResources.values().toArray(new SyncInfo[changedResources.size()]);
 	}
 
 	public IResource[] getRemovedResources() {
