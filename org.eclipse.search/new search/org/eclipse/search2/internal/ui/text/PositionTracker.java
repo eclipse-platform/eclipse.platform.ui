@@ -142,7 +142,8 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			fMatchesToPositions.put(match, position);
 			addFileBufferMapping(fb, match);
 		} catch (BadLocationException e) {
-			SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, "BadLocationException when trying to track position", e)); //$NON-NLS-1$
+			// the match is outside the document
+			result.removeMatch(match);
 		}
 	}
 
@@ -297,8 +298,8 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
-				untrackPosition(textBuffer, match);
 				AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+				untrackPosition(textBuffer, match);
 				trackPosition(result, textBuffer, match);
 			}
 		});
