@@ -178,7 +178,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
-		Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.isTrue(!(descriptor.isPluginActivated() && CompatibilityHelper.activationPending(descriptor) == false), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.descriptor = descriptor;
 		String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
 		String value = InternalPlatform.getDefault().getOption(key);
@@ -490,6 +490,9 @@ public abstract class Plugin implements BundleActivator {
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public void shutdown() throws CoreException {
+		if (CompatibilityHelper.getCompatibility() == null)
+			return;
+		
 		Method m;
 		try {
 			m = descriptor.getClass().getMethod("doPluginDeactivation", new Class[0]); //$NON-NLS-1$
@@ -564,7 +567,8 @@ public abstract class Plugin implements BundleActivator {
 	 * for debugging purposes only.
 	 */
 	public String toString() {
-		return descriptor.toString();
+		String name = bundle.getSymbolicName(); 
+		return name==null ? new Long(bundle.getBundleId()).toString() : name;
 	}
 
 	/**
@@ -612,10 +616,14 @@ public abstract class Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
 
+		if (CompatibilityHelper.getCompatibility() == null)
+			return;
+		
 		//This associate a descriptor to any real bundle that uses this to start
 		String pluginId = bundle.getSymbolicName();
 		if (pluginId == null)
 			return;
+		
 		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
 		CompatibilityHelper.setPlugin(descriptor, this);
 		CompatibilityHelper.setActive(descriptor);

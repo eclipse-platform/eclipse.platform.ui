@@ -421,7 +421,7 @@ public final class Platform {
 		try {
 			IPluginRegistry registry = getPluginRegistry();
 			if (registry == null)
-				return null;
+				throw new IllegalStateException();
 			IPluginDescriptor pd = registry.getPluginDescriptor(id);
 			if (pd == null)
 				return null;
@@ -448,7 +448,7 @@ public final class Platform {
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
-			return null;
+			throw new IllegalStateException();
 
 		Class oldInternalPlatform = null;
 		try {
