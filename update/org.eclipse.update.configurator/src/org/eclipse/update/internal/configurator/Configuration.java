@@ -101,7 +101,7 @@ public class Configuration implements IConfigurationConstants {
 			Element configElement = doc.createElement(CFG);
 
 			configElement.setAttribute(CFG_VERSION, VERSION);
-			configElement.setAttribute(CFG_DATE, date.toString());
+			configElement.setAttribute(CFG_DATE, String.valueOf(date.getTime()));
 			String transitory = isTransient() ? "true" : "false";
 			configElement.setAttribute(CFG_TRANSIENT, transitory);
 						

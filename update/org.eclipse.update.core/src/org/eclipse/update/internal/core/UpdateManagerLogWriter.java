@@ -77,7 +77,7 @@ public class UpdateManagerLogWriter {
 				activities[i].setStatus(IActivity.STATUS_OK);
 			}
 			Date date = new Date(runtimeConfig.getChangeStamp());
-			safeWriteConfiguration(date.toString(), activities);
+			safeWriteConfiguration(date, activities);
 		} catch (Exception e) {
 			// silently ignore errors
 		}
@@ -101,7 +101,7 @@ public class UpdateManagerLogWriter {
 	 * 
 	 */
 	public void log(IInstallConfiguration installConfig) {
-		safeWriteConfiguration(installConfig.getCreationDate().toString(), installConfig.getActivities());
+		safeWriteConfiguration(installConfig.getCreationDate(), installConfig.getActivities());
 	}
 	
 	
@@ -169,7 +169,7 @@ public class UpdateManagerLogWriter {
 	/*
 	 * 
 	 */
-	private synchronized void safeWriteConfiguration(String label, IActivity[] activities) {
+	private synchronized void safeWriteConfiguration(Date date, IActivity[] activities) {
 		// thread safety: (Concurrency003)
 		if (logFile != null)
 			openLogFile();
@@ -177,7 +177,7 @@ public class UpdateManagerLogWriter {
 			log = logForStream(System.err);
 		try {
 			try {
-				write(label, activities);
+				write(date, activities);
 			} finally {
 				if (logFile != null)
 					closeLogFile();
@@ -191,7 +191,7 @@ public class UpdateManagerLogWriter {
 			//we failed to write, so dump log entry to console instead
 			try {
 				log = logForStream(System.err);
-				write(label, activities);
+				write(date, activities);
 				log.flush();
 			} catch (Exception e2) {
 				System.err.println("An exception occurred while logging to the console:"); //$NON-NLS-1$
@@ -206,11 +206,13 @@ public class UpdateManagerLogWriter {
 	/*
 	 * !CONFIGURATION <label>
 	 */
-	private void write(String label, IActivity[] activities) throws IOException {
+	private void write(Date date, IActivity[] activities) throws IOException {
 		writeln();
 		write(CONFIGURATION);
-		writeSpace();		
-		write(label);
+		writeSpace();	
+		write(String.valueOf(date.getTime()));
+		writeSpace();
+		write(date.toString());
 		writeln();
 		for (int i = 0; i < activities.length; i++) {
 			write(activities[i]);
@@ -222,7 +224,9 @@ public class UpdateManagerLogWriter {
 	 */
 	private void write(IActivity activity) throws IOException {
 		write(ACTIVITY);
-		writeSpace();		
+		writeSpace();	
+		write(String.valueOf(activity.getDate().getTime()));
+		writeSpace();
 		write(getFormattedDate(activity.getDate()));
 		writeSpace();
 		write(activity.getLabel());

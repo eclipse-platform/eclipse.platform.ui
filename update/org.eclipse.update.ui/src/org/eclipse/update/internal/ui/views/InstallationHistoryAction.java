@@ -112,7 +112,9 @@ public class InstallationHistoryAction extends Action {
 
 				if (type.equals(UpdateUI.getString("InstallationHistoryAction.activity"))) { //$NON-NLS-1$
 					target = ""; //$NON-NLS-1$
-					date = htmlCode.nextToken("."); //$NON-NLS-1$
+					date = new Date(new Long(htmlCode.nextToken()).longValue()).toString();
+					// ignore string date
+					htmlCode.nextToken("."); //$NON-NLS-1$
 					htmlCode.nextToken(" "); //$NON-NLS-1$
 					while (htmlCode.countTokens() > 2)
 						target = target + " " + htmlCode.nextToken(); //$NON-NLS-1$
@@ -127,9 +129,10 @@ public class InstallationHistoryAction extends Action {
 					htmlLog.println(
 						"<tr id=separator><td colspan=4></td></tr>"); //$NON-NLS-1$
 					htmlLog.println();
-					date = ""; //$NON-NLS-1$
-					while (htmlCode.countTokens() > 0)
-						date = date + " " + htmlCode.nextToken(); //$NON-NLS-1$
+					date = new Date(new Long(htmlCode.nextToken()).longValue()).toString();
+//					date = ""; //$NON-NLS-1$
+//					while (htmlCode.countTokens() > 0)
+//						date = date + " " + htmlCode.nextToken(); //$NON-NLS-1$
 					addConfigurationHeader(date);
 					addActivityHeader();
 				}

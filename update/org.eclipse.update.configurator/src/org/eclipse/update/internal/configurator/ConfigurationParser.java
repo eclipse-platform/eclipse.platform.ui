@@ -114,9 +114,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException(Messages.getString("Parser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
+			throw new SAXException(Messages.getString("InstalledSiteParser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			throw new SAXException(Messages.getString("Parser.InternalError", e.toString()), e); //$NON-NLS-1$
+			throw new SAXException(Messages.getString("InstalledSiteParser.InternalError", e.toString()), e); //$NON-NLS-1$
 		}
 	}
 
@@ -273,8 +273,17 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		String date = attributes.getValue(CFG_DATE);
 		if (date == null || date.trim().length() == 0)
 			config = new Configuration(); // constructed with current date
-		else
-			config = new Configuration(new Date(date));
+		else {
+			long time = 0;
+			try {
+				time = Long.parseLong(date);
+				config = new Configuration(new Date(time));
+			} catch (NumberFormatException e1) {
+				time = new Date().getTime();
+				Utils.log(Messages.getString("Parser.date", date));
+				config = new Configuration(); // constructed with current date
+			}
+		}
 		
 		config.setURL(configURL);
 		

@@ -1153,6 +1153,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				throw Utils.newCoreException("Configuration cannot be saved because it does not exist",null);
 			
 			config.setDate(new Date());
+			doc.appendChild(doc.createComment("Created on " + config.getDate().toString()));
 			Element configElement = config.toXML(doc);
 			doc.appendChild(configElement);
 

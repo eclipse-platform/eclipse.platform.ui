@@ -56,11 +56,11 @@ public class InstallLogParser {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();
 			for (int i=0;i<configs.length; i++){
 				if (!configs[i].isCurrent())
-					installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
+					installConfigMap.put(new Long(configs[i].getCreationDate().getTime()), configs[i]);
 			}
 			// Need to make a copy of the current config instead
 			InstallConfiguration config = getConfigCopy((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration());
-			installConfigMap.put(config.getCreationDate().toString(), config);
+			installConfigMap.put(new Long(config.getCreationDate().getTime()), config);
 			
 		} catch (CoreException e) {
 			UpdateCore.log(e);
@@ -130,6 +130,7 @@ public class InstallLogParser {
 				type = htmlCode.nextToken().trim();
 
 				if (type.equals(ACTIVITY)) {
+					String time = htmlCode.nextToken();
 					String date;
 					StringBuffer target = new StringBuffer();
 					date = htmlCode.nextToken("."); 
@@ -141,8 +142,9 @@ public class InstallLogParser {
 					
 					action = htmlCode.nextToken();
 					status = htmlCode.nextToken();
-					createActivity(action, date, status, target.toString(), currentConfiguration);
+					createActivity(action, time, date, status, target.toString(), currentConfiguration);
 				}  else {
+					String time = htmlCode.nextToken();
 					StringBuffer date;
 					date = new StringBuffer();
 					while (htmlCode.countTokens() > 0){
@@ -150,7 +152,7 @@ public class InstallLogParser {
 							date.append(" ");
 						date.append(htmlCode.nextToken());
 					}
-					currentConfiguration = (InstallConfiguration)installConfigMap.get(date.toString());
+					currentConfiguration = (InstallConfiguration)installConfigMap.get(new Long(time));
 				}
 			}
 		} catch (Exception e) {
@@ -167,7 +169,7 @@ public class InstallLogParser {
 			buffRead = null;
 		}
 	}
-	private IActivity createActivity(String action, String date, String status, String target, InstallConfiguration config){
+	private IActivity createActivity(String action, String time, String date, String status, String target, InstallConfiguration config){
 		ConfigurationActivity a = new ConfigurationActivity();
 
 		int code = 0;
@@ -191,7 +193,12 @@ public class InstallLogParser {
 			code = IActivity.ACTION_ADD_PRESERVED;
 		
 		a.setAction(code);
-		a.setDate(new Date(date));
+		try {
+			long activityTime = Long.parseLong(time);
+			a.setDate(new Date(activityTime));
+		} catch (NumberFormatException e) {
+			a.setDate(new Date(date));
+		}
 		a.setStatus(SUCCESS.equals(status) ? IActivity.STATUS_OK : IActivity.STATUS_NOK);
 		a.setLabel(target);
 		a.setInstallConfigurationModel(config);
