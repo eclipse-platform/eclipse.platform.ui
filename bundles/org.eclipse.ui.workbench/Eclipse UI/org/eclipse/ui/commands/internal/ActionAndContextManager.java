@@ -11,15 +11,20 @@
 
 package org.eclipse.ui.commands.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jface.action.ContextResolver;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContextResolver;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,13 +50,17 @@ import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.commands.Command;
+import org.eclipse.ui.internal.commands.CoreRegistry;
 import org.eclipse.ui.internal.commands.KeySupport;
+import org.eclipse.ui.internal.commands.LocalRegistry;
 import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.commands.PreferenceRegistry;
 import org.eclipse.ui.internal.commands.Sequence;
 import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.Stroke;
 
-public class ActionAndContextManager {
+public class ActionAndContextManager implements IContextResolver {
 
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
@@ -122,6 +131,7 @@ public class ActionAndContextManager {
 		workbenchWindowActionService.addActionServiceListener(actionServiceListener);	
 		workbenchWindowContextService = ((WorkbenchWindow) workbenchWindow).getContextService();
 		workbenchWindowContextService.addContextServiceListener(contextServiceListener);
+		reset();
 
 		this.workbenchWindow.addPageListener(new IPageListener() {			
 			public void pageActivated(IWorkbenchPage workbenchPage) {
@@ -352,7 +362,66 @@ public class ActionAndContextManager {
 		else
 			acceleratorMenu.addVerifyListener(verifyListener);
 
+		ContextResolver.getInstance().setContextResolver(this);
 		MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
 		menuManager.update(IAction.TEXT);
 	}
+
+	private Map commandsById;
+	private Set contexts;
+	
+	public boolean inContext(String commandId) {
+		/*
+		if (commandId != null) {
+			Command command = (Command) commandsById.get(commandId);
+			
+			if (command != null) {
+				List contexts = command.getContexts();
+				
+				if (contexts != null && contexts.size() >= 1) {
+					Iterator iterator = contexts.iterator();
+					
+					while (iterator.hasNext()) {
+						String context = (String) iterator.next();
+						
+						if (this.contexts.contains(context))
+							return true;
+					}
+					
+					return false;				
+				}
+			}
+		}
+		*/
+
+		return true;			
+	}
+	
+	void reset() {
+		contexts = Collections.EMPTY_SET;
+		CoreRegistry coreRegistry = CoreRegistry.getInstance();
+		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+			
+		try {
+			coreRegistry.load();
+		} catch (IOException eIO) {
+		}
+	
+		try {
+			localRegistry.load();
+		} catch (IOException eIO) {
+		}
+	
+		try {
+			preferenceRegistry.load();
+		} catch (IOException eIO) {
+		}		
+
+		List commands = new ArrayList();
+		commands.addAll(coreRegistry.getCommands());
+		commands.addAll(localRegistry.getCommands());
+		commands.addAll(preferenceRegistry.getCommands());		
+		commandsById = Collections.unmodifiableSortedMap(Command.sortedMapById(commands));
+	}	
 }

@@ -64,7 +64,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.ContextManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -496,7 +495,6 @@ protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
  * @see Window
  */
 public int open() {
-	ContextManager contextManager = ContextManager.getInstance();
 	int result = super.open();	
 	actionAndContextManager = new ActionAndContextManager(this);
 	workbench.fireWindowOpened(this);
