@@ -96,23 +96,28 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		fContentProvider= new BreakpointsViewContentProvider();
 		final CheckboxTreeViewer viewer = new CheckboxTreeViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK)) {
 		    public void refresh() {
-		    	BreakpointsViewContentProvider provider = (BreakpointsViewContentProvider) getContentProvider();
-		    	List expanded= new ArrayList();
-		    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-		    	for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint= breakpoints[i];
-					Object breakpointParent = provider.getParent(breakpoint);
-					if (breakpointParent instanceof IBreakpointContainer && getExpandedState(breakpointParent)) {
-						expanded.add(breakpoint);
+		    	getControl().setRedraw(false);
+		    	try {
+			    	BreakpointsViewContentProvider provider = (BreakpointsViewContentProvider) getContentProvider();
+			    	List expanded= new ArrayList();
+			    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+			    	for (int i = 0; i < breakpoints.length; i++) {
+						IBreakpoint breakpoint= breakpoints[i];
+						Object breakpointParent = provider.getParent(breakpoint);
+						if (breakpointParent instanceof IBreakpointContainer && getExpandedState(breakpointParent)) {
+							expanded.add(breakpoint);
+						}
 					}
-				}
-		    	provider.recomputeContent();
-                super.refresh();
-                Iterator iter = expanded.iterator();
-                while (iter.hasNext()) {
-                    expandToLevel(iter.next(), ALL_LEVELS);
-                }
-                initializeCheckedState(this, fContentProvider);
+			    	provider.recomputeContent();
+	                super.refresh();
+	                Iterator iter = expanded.iterator();
+	                while (iter.hasNext()) {
+	                    expandToLevel(iter.next(), ALL_LEVELS);
+	                }
+	                initializeCheckedState(this, fContentProvider);
+		    	} finally {
+		    		getControl().setRedraw(true);
+		    	}
             }
 		};
 		viewer.setContentProvider(fContentProvider);
