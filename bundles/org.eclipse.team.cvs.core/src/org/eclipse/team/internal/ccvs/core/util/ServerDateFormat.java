@@ -20,11 +20,11 @@ import java.util.TimeZone;
  */
 public class ServerDateFormat extends SimpleDateFormat {
 	
-	public static final String FORMAT = "dd MMM yyyy HH:mm:ss";
+	public static final String FORMAT = "dd MMM yyyy HH:mm:ss";//$NON-NLS-1$
 	
 	public ServerDateFormat() {
 		super(FORMAT, Locale.US);
-		setTimeZone(TimeZone.getTimeZone("GMT"));		
+		setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 	}
 
 	/**
@@ -32,8 +32,8 @@ public class ServerDateFormat extends SimpleDateFormat {
 	 */
 	public Date toDate(String text) throws ParseException {
 		// FIXME this cuts the timezone which we do not want
-		if (text.indexOf("-") != -1) {
-			text = text.substring(0,text.indexOf("-"));
+		if (text.indexOf("-") != -1) {//$NON-NLS-1$
+			text = text.substring(0,text.indexOf("-"));//$NON-NLS-1$
 		}
 		return parse(text);
 	}

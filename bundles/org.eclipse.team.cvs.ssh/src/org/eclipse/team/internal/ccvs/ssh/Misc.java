@@ -305,7 +305,7 @@ static public byte[] readMpInt(InputStream is) throws IOException {
 	int b = (byte) is.read();
 
 	if(a == -1 || b == -1){
-		throw new IOException(SSHPlugin.getResourceString("stream"));
+		throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 	}
 
 	int bits = (a << 8) + b;
@@ -320,7 +320,7 @@ static public byte[] readMpInt(InputStream is) throws IOException {
 public static byte[] md5(byte[] b) {
 	if (md5 == null) {
 		try {
-			md5 = MessageDigest.getInstance("MD5");
+			md5 = MessageDigest.getInstance("MD5");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
 		}
 	}
@@ -341,7 +341,7 @@ public static void readFully(InputStream is, byte[] b, int off, int len) throws 
 		bytesRead = is.read(b, totalBytesRead + off, len - totalBytesRead);
 
 		if (bytesRead == -1) {
-			throw new IOException(SSHPlugin.getResourceString("stream"));
+			throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 		}
 
 		totalBytesRead += bytesRead;
@@ -362,7 +362,7 @@ public static int readInt(InputStream is) throws IOException {
 	int d = is.read();
 
 	if (a == -1 || b == -1 || c == -1 || d == -1) {
-		throw new IOException(SSHPlugin.getResourceString("stream"));
+		throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 	}
 
 	return (a << 24) + (b << 16) + (c << 8) + d;
@@ -373,7 +373,7 @@ public static void skipFully(InputStream is, long n) throws IOException {
 
 		if (b == -1) {
 			if (n > 0) {
-				throw new IOException(SSHPlugin.getResourceString("stream"));
+				throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 			}
 
 			return;
@@ -396,7 +396,7 @@ static public void xor(byte[] src_a, int off_a, byte[] src_b, int off_b, byte[] 
 static public void random(byte[] b, int off, int len, boolean allowZeroBytes) {
 	if (random == null) {
 		try {
-			random = SecureRandom.getInstance("SHA1PRNG");
+			random = SecureRandom.getInstance("SHA1PRNG");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
 		}
 	}

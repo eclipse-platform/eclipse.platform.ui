@@ -13,7 +13,7 @@ public class SSHMethod implements IConnectionMethod {
 	 * @see IConnectionMethod#getName
 	 */
 	public String getName() {
-		return "extssh";
+		return "extssh";//$NON-NLS-1$
 	}
 	
 	/**

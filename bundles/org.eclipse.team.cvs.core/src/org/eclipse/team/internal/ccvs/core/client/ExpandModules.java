@@ -18,7 +18,7 @@ public class ExpandModules extends Command {
 	 * @see Command#getCommandId()
 	 */
 	protected String getCommandId() {
-		return "expand-modules";
+		return "expand-modules"; //$NON-NLS-1$
 	}
 
 	/*

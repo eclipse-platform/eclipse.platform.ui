@@ -77,7 +77,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 				EntryFileDateFormat timestamp = new EntryFileDateFormat();
 				millSec = timestamp.toDate(date).getTime();
 			} catch (ParseException e) {
-				throw new CVSException(0,0,"Format of the Date for a TimeStamp not parseable",e);
+				throw new CVSException(Policy.bind("LocalFile.invalidDateFormat", date), e); //$NON-NLS-1$
 			}
 		}		
 		ioResource.setLastModified(millSec);
@@ -135,7 +135,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		boolean success = ioResource.renameTo(file.getFile());
 		
 		if (!success) {
-			throw new CVSException("Move from " + ioResource + " to " + file + " was not possible");
+			throw new CVSException(Policy.bind("LocalFile.moveFailed", ioResource.toString(), file.toString())); //$NON-NLS-1$
 		}
 	}
 

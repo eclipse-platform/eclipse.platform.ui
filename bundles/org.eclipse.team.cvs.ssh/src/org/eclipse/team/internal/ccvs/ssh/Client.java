@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException
 
 public class Client {
 	// client identification string
-	private static final String clientId = "SSH-1.5-Java 1.2.2\n";
+	private static final String clientId = "SSH-1.5-Java 1.2.2\n"; //$NON-NLS-1$
 
 	// server identification string
 	private static String serverId = null;
@@ -49,7 +49,7 @@ public class Client {
 	private static final int SSH_MSG_DEBUG = 36;
 
 	// cipher names
-	private static String[] cipherNames = { "None", "IDEA", "DES", "3DES", "TSS", "RC4", "Blowfish" };
+	private static String[] cipherNames = { "None", "IDEA", "DES", "3DES", "TSS", "RC4", "Blowfish" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 
 	// cipher types
 	private static int SSH_CIPHER_NONE = 0;
@@ -95,7 +95,7 @@ public class Client {
 
 		public int available() throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed")); //$NON-NLS-1$
 			}
 
 			int available = buffer == null ? 0 : buffer.available();
@@ -122,7 +122,7 @@ public class Client {
 
 		public int read() throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			if (atEnd) {
@@ -138,7 +138,7 @@ public class Client {
 
 		public int read(byte b[], int off, int len) throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			if (atEnd) {
@@ -177,7 +177,7 @@ public class Client {
 					send(SSH_CMSG_EXIT_CONFIRMATION, null);
 					break;
 				default :
-					throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+					throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 			}
 		}
 	}
@@ -200,7 +200,7 @@ public class Client {
 
 		public void flush() throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			if (bufpos > 0) {
@@ -211,7 +211,7 @@ public class Client {
 
 		public void write(int b) throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			buffer[bufpos++] = (byte) b;
@@ -223,7 +223,7 @@ public class Client {
 
 		public void write(byte b[], int off, int len) throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed")); //$NON-NLS-1$
 			}
 
 			int bytesWritten = 0;
@@ -325,7 +325,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 				socket = new Socket(host, port);
 			} catch (InterruptedIOException e) {
 				// If we get this exception, chances are the host is not responding
-				throw new InterruptedIOException(SSHPlugin.getResourceString("Client.socket", new Object[] {host}));
+				throw new InterruptedIOException(Policy.bind("Client.socket", new Object[] {host}));//$NON-NLS-1$
 
 			}
 			if (timeout >= 0) {
@@ -342,7 +342,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		int c;
 		while ((c = socketIn.read()) != '\n') {
 			if (c == -1)
-				throw new IOException(SSHPlugin.getResourceString("Client.socketClosed"));
+				throw new IOException(Policy.bind("Client.socketClosed"));//$NON-NLS-1$
 			buf.append((char) c);
 		}
 		serverId = buf.toString();
@@ -386,14 +386,14 @@ public void disconnect() throws IOException {
 }
 public InputStream getInputStream() throws IOException {
 	if (!connected) {
-		throw new IOException(SSHPlugin.getResourceString("Client.notConnected"));
+		throw new IOException(Policy.bind("Client.notConnected"));//$NON-NLS-1$
 	}
 
 	return is;
 }
 public OutputStream getOutputStream() throws IOException {
 	if (!connected) {
-		throw new IOException(SSHPlugin.getResourceString("Client.notConnected"));
+		throw new IOException(Policy.bind("Client.notConnected"));//$NON-NLS-1$
 	}
 
 	return os;
@@ -410,7 +410,7 @@ private void startShell() throws IOException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+			throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 		}
 	} finally {
 		if (packet != null) {
@@ -434,7 +434,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_PUBLIC_KEY) {
-			throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+			throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 		}
 
 		receive_SSH_SMSG_PUBLIC_KEY(packet);
@@ -449,7 +449,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+			throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 		}
 	} finally {
 		if (packet != null) {
@@ -464,7 +464,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_FAILURE) {
-			throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+			throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 		}
 	} finally {
 		if (packet != null) {
@@ -479,11 +479,11 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType == SSH_SMSG_FAILURE) {
-			throw new CVSAuthenticationException(SSHPlugin.getResourceString("Client.authenticationFailed"));
+			throw new CVSAuthenticationException(Policy.bind("Client.authenticationFailed"));//$NON-NLS-1$
 		}
 
 		if (packetType != SSH_SMSG_SUCCESS) {
-			throw new IOException(SSHPlugin.getResourceString("Client.packetType", new Object[] {new Integer(packetType)} ));
+			throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 		}
 	} finally {
 		if (packet != null) {
@@ -523,7 +523,7 @@ private void receive_SSH_SMSG_PUBLIC_KEY(ServerPacket packet) throws IOException
 	send_SSH_CMSG_SESSION_KEY(anti_spoofing_cookie, server_key_public_modulus, host_key_public_modulus, supported_ciphers_mask, server_key_public_exponent, host_key_public_exponent);
 }
 private void send(int packetType, String s) throws IOException {
-	byte[] data = s == null ? new byte[0] : s.getBytes("UTF-8");
+	byte[] data = s == null ? new byte[0] : s.getBytes("UTF-8"); //$NON-NLS-1$
 	send(packetType, data, 0, data.length);
 }
 private void send(int packetType, byte[] data, int off, int len) throws IOException {
@@ -535,7 +535,7 @@ private void send(int packetType, byte[] data, int off, int len) throws IOExcept
 private void send_SSH_CMSG_REQUEST_PTY() throws IOException {
 	byte packet_type = SSH_CMSG_REQUEST_PTY;
 
-	byte[] termType = Misc.lengthEncode("dumb".getBytes(), 0, 4);
+	byte[] termType = Misc.lengthEncode("dumb".getBytes(), 0, 4);//$NON-NLS-1$
 	byte[] row = {0, 0, 0, 0};
 	byte[] col = {0, 0, 0, 0};
 	byte[] XPixels = {0, 0, 0, 0};
@@ -593,7 +593,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] serve
 	}
 
 	if (!foundSupportedCipher) {
-		throw new IOException(SSHPlugin.getResourceString("Client.cipher"));
+		throw new IOException(Policy.bind("Client.cipher"));//$NON-NLS-1$
 	}
 
 	// session_key

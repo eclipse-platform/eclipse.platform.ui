@@ -54,8 +54,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  *   
  */
 public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, ICVSFolder {
-
-	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir";
 	
 	protected FolderSyncInfo folderInfo;
 	private ICVSRemoteResource[] children;
@@ -66,7 +64,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	public RemoteFolder(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
 		this(parent, 
-			repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment(),
+			repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment(), //$NON-NLS-1$
 			repository,
 			repositoryRelativePath,
 			tag, 
@@ -113,7 +111,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		}
 		
 		if (count[0] != fileNames.length)
-			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
+			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -250,7 +248,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			IStatus status = Command.UPDATE.execute(s,
 				new GlobalOption[] { Command.DO_NOT_CHANGE },
 				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-				new String[] { "." },
+				new String[] { Session.CURRENT_LOCAL_FOLDER },
 				new UpdateListener(listener),
 				monitor);
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -341,7 +339,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (child.isFolder())
 			return (ICVSFolder)child;
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {name}));
+		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {name})); //$NON-NLS-1$
 	}
 
 	/**
@@ -351,7 +349,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (!child.isFolder())
 			return (ICVSFile)child;
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {name}));
+		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {name})); //$NON-NLS-1$
 
 	}
 
@@ -374,13 +372,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public String getRelativePath(ICVSFolder ancestor) throws CVSException {
 		
 		if (ancestor == this)
-			return ".";
+			return Session.CURRENT_LOCAL_FOLDER;
 
 		RemoteResource rootFolder;
 		try {
 			rootFolder = (RemoteResource)ancestor;
 		} catch (ClassCastException e) {
-			throw new CVSException(0,0,"two different implementations of ICVSResource used",e);
+			throw new CVSException(Policy.bind("RemoteResource.invalidResourceClass"),e); //$NON-NLS-1$
 		}
 		
 		return Util.getRelativePath(rootFolder.getLocalPath(), getLocalPath());	
@@ -426,7 +424,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			return this;
 		ICVSRemoteResource[] children = getChildren();
 		if (children == null) 
-			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
+			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 		if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
@@ -438,17 +436,17 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
 			} catch (CVSException e) {
 				// regenerate the exception to give as much info as possible
-				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
+				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 			}
 		}
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));
+		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 	}
 
 	/**
 	 * @see ICVSFolder#mkdir()
 	 */
 	public void mkdir() throws CVSException {
-		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));//$NON-NLS-1$
 	}
 
 	/**
@@ -482,7 +480,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#acceptChildren(ICVSResourceVisitor)
 	 */
 	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException {
-		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));//$NON-NLS-1$
 	}
 	
 	/*
@@ -538,7 +536,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
 		this.folderInfo = folderInfo;
 		// XXX temporary to see if this ever occurs
-		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));//$NON-NLS-1$
 	}
 	
 	/**

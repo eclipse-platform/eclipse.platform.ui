@@ -61,7 +61,7 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 						}
 						visitor.handle();
 					} catch (CoreException e) {
-						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);
+						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
 					}
 				}
 			};

@@ -99,7 +99,7 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 * @see ICVSFolder#createFolder(String)
 	 */
 	public ICVSFolder getFolder(String name) throws CVSException {
-		if ((".".equals(name)) || (("." + SEPARATOR).equals(name)))
+		if ((CURRENT_LOCAL_FOLDER.equals(name)) || ((CURRENT_LOCAL_FOLDER + SEPARATOR).equals(name)))
 			return this;
 		return new LocalFolder(new File(ioResource, name));
 	}
@@ -125,7 +125,7 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 			LocalFile localFile = new LocalFile(child);
 			ResourceSyncInfo info = localFile.getSyncInfo();
 			if (info == null)
-				throw new CVSFileNotFoundException(Policy.bind("LocalFolder.invalidChild", child.getAbsolutePath()));
+				throw new CVSFileNotFoundException(Policy.bind("LocalFolder.invalidChild", child.getAbsolutePath())); //$NON-NLS-1$
 			isDirectory = info.isDirectory();			
 		}
 		

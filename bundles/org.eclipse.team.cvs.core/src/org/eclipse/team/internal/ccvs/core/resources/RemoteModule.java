@@ -33,8 +33,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
  * @author
  */
 public class RemoteModule extends RemoteFolder {
-
-	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir";
 	
 	private String label;
 	private ICVSRemoteResource[] referencedModules;
@@ -222,7 +220,7 @@ public class RemoteModule extends RemoteFolder {
 		super(parent, 
 			localName == null ? label : localName, 
 			repository, 
-			repositoryRelativePath == null ? new Path(VIRTUAL_DIRECTORY) : repositoryRelativePath, 
+			repositoryRelativePath == null ? new Path(FolderSyncInfo.VIRTUAL_DIRECTORY) : repositoryRelativePath, 
 			tag, 
 			isStatic);
 		this.localOptions = localOptions;

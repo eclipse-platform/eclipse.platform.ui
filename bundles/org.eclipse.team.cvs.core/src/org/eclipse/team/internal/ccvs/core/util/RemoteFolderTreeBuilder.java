@@ -69,10 +69,10 @@ public class RemoteFolderTreeBuilder {
 	
 	private boolean projectDoesNotExist = false;
 	
-	private static String UNKNOWN = "";
-	private static String DELETED = "DELETED";
-	private static String ADDED = "ADDED";
-	private static String FOLDER = "FOLDER";
+	private static String UNKNOWN = ""; //$NON-NLS-1$
+	private static String DELETED = "DELETED"; //$NON-NLS-1$
+	private static String ADDED = "ADDED"; //$NON-NLS-1$
+	private static String FOLDER = "FOLDER"; //$NON-NLS-1$
 	
 	private static Map EMPTY_MAP = new HashMap();
 	
@@ -414,7 +414,7 @@ public class RemoteFolderTreeBuilder {
 		IStatus status = Command.UPDATE.execute(session,
 			new GlobalOption[] { Command.DO_NOT_CHANGE },
 			updateLocalOptions,
-			new String[] { "." },
+			new String[] { Session.CURRENT_LOCAL_FOLDER },
 			new UpdateListener(listener),
 			monitor);
 		return changedFiles;

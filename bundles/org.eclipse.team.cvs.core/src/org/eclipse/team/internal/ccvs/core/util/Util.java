@@ -10,14 +10,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Unsorted static helper-methods 
  */
 public class Util {
 	
-	private static final String AT = "@";
-	private static final String COLON = ":";
+	private static final String AT = "@"; //$NON-NLS-1$
+	private static final String COLON = ":"; //$NON-NLS-1$
 	
 	
 	// private static final String newLine = System.getProperty("line.separator");
@@ -250,13 +251,13 @@ public class Util {
 		throws CVSException {
 
 		if (!resourceName.startsWith(rootName)) {
-			throw new CVSException("Internal error, resource does not start with root.");
+			throw new CVSException(Policy.bind("Util.Internal_error,_resource_does_not_start_with_root_3")); //$NON-NLS-1$
 		}
 		
 		// Otherwise we would get an ArrayOutOfBoundException
 		// in case of two equal Resources
 		if (rootName.length() == resourceName.length()) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		// Get rid of the seperator, that would be in the 

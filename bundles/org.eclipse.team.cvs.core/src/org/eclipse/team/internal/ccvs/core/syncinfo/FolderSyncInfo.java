@@ -20,6 +20,9 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  */
 public class FolderSyncInfo {
 
+	// The Repository value for virtual directories (i.e. local with no corresponding remote)
+	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir"; //$NON-NLS-1$
+
 	// relative path of this folder in the repository, project1/folder1/folder2
 	private String repository;
 	

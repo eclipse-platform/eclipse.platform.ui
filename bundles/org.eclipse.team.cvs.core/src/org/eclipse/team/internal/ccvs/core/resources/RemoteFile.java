@@ -121,12 +121,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 */
 	// XXX do we need the first two constructors?
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, CVSTag tag) {
-		this(parent, workspaceSyncState, name, "0", tag);
+		this(parent, workspaceSyncState, name, ResourceSyncInfo.ADDED_REVISION, tag);
 	}
 	
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
-		this(parent, workspaceSyncState, new ResourceSyncInfo(name, revision, "dummy", "", tag, "u=rw,g=rw,o=rw"));
-		// A blank keyword mode will use the type provided by the server to transfer the file contents
+		this(parent, workspaceSyncState, new ResourceSyncInfo(name, revision, ResourceSyncInfo.DUMMY_TIMESTAMP, ResourceSyncInfo.USE_SERVER_MODE, tag, ResourceSyncInfo.DEFAULT_PERMISSIONS));
 	}
 	
 	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {
@@ -173,7 +172,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 				}
 			}
 			if (contents == null)
-				throw new CVSException(Policy.bind("RemoteFile.noContentsReceived", getRemoteLocation(null)));
+				throw new CVSException(Policy.bind("RemoteFile.noContentsReceived", getRemoteLocation(null))); //$NON-NLS-1$
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
 			return null;

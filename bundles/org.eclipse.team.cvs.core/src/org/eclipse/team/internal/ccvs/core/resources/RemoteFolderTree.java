@@ -59,7 +59,7 @@ public class RemoteFolderTree extends RemoteFolder  {
 	
 	protected String getLocalPath() {
 		if (parent == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return Util.appendPath(parent.getLocalPath(), getName());
 	}
 }

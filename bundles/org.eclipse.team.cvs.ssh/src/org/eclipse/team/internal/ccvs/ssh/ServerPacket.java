@@ -34,7 +34,7 @@ class ServerPacket extends Packet {
 
 		public int available() throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			return (int) Math.min(remaining - 4, Integer.MAX_VALUE);
@@ -57,7 +57,7 @@ class ServerPacket extends Packet {
 					
 					if(doCrcCheck) {
 						if ((int) crc != Misc.readInt(buffer, bufpos)) {
-							throw new IOException(SSHPlugin.getResourceString("ServerPacket.crc"));
+							throw new IOException(Policy.bind("ServerPacket.crc"));//$NON-NLS-1$
 						}
 					}
 				} finally {
@@ -79,7 +79,7 @@ class ServerPacket extends Packet {
 				read = in.read(buffer, totalBytesRead, toRead);
 
 				if (read == -1) {
-					throw new IOException(SSHPlugin.getResourceString("stream"));
+					throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 				}
 
 				totalBytesRead += read;
@@ -100,7 +100,7 @@ class ServerPacket extends Packet {
 
 		public int read() throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			if (remaining - 4 == 0) {
@@ -121,7 +121,7 @@ class ServerPacket extends Packet {
 
 		public int read(byte b[], int off, int len) throws IOException {
 			if (closed) {
-				throw new IOException(SSHPlugin.getResourceString("closed"));
+				throw new IOException(Policy.bind("closed"));//$NON-NLS-1$
 			}
 
 			if (remaining - 4 == 0) {

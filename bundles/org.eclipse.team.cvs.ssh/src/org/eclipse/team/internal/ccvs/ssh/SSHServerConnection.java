@@ -16,7 +16,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException
 public class SSHServerConnection implements IServerConnection {
 	
 	// command to start remote cvs in server mode
-	private static final String INVOKE_SVR_CMD = "cvs server";
+	private static final String INVOKE_SVR_CMD = "cvs server"; //$NON-NLS-1$
 	
 	private static final int DEFAULT_PORT = 22;
 	
@@ -64,7 +64,7 @@ public class SSHServerConnection implements IServerConnection {
 	 * @see Connection.open()
 	 */
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
-		monitor.subTask("Authenticating over extssh");
+		monitor.subTask(Policy.bind("SSHServerConnection.authenticating")); //$NON-NLS-1$
 		monitor.worked(1);
 		String hostname = location.getHost();
 		String username = location.getUsername();

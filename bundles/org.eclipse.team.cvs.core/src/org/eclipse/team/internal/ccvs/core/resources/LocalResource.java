@@ -10,8 +10,9 @@ import java.io.File;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.IIgnoreInfo;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.core.internal.IgnoreInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -30,7 +31,8 @@ public abstract class LocalResource implements ICVSResource {
 
 	 // The seperator that must be used when creating CVS resource paths. Never use
 	 // the platform default seperator since it is not compatible with CVS resources.
-	protected static final String SEPARATOR = "/";
+	protected static final String SEPARATOR = Session.SERVER_SEPARATOR;
+	protected static final String CURRENT_LOCAL_FOLDER = Session.CURRENT_LOCAL_FOLDER;
 		
 	/**
 	 * The local file represented by this handle.
@@ -60,7 +62,7 @@ public abstract class LocalResource implements ICVSResource {
 		try {
 			rootFolder = (LocalResource)root;
 		} catch (ClassCastException e) {
-			throw new CVSException(0,0,"two different implementations of ICVSResource used",e);
+			throw new CVSException(Policy.bind("LocalResource.invalidResourceClass"),e); //$NON-NLS-1$
 		}
 		
 		result = Util.getRelativePath(rootFolder.getPath(),getPath()); 
@@ -115,7 +117,7 @@ public abstract class LocalResource implements ICVSResource {
 		for (int i = 0; i < ignorePatterns.length; i++) {
 			IIgnoreInfo info = ignorePatterns[i];
 			if(info.getEnabled()) {
-				matcher.register(info.getPattern(), "true");
+				matcher.register(info.getPattern(), "true"); //$NON-NLS-1$
 			}
 		}
 		

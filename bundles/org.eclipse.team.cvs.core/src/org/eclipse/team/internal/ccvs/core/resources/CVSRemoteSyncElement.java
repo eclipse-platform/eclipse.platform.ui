@@ -159,7 +159,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
-					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
+					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?ResourceSyncInfo.USE_SERVER_MODE:ResourceSyncInfo.BINARY_TAG, local.getParent().getFolderSyncInfo().getTag(), null);
 					revision = info.getRevision();
 				} else {
 					info = remote.getSyncInfo();
@@ -249,7 +249,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		} else {
 			// If the folder already has CVS info, check that the remote and local match
 			if(local.isManaged() && local.isCVSFolder() && ! remote.getFolderSyncInfo().equals(local.getFolderSyncInfo())) {
-				throw new CVSException(IStatus.ERROR, 0, "Error making a remote folder in sync with the server. The local folder is already managed.");
+				throw new CVSException(IStatus.ERROR, 0, Policy.bind("CVSRemoteSyncElement.alreadyManaged"));//$NON-NLS-1$
 			}
 		}
 		

@@ -14,7 +14,7 @@ public class ModuleExpansionHandler extends ResponseHandler {
 	 * @see ResponseHandler#getResponseID()
 	 */
 	public String getResponseID() {
-		return "Module-expansion";
+		return "Module-expansion";//$NON-NLS-1$
 	}
 
 	/*

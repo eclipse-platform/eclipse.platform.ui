@@ -9,7 +9,7 @@ public abstract void decipher(byte[] src, int srcPos, byte[] dst, int dstPos, in
 public abstract void encipher(byte[] src, int srcPos, byte[] dst, int dstPos, int len);
 public static Cipher getInstance(String algorithm) {
 	try {
-		Class c = Class.forName("org.eclipse.team.internal.ccvs.ssh." + algorithm);
+		Class c = Class.forName("org.eclipse.team.internal.ccvs.ssh." + algorithm); //$NON-NLS-1$
 		return (Cipher) c.newInstance();
 	} catch (Exception e) {
 		return null;
