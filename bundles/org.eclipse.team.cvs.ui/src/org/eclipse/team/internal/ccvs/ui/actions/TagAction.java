@@ -42,7 +42,7 @@ import org.eclipse.team.internal.ui.PromptingDialog;
  */
 public class TagAction extends WorkspaceAction {
 	// The previously remembered tag
-	private static String previousTag = ""; //$NON-NLS-1$
+	protected static String previousTag = ""; //$NON-NLS-1$
 	
 	/**
 	 * @see CVSAction#execute(IAction)
