@@ -5,11 +5,24 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
  
+import java.io.InterruptedIOException;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSCommunicationException extends CVSException {
 
+	/**
+	 * Create a new <code>CVSCommunicationException with the
+	 * given status.
+	 */
+	private CVSCommunicationException(IStatus status) {
+		super(status);
+	}
 	/**
 	 * Create a new <code>CVSCommunicationException with the
 	 * given message.
@@ -34,7 +47,20 @@ public class CVSCommunicationException extends CVSException {
 	 *  exception.
 	 */
 	public CVSCommunicationException(Exception e) {
-		this(getMessageFor(e), e);
+		this(getStatusFor(e));
+	}
+	
+	public static IStatus getStatusFor(Exception e) {
+		if (e instanceof InterruptedIOException) {
+			InterruptedIOException ioEx = (InterruptedIOException) e;
+			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 0, getMessageFor(e), e);
+			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptCause"))); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptSolution"))); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.alternateInterruptCause"))); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.alternateInterruptSolution"))); //$NON-NLS-1$
+			return status;
+		}
+		return new CVSStatus(IStatus.ERROR, getMessageFor(e), e);
 	}
 	
 	public static String getMessageFor(Throwable throwable) {
