@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     Atsuhiko Yamanaka, JCraft,Inc. - initial API and implementation.
 **********************************************************************/
-package org.eclipse.team.cvs.ssh2;
+package org.eclipse.team.ccvs.ssh2;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
