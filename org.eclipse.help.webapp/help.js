@@ -108,16 +108,18 @@ function switchTab(nav, title)
  */
 function displayTocFor(topic)
 {
-	// first ensure the TOC frame is loaded
-	// TO DO....
-	
+
 	switchTab("toc");
+
 	// remove the query, if any
 	var i = topic.indexOf('?');
 	if (i != -1)
 		topic = topic.substring(0, i);
 	
-	var selected = NavFrame.toc.selectTopic(topic);
+	var selected = false;
+	if (NavFrame.toc.selectTopic)
+		selected = NavFrame.toc.selectTopic(topic);
+
 	if (!selected)
 		NavFrame.toc.location = "toc.jsp?topic="+topic;
 }
