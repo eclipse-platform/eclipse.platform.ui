@@ -119,21 +119,8 @@ final public class TeamPlugin extends Plugin {
 	
 	public static String getCharset(String name, InputStream stream) throws IOException {
 		IContentDescription description = getContentDescription(name, stream);
-		if (description != null) {
-			byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-			if (bom != null) {
-				if (bom == IContentDescription.BOM_UTF_8)
-					return "UTF-8"; //$NON-NLS-1$
-				else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
-					// UTF-16 will properly recognize the BOM
-					return "UTF-16"; //$NON-NLS-1$
-				else {
-					// unknown BOM... ignore it				
-				}
-			}
-			return (String) description.getProperty(IContentDescription.CHARSET);
-		}
-		return null;
+		return description == null ? null : description.getCharset();
+
 	}
 	public static IContentDescription getContentDescription(String name, InputStream stream) throws IOException  {
 		// tries to obtain a description for this file contents
