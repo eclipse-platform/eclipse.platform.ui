@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 
@@ -196,7 +197,7 @@ public class TextPresentation {
 	public StyleRange getDefaultStyleRange() {
 		return createWindowRelativeRange(fResultWindow, fDefaultRange);
 	}
-	
+
 	/**
 	 * Add the given range to the presentation. The range must be a 
 	 * subrange of the presentation's default range.
@@ -207,7 +208,143 @@ public class TextPresentation {
 		checkConsistency(range);
 		fRanges.add(range);
 	}
+		
+	/**
+	 * Merges the given range into this presentation. The range must be a 
+	 * subrange of the presentation's default range.
+	 *
+	 * @param range the range to be added
+	 * @since 3.0
+	 */
+	public void mergeStyleRange(StyleRange range) {
+		if (range.length == 0)
+			return;
+
+		checkConsistency(range);
+
+		int start= range.start;
+		int length= range.length;
+		int end= start + length;
+		
+		if (fRanges.size() == 0) {
+			StyleRange defaultRange= getDefaultStyleRange();
+			if (defaultRange == null)
+				defaultRange= range;
+			
+			defaultRange.start= start;
+			defaultRange.length= length;
+			applyStyle(range, defaultRange);
+			fRanges.add(defaultRange);
+		} else {
+			IRegion rangeRegion= new Region(start, length);
+			int first= getFirstIndexInWindow(rangeRegion);
+			
+			if (first == fRanges.size()) {
+				StyleRange defaultRange= getDefaultStyleRange();
+				if (defaultRange == null)
+					defaultRange= range;
+				defaultRange.start= start;
+				defaultRange.length= length;
+				applyStyle(range, defaultRange);
+				fRanges.add(defaultRange);
+				return;
+			}
+			
+			int last= getFirstIndexAfterWindow(rangeRegion);
+			ArrayList rangesCopy= new ArrayList(fRanges);
+			int insertOffset= 0;
+			for (int i= first; i < last && length > 0; i++) {
+			
+				StyleRange current= (StyleRange)rangesCopy.get(i);
+				int currentStart= current.start;
+				int currentEnd= currentStart + current.length;
+
+				if (end <= currentStart) {
+					fRanges.add(i + insertOffset, range);
+					return;
+				}
+				
+				if (start >= currentEnd)
+					continue;
+				
+				StyleRange currentCopy= null;
+				if (end < currentEnd)
+					currentCopy= (StyleRange)current.clone();
+				
+				if (start < currentStart) {
+					// Apply background to new default range and add it
+					StyleRange defaultRange= getDefaultStyleRange();
+					if (defaultRange == null)
+						defaultRange= new StyleRange();
+					
+					defaultRange.start= start;
+					defaultRange.length= currentStart - start;
+					applyStyle(range, defaultRange);
+					fRanges.add(i + insertOffset, defaultRange);
+					insertOffset++;
+					
+					
+					// Apply background to first part of current range
+					current.length= Math.min(end, currentEnd) - currentStart;
+					applyStyle(range, current);
+				}
+				
+				if (start >= currentStart) {
+					// Shorten the current range
+					current.length= start - currentStart;
+						
+					// Apply the background to the rest of the current range and add it
+					if (current.length > 0) {
+						current= (StyleRange)current.clone();
+						insertOffset++;
+						fRanges.add(i + insertOffset, current);
+					}
+					applyStyle(range, current);
+					current.start= start;
+					current.length= Math.min(end, currentEnd) - start;
+				}
+
+				if (end < currentEnd) {
+					// Add rest of current range
+					currentCopy.start= end;
+					currentCopy.length= currentEnd - end;
+					insertOffset++;
+					fRanges.add(i + insertOffset,  currentCopy);
+				}
+
+				// Update range
+				range.start=  currentEnd;
+				range.length= Math.max(end - currentEnd, 0);
+				start= range.start;
+				length= range.length;
+			}
+			if (length > 0) {
+				// Apply background to new default range and add it
+				StyleRange defaultRange= getDefaultStyleRange();
+				if (defaultRange == null)
+					defaultRange= range;
+				defaultRange.start= start;
+				defaultRange.length= end - start;
+				defaultRange.background= range.background;
+				fRanges.add(last, defaultRange);
+			}
+		}
+	}
 	
+	/**
+	 * Applies the template's style to the target.
+	 * 
+	 * @since 3.0
+	 */
+	private void applyStyle(StyleRange template, StyleRange target) {
+		if (template.foreground != null)
+			target.foreground= template.foreground;
+		if (template.background != null)
+			target.background= template.background;
+		if (template.fontStyle != SWT.NORMAL)
+			target.fontStyle= template.fontStyle;
+	}
+
 	/**
 	 * Checks whether the given range is a subrange of the presentation's
 	 * default style range.
