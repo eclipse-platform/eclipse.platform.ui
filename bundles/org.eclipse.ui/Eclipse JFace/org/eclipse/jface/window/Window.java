@@ -153,6 +153,11 @@ public abstract class Window {
 	private int returnCode = OK;
 	
 	/**
+	 * Last recorded window return code; initially <code>OK</code>.
+	 */
+	private static int globalReturnCode = OK;
+
+	/**
 	 * <code>true</code> if the <code>open</code> method should
 	 * not return until the window closes, and <code>false</code> if the
 	 * <code>open</code> method should return immediately;
@@ -595,6 +600,7 @@ public static void setDefaultImage(Image image) {
  */
 protected void setReturnCode(int code) {
 	returnCode = code;
+	globalReturnCode = code;
 }
 /**
  * Sets the shell style bits.
