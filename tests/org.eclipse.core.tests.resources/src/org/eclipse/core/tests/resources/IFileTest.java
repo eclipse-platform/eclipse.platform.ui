@@ -253,10 +253,9 @@ public class IFileTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(IFileTest.class);
 
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new IFileTest("testAppendContents2"));
-		//	suite.addTest(new IFileTest("testSetContents3"));
-		//	return suite;
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IFileTest("testInvalidFileNames"));
+//		return suite;
 	}
 
 	protected void tearDown() throws Exception {
@@ -694,13 +693,13 @@ public class IFileTest extends EclipseWorkspaceTest {
 		names = new String[0];
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//invalid windows names
-			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
+			names = new String[] {"foo::bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
 		} else {
 			//invalid names on non-windows platforms
 			names = new String[] {};
 		}
 		for (int i = 0; i < names.length; i++) {
-			IFile file = project.getFile(names[i]);
+			IFile file = project.getFile(Path.fromPortableString(names[i]));
 			assertTrue("1.0 " + names[i], !file.exists());
 			try {
 				file.create(getRandomContents(), true, getMonitor());
