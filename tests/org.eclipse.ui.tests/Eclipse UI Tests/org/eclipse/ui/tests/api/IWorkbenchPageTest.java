@@ -1551,4 +1551,37 @@ public class IWorkbenchPageTest extends UITestCase {
         assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
     }
 
+    /**
+     * Regression test for Bug 76285 [Presentations] Folder tab does not indicate current view.
+     * Tests that, when switching between perspectives, the remembered old part correctly
+     * handles multi-view instances. 
+     */
+    public void testBug76285() {
+        IWorkbenchPage page = fActivePage;
+        IPerspectiveDescriptor originalPersp = page.getPerspective();
+        IPerspectiveDescriptor resourcePersp = PlatformUI.getWorkbench()
+                .getPerspectiveRegistry().findPerspectiveWithId(
+                        IDE.RESOURCE_PERSPECTIVE_ID);
+        // test requires switching between two different perspectives
+        assertNotSame(originalPersp, resourcePersp);
+        
+        int n = 5;
+        IViewPart[] views = new IViewPart[n];
+        for (int i = 0; i < n; ++i) {
+            try {
+                views[i] = page.showView(MockViewPart.IDMULT, Integer
+                        .toString(i), IWorkbenchPage.VIEW_CREATE);
+            } catch (PartInitException e) {
+                fail(e.getMessage());
+            }
+        }
+        assertEquals(5, page.getViews().length);
+        for (int i = 0; i < n; ++i) {
+            page.activate(views[i]);
+            page.setPerspective(resourcePersp);
+            assertFalse(page.getActivePart() instanceof MockViewPart);
+            page.setPerspective(originalPersp);
+            assertEquals(views[i], page.getActivePart());
+        }
+    }
 }
