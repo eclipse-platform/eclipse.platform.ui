@@ -68,23 +68,6 @@ class WorkManager implements IManager {
 	}
 	
 	/**
-	 * Begins a resource change notification.
-	 * @param currentRule The rule for the operation that is ending.
-	 */
-	public void beginNotify(final ISchedulingRule currentRule) {
-		//if we don't currently have a rule, we must released the ws lock
-		// before beginRule to prevent deadlock
-		int depth = 0;
-		if (currentRule == null)
-			depth = beginUnprotected();
-		try {
-			jobManager.beginRule(notifyRule, null);
-		} finally {
-			if (currentRule == null)
-				endUnprotected(depth);
-		}
-	}
-	/**
 	 * Releases the workspace lock without changing the nested operation depth.
 	 * Must be followed eventually by endUnprotected. Any
 	 * beginUnprotected/endUnprotected pair must be done entirely within the
@@ -167,14 +150,6 @@ class WorkManager implements IManager {
 	}
 
 	/**
-	 * End of a resource change notification.
-	 *
-	 */
-	public void endNotify() {
-		jobManager.endRule(notifyRule);
-	}
-	
-	/**
 	 * Re-acquires the workspace lock that was temporarily released during an
 	 * operation, and restores the old lock depth.
 	 * @see #beginUnprotected()
@@ -191,13 +166,6 @@ class WorkManager implements IManager {
 		return lock;
 	}
 	
-	/**
-	 * Returns the scheduling rule used during resource change notifications.
-	 */
-	public ISchedulingRule getNotifyRule() {
-		return notifyRule;
-	}
-
 	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -301,5 +269,12 @@ class WorkManager implements IManager {
 			// ignore
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the scheduling rule used during resource change notifications.
+	 */
+	public ISchedulingRule getNotifyRule() {
+		return notifyRule;
 	}
 }

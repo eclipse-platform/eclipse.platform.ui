@@ -17,6 +17,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+/**
+ * Standard implementation of the ISavedState interface.
+ */
 public class SavedState implements ISavedState {
 	ElementTree oldTree;
 	ElementTree newTree;
@@ -61,8 +64,7 @@ public class SavedState implements ISavedState {
 
 	public void processResourceChangeEvents(IResourceChangeListener listener) {
 		try {
-			//use the notify rule to prevent concurrent resource change notifications
-			final ISchedulingRule rule = workspace.getWorkManager().getNotifyRule();
+			final ISchedulingRule rule = workspace.getRoot();
 			try {
 				workspace.prepareOperation(rule, null);
 				if (oldTree == null || newTree == null)
