@@ -133,7 +133,7 @@ public class ViewsPreferencePage
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		layout.verticalSpacing = 10;
+		//layout.verticalSpacing = 10;
 		composite.setLayout(layout);
 
 		Composite colorIconsComposite = new Composite(composite, SWT.NONE);
@@ -186,32 +186,35 @@ public class ViewsPreferencePage
 
 		Group colorSchemeComposite = new Group(composite, SWT.NONE);
 		colorSchemeComposite.setLayout(new GridLayout());
+		
 		colorSchemeComposite.setText("Workbench Color Theme"); 
 		colorSchemeComposite.setFont(font);
-		GridData data2 =
-		new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		GridData data2 = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		colorSchemeComposite.setLayoutData(data2); 
-
-		//Add in the demo viewing area for color settings
-		colorThemeDemo = new ColorThemeDemo(colorSchemeComposite);
-		
-		useDefault =
-		new BooleanFieldEditor(
-				JFacePreferences.USE_DEFAULT_THEME,
-				"Use System Colors",
-				colorSchemeComposite);
-		useDefault.setPreferencePage(this);
-		useDefault.setPreferenceStore(doGetPreferenceStore());
-		useDefault.load();		
-		
 		//Add in an intermediate composite to allow for spacing
 		final Composite spacingComposite2 = new Composite(colorSchemeComposite, SWT.NONE);
 		GridLayout spacingLayout2 = new GridLayout();
 		spacingLayout2.numColumns = 2;
 		spacingComposite2.setLayout(spacingLayout2);
 		spacingComposite2.setFont(font);
-
+		spacingComposite2.setLayoutData(new GridData());
+		
+		//Add in the demo viewing area for color settings
+		colorThemeDemo = new ColorThemeDemo(spacingComposite2);
+		
+		useDefault =
+		new BooleanFieldEditor(
+				JFacePreferences.USE_DEFAULT_THEME,
+				"Use System Colors",
+				spacingComposite2);
+		useDefault.setPreferencePage(this);
+		useDefault.setPreferenceStore(doGetPreferenceStore());
+		useDefault.load();		
+		
+		// 	dummy label to fill the space
+		Label spacer = new Label(spacingComposite2, SWT.NONE);
+		
 		colorSchemeSelectedTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, "Selected Tab Background", spacingComposite2);
 		colorSchemeSelectedTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		// If the value is still the default, this means the use has been using system colors
@@ -268,8 +271,6 @@ public class ViewsPreferencePage
 
 	void updateColorThemeDemo(Composite parentComposite) {
 		boolean defaultColor = useDefault.getBooleanValue();
-		
-		parentComposite.setEnabled(!defaultColor);
 		colorSchemeTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
 		colorSchemeTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
 		colorSchemeSelectedTabBGColorEditor.setEnabled(!defaultColor, parentComposite);

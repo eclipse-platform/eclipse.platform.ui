@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
@@ -20,6 +19,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.window.ColorSchemeService;
 
 /**
  * Class to encapsulate the set of widgets that will be used to indicate 
@@ -51,17 +52,16 @@ public class ColorThemeDemo {
 		GridLayout gl = new GridLayout();
 		gl.marginHeight = 1;
 		gl.marginWidth = 1;
-		marginComposite.setBackground(new Color(parent.getDisplay(), 0,0,0));
+		
+		marginComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		marginComposite.setLayout(gl);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		marginComposite.setLayoutData(gd);
 		
 		sampleComposite = new Composite(marginComposite, SWT.H_SCROLL | SWT.V_SCROLL);
-		GridLayout gl2 = new GridLayout();
-		gl2.marginHeight = 0;
-		gl2.marginWidth = 0;
-		sampleComposite.setLayout(gl2);
+		sampleComposite.setLayout(new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
 		sampleComposite.setData(gridData);
 			
 		sampleTabFolder = new CTabFolder2(sampleComposite, SWT.BORDER);
@@ -74,14 +74,8 @@ public class ColorThemeDemo {
 		sampleTabFolder.setSelection(0);
 		temp = new CTabItem2(sampleTabFolder, SWT.NONE);
 		temp.setText("Search");
-
-		CLabel clabel = new CLabel(sampleComposite, SWT.NONE);
-		clabel.setText("Status Text");
-		clabel.setData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		resetColors();
-		
-		marginComposite.setLayoutData(new GridData());
 	}
 
 	/**
