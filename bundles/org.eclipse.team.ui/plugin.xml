@@ -353,7 +353,7 @@
       <actionSet
             label="%Team"
             description="%ActionSet.description"
-            visible="true"
+            visible="false"
             id="org.eclipse.team.ui.actionSet">
          <action
                definitionId="org.eclipse.team.ui.syncview.syncAll"
