@@ -17,7 +17,7 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
          <sequence>
             <element ref="activity"/>
             <element ref="activityActivityBinding"/>
-            <element ref="activityParentBinding"/>
+            <element ref="activityPatternBinding"/>
             <element ref="category"/>
             <element ref="categoryActivityBinding"/>
          </sequence>
