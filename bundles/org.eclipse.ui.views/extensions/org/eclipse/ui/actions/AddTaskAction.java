@@ -20,7 +20,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
+import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
 /**
  * Standard action for adding a task to the currently selected file
@@ -77,7 +77,7 @@ public class AddTaskAction extends SelectionListenerAction {
 	public void run() {
 		IResource resource = getElement(getStructuredSelection());
 		if (resource != null) {
-			TaskPropertiesDialog dialog= new TaskPropertiesDialog(shell);
+			DialogTaskProperties dialog= new DialogTaskProperties(shell);
 			dialog.setResource(resource);
 			dialog.open();
 		}
