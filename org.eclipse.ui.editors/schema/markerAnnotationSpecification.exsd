@@ -6,7 +6,8 @@
          <meta.schema plugin="org.eclipse.ui.editors" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
       </appInfo>
       <documentation>
-         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.AnnotationPreferenceLookup; using the older org.eclipse.ui.texteditor.MarkerAnnotationPreferences is not encouraged.
+         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using &lt;samp&gt;org.eclipse.ui.texteditor.MarkerAnnotationPreferences&lt;/samp&gt;.
+         Use &lt;samp&gt;org.eclipse.ui.texteditor.AnnotationPreferenceLookup&lt;/samp&gt; to get the annotation preference for a given annotation.
       </documentation>
    </annotation>
 
