@@ -208,6 +208,9 @@ public class ForceUpdateSyncAction extends MergeAction {
 								updateShallow.add(resource);
 							} else {
 								updateIgnoreLocalShallow.add(resource);
+								if (!resource.exists()) {
+									makeIncoming.add(changed[i]);
+								}
 							}
 							break;
 					}
