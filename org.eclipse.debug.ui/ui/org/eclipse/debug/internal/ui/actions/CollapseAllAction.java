@@ -1,0 +1,39 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.actions;
+
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+
+/**
+ * CollapseAllAction
+ */
+public class CollapseAllAction extends Action {
+	
+	private AbstractTreeViewer fViewer;
+	
+	public CollapseAllAction(AbstractTreeViewer viewer) {
+		super(ActionMessages.getString("CollapseAllAction.0"), DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COLLAPSE_ALL)); //$NON-NLS-1$
+		setToolTipText(ActionMessages.getString("CollapseAllAction.0")); //$NON-NLS-1$
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL));
+		fViewer = viewer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	public void run() {
+		fViewer.collapseAll();
+	}
+
+}

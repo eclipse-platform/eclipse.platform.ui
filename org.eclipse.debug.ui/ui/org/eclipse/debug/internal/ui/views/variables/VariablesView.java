@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
+import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.ToggleDetailPaneAction;
@@ -735,6 +736,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				
 		action = new ToggleObjectBrowsersAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
+		
+		action = new CollapseAllAction(getVariablesViewer());
+		setAction("CollapseAll", action); //$NON-NLS-1$
 
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
@@ -808,6 +812,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
+		tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
 	}
 
    /**
