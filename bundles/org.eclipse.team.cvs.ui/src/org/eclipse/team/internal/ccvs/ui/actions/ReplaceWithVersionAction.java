@@ -19,7 +19,7 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.VersionSelectionDialog;
+import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
@@ -44,7 +44,7 @@ public class ReplaceWithVersionAction extends TeamAction {
 				cvsResource = new LocalFolder(resource.getLocation().toFile());
 			}
 
-			VersionSelectionDialog dialog = new VersionSelectionDialog(getShell(), resource);
+			TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
 			dialog.setBlockOnOpen(true);
 			int result = dialog.open();
 			if (result == Dialog.CANCEL || dialog.getResult() == null) {
