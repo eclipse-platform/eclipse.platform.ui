@@ -71,9 +71,9 @@ public interface IActionBarConfigurer {
 	 *
 	 * @param toolBarMgr the tool bar manager to add the group to 
 	 * @param id the unique group identifier
-	 * @param asSeperator whether the group should have a seperator
+	 * @param asSeparator whether the group should have a seperator
 	 */
-	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator);
+	public void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator);
 	
 	/**
 	 * Register the action as a global action with a workbench
@@ -108,7 +108,7 @@ public interface IActionBarConfigurer {
 	 * @return the tool bar manager for the new tool bar item
 	 * @issue where is EDITOR_TOOLBAR_ID defined?
 	 */
-	public void addEditorToolbarGroup();
+	public void addEditorToolBarGroup();
 	
 	/**
 	 * Returns the status line manager of a workbench window.
