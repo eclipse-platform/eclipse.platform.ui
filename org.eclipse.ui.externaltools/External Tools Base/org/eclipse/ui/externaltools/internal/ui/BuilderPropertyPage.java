@@ -43,7 +43,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -596,7 +595,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(ExternalToolsUIMessages.getString("BuilderPropertyPage.New_Builder_7")); //$NON-NLS-1$
 			workingCopy = type.newInstance(getBuilderFolder(true), name);		
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
 			
 			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
 			buffer.append(',');
