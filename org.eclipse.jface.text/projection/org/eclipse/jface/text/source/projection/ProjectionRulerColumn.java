@@ -24,7 +24,9 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -201,5 +203,40 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 			model= extension.getAnnotationModel(ProjectionSupport.PROJECTION);
 		}
 		super.setModel(model);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#hasLineAnnotations(int)
+	 * @since 3.0
+	 */
+	protected boolean hasAnnotation(int lineNumber) {
+		
+		IRegion line;
+		try {
+			IDocument d= getCachedTextViewer().getDocument();
+			line= d.getLineInformation(lineNumber);
+		}  catch (BadLocationException ex) {
+			return false;
+		}
+
+		int lineStart= line.getOffset();
+		int lineLength= line.getLength();
+		
+		Iterator e= getModel().getAnnotationIterator();
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			
+			if (a.isMarkedDeleted())
+				continue;
+			
+			Position p= getModel().getPosition(a);
+			if (p == null || p.isDeleted())
+				continue;
+			
+			if (p.overlapsWith(lineStart, lineLength))
+				return true;
+		}
+		
+		return false;
 	}
 }

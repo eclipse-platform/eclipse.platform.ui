@@ -332,7 +332,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private void handleMouseMove(MouseEvent event) {
 		if (fCachedTextViewer != null) {
 			int line= toDocumentLineNumber(event.y);
-			Cursor cursor= (hasLineAnnotations(line) ? fHitDetectionCursor : null);
+			Cursor cursor= (hasAnnotation(line) ? fHitDetectionCursor : null);
 			if (cursor != fLastCursor) {
 				fCanvas.setCursor(cursor);
 				fLastCursor= cursor;
@@ -341,14 +341,18 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	}
 
 	/**
-	 * Tells whether the given line contains any annotations.
+	 * Tells whether the given line contains an annotation.
 	 * 
 	 * @param lineNumber the line number
 	 * @return <code>true</code> if the given line contains an annotation
 	 */
-	private boolean hasLineAnnotations(int lineNumber) {
+	protected boolean hasAnnotation(int lineNumber) {
 		
-		if (fModel == null)
+		IAnnotationModel model= fModel;
+		if (fModel instanceof IAnnotationModelExtension)
+			model= ((IAnnotationModelExtension)fModel).getAnnotationModel(SourceViewer.MODEL_ANNOTATION_MODEL);
+
+		if (model == null)
 			return false;
 		
 		IRegion line;
@@ -362,7 +366,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int lineStart= line.getOffset();
 		int lineLength= line.getLength();
 		
-		Iterator e= fModel.getAnnotationIterator();
+		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation a= (Annotation) e.next();
 			
@@ -372,7 +376,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			if (skip(a))
 				continue;
 			
-			Position p= fModel.getPosition(a);
+			Position p= model.getPosition(a);
 			if (p == null || p.isDeleted())
 				continue;
 			
