@@ -21,9 +21,9 @@ package org.eclipse.ui;
  * the <code>org.eclipse.ui.editorss</code> extension point in the plugin registry.  
  * For each extension an editor class and a contributor class must be defined. 
  * </p><p>
- * For convenience, an implementation of this interface has been 
- * created in <code>EditorActionBarContributor</code>.  Implementors
- * should subclass this and specialize as required.
+ * This interface should not be implemented directly. An implementation of this 
+ * interface has been created in <code>EditorActionBarContributor</code>.  
+ * Implementors should subclass this and specialize as required.
  * </p>
  *
  * @see org.eclipse.ui.actions.EditorActionBarContributor
