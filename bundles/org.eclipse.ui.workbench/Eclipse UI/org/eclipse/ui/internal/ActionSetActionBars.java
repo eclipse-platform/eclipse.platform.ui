@@ -9,8 +9,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.SubToolBarManager;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.SubActionBars;
 
 /**
  * This class represents the action bars for an action set.

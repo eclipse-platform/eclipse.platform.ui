@@ -11,8 +11,8 @@ Contributors:
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.SubActionBars;
 
 /**
  * An editor container manages the services for an editor.

@@ -14,7 +14,10 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * <code>PartActionBars</code> is the general implementation for an
- * <code>IActionBars</code>.  
+ * <code>IActionBars</code>.
+ * 
+ * @deprecated This class has been promoted to API.
+ * @see org.eclipse.ui.SubActionBars
  */
 public class SubActionBars implements IActionBars
 {
@@ -31,6 +34,9 @@ public class SubActionBars implements IActionBars
 	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers";//$NON-NLS-1$
 /**
  * Construct a new PartActionBars object.
+ * 
+ * @deprecated This class has been promoted to API.
+ * @see org.eclipse.ui.SubActionBars
  */
 public SubActionBars(IActionBars parent) {
 	this.parent = parent;
