@@ -37,26 +37,14 @@ are added or removed.</li>
 <ul>
   <li>a subclass of Subcriber which maintains the synchronization state
 between its local resources and their corresponding variants.</li>
-  <li>an implemenation of IResourceVariant which provides access to the
+  <li>an implemenation of org.eclipse.team.core.variants.IResourceVariant which provides access to the
 contents and other state of a variant resource that corresponds to a
 local resource</li>
-  <li>an implementation of IResourceVariantComparator which is used by
-SyncInfo to determine the synchronization state of a resource.</li>
+  <li>an implementation of org.eclipse.team.core.variants.IResourceVariantComparator which is used by
+org.eclipse.team.core.synchronize.SyncInfo to determine the synchronization state of a resource.</li>
 </ul>
-Optionally, a subscriber may provide a subclass of SyncInfo in order to
+Optionally, a subscriber may provide a subclass of org.eclipse.team.core.synchronize.SyncInfo in order to
 customize the algorithm used to
 determine the synchronization state of a resource.
-<p></p>
-<h3>Additional Classes</h3>
-<p>The SubscriberSyncInfoCollector is used to collect the SyncInfo for
-out-of-sync resources from a subscriber into a SyncInfoTree that can be
-used to, for example, display the out-of-sync resources of a subscriber
-to the user. The collector supports filtering by working set and
-SyncInfoFilter (e.g. to select groupings such as incoming-changes or
-conflicts). Even when filtered, the collector still maintains a set of
-all out-of-sync resources from the subscriber in order to provide
-statistics on the number of pre and post filtered out-of-sync resources.</p>
-<p>FilteredSyncInfoCollector is used to populate an output sync info set
-with the contents of an input set that match a particular filter.</p>
 </body>
 </html>
