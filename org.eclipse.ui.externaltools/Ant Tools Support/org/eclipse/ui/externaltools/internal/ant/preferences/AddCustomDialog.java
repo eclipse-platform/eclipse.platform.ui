@@ -12,6 +12,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
+import org.eclipse.ui.externaltools.internal.ui.*;
 import org.eclipse.ui.externaltools.internal.ui.StatusDialog;
 import org.eclipse.ui.externaltools.internal.ui.StatusInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -71,7 +73,7 @@ public class AddCustomDialog extends StatusDialog {
 	private List libraryUrls;
 	private List existingNames;
 	
-	private AddCustomTreeAndListGroup selectionGroup;
+	private TreeAndListGroup selectionGroup;
 	
 	protected Button sourceBrowseButton;
 	
@@ -323,7 +325,7 @@ public class AddCustomDialog extends StatusDialog {
 	protected void createFileSelectionGroup(Composite parent) {
 		//Just create with a dummy root.
 		FileSystemElement dummyRoot= new FileSystemElement("Dummy", null, true); //$NON-NLS-1$
-		this.selectionGroup = new AddCustomTreeAndListGroup(parent, dummyRoot, 
+		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, 
 			getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(), new WorkbenchLabelProvider(), SWT.NONE, 400, 150);
 
 		ISelectionChangedListener listener = new ISelectionChangedListener() {
@@ -372,8 +374,8 @@ public class AddCustomDialog extends StatusDialog {
 	
 	/**
 	 * Invokes a file selection operation using the specified file system and
-	 * structure provider.  If the user specifies files to be imported then
-	 * this selection is cached for later retrieval and is returned.
+	 * structure provider.  If the user specifies files then this selection is
+	 * cached for later retrieval and is returned.
 	 */
 	protected MinimizedFileSystemElement selectFiles(final Object rootFileSystemObject, final ZipFileStructureProvider structureProvider) {
 
@@ -420,9 +422,13 @@ public class AddCustomDialog extends StatusDialog {
 		try {
 			return new ZipFile(sourceNameField.getText());
 		} catch (ZipException e) {
-			//displayErrorDialog(DataTransferMessages.getString("ZipImport.badFormat")); //$NON-NLS-1$
+			StatusInfo status= new StatusInfo();
+			status.setError("Specified zip file is not in the correct format");
+			updateStatus(status);
 		} catch (IOException e) {
-			//displayErrorDialog(DataTransferMessages.getString("ZipImport.couldNotRead")); //$NON-NLS-1$
+			StatusInfo status= new StatusInfo();
+			status.setError("Specified zip file could not be read");
+			updateStatus(status);
 		}
 
 		sourceNameField.setFocus();
@@ -436,10 +442,11 @@ public class AddCustomDialog extends StatusDialog {
 			providerCache = new ZipFileStructureProvider(targetZip);
 		else if (!providerCache.getZipFile().getName().equals(targetZip.getName())) {
 			clearProviderCache();
-			// ie.- new value, so finalize&remove old value
+			// ie.- new value, so finalize & remove old value
 			providerCache = new ZipFileStructureProvider(targetZip);
-		} else if (!providerCache.getZipFile().equals(targetZip))
+		} else if (!providerCache.getZipFile().equals(targetZip)) {
 			closeZipFile(targetZip); // ie.- duplicate handle to same .zip
+		}
 
 		return providerCache;
 	}
@@ -450,6 +457,46 @@ public class AddCustomDialog extends StatusDialog {
 	protected void resetSelection() {
 		MinimizedFileSystemElement currentRoot = getFileSystemTree();
 		selectionGroup.setRoot(currentRoot);
+		
+		if (className != null) {
+			StringTokenizer tokenizer= new StringTokenizer(className, ".");
+			if (selectClass(currentRoot, tokenizer)) {
+				//getButton(IDialogConstants.OK_ID).setEnabled(true);
+			}
+		}
+	}
+	
+	private boolean selectClass(MinimizedFileSystemElement currentParent, StringTokenizer tokenizer) {
+		List folders= currentParent.getFolders(currentProvider);
+		if (folders.size() == 1) {
+			MinimizedFileSystemElement element = (MinimizedFileSystemElement)folders.get(0);
+			if (element.getLabel(null).equals("/")) {
+				selectionGroup.selectAndRevealFolder(element);
+				return selectClass(element, tokenizer);
+			}
+		}
+		String currentName= tokenizer.nextToken();
+		if (tokenizer.hasMoreTokens()) {
+			Iterator allFolders= folders.iterator();
+			while (allFolders.hasNext()) {
+				MinimizedFileSystemElement folder = (MinimizedFileSystemElement) allFolders.next();
+				if (folder.getLabel(null).equals(currentName)) {
+					selectionGroup.selectAndRevealFolder(folder);
+					return selectClass(folder, tokenizer);
+				}
+			}	
+		} else {
+			List files= currentParent.getFiles(currentProvider);
+			Iterator iter= files.iterator();
+			while (iter.hasNext()) {
+				MinimizedFileSystemElement file = (MinimizedFileSystemElement) iter.next();
+				if (file.getLabel(null).equals(currentName + ".class")) {
+					selectionGroup.selectAndRevealFile(file);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -550,9 +597,6 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	public void create() {
 		super.create();
-		if (library == null) {
-			//need information to add
-			getButton(IDialogConstants.OK_ID).setEnabled(false);
-		}
+		getButton(IDialogConstants.OK_ID).setEnabled(!(library == null));
 	}
 }

@@ -84,7 +84,6 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Returns a list of the files that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
-	 * of this folder.
 	 */
 	public List getFiles(ZipFileStructureProvider provider) {
 		if (!populated) {
@@ -100,7 +99,6 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Returns a list of the folders that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
-	 * of this folder.
 	 */
 	public List getFolders(ZipFileStructureProvider provider) {
 		if (!populated) {
