@@ -7,7 +7,6 @@
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.help</project>
 		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.cheatsheets</project>
 		<project>org.eclipse.ui.forms</project>
 	</projects>
 	<buildSpec>

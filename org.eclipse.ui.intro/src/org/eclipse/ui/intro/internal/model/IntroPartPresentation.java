@@ -58,7 +58,7 @@ public class IntroPartPresentation extends IntroElement {
     // implementation).
     private IntroHead head;
 
-    private AbstractIntroPart implementation;
+    private AbstractIntroPartImplementation implementation;
     //private AbstractIntroPart implementation;
 
     // CustomizableIntroPart instance. Passed to the Implementation classes.
@@ -218,13 +218,13 @@ public class IntroPartPresentation extends IntroElement {
      * @return Returns the partConfigElement representing the single Intro
      *         config.
      */
-    private AbstractIntroPart createIntroPartImplementation(
+    private AbstractIntroPartImplementation createIntroPartImplementation(
             IConfigurationElement configElement) {
         if (configElement == null)
             return null;
-        AbstractIntroPart implementation = null;
+        AbstractIntroPartImplementation implementation = null;
         try {
-            implementation = (AbstractIntroPart) configElement
+            implementation = (AbstractIntroPartImplementation) configElement
                     .createExecutableExtension("class");
         } catch (Exception e) {
             Util.handleException("Could not instantiate implementation class "

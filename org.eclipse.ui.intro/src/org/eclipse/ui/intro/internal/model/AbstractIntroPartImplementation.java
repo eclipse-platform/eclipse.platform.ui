@@ -31,7 +31,7 @@ import org.eclipse.ui.intro.internal.util.*;
  * a history of navigation locations.
  *  
  */
-public abstract class AbstractIntroPart {
+public abstract class AbstractIntroPartImplementation {
 
     // CustomizableIntroPart instance.
     private CustomizableIntroPart introPart = null;

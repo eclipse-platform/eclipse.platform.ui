@@ -26,7 +26,7 @@ import org.eclipse.ui.intro.internal.util.*;
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.
  */
-public class FormIntroPartImplementation extends AbstractIntroPart implements
+public class FormIntroPartImplementation extends AbstractIntroPartImplementation implements
         IPropertyListener {
 
     private FormToolkit toolkit = null;

@@ -22,7 +22,7 @@ import org.eclipse.ui.intro.internal.model.*;
  * This is an Text based implementation of an Intro Part. It simply walks the
  * model and prints the content of pages. It is used for debugging.
  */
-public class TextIntroPartImplementation extends AbstractIntroPart {
+public class TextIntroPartImplementation extends AbstractIntroPartImplementation {
 
     public void createPartControl(Composite container) {
         Text textUI = new Text(container, SWT.MULTI | SWT.H_SCROLL

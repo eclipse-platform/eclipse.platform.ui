@@ -21,7 +21,7 @@ import org.eclipse.ui.intro.internal.html.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
 
-public class BrowserIntroPartImplementation extends AbstractIntroPart implements
+public class BrowserIntroPartImplementation extends AbstractIntroPartImplementation implements
         IPropertyListener {
 
     // the browser widget that will display the intro content

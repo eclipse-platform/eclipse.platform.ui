@@ -19,12 +19,12 @@ import org.eclipse.ui.intro.internal.model.*;
  */
 public class BrowserIntroPartLocationListener implements LocationListener {
 
-	private AbstractIntroPart implementation;
+	private AbstractIntroPartImplementation implementation;
 
 	/**
 	 * Takes the implementation as an input.
 	 */
-	public BrowserIntroPartLocationListener(AbstractIntroPart implementation) {
+	public BrowserIntroPartLocationListener(AbstractIntroPartImplementation implementation) {
 		this.implementation = implementation;
 	}
 
