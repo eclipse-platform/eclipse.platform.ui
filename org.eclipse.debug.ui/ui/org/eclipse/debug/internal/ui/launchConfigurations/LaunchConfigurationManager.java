@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -96,13 +98,17 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * The list of registered implementors of <code>ILaunchHistoryChangedListener</code>
 	 */
 	protected List fLaunchHistoryChangedListeners = new ArrayList(3);	
+
 	/**
-	 * The mapping of launch configuration type IDs to lists of perspectives.
-	 * A shortcut for bringing up the launch configuration dialog initialized to
-	 * the specified config type will appear in each specified perspective.
+	 * Launch shortcuts
 	 */
-	protected Map fLaunchConfigurationShortcuts;
+	private List fLaunchShortcuts = null;
 	
+	/**
+	 * Launch shortcuts, cached by perspective ids
+	 */
+	private Map fLaunchShortcutsByPerspective = null;
+		
 	/**
 	 * Cache of launch configuration tab images with error overlays
 	 */
@@ -138,7 +144,6 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		addLaunchHistoryListener(this);
-		loadLaunchConfigurationShortcuts();
 	}
 
 	protected void setRunHistoryVector(Vector runHistory) {
@@ -181,7 +186,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
-		removeLaunchHistoryListener(this);
+		removeLaunchHistoryListener(this);		
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
 	
@@ -785,36 +790,70 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 	
 	/**
-	 * Load all registered extensions of the 'launch configuration shortcut' extension point.
+	 * Load all registered extensions of the 'launch shortcut' extension point.
 	 */
-	private void loadLaunchConfigurationShortcuts() {
+	private void loadLaunchShortcuts() {
 		// Get the configuration elements
 		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_SHORTCUTS);
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 
 		// Load the configuration elements into a Map 
-		fLaunchConfigurationShortcuts = new HashMap(infos.length);
+		fLaunchShortcuts = new ArrayList(infos.length);
 		for (int i = 0; i < infos.length; i++) {
-			IConfigurationElement configElement = infos[i];
-			String configTypeID = configElement.getAttribute("configTypeID"); //$NON-NLS-1$
-			IConfigurationElement[] children = configElement.getChildren("perspective"); //$NON-NLS-1$
-			List perspChildren = new ArrayList(children.length);
-			for (int j = 0; j < children.length; j++) {
-				String perspID = children[j].getAttribute("id"); //$NON-NLS-1$
-				perspChildren.add(perspID);
-			}
-			fLaunchConfigurationShortcuts.put(configTypeID, perspChildren);
+			LaunchShortcutExtension ext = new LaunchShortcutExtension(infos[i]);
+			fLaunchShortcuts.add(ext);
 		}
 	}
 	
+	
 	/**
-	 * Return a <code>Map</code> of launch configuration type IDs to <code>List</code>s of 
-	 * perspective IDs.  This map indicates which perspectives should have menu shortcuts present
-	 * for creating launch configurations of the listed configuration types.
+	 * Returns all launch shortcuts
+	 * 
+	 * @return all launch shortcuts
 	 */
-	public Map getLaunchConfigurationShortcuts() {
-		return fLaunchConfigurationShortcuts;
+	public List getLaunchShortcuts() {
+		if (fLaunchShortcuts == null) {
+			loadLaunchShortcuts();
+		}
+		return fLaunchShortcuts;
+	}
+	
+	/**
+	 * Returns all launch shortcuts defined for the given perspective,
+	 * or <code>null</code> if none
+	 * 
+	 * @param perpsective perspective identifier
+	 * @return all launch shortcuts defined for the given perspective,
+	 * or <code>null</code> if none
+	 */
+	public List getLaunchShortcuts(String perpsective) {
+		if (fLaunchShortcutsByPerspective == null) {
+			Iterator shortcuts = getLaunchShortcuts().iterator();
+			fLaunchShortcutsByPerspective = new HashMap(10);
+			while (shortcuts.hasNext()) {
+				LaunchShortcutExtension ext = (LaunchShortcutExtension)shortcuts.next();
+				Iterator perspectives = ext.getPerspectives().iterator();
+				while (perspectives.hasNext()) {
+					String id = (String)perspectives.next();
+					List list = (List)fLaunchShortcutsByPerspective.get(id);
+					if (list == null) {
+						list = new ArrayList(4);
+						fLaunchShortcutsByPerspective.put(id, list);
+					}
+					list.add(ext);
+				}
+			}	
+			// sort the lists
+			Iterator perspectives = fLaunchShortcutsByPerspective.keySet().iterator();		
+			while (perspectives.hasNext()) {
+				String id = (String)perspectives.next();
+				List list = (List)fLaunchShortcutsByPerspective.get(id);
+				Collections.sort(list, new ShortcutComparator());
+			}
+		}
+		return (List)fLaunchShortcutsByPerspective.get(perpsective);
+
 	}
 	
 	/**
@@ -884,6 +923,16 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			fErrorImages.put(key, image);
 		}
 		return image;
+	}
+
+}
+
+class ShortcutComparator implements Comparator {
+	/**
+	 * @see Comparator#compare(Object, Object)
+	 */
+	public int compare(Object a, Object b) {
+		return ((LaunchShortcutExtension)a).getLabel().compareTo(((LaunchShortcutExtension)b).getLabel());
 	}
 
 }

@@ -16,6 +16,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -104,61 +106,35 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		
 		// Retrieve the current perspective and the registered shortcuts
 		String activePerspID = getActivePerspectiveID();
-		Map shortcutMap = DebugUIPlugin.getLaunchConfigurationManager().getLaunchConfigurationShortcuts();
-	
-		// Look through the shortcut map and for each config type, see if the active perspective's
-		// ID is listed.  If it is, add a shortcut for creating a new configuration of that type
-		// to the menu
-		List configTypeList = new ArrayList(shortcutMap.keySet().size());
-		Iterator keyIterator = shortcutMap.keySet().iterator();
-		while (keyIterator.hasNext()) {
-			String configTypeID = (String) keyIterator.next();
-			List perspList = (List) shortcutMap.get(configTypeID);
-			if ((perspList.contains(activePerspID)) || (perspList.contains("*"))) {  //$NON-NLS-1$
-				ILaunchConfigurationType configType = getLaunchManager().getLaunchConfigurationType(configTypeID);
-				if (configType.supportsMode(getMode()) && configType.isPublic()) {
-					configTypeList.add(configType);
-				}
-			}
-		}
+		List shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID);
 		
-		// If NO configuration types listed the current perspective as a place to add a shortcut,
-		// add shortcuts for ALL configuration types to avoid an empty cascading menu
-		if (configTypeList.isEmpty()) {
-			ILaunchConfigurationType[] allConfigTypes = getLaunchManager().getLaunchConfigurationTypes();
-			for (int i = 0; i < allConfigTypes.length; i++) {
-				ILaunchConfigurationType configType = allConfigTypes[i];
-				if (configType.supportsMode(getMode()) && configType.isPublic()) {
-					configTypeList.add(configType);
-				}
-			}			
+		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
+		// to avoid an empty cascading menu
+		if (shortcuts == null || shortcuts.isEmpty()) {
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts();
 		}
 		
 		// Sort the applicable config types alphabetically and add them to the menu
 		Menu menu= new Menu(parent);
 		int menuCount = 1;
-		Collections.sort(configTypeList, new LaunchConfigurationTypeAlphabeticComparator());
-		Iterator typeIterator = configTypeList.iterator();
-		while (typeIterator.hasNext()) {
-			ILaunchConfigurationType configType = (ILaunchConfigurationType) typeIterator.next();
-			populateMenu(configType, menu, menuCount);
-			menuCount++;
+		Iterator iter = shortcuts.iterator();
+		while (iter.hasNext()) {
+			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			if (ext.getModes().contains(getMode())) {
+				populateMenu(ext, menu, menuCount);
+				menuCount++;
+			}
 		}
 				
 		return menu;
 	}
 	
 	/**
-	 * Add the configuration type to the menu.
+	 * Add the shortcut to the menu.
 	 */
-	protected void populateMenu(ILaunchConfigurationType configType, Menu menu, int menuCount) {
-		OpenLaunchConfigurationsAction openAction = null;
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			openAction = new OpenDebugConfigurations(configType);
-		} else {
-			openAction = new OpenRunConfigurations(configType);
-		}
-		createMenuForAction(menu, openAction, menuCount);
+	protected void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
+		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
+		createMenuForAction(menu, action, menuCount);
 	}
 	
 	/**

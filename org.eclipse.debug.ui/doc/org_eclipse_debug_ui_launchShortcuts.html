@@ -1,0 +1,78 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>README Launch Shortcuts Extension Point</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Launch Shortcuts</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.ui.launchShortcuts</p>
+
+<p><b><i>Description: </i></b>This extension point provides
+support for selection sensitive launching. Extensions register a shortcut which appears
+in the run and/or debug cascade menus to lanuch the workbench selection or active
+edtior.</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT shortcut (perspective)*</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST shortcut</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+</pre>
+
+<ul>
+<li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
+<li><code>modes</code> specifies a comma separated list of modes this shortcut supports.</li>
+<li><code>class</code> specifies the fully qualified name of a class which implements
+ <code>org.eclipse.debug.ui.ILaunchShortcut</code>.</li>
+<li><code>label</code> specifies a label used to render this shortcut.</li> 
+<li><code>icon</code> specifies a plug-in relative path to an image used to render this
+ shortcut.</li> 
+</ul>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT perspective</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST perspective</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+</pre>
+
+<ul>
+ <li><code>id</code> - the unique identifier of a perspective in which a menu shortcut for the
+ this launch shortcut will appear</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a launch shortcut extension point: </p>
+
+<pre>
+&lt;extension point="org.eclipse.debug.ui.launchShortcuts
+  &lt;shortcut
+     id="com.example.ExampleLaunchShortcutId"
+     modes="run,debug"
+     class="com.example.ExampleLaunchShortcutImpl"
+     label="Example Launch Shortcut"
+     icon="icons\example.gif"&gt;
+     &lt;perspective id="org.eclipse.jdt.ui.JavaPerspective"/&gt;
+     &lt;perspective id="org.eclipse.debug.ui.DebugPerspective"/&gt;     
+  &lt;/shortcut&gt;
+&lt;/extension&gt;
+</pre>
+<p>In the above example, a launch shortcut will be shown in the run and debug cascade menus
+with the label "Example Launch Shortcut", in the
+JavaPerspective and the DebugPerspective.
+</p>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+border="0" width="195" height="12"></a></p>
+</body>
+</html>

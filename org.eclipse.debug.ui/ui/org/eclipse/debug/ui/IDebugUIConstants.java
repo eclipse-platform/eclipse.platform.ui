@@ -623,10 +623,10 @@ public interface IDebugUIConstants {
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS= "launchConfigurationTabGroups";	 //$NON-NLS-1$	
 
 	/**
-	 * Launch configuration shortcuts extension point identifier
-	 * (value <code>"launchConfigurationShortcuts"</code>).
+	 * Launch shortcuts extension point identifier
+	 * (value <code>"launchShortcuts"</code>).
 	 * 
 	 * @since 2.0
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_SHORTCUTS= "launchConfigurationShortcuts";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_LAUNCH_SHORTCUTS= "launchShortcuts";	 //$NON-NLS-1$	
 }
