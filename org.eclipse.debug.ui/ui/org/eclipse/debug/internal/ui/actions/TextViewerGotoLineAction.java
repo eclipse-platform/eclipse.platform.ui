@@ -90,13 +90,13 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			String value= Integer.toString(startLine);
 			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
-			d.open();
-
-			try {
-				int line= Integer.parseInt(d.getValue());
-				gotoLine(line - 1);
-			} catch (NumberFormatException x) {
-				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("TextViewerGotoLineAction.Go_To_Line_1"), ActionMessages.getString("TextViewerGotoLineAction.Exceptions_occurred_attempt_to_go_to_line_2"), x); //$NON-NLS-1$ //$NON-NLS-2$
+			if (d.open() == d.OK) {
+				try {
+					int line= Integer.parseInt(d.getValue());
+					gotoLine(line - 1);
+				} catch (NumberFormatException x) {
+					DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("TextViewerGotoLineAction.Go_To_Line_1"), ActionMessages.getString("TextViewerGotoLineAction.Exceptions_occurred_attempt_to_go_to_line_2"), x); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		} catch (BadLocationException x) {
 			DebugUIPlugin.errorDialog(fTextViewer.getTextWidget().getShell(), ActionMessages.getString("TextViewerGotoLineAction.Go_To_Line_1"), ActionMessages.getString("TextViewerGotoLineAction.Exceptions_occurred_attempt_to_go_to_line_2"), x); //$NON-NLS-1$ //$NON-NLS-2$
