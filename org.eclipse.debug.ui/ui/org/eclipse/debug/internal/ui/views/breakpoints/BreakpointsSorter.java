@@ -1,5 +1,16 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -10,7 +21,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-public 	class BreakpointsSorter extends ViewerSorter {
+public class BreakpointsSorter extends ViewerSorter {
 		/**
 		 * @see ViewerSorter#isSorterProperty(Object, String)
 		 */
