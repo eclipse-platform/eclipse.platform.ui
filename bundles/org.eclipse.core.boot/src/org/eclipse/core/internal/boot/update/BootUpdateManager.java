@@ -54,7 +54,7 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 	URL urlBase = UMEclipseTree.getBaseInstallURL();
 	String strUrlBase = urlBase.toExternalForm();
 	UMRegistryManager registryManagerInstalled = new UMRegistryManager(urlBase);
-	IUMRegistry registryInstalled = registryManagerInstalled.getLocalRegistry();
+	IUMRegistry registryInstalled = registryManagerInstalled.getCurrentRegistry();
 
 	// Register configurations
 	//------------------------
@@ -84,7 +84,7 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 		}
 	}
 
-	// Register components
+	// Register components  
 	//--------------------
 	if (vidComponents.length > 0) {
 
