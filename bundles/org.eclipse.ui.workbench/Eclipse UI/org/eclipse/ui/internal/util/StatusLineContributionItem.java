@@ -11,13 +11,15 @@
 
 package org.eclipse.ui.internal.util;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.StatusLineLayoutData;
 
 /**
  * @issue needs Javadoc
@@ -28,6 +30,12 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	private int charWidth;
 	private CLabel label;
+	/**
+	 * The composite into which this contribution item has been placed. This
+	 * will be <code>null</code> if this instance has not yet been
+	 * initialized.
+	 */
+	private Composite statusLine = null;
 	private String text = Util.ZERO_LENGTH_STRING;
 	private int widthHint = -1;
 
@@ -42,12 +50,13 @@ public class StatusLineContributionItem extends ContributionItem {
 	}
 
 	public void fill(Composite parent) {
-		label = new CLabel(parent, SWT.SHADOW_IN);
+		statusLine = parent;
+		label = new CLabel(statusLine, SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
 
 		if (widthHint < 0) {
-			GC gc = new GC(parent);
-			gc.setFont(parent.getFont());
+			GC gc = new GC(statusLine);
+			gc.setFont(statusLine.getFont());
 			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
 			gc.dispose();
 		}
@@ -55,6 +64,21 @@ public class StatusLineContributionItem extends ContributionItem {
 		statusLineLayoutData.widthHint = widthHint;
 		label.setLayoutData(statusLineLayoutData);
 		label.setText(text);
+	}
+
+	/**
+	 * An accessor for the current location of this status line contribution
+	 * item -- relative to the display.
+	 * 
+	 * @return The current location of this status line; <code>null</code> if
+	 *         not yet initialized.
+	 */
+	public Point getDisplayLocation() {
+		if ((label != null) && (statusLine != null)) {
+			return statusLine.toDisplay(label.getLocation());
+		}
+
+		return null;
 	}
 
 	public String getText() {
