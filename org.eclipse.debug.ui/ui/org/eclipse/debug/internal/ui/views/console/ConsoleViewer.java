@@ -192,7 +192,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		} else if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
 			getTextWidget().setTabs(DebugUIPlugin.getDefault().getPluginPreferences().getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
 		} else if (propertyName.equals(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK)) {
-			setAutoScroll(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK));
+			setAutoScroll(!DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK));
 		}
 	}
 	
