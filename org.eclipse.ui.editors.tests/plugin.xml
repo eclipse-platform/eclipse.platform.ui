@@ -3,8 +3,7 @@
    id="org.eclipse.ui.editors.tests"
    name="%Plugin.name"
    version="3.1.0"
-   provider-name="%Plugin.providerName"
-   class="">
+   provider-name="%Plugin.providerName">
 
    <runtime>
       <library name="editorstests.jar">
