@@ -32,7 +32,7 @@ public class FrameworkTests extends AbstractAntTest {
 	
 	/**
 	 * Ensures that the deprecated means of setting the classpath still works correctly
-	 * Do not fix deprecations unless the methods are being removed.
+	 * Do not fix deprecations unless the deprecated methods are being removed.
 	 * @throws MalformedURLException
 	 * @throws CoreException
 	 */
