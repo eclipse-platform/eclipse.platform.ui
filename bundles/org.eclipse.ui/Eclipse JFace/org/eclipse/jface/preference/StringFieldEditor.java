@@ -122,7 +122,7 @@ public StringFieldEditor(String name, String labelText, int width, int strategy,
  * @param parent the parent of the field editor's control
  */
 public StringFieldEditor(String name, String labelText, int width, Composite parent) {
-	this(name, labelText, UNLIMITED, VALIDATE_ON_KEY_STROKE, parent);
+	this(name, labelText, width, VALIDATE_ON_KEY_STROKE, parent);
 }
 /**
  * Creates a string field editor of unlimited width.
