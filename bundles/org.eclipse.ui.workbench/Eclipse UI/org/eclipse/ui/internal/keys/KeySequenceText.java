@@ -19,10 +19,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -334,7 +337,7 @@ public final class KeySequenceText {
 		 */
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
-			// TODO This doesn't work.  Bug 46059.
+			// TODO This doesn't work. Bug 46059.
 			//selectAll();
 		}
 
@@ -426,13 +429,27 @@ public final class KeySequenceText {
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the
-	 * text field to use.
+	 * text field to use. If the platform is carbon (MacOS X), then the font is
+	 * set to be the same font used to display accelerators in the menus.
 	 * 
 	 * @param wrappedText
 	 *            The text widget to wrap; must not be <code>null</code>.
 	 */
 	public KeySequenceText(Text wrappedText) {
 		text = wrappedText;
+
+		// Set the font if the platform is carbon.
+		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			// Don't worry about this font name here; it is the official menu
+			// font and point size on the Mac.
+			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
+			text.setFont(font);
+			text.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					font.dispose();
+				}
+			});
+		}
 
 		// Add the key listener.
 		text.addListener(SWT.KeyUp, keyFilter);
