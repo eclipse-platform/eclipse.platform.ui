@@ -40,6 +40,7 @@ public class ReviewPage
 	extends BannerPage
 	implements IUpdateSearchResultCollector {
 
+	private Label label;
 	private ArrayList jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
@@ -212,7 +213,10 @@ public class ReviewPage
 		
 		if (visible && searchRunner.isNewSearchNeeded()) {
 			jobs.clear();
-			tableViewer.refresh();
+
+			setDescription(UpdateUI.getString("InstallWizard.ReviewPage.searching")); //$NON-NLS-1$;
+			label.setText(UpdateUI.getString("")); //$NON-NLS-1$
+
 			getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					searchRunner.runSearch();
@@ -233,6 +237,20 @@ public class ReviewPage
 					}
 				}
 				pageChanged();
+				
+				int totalCount = tableViewer.getTable().getItemCount();
+				if(totalCount >0) {
+					setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$;
+					label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
+				} else {
+					boolean isUpdateSearch = searchRunner.getSearchProvider() instanceof ModeSelectionPage;
+					if (isUpdateSearch)
+						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates")); //$NON-NLS-1$
+					else
+						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures")); //$NON-NLS-1$
+					label.setText("");
+				}
+
 			}
 		});
 	}
@@ -256,7 +274,7 @@ public class ReviewPage
 		layout.numColumns = 2;
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
-		Label label = new Label(client, SWT.NULL);
+		label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
