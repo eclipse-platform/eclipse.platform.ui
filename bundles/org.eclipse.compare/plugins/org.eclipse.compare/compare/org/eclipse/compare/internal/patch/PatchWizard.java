@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
@@ -98,7 +99,7 @@ import org.eclipse.compare.internal.*;
 		fPatcher.setName(fPatchWizardPage.getPatchName());
 
 		try {
-			WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+			WorkspaceModifyOperation op= new WorkspaceModifyOperation(fTarget.getProject()) {
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						fPatcher.applyAll(getTarget(), monitor, getShell(), PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
