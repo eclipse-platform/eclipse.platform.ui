@@ -26,6 +26,8 @@ import java.util.Iterator;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * 
+ * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
  */
 public class CreateFolderAction extends SelectionListenerAction {
 	
@@ -42,6 +44,8 @@ public class CreateFolderAction extends SelectionListenerAction {
  * Creates a new action for creating a folder resource.
  *
  * @param shell the shell for any dialogs
+ * 
+ * @deprecated see deprecated tag on class
  */
 public CreateFolderAction(Shell shell) {
 	super(WorkbenchMessages.getString("CreateFolderAction.text")); //$NON-NLS-1$
