@@ -13,6 +13,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
@@ -87,7 +88,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		treeViewer.expandAll();
-		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
+		getLaunchManager().addLaunchConfigurationListener(this);
 
 		IPropertyChangeListener titleUpdater= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -161,18 +162,27 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fCreateAction.dispose();
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
+		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		TreeViewer viewer = getTreeViewer();
+		viewer.getControl().setRedraw(false);
 		try {
-			getTreeViewer().add(configuration.getType(), configuration);
+			viewer.add(configuration.getType(), configuration);
+			// if moved, remove original now
+			ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
+			if (from != null) {
+				viewer.remove(from);
+			}
 		} catch (CoreException e) {
 		}
+		viewer.getControl().setRedraw(true);
 		getTreeViewer().setSelection(new StructuredSelection(configuration), true);
+		
 	}
 
 	/**
@@ -185,6 +195,12 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		// if moved, ignore
+		ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
+		if (to != null) {
+			return;
+		}
+		
 		ILaunchConfigurationType type = null;
 		int typeIndex= -1; // The index of the deleted configuration's type
 		int configIndex= -1; // The index of the deleted configuration		
@@ -263,6 +279,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		return fWorkingSetActionManager;
 	}
 
-	
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
 
 }

@@ -148,6 +148,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * configuration elements.
 	 */
 	private Map fSourceLocators = null;
+
+	/**
+	 * The handles of launch configurations being moved, or <code>null</code>
+	 */
+	private ILaunchConfiguration fFrom;
+	private ILaunchConfiguration fTo;
 	
 	/**
 	 * Path to the local directory where local launch configurations
@@ -1200,6 +1206,39 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void removeLaunchListener(ILaunchesListener listener) {
 		fLaunchesListeners.remove(listener);
+	}
+
+	/**
+	 * Indicates the given launch configuration is being moved from the given
+	 * location to the new location.
+	 * 
+	 * @param from the location a launch configuration is being moved from, or
+	 * <code>null</code>
+	 * @param to the location a launch configuration is being moved to,
+	 * or <code>null</code>
+	 */
+	protected void setMovedFromTo(ILaunchConfiguration from, ILaunchConfiguration to) {
+		fFrom = from;
+		fTo = to;
+	}
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#getMovedFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration) {
+		if (addedConfiguration.equals(fTo)) {
+			return fFrom;
+		}
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#getMovedTo(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration) {
+		if (removedConfiguration.equals(fFrom)) {
+			return fTo;
+		}
+		return null;
 	}
 
 }

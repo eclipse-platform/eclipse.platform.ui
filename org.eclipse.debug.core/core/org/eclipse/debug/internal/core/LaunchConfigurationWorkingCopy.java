@@ -137,20 +137,26 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (isDirty()) {
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
+					// set up from/to information if this is a move
+					boolean moved = (!isNew() && isMoved());
+					if (moved) {
+						ILaunchConfiguration to = new LaunchConfiguration(getLocation());
+						ILaunchConfiguration from = getOriginal();
+						getLaunchManager().setMovedFromTo(from, to);
+					}
 					// write the new file
-					LaunchConfigurationWorkingCopy.this.writeNewFile();
+					writeNewFile();
 					// delete the old file if this is not a new configuration
 					// or the file was renamed/moved
-					if (!LaunchConfigurationWorkingCopy.this.isNew()) {
-						if (LaunchConfigurationWorkingCopy.this.isMoved()) {
-							LaunchConfigurationWorkingCopy.this.getOriginal().delete();
-						}
+					if (moved) {
+						getOriginal().delete();
 					}
 					resetDirty();
 				}
 			};
 			
 			ResourcesPlugin.getWorkspace().run(wr, null);
+			getLaunchManager().setMovedFromTo(null, null);
 		}
 		
 		return new LaunchConfiguration(getLocation());		

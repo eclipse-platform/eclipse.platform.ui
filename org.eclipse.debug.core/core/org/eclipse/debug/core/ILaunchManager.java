@@ -237,6 +237,54 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
+	
+	/**
+	 * When a lanuch configuration is created or moved, registered launch
+	 * configuration listeners (see <code>ILaunchConfigurationListener</code>)
+	 * are notified of an add notification for the new configuration. If the
+	 * notification is the result of a move this method will return a handle to
+	 * the launch configuration that the added launch configuration was moved
+	 * from. This method returns <code>null</code> if the added launch
+	 * configuration was not the result of a rename or move. This information is
+	 * only available during the add notifcation call back
+	 * <code>launchConfigurationAdded</code>.
+	 * <p>
+	 * Renaming a configuration is considered the same as moving a
+	 * configuration.
+	 * </p>
+	 * 
+	 * @param addedConfiguration a launch configuration for which an add
+	 * notification is being broadcast
+	 * @return the launch configuration that the added launch configuration was
+	 * moved from, or <code>null</code> if the add notification is not the
+	 * result of a move
+	 * @since 2.1
+	 */
+	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration);
+	
+	/**
+	 * When a lanuch configuration is deleted or moved, registered launch
+	 * configuration listeners (see <code>ILaunchConfigurationListener</code>)
+	 * are notified of a remove notification for launch configuration that has
+	 * been deleted. If the notification is the result of a move this method
+	 * will return a handle to the launch configuration that the removed launch
+	 * configuration was moved to. This method returns <code>null</code> if the
+	 * removed launch configuration was not the result of a rename or move. This
+	 * information is only available during the add notifcation call back
+	 * <code>launchConfigurationRemoved</code>.
+	 * <p>
+	 * Renaming a configuration is considered the same as moving a
+	 * configuration.
+	 * </p>
+	 *
+	 * @param removedConfiguration a launch configuration for which a
+	 * remove notification is being broadcast
+	 * @return the launch configuration that the removed launch configuration
+	 * was moved to, or <code>null</code> if the add notification is not the
+	 * result of a move
+	 * @since 2.1
+	 */
+	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);	
 }
 
 

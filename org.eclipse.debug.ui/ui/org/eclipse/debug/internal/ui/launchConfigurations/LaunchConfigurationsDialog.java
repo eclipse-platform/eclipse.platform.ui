@@ -835,17 +835,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				}
  			}
  		}
+ 		ILaunchConfiguration original = fTabViewer.getOriginal();
+ 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
+			// the current config is about to be deleted ignore this change
+			return;
+		}
  		updateButtons();
  		
  		if (!isEqual(input, newInput)) {
  			ILaunchConfigurationTabGroup group = getTabGroup();
- 			ILaunchConfiguration original = fTabViewer.getOriginal();
  			if (original != null) {
  				boolean deleted = !original.exists();
  				boolean renamed = false;
  				if (newInput instanceof ILaunchConfiguration) {
  					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
- 					renamed = fTabViewer.getWorkingCopy().getName().equals(lc.getName());
+ 					renamed = getLaunchManager().getMovedFrom(lc) != null;
  				}
 	 			if (fTabViewer.isDirty() && !deleted && !renamed) {
 	 				boolean canReplace = showSaveChangesDialog();
