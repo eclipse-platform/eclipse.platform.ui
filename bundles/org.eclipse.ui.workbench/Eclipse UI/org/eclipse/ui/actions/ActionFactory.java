@@ -1138,7 +1138,7 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new NewWizardAction(window);
 			action.setId(getId());
-			// indicate that a open perspectives submenu has been created
+			// indicate that a new wizard submenu has been created
  		    ((WorkbenchWindow)window).addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
 			return action;
 		}
