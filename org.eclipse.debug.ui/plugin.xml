@@ -217,6 +217,9 @@
          <separator
                name="runGroup">
          </separator>
+         <separator
+               name="emptyLaunchGroup">
+         </separator>
       </menu>
       <action
             label="%OpenRunConfigurations.label"
