@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.core.runtime">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.core.runtime" id="products" name="%productsName"/>
+         <meta.schema plugin="org.eclipse.core.runtime" id="products" name="Products"/>
       </appInfo>
       <documentation>
          Products are the Eclipse unit of branding.  Product extensions are supplied by plug-ins wishing to define one or more products.  There must be one product per extension as the extension id is used in processing and identifying the product.
@@ -47,7 +47,7 @@ There are two possible forms of product extension, static and dynamic.  Static p
    <element name="product">
       <complexType>
          <sequence>
-            <element ref="property"/>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="application" type="string" use="required">
             <annotation>
