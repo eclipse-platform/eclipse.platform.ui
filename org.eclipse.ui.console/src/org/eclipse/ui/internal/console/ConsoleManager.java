@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -66,6 +65,8 @@ public class ConsoleManager implements IConsoleManager {
 
     private List fConsoleFactoryExtensions;
 	
+    private IWindowListener fWindowListener;
+    
 	/**
 	 * Notifies a console listener of additions or removals
 	 */
@@ -119,7 +120,24 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}	
 	
-	/* (non-Javadoc)
+	
+	public ConsoleManager() {
+	    fWindowListener = new IWindowListener() {
+            public void windowActivated(IWorkbenchWindow window) {
+            }
+            public void windowDeactivated(IWorkbenchWindow window) {   
+            }
+            public void windowOpened(IWorkbenchWindow window) {   
+            }
+            public void windowClosed(IWorkbenchWindow window) {
+                removeConsoles((IConsole[]) fConsoles.toArray(new IConsole[0]));
+            }
+	    };
+	    
+	    ConsolePlugin.getDefault().getWorkbench().addWindowListener(fWindowListener);
+	}
+	
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
 	public void addConsoleListener(IConsoleListener listener) {
@@ -327,17 +345,7 @@ public class ConsoleManager implements IConsoleManager {
             for (int i = 0; i < configurationElements.length; i++) {
                 fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
             }
-            Collections.sort(fConsoleFactoryExtensions, new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    return ((ConsoleFactoryExtension)o1).getLabel().compareTo(((ConsoleFactoryExtension)o2).getLabel()); 
-                }
-
-                public boolean equals(Object obj) {
-                    return obj == this; 
-                }
-            });
         }
         return (ConsoleFactoryExtension[]) fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
     }
-    
 }
