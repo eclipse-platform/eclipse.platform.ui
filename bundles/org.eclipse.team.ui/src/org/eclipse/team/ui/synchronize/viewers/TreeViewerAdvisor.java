@@ -132,6 +132,14 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#dispose()
+	 */
+	public void dispose() {
+		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
+		super.dispose();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
 	protected void initializeListeners(StructuredViewer viewer) {
