@@ -209,6 +209,9 @@
    <test id="jobs.JobTest">
       <run class="org.eclipse.core.tests.runtime.jobs.JobTest"/>
     </test>
+   <test id="jobs.BeginEndRuleTest">
+      <run class="org.eclipse.core.tests.runtime.jobs.BeginEndRuleTest"/>
+    </test>
 
  </extension>
 
