@@ -27,12 +27,14 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -338,5 +340,20 @@ public class AntEditor extends TextEditor {
 	private void setResolveFully(boolean resolveFully) {
 		getAntModel().setResolveFully(resolveFully);
 		
+	}
+
+	public void openReferenceElement() {
+		ISelection selection= getSelectionProvider().getSelection();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection)selection;
+			String text= textSelection.getText();
+			AntElementNode node= getAntModel().getReferenceNode(text);
+			if (node != null) {
+				setSelection(node, true);
+				return;
+			} 
+		}
+		setStatusLineErrorMessage(AntEditorMessages.getString("AntEditor.3")); //$NON-NLS-1$
+		getSite().getShell().getDisplay().beep();
 	}
 }

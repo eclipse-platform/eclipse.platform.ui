@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -32,12 +33,17 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 public class AntEditorActionContributor extends TextEditorActionContributor {
 
 	protected RetargetTextEditorAction fContentAssistProposal;
+	private OpenDeclarationAction fOpenDeclarationAction;
 	private ValidateBuildfileAction fValidateAction;
 
 	public AntEditorActionContributor() {
 		super();
 		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
 		fValidateAction= new ValidateBuildfileAction();
+	}
+	
+	protected void initializeActions(AntEditor editor) {	 
+		fOpenDeclarationAction= new OpenDeclarationAction(editor);
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) {
@@ -49,8 +55,35 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		}
 
 		fContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
+		
+		if (part instanceof AntEditor) {
+			if (fOpenDeclarationAction == null) {
+				initializeActions((AntEditor) part);
+				contributeToMenu(getActionBars().getMenuManager());
+			}
+		}
+
+		if (fOpenDeclarationAction != null) {
+			fOpenDeclarationAction.setEditor((AntEditor) part);		
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void contributeToMenu(IMenuManager menu) {
+		if (fOpenDeclarationAction == null) {
+			return;
+		}
+		super.contributeToMenu(menu);
+		
+		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
+		if (navigateMenu != null) {
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenDeclarationAction);
+			navigateMenu.setVisible(true);
+		}
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
      */
@@ -60,10 +93,9 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         IMenuManager menuManager= bars.getMenuManager();
         IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
         if (editMenu != null) {
-            editMenu.add(new org.eclipse.jface.action.Separator());
+            editMenu.add(new Separator());
             editMenu.add(fContentAssistProposal);
-        }   
-        
+        }
     }
     
     /* (non-Javadoc)

@@ -25,6 +25,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
@@ -197,7 +198,6 @@ public class AntModel {
     	} finally {
     		resolveBuildfile();
     		endReporting();
-    		fTaskToNode= new HashMap();
     	}
 	}
 
@@ -757,12 +757,36 @@ public class AntModel {
 		return null;
 	}
 
-	/**
-	 * @param resolveFully
-	 */
 	public void setResolveFully(boolean resolveFully) {
 		fValidateFully= resolveFully;
 		resolveBuildfile();
+	}
+
+	public AntElementNode getReferenceNode(String text) {
+		Object reference= getReferenceObject(text);
+		if (reference == null) {
+			return null;
+		}
+		
+		Collection nodes= fTaskToNode.keySet();
+		Iterator iter= nodes.iterator();
+		while (iter.hasNext()) {
+			Object original = iter.next();
+			Object object= original;
+			if (object instanceof UnknownElement) {
+				UnknownElement element= (UnknownElement) object;
+				object= element.getRealThing();
+				if (object == null) {
+					//element.maybeConfigure();
+					//object= element.getRealThing();
+					continue;
+				}
+			} 
+			if (object == reference) {
+				return (AntElementNode)fTaskToNode.get(original);
+			}
+		}
+		return null;
 	}
 	
 	private ClassLoader getClassLoader() {
