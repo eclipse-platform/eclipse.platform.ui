@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joe Bowbeer (jozart@blarg.net) - removed dependency on runtime compatibility layer (bug 74526)
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -24,11 +24,8 @@ public class PropertySheetPlugin extends AbstractUIPlugin {
 
     /**
      * Create the PropertySheet plugin and cache its default instance
-     *
-     * @param descriptor  the plugin descriptor which the receiver is made from
      */
-    public PropertySheetPlugin(IPluginDescriptor descriptor) {
-        super(descriptor);
+    public PropertySheetPlugin() {
         if (inst == null)
             inst = this;
     }
