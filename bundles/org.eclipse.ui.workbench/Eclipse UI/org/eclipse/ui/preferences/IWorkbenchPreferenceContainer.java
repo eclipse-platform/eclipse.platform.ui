@@ -14,7 +14,7 @@ package org.eclipse.ui.preferences;
  * IWorkbenchPreferenceContainer is the class that specifies
  * the workbench specific preferences support.
  * @since 3.1
- * <strong>NOTE</strong> This is experimental APIand subject
+ * <strong>NOTE</strong> This is experimental API and subject
  * to change during the 3.1 development cycle.
  *
  */
