@@ -169,8 +169,13 @@ public class FormColors {
 	protected void updateBorderColor() {
 		if (isWhiteBackground())
 			border = getColor(BORDER);
-		else
+		else {
 			border = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			if (border.getRed()==background.getRed() &&
+					border.getGreen()==background.getGreen() &&
+					border.getBlue()==background.getBlue())
+				border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
+		}
 	}
 	/**
 	 * Sets the background color. All the toolkits that use this class will
