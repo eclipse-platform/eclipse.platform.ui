@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ui.Utils;
 
 /**
  * An authenticator that prompts the user for authentication info,
@@ -113,12 +112,8 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @throws CVSException 
 	 */
 	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) throws CVSException {
-		Shell shell = Utils.findShell();
-		if(shell == null) {
-			throw new CVSException(Policy.bind("WorkbenchUserAuthenticator.0")); //$NON-NLS-1$
-		}
 		String domain = location == null ? null : location.getLocation(true);
-		UserValidationDialog dialog = new UserValidationDialog(shell, domain, (username==null)?"":username, message);//$NON-NLS-1$
+		UserValidationDialog dialog = new UserValidationDialog(null, domain, (username==null)?"":username, message);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
 		dialog.open();	
 		result[0] = dialog.getUsername();
@@ -166,10 +161,8 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						   final String[] prompt,
 						   final boolean[] echo) {
 	
-		Shell shell = Utils.findShell();
-		if(shell == null) return new String[0];
 		String domain = location == null ? null : location.getLocation(true);
-		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
+		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
 										 domain,
 										 destination,
 										 name,
@@ -184,8 +177,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * Special alternate prompting. Returns the password. Username must be fixed.
 	 */
 	private String alternatePromptForPassword(final String username) {
-		Shell shell = Utils.findShell();
-		AlternateUserValidationDialog dialog = new AlternateUserValidationDialog(shell, (username == null) ? "" : username); //$NON-NLS-1$
+		AlternateUserValidationDialog dialog = new AlternateUserValidationDialog(null, (username == null) ? "" : username); //$NON-NLS-1$
 		dialog.setUsername(username);
 		int result = dialog.open();
 		if (result == Dialog.CANCEL) return null;
