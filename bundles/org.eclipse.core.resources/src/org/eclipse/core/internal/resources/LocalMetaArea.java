@@ -1,16 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import java.io.*;
 
+import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.utils.*;
-import java.util.*;
-import java.io.*;
 
 public class LocalMetaArea implements ICoreConstants {
 	protected IPath metaAreaLocation;
@@ -176,7 +183,8 @@ public IPath locationFor(IResource resource) {
 /**
  * Reads and returns the project content location for the given project.
  * Returns null if the default content location should be used.
- * In the case of failure, just return null and revert to using the default location.
+ * In the case of failure, log the exception and return null, thus reverting to 
+ * using the default location.
  */
 public IPath readLocation(IProject target) {
 	IPath locationFile = locationFor(target).append(F_PROJECT_LOCATION);
@@ -197,6 +205,9 @@ public IPath readLocation(IProject target) {
 			dataIn.close();
 		}
 	} catch (IOException e) {
+		String msg = Policy.bind("resources.exReadProjectLocation", target.getName());
+		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(
+			IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 		return null;
 	}
 }
