@@ -446,10 +446,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			// XXX diff errors??
-			throw new CVSServerException(status);
-		}
 	}
 	
 	/**
