@@ -48,19 +48,19 @@ public class VolumeLabelProvider extends LabelProvider {
 			switch (type) {
 				case LocalSystemInfo.VOLUME_CDROM :
 					nativeLabel =
-						UpdateUI.getResourceString(KEY_VOLUME_CDROM);
+						UpdateUI.getString(KEY_VOLUME_CDROM);
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_3 :
 					nativeLabel =
-						UpdateUI.getResourceString(KEY_VOLUME_FLOPPY_3);
+						UpdateUI.getString(KEY_VOLUME_FLOPPY_3);
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_5 :
 					nativeLabel =
-						UpdateUI.getResourceString(KEY_VOLUME_FLOPPY_5);
+						UpdateUI.getString(KEY_VOLUME_FLOPPY_5);
 					break;
 				case LocalSystemInfo.VOLUME_FIXED:
 					nativeLabel = 
-						UpdateUI.getResourceString(KEY_LOCAL_DISK);
+						UpdateUI.getString(KEY_LOCAL_DISK);
 					break;
 			}
 		}

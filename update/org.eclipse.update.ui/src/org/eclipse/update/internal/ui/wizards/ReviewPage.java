@@ -31,8 +31,8 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 	 */
 	public ReviewPage(PendingChange job) {
 		super("Review");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.job = job;
 	}
 	
@@ -50,16 +50,16 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		Label label = new Label(client, SWT.NULL);
 		switch (job.getJobType()) {
 			case PendingChange.UNINSTALL :
-				label.setText(UpdateUI.getResourceString(KEY_ABOUT_UNINSTALL));				
+				label.setText(UpdateUI.getString(KEY_ABOUT_UNINSTALL));				
 				break;
 			case PendingChange.INSTALL :
-				label.setText(UpdateUI.getResourceString(KEY_ABOUT_INSTALL));				
+				label.setText(UpdateUI.getString(KEY_ABOUT_INSTALL));				
 				break;	
 			case PendingChange.UNCONFIGURE:
-				label.setText(UpdateUI.getResourceString(KEY_ABOUT_UNCONFIGURE));		
+				label.setText(UpdateUI.getString(KEY_ABOUT_UNCONFIGURE));		
 				break;
 			case PendingChange.CONFIGURE:
-				label.setText(UpdateUI.getResourceString(KEY_ABOUT_CONFIGURE));		
+				label.setText(UpdateUI.getString(KEY_ABOUT_CONFIGURE));		
 				break;
 		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -72,7 +72,7 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		label.setLayoutData(gd);
 		
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getString(KEY_NAME));
 		
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
@@ -80,14 +80,14 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_PROVIDER));
+		label.setText(UpdateUI.getString(KEY_PROVIDER));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
 		label.setText(job.getFeature().getProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_VERSION));
+		label.setText(UpdateUI.getString(KEY_VERSION));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
 		label.setText(job.getFeature().getVersionedIdentifier().getVersion().toString());
@@ -96,9 +96,9 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 
 		label = new Label(client, SWT.NULL);
 		if (job.getJobType()==PendingChange.INSTALL)
-			label.setText(UpdateUI.getResourceString(KEY_CORRECT_INSTALL));
+			label.setText(UpdateUI.getString(KEY_CORRECT_INSTALL));
 		else
-			label.setText(UpdateUI.getResourceString(KEY_CORRECT_UNINSTALL));
+			label.setText(UpdateUI.getString(KEY_CORRECT_UNINSTALL));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

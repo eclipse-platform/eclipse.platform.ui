@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class DiscoveryFolder extends BookmarkFolder {
 	public DiscoveryFolder() {
-		super(UpdateUI.getResourceString("DiscoveryFolder"));
+		super(UpdateUI.getString("DiscoveryFolder"));
 		setModel(UpdateUI.getDefault().getUpdateModel());
 	}
 	public void initialize() {

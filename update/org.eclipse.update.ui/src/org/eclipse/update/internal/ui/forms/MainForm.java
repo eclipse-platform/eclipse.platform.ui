@@ -52,7 +52,7 @@ public class MainForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getString(KEY_TITLE));
 		super.initialize(modelObject);
 		IPreferenceStore pstore =
 			UpdateUI.getDefault().getPreferenceStore();
@@ -106,7 +106,7 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUI.getResourceString(KEY_UPDATES_TITLE),
+				UpdateUI.getString(KEY_UPDATES_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
@@ -114,7 +114,7 @@ public class MainForm extends UpdateWebForm {
 		text = factory.createFormEngine(parent, true);
 		setFocusControl(text);
 		text.load(
-			UpdateUI.getResourceString(KEY_UPDATES_DESC),
+			UpdateUI.getString(KEY_UPDATES_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -135,14 +135,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUI.getResourceString(KEY_INSTALLS_TITLE),
+				UpdateUI.getString(KEY_INSTALLS_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent, true);
 		text.load(
-			UpdateUI.getResourceString(KEY_INSTALLS_DESC),
+			UpdateUI.getString(KEY_INSTALLS_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -166,14 +166,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUI.getResourceString(KEY_UNINSTALLS_TITLE),
+				UpdateUI.getString(KEY_UNINSTALLS_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent, true);
 		text.load(
-			UpdateUI.getResourceString(KEY_UNINSTALLS_DESC),
+			UpdateUI.getString(KEY_UNINSTALLS_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);
@@ -198,14 +198,14 @@ public class MainForm extends UpdateWebForm {
 		topic =
 			factory.createHeadingLabel(
 				parent,
-				UpdateUI.getResourceString(KEY_HISTORY_TITLE),
+				UpdateUI.getString(KEY_HISTORY_TITLE),
 				SWT.WRAP);
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
 		text = factory.createFormEngine(parent, true);
 		text.load(
-			UpdateUI.getResourceString(KEY_HISTORY_DESC),
+			UpdateUI.getString(KEY_HISTORY_DESC),
 			true,
 			false);
 		text.registerTextObject("action1", action);

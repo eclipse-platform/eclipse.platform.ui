@@ -32,7 +32,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 		public OtherCategory() {
 			entry = new IURLEntry () {
 				public String getAnnotation() {
-					return UpdateUI.getResourceString(KEY_OTHER_DESCRIPTION);
+					return UpdateUI.getString(KEY_OTHER_DESCRIPTION);
 				}
 				public URL getURL() {
 					return null;
@@ -61,7 +61,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	
 	public SiteCategory(String name, ICategory category) {
 		if (category==null) {
-		   this.name = UpdateUI.getResourceString(KEY_OTHER_LABEL);
+		   this.name = UpdateUI.getString(KEY_OTHER_LABEL);
 		   this.category = new OtherCategory();
 		}
 		else {
@@ -109,7 +109,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				monitor.beginTask("Downloading: ", featureCount);
+				monitor.beginTask(UpdateUI.getString("SiteBookmark.downloading"), featureCount);
 				for (int i=0; i<children.size(); i++) {
 					Object child = children.get(i);
 					if (monitor.isCanceled())

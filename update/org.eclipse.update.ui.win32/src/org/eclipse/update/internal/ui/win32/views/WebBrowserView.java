@@ -108,7 +108,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 
 	private void createNavBar(Composite parent) {
 		Label addressLabel = new Label(parent, SWT.NONE);
-		addressLabel.setText(UpdateUI.getResourceString(KEY_ADDRESS));
+		addressLabel.setText(UpdateUI.getString(KEY_ADDRESS));
 
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		addressCombo.addModifyListener(new ModifyListener() {
@@ -171,7 +171,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		goAction.setEnabled(false);
-		goAction.setToolTipText(UpdateUI.getResourceString(KEY_GO));
+		goAction.setToolTipText(UpdateUI.getString(KEY_GO));
 		goAction.setImageDescriptor(UpdateUIImages.DESC_GO_NAV);
 		goAction.setDisabledImageDescriptor(UpdateUIImages.DESC_GO_NAV_D);
 		goAction.setHoverImageDescriptor(UpdateUIImages.DESC_GO_NAV_H);
@@ -181,7 +181,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 				browser.stop();
 			}
 		};
-		stopAction.setToolTipText(UpdateUI.getResourceString(KEY_STOP));
+		stopAction.setToolTipText(UpdateUI.getString(KEY_STOP));
 		stopAction.setImageDescriptor(UpdateUIImages.DESC_STOP_NAV);
 		stopAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_STOP_NAV_D);
@@ -195,7 +195,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		refreshAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_REFRESH));
+			UpdateUI.getString(KEY_REFRESH));
 		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_REFRESH_NAV_D);
@@ -210,7 +210,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		};
 		backwardAction.setEnabled(false);
 		backwardAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_BACKWARD));
+			UpdateUI.getString(KEY_BACKWARD));
 		backwardAction.setImageDescriptor(
 			UpdateUIImages.DESC_BACKWARD_NAV);
 		backwardAction.setDisabledImageDescriptor(
@@ -224,7 +224,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		forwardAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_FORWARD));
+			UpdateUI.getString(KEY_FORWARD));
 		forwardAction.setImageDescriptor(UpdateUIImages.DESC_FORWARD_NAV);
 		forwardAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_FORWARD_NAV_D);

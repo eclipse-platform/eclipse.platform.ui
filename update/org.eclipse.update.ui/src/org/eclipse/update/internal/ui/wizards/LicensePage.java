@@ -31,12 +31,12 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 	 */
 	public LicensePage(boolean multiLicenseMode) {
 		super("License"); //$NON-NLS-1$
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
+		setTitle(UpdateUI.getString(KEY_TITLE));
 		setPageComplete(false);
 		this.multiLicenseMode = multiLicenseMode;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		setDescription(
-			UpdateUI.getResourceString(
+			UpdateUI.getString(
 				multiLicenseMode ? KEY_DESC2 : KEY_DESC));
 	}
 	public void dispose() {
@@ -109,7 +109,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 
 		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
 		acceptButton.setText(
-			UpdateUI.getResourceString(
+			UpdateUI.getString(
 				multiLicenseMode ? KEY_ACCEPT2 : KEY_ACCEPT));
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -118,7 +118,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		});
 		Button declineButton = new Button(buttonContainer, SWT.RADIO);
 		declineButton.setText(
-			UpdateUI.getResourceString(
+			UpdateUI.getString(
 				multiLicenseMode ? KEY_DECLINE2 : KEY_DECLINE));
 		declineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

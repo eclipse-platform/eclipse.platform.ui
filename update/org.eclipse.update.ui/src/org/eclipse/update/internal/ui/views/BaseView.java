@@ -132,7 +132,7 @@ public abstract class BaseView extends ViewPart {
 			showDetailsAction,
 			"org.eclipse.update.ui.BaseViewer_showDetailsAction");
 		showDetailsAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_DETAILS));
+			UpdateUI.getString(KEY_SHOW_DETAILS));
 	}
 
 	protected void initDragAndDrop() {
@@ -157,7 +157,7 @@ public abstract class BaseView extends ViewPart {
 	protected boolean confirmDeletion() {
 		IStructuredSelection ssel =
 			(IStructuredSelection) viewer.getSelection();
-		String title = UpdateUI.getResourceString(KEY_CONFIRM_DELETE);
+		String title = UpdateUI.getString(KEY_CONFIRM_DELETE);
 		String message;
 
 		if (ssel.size() > 1) {

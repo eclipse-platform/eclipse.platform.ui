@@ -27,7 +27,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getString(KEY_TITLE));
 		super.initialize(modelObject);
 	}
 
@@ -49,7 +49,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 		path.setLayoutData(td);
 
 		FormEngine engine = factory.createFormEngine(parent);
-		String markup = UpdateUI.getResourceString(KEY_DESC);
+		String markup = UpdateUI.getString(KEY_DESC);
 		markup = "<form>"+markup+"</form>";
 		engine.load(markup, true, true);
 		td = new TableData();

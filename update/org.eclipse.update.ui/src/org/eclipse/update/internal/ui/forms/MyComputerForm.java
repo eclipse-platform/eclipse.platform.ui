@@ -30,7 +30,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getString(KEY_TITLE));
 	super.initialize(modelObject);
 }
 
@@ -47,7 +47,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUI.getResourceString(KEY_DESC));
+	text.setText(UpdateUI.getString(KEY_DESC));
 	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.MyComputerForm");
 }
 
@@ -58,7 +58,7 @@ public void expandTo(Object obj) {
 }
 
 private void inputChanged(MyComputer myComputer) {
-	String pattern = UpdateUI.getResourceString(KEY_TITLE);
+	String pattern = UpdateUI.getString(KEY_TITLE);
 	String name = System.getProperty("user.name");
 	String message = MessageFormat.format(pattern, new Object[] {name});
 	setHeadingText(message);

@@ -37,7 +37,7 @@ public class NewPluginEntryDialog extends Dialog {
 		container.setLayout(layout);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString("NewPluginEntryDialog.id")); //$NON-NLS-1$
+		label.setText(UpdateUI.getString("NewPluginEntryDialog.id")); //$NON-NLS-1$
 		
 		idText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -49,7 +49,7 @@ public class NewPluginEntryDialog extends Dialog {
 		});
 		
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString("NewPluginEntryDialog.version")); //$NON-NLS-1$
+		label.setText(UpdateUI.getString("NewPluginEntryDialog.version")); //$NON-NLS-1$
 		
 		versionText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

@@ -32,7 +32,7 @@ public class PreserveSection extends UpdateSection {
 	public PreserveSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText(UpdateUI.getResourceString(KEY_TITLE));
+		setHeaderText(UpdateUI.getString(KEY_TITLE));
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 	
@@ -58,7 +58,7 @@ public class PreserveSection extends UpdateSection {
 		td.grabHorizontal = true;
 		td.colspan = 2;
 		textLabel.setLayoutData(td);
-		textLabel.load(UpdateUI.getResourceString(KEY_TEXT), true, false);
+		textLabel.load(UpdateUI.getString(KEY_TEXT), true, false);
 		Image configsImage = UpdateUI.getDefault().getLabelProvider().get(UpdateUIImages.DESC_CONFIGS_VIEW);
 		HyperlinkAction action = new HyperlinkAction() {
 			public void linkActivated(IHyperlinkSegment link) {
@@ -71,11 +71,11 @@ public class PreserveSection extends UpdateSection {
 		};
 		textLabel.registerTextObject("link", action);
 		textLabel.registerTextObject("image", configsImage);
-		preserveLabel = factory.createLabel(container, UpdateUI.getResourceString(KEY_PRESERVE_TEXT));
+		preserveLabel = factory.createLabel(container, UpdateUI.getString(KEY_PRESERVE_TEXT));
 		td = new TableData();
 		td.valign = TableData.MIDDLE;
 				
-		preserveButton = factory.createButton(container, UpdateUI.getResourceString(KEY_PRESERVE_BUTTON), SWT.PUSH); //$NON-NLS-1$
+		preserveButton = factory.createButton(container, UpdateUI.getString(KEY_PRESERVE_BUTTON), SWT.PUSH); //$NON-NLS-1$
 		preserveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performPreserve();

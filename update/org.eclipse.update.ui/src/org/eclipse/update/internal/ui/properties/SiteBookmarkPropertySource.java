@@ -41,26 +41,26 @@ public class SiteBookmarkPropertySource implements IPropertySource {
 			desc =
 				new TextPropertyDescriptor(
 					SiteBookmark.P_URL,
-					UpdateUI.getResourceString(KEY_URL_LABEL));
+					UpdateUI.getString(KEY_URL_LABEL));
 		else
 			desc =
 				new PropertyDescriptor(
 					SiteBookmark.P_URL,
-					UpdateUI.getResourceString(KEY_URL_LABEL));
-		desc.setDescription(UpdateUI.getResourceString(KEY_URL_DESC));
+					UpdateUI.getString(KEY_URL_LABEL));
+		desc.setDescription(UpdateUI.getString(KEY_URL_DESC));
 		descriptors[0] = desc;
 
 		if (bookmark.getType() == SiteBookmark.USER)
 			desc =
 				new TextPropertyDescriptor(
 					SiteBookmark.P_NAME,
-					UpdateUI.getResourceString(KEY_NAME_LABEL));
+					UpdateUI.getString(KEY_NAME_LABEL));
 		else
 			desc =
 				new PropertyDescriptor(
 					SiteBookmark.P_NAME,
-					UpdateUI.getResourceString(KEY_NAME_LABEL));
-		desc.setDescription(UpdateUI.getResourceString(KEY_NAME_DESC));
+					UpdateUI.getString(KEY_NAME_LABEL));
+		desc.setDescription(UpdateUI.getString(KEY_NAME_DESC));
 		descriptors[1] = desc;
 		return descriptors;
 	}

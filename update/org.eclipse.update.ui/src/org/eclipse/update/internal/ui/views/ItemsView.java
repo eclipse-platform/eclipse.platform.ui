@@ -173,7 +173,7 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		deleteAction.setText(
-			UpdateUI.getResourceString("ItemsView.popup.delete"));
+			UpdateUI.getString("ItemsView.popup.delete"));
 			
 		processAction = new Action() {
 			public void run() {
@@ -181,7 +181,7 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		processAction.setText(
-			UpdateUI.getResourceString("ItemsView.popup.process"));
+			UpdateUI.getString("ItemsView.popup.process"));
 
 		processAllAction = new Action() {
 			public void run() {
@@ -189,7 +189,7 @@ public class ItemsView extends BaseTableView {
 			}
 		};
 		processAllAction.setText(
-			UpdateUI.getResourceString("ItemsView.popup.processAll"));
+			UpdateUI.getString("ItemsView.popup.processAll"));
 
 		super.makeActions();
 	}

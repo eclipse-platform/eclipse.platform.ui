@@ -110,7 +110,7 @@ public class SearchForm extends UpdateWebForm {
 			updateButtonText();
 			searchButton.setEnabled(true);
 			Date date = new Date();
-			String pattern = UpdateUI.getResourceString(KEY_LAST_SEARCH);
+			String pattern = UpdateUI.getString(KEY_LAST_SEARCH);
 			String text =
 				UpdateUI.getFormattedMessage(
 					pattern,
@@ -162,7 +162,7 @@ public class SearchForm extends UpdateWebForm {
 	}
 
 	private void updateHeadingText(SearchObject obj) {
-		String title = UpdateUI.getResourceString(KEY_TITLE);
+		String title = UpdateUI.getString(KEY_TITLE);
 		if (obj != null)
 			title += " - " + obj.getName();
 		setHeadingText(title);
@@ -183,7 +183,7 @@ public class SearchForm extends UpdateWebForm {
 		TableData td;
 
 		descLabel = factory.createFormEngine(parent);
-		descLabel.load(UpdateUI.getResourceString(KEY_DESC), true, true);
+		descLabel.load(UpdateUI.getString(KEY_DESC), true, true);
 		td = new TableData();
 		td.colspan = 2;
 		descLabel.setLayoutData(td);
@@ -209,7 +209,7 @@ public class SearchForm extends UpdateWebForm {
 		td.colspan = 2;
 		optionContainer.setLayoutData(td);
 
-		queryGroup.setText(UpdateUI.getResourceString(KEY_QUERY));
+		queryGroup.setText(UpdateUI.getString(KEY_QUERY));
 		queryGroup.createControl(optionContainer, factory);
 		setFocusControl(queryGroup.getControl());
 
@@ -224,7 +224,7 @@ public class SearchForm extends UpdateWebForm {
 				myComputerCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				myComputerCheck.setText(
-					UpdateUI.getResourceString(KEY_MY_COMPUTER_CHECK));
+					UpdateUI.getString(KEY_MY_COMPUTER_CHECK));
 				myComputerCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						myComputerSettings.setEnabled(
@@ -237,7 +237,7 @@ public class SearchForm extends UpdateWebForm {
 				myComputerSettings =
 					factory.createButton(expansion, null, SWT.PUSH);
 				myComputerSettings.setText(
-					UpdateUI.getResourceString(KEY_MY_COMPUTER_MORE));
+					UpdateUI.getString(KEY_MY_COMPUTER_MORE));
 				myComputerSettings
 					.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -252,7 +252,7 @@ public class SearchForm extends UpdateWebForm {
 										searchObject);
 								sd.create();
 								sd.getShell().setText(
-									UpdateUI.getResourceString(
+									UpdateUI.getString(
 										KEY_MY_COMPUTER_TITLE));
 								sd.open();
 							}
@@ -263,7 +263,7 @@ public class SearchForm extends UpdateWebForm {
 				discoveryCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				discoveryCheck.setText(
-					UpdateUI.getResourceString(KEY_DISCOVERY_CHECK));
+					UpdateUI.getString(KEY_DISCOVERY_CHECK));
 				discoveryCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchDiscovery(
@@ -277,7 +277,7 @@ public class SearchForm extends UpdateWebForm {
 				bookmarkCheck =
 					factory.createButton(expansion, null, SWT.CHECK);
 				bookmarkCheck.setText(
-					UpdateUI.getResourceString(KEY_BOOKMARK_CHECK));
+					UpdateUI.getString(KEY_BOOKMARK_CHECK));
 				bookmarkCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setSearchBookmarks(
@@ -290,7 +290,7 @@ public class SearchForm extends UpdateWebForm {
 
 				filterCheck = factory.createButton(expansion, null, SWT.CHECK);
 				filterCheck.setText(
-					UpdateUI.getResourceString(KEY_FILTER_CHECK));
+					UpdateUI.getString(KEY_FILTER_CHECK));
 				filterCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						searchObject.setFilterEnvironment(
@@ -302,7 +302,7 @@ public class SearchForm extends UpdateWebForm {
 				filterCheck.setLayoutData(gd);
 			}
 		};
-		optionsGroup.setText(UpdateUI.getResourceString(KEY_OPTIONS));
+		optionsGroup.setText(UpdateUI.getString(KEY_OPTIONS));
 		optionsGroup.createControl(optionContainer, factory);
 
 /*
@@ -339,14 +339,14 @@ public class SearchForm extends UpdateWebForm {
 		GridData gd;
 
 		infoLabel = factory.createLabel(searchContainer, null);
-		infoLabel.setText(UpdateUI.getResourceString(KEY_NO_LAST_SEARCH));
+		infoLabel.setText(UpdateUI.getString(KEY_NO_LAST_SEARCH));
 		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		infoLabel.setLayoutData(gd);
 
 		searchButton =
 			factory.createButton(
 				searchContainer,
-				UpdateUI.getResourceString(KEY_SEARCH_NOW),
+				UpdateUI.getString(KEY_SEARCH_NOW),
 				SWT.PUSH);
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -390,7 +390,7 @@ public class SearchForm extends UpdateWebForm {
 		container.setLayout(layout);
 		factory.createLabel(
 			container,
-			UpdateUI.getResourceString(KEY_CATEGORY));
+			UpdateUI.getString(KEY_CATEGORY));
 		categoryCombo = new CCombo(container, SWT.READ_ONLY | SWT.FLAT);
 		categoryCombo.setBackground(factory.getBackgroundColor());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -601,10 +601,10 @@ public class SearchForm extends UpdateWebForm {
 		boolean inSearch =
 			searchObject != null && searchObject.isSearchInProgress();
 		if (inSearch)
-			searchButton.setText(UpdateUI.getResourceString(KEY_CANCEL));
+			searchButton.setText(UpdateUI.getString(KEY_CANCEL));
 		else
 			searchButton.setText(
-				UpdateUI.getResourceString(KEY_SEARCH_NOW));
+				UpdateUI.getString(KEY_SEARCH_NOW));
 		searchButton.getParent().layout(true);
 	}
 

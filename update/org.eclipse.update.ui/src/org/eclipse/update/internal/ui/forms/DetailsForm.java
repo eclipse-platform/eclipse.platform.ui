@@ -42,7 +42,7 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_PENDING_VERSION =
 		"FeaturePage.pendingVersion";
 	private static final String KEY_SIZE = "FeaturePage.size";
-	private static final String KEY_ESTIMATE = "FeaturePage.estimate";	
+	private static final String KEY_ESTIMATE = "FeaturePage.estimate";
 	private static final String KEY_OS = "FeaturePage.os";
 	private static final String KEY_WS = "FeaturePage.ws";
 	private static final String KEY_NL = "FeaturePage.nl";
@@ -55,11 +55,12 @@ public class DetailsForm extends PropertyWebForm {
 		"FeaturePage.copyrightLink";
 	private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
 	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
-	private static final String KEY_ESTIMATE_VALUE = "FeaturePage.estimateValue";	
+	private static final String KEY_ESTIMATE_VALUE =
+		"FeaturePage.estimateValue";
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
 		"FeaturePage.unknownSizeValue";
 	private static final String KEY_UNKNOWN_ESTIMATE_VALUE =
-		"FeaturePage.unknownEstimateValue";		
+		"FeaturePage.unknownEstimateValue";
 	private static final String KEY_DO_UNCONFIGURE =
 		"FeaturePage.doButton.unconfigure";
 	private static final String KEY_DO_CONFIGURE =
@@ -85,6 +86,9 @@ public class DetailsForm extends PropertyWebForm {
 		"FeaturePage.batchButton.install";
 	private static final String KEY_BATCH_UNINSTALL =
 		"FeaturePage.batchButton.uninstall";
+	private static final String KEY_BATCH = "FeaturePage.batch";
+	private static final String KEY_SELECTED_UPDATES =
+		"FeaturePage.selectedUpdates";
 
 	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
 	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
@@ -302,22 +306,19 @@ public class DetailsForm extends PropertyWebForm {
 		providerLabel =
 			createProperty(
 				properties,
-				UpdateUI.getResourceString(KEY_PROVIDER));
+				UpdateUI.getString(KEY_PROVIDER));
 		versionLabel =
-			createProperty(
-				properties,
-				UpdateUI.getResourceString(KEY_VERSION));
+			createProperty(properties, UpdateUI.getString(KEY_VERSION));
 		installedVersionLabel =
 			createProperty(
 				properties,
-				UpdateUI.getResourceString(KEY_IVERSION));
+				UpdateUI.getString(KEY_IVERSION));
 		sizeLabel =
+			createProperty(properties, UpdateUI.getString(KEY_SIZE));
+		estimatedTime =
 			createProperty(
 				properties,
-				UpdateUI.getResourceString(KEY_SIZE));
-		estimatedTime = createProperty(
-				properties,
-				UpdateUI.getResourceString(KEY_ESTIMATE));
+				UpdateUI.getString(KEY_ESTIMATE));
 		supportedPlatformsGroup = new ReflowGroup() {
 			public void fillExpansion(
 				Composite expansion,
@@ -328,23 +329,23 @@ public class DetailsForm extends PropertyWebForm {
 				osLabel =
 					createProperty(
 						expansion,
-						UpdateUI.getResourceString(KEY_OS));
+						UpdateUI.getString(KEY_OS));
 				wsLabel =
 					createProperty(
 						expansion,
-						UpdateUI.getResourceString(KEY_WS));
+						UpdateUI.getString(KEY_WS));
 				nlLabel =
 					createProperty(
 						expansion,
-						UpdateUI.getResourceString(KEY_NL));
+						UpdateUI.getString(KEY_NL));
 				archLabel =
 					createProperty(
 						expansion,
-						UpdateUI.getResourceString(KEY_ARCH));
+						UpdateUI.getString(KEY_ARCH));
 			}
 		};
 		supportedPlatformsGroup.setText(
-			UpdateUI.getResourceString(KEY_PLATFORMS));
+			UpdateUI.getString(KEY_PLATFORMS));
 		new Label(properties, SWT.NULL);
 		supportedPlatformsGroup.createControl(properties, factory);
 		setFocusControl(supportedPlatformsGroup.getControl());
@@ -356,9 +357,7 @@ public class DetailsForm extends PropertyWebForm {
 		imageLabel.setLayoutData(td);
 
 		Label label =
-			createHeading(
-				container,
-				UpdateUI.getResourceString(KEY_DESC));
+			createHeading(container, UpdateUI.getString(KEY_DESC));
 		td = new TableData();
 		td.colspan = 2;
 		label.setLayoutData(td);
@@ -387,20 +386,19 @@ public class DetailsForm extends PropertyWebForm {
 				return infoLinkURL;
 			}
 		};
-		
+
 		infoLinkLabel = new SelectableFormLabel(footer, SWT.NULL);
-		infoLinkLabel.setText(UpdateUI.getResourceString(KEY_INFO_LINK));
+		infoLinkLabel.setText(UpdateUI.getString(KEY_INFO_LINK));
 		factory.turnIntoHyperlink(infoLinkLabel, listener);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		infoLinkLabel.setLayoutData(gd);
 		licenseLink = new InfoLink((DetailsView) getPage().getView());
-		licenseLink.setText(UpdateUI.getResourceString(KEY_LICENSE_LINK));
+		licenseLink.setText(UpdateUI.getString(KEY_LICENSE_LINK));
 		licenseLink.createControl(footer, factory);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		licenseLink.getControl().setLayoutData(gd);
 		copyrightLink = new InfoLink((DetailsView) getPage().getView());
-		copyrightLink.setText(
-			UpdateUI.getResourceString(KEY_COPYRIGHT_LINK));
+		copyrightLink.setText(UpdateUI.getString(KEY_COPYRIGHT_LINK));
 		copyrightLink.createControl(footer, factory);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
@@ -410,7 +408,7 @@ public class DetailsForm extends PropertyWebForm {
 			public void widgetSelected(SelectionEvent e) {
 				doButtonSelected();
 			}
-		});		
+		});
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_CENTER
@@ -430,16 +428,14 @@ public class DetailsForm extends PropertyWebForm {
 		//td.grabHorizontal = true;
 		batch.setLayoutData(td);
 		groupUpdatesLabel =
-			createHeading(
-				batch,
-				UpdateUI.getResourceString("Group Updates"));
+			createHeading(batch, UpdateUI.getString(KEY_BATCH));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		groupUpdatesLabel.setLayoutData(gd);
 		addButton =
 			factory.createButton(
 				batch,
-				UpdateUI.getResourceString(KEY_BATCH_INSTALL),
+				UpdateUI.getString(KEY_BATCH_INSTALL),
 				SWT.CHECK);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -449,7 +445,9 @@ public class DetailsForm extends PropertyWebForm {
 		});
 		addButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		itemsLink =
-			factory.createSelectableLabel(batch, "Selected Updates");
+			factory.createSelectableLabel(
+				batch,
+				UpdateUI.getString(KEY_SELECTED_UPDATES));
 		factory.turnIntoHyperlink(itemsLink, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 				openUpdateItems();
@@ -574,35 +572,38 @@ public class DetailsForm extends PropertyWebForm {
 			feature.getVersionedIdentifier().getVersion().toString());
 		String installedVersion = getInstalledVersion(feature);
 		if (installedVersion == null)
-			installedVersion =
-				UpdateUI.getResourceString(KEY_NOT_INSTALLED);
+			installedVersion = UpdateUI.getString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
 		long size = feature.getDownloadSize();
 		String format = null;
 		if (size != -1) {
 			String stext = Long.toString(size);
-			String pattern = UpdateUI.getResourceString(KEY_SIZE_VALUE);
+			String pattern = UpdateUI.getString(KEY_SIZE_VALUE);
 			format = UpdateUI.getFormattedMessage(pattern, stext);
 		} else {
-			format = UpdateUI.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
+			format = UpdateUI.getString(KEY_UNKNOWN_SIZE_VALUE);
 		}
 		sizeLabel.setText(format);
 		long estimate = SiteManager.estimate(feature.getURL());
 		String estimateFormat = null;
-		if (estimate>=0 && size!=-1){
-			String hours = Long.toString(estimate/3600000);
-			String minutes = Long.toString(estimate%3600000);
-			String pattern = UpdateUI.getResourceString(KEY_ESTIMATE_VALUE);
-			estimateFormat = UpdateUI.getFormattedMessage(pattern,new String[]{hours,minutes});
+		if (estimate >= 0 && size != -1) {
+			String hours = Long.toString(estimate / 3600000);
+			String minutes = Long.toString(estimate % 3600000);
+			String pattern = UpdateUI.getString(KEY_ESTIMATE_VALUE);
+			estimateFormat =
+				UpdateUI.getFormattedMessage(
+					pattern,
+					new String[] { hours, minutes });
 		} else {
-			estimateFormat = UpdateUI.getResourceString(KEY_UNKNOWN_ESTIMATE_VALUE);
+			estimateFormat =
+				UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
 		}
 		estimatedTime.setText(estimateFormat);
 		if (feature.getDescription() != null)
 			descriptionText.setText(feature.getDescription().getAnnotation());
 		else
 			descriptionText.setText("");
-		
+
 		Image logoImage = loadProviderImage(feature);
 		if (logoImage == null)
 			logoImage = providerImage;
@@ -677,7 +678,7 @@ public class DetailsForm extends PropertyWebForm {
 				(IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
-			if (context.getConfigurationSite().isEnabled()==false)
+			if (context.getConfigurationSite().isEnabled() == false)
 				return false;
 		}
 
@@ -810,22 +811,19 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void updateButtonText(boolean update) {
 		if (reinstallCode == REPAIR) {
-			doButton.setText(UpdateUI.getResourceString(KEY_DO_REPAIR));
-			addButton.setText(
-				UpdateUI.getResourceString(KEY_BATCH_REPAIR));
+			doButton.setText(UpdateUI.getString(KEY_DO_REPAIR));
+			addButton.setText(UpdateUI.getString(KEY_BATCH_REPAIR));
 			return;
 		}
 		if (reinstallCode == CHANGE) {
-			doButton.setText(UpdateUI.getResourceString(KEY_DO_CHANGE));
-			addButton.setText(
-				UpdateUI.getResourceString(KEY_BATCH_CHANGE));
+			doButton.setText(UpdateUI.getString(KEY_DO_CHANGE));
+			addButton.setText(UpdateUI.getString(KEY_BATCH_CHANGE));
 			return;
 		}
 		if (currentFeature instanceof MissingFeature) {
 			MissingFeature mf = (MissingFeature) currentFeature;
 			if (mf.isOptional() && mf.getOriginatingSiteURL() != null) {
-				doButton.setText(
-					UpdateUI.getResourceString(KEY_DO_INSTALL));
+				doButton.setText(UpdateUI.getString(KEY_DO_INSTALL));
 				return;
 			}
 		}
@@ -833,23 +831,20 @@ public class DetailsForm extends PropertyWebForm {
 			boolean configured = isConfigured();
 			if (configured) {
 				doButton.setText(
-					UpdateUI.getResourceString(KEY_DO_UNCONFIGURE));
+					UpdateUI.getString(KEY_DO_UNCONFIGURE));
 				addButton.setText(
-					UpdateUI.getResourceString(KEY_BATCH_UNCONFIGURE));
+					UpdateUI.getString(KEY_BATCH_UNCONFIGURE));
 			} else {
-				doButton.setText(
-					UpdateUI.getResourceString(KEY_DO_CONFIGURE));
+				doButton.setText(UpdateUI.getString(KEY_DO_CONFIGURE));
 				addButton.setText(
-					UpdateUI.getResourceString(KEY_BATCH_CONFIGURE));
+					UpdateUI.getString(KEY_BATCH_CONFIGURE));
 			}
 		} else if (update && !alreadyInstalled) {
-			doButton.setText(UpdateUI.getResourceString(KEY_DO_UPDATE));
-			addButton.setText(
-				UpdateUI.getResourceString(KEY_BATCH_UPDATE));
+			doButton.setText(UpdateUI.getString(KEY_DO_UPDATE));
+			addButton.setText(UpdateUI.getString(KEY_BATCH_UPDATE));
 		} else {
-			doButton.setText(UpdateUI.getResourceString(KEY_DO_INSTALL));
-			addButton.setText(
-				UpdateUI.getResourceString(KEY_BATCH_INSTALL));
+			doButton.setText(UpdateUI.getString(KEY_DO_INSTALL));
+			addButton.setText(UpdateUI.getString(KEY_BATCH_INSTALL));
 		}
 	}
 
@@ -1078,7 +1073,7 @@ public class DetailsForm extends PropertyWebForm {
 			// Show error dialog
 			ErrorDialog.openError(
 				shell,
-				UpdateUI.getResourceString(KEY_OPTIONAL_INSTALL_TITLE),
+				UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE),
 				null,
 				status);
 		}
@@ -1232,13 +1227,13 @@ public class DetailsForm extends PropertyWebForm {
 			MessageDialog dialog =
 				new MessageDialog(
 					getControl().getShell(),
-					UpdateUI.getResourceString(KEY_MISSING_TITLE),
+					UpdateUI.getString(KEY_MISSING_TITLE),
 					(Image) null,
-					UpdateUI.getResourceString(KEY_MISSING_MESSAGE),
+					UpdateUI.getString(KEY_MISSING_MESSAGE),
 					MessageDialog.WARNING,
 					new String[] {
-						UpdateUI.getResourceString(KEY_MISSING_SEARCH),
-						UpdateUI.getResourceString(KEY_MISSING_ABORT)},
+						UpdateUI.getString(KEY_MISSING_SEARCH),
+						UpdateUI.getString(KEY_MISSING_ABORT)},
 					0);
 			int result = dialog.open();
 			if (result == 0)
@@ -1297,14 +1292,12 @@ public class DetailsForm extends PropertyWebForm {
 		search.getSettings().put("imports", value);
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		try {
-			UpdateUI.getActivePage().showView(
-				UpdatePerspective.ID_UPDATES);
+			UpdateUI.getActivePage().showView(UpdatePerspective.ID_UPDATES);
 		} catch (PartInitException e) {
 		}
 		model.addBookmark(search);
 		try {
-			UpdateUI.getActivePage().showView(
-				UpdatePerspective.ID_DETAILS);
+			UpdateUI.getActivePage().showView(UpdatePerspective.ID_DETAILS);
 		} catch (PartInitException e) {
 		}
 	}

@@ -111,8 +111,8 @@ public class TargetPage extends BannerPage {
 		PendingChange pendingChange,
 		IInstallConfiguration config) {
 		super("Target");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
@@ -223,7 +223,7 @@ public class TargetPage extends BannerPage {
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		final Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUI.getResourceString(KEY_NEW));
+		button.setText(UpdateUI.getString(KEY_NEW));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -242,13 +242,13 @@ public class TargetPage extends BannerPage {
 		status.setLayout(layout);
 		Label label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
+			UpdateUI.getString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
 		label.setText(
-			UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+			UpdateUI.getString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
@@ -318,7 +318,7 @@ public class TargetPage extends BannerPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUI.getResourceString(KEY_LOCATION_EMPTY);
+			errorMessage = UpdateUI.getString(KEY_LOCATION_EMPTY);
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -342,7 +342,7 @@ public class TargetPage extends BannerPage {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUI.getResourceString(KEY_LOCATION_MESSAGE));
+		dd.setMessage(UpdateUI.getString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
 			File file = new File(path);
@@ -367,7 +367,7 @@ public class TargetPage extends BannerPage {
 					config.addConfiguredSite(csite);
 				else {
 					String title =
-						UpdateUI.getResourceString(
+						UpdateUI.getString(
 							KEY_LOCATION_ERROR_TITLE);
 					String message =
 						UpdateUI.getFormattedMessage(
@@ -404,14 +404,14 @@ public class TargetPage extends BannerPage {
 			site.getSite().getInstallSizeFor(pendingChange.getFeature());
 		if (required == -1)
 			requiredSpaceLabel.setText(
-				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			requiredSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
 			availableSpaceLabel.setText(
-				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			availableSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));

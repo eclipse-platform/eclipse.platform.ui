@@ -104,7 +104,7 @@ public class MyComputerSearchDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_LABEL));
+		label.setText(UpdateUI.getString(KEY_LABEL));
 
 		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		viewer.setContentProvider(new DriveContentProvider());

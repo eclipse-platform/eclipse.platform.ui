@@ -9,7 +9,7 @@ public class DefaultUpdatesSearchObject extends SearchObject {
 
 	public DefaultUpdatesSearchObject() {
 		super(
-			UpdateUI.getResourceString(KEY_NAME),
+			UpdateUI.getString(KEY_NAME),
 			SearchCategoryRegistryReader.getDefault().getDescriptor(
 				"org.eclipse.update.ui.updates"),
 			true);

@@ -107,7 +107,7 @@ public class ConfigurationView
 
 	class SavedFolder extends ViewFolder {
 		public SavedFolder() {
-			super(UpdateUI.getResourceString(KEY_SAVED_FOLDER));
+			super(UpdateUI.getString(KEY_SAVED_FOLDER));
 		}
 		public Object[] getChildren() {
 			try {
@@ -130,7 +130,7 @@ public class ConfigurationView
 
 	class HistoryFolder extends ViewFolder {
 		public HistoryFolder() {
-			super(UpdateUI.getResourceString(KEY_HISTORY_FOLDER));
+			super(UpdateUI.getString(KEY_HISTORY_FOLDER));
 		}
 		public Object[] getChildren() {
 			try {
@@ -252,7 +252,7 @@ public class ConfigurationView
 				String productName = info.getProductName();
 				if (productName != null)
 					return productName;
-				return UpdateUI.getResourceString(KEY_CURRENT);
+				return UpdateUI.getString(KEY_CURRENT);
 			}
 			if (obj instanceof IInstallConfiguration) {
 				IInstallConfiguration config = (IInstallConfiguration) obj;
@@ -604,7 +604,7 @@ public class ConfigurationView
 			IStatus[] children =
 				(IStatus[]) errors.toArray(new IStatus[errors.size()]);
 			String message =
-				UpdateUI.getResourceString(KEY_SAVING_ERRORS);
+				UpdateUI.getString(KEY_SAVING_ERRORS);
 			MultiStatus status =
 				new MultiStatus(
 					UpdateUI.getPluginId(),
@@ -720,12 +720,12 @@ public class ConfigurationView
 			showUnconfFeaturesAction,
 			"org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction");
 		showUnconfFeaturesAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_UNCONF_FEATURES));
+			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES));
 		showUnconfFeaturesAction.setImageDescriptor(
 			UpdateUIImages.DESC_UNCONF_FEATURE_OBJ);
 		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
+			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
 		super.makeActions();
 		initDrillDown();
 		revertAction = new Action() {
@@ -737,7 +737,7 @@ public class ConfigurationView
 					RevertSection.performRevert(target);
 			}
 		};
-		revertAction.setText(UpdateUI.getResourceString(KEY_RESTORE));
+		revertAction.setText(UpdateUI.getString(KEY_RESTORE));
 		WorkbenchHelp.setHelp(
 			revertAction,
 			"org.eclipse.update.ui.CofigurationView_revertAction");
@@ -760,7 +760,7 @@ public class ConfigurationView
 			showStatusAction,
 			"org.eclipse.update.ui.CofigurationView_showStatusAction");
 		showStatusAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_STATUS));
+			UpdateUI.getString(KEY_SHOW_STATUS));
 
 		preserveAction = new Action() {
 			public void run() {
@@ -770,7 +770,7 @@ public class ConfigurationView
 		WorkbenchHelp.setHelp(
 			preserveAction,
 			"org.eclipse.update.ui.CofigurationView_preserveAction");
-		preserveAction.setText(UpdateUI.getResourceString(KEY_PRESERVE));
+		preserveAction.setText(UpdateUI.getString(KEY_PRESERVE));
 		removePreservedAction = new Action() {
 			public void run() {
 				doDelete();
@@ -780,7 +780,7 @@ public class ConfigurationView
 			removePreservedAction,
 			"org.eclipse.update.ui.CofigurationView_removePreservedAction");
 		removePreservedAction.setText(
-			UpdateUI.getResourceString(KEY_REMOVE_PRESERVED));
+			UpdateUI.getString(KEY_REMOVE_PRESERVED));
 
 		unlinkAction = new Action() {
 			public void run() {
@@ -790,7 +790,7 @@ public class ConfigurationView
 		WorkbenchHelp.setHelp(
 			unlinkAction,
 			"org.eclipse.update.ui.CofigurationView_unlinkAction");
-		unlinkAction.setText(UpdateUI.getResourceString(KEY_UNLINK));
+		unlinkAction.setText(UpdateUI.getString(KEY_UNLINK));
 		
 		siteStateAction = new SiteStateAction();
 		
@@ -813,11 +813,11 @@ public class ConfigurationView
 			if (missingFeature.isOptional()) {
 				severity = IStatus.INFO;
 				msg =
-					UpdateUI.getResourceString(
+					UpdateUI.getString(
 						KEY_MISSING_OPTIONAL_STATUS);
 			} else {
 				severity = IStatus.ERROR;
-				msg = UpdateUI.getResourceString(KEY_MISSING_STATUS);
+				msg = UpdateUI.getString(KEY_MISSING_STATUS);
 			}
 			status =
 				new Status(
@@ -829,7 +829,7 @@ public class ConfigurationView
 		} else {
 			status = getLocalSite().getFeatureStatus(feature);
 		}
-		String title = UpdateUI.getResourceString(KEY_STATUS_TITLE);
+		String title = UpdateUI.getString(KEY_STATUS_TITLE);
 		int severity = status.getSeverity();
 		String message = status.getMessage();
 
@@ -863,7 +863,7 @@ public class ConfigurationView
 			default :
 				if (message == null || message.length() == 0)
 					message =
-						UpdateUI.getResourceString(KEY_STATUS_DEFAULT);
+						UpdateUI.getString(KEY_STATUS_DEFAULT);
 				MessageDialog.openInformation(
 					getControl().getShell(),
 					title,
@@ -1147,7 +1147,7 @@ public class ConfigurationView
 					ISite site = csite.getSite();
 					refs = site.getFeatureReferences();
 				}
-				monitor.beginTask("Loading: ", refs.length);
+				monitor.beginTask(UpdateUI.getString("ConfigurationView.loading"), refs.length);
 
 				for (int i = 0; i < refs.length; i++) {
 					IFeatureReference ref = refs[i];

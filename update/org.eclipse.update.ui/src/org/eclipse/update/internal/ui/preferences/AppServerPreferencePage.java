@@ -54,7 +54,7 @@ public class AppServerPreferencePage
 	public AppServerPreferencePage() {
 		super(GRID);
 		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
-		setDescription(UpdateUI.getResourceString(KEY_DESCRIPTION));
+		setDescription(UpdateUI.getString(KEY_DESCRIPTION));
 	}
 
 	/**
@@ -70,13 +70,13 @@ public class AppServerPreferencePage
 		masterField =
 			new MasterField(
 				P_MASTER_SWITCH,
-				UpdateUI.getResourceString(KEY_MASTER_SWITCH),
+				UpdateUI.getString(KEY_MASTER_SWITCH),
 				getFieldEditorParent());
 		addField(masterField);
 		BooleanFieldEditor encodeURLs =
 			new BooleanFieldEditor(
 				P_ENCODE_URLS,
-				UpdateUI.getResourceString(KEY_ENCODE_URLS),
+				UpdateUI.getString(KEY_ENCODE_URLS),
 				getFieldEditorParent());
 		addField(encodeURLs);
 		masterField.setSlave(encodeURLs);

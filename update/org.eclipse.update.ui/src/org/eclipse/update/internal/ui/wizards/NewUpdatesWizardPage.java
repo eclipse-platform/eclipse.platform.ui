@@ -118,7 +118,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 						case 3 :
 							long size = feature.getDownloadSize();
 							if (size == -1)
-								return UpdateUI.getResourceString(
+								return UpdateUI.getString(
 									KEY_UNKNOWN_SIZE);
 							else
 								return feature.getDownloadSize() + "KB";
@@ -176,8 +176,8 @@ public class NewUpdatesWizardPage extends BannerPage {
 		PendingChange[] changes,
 		IInstallConfiguration config) {
 		super("Target");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
 		this.pendingChanges = changes;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
@@ -207,7 +207,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		buttonContainer.setLayoutData(gd);
 
 		Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUI.getResourceString(KEY_SELECT_ALL));
+		button.setText(UpdateUI.getString(KEY_SELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(true);
@@ -218,7 +218,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		SWTUtil.setButtonDimensionHint(button);
 
 		button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUI.getResourceString(KEY_DESELECT_ALL));
+		button.setText(UpdateUI.getString(KEY_DESELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(false);
@@ -229,7 +229,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
-		moreInfoButton.setText(UpdateUI.getResourceString(KEY_MORE_INFO));
+		moreInfoButton.setText(UpdateUI.getString(KEY_MORE_INFO));
 		moreInfoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doMoreInfo();
@@ -243,7 +243,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		tableViewer.setCheckedElements(pendingChanges);
 		
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_FEATURE_DESC));
+		label.setText(UpdateUI.getString(KEY_FEATURE_DESC));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -260,7 +260,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUI.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setText(UpdateUI.getString(KEY_FILTER_CHECK));
 		filterCheck.setSelection(true);
 		tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -310,13 +310,13 @@ public class NewUpdatesWizardPage extends BannerPage {
 			setMessage(null);
 		else
 			setMessage(
-				UpdateUI.getResourceString(KEY_DUPLICATE_WARNING),
+				UpdateUI.getString(KEY_DUPLICATE_WARNING),
 				WARNING);
 	}
 
 	private void createTableViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_TABLE_LABEL));
+		label.setText(UpdateUI.getString(KEY_TABLE_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -330,16 +330,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getString(KEY_C_PROVIDER));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_SIZE));
+		column.setText(UpdateUI.getString(KEY_C_SIZE));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, 200, true));

@@ -30,7 +30,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	}
 
 	public String getName() {
-		return UpdateUI.getResourceString(KEY_LABEL);
+		return UpdateUI.getString(KEY_LABEL);
 	}
 
 	public String toString() {

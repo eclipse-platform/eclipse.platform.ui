@@ -28,8 +28,8 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	public NewSearchWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	protected void createClientControl(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_CATEGORY));
+		label.setText(UpdateUI.getString(KEY_CATEGORY));
 		categoryCombo = new Combo(parent, SWT.READ_ONLY);
 		descriptors =
 			SearchCategoryRegistryReader.getDefault().getCategoryDescriptors();

@@ -234,7 +234,7 @@ public class ActivityConstraints {
 						KEY_PATCH_UNCONFIGURE_BACKUP,
 						backup.getLabel());
 			else
-				msg = UpdateUI.getResourceString(KEY_PATCH_UNCONFIGURE);
+				msg = UpdateUI.getString(KEY_PATCH_UNCONFIGURE);
 			status.add(createStatus(feature, msg));
 			return true;
 		}
@@ -335,7 +335,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							newFeature,
-							UpdateUI.getResourceString(KEY_EXCLUSIVE)));
+							UpdateUI.getString(KEY_EXCLUSIVE)));
 					continue;
 				}
 				if (mode == PendingChange.UNCONFIGURE
@@ -406,7 +406,7 @@ public class ActivityConstraints {
 					IStatus conflict =
 						createStatus(
 							newFeature,
-							UpdateUI.getResourceString(KEY_CONFLICT));
+							UpdateUI.getString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -456,7 +456,7 @@ public class ActivityConstraints {
 					IStatus conflict =
 						createStatus(
 							newFeature,
-							UpdateUI.getResourceString(KEY_CONFLICT));
+							UpdateUI.getString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -522,7 +522,7 @@ public class ActivityConstraints {
 		// check for <includes> cycle
 		if (features.contains(feature)) {
 			IStatus status =
-				createStatus(top, UpdateUI.getResourceString(KEY_CYCLE));
+				createStatus(top, UpdateUI.getString(KEY_CYCLE));
 			throw new CoreException(status);
 		}
 
@@ -831,7 +831,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUI.getResourceString(KEY_OS)));
+							UpdateUI.getString(KEY_OS)));
 					continue;
 				}
 			}
@@ -841,7 +841,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUI.getResourceString(KEY_WS)));
+							UpdateUI.getString(KEY_WS)));
 					continue;
 				}
 			}
@@ -851,7 +851,7 @@ public class ActivityConstraints {
 					status.add(
 						createStatus(
 							feature,
-							UpdateUI.getResourceString(KEY_ARCH)));
+							UpdateUI.getString(KEY_ARCH)));
 					continue;
 				}
 			}
@@ -885,7 +885,7 @@ public class ActivityConstraints {
 				status.add(
 					createStatus(
 						null,
-						UpdateUI.getResourceString(KEY_PLATFORM)));
+						UpdateUI.getString(KEY_PLATFORM)));
 				return;
 			}
 		}
@@ -911,7 +911,7 @@ public class ActivityConstraints {
 		}
 
 		status.add(
-			createStatus(null, UpdateUI.getResourceString(KEY_PRIMARY)));
+			createStatus(null, UpdateUI.getString(KEY_PRIMARY)));
 	}
 
 	/*
@@ -994,9 +994,9 @@ public class ActivityConstraints {
 					// report status
 					String target =
 						featurePrereq
-							? UpdateUI.getResourceString(
+							? UpdateUI.getString(
 								KEY_PREREQ_FEATURE)
-							: UpdateUI.getResourceString(KEY_PREREQ_PLUGIN);
+							: UpdateUI.getString(KEY_PREREQ_PLUGIN);
 					String msg =
 						UpdateUI.getFormattedMessage(
 							KEY_PREREQ,
@@ -1110,7 +1110,7 @@ public class ActivityConstraints {
 		if (included) {
 			// feature is included as optional but
 			// no parent is currently configured.
-			String msg = UpdateUI.getResourceString(KEY_OPTIONAL_CHILD);
+			String msg = UpdateUI.getString(KEY_OPTIONAL_CHILD);
 			status.add(createStatus(feature, msg));
 		} else {
 			//feature is root - can be configured
@@ -1191,7 +1191,7 @@ public class ActivityConstraints {
 		ArrayList children) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = UpdateUI.getResourceString(rootKey);
+		String message = UpdateUI.getString(rootKey);
 		return new MultiStatus(
 			UpdateUI.getPluginId(),
 			IStatus.ERROR,

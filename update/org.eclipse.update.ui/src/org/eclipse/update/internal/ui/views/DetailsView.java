@@ -307,8 +307,8 @@ public class DetailsView extends MultiPageView {
 				performHome();
 			}
 		};
-		homeAction.setText(UpdateUI.getResourceString(KEY_HOME));
-		homeAction.setToolTipText(UpdateUI.getResourceString(KEY_T_HOME));
+		homeAction.setText(UpdateUI.getString(KEY_HOME));
+		homeAction.setToolTipText(UpdateUI.getString(KEY_T_HOME));
 		homeAction.setImageDescriptor(UpdateUIImages.DESC_HOME_NAV);
 		homeAction.setHoverImageDescriptor(
 			UpdateUIImages.DESC_HOME_NAV_H);
@@ -326,9 +326,9 @@ public class DetailsView extends MultiPageView {
 				setEnabled(canPerformBackward());
 			}
 		};
-		backAction.setText(UpdateUI.getResourceString(KEY_BACKWARD));
+		backAction.setText(UpdateUI.getString(KEY_BACKWARD));
 		backAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_T_BACKWARD));
+			UpdateUI.getString(KEY_T_BACKWARD));
 		backAction.setImageDescriptor(UpdateUIImages.DESC_BACKWARD_NAV);
 		backAction.setHoverImageDescriptor(
 			UpdateUIImages.DESC_BACKWARD_NAV_H);
@@ -347,9 +347,9 @@ public class DetailsView extends MultiPageView {
 				setEnabled(canPerformForward());
 			}
 		};
-		forwardAction.setText(UpdateUI.getResourceString(KEY_FORWARD));
+		forwardAction.setText(UpdateUI.getString(KEY_FORWARD));
 		forwardAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_T_FORWARD));
+			UpdateUI.getString(KEY_T_FORWARD));
 		forwardAction.setImageDescriptor(UpdateUIImages.DESC_FORWARD_NAV);
 		forwardAction.setHoverImageDescriptor(
 			UpdateUIImages.DESC_FORWARD_NAV_H);

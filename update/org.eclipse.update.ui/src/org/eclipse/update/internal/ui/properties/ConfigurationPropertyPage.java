@@ -40,7 +40,7 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		container.setLayout(layout);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE|SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);

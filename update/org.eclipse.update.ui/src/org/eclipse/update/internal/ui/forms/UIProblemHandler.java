@@ -14,7 +14,7 @@ public class UIProblemHandler implements IProblemHandler {
 	 * @see IProblemHandler#reportProblem(String)
 	 */
 	public boolean reportProblem(String problemText) {
-		String title = UpdateUI.getResourceString(KEY_TITLE);
+		String title = UpdateUI.getString(KEY_TITLE);
 		return MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(), title, problemText);
 	}
 }

@@ -83,8 +83,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 	public InstallDeltaWizardPage(ISessionDelta[] deltas) {
 		super("installDeltaPage");
 		this.deltas = deltas;
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -111,7 +111,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_LABEL));
+		label.setText(UpdateUI.getString(KEY_LABEL));
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -149,7 +149,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
 		deleteButton.setEnabled(false);
-		deleteButton.setText(UpdateUI.getResourceString(KEY_DELETE));
+		deleteButton.setText(UpdateUI.getString(KEY_DELETE));
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -163,7 +163,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		errorsButton = new Button(buttonContainer, SWT.PUSH);
 		errorsButton.setEnabled(false);
-		errorsButton.setText(UpdateUI.getResourceString(KEY_ERRORS));
+		errorsButton.setText(UpdateUI.getString(KEY_ERRORS));
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -286,7 +286,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		setPageComplete(errors == 0 && (nremoved > 0 || nselected > 0));
 		String message = null;
 		if (errors > 0)
-			message = UpdateUI.getResourceString(KEY_MESSAGE);
+			message = UpdateUI.getString(KEY_MESSAGE);
 		setErrorMessage(message);
 	}
 

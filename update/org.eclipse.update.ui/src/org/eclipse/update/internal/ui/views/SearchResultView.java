@@ -100,7 +100,7 @@ public class SearchResultView
 					case 4 :
 						long size = feature.getDownloadSize();
 						if (size == -1)
-							return UpdateUI.getResourceString(
+							return UpdateUI.getString(
 								KEY_UNKNOWN_SIZE);
 						else
 							return feature.getDownloadSize() + "KB";
@@ -182,19 +182,19 @@ public class SearchResultView
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getString(KEY_C_PROVIDER));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_SITE));
+		column.setText(UpdateUI.getString(KEY_C_SITE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_SIZE));
+		column.setText(UpdateUI.getString(KEY_C_SIZE));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, 200, true));
@@ -238,9 +238,9 @@ public class SearchResultView
 			}
 		};
 		showSearchAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_SEARCH_LABEL));
+			UpdateUI.getString(KEY_SHOW_SEARCH_LABEL));
 		showSearchAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_SHOW_SEARCH_TOOLTIP));
+			UpdateUI.getString(KEY_SHOW_SEARCH_TOOLTIP));
 		showSearchAction.setImageDescriptor(
 			UpdateUIImages.DESC_SHOW_SEARCH);
 	}

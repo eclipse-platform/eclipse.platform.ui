@@ -484,7 +484,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			newAction,
 			"org.eclipse.update.ui.UpdatesView_newAction");
-		newAction.setText(UpdateUI.getResourceString(KEY_NEW_SITE));
+		newAction.setText(UpdateUI.getString(KEY_NEW_SITE));
 
 		newFolderAction = new Action("newFolder") {
 			public void run() {
@@ -495,7 +495,7 @@ public class UpdatesView
 			newFolderAction,
 			"org.eclipse.update.ui.UpdatesView_newFolderAction");
 		newFolderAction.setText(
-			UpdateUI.getResourceString(KEY_NEW_FOLDER));
+			UpdateUI.getString(KEY_NEW_FOLDER));
 
 		newSearchAction = new Action("newSearch") {
 			public void run() {
@@ -506,7 +506,7 @@ public class UpdatesView
 			newSearchAction,
 			"org.eclipse.update.ui.UpdatesView_newSearchAction");
 		newSearchAction.setText(
-			UpdateUI.getResourceString(KEY_NEW_SEARCH));
+			UpdateUI.getString(KEY_NEW_SEARCH));
 
 		newLocalAction = new Action("newLocal") {
 			public void run() {
@@ -518,7 +518,7 @@ public class UpdatesView
 			newLocalAction,
 			"org.eclipse.update.ui.UpdatesView_newLocalAction");
 		newLocalAction.setText(
-			UpdateUI.getResourceString(KEY_NEW_LOCAL_SITE));
+			UpdateUI.getString(KEY_NEW_LOCAL_SITE));
 
 		showSearchResultAction = new Action("showSearch") {
 			public void run() {
@@ -529,41 +529,41 @@ public class UpdatesView
 			newLocalAction,
 			"org.eclipse.update.ui.UpdatesView_showSearchResultAction");
 		showSearchResultAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_SEARCH_RESULT));
+			UpdateUI.getString(KEY_SHOW_SEARCH_RESULT));
 
 		deleteAction = new DeleteAction();
 		WorkbenchHelp.setHelp(
 			deleteAction,
 			"org.eclipse.update.ui.UpdatesView_deleteAction");
-		deleteAction.setText(UpdateUI.getResourceString(KEY_DELETE));
+		deleteAction.setText(UpdateUI.getString(KEY_DELETE));
 
 		openWebAction = new Action("openWeb") {
 			public void run() {
 				performOpenWeb();
 			}
 		};
-		openWebAction.setText(UpdateUI.getResourceString(KEY_OPEN_WEB));
+		openWebAction.setText(UpdateUI.getString(KEY_OPEN_WEB));
 
 		cutAction = new Action("cut") {
 			public void run() {
 				performCut();
 			}
 		};
-		cutAction.setText(UpdateUI.getResourceString(KEY_CUT));
+		cutAction.setText(UpdateUI.getString(KEY_CUT));
 
 		copyAction = new Action("copy") {
 			public void run() {
 				performCopy();
 			}
 		};
-		copyAction.setText(UpdateUI.getResourceString(KEY_COPY));
+		copyAction.setText(UpdateUI.getString(KEY_COPY));
 
 		pasteAction = new Action("paste") {
 			public void run() {
 				performPaste();
 			}
 		};
-		pasteAction.setText(UpdateUI.getResourceString(KEY_PASTE));
+		pasteAction.setText(UpdateUI.getString(KEY_PASTE));
 
 		refreshAction = new Action("refresh") {
 			public void run() {
@@ -573,9 +573,9 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			refreshAction,
 			"org.eclipse.update.ui.UpdatesView_refreshAction");
-		refreshAction.setText(UpdateUI.getResourceString(KEY_REFRESH));
+		refreshAction.setText(UpdateUI.getString(KEY_REFRESH));
 		refreshAction.setToolTipText(
-			UpdateUI.getResourceString(KEY_REFRESH_TOOLTIP));
+			UpdateUI.getString(KEY_REFRESH_TOOLTIP));
 		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_REFRESH_NAV_D);
@@ -594,7 +594,7 @@ public class UpdatesView
 			fileFilterAction,
 			"org.eclipse.update.ui.UpdatesView_fileFilterAction");
 		fileFilterAction.setText(
-			UpdateUI.getResourceString(KEY_FILTER_FILES));
+			UpdateUI.getString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
 
 		getTreeViewer().addFilter(fileFilter);
@@ -613,7 +613,7 @@ public class UpdatesView
 			filterEnvironmentAction,
 			"org.eclipse.update.ui.UpdatesView_filterEnvironmentAction");
 		filterEnvironmentAction.setText(
-			UpdateUI.getResourceString(KEY_FILTER_ENVIRONMENT));
+			UpdateUI.getString(KEY_FILTER_ENVIRONMENT));
 		boolean envValue = getStoredEnvironmentValue();
 		filterEnvironmentAction.setChecked(envValue);
 
@@ -629,7 +629,7 @@ public class UpdatesView
 			showCategoriesAction,
 			"org.eclipse.update.ui.UpdatesView_showCategoriesAction");
 		showCategoriesAction.setText(
-			UpdateUI.getResourceString(KEY_SHOW_CATEGORIES));
+			UpdateUI.getString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
 
 		linkExtensionAction = new Action("link") {
@@ -641,7 +641,7 @@ public class UpdatesView
 			linkExtensionAction,
 			"org.eclipse.update.ui.UpdatesView_linkExtensionAction");
 		linkExtensionAction.setText(
-			UpdateUI.getResourceString(KEY_LINK_EXTENSION));
+			UpdateUI.getString(KEY_LINK_EXTENSION));
 
 		getTreeViewer().addSelectionChangedListener(selectionListener);
 		hookGlobalActions();
@@ -700,7 +700,7 @@ public class UpdatesView
 		manager.add(refreshAction);
 		manager.add(new Separator());
 		MenuManager newMenu =
-			new MenuManager(UpdateUI.getResourceString(KEY_NEW));
+			new MenuManager(UpdateUI.getString(KEY_NEW));
 		newMenu.add(newAction);
 		newMenu.add(newFolderAction);
 		newMenu.add(newSearchAction);
@@ -782,7 +782,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUI.getResourceString(KEY_NEW_BOOKMARK_TITLE));
+			UpdateUI.getString(KEY_NEW_BOOKMARK_TITLE));
 		//dialog.getShell().setSize(400, 400);
 		dialog.open();
 	}
@@ -806,7 +806,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUI.getResourceString(KEY_NEW_FOLDER_TITLE));
+			UpdateUI.getString(KEY_NEW_FOLDER_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -820,7 +820,7 @@ public class UpdatesView
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			UpdateUI.getResourceString(KEY_NEW_SEARCH_TITLE));
+			UpdateUI.getString(KEY_NEW_SEARCH_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -847,7 +847,7 @@ public class UpdatesView
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
 					dialog.getShell().setText(
-						UpdateUI.getResourceString(
+						UpdateUI.getString(
 							KEY_NEW_BOOKMARK_TITLE));
 					dialog.open();
 				}
@@ -1031,7 +1031,7 @@ public class UpdatesView
 								new SubProgressMonitor(monitor, 1));
 						} else
 							monitor.worked(1);
-						monitor.setTaskName("Updating...");
+						monitor.setTaskName(UpdateUI.getString("UpdatesView.updating"));
 						getControl().getDisplay().syncExec(new Runnable() {
 							public void run() {
 								getViewer().refresh(obj);
@@ -1118,7 +1118,7 @@ public class UpdatesView
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					monitor.beginTask("Connecting...", 2);
+					monitor.beginTask(UpdateUI.getString("UpdatesView.connecting"), 2);
 
 					if (connect)
 						bookmark.connect(new SubProgressMonitor(monitor, 1));

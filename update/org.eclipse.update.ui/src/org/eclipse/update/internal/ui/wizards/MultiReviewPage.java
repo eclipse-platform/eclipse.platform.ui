@@ -138,8 +138,8 @@ public class MultiReviewPage extends BannerPage {
 	 */
 	public MultiReviewPage(PendingChange[] jobs) {
 		super("MultiReview");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.jobs = orderJobs(jobs);
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
@@ -224,7 +224,7 @@ public class MultiReviewPage extends BannerPage {
 		counterLabel.setLayoutData(gd);
 
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUI.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setText(UpdateUI.getString(KEY_FILTER_CHECK));
 		filterCheck.setSelection(true);
 		tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -254,16 +254,16 @@ public class MultiReviewPage extends BannerPage {
 		table.setHeaderVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_TASK));
+		column.setText(UpdateUI.getString(KEY_C_TASK));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_FEATURE));
+		column.setText(UpdateUI.getString(KEY_C_FEATURE));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_VERSION));
+		column.setText(UpdateUI.getString(KEY_C_VERSION));
 
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getResourceString(KEY_C_PROVIDER));
+		column.setText(UpdateUI.getString(KEY_C_PROVIDER));
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(30));

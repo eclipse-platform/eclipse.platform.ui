@@ -408,7 +408,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 	}
 
 	public String getCurrentSearch() {
-		return UpdateUI.getResourceString(KEY_CURRENT_SEARCH);
+		return UpdateUI.getString(KEY_CURRENT_SEARCH);
 	}
 
 	private boolean isNewerVersion(

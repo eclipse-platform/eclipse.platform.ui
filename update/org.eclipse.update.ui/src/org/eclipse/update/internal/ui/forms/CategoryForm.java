@@ -34,7 +34,7 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+	setHeadingText(UpdateUI.getString(KEY_TITLE));
 	super.initialize(modelObject);
 	//((Composite)getControl()).layout(true);
 }
@@ -73,7 +73,7 @@ protected void createContents(Composite parent) {
 		}
 	};
 	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setText(UpdateUI.getResourceString(KEY_MORE_INFO));
+	link.setText(UpdateUI.getString(KEY_MORE_INFO));
 	factory.turnIntoHyperlink(link, listener);
 	link.setVisible(false);
 	setFocusControl(link);

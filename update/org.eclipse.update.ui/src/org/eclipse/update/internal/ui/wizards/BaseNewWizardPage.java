@@ -89,7 +89,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
@@ -100,7 +100,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		});
 		createClientControl(container, layout.numColumns);
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_CREATE_IN));
+		label.setText(UpdateUI.getString(KEY_CREATE_IN));
 		containerText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
@@ -112,7 +112,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			}
 		});
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_EXISTING));
+		label.setText(UpdateUI.getString(KEY_EXISTING));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -155,7 +155,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		if (containerText.getText().length() > 0) {
 			folder = getFolderFromPath(containerText.getText());
 			if (folder == null) {
-				message = UpdateUI.getResourceString(KEY_INVALID);
+				message = UpdateUI.getString(KEY_INVALID);
 			}
 		} else
 			folder = null;

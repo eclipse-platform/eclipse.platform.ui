@@ -21,8 +21,8 @@ public class NewFolderWizardPage extends BaseNewWizardPage {
 	 */
 	public NewFolderWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 	}
 
 	/**

@@ -87,7 +87,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	
 	private void showConnectionErrors(IStatus status) {
 		ErrorDialog.openError(window.getShell(),
-			UpdateUI.getResourceString(KEY_TITLE),
+			UpdateUI.getString(KEY_TITLE),
 			null, 
 			status);
 	}			
@@ -96,8 +96,8 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	private void showNoUpdatesMessage() {
 		MessageDialog.openInformation(
 			window.getShell(),
-			UpdateUI.getResourceString(KEY_TITLE),
-			UpdateUI.getResourceString(KEY_MESSAGE));
+			UpdateUI.getString(KEY_TITLE),
+			UpdateUI.getString(KEY_MESSAGE));
 	}
 
 	private void openNewUpdatesWizard() {

@@ -38,7 +38,7 @@ public class InstallWizard extends Wizard {
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUI.getResourceString("InstallWizard.wtitle"));
+		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle"));
 		this.job = job;
 		this.needLicensePage = needLicensePage;
 	}
@@ -195,7 +195,7 @@ public class InstallWizard extends Wizard {
 				site.remove(feature, monitor);
 			} else {
 				// we should do something here
-				throwError(UpdateUI.getResourceString(KEY_UNABLE));
+				throwError(UpdateUI.getString(KEY_UNABLE));
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
 			if (optionalFeatures == null)
@@ -214,7 +214,7 @@ public class InstallWizard extends Wizard {
 				if (!oldSuccess) {
 					if (!isNestedChild(oldFeature))
 						// "eat" the error if nested child
-						throwError(UpdateUI.getResourceString(KEY_OLD));
+						throwError(UpdateUI.getString(KEY_OLD));
 				}
 			}
 			if (oldFeature == null) {

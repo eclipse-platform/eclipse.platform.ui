@@ -126,9 +126,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 	public DuplicateConflictsDialog(Shell shell, ArrayList conflicts) {
 		super(
 			shell,
-			UpdateUI.getResourceString(KEY_TITLE),
+			UpdateUI.getString(KEY_TITLE),
 			null,
-			UpdateUI.getResourceString(KEY_MESSAGE),
+			UpdateUI.getString(KEY_MESSAGE),
 			WARNING,
 			new String[] {
 				IDialogConstants.YES_LABEL,
@@ -150,7 +150,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getString(KEY_TREE_LABEL));
 
 		treeViewer = new TreeViewer(client, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);

@@ -28,7 +28,7 @@ public class SiteStateAction extends Action {
 	public void setSite(IConfiguredSite site) {
 		this.site = site;
 		boolean state = site.isEnabled();
-		setText(state ? UpdateUI.getResourceString("SiteStateAction.disableLabel") : UpdateUI.getResourceString("SiteStateAction.enableLabel")); //$NON-NLS-1$ //$NON-NLS-2$
+		setText(state ? UpdateUI.getString("SiteStateAction.disableLabel") : UpdateUI.getString("SiteStateAction.enableLabel")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void run() {
@@ -66,6 +66,6 @@ public class SiteStateAction extends Action {
 		String disableMessage = UpdateUI.getFormattedMessage("SiteStateAction.disableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String message = newState ? enableMessage : disableMessage;
-		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), UpdateUI.getResourceString("SiteStateAction.dialogTitle"), message); //$NON-NLS-1$
+		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), UpdateUI.getString("SiteStateAction.dialogTitle"), message); //$NON-NLS-1$
 	}
 }

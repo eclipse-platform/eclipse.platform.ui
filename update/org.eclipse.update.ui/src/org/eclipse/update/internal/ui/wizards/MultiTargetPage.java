@@ -154,8 +154,8 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	 */
 	public MultiTargetPage(IInstallConfiguration config) {
 		super("MultiTarget");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
@@ -264,7 +264,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_JOBS_LABEL));
+		label.setText(UpdateUI.getString(KEY_JOBS_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -274,7 +274,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		new Label(client, SWT.NULL);
 
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_SITE_LABEL));
+		label.setText(UpdateUI.getString(KEY_SITE_LABEL));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -288,7 +288,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		addButton = new Button(buttonContainer, SWT.PUSH);
-		addButton.setText(UpdateUI.getResourceString(KEY_NEW));
+		addButton.setText(UpdateUI.getString(KEY_NEW));
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -306,12 +306,12 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 2;
 		status.setLayout(layout);
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
+		label.setText(UpdateUI.getString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+		label.setText(UpdateUI.getString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
@@ -432,7 +432,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUI.getResourceString(KEY_LOCATION_EMPTY);
+			errorMessage = UpdateUI.getString(KEY_LOCATION_EMPTY);
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -465,7 +465,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUI.getResourceString(KEY_LOCATION_MESSAGE));
+		dd.setMessage(UpdateUI.getString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
 			File file = new File(path);
@@ -490,7 +490,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 					config.addConfiguredSite(csite);
 				else {
 					String title =
-						UpdateUI.getResourceString(KEY_LOCATION_ERROR_TITLE);
+						UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
 					String message =
 						UpdateUI.getFormattedMessage(
 							KEY_LOCATION_ERROR_MESSAGE,
@@ -525,14 +525,14 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		long required = computeRequiredSizeFor(site);
 		if (required == -1)
 			requiredSpaceLabel.setText(
-				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			requiredSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
 			availableSpaceLabel.setText(
-				UpdateUI.getResourceString(KEY_SIZE_UNKNOWN));
+				UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			availableSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));

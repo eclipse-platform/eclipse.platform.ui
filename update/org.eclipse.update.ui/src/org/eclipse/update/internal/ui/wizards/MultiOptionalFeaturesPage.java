@@ -133,8 +133,8 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 	 */
 	public MultiOptionalFeaturesPage(IInstallConfiguration config) {
 		super("OptionalFeatures");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
@@ -168,7 +168,7 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 			}
 		});
 		selectAllButton.setText(
-			UpdateUI.getResourceString(KEY_SELECT_ALL));
+			UpdateUI.getString(KEY_SELECT_ALL));
 		GridData gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -183,7 +183,7 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 			}
 		});
 		deselectAllButton.setText(
-			UpdateUI.getResourceString(KEY_DESELECT_ALL));
+			UpdateUI.getString(KEY_DESELECT_ALL));
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -195,7 +195,7 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 
 	private void createCheckboxTreeViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getString(KEY_TREE_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

@@ -84,8 +84,8 @@ public class OptionalFeaturesPage extends BannerPage {
 		PendingChange pendingChange,
 		IInstallConfiguration config) {
 		super("OptionalFeatures");
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
@@ -113,7 +113,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			}
 		});
 		selectAllButton.setText(
-			UpdateUI.getResourceString(KEY_SELECT_ALL));
+			UpdateUI.getString(KEY_SELECT_ALL));
 		GridData gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -128,7 +128,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			}
 		});
 		deselectAllButton.setText(
-			UpdateUI.getResourceString(KEY_DESELECT_ALL));
+			UpdateUI.getString(KEY_DESELECT_ALL));
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -140,7 +140,7 @@ public class OptionalFeaturesPage extends BannerPage {
 
 	private void createCheckboxTreeViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getString(KEY_TREE_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

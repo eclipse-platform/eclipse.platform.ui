@@ -64,7 +64,7 @@ public class MainPreferencePage
 	public MainPreferencePage() {
 		super(GRID);
 		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
-		setDescription(UpdateUI.getResourceString(KEY_DESCRIPTION));
+		setDescription(UpdateUI.getString(KEY_DESCRIPTION));
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class MainPreferencePage
 		IntegerFieldEditor maxLevel =
 			new IntegerFieldEditor(
 				P_HISTORY_SIZE,
-				UpdateUI.getResourceString(KEY_HISTORY_SIZE),
+				UpdateUI.getString(KEY_HISTORY_SIZE),
 				getFieldEditorParent());
 		maxLevel.setValidRange(1, Integer.MAX_VALUE);
 		addField(maxLevel);
@@ -86,15 +86,15 @@ public class MainPreferencePage
 			RadioGroupFieldEditor browser =
 				new RadioGroupFieldEditor(
 					P_BROWSER,
-					UpdateUI.getResourceString(KEY_BROWSER_CHOICE),
+					UpdateUI.getString(KEY_BROWSER_CHOICE),
 					1,
 					new String[][] {
 						{
-							UpdateUI.getResourceString(
+							UpdateUI.getString(
 								KEY_BROWSER_CHOICE_EMBEDDED),
 							EMBEDDED_VALUE },
 						{
-					UpdateUI.getResourceString(KEY_BROWSER_CHOICE_SYSTEM),
+					UpdateUI.getString(KEY_BROWSER_CHOICE_SYSTEM),
 						SYSTEM_VALUE }
 			}, getFieldEditorParent());
 			addField(browser);
@@ -104,15 +104,15 @@ public class MainPreferencePage
 		RadioGroupFieldEditor updateVersions =
 			new RadioGroupFieldEditor(
 				P_UPDATE_VERSIONS,
-				UpdateUI.getResourceString(KEY_UPDATE_VERSIONS),
+				UpdateUI.getString(KEY_UPDATE_VERSIONS),
 				1,
 				new String[][] {
 					{
-						UpdateUI.getResourceString(
+						UpdateUI.getString(
 							KEY_UPDATE_VERSIONS_EQUIVALENT),
 						EQUIVALENT_VALUE },
 					{
-				UpdateUI.getResourceString(
+				UpdateUI.getString(
 					KEY_UPDATE_VERSIONS_COMPATIBLE),
 					COMPATIBLE_VALUE }
 		}, getFieldEditorParent());
@@ -123,7 +123,7 @@ public class MainPreferencePage
 		ColorFieldEditor topicColor =
 			new ColorFieldEditor(
 				UpdateColors.P_TOPIC_COLOR,
-				UpdateUI.getResourceString(KEY_TOPIC_COLOR),
+				UpdateUI.getString(KEY_TOPIC_COLOR),
 				getFieldEditorParent());
 		addField(topicColor);
 		
@@ -140,7 +140,7 @@ public class MainPreferencePage
 	protected void createHttpProxy(Composite composite, int columnSpan) {
 		
 		enableHttpProxy = new Button(composite,SWT.CHECK);
-		enableHttpProxy.setText(UpdateUI.getResourceString(KEY_ENABLE_HTTP_PROXY));
+		enableHttpProxy.setText(UpdateUI.getString(KEY_ENABLE_HTTP_PROXY));
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		enableHttpProxy.setLayoutData(gd);
@@ -149,7 +149,7 @@ public class MainPreferencePage
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		httpProxyHostLabel.setLayoutData(gd);
-		httpProxyHostLabel.setText(UpdateUI.getResourceString(KEY_HTTP_PROXY_SERVER));
+		httpProxyHostLabel.setText(UpdateUI.getString(KEY_HTTP_PROXY_SERVER));
 		
 		httpProxyHostText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		httpProxyHostText.setFont(composite.getFont());
@@ -163,7 +163,7 @@ public class MainPreferencePage
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		httpProxyPortLabel.setLayoutData(gd);
-		httpProxyPortLabel.setText(UpdateUI.getResourceString(KEY_HTTP_PROXY_PORT));
+		httpProxyPortLabel.setText(UpdateUI.getString(KEY_HTTP_PROXY_PORT));
 
 		httpProxyPortText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		httpProxyPortText.setFont(composite.getFont());

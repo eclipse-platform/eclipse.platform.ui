@@ -41,8 +41,8 @@ public class RevertSection extends UpdateSection {
 	public RevertSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
-		setHeaderText(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setHeaderText(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 	}
 
 	public Composite createClient(
@@ -96,17 +96,17 @@ public class RevertSection extends UpdateSection {
 			return;
 		if (config.isCurrent()) {
 			currentTextLabel.setText(
-				UpdateUI.getResourceString(KEY_CURRENT_TEXT));
+				UpdateUI.getString(KEY_CURRENT_TEXT));
 			textLabel.setText(
-				UpdateUI.getResourceString(KEY_REVERT_TEXT));
+				UpdateUI.getString(KEY_REVERT_TEXT));
 			revertButton.setText(
-				UpdateUI.getResourceString(KEY_REVERT_BUTTON));
+				UpdateUI.getString(KEY_REVERT_BUTTON));
 		} else {
 			currentTextLabel.setText(""); //$NON-NLS-1$
 			textLabel.setText(
-				UpdateUI.getResourceString(KEY_RESTORE_TEXT));
+				UpdateUI.getString(KEY_RESTORE_TEXT));
 			revertButton.setText(
-				UpdateUI.getResourceString(KEY_RESTORE_BUTTON));
+				UpdateUI.getString(KEY_RESTORE_BUTTON));
 		}
 		container.layout(true);
 	}
@@ -138,7 +138,7 @@ public class RevertSection extends UpdateSection {
 		if (confirm) {
 			// ask the user to confirm and bail if canceled
 			String title = UpdateUI.getActivePage().getLabel();
-			if (!MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), title, UpdateUI.getResourceString("InstallConfigurationPage.RevertSection.confirm.message"))) //$NON-NLS-1$
+			if (!MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), title, UpdateUI.getString("InstallConfigurationPage.RevertSection.confirm.message"))) //$NON-NLS-1$
 				return false;
 		}
 

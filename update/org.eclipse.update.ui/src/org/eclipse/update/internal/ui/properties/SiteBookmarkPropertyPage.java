@@ -48,24 +48,24 @@ public class SiteBookmarkPropertyPage
 		container.setLayout(layout);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_NAME));
+		label.setText(UpdateUI.getString(KEY_NAME));
 		siteName = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteName.setLayoutData(gd);
 		label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_ADDRESS));
+		label.setText(UpdateUI.getString(KEY_ADDRESS));
 		siteURL = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteURL.setLayoutData(gd);
 		
 		updateButton = new Button(container, SWT.RADIO);
-		updateButton.setText(UpdateUI.getResourceString(KEY_UPDATE_SITE));
+		updateButton.setText(UpdateUI.getString(KEY_UPDATE_SITE));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		updateButton.setLayoutData(gd);
 		
 		webButton = new Button(container, SWT.RADIO);
-		webButton.setText(UpdateUI.getResourceString(KEY_WEB_SITE));
+		webButton.setText(UpdateUI.getString(KEY_WEB_SITE));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		webButton.setLayoutData(gd);

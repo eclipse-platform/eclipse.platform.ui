@@ -51,14 +51,14 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUI.getResourceString("JarVerificationDialog.Install"),
+					UpdateUI.getString("JarVerificationDialog.Install"),
 					false);
 				//$NON-NLS-1$
 			} else {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUI.getResourceString("JarVerificationDialog.Continue"),
+					UpdateUI.getString("JarVerificationDialog.Continue"),
 					false);
 				//$NON-NLS-1$				
 			}
@@ -68,14 +68,14 @@ public class JarVerificationDialog extends TitleAreaDialog {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUI.getResourceString("JarVerificationDialog.Cancel"),
+				UpdateUI.getString("JarVerificationDialog.Cancel"),
 				true);
 			//$NON-NLS-1$							
 		} else {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUI.getResourceString("JarVerificationDialog.Cancel"),
+				UpdateUI.getString("JarVerificationDialog.Cancel"),
 				true);
 		}
 		getButton(IDialogConstants.CANCEL_ID).setFocus();
@@ -87,7 +87,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite compositeParent = (Composite)super.createDialogArea(parent);
 		setTitleImage(this.getImage());
-		setTitle(UpdateUI.getResourceString("JarVerificationDialog.Title"));
+		setTitle(UpdateUI.getString("JarVerificationDialog.Title"));
 		
 		_DialogPage.createControl(compositeParent);
 		pageContainer=(Composite)_DialogPage.getControl();

@@ -111,7 +111,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
-	public static String getResourceString(String key) {
+	public static String getString(String key) {
 		ResourceBundle bundle = UpdateUI.getDefault().getResourceBundle();
 		try {
 			return bundle.getString(key);
@@ -121,12 +121,12 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public static String getFormattedMessage(String key, String[] args) {
-		String text = getResourceString(key);
+		String text = getString(key);
 		return java.text.MessageFormat.format(text, args);
 	}
 
 	public static String getFormattedMessage(String key, String arg) {
-		String text = getResourceString(key);
+		String text = getString(key);
 		return java.text.MessageFormat.format(text, new String[] { arg });
 	}
 
@@ -385,8 +385,8 @@ public class UpdateUI extends AbstractUIPlugin {
 		}
 	}
 	public static void informRestartNeeded() {
-		String title = UpdateUI.getResourceString("RestartTitle");
-		String message = UpdateUI.getResourceString("RestartMessage");
+		String title = UpdateUI.getString("RestartTitle");
+		String message = UpdateUI.getString("RestartMessage");
 		boolean restart = MessageDialog.openQuestion(getActiveWorkbenchShell(), title, message);
 		if (restart)
 			PlatformUI.getWorkbench().restart();

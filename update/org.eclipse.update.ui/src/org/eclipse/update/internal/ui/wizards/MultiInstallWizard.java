@@ -43,7 +43,7 @@ public class MultiInstallWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(
-			UpdateUI.getResourceString("MultiInstallWizard.wtitle"));
+			UpdateUI.getString("MultiInstallWizard.wtitle"));
 		this.jobs = jobs;
 		this.needLicensePage = needLicensePage;
 	}
@@ -113,7 +113,7 @@ public class MultiInstallWizard extends Wizard {
 		IProgressMonitor monitor)
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
-			UpdateUI.getResourceString(KEY_INSTALLING),
+			UpdateUI.getString(KEY_INSTALLING),
 			jobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];

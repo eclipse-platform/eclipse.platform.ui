@@ -44,7 +44,7 @@ public class LocalSiteForm extends UpdateWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getString(KEY_TITLE));
 		super.initialize(modelObject);
 	}
 

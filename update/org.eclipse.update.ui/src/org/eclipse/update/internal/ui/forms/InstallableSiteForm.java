@@ -39,7 +39,7 @@ public class InstallableSiteForm extends PropertyWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText(UpdateUI.getResourceString(KEY_TITLE));
+		setHeadingText(UpdateUI.getString(KEY_TITLE));
 		super.initialize(modelObject);
 		//((Composite)getControl()).layout(true);
 	}
@@ -58,17 +58,17 @@ public class InstallableSiteForm extends PropertyWebForm {
 		urlLabel =
 			createProperty(
 				parent,
-				UpdateUI.getResourceString(
+				UpdateUI.getString(
 					"InstallableSiteForm.url"));
 		typeLabel =
 			createProperty(
 				parent,
-					UpdateUI.getResourceString(
+					UpdateUI.getString(
 						"InstallableSiteForm.type"));
 		stateLabel =
 			createProperty(
 				parent,
-					UpdateUI.getResourceString(
+					UpdateUI.getString(
 						"InstallableSiteForm.state"));
 
 		stateButton = factory.createButton(parent, "", SWT.PUSH);
@@ -81,7 +81,7 @@ public class InstallableSiteForm extends PropertyWebForm {
 		factory.createLabel(parent, "");
 
 		FormEngine desc = factory.createFormEngine(parent);
-		desc.load(UpdateUI.getResourceString(KEY_DESC), true, true);
+		desc.load(UpdateUI.getString(KEY_DESC), true, true);
 		setFocusControl(desc);
 		TableData td = new TableData();
 		td.align = TableData.FILL;
@@ -108,14 +108,14 @@ public class InstallableSiteForm extends PropertyWebForm {
 	}
 
 	private String getStateButtonLabel(boolean enabled) {
-		return UpdateUI.getResourceString(
+		return UpdateUI.getString(
 			enabled
 				? "InstallableSiteForm.stateButton.disable"
 				: "InstallableSiteForm.stateButton.enable");
 	}
 
 	private String getStateLabel(boolean enabled) {
-		return UpdateUI.getResourceString(
+		return UpdateUI.getString(
 			enabled
 				? "InstallableSiteForm.stateLabel.enabled"
 				: "InstallableSiteForm.stateLabel.disabled");
@@ -123,10 +123,10 @@ public class InstallableSiteForm extends PropertyWebForm {
 
 	private String getSiteType(IConfiguredSite csite) {
 		if (csite.isProductSite())
-			return UpdateUI.getResourceString("InstallableSiteForm.type.product");
+			return UpdateUI.getString("InstallableSiteForm.type.product");
 		if (csite.isExtensionSite())
-			return UpdateUI.getResourceString("InstallableSiteForm.type.extension");
-		return UpdateUI.getResourceString("InstallableSiteForm.type.private");
+			return UpdateUI.getString("InstallableSiteForm.type.extension");
+		return UpdateUI.getString("InstallableSiteForm.type.private");
 	}
 
 	private void inputChanged(IConfiguredSite csite) {

@@ -89,7 +89,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 			dialog.create();
 			dialog.getShell().setSize(350, 150);
 			dialog.getShell().setText(
-				UpdateUI.getResourceString(KEY_CONFLICT));
+				UpdateUI.getString(KEY_CONFLICT));
 			if (dialog.open() != RenameDialog.OK)
 				return false;
 		}

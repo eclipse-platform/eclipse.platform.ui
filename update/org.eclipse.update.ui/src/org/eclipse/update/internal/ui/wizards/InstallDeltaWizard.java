@@ -29,7 +29,7 @@ public class InstallDeltaWizard
 	 */
 	public InstallDeltaWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUI.getResourceString(KEY_WTITLE));
+		setWindowTitle(UpdateUI.getString(KEY_WTITLE));
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 	}
 
@@ -87,7 +87,7 @@ public class InstallDeltaWizard
 		analyzeAdapters(adapters, selectedDeltas, removedDeltas);
 			
 		monitor.beginTask(
-			UpdateUI.getResourceString(KEY_PROCESSING),
+			UpdateUI.getString(KEY_PROCESSING),
 			selectedDeltas.size() + removedDeltas.size());
 		processed = 0;
 		for (int i = 0; i < removedDeltas.size(); i++) {

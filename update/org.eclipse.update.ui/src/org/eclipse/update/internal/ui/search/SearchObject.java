@@ -234,12 +234,12 @@ public class SearchObject extends NamedModelObject {
 		ArrayList candidates = new ArrayList();
 
 		monitor.beginTask(
-			UpdateUI.getResourceString(KEY_BEGIN),
+			UpdateUI.getString(KEY_BEGIN),
 			IProgressMonitor.UNKNOWN);
 
 		if (getSearchMyComputer()) {
 			monitor.setTaskName(
-				UpdateUI.getResourceString(KEY_MY_COMPUTER));
+				UpdateUI.getString(KEY_MY_COMPUTER));
 			initializeMyComputerSites(monitor);
 		}
 		ArrayList statusList = new ArrayList();
@@ -248,7 +248,7 @@ public class SearchObject extends NamedModelObject {
 			int ntasks = queries.length * (1 + candidates.size());
 
 			monitor.beginTask(
-				UpdateUI.getResourceString(KEY_BEGIN),
+				UpdateUI.getString(KEY_BEGIN),
 				ntasks);
 
 			for (int i = 0; i < queries.length; i++) {
@@ -257,7 +257,7 @@ public class SearchObject extends NamedModelObject {
 				if (site != null) {
 					SubProgressMonitor subMonitor =
 						new SubProgressMonitor(monitor, 1);
-					UpdateUI.getResourceString(KEY_CHECKING);
+					UpdateUI.getString(KEY_CHECKING);
 					IStatus status =
 						searchOneSite(display, site, query, subMonitor);
 					if (status != null)
@@ -292,7 +292,7 @@ public class SearchObject extends NamedModelObject {
 		if (statusList.size() > 0) {
 			IStatus[] children =
 				(IStatus[]) statusList.toArray(new IStatus[statusList.size()]);
-				MultiStatus multiStatus = new MultiStatus(UpdateUI.getPluginId(), ISite.SITE_ACCESS_EXCEPTION, children, UpdateUI.getResourceString("Search.networkProblems"), //$NON-NLS-1$
+				MultiStatus multiStatus = new MultiStatus(UpdateUI.getPluginId(), ISite.SITE_ACCESS_EXCEPTION, children, UpdateUI.getString("Search.networkProblems"), //$NON-NLS-1$
 	null);
 			throw new CoreException(multiStatus);
 		}

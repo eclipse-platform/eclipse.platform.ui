@@ -83,11 +83,11 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		dateLabel =
 			createProperty(
 				parent,
-				UpdateUI.getResourceString(KEY_CREATED_ON));
+				UpdateUI.getString(KEY_CREATED_ON));
 		currentLabel =
 			createProperty(
 				parent,
-				UpdateUI.getResourceString(KEY_CURRENT_CONFIG));
+				UpdateUI.getString(KEY_CURRENT_CONFIG));
 		factory.createLabel(parent, null);
 
 		activitySection = new ActivitySection((UpdateFormPage) getPage());
@@ -149,8 +149,8 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		dateLabel.setText(Utilities.format(date));
 		String isCurrent =
 			configuration.isCurrent()
-				? UpdateUI.getResourceString(KEY_YES)
-				: UpdateUI.getResourceString(KEY_NO);
+				? UpdateUI.getString(KEY_YES)
+				: UpdateUI.getString(KEY_NO);
 		currentLabel.setText(isCurrent);
 
 		activitySection.configurationChanged(configuration);

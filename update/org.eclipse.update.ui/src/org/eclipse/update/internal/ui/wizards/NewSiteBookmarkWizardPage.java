@@ -40,8 +40,8 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	 */
 	public NewSiteBookmarkWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle(UpdateUI.getResourceString(KEY_TITLE));
-		setDescription(UpdateUI.getResourceString(KEY_DESC));
+		setTitle(UpdateUI.getString(KEY_TITLE));
+		setDescription(UpdateUI.getString(KEY_DESC));
 	}
 
 	public NewSiteBookmarkWizardPage(
@@ -56,7 +56,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	 */
 	protected void createClientControl(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getResourceString(KEY_URL));
+		label.setText(UpdateUI.getString(KEY_URL));
 		urlText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		urlText.setLayoutData(gd);
@@ -65,7 +65,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 			urlText.setText(url.toString());
 			urlText.setEnabled(false);
 		} else
-			urlText.setText(UpdateUI.getResourceString(KEY_HTTP));
+			urlText.setText(UpdateUI.getString(KEY_HTTP));
 		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
@@ -73,13 +73,13 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 		});
 		if (localBookmark == null) {
 			label = new Label(parent, SWT.NULL);
-			label.setText(UpdateUI.getResourceString(KEY_TYPE));
+			label.setText(UpdateUI.getString(KEY_TYPE));
 			gd = new GridData();
 			gd.horizontalSpan = span;
 			label.setLayoutData(gd);
 			updateButton = new Button(parent, SWT.RADIO);
 			updateButton.setText(
-				UpdateUI.getResourceString(KEY_UPDATE_TYPE));
+				UpdateUI.getString(KEY_UPDATE_TYPE));
 			gd = new GridData();
 			gd.horizontalSpan = span;
 			gd.horizontalIndent = 10;
@@ -87,7 +87,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 			updateButton.setSelection(true);
 
 			webButton = new Button(parent, SWT.RADIO);
-			webButton.setText(UpdateUI.getResourceString(KEY_WEB_TYPE));
+			webButton.setText(UpdateUI.getString(KEY_WEB_TYPE));
 			gd = new GridData();
 			gd.horizontalSpan = span;
 			gd.horizontalIndent = 10;
@@ -107,7 +107,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 				url = new URL(decodedText);
 				super.validatePage();
 			} catch (MalformedURLException e) {
-				setErrorMessage(UpdateUI.getResourceString(KEY_INVALID));
+				setErrorMessage(UpdateUI.getString(KEY_INVALID));
 				setPageComplete(false);
 			}
 		}

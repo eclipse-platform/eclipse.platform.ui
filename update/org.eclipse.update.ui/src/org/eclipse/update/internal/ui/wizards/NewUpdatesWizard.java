@@ -184,7 +184,7 @@ public class NewUpdatesWizard extends Wizard {
 		IProgressMonitor monitor)
 		throws InstallAbortedException, CoreException {
 		monitor.beginTask(
-			UpdateUI.getResourceString(KEY_INSTALLING),
+			UpdateUI.getString(KEY_INSTALLING),
 			jobs.length);
 		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];

@@ -64,7 +64,7 @@ public class JarVerificationService implements IVerificationListener {
 				new JarVerificationDialog(shell,page,result);
 		dialog.create();
 		dialog.getShell().setSize(600, 500);
-		dialog.getShell().setText(UpdateUI.getResourceString("JarVerificationDialog.wtitle"));
+		dialog.getShell().setText(UpdateUI.getString("JarVerificationDialog.wtitle"));
 		dialog.open();
 		if (dialog.getReturnCode() == JarVerificationDialog.OK)
 			code = CHOICE_INSTALL_TRUST_ALWAYS;
