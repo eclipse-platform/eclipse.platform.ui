@@ -82,10 +82,10 @@ public class ExternalToolsUtil {
 				File file = new File(expandedLocation);
 				if (file.isFile()) {
 					return new Path(expandedLocation);
-				} else {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation_{0}"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-					abort(msg, null, 0);
-				}
+				} 
+				
+				String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation_{0}"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+				abort(msg, null, 0);
 			}
 		}
 		// execution will not reach here
@@ -127,10 +127,9 @@ public class ExternalToolsUtil {
 				File path = new File(expandedLocation);
 				if (path.isDirectory()) {
 					return new Path(expandedLocation);
-				} else {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory_{0}"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
-					abort(msg, null, 0);
-				}
+				} 
+				String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory_{0}"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
+				abort(msg, null, 0);
 			}
 		}
 		return null;
