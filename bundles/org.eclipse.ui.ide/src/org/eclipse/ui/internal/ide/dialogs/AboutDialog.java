@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,7 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -50,28 +50,44 @@ public class AboutDialog extends ProductInfoDialog {
 	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
 	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
-	private AboutInfo primaryInfo;
-	private AboutInfo[] featureInfos;
+	/**
+	 * About info for the primary feature.
+	 * Private field used in inner class.
+	 * @issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+	 */
+	/* package */ AboutInfo primaryInfo;
+
+	/**
+	 * About info for the all features.
+	 * Private field used in inner class.
+	 * @issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
+	 */
+	/* package */ AboutInfo[] featureInfos;
 	private Image image; //image to display on dialog
+
 	private ArrayList images = new ArrayList();
 	private StyledText text;
 
 	/**
 	 * Create an instance of the AboutDialog
 	 */
-	public AboutDialog(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
+	public AboutDialog(
+		IWorkbenchWindow window,
+		AboutInfo primaryInfo,
+		AboutInfo[] featureInfos) {
 		super(window.getShell());
 		this.primaryInfo = primaryInfo;
 		this.featureInfos = featureInfos;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case FEATURES_ID :
-				new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos).open();
+				new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos)
+					.open();
 				return;
 			case PLUGINS_ID :
 				new AboutPluginsDialog(getShell(), primaryInfo).open();
@@ -80,14 +96,15 @@ public class AboutDialog extends ProductInfoDialog {
 				new SystemSummaryDialog(getShell()).open();
 				return;
 		}
-		
+
 		super.buttonPressed(buttonId);
 	}
 
 	public boolean close() {
 		//get rid of the image that was displayed on the left-hand side of the Welcome dialog
-		if (image != null)
+		if (image != null) {
 			image.dispose();
+		}
 		for (int i = 0; i < images.size(); i++) {
 			((Image) images.get(i)).dispose();
 		}
@@ -127,7 +144,12 @@ public class AboutDialog extends ProductInfoDialog {
 		layout.numColumns++;
 		layout.makeColumnsEqualWidth = false;
 
-		Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		Button b =
+			createButton(
+				parent,
+				IDialogConstants.OK_ID,
+				IDialogConstants.OK_LABEL,
+				true);
 		b.setFocus();
 	}
 	/**
@@ -144,10 +166,12 @@ public class AboutDialog extends ProductInfoDialog {
 		setBusyCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT));
 		getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (getHandCursor() != null)
+				if (getHandCursor() != null) {
 					getHandCursor().dispose();
-				if (getBusyCursor() != null)
+				}
+				if (getBusyCursor() != null) {
 					getBusyCursor().dispose();
+				}
 			}
 		});
 
@@ -158,7 +182,8 @@ public class AboutDialog extends ProductInfoDialog {
 		if (imageDescriptor != null) {
 			image = imageDescriptor.createImage();
 		}
-		if (image == null || image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
+		if (image == null
+			|| image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
 			// show text
 			String aboutText = null;
 			if (primaryInfo != null) {
@@ -231,24 +256,31 @@ public class AboutDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		featureContainer.setLayoutData(data);
 
-		final AboutInfo[] infoArray = getFeaturesInfo();
+		final AboutInfo[] infoArray = getFeaturesWithImages();
 		for (int i = 0; i < infoArray.length; i++) {
 			ImageDescriptor desc = infoArray[i].getFeatureImage();
-			Image image = null;
+			Image featureImage = null;
 			if (desc != null) {
-				Button button = new Button(featureContainer, SWT.FLAT | SWT.PUSH);
+				Button button =
+					new Button(featureContainer, SWT.FLAT | SWT.PUSH);
 				button.setData(infoArray[i]);
-				image = desc.createImage();
-				images.add(image);
-				button.setImage(image);
+				featureImage = desc.createImage();
+				images.add(featureImage);
+				button.setImage(featureImage);
 				String name = infoArray[i].getProviderName();
-				if (name == null)
+				if (name == null) {
 					name = ""; //$NON-NLS-1$
+				}
 				button.setToolTipText(name);
 				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent event) {
-						AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos);
-						d.setInitialSelection((AboutInfo) event.widget.getData());
+						AboutFeaturesDialog d =
+							new AboutFeaturesDialog(
+								getShell(),
+								primaryInfo,
+								featureInfos);
+						d.setInitialSelection(
+							(AboutInfo) event.widget.getData());
 						d.open();
 					}
 				});
@@ -265,45 +297,46 @@ public class AboutDialog extends ProductInfoDialog {
 	}
 
 	/**
-	 * Returns the feature infos.
-	 * They are grouped by provider and image.
+	 * Returns the feature info for non-primary features with a feature image.
+	 * If several features share the same image bitmap, include only one per
+	 * provider.
 	 */
-	private AboutInfo[] getFeaturesInfo() {
+	private AboutInfo[] getFeaturesWithImages() {
 		// quickly exclude any that do not have a provider name and image
-		ArrayList infoList = new ArrayList();
+		List infoList = new ArrayList(featureInfos.length);
 		for (int i = 0; i < featureInfos.length; i++) {
-			if (featureInfos[i].getProviderName() != null && featureInfos[i].getFeatureImageName() != null)
+			if (featureInfos[i].getProviderName() != null
+				&& featureInfos[i].getFeatureImageName() != null) {
 				infoList.add(featureInfos[i]);
+			}
 		}
-		AboutInfo[] infoArray = (AboutInfo[]) infoList.toArray(new AboutInfo[infoList.size()]);
-
-		// now exclude those with duplicate images
-		infoList = new ArrayList();
-		for (int i = 0; i < infoArray.length; i++) {
-			// check for identical provider
-			boolean add = true;
-			for (int j = 0; j < infoList.size(); j++) {
-				AboutInfo current = (AboutInfo) infoList.get(j);
-				if (current.getProviderName().equals(infoArray[i].getProviderName())) {
-					// check for identical image
-					if (current.getFeatureImageName().equals(infoArray[i].getFeatureImageName())) {
-						// same name
-						// we have to check if the CRC's are identical
-						Long crc1 = current.getFeatureImageCRC();
-						Long crc2 = infoArray[i].getFeatureImageCRC();
-						if (crc1 == null ? false : crc1.equals(crc2)) {
-							// duplicate
-							add = false;
-							break;
-						}
-					}
+		List keepers = new ArrayList(featureInfos.length);
+		// ensure the primary feature make the first cut so we can eliminate at end
+		keepers.add(primaryInfo);
+		// precompute CRCs of all the feature images
+		long[] featureImageCRCs = new long[infoList.size()];
+		for (int i = 0; i < infoList.size(); i++) {
+			AboutInfo info = (AboutInfo) infoList.get(i);
+			featureImageCRCs[i] = info.getFeatureImageCRC().longValue();
+		}
+		for (int i = 0; i < infoList.size(); i++) {
+			AboutInfo outer = (AboutInfo) infoList.get(i);
+			boolean found = false;
+			// see whether we already have one for same provider and same image
+			for (int j = 0; j < keepers.size(); j++) {
+				AboutInfo k = (AboutInfo) keepers.get(j);
+				if (k.getProviderName().equals(outer.getProviderName())
+					&& featureImageCRCs[j] == featureImageCRCs[i]) {
+					found = true;
+					break;
 				}
 			}
-			if (add)
-				infoList.add(infoArray[i]);
+			if (!found) {
+				keepers.add(outer);
+			}
 		}
-		infoList.remove(primaryInfo);
-		return (AboutInfo[]) infoList.toArray(new AboutInfo[infoList.size()]);
+		keepers.remove(primaryInfo);
+		return (AboutInfo[]) keepers.toArray(new AboutInfo[keepers.size()]);
 	}
 
 }
