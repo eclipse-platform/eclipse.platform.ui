@@ -65,6 +65,7 @@ protected IWorkbenchWindowPulldownDelegate getPulldownDelegate() {
 	IActionDelegate delegate = getDelegate();
 	if (delegate == null) {
 		createDelegate();
+		delegate = getDelegate();
 	}
 	return (IWorkbenchWindowPulldownDelegate)delegate;
 }
