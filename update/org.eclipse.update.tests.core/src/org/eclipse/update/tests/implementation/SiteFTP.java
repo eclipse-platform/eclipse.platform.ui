@@ -78,7 +78,7 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#getArchives()
 	 */
-	public IInfo[] getArchives() {
+	public IURLEntry[] getArchives() {
 		return null;
 	}
 
@@ -111,14 +111,14 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
-	public int getDownloadSize(IPluginEntry entry) {
+	public long getDownloadSize(IPluginEntry entry) {
 		return 0;
 	}
 
 	/*
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
-	public int getInstallSize(IPluginEntry entry) {
+	public long getInstallSize(IPluginEntry entry) {
 		return 0;
 	}
 

@@ -98,9 +98,9 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 			
 		} catch (java.net.MalformedURLException e){} // impossible eh !
 		Feature feature = getFeature();
-		feature.setUpdateInfo(new Info(label, url));
-		assertEquals(url,feature.getUpdateInfo().getURL());
-		assertEquals(label,feature.getUpdateInfo().getText());
+		feature.setUpdateSiteEntry(new URLEntry(label, url));
+		assertEquals(url,feature.getUpdateSiteEntry().getURL());
+		assertEquals(label,feature.getUpdateSiteEntry().getAnnotation());
 
 	}
 
@@ -110,7 +110,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testDiscoveryURLs()
 	 */
 	public void testDiscoveryURLs() throws CoreException, MalformedURLException {
-		IInfo[] urlInfo = new Info[2];
+		IURLEntry[] urlInfo = new URLEntry[2];
 		URL[] url = new URL[2];
 		String[] label = new String[2];
 		try {
@@ -121,11 +121,11 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		} catch (java.net.MalformedURLException e){} // impossible eh !
 		Feature feature = getFeature();
 		for (int i=0;i<2;i++){
-				urlInfo[i] = new Info(label[i],url[i]);
+				urlInfo[i] = new URLEntry(label[i],url[i]);
 		}
-		feature.setDiscoveryInfos(urlInfo);
-		for (int i=0; i<feature.getDiscoveryInfos().length;i++){
-			assertEquals(urlInfo[i],feature.getDiscoveryInfos()[i]);
+		feature.setDiscoverySiteEntries(urlInfo);
+		for (int i=0; i<feature.getDiscoverySiteEntries().length;i++){
+			assertEquals(urlInfo[i],feature.getDiscoverySiteEntries()[i]);
 		}
 
 
@@ -148,10 +148,10 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testDescription() throws CoreException, MalformedURLException {
 		String desc = "pretty long description as a string with \r\n and \t and \n";
-		IInfo info = new Info(desc);
+		IURLEntry info = new URLEntry(desc);
 		Feature feature = getFeature();
 		feature.setDescription(info);
-		assertEquals(desc,feature.getDescription().getText());
+		assertEquals(desc,feature.getDescription().getAnnotation());
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		try {
 			desc = new URL("http://www.oti.com");
 		} catch (MalformedURLException e){/*pretty impossible*/}
-		IInfo info = new Info(desc);
+		IURLEntry info = new URLEntry(desc);
 		Feature feature = getFeature();
 		feature.setDescription(info);
 		assertEquals(desc,feature.getDescription().getURL());
@@ -177,10 +177,10 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 			url = new URL("http://www.oti.com");
 		} catch (MalformedURLException e){/*pretty impossible*/}
 		String desc = "pretty long description as a string with \r\n and \t and \n";
-		IInfo info = new Info(desc,url);
+		IURLEntry info = new URLEntry(desc,url);
 		Feature feature = getFeature();
 		feature.setDescription(info);
-		assertEquals(desc,feature.getDescription().getText());
+		assertEquals(desc,feature.getDescription().getAnnotation());
 		assertEquals(url,feature.getDescription().getURL());
 	}
 

@@ -23,7 +23,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	public void testFileParsing() throws Exception {
 
 		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"));
-		IInfo[] info = site.getArchives();
+		IURLEntry[] info = site.getArchives();
 		
 		if (info.length<=0){
 			fail("no plugins in site: "+site.getURL().toExternalForm());
@@ -35,8 +35,8 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 		String name2 = "org.eclipse.update.core.tests.feature1.plugin2_5.0.1.jar";
 		
 		for (int i =0; i<info.length; i++){
-			if (info[i].getText().equals(name1)) found1 = true;
-			if (info[i].getText().equals(name2)) found2 = true;
+			if (info[i].getAnnotation().equals(name1)) found1 = true;
+			if (info[i].getAnnotation().equals(name2)) found2 = true;
 		}
 		
 		if (!found1 || !found2){
