@@ -18,7 +18,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -124,24 +123,12 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	 * {@inheritDoc}
 	 */
 	public Point getLocationAtOffset(int offset) {
-//		return fText.getCaretLocation();
-
+		Point caretLocation= fText.getCaretLocation();
 		/*
-		 * 
-		 * FIXME: All code below is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50256
-		 * 		  It can be replaced by above return statement.
+		 * FIXME workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=52520
 		 */
-		String comboString= fText.getText();
-		GC gc = new GC(fText);
-		gc.setFont(fText.getFont());
-		Point extent= gc.textExtent(comboString.substring(0, Math.min(offset, comboString.length())));
-		int spaceWidth= gc.textExtent(" ").x; //$NON-NLS-1$
-		gc.dispose();
-		/*
-		 * FIXME: the two space widths below is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=44072
-		 */
-		int x= 2 * spaceWidth + fText.getClientArea().x + fText.getBorderWidth() + extent.x;
-		return new Point(x, 0);
+		caretLocation.y += 2;
+		return caretLocation;
 	}
 
 	/**
