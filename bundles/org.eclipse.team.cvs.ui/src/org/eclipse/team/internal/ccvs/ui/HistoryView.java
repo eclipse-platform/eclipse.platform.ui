@@ -137,8 +137,14 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				case COL_COMMENT:
 					String comment = entry.getComment();
 					int index = comment.indexOf("\n");
-					if (index == -1) return comment;
-					return comment.substring(0, index) + "[...]";
+					switch (index) {
+						case -1:
+							return comment;
+						case 0:
+							return "[...]";
+						default:
+							return comment.substring(0, index - 1) + "[...]";
+					}
 			}
 			return "";
 		}
