@@ -307,10 +307,10 @@ private void create(final IResource resource, boolean local) throws CoreExceptio
 		create(resource.getParent(), local);
 	switch (resource.getType()) {
 		case IResource.FILE :
-			 ((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, false, getMonitor());
+			 ((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, true, getMonitor());
 			break;
 		case IResource.FOLDER :
-			 ((IFolder) resource).create(false, local, getMonitor());
+			 ((IFolder) resource).create(true, local, getMonitor());
 			break;
 		case IResource.PROJECT :
 			 ((IProject) resource).create(getMonitor());
@@ -474,6 +474,23 @@ public void ensureExistsInWorkspace(final IResource[] resources, final boolean l
 		getWorkspace().run(body, null);
 	} catch (CoreException e) {
 		fail("#ensureExistsInWorkspace(IResource[])", e);
+	}
+}
+/**
+ * Modifies the resource in the filesystem so that it is out of sync
+ * with the workspace.
+ */
+public void ensureOutOfSync(final IResource resource) {
+	if (resource.getType() != IResource.FILE)
+		return;
+	IFile file = (IFile)resource;
+	ensureExistsInWorkspace(file, true);
+	while (file.isSynchronized(IResource.DEPTH_ZERO)) {
+		modifyInFileSystem(file);
+		try {
+			Thread.currentThread().sleep(100);
+		} catch (InterruptedException e) {
+		}
 	}
 }
 /**
