@@ -1164,17 +1164,78 @@
       		categoryId="org.eclipse.ui.workbenchMisc"      
             label="Active Tab Text Color"
             value="COLOR_BLACK"
-            id="VIEW_TITLE_TEXT_COLOR_ACTIVE">
-      </colorDefinition>
+            id="VIEW_TITLE_TEXT_COLOR_ACTIVE" />
       <colorDefinition
       		categoryId="org.eclipse.ui.workbenchMisc"
             label="Inactive Tab Text Color"
             value="COLOR_BLACK"
-            id="VIEW_TITLE_TEXT_COLOR_DEACTIVATED">
-      </colorDefinition>
+            id="VIEW_TITLE_TEXT_COLOR_DEACTIVATED" />  
+                      
+      <!-- FastView -->
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Fast View Border 1"
+            value="132,130,132"
+            id="FAST_VIEW_BORDER_1" />      
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Fast View Border 2"
+            value="143,141,138"
+            id="FAST_VIEW_BORDER_2" />      
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Fast View Border 3"
+            value="171,168,165"
+            id="FAST_VIEW_BORDER_3" />      
+
+      <!-- EditorWorkbook -->
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Active Editor Tab Text Color (Focus)"
+            value="COLOR_BLACK"
+            id="EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS" />                  
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Active Editor Tab Text Color (No Focus)"
+            value="COLOR_BLACK"
+            id="EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS" />                              
+      <colorDefinition
+      		categoryId="org.eclipse.ui.workbenchMisc"
+            label="Inactive Editor Tab Text Color"
+            value="COLOR_BLACK"
+            id="EDITOR_TITLE_TEXT_COLOR_INACTIVE" />
+	  <gradientDefinition
+      		id="EDITOR_TITLE_GRADIENT_INACTIVE"
+      		label="Inactive Editor Tab Gradient"
+      		direction="vertical"      		
+      		categoryId="org.eclipse.ui.workbenchMisc"
+      		initialValue="COLOR_TITLE_BACKGROUND_GRADIENT">
+	  </gradientDefinition>	      		
+      <gradientDefinition
+      		id="EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS"
+      		label="Active Editor Tab Gradient"
+      		direction="vertical"      		
+      		categoryId="org.eclipse.ui.workbenchMisc"
+      		initialValue="COLOR_WHITE">
+      		<gradientPart 
+      			value="COLOR_TITLE_BACKGROUND_GRADIENT" 
+	      		percentage="100"/>      		
+      </gradientDefinition>
+      <gradientDefinition
+      		id="EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS"
+      		label="Active Editor Tab Gradient"
+      		direction="vertical"      		
+      		categoryId="org.eclipse.ui.workbenchMisc"
+      		initialValue="COLOR_WHITE">
+      		<gradientPart 
+      			value="COLOR_TITLE_BACKGROUND_NOGRADIENT" 
+	      		percentage="100"/>      		
+      </gradientDefinition>
+                              
+
       <gradientDefinition
       		id="VIEW_TITLE_GRADIENT_COLOR_ACTIVE"
-      		label="Active Tab Gradient"
+      		label="Active View Tab Gradient"
       		direction="vertical"      		
       		categoryId="org.eclipse.ui.workbenchMisc"
       		initialValue="COLOR_WHITE">
@@ -1184,7 +1245,7 @@
       </gradientDefinition>
       <gradientDefinition
       		id="VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"
-      		label="Inacitve Tab Gradient"
+      		label="Inacitve View Tab Gradient"
       		direction="vertical"
       		categoryId="org.eclipse.ui.workbenchMisc"
       		initialValue="COLOR_WHITE"> <!-- win32 specific -->
