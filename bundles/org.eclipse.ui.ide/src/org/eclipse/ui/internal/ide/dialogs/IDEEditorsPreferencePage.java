@@ -11,11 +11,8 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -29,6 +26,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.WorkbenchEncoding;
+import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
@@ -42,6 +41,9 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
     // State for encoding group
     private String defaultEnc;
+    
+    //A boolean to indicate if the user settings were cleared.
+    private boolean clearUserSettings = false;
 
     private Button defaultEncodingButton;
 
@@ -91,7 +93,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
         };
 
         defaultEncodingButton = new Button(group, SWT.RADIO);
-        defaultEnc = System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$  //$NON-NLS-2$
+        defaultEnc =  WorkbenchEncoding.getWorkbenchDefaultEncoding();
         defaultEncodingButton
                 .setText(IDEWorkbenchMessages
                         .format(
@@ -119,39 +121,20 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
             }
         });
 
-        ArrayList encodings = new ArrayList();
-        int n = 0;
-        try {
-            n = Integer.parseInt(IDEWorkbenchMessages
-                    .getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-        } catch (NumberFormatException e) {
-            // Ignore;
-        }
-        for (int i = 0; i < n; ++i) {
-            String enc = IDEWorkbenchMessages.getString(
-                    "WorkbenchPreference.defaultEncoding" + (i + 1), null); //$NON-NLS-1$
-            if (enc != null) {
-                encodings.add(enc);
-            }
-        }
-
-        if (!encodings.contains(defaultEnc)) {
-            encodings.add(defaultEnc);
-        }
-
-        String enc = ResourcesPlugin.getPlugin().getPluginPreferences()
-                .getString(ResourcesPlugin.PREF_ENCODING);
-        boolean isDefault = enc == null || enc.length() == 0;
-
-        if (!isDefault && !encodings.contains(enc)) {
-            encodings.add(enc);
-        }
-        Collections.sort(encodings);
-        for (int i = 0; i < encodings.size(); ++i) {
-            encodingCombo.add((String) encodings.get(i));
-        }
-
-        encodingCombo.setText(isDefault ? defaultEnc : enc);
+        List encodings = IDEEncoding.getIDEEncodings();
+        String [] encodingStrings = new String[encodings.size()];
+        encodings.toArray(encodingStrings);
+        encodingCombo.setItems(encodingStrings);
+        
+       
+        String resourcePreference = IDEEncoding.getResourceEncoding();
+        boolean isDefault = resourcePreference == null;
+        
+        if(isDefault)
+        	encodingCombo.setText(WorkbenchEncoding.getWorkbenchDefaultEncoding());
+        else
+        	encodingCombo.setText(resourcePreference);
+        
 
         updateEncodingState(isDefault);
     }
@@ -194,6 +177,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
      */
     protected void performDefaults() {
         updateEncodingState(true);
+        clearUserSettings = true;
         super.performDefaults();
     }
 
@@ -201,16 +185,15 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
      * @see org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage#performOk()
      */
     public boolean performOk() {
-        // set the workspace text file encoding
-        Preferences resourcePrefs = ResourcesPlugin.getPlugin()
-                .getPluginPreferences();
-        if (defaultEncodingButton.getSelection()) {
-            resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
-        } else {
-            String enc = encodingCombo.getText();
-            resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
-        }
-        ResourcesPlugin.getPlugin().savePluginPreferences();
+        
+    	String setting = null;
+        if (!defaultEncodingButton.getSelection()) 
+        	setting = encodingCombo.getText();
+        
+        if(clearUserSettings)
+        	IDEEncoding.clearUserEncodings();
+            
+        IDEEncoding.setResourceEncoding(setting);
 
         return super.performOk();
     }
