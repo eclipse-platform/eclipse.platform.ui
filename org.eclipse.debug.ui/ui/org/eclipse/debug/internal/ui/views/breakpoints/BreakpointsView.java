@@ -40,7 +40,9 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -92,7 +94,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		CheckboxTreeViewer viewer = new CheckboxTreeViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
+		final CheckboxTreeViewer viewer = new CheckboxTreeViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
 		viewer.setContentProvider(new BreakpointsViewContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation() {
 			public Image getImage(Object item) {
@@ -112,6 +114,18 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection selection= (IStructuredSelection) event.getSelection();
+                if (selection.size() == 1) {
+                    Object element = selection.getFirstElement();
+                    if (element instanceof String) {
+                        viewer.setExpandedState(element, !viewer.getExpandedState(element));
+                    }
+                }
+                
+            }
+        });
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
 		initIsTrackingSelection();
