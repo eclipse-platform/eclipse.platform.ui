@@ -299,7 +299,7 @@ class JobInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
 	boolean isActive() {
-		return getJob().getState() == Job.NONE;
+		return getJob().getState() != Job.NONE;
 	}
 	
 	/* (non-Javadoc)
