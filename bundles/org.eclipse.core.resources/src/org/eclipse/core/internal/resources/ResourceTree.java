@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,7 +232,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
 		info.clearNatures();
 		info.setBuilders(null);
-		
+
 		// Generate marker deltas.
 		try {
 			workspace.getMarkerManager().moved(source, destination, depth);
@@ -380,7 +380,7 @@ public void deletedProject(IProject target) {
  */
 public void failed(IStatus reason) {
 	Assert.isLegal(isValid);
-	status.add(reason);
+	status.merge(reason);
 }
 /**
  * Return <code>true</code> if there is a change in the name of the project.
@@ -651,15 +651,16 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 		// Do nothing if the project doesn't exist in the workspace tree.
 		if (!project.exists())
 			return;
-	
+
 		boolean alwaysDeleteContent = (updateFlags & IResource.ALWAYS_DELETE_PROJECT_CONTENT) != 0;
 		// don't take force into account if we are always deleting the content
 		boolean force = alwaysDeleteContent ? true : (updateFlags & IResource.FORCE) != 0;
 		boolean neverDeleteContent = (updateFlags & IResource.NEVER_DELETE_PROJECT_CONTENT) != 0;
 		boolean success = true;
-		
-		// Delete project content.  Don't do anything if the user specified explicitly 
-		// not to delete the project content.
+
+		// Delete project content.  Don't do anything if the user specified explicitly asked
+		// not to delete the project content or if the project is closed and
+		// ALWAYS_DELETE_PROJECT_CONTENT was not specified.
 		if (alwaysDeleteContent || (project.isOpen() && !neverDeleteContent)) {
 			// Check to see if we are synchronized with the local file system. If we are in sync then
 			// we can short circuit this operation and delete all the files on disk, otherwise we have
@@ -676,32 +677,41 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 					failed(status);
 				}
 				return;
-			} 
+			}
 
 			// If the content area is in the default location then delete the directory and all its
 			// children. If it is specified by the user then leave the directory itself but delete the children.
-			java.io.File root = project.getLocation().toFile();
 			IProjectDescription description = ((Project) project).internalGetDescription();
-			if (description == null || description.getLocation() == null) {
-				success = Workspace.clear(root);
-			} else {
-				success = true;
-				String[] list = root.list();
-				// for some unknown reason, list() can return null.  
-				// Just skip the children If it does.
-				if (list != null)
-					for (int i = 0; i < list.length; i++)
-						success &= Workspace.clear(new java.io.File(root, list[i]));
-			}
+			boolean defaultLocation = description == null || description.getLocation() == null;
+			java.io.File projectLocation = project.getLocation().toFile();
+			// if the project is open, we must perform a best-effort deletion			
+			if (project.isOpen()) {
+				try {
+					FileSystemResourceManager localManager = ((Project) project).getLocalManager();
+					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, Policy.totalWork * 1 / 2);
+					localManager.delete(project, force, false, false, subMonitor);
+					success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
+				} catch (CoreException ce) {
+					message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString()); //$NON-NLS-1$					
+					MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
+					if (ce.getStatus() != null)
+						status.merge(ce.getStatus());
+					failed(status);
+					success = false;
+				}
+				if (!success)
+					return;
+			} else
+				success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
 		}
 		// deleting project content is 75% of the work
-		monitor.worked(Policy.totalWork*3/4);
-	
+		monitor.worked(Policy.totalWork * 3 / 4);
+
 		// Signal that the workspace tree should be updated that the project
 		// has been deleted.
-		if (success) {
+		if (success)
 			deletedProject(project);
-		} else {
+		else {
 			message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 			failed(status);

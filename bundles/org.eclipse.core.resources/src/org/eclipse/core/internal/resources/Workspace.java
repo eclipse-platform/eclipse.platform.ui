@@ -211,6 +211,23 @@ public void checkpoint(boolean build) {
  * Even if an exception occurs, a best effort is made to continue deleting.
  */
 public static boolean clear(java.io.File root) {
+	boolean result = clearChildren(root);
+	try {
+		if (root.exists())
+			result &= root.delete();
+	} catch (Exception e) {
+		result = false;
+	}
+	return result;
+}
+/**
+ * Deletes all the files and directories from the given root down, except for 
+ * the root itself.
+ * Returns false if we could not delete some file or an exception occurred
+ * at any point in the deletion.
+ * Even if an exception occurs, a best effort is made to continue deleting.
+ */
+public static boolean clearChildren(java.io.File root) {
 	boolean result = true;
 	if (root.isDirectory()) {
 		String[] list = root.list();
@@ -219,12 +236,6 @@ public static boolean clear(java.io.File root) {
 		if (list != null)
 			for (int i = 0; i < list.length; i++)
 				result &= clear(new java.io.File(root, list[i]));
-	}
-	try {
-		if (root.exists())
-			result &= root.delete();
-	} catch (Exception e) {
-		result = false;
 	}
 	return result;
 }

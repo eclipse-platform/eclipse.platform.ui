@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000,2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	 * from the workspace or converted into phantoms
 	 */
 	protected boolean convertToPhantom;
+	
 public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) {
 	this.skipList = skipList;
 	this.force = force;
@@ -37,36 +38,42 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 	this.monitor = monitor;
 	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null); //$NON-NLS-1$
 }
-protected void deleteAndKeepHistory(UnifiedTreeNode node) {
-	String location = node.getLocalLocation();
+/**
+ * Deletes a file from both the workspace resource tree and the file system.
+ */
+protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean keepHistory) {
 	Resource target = (Resource) node.getResource();
 	try {
-		java.io.File localFile = new java.io.File(location);
+		deleteLocalFile = deleteLocalFile && !target.isLinked() && node.existsInFileSystem();
+		java.io.File localFile = deleteLocalFile ? new java.io.File(node.getLocalLocation()) : null;		
+		// if it is a folder in the file system, delete its children first
 		if (target.getType() == IResource.FOLDER) {
 			for (Enumeration children = node.getChildren(); children.hasMoreElements();)
-				deleteAndKeepHistory((UnifiedTreeNode) children.nextElement());
+				delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, keepHistory);
 			node.removeChildrenFromTree();
-			delete(target, localFile);
+			delete(node.existsInWorkspace() ? target : null, localFile);
 			return;
 		}
-		HistoryStore store = target.getLocalManager().getHistoryStore();
-		store.addState(target.getFullPath(), localFile, node.getLastModified(), true);
-		if (localFile.exists())
-			delete(target, localFile);
-		else
-			target.deleteResource(convertToPhantom, status);
+		if (keepHistory) {
+			HistoryStore store = target.getLocalManager().getHistoryStore();
+			store.addState(target.getFullPath(), localFile, node.getLastModified(), true);
+		}
+		delete(node.existsInWorkspace() ? target : null, localFile);			
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 	}
 }
 protected void delete(Resource target, java.io.File localFile) {
-	if(!target.getLocalManager().getStore().delete(localFile, status))
-		return;
-	try {
-		target.deleteResource(convertToPhantom, status);
-	} catch (CoreException e) {
-		status.add(e.getStatus());
-	}
+	if (target != null) {
+		if (localFile != null && !target.isLinked() && !target.getLocalManager().getStore().delete(localFile, status))
+			return;
+		try {
+			target.deleteResource(convertToPhantom, status);
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
+	} else 
+		localFile.delete();	
 }
 protected boolean equals(IResource one, IResource another) throws CoreException {
 	return one.getFullPath().equals(another.getFullPath());
@@ -113,10 +120,8 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (isAncestorOfResourceToSkip(target))
 			return true;
-		if (keepHistory)
-			deleteAndKeepHistory(node);
-		else
-			delete(target, new java.io.File(node.getLocalLocation()));
+			
+		delete(node, true, keepHistory);
 		return false;
 	} finally {
 		monitor.worked(1);
