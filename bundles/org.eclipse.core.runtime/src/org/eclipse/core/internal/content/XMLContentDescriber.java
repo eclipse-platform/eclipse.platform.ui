@@ -85,6 +85,8 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		// XMLDecl should be the first string (no blanks allowed)
 		if (!line.startsWith(XML_PREFIX))
 			return INDETERMINATE;
+		if (description == null)
+			return VALID;		
 		// describe charset if requested
 		if ((description.isRequested(IContentDescription.CHARSET)))
 			description.setProperty(IContentDescription.CHARSET, getCharset(line));
