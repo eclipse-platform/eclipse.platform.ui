@@ -22,10 +22,11 @@ public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTre
 	newTree.immutable();
 	DeltaDataTree delta = null;
 	if (Path.ROOT.equals(root))
-		delta = oldTree.getDataTree().compareWith(newTree.getDataTree(), comparator);
+		delta = newTree.getDataTree().compareWith(oldTree.getDataTree(), comparator);
 	else
-		delta = oldTree.getDataTree().compareWith(newTree.getDataTree(), comparator, root);
+		delta = newTree.getDataTree().compareWith(oldTree.getDataTree(), comparator, root);
 
+	delta = delta.asReverseComparisonTree(comparator);
 	IPath pathInTree = root;
 	IPath pathInDelta = Path.ROOT;
 
