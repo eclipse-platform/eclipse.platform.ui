@@ -335,7 +335,12 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
-		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, ((KSubstOption) ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode());
+		// Text mode processed separately to avoid empty string in properties file.
+		String mode =((KSubstOption)ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode();
+		if (mode.length() == 0) {
+			mode = "-kkv";
+		}
+		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());

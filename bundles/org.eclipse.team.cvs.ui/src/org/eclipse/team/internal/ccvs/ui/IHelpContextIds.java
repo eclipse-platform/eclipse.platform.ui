@@ -97,6 +97,8 @@ public interface IHelpContextIds {
 	public static final String NEW_DEV_ECLIPSE_REPOSITORY_LOCATION_ACTION = PREFIX + "new_dev_eclipse repository_location_action_context"; //$NON-NLS-1$
 	public static final String SHOW_REMOTE_FOLDERS_ACTION = PREFIX + "show_remote_folders_action_context"; //$NON-NLS-1$
 	public static final String SHOW_REMOTE_MODULES_ACTION = PREFIX + "show_remote_modules_action_context"; //$NON-NLS-1$
+	public static final String SHOW_COMMENT_IN_HISTORY_ACTION = PREFIX + "show_comment_in_history_action_context"; //$NON-NLS-1$
+	public static final String SHOW_TAGS_IN_HISTORY_ACTION = PREFIX + "show_tag_in_history_action_context"; //$NON-NLS-1$
 
 	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$
