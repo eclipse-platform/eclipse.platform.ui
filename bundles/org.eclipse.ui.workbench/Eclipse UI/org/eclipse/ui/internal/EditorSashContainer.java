@@ -298,6 +298,12 @@ public IStatus saveState(IMemento memento) {
  * Set the editor workbook which is active.
  */
 public void setActiveWorkbook(EditorStack newWorkbook, boolean hasFocus) {
+    if (newWorkbook != null) {
+	    if (newWorkbook.isDisposed())
+	        return;
+	    if (!editorWorkbooks.contains(newWorkbook))
+	        return;
+    }
 	EditorStack oldWorkbook = activeEditorWorkbook;
 	activeEditorWorkbook = newWorkbook;
 	
