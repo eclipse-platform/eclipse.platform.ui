@@ -63,6 +63,32 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		setDescription(WorkbenchMessages.getString("ResourceWorkingSetPage.description")); //$NON-NLS-1$
 	}
 	/**
+	 * Adds working set elements contained in the given container to the list
+	 * of checked resources.
+	 * 
+	 * @param collectedResources list of collected resources
+	 * @param container container to collect working set elements for
+	 */
+	private void addWorkingSetElements(List collectedResources, IContainer container) {
+		IAdaptable[] elements = workingSet.getElements();
+		IPath containerPath = container.getFullPath();
+		
+		for (int i = 0; i < elements.length; i++) {
+			IResource resource = null;
+			
+			if (elements[i] instanceof IResource)
+				resource = (IResource) elements[i];
+			else
+				resource = (IResource) elements[i].getAdapter(IResource.class);
+
+			if (resource != null) {
+				IPath resourcePath = resource.getFullPath();
+				if (containerPath.isPrefixOf(resourcePath))
+					collectedResources.add(elements[i]);
+			}
+		}
+	}
+	/**
 	 * Overrides method in WizardPage.
 	 * 
 	 * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
@@ -135,21 +161,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			}
 		});
 		initializeCheckedState();
-		disableClosedProjects();
 		if (workingSet != null) {
 			text.setText(workingSet.getName());
 		}
 		setPageComplete(false);
-	}
-	/**
-	 * Grays all closed projects
-	 */
-	private void disableClosedProjects() {
-		IProject[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen() == false && tree.getGrayed(projects[i]) == false)
-				tree.setGrayed(projects[i], true);
-		}
 	}
 	/**
 	 * Collects all checked resources in the specified container.
@@ -167,7 +182,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		for (int i = 0; i < resources.length; i++) {
 			if (tree.getGrayed(resources[i])) {
-				findCheckedResources(checkedResources, (IContainer) resources[i]);
+				if (resources[i].isAccessible())
+					findCheckedResources(checkedResources, (IContainer) resources[i]);
+				else
+					addWorkingSetElements(checkedResources, (IContainer) resources[i]);
 			} else if (tree.getChecked(resources[i])) {
 				checkedResources.add(resources[i]);
 			}
@@ -185,20 +203,6 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
 			workingSet = workingSetManager.createWorkingSet(getWorkingSetName(), (IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		} else {
-			// Add inaccessible resources
-			IAdaptable[] oldItems = workingSet.getElements();
-
-			for (int i = 0; i < oldItems.length; i++) {
-				IResource oldResource = null;
-				if (oldItems[i] instanceof IResource) {
-					oldResource = (IResource) oldItems[i];
-				} else {
-					oldResource = (IResource) oldItems[i].getAdapter(IResource.class);
-				}
-				if (oldResource != null && oldResource.isAccessible() == false) {
-					resources.add(oldResource);
-				}
-			}
 			workingSet.setName(getWorkingSetName());
 			workingSet.setElements((IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		}
@@ -228,17 +232,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				IResource resource = (IResource) event.getElement();
-				if (resource.isAccessible() == false) {
-					MessageDialog.openInformation(
-						getShell(),
-						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.title"), //$NON-NLS-1$
-						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.message")); //$NON-NLS-1$
-					//$NON-NLS-2$ //$NON-NLS-1$
-					tree.setChecked(resource, false);
-					tree.setGrayed(resource, true);
-					return;
-				}
 				boolean state = event.getChecked();
+				
 				tree.setGrayed(resource, false);
 				if (resource instanceof IContainer) {
 					setSubtreeChecked((IContainer) resource, state, true);
@@ -294,7 +289,14 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 					} else {
 						resource = (IResource) item.getAdapter(IResource.class);
 					}
-					updateParentState(resource);
+					if (resource != null && resource.isAccessible() == false) {
+						IProject project = resource.getProject();
+						if (tree.getChecked(project) == false)
+							tree.setGrayChecked(project, true);
+					}
+					else {
+						updateParentState(resource);
+					}
 				}
 			}
 		});
@@ -310,7 +312,6 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (getShell() != null && text != null) {
 			firstCheck = true;
 			initializeCheckedState();
-			disableClosedProjects();
 			text.setText(workingSet.getName());
 		}
 	}	
@@ -357,15 +358,6 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private void updateParentState(IResource child) {
 		if (child == null || child.getParent() == null)
 			return;
-		if (child.isAccessible() == false) {
-			if (child.getType() == IResource.PROJECT) {
-				tree.setGrayChecked(child, true);
-				return;
-			}
-			else {
-				updateParentState(child.getParent());
-			}
-		}
 
 		IContainer parent = child.getParent();
 		boolean childChecked = false;
