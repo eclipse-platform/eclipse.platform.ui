@@ -29,6 +29,12 @@ import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.registry.ICommandDefinition;
+import org.eclipse.ui.internal.commands.registry.ICommandRegistry;
+import org.eclipse.ui.internal.commands.registry.ICommandRegistryEvent;
+import org.eclipse.ui.internal.commands.registry.ICommandRegistryListener;
+import org.eclipse.ui.internal.commands.registry.PluginCommandRegistry;
+import org.eclipse.ui.internal.commands.registry.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.handles.Handle;
 import org.eclipse.ui.internal.util.Util;
 

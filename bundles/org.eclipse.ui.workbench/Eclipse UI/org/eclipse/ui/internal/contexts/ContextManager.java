@@ -28,6 +28,12 @@ import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.contexts.registry.IContextDefinition;
+import org.eclipse.ui.internal.contexts.registry.IContextRegistry;
+import org.eclipse.ui.internal.contexts.registry.IContextRegistryEvent;
+import org.eclipse.ui.internal.contexts.registry.IContextRegistryListener;
+import org.eclipse.ui.internal.contexts.registry.PluginContextRegistry;
+import org.eclipse.ui.internal.contexts.registry.PreferenceContextRegistry;
 import org.eclipse.ui.internal.handles.Handle;
 import org.eclipse.ui.internal.util.Util;
 

@@ -16,7 +16,6 @@ import java.util.SortedSet;
 
 import org.eclipse.ui.handles.IHandle;
 
-
 /**
  * <p>
  * JAVADOC
