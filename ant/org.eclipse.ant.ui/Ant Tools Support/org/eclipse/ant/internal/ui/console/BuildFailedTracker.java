@@ -29,7 +29,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 	private IConsole fConsole;
 	private StringMatcher fErrorMatcher;
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
 	public void init(IConsole console) {
@@ -38,7 +38,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 		fErrorMatcher = new StringMatcher("*BUILD FAILED: *.xml*",false, false); //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
 	public void lineAppended(IRegion line) {
@@ -57,11 +57,11 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
 					index= fileStart;
 				}
-				index = text.indexOf(' ', index); //$NON-NLS-1$
+				index = text.indexOf("xml", index); //$NON-NLS-1$
 				if (index > 0) {
-					int numberEnd= index - 1;
-					int numberStart = text.lastIndexOf(':', numberEnd - 1) + 1;
-					int fileEnd = text.lastIndexOf(':', numberStart);
+					int numberStart= index + 4;
+					int numberEnd= text.indexOf(':', numberStart);
+					int fileEnd = index + 3;
 					if (numberStart > 0 && fileEnd > 0) {
 						fileName = text.substring(fileStart, fileEnd).trim();
 						lineNumber = text.substring(numberStart, numberEnd).trim();
@@ -88,11 +88,10 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	public void dispose() {
 		fConsole = null;
 	}
-
 }
