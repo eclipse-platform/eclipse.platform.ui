@@ -73,7 +73,7 @@
             id="sample-binary1">
          <describer
          	plugin="org.eclipse.core.runtime"
-            class="org.eclipse.core.internal.content.BinarySignatureDescriber">
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
             <parameter name="signature" value="10, 11, 12, 13"/>
             <parameter name="offset" value="5"/>                           
          </describer>
@@ -84,7 +84,7 @@
             id="sample-binary2">
          <describer
          	plugin="org.eclipse.core.runtime"
-            class="org.eclipse.core.internal.content.BinarySignatureDescriber">
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
             <parameter name="signature" value="10, 11, 12, 14"/>   
          </describer>
       </content-type>            
@@ -105,7 +105,7 @@
             id="root-element">
          <describer
                plugin="org.eclipse.core.runtime"       		
-               class="org.eclipse.core.internal.content.XMLRootElementContentDescriber">
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
             <parameter name="element" value="root-element"/>
          </describer>
       </content-type>
@@ -115,7 +115,7 @@
             id="dtd">
          <describer
                plugin="org.eclipse.core.runtime"       		
-               class="org.eclipse.core.internal.content.XMLRootElementContentDescriber">
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
             <parameter name="dtd" value="some.dtd"/>
          </describer>
       </content-type>      

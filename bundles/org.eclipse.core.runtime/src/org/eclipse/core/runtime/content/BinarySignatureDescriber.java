@@ -8,16 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.content;
+package org.eclipse.core.runtime.content;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentDescriber;
-import org.eclipse.core.runtime.content.IContentDescription;
 
+/**
+ * @since 3.0
+ */
 public class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
 	private final static String SIGNATURE = "signature"; //$NON-NLS-1$
 	private final static String OFFSET = "offset"; //$NON-NLS-1$

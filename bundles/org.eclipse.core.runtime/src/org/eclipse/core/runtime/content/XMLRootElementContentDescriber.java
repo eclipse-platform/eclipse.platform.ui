@@ -8,15 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.core.internal.content;
+package org.eclipse.core.runtime.content;
 
 import java.io.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Hashtable;
+import org.eclipse.core.internal.content.XMLContentDescriber;
+import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentDescription;
 
 /**
  * A content describer for detecting the name of the top-level element of the
