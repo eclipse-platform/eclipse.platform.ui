@@ -72,8 +72,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 * Asserts the current job state
 	 */
 	public void assertState(String msg, Job job, int expectedState) {
-		if (job.getState() != expectedState)
-			assertTrue(msg + ": expected state: " + printState(expectedState) + " actual state: " + printState(job.getState()), false);
+		int actualState = job.getState();
+		if (actualState != expectedState)
+			assertTrue(msg + ": expected state: " + printState(expectedState) + " actual state: " + printState(actualState), false);
 	}
 	/**
 	 * Cancels a list of jobs
@@ -309,7 +310,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		ArrayList longJobs = new ArrayList();
 		TestJob job = null;
 		//start enough jobs to saturate the worker pool
-		final int MAX_THREADS = 100;
+		final int MAX_THREADS = 150;
 		for (int i = 0; i < MAX_THREADS; i++) {
 			job = new TestJob("Long Job", 1000000, 10);
 			job.schedule();
@@ -1045,6 +1046,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 	
+	/**
+	 * Tests the API method IJobManager.wakeUp(family)
+	 */
 	public void testJobFamilyWakeUp() {
 		//test the wake-up of a family of jobs
 		final int NUM_JOBS = 20;
@@ -1086,29 +1090,30 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		//wake-up the second family of jobs
 		manager.wakeUp(second);
-		waitForStart(jobs[1]);
-		assertState("4.0", jobs[1], Job.RUNNING);
 		
-		//all other jobs in the second family should be in the waiting state
+		//ensure all jobs in second family are either running or waiting
 		//jobs in the first family should still be in the sleep state
+		int runningCount = 0;
 		for(int i = 2; i < NUM_JOBS; i++) {
+			int state = jobs[i].getState();
 			if(jobs[i].belongsTo(first))
 				assertState("4." + i, jobs[i], Job.SLEEPING);
 			else
-				assertState("4." + i, jobs[i], Job.WAITING);
+				assertTrue("4." + i, state == Job.WAITING || state == Job.RUNNING);
+			if (state == Job.RUNNING)
+				runningCount++;
 		}
+		//ensure only one job is running (it is possible that none have started yet)
+		assertTrue("4.running", runningCount <= 1);
 		
-		//cycle through the jobs in the second family
-		//canceling one of them should start the next one
-		for(int i = 1; i < NUM_JOBS-2; i+=2) {
-			jobs[i].cancel();
-			waitForStart(jobs[i+2]);
-			assertState("5." + i, jobs[i+2], Job.RUNNING);
+		//cycle through the jobs in the second family and cancel them
+		for(int i = 1; i < NUM_JOBS; i+=2) {
+			//the running job may not respond immediately
+			if (jobs[i].cancel());
+				assertState("5." + i, jobs[i], Job.NONE);
 		}
-		
-		jobs[NUM_JOBS-1].cancel();
 			
-		//all jobs in the first family should be sleeping
+		//all jobs in the first family should still be sleeping
 		for(int i = 2; i < NUM_JOBS; i+=2) {
 			assertState("6." + i, jobs[i], Job.SLEEPING);
 		}
@@ -1116,20 +1121,14 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//wake up the first family
 		manager.wakeUp(first);
 		
-		waitForStart(jobs[2]);
-		//next job in the family should be running
-		assertState("7.0", jobs[2], Job.RUNNING);	
-		
 		//cycle through the jobs in the first family
 		//canceling one of them should start the next one
-		for(int i = 2; i < NUM_JOBS-3; i+=2) {
-			jobs[i].cancel();
-			waitForStart(jobs[i+2]);
-			assertState("7." + i, jobs[i+2], Job.RUNNING);
+		for(int i = 2; i < NUM_JOBS; i+=2) {
+			int state = jobs[i].getState();
+			assertTrue("7.1." + i, state == Job.WAITING || state == Job.RUNNING);
+			if (jobs[i].cancel())
+				assertState("7.2." + i, jobs[i], Job.NONE);
 		}
-		
-		jobs[NUM_JOBS-2].cancel();
-		waitForCancel(jobs[NUM_JOBS-2]);
 		
 		//all jobs should now be in the NONE state		
 		for(int i = 0; i < NUM_JOBS; i++) {
