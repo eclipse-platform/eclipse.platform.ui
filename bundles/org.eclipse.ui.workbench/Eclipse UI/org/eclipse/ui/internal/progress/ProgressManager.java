@@ -778,56 +778,29 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IProgressManager#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
 
 		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
 		dialog.setOpenOnRun(false);
-		final boolean[] busy = { true };
 
-		scheduleProgressMonitorJob(dialog, busy);
+		//create the job that will open the dialog after a delay
+		scheduleProgressMonitorJob(dialog);
 
-		final InvocationTargetException[] invokes = new InvocationTargetException[1];
-		final InterruptedException[] interrupt = new InterruptedException[1];
-
-		invokes[0] = null;
-		interrupt[0] = null;
-
-		Display display = PlatformUI.getWorkbench().getDisplay();
-
+		final Display display = PlatformUI.getWorkbench().getDisplay();
 		if (display == null)
 			return;
-
+		final InvocationTargetException[] invokes = new InvocationTargetException[1];
+		final InterruptedException[] interrupt = new InterruptedException[1];
+		//show a busy cursor until the dialog opens
 		BusyIndicator.showWhile(display, new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
 			public void run() {
 				try {
 					dialog.setOpenOnRun(false);
-					dialog.run(true /* fork */
-					, true /* cancelable */
-					, runnable);
-
-					//Run the event loop until the progress job wakes up
-					//Just exit if there is no display
-					Display currentDisplay;
-					if (PlatformUI.isWorkbenchRunning())
-						currentDisplay = PlatformUI.getWorkbench().getDisplay();
-					else
-						return;
-
-					while (busy[0]) {
-						if (!currentDisplay.readAndDispatch())
-							currentDisplay.sleep();
-					}
-
+					dialog.run(true, true, runnable);
 				} catch (InvocationTargetException e) {
 					invokes[0] = e;
 				} catch (InterruptedException e) {
@@ -835,79 +808,44 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				}
 			}
 		});
-
 		if (invokes[0] != null)
 			throw invokes[0];
-
 		if (interrupt[0] != null)
 			throw interrupt[0];
-
 	}
 
 	/**
-	 * Schedule the job that starts the progress monitor.
-	 * @param dialog
-	 * @param busy
+	 * Schedule the job that will open the progress monitor dialog
 	 */
-	private void scheduleProgressMonitorJob(
-		final ProgressMonitorJobsDialog dialog,
-		final boolean[] busy) {
-
-		final boolean[] defer = new boolean[1];
-		defer[0] = false;
-			final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	private void scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
+		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-					//If there is a modal shell open then wait
-	Display currentDisplay = getDisplay();
+				Display currentDisplay = getDisplay();
 				if (currentDisplay == null || currentDisplay.isDisposed())
 					return Status.CANCEL_STATUS;
+				//If there is a modal shell open then wait
 				Shell[] shells = currentDisplay.getShells();
+				int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
 				for (int i = 0; i < shells.length; i++) {
-
-					//Do not stop for shells that will not
-					//block the user.
+					//Do not stop for shells that will not block the user.
 					if (shells[i].isVisible()) {
 						int style = shells[i].getStyle();
-						if ((style
-							& SWT.APPLICATION_MODAL
-							| style
-							& SWT.SYSTEM_MODAL
-							| style
-							& SWT.PRIMARY_MODAL)
-							> 0) {
-							defer[0] = true;
+						if ((style & modal) != 0) {
+							//try again in a few seconds
+							schedule(LONG_OPERATION_MILLISECONDS);
 							return Status.CANCEL_STATUS;
 						}
 					}
 				}
-
-				busy[0] = false;
-
 				dialog.open();
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				else
-					return Status.OK_STATUS;
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.WorkbenchJob#performDone(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void performDone(IJobChangeEvent event) {
-				//If we are deferring try again.
-				if (defer[0]) {
-					defer[0] = false;
-					schedule(LONG_OPERATION_MILLISECONDS);
-				}
+				return Status.OK_STATUS;
 			}
 		};
-
 		updateJob.schedule(LONG_OPERATION_MILLISECONDS);
 	}
 
