@@ -178,6 +178,7 @@ public class PatternRule implements IPredicateRule {
 				return true;
 			} else if (c != sequence[i]) {
 				// Non-matching character detected, rewind the scanner back to the start.
+				// Do not unread the first character.
 				scanner.unread();
 				for (int j= i-1; j > 0; j--)
 					scanner.unread();
