@@ -300,7 +300,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
 		
-		fKeyBindingFollowLinkAction= new KeyBindingFollowHyperlinkAction(this);
+		fKeyBindingFollowLinkAction= new KeyBindingFollowHyperlinkAction(getConsoleViewer(), actionBars);
 		fKeyBindingFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor"); //$NON-NLS-1$
 		getSite().getKeyBindingService().registerAction(fKeyBindingFollowLinkAction);
 		

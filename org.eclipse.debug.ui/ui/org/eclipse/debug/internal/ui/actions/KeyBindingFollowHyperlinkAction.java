@@ -11,12 +11,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import org.eclipse.debug.internal.ui.views.console.ConsoleView;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionBars;
 
 /**
  * A follow hyperlink action that is always enabled but reports problems
@@ -25,12 +27,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class KeyBindingFollowHyperlinkAction extends FollowHyperlinkAction {
 
-	ConsoleView fView;
-	boolean fSelectionNotAHyperlink = false;
+	private boolean fSelectionNotAHyperlink = false;
+	private IActionBars fActionBars;
 	
-	public KeyBindingFollowHyperlinkAction(ConsoleView view) {
-		super(view.getConsoleViewer());
-		fView= view;
+	public KeyBindingFollowHyperlinkAction(ISelectionProvider selectionProvider, IActionBars actionBars) {
+		super(selectionProvider);
+		fActionBars = actionBars;
 	}
 
 	/**
@@ -44,7 +46,7 @@ public class KeyBindingFollowHyperlinkAction extends FollowHyperlinkAction {
 				statusLine.setErrorMessage(ActionMessages.getString("KeyBindingFollowHyperLinkAction.No_hyperlink")); //$NON-NLS-1$
 				fSelectionNotAHyperlink = true;
 			}
-			fView.getSite().getShell().getDisplay().beep();
+			DebugUIPlugin.getStandardDisplay().beep();
 		} else {
 			link.linkActivated();
 			fSelectionNotAHyperlink = false;
@@ -94,7 +96,7 @@ public class KeyBindingFollowHyperlinkAction extends FollowHyperlinkAction {
 	 * Convenience method
 	 */
 	protected IStatusLineManager getStatusLineManager() {
-		return fView.getViewSite().getActionBars().getStatusLineManager();
+		return fActionBars.getStatusLineManager();
 	}
 
 }

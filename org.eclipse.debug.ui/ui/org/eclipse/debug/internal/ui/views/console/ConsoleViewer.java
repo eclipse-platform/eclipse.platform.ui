@@ -219,7 +219,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	/**
 	 * Dispose this viewer and resources
 	 */
-	protected void dispose() {
+	public void dispose() {
 		Control control = getTextWidget();
 		if (control != null) {
 			control.removeMouseTrackListener(this);

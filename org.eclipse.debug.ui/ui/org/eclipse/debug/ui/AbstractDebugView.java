@@ -302,15 +302,20 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		super.createPartControl(parent);
 		createActions();
 		initializeToolBar();
-		createContextMenu(getViewer().getControl());
+		Viewer viewer = getViewer();
+		if (viewer != null) {
+			createContextMenu(viewer.getControl());
+		}
 		WorkbenchHelp.setHelp(parent, getHelpContextId());
-		getViewer().getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				handleKeyPressed(e);
+		if (viewer != null) {
+			getViewer().getControl().addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					handleKeyPressed(e);
+				}
+			});
+			if (getViewer() instanceof StructuredViewer) {
+				((StructuredViewer)getViewer()).addDoubleClickListener(this);	
 			}
-		});
-		if (getViewer() instanceof StructuredViewer) {
-			((StructuredViewer)getViewer()).addDoubleClickListener(this);	
 		}
 		// create the message page
 		setMessagePage(new MessagePage());
