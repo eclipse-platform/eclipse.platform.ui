@@ -12,7 +12,40 @@
 
 <h2 align="left">Package Specification</h2>
 
-<p>This package provides a set interfaces and classses for coloring streams of text, parsing output,
-and creating hyperlinks in the debug console.</p>
+<p>This package provides a set interfaces and classses for coloring streams of 
+  text, parsing output, and creating hyperlinks in the debug console.</p>
+<h3>Coloring Console Output</h3>
+<p>A process may have standard input, output, and error streams associated with, 
+  as defined by <font face="Courier New, Courier, mono">org.eclipse.debug.core.model.IProcess</font> 
+  and <font face="Courier New, Courier, mono">org.eclipse.debug.core.model.IStreamsProxy</font>. 
+  When a process is registered with the debug plug-in, a document is created to 
+  display the output of that process, and to provide input to the process via 
+  the keyboard. A console document is displayed in the Console View. By default, 
+  the output, error, and input streams are rendered in colors specified by user 
+  preferences.</p>
+<p>A client can specialize coloring for a process's streams by defining an <font face="Courier New, Courier, mono">IConsoleColorProvider</font> 
+  extension (using the <font face="Courier New, Courier, mono">org.eclipse.debug.ui.consoleColorProviders</font> 
+  extension point). A console color provider is defined for a <i>type</i> of process. 
+  A process type is defined by the creator of a process, and is specified on an 
+  <font face="Courier New, Courier, mono">IProcess</font> via the <font face="Courier New, Courier, mono">ATTR_PROCESS_TYPE</font> 
+  attribute. When a process is registered with the debug plug-in, a console color 
+  provider associated with the process type is instantiated, and connected to 
+  the process (<font face="Courier New, Courier, mono">IProcess</font>) and a 
+  console (<font face="Courier New, Courier, mono">IConsole</font>). The console 
+  color provider then connects its streams to the console (<font face="Courier New, Courier, mono">IConsole</font>), 
+  via the console methods <font face="Courier New, Courier, mono">connect(IStreamsProxy)</font> 
+  and <font face="Courier New, Courier, mono">connect(IStreamMonitor, String)</font>. 
+  The color provider will then be consulted to provide a color when the console 
+  needs to render output from a stream.</p>
+<h3>Parsing Console Output</h3>
+<p>A client can be notified of output appended to a process's console document, 
+  by defining an <font face="Courier New, Courier, mono">IConsoleLineTracker</font> 
+  extension (using the <font face="Courier New, Courier, mono">org.eclipse.debug.ui.consoleLineTrackers</font> 
+  extension point). A console line tracker is defined for a <i>type</i> of process. 
+  When a process is registered with the debug plug-in, a console document is created 
+  for that process, and output is appended to that document. As output is written 
+  to the document, each console line tracker extension defined for that process 
+  type is notified of output, line by line. This support is most commonly used 
+  to annotate output with hyperlinks.</p>
 </body>
 </html>
