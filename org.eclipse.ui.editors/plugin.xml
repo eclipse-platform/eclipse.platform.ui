@@ -202,22 +202,40 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PreferencePages.TextEditor"
-            category="org.eclipse.ui.preferencePages.Editors"
+            name="Plain Text"
+            category="org.eclipse.ui.preferencePages.Languages"
             class="org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2"
             id="org.eclipse.ui.preferencePages.TextEditor">
       </page>
       <page
-            name="%PreferencePages.Annotations"
+            name="Text Editors"
             category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
+            id="org.eclipse.ui.preferencePages.GeneralTextEditor">
+      </page>
+      <page
+            name="Text Content Types"
+            category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.editors.text.LanguageEditorPreferencePage"
+            id="org.eclipse.ui.preferencePages.Languages">
+      </page>
+      <page
+            name="%PreferencePages.Annotations"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.AnnotationsPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Annotations">
       </page>
       <page
             name="%PreferencePages.QuickDiff"
-            category="org.eclipse.ui.preferencePages.Editors"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.QuickDiffPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.QuickDiff">
+      </page>
+      <page
+            name="Accessibility"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage"
+            id="org.eclipse.ui.editors.preferencePages.Accessibility">
       </page>
    </extension>
    <extension
@@ -274,15 +292,6 @@
                tooltip="%AddBookmark.tooltip"
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
-         </action>
-         <action
-               label="%quickdiff.toggle.enable"
-               style="push"
-               helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
-               menubarPath="quickdiff"
-               definitionId="org.eclipse.quickdiff.toggle"
-               id="quickdiff.toggle">
          </action>
       </viewerContribution>
       <viewerContribution

@@ -16,27 +16,31 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.jface.text.Assert;
@@ -47,18 +51,19 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
-import org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2.EnumeratedDomain.EnumValue;
+import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
+
+
+
 
 /**
  * The preference page for setting the editor options.
  * <p>
  * This class is internal and not intended to be used by clients.</p>
  * 
- * @since 2.1
+ * @since 3.1
  */
-public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
-	
+public class TextEditorDefaultsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private abstract class Initializer {
 
 		protected final Preference fPreference;
@@ -372,7 +377,21 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		}
 	}
 	
+
+	
+	private final String[][] fAppearanceColorListModel= new String[][] {
+		{TextEditorMessages.getString("TextEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.selectionForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.selectionBackgroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
+	};
+	
 	private OverlayPreferenceStore fOverlayStore;
+	
+	private List fAppearanceColorList;
+	private ColorEditor fAppearanceColorEditor;
+	private Button fAppearanceColorDefault;
 	
 	/**
 	 * Tells whether the fields are initialized.
@@ -380,15 +399,16 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	 */
 	private boolean fFieldsInitialized= false;
 	
+	private ArrayList fMasterSlaveListeners= new ArrayList();
+	
 	private java.util.List fInitializers= new ArrayList();
 	
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
 
-	private Control fContents;
 
 	
-	public TextEditorPreferencePage2() {
-		setDescription(TextEditorMessages.getString("TextEditorPreferencePage.description")); //$NON-NLS-1$
+	public TextEditorDefaultsPreferencePage() {
+		setDescription("Default Text Editor settings:"); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
@@ -398,7 +418,22 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		ArrayList overlayKeys= new ArrayList();
 		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -419,126 +454,211 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
-	protected Preferences getPreferences() {
-		return new Preferences();
-	}
-	
-	
-	protected Label createDescriptionLabel(Composite parent) {
-		return null; // since we supply a link text introduction
+	private void handleAppearanceColorListSelection() {	
+		int i= fAppearanceColorList.getSelectionIndex();
+		String key= fAppearanceColorListModel[i][1];
+		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		fAppearanceColorEditor.setColorValue(rgb);		
+		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
 	}
 
+	private void updateAppearanceColorWidgets(String systemDefaultKey) {
+		if (systemDefaultKey == null) {
+			fAppearanceColorDefault.setSelection(false);
+			fAppearanceColorDefault.setVisible(false);
+			fAppearanceColorEditor.getButton().setEnabled(true);
+		} else {
+			boolean systemDefault= fOverlayStore.getBoolean(systemDefaultKey);
+			fAppearanceColorDefault.setSelection(systemDefault);
+			fAppearanceColorDefault.setVisible(true);
+			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
+		}
+	}
+	
 	private Control createAppearancePage(Composite parent) {
 
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
+		Composite appearanceComposite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		appearanceComposite.setLayout(layout);
+
+		String label= TextEditorMessages.getString("TextEditorPreferencePage.displayedTabWidth"); //$NON-NLS-1$
+		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
+		EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
+		tabWidthDomain.addRange(1, 16);
+		addCombo(appearanceComposite, tabWidth, tabWidthDomain, 0);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
+		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
+		addCheckBox(appearanceComposite, highlightCurrentLine, new BooleanDomain(), 0);
+				
+		label= TextEditorMessages.getString("TextEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
+		Preference showPrintMargin= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, label, null);
+		Button showPrintMarginButton= addCheckBox(appearanceComposite, showPrintMargin, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
+		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
+		EnumeratedDomain printMarginDomain= new EnumeratedDomain();
+		printMarginDomain.addRange(20, 200);
+		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 3, 20);
+		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
+		
+		label= TextEditorMessages.getString("TextEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
+		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
+		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
+
+		Label l= new Label(appearanceComposite, SWT.LEFT );
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
+		l.setLayoutData(gd);
+		
+		l= new Label(appearanceComposite, SWT.LEFT);
+		l.setText(TextEditorMessages.getString("TextEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		l.setLayoutData(gd);
+
+		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
+		layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		composite.setLayout(layout);
-		
-		
-		Control description= createLinkText(composite, new Object[] {
-				"Text editor preferences. Note that some settings are configured on the ", 
-				new String[] {"general text editor preference page", "org.eclipse.ui.preferencePages.GeneralTextEditor", "Go to the text editor preferences" },
-				"."});
-		GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		gd.widthHint= 150; // only expand further if anyone else requires it
+		editorComposite.setLayout(layout);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
-		description.setLayoutData(gd);
+		editorComposite.setLayoutData(gd);		
+
+		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd.heightHint= convertHeightInCharsToPixels(8);
+		fAppearanceColorList.setLayoutData(gd);
+						
+		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
+		layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label spacer= new Label(composite, SWT.LEFT );
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		l= new Label(stylesComposite, SWT.LEFT);
+		l.setText(TextEditorMessages.getString("TextEditorPreferencePage.color")); //$NON-NLS-1$
+		gd= new GridData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		l.setLayoutData(gd);
+
+		fAppearanceColorEditor= new ColorEditor(stylesComposite);
+		Button foregroundColorButton= fAppearanceColorEditor.getButton();
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		foregroundColorButton.setLayoutData(gd);
+
+		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean systemDefault= fAppearanceColorDefault.getSelection();
+				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
+				
+				int i= fAppearanceColorList.getSelectionIndex();
+				String key= fAppearanceColorListModel[i][2];
+				if (key != null)
+					fOverlayStore.setValue(key, systemDefault);
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		};
+		
+		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
+		fAppearanceColorDefault.setText(TextEditorMessages.getString("TextEditorPreferencePage.systemDefault")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		spacer.setLayoutData(gd);
+		fAppearanceColorDefault.setLayoutData(gd);
+		fAppearanceColorDefault.setVisible(false);
+		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
 		
-		if (false) {
-			// TODO create an inherited preference that defaults to its ancestor when set to -1
-			String label= TextEditorMessages.getString("TextEditorPreferencePage.displayedTabWidth"); //$NON-NLS-1$
-			Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
-			EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
-			tabWidthDomain.addValue(new EnumValue(-1, "Default"));
-			tabWidthDomain.addRange(1, 16);
-			addCombo(composite, tabWidth, tabWidthDomain, 0);
-		}
-		
-		return composite;
-	}
-	
-	private Control createLinkText(Composite contents, Object[] tokens) {
-		Composite description= new Composite(contents, SWT.NONE);
-		RowLayout rowLayout= new RowLayout(SWT.HORIZONTAL);
-		rowLayout.justify= false;
-		rowLayout.fill= true;
-		rowLayout.marginBottom= 0;
-		rowLayout.marginHeight= 0;
-		rowLayout.marginLeft= 0;
-		rowLayout.marginRight= 0;
-		rowLayout.marginTop= 0;
-		rowLayout.marginWidth= 0;
-		rowLayout.spacing= 0;
-		description.setLayout(rowLayout);
-		
-		for (int i= 0; i < tokens.length; i++) {
-			String text;
-			if (tokens[i] instanceof String[]) {
-				String[] strings= (String[]) tokens[i];
-				text= strings[0];
-				final String target= strings[1];
-				CHyperLink link= new CHyperLink(description, SWT.NONE);
-				link.setText(text);
-				link.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						WorkbenchPreferenceDialog.createDialogOn(target);
-					}
-				});
-				if (strings.length > 2)
-					link.setToolTipText(strings[2]);
-				continue;
+		fAppearanceColorList.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
 			}
-			
-			text= (String) tokens[i];
-			StringTokenizer tokenizer= new StringTokenizer(text);
-			while (tokenizer.hasMoreTokens()) {
-				Label label= new Label(description, SWT.NONE);
-				String token= tokenizer.nextToken();
-				label.setText(token + " "); //$NON-NLS-1$
+			public void widgetSelected(SelectionEvent e) {
+				handleAppearanceColorListSelection();
 			}
-		}
+		});
+		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				int i= fAppearanceColorList.getSelectionIndex();
+				String key= fAppearanceColorListModel[i][1];
+				
+				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
+			}
+		});
 		
-		return description;
+		return appearanceComposite;
 	}
 	
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
-		
 	protected Control createContents(Composite parent) {
+		
+		initializeDefaultColors();
+
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
-		fContents= createAppearancePage(parent);
+		Control control= createAppearancePage(parent);
+
 		initialize();
-		Dialog.applyDialogFont(fContents);
-		return fContents;
+		Dialog.applyDialogFont(control);
+		return control;
 	}
 	
 	private void initialize() {
+		
 		initializeFields();
+		
+		for (int i= 0; i < fAppearanceColorListModel.length; i++)
+			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
+		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
+					fAppearanceColorList.select(0);
+					handleAppearanceColorListSelection();
+				}
+			}
+		});
 	}
 	
 	private void initializeFields() {
-		
 		for (Iterator it= fInitializers.iterator(); it.hasNext();) {
 			Initializer initializer= (Initializer) it.next();
 			initializer.initialize();
 		}
 		
 		fFieldsInitialized= true;
-
 		updateStatus(new StatusInfo()); //$NON-NLS-1$
 		
+        // Update slaves
+        Iterator iter= fMasterSlaveListeners.iterator();
+        while (iter.hasNext()) {
+            SelectionListener listener= (SelectionListener)iter.next();
+            listener.widgetSelected(null);
+        }
+	}
+	
+	private void initializeDefaultColors() {	
+		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR)) {
+			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
+			PreferenceConverter.setDefault(fOverlayStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
+			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
+		}
+		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR)) {
+			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT).getRGB();
+			PreferenceConverter.setDefault(fOverlayStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
+			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
+		}
 	}
 	
 	/*
@@ -559,6 +679,8 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		initializeFields();
 
+		handleAppearanceColorListSelection();
+
 		super.performDefaults();
 	}
 	
@@ -575,7 +697,31 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		super.dispose();
 	}
 	
-	private Combo addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
+	private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
+		final Button checkBox= new Button(composite, SWT.CHECK);
+		checkBox.setText(preference.getName());
+		checkBox.setToolTipText(preference.getDescription());
+		
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		gd.horizontalSpan= 2;
+		checkBox.setLayoutData(gd);
+		checkBox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean value= checkBox.getSelection();
+				IStatus status= domain.validate(Boolean.valueOf(value));
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value);
+				updateStatus(status);
+			}
+		});
+		
+		fInitializers.add(fInitializerFactory.create(preference, checkBox));
+		
+		return checkBox;
+	}
+	
+	private Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(preference.getName());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -604,7 +750,64 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		fInitializers.add(fInitializerFactory.create(preference, combo, domain));
 		
-		return combo;
+		return new Control[] {labelControl, combo};
+	}
+	
+	private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
+		Label labelControl= new Label(composite, SWT.NONE);
+		labelControl.setText(preference.getName());
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		labelControl.setLayoutData(gd);
+		
+		final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+		textControl.setLayoutData(gd);
+		textControl.setTextLimit(textLimit);
+		textControl.setToolTipText(preference.getDescription());
+		
+		textControl.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String value= textControl.getText();
+				IStatus status= domain.validate(value);
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value);
+				updateStatus(status);
+			}
+		});
+		
+		fInitializers.add(fInitializerFactory.create(preference, textControl));
+		
+		return new Control[] {labelControl, textControl};
+	}
+
+	private void createDependency(final Button master, Preference preference, final Control[] slaves) {
+		indent(slaves[0]);
+		
+		boolean masterState= fOverlayStore.getBoolean(preference.getKey());
+		for (int i= 0; i < slaves.length; i++) {
+			slaves[i].setEnabled(masterState);
+		}
+		
+		SelectionListener listener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean state= master.getSelection();
+				for (int i= 0; i < slaves.length; i++) {
+					slaves[i].setEnabled(state);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		};
+		master.addSelectionListener(listener);
+		fMasterSlaveListeners.add(listener);
+	}
+	
+	private static void indent(Control control) {
+		GridData gridData= new GridData();
+		gridData.horizontalIndent= 20;
+		control.setLayoutData(gridData);		
 	}
 	
 	void updateStatus(IStatus status) {

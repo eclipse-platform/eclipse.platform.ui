@@ -12,6 +12,11 @@ package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -22,12 +27,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResourceStatus;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -55,18 +59,26 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.DefaultEncodingSupport;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
-import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction;
+import org.eclipse.ui.internal.texteditor.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.texteditor.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.texteditor.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.texteditor.quickdiff.RevertSelectionAction;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -414,11 +426,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * a separate change ruler gets displayed.
 	 */
 	private void ensureChangeInfoCanBeDisplayed() {
-		if (isLineNumberRulerVisible()) {
+		if (fLineNumberRulerColumn != null) {
 			if (!(fLineNumberRulerColumn instanceof IChangeRulerColumn)) {
 				hideLineNumberRuler();
-				// HACK: set state already so a change ruler is created. Not needed once always a change line number bar gets installed
-				fIsChangeInformationShown= true;
 				showLineNumberRuler();
 			}
 		} else 
@@ -700,7 +710,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the created line number column
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
-		if (isPrefQuickDiffAlwaysOn() || isChangeInformationShowing()) {
+		if (isPrefQuickDiffAlwaysOn()) {
 			LineNumberChangeRulerColumn column= new LineNumberChangeRulerColumn(getSharedColors());
 			column.setHover(createChangeHover());
 			initializeChangeRulerColumn(column);
@@ -817,6 +827,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				else
 					hideLineNumberRuler();
 				return;
+			}
+			
+			if (AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON.equals(property)) {
+				showChangeInformation(isPrefQuickDiffAlwaysOn());
 			}
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
@@ -1143,5 +1157,107 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		// create and add rulers menu
+
+		// XXX this is a hack
+		// pre-install menus for contributions
+		menu.add(new Separator("debug"));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		String GROUP_RESTORE= "restore";
+		menu.add(new GroupMarker(GROUP_RESTORE));
+		menu.add(new Separator("add"));
+		menu.add(new Separator("rulers"));
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+
+		super.rulerContextMenuAboutToShow(menu);
+		
+		/* quick diff */
+		IAction quickdiffAction= new Action("QuickDiff", IAction.AS_CHECK_BOX) {
+			public void run() {
+				toggleQuickDiffRuler();
+			}
+		};
+		quickdiffAction.setChecked(isChangeInformationShowing());
+		quickdiffAction.setActionDefinitionId("org.eclipse.quickdiff.toggle");
+		menu.appendToGroup("rulers", quickdiffAction);
+		
+		if (isChangeInformationShowing()) {
+			QuickDiffRestoreAction[] restoreActions= 
+				new QuickDiffRestoreAction[] { 
+					new RevertSelectionAction(this), 
+					new RevertBlockAction(this), 
+					new RevertLineAction(this), 
+					new RestoreAction(this)
+			};
+			for (int i= 0; i < restoreActions.length; i++) {
+				restoreActions[i].update();
+			}
+			// only add block action if selection action is not enabled
+			if (restoreActions[0].isEnabled())
+				menu.appendToGroup(GROUP_RESTORE, restoreActions[0]);
+			else if (restoreActions[1].isEnabled())
+				menu.appendToGroup(GROUP_RESTORE, restoreActions[1]);
+			if (restoreActions[2].isEnabled())
+				menu.appendToGroup(GROUP_RESTORE, restoreActions[2]);
+			if (restoreActions[3].isEnabled())
+				menu.appendToGroup(GROUP_RESTORE, restoreActions[3]);
+		}
+
+		IAction lineNumberAction= new Action("Line Numbers", IAction.AS_CHECK_BOX) {
+			public void run() {
+				toggleLineNumberRuler();
+			}
+		};
+		lineNumberAction.setChecked(fLineNumberRulerColumn != null);
+		menu.appendToGroup("rulers", lineNumberAction);
+		
+		IAction preferencesAction= new Action("Preferences...") {
+			public void run() {
+				String[] preferencePages= {
+					"org.eclipse.ui.preferencePages.GeneralTextEditor",
+					"org.eclipse.ui.editors.preferencePages.QuickDiff",
+					"org.eclipse.ui.preferencePages.TextEditor",
+					"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", // TODO move down and create extension mechanism for ruler providers to specify their preferences url.
+				};
+				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+			}
+		};
+		menu.appendToGroup("rulers", new GroupMarker("ruler_settings"));
+		menu.appendToGroup("ruler_settings", preferencesAction);
+	}
+
+	private void toggleLineNumberRuler() {
+		boolean newSetting= fLineNumberRulerColumn == null;
+		// locally
+		if (newSetting)
+			showLineNumberRuler();
+		else
+			hideLineNumberRuler();
+		
+		// globally
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		if (store != null) {
+			store.setValue(LINE_NUMBER_RULER, newSetting);
+		}
+	}
+	
+	private void toggleQuickDiffRuler() {
+		boolean newSetting= !isChangeInformationShowing();
+		// change locally to ensure we get it right even if our setting
+		// does not adhere to the global setting
+		showChangeInformation(newSetting);
+		
+		// change global setting which will inform other interested parties
+		// the it is changed
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		if (store != null) {
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, newSetting);
+		}
 	}
 }

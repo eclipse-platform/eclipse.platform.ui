@@ -16,17 +16,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -47,8 +48,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
-import org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2.EnumeratedDomain.EnumValue;
+import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.EnumeratedDomain.EnumValue;
 
 /**
  * The preference page for setting the editor options.
@@ -57,7 +57,7 @@ import org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2.Enumerated
  * 
  * @since 2.1
  */
-public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
+public class AccessibilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private abstract class Initializer {
 
@@ -291,7 +291,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError("Value must be in between " + getValueByIndex(0).getLabel() + " and " + getValueByIndex(fItems.size() - 1).getLabel());
+					status.setError("Value must be in the predefined set");
 			} catch (NumberFormatException e) {
 				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$
 			}
@@ -385,10 +385,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
 
 	private Control fContents;
+	private ArrayList fMasterSlaveListeners= new ArrayList();
 
 	
-	public TextEditorPreferencePage2() {
-		setDescription(TextEditorMessages.getString("TextEditorPreferencePage.description")); //$NON-NLS-1$
+	public AccessibilityPreferencePage() {
+		setDescription("Accessibility"); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
@@ -398,7 +399,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		ArrayList overlayKeys= new ArrayList();
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -422,99 +425,35 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	protected Preferences getPreferences() {
 		return new Preferences();
 	}
-	
-	
-	protected Label createDescriptionLabel(Composite parent) {
-		return null; // since we supply a link text introduction
-	}
 
 	private Control createAppearancePage(Composite parent) {
 
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		composite.setLayout(layout);
+
+		Composite appearanceComposite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		appearanceComposite.setLayout(layout);
 		
+		String label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.disableCustomCarets"); //$NON-NLS-1$
+		Preference customCarets= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, label, null);
+		Button master= addCheckBox(appearanceComposite, customCarets, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.wideCaret"); //$NON-NLS-1$
+		Preference wideCaret= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, label, null);
+		Button slave= addCheckBox(appearanceComposite, wideCaret, new BooleanDomain(), 0);
+		createDependency(master, customCarets, new Control[] { slave });
 		
-		Control description= createLinkText(composite, new Object[] {
-				"Text editor preferences. Note that some settings are configured on the ", 
-				new String[] {"general text editor preference page", "org.eclipse.ui.preferencePages.GeneralTextEditor", "Go to the text editor preferences" },
-				"."});
-		GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		gd.widthHint= 150; // only expand further if anyone else requires it
-		gd.horizontalSpan= 2;
-		description.setLayoutData(gd);
-		
-		Label spacer= new Label(composite, SWT.LEFT );
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		spacer.setLayoutData(gd);
-		
-		if (false) {
-			// TODO create an inherited preference that defaults to its ancestor when set to -1
-			String label= TextEditorMessages.getString("TextEditorPreferencePage.displayedTabWidth"); //$NON-NLS-1$
-			Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
-			EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
-			tabWidthDomain.addValue(new EnumValue(-1, "Default"));
-			tabWidthDomain.addRange(1, 16);
-			addCombo(composite, tabWidth, tabWidthDomain, 0);
-		}
-		
-		return composite;
-	}
-	
-	private Control createLinkText(Composite contents, Object[] tokens) {
-		Composite description= new Composite(contents, SWT.NONE);
-		RowLayout rowLayout= new RowLayout(SWT.HORIZONTAL);
-		rowLayout.justify= false;
-		rowLayout.fill= true;
-		rowLayout.marginBottom= 0;
-		rowLayout.marginHeight= 0;
-		rowLayout.marginLeft= 0;
-		rowLayout.marginRight= 0;
-		rowLayout.marginTop= 0;
-		rowLayout.marginWidth= 0;
-		rowLayout.spacing= 0;
-		description.setLayout(rowLayout);
-		
-		for (int i= 0; i < tokens.length; i++) {
-			String text;
-			if (tokens[i] instanceof String[]) {
-				String[] strings= (String[]) tokens[i];
-				text= strings[0];
-				final String target= strings[1];
-				CHyperLink link= new CHyperLink(description, SWT.NONE);
-				link.setText(text);
-				link.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						WorkbenchPreferenceDialog.createDialogOn(target);
-					}
-				});
-				if (strings.length > 2)
-					link.setToolTipText(strings[2]);
-				continue;
-			}
-			
-			text= (String) tokens[i];
-			StringTokenizer tokenizer= new StringTokenizer(text);
-			while (tokenizer.hasMoreTokens()) {
-				Label label= new Label(description, SWT.NONE);
-				String token= tokenizer.nextToken();
-				label.setText(token + " "); //$NON-NLS-1$
-			}
-		}
-		
-		return description;
+		label= TextEditorMessages.getString("QuickDiffConfigurationBlock.characterMode"); //$NON-NLS-1$
+		Preference quickDiffTextMode= new Preference(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, label, null);
+		addCheckBox(appearanceComposite, quickDiffTextMode, new BooleanDomain(), 0);
+
+		return appearanceComposite;
 	}
 	
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
-		
 	protected Control createContents(Composite parent) {
+		
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
@@ -575,7 +514,33 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		super.dispose();
 	}
 	
-	private Combo addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
+	
+	
+	private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
+		final Button checkBox= new Button(composite, SWT.CHECK);
+		checkBox.setText(preference.getName());
+		checkBox.setToolTipText(preference.getDescription());
+		
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		gd.horizontalSpan= 2;
+		checkBox.setLayoutData(gd);
+		checkBox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean value= checkBox.getSelection();
+				IStatus status= domain.validate(Boolean.valueOf(value));
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value);
+				updateStatus(status);
+			}
+		});
+		
+		fInitializers.add(fInitializerFactory.create(preference, checkBox));
+		
+		return checkBox;
+	}
+	
+	private Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(preference.getName());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -604,7 +569,64 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		fInitializers.add(fInitializerFactory.create(preference, combo, domain));
 		
-		return combo;
+		return new Control[] {labelControl, combo};
+	}
+	
+	private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
+		Label labelControl= new Label(composite, SWT.NONE);
+		labelControl.setText(preference.getName());
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		labelControl.setLayoutData(gd);
+		
+		final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+		textControl.setLayoutData(gd);
+		textControl.setTextLimit(textLimit);
+		textControl.setToolTipText(preference.getDescription());
+		
+		textControl.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String value= textControl.getText();
+				IStatus status= domain.validate(value);
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value);
+				updateStatus(status);
+			}
+		});
+		
+		fInitializers.add(fInitializerFactory.create(preference, textControl));
+		
+		return new Control[] {labelControl, textControl};
+	}
+
+	private void createDependency(final Button master, Preference preference, final Control[] slaves) {
+		indent(slaves[0]);
+		
+		boolean masterState= fOverlayStore.getBoolean(preference.getKey());
+		for (int i= 0; i < slaves.length; i++) {
+			slaves[i].setEnabled(masterState);
+		}
+		
+		SelectionListener listener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean state= master.getSelection();
+				for (int i= 0; i < slaves.length; i++) {
+					slaves[i].setEnabled(state);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		};
+		master.addSelectionListener(listener);
+		fMasterSlaveListeners.add(listener);
+	}
+	
+	private static void indent(Control control) {
+		GridData gridData= new GridData();
+		gridData.horizontalIndent= 20;
+		control.setLayoutData(gridData);		
 	}
 	
 	void updateStatus(IStatus status) {
