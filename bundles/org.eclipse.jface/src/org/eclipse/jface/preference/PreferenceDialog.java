@@ -11,6 +11,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
@@ -328,11 +329,6 @@ public class PreferenceDialog
 
 		createTitleArea(titleComposite);
 
-		Label titleBarSeparator =
-			new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		titleBarSeparator.setLayoutData(gd);
-
 		// Build the Page container
 		pageContainer = createPageContainer(composite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -365,8 +361,8 @@ public class PreferenceDialog
 		// a title, message, and image.
 		titleArea = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.marginHeight = 2;
+		layout.marginWidth = 2;
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		layout.numColumns = 2;
@@ -374,12 +370,24 @@ public class PreferenceDialog
 		// Get the background color for the title area
 		Display display = parent.getDisplay();
 		Color background = JFaceColors.getBannerBackground(display);
-		Color foreground = JFaceColors.getBannerForeground(display);
+		final Color foreground = JFaceColors.getBannerForeground(display);
 
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		titleArea.setLayout(layout);
 		titleArea.setLayoutData(layoutData);
 		titleArea.setBackground(background);
+		
+		final Color borderColor = new Color(titleArea.getDisplay(),ViewForm.borderOutsideRGB);
+		
+		titleArea.addPaintListener(new PaintListener(){
+			public void paintControl(PaintEvent e){
+				e.gc.setForeground(borderColor);
+				Rectangle bounds = titleArea.getClientArea();
+				bounds.height = bounds.height - 2;
+				bounds.width = bounds.width - 1;
+				e.gc.drawRectangle(bounds);
+			}
+		});
 
 		// Add a dispose listener
 		titleArea.addDisposeListener(new DisposeListener() {
@@ -388,6 +396,7 @@ public class PreferenceDialog
 					titleAreaColor.dispose();
 				if (errorMsgAreaBackground != null)
 					errorMsgAreaBackground.dispose();
+				borderColor.dispose();
 			}
 		});
 
