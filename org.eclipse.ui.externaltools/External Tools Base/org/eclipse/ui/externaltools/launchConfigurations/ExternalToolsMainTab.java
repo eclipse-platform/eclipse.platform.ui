@@ -317,6 +317,10 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage("External tool location does not exist");
 			return false;
 		}
+		if (!file.isFile()) {
+			setErrorMessage("External tool location specified is not a file");
+			return false;
+		}
 		return true;
 	}
 
