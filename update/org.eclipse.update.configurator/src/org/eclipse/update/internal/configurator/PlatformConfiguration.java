@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * 	   Phil Loats/Erxiang Liu (IBM Corp.) - fix to use only foundation APIs  
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
@@ -19,6 +18,9 @@ import java.net.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 //PAL cdcFoundation
 //import javax.xml.transform.*;
 //import javax.xml.transform.dom.*;
@@ -44,8 +46,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-	//PAL cdcFoundation
-	//private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	private static final String XML_ENCODING = "UTF-8";
 
 	private Configuration config;
@@ -563,6 +564,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 			// first save the file as temp
 			os = new FileOutputStream(cfigTmp);
+			
 			try {
 				saveAsXML(os);
 				// Try flushing any internal buffers, and synchronize with the disk
@@ -1101,8 +1103,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return installURL;
 	}
 	
-//	PAL cdcFoundation	
-	/*	
 	private void saveAsXML(OutputStream stream) throws CoreException {	
 		StreamResult result = null;
 		try {
@@ -1136,34 +1136,34 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			result = null;
 		}
 	}
-*/
-	private void saveAsXML(OutputStream stream) throws CoreException,IOException {	
-		OutputStreamWriter xmlWriter = new OutputStreamWriter(stream,XML_ENCODING);
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setExpandEntityReferences(false);
-			factory.setValidating(false);
-			factory.setIgnoringComments(true);
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			Document doc = docBuilder.newDocument();
-			
-			if (config == null)
-				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
-			
-			config.setDate(new Date());
-			Element configElement = config.toXML(doc);
-			doc.appendChild(configElement);
-			
-			//XMLPrintHandler.printComment(xmlWriter,"Created on " + config.getDate().toString());
-			XMLPrintHandler.printNode(xmlWriter,doc,XML_ENCODING);
-			
-		} catch (Exception e) {
-			throw Utils.newCoreException("", e); //$NON-NLS-1$
-		} finally {
-			xmlWriter.close();
-			xmlWriter = null;
-		}
-	} 
+
+//	private void saveAsXML(OutputStream stream) throws CoreException,IOException {	
+//		OutputStreamWriter xmlWriter = new OutputStreamWriter(stream,XML_ENCODING);
+//		try {
+//			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//			factory.setExpandEntityReferences(false);
+//			factory.setValidating(false);
+//			factory.setIgnoringComments(true);
+//			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+//			Document doc = docBuilder.newDocument();
+//			
+//			if (config == null)
+//				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
+//			
+//			config.setDate(new Date());
+//			Element configElement = config.toXML(doc);
+//			doc.appendChild(configElement);
+//			
+//			//XMLPrintHandler.printComment(xmlWriter,"Created on " + config.getDate().toString());
+//			XMLPrintHandler.printNode(xmlWriter,doc,XML_ENCODING);
+//			
+//		} catch (Exception e) {
+//			throw Utils.newCoreException("", e); //$NON-NLS-1$
+//		} finally {
+//			xmlWriter.close();
+//			xmlWriter = null;
+//		}
+//	} 
 	
 	private void reconcile() throws CoreException {
 		long lastChange = config.getDate().getTime();
