@@ -1,51 +1,109 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.commands">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="commands" name="Commands"/>
+         <meta.schema plugin="org.eclipse.commands" id="commands" name="Commands"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and contexts which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;context&lt;/code&gt; elements.
-&lt;/p&gt;
+         &lt;p&gt;A command is an abstract representation for some semantic behaviour.  It is not the actual implementation of this behaviour, nor is it the visual appearance of this behaviour in the user interface.  Instead, it is a bridge between the two.&lt;/p&gt;
+&lt;p&gt;The concept of a command is based on the command design pattern.  The notable difference is how the command delegates responsibility for execution.  Rather than allowing concrete subclasses, it uses a handler mechanism (see the &lt;code&gt;handlers&lt;/code&gt; extension point).  This provides another level of indirection.&lt;/p&gt;
+&lt;p&gt;A command will exist in two states: defined and undefined.  A command is defined if it is declared in the XML of a resolved plug-in.  If the plug-in is unloaded or the command is simply not declared, then it is undefined.  Trying to reference an undefined command will succeed, but trying to access any of its functionality will fail with a &lt;code&gt;NotDefinedException&lt;/code&gt;.  If you need to know when a command changes from defined to undefined (or vice versa), then attach a command listener.&lt;/p&gt;
+&lt;p&gt;The commands extension point can appear in either UI or non-UI plug-ins.  In a non-UI (i.e., headless) set-up, then there can only be handlers and contexts along with it.&lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="command"/>
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
-            <element ref="command"/>
-            <element ref="keyBinding"/>
-            <element ref="keyConfiguration"/>
-            <element ref="context"/>
-            <element ref="handlerSubmission"/>
             <element ref="scope"/>
+            <element ref="handlerSubmission"/>
+            <element ref="context"/>
+            <element ref="keyConfiguration"/>
+            <element ref="keyBinding"/>
          </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  An optional identifier of the extension instance.
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  An optional name of the extension instance.
+                  
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="point" type="string" use="required">
+      </complexType>
+   </element>
+
+   <element name="command">
+      <annotation>
+         <documentation>
+            This element is used to define commands. A command represents a semantically similar group of functional behaviour.  For example, &quot;rename&quot; may have different behaviour in different contexts, but it has the same semantic meaning. Do not define a command if there is already one defined with the same meaning. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A fully qualified identifier of the target extension point.
+                  The unique identifier of this command.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this command for display in the UI. Command are typically named in the form of an imperative verb.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this command for display in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultHandler" type="string">
+            <annotation>
+               <documentation>
+                  The class that should handle this command by default.  If this class implements &lt;code&gt;IExecutableExtension&lt;/code&gt;, then it will be initialized as such.  Otherwise, there must be a default constructor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.commands.IHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="categoryId" type="string">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;This is deprecated.  We don&apos;t believe in categories anymore.&lt;/p&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -53,8 +111,12 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="activeKeyConfiguration">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
+            &lt;p&gt;This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Please use &lt;code&gt;org.eclipse.ui/KEY_CONFIGURATION_ID&lt;/code&gt; in &lt;code&gt;plugin_customization.ini&lt;/code&gt; instead.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -77,8 +139,12 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="category">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            In the UI, commands are often organized by category to make them more manageable. This element is used to define these categories. Commands can add themselves to at most one category. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+            &lt;p&gt;In the UI, commands are often organized by category to make them more manageable. This element is used to define these categories. Commands can add themselves to at most one category. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  We just don&apos;t believe in categories anymore.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -112,28 +178,23 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-   <element name="command">
+   <element name="scope">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element is used to define commands. A command represents an request from the user that can be handled by an action, and should be semantically unique among other commands. Do not define a command if there is already one defined with the same meaning. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid. See the extension points &lt;a href=&quot;org_eclipse_ui_actionSets.html&quot;&gt;org.eclipse.ui.actionSets&lt;/a&gt; and &lt;a href=&quot;org_eclipse_ui_editorActions.html&quot;&gt;org.eclipse.ui.editorActions&lt;/a&gt; to understand how actions are connected to commands.
+            &lt;p&gt;This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="category" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
-@deprecated Please use &quot;categoryId&quot; instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable short description of this command for display in the UI.
+                  A translatable short description of this scope for display in the UI.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -143,24 +204,183 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique identifier of this command.
+                  The unique identifier of this scope.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The translatable name of this command for display in the UI. Command are typically named in the form of an imperative verb.
+                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="categoryId" type="string">
+         <attribute name="parent" type="string">
             <annotation>
                <documentation>
-                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
+                  The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="handlerSubmission">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            &lt;p&gt;This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
+&lt;/p&gt;
+&lt;p&gt;
+This particular API should still be considered experimental.  While you may use it, you must be willing to accept that this API may change radically or be removed entirely at some point in the future.  We appreciate feedback on this API to &lt;a href=&quot;mailto:platform-ui-dev@eclipse.org&quot;&gt;platform-ui-dev@eclipse.org&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Use the handlers extension point instead.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="commandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the command to which this handler should be associated.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="handler" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class of the handler.  If the class is an implementation of IExecutableExtension, then it is possible to pass data into the object.  This handler will be proxied until the handler is queried for information -- at which point the class will be loaded, and an instance created.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.commands.IHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="context">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            &lt;p&gt;This element is used to define contexts. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Use the contexts extension point instead.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this context for display in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this context.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this context for display in the UI. If this context has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
+@deprecated Please use &quot;parentId&quot; instead.
+               </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="keyConfiguration">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            &lt;p&gt;This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Use the bindings extension point instead.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this key configuration for display in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this key configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends ...)&quot; to the name. This will be automatically added by the UI where necessary.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
+@deprecated Please use parentId instead.
+               </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
                </documentation>
             </annotation>
          </attribute>
@@ -169,8 +389,12 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="keyBinding">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element allows one to assign key sequences to commands.
+            &lt;p&gt;This element allows one to assign key sequences to commands.&lt;/p&gt;
+&lt;p&gt;This is deprecated.  Use the bindings extension point&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -265,215 +489,12 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-   <element name="keyConfiguration">
-      <annotation>
-         <documentation>
-            This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  A translatable short description of this key configuration for display in the UI.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of this key configuration.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends ...)&quot; to the name. This will be automatically added by the UI where necessary.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
-@deprecated Please use parentId instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="parentId" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="context">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
-         <documentation>
-            This element is used to define contexts. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  A translatable short description of this context for display in the UI.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of this context.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The translatable name of this context for display in the UI. If this context has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
-@deprecated Please use &quot;parentId&quot; instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="parentId" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="handlerSubmission">
-      <annotation>
-         <documentation>
-            &lt;p&gt;
-This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
-&lt;/p&gt;
-&lt;p&gt;
-This particular API should still be considered experimental.  While you may use it, you must be willing to accept that this API may change radically or be removed entirely at some point in the future.  We appreciate feedback on this API to &lt;a href=&quot;mailto:platform-ui-dev@eclipse.org&quot;&gt;platform-ui-dev@eclipse.org&lt;/a&gt;.
-&lt;/p&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="commandId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The identifier of the command to which this handler should be associated.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="handler" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The name of the class of the handler.  If the class is an implementation of IExecutableExtension, then it is possible to pass data into the object.  This handler will be proxied until the handler is queried for information -- at which point the class will be loaded, and an instance created.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.commands.IHandler"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="scope">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
-         <documentation>
-            This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
-@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  A translatable short description of this scope for display in the UI.
-
-@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of this scope.
-
-@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
-
-@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
-
-@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-2.1
-&lt;/p&gt;
+         3.1
       </documentation>
    </annotation>
 
@@ -482,9 +503,14 @@ This particular API should still be considered experimental.  While you may use 
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&lt;/code&gt; plugin makes extensive use of the &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point.
-&lt;/p&gt;
+         &lt;p&gt;Here is an example of a command definition:&lt;/p&gt;
+&lt;pre&gt;
+  &lt;command
+   name=&quot;Copy&quot;
+   description=&quot;Copy the current selection into the clipboard&quot;
+   id=&quot;edit.copy&quot;
+   defaultHandler=&quot;org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:copy&quot; /&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -493,9 +519,7 @@ The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&l
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-This is no public API for declaring commands, categories, key bindings, key configurations, or contexts other than this extension point. Public API for querying and setting contexts, as well as registering actions to handle specific commands can be found in &lt;code&gt;org.eclipse.ui.IKeyBindingService&lt;/code&gt;.
-&lt;/p&gt;
+         &lt;p&gt;There is currently no public API for declaring commands or associated elements other than this extension point.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -513,13 +537,10 @@ This is no public API for declaring commands, categories, key bindings, key conf
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2004 IBM Corporation and others.&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made 
-available under the terms of the Common Public License v1.0 which 
-accompanies 
-this distribution, and is available at 
-&lt;a 
-href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
+         &lt;p&gt;Copyright (c) 2004 IBM Corporation and others.&lt;/p&gt;
+&lt;p&gt;All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 

@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.commands">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.commands" id="images" name="Images"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;An image is an icon that is associated with a command.  This image will appear where the command is placed within the user interface.  Typically, this is used for putting icons next to menu items, or for putting items in a tool bar.&lt;/p&gt;
+&lt;p&gt;It should only be used in UI plug-ins.&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="image"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="image">
+      <complexType>
+         <attribute name="commandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the command which this image is intended to represent.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path to the icon to display for this command.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="hoverIcon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the icon to display when the mouse is hovering over this command.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="disabledIcon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the icon to display when this command is not enabled.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="imageStyle" type="string">
+            <annotation>
+               <documentation>
+                  An optional string that allows multiple images to be defined for a command.  This allows different images to appear next to a command in different places in the user interface.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;Here is an example of a couple image definitions:&lt;/p&gt;
+&lt;pre&gt;
+	&lt;image
+		commandId=&quot;org.eclipse.debug.ui.commands.ProfileLast&quot;
+		hoverIcon=&quot;icons/full/etool16/profile_exc.gif&quot;
+		disabledIcon=&quot;icons/full/dtool16/profile_exc.gif&quot;
+		icon=&quot;icons/full/etool16/profile_exc.gif&quot;
+		imageStyle=&quot;toolbar&quot; /&gt;
+	
+	&lt;image
+		commandId=&quot;org.eclipse.debug.ui.commands.ProfileLast&quot;
+		hoverIcon=&quot;icons/full/etool16/profile_exc.gif&quot;
+		disabledIcon=&quot;icons/full/dtool16/profile_exc.gif&quot;
+		icon=&quot;icons/full/etool16/profile_exc.gif&quot; /&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;There is currently no public API for declaring images or associated elements other than this extension point.&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;Copyright (c) 2004 IBM Corporation and others.&lt;/p&gt;
+&lt;p&gt;All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.commands">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.commands" id="bindings" name="Bindings"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;The bindings extension point is the extension point for anything related to the bindings mechanism (e.g., keyboard shortcuts).  It is dependent on both the contexts and commands extension point.  Roughly, it is anything that can be triggered by a user event (above and beyond normal widget behaviour).&lt;/p&gt;
+&lt;p&gt;Bindings are arranged into schemes.  A scheme is simply a collection of bindings with a name.  The name is presented to the user in the preference pages, and the user can choose which scheme to use.  For example, in the core Eclipse product, there is an Emacs scheme and a default scheme.  Most plug-ins will probably just want to contribute to these two schemes.&lt;/p&gt;
+&lt;p&gt;To reduce the amount you have to type (and we have to parse), it is possible to group bindings into &lt;em&gt;binding groups&lt;/em&gt;.  Groups allow you to apply one or more attributes to a whole set of bindings.&lt;/p&gt;
+&lt;p&gt;At this time, it is only possible to define keyboard shortcuts here.  In the future, this extension point might support mouse button bindings, and even gestures.&lt;/p&gt;
+&lt;p&gt;It should only be used in UI plug-ins.&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="bindingGroup"/>
+            <element ref="key"/>
+            <element ref="scheme"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="bindingGroup">
+      <annotation>
+         <documentation>
+            A binding group is a way of applying certain default attribute values to a group of bindings.  This is used to minimize the amount of text that needs to be read in and parsed during start-up, and can also make the schema easier to read.  Any element in the bindings extension point can appear in a group, except for the scheme element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="bindingGroup"/>
+            <element ref="key"/>
+         </sequence>
+         <attribute name="contextId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the context for these bindings.  These bindings are only available when this context (and all of its parents) are active.  The context should support the &quot;org.eclipse.ui.bindings&quot; type.  Individual bindings within this group can override this value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="schemeId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the scheme in which these bindings exist.  The bindings in this group are only active if the user has selected this scheme (or a scheme that inherits from it).  Bindings within this group can override this value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string">
+            <annotation>
+               <documentation>
+                  The platform on which these binding apply.  The platform is the same as the platform returned by &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  Bindings within this group can override this value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="locale" type="string">
+            <annotation>
+               <documentation>
+                  The locale for which this binding applies.  This value is the same as one would expect to be returned from &lt;code&gt;Locale.getDefault().toString()&lt;/code&gt;.  This is typically used for working around keys that have special meanings in some locales (e.g., input-method editors).  This value can be overridden by bindings within this group.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="key">
+      <annotation>
+         <documentation>
+            A key binding to a particular command.  This is triggered by the user typing some key.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="sequence" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: CTRL, ALT, SHIFT and COMMAND. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.&lt;/p&gt;
+&lt;p&gt;The modifier keys can also be expressed in a platform-independent way.  On MacOS X, for example, &quot;Command&quot; is almost always used in place of &quot;Ctrl&quot;.  So, we provide &quot;M1&quot; which will map to either &quot;Ctrl&quot; or &quot;Command&quot;, as appropriate.  Similarly, &quot;M2&quot; is &quot;Shift&quot;; &quot;M3&quot; is &quot;Alt&quot;; and &quot;M4&quot; is &quot;Ctrl&quot; (MacOS X).  If more platforms are added, then you can count on these aliases being mapped to good platform defaults.&lt;/p&gt;
+&lt;p&gt;The syntax for this string is defined in &lt;code&gt;org.eclipse.jface.bindings&lt;/code&gt;.  Briefly, the string is case insensitive -- though all capitals is preferred stylistically.  If the key is a letter, then simply append the letter.  If the key is a special key (i.e., non-ASCII), then use one of the following: ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BREAK, CAPS_LOCK, END, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, HOME, INSERT, NUM_LOCK, NUMPAD_0, NUMPAD_1, NUMPAD_2, NUMPAD_3, NUMPAD_4, NUMPAD_5, NUMPAD_6, NUMPAD_7, NUMPAD_8, NUMPAD_9, NUMPAD_ADD, NUMPAD_DECIMAL, NUMPAD_DIVIDE, NUMPAD_ENTER, NUMPAD_EQUAL, NUMPAD_MULTIPLY, NUMPAD_SUBTRACT, PAGE_UP, PAGE_DOWN, PAUSE, PRINT_SCREEN, or SCROLL_LOCK.  If the key is a non-printable ASCII key, then use one of the following: BS, CR, DEL, ESC, FF, LF, NUL, SPACE, TAB, or VT.  Note that the main keyboard enter/return key is CR.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and contexts which may have been borrowed from their parents.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contextId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the context for this binding.  This binding is only available when this context (and all of its parents) are active.  The context should support the &quot;org.eclipse.ui.bindings&quot; type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="schemeId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the scheme in which this binding exists.  The binding is only active if the user has selected this scheme (or a scheme that inherits from it).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string">
+            <annotation>
+               <documentation>
+                  The platform on which this binding applies.  The platform is the same as the platform returned by &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="locale" type="string">
+            <annotation>
+               <documentation>
+                  The locale for which this binding applies.  This value is the same as one would expect to be returned from &lt;code&gt;Locale.getDefault().toString()&lt;/code&gt;.  This is typically used for working around keys that have special meanings in some locales (e.g., input-method editors).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="scheme">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this binding scheme.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends ...)&quot; to the name. This will be automatically added by the UI where necessary.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this key configuration for display in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;The following is an example of binding definition:&lt;/p&gt;
+&lt;pre&gt;
+ &lt;set schemeId=&quot;org.eclipse.ui.defaultAcceleratorConfiguration&quot;&gt;
+   &lt;set contextId=&quot;org.eclipse.ui.contexts.window&quot;&gt;
+    &lt;key
+     sequence=&quot;F11&quot;
+     commandId=&quot;org.eclipse.debug.ui.commands.DebugLast&quot; /&gt;
+    &lt;key
+     sequence=&quot;M1+F11&quot;
+     commandId=&quot;org.eclipse.debug.ui.commands.RunLast&quot; /&gt;
+    &lt;set platform=&quot;carbon&quot;&gt;
+     &lt;key
+      sequence=&quot;M1+F11&quot;
+      commandId=&quot;org.eclipse.debug.ui.commands.DebugLast&quot; /&gt;
+     &lt;key
+      sequence=&quot;M1+M2+F11&quot;
+      commandId=&quot;org.eclipse.debug.ui.commands.RunLast&quot; /&gt;
+    &lt;/set&gt;
+   &lt;/set&gt;
+   &lt;set contextId=&quot;org.eclipse.debug.ui.debugging&quot;&gt;
+    &lt;key
+     sequence=&quot;F5&quot;
+     commandId=&quot;org.eclipse.debug.ui.commands.StepInto&quot; /&gt;
+    &lt;key
+     sequence=&quot;F6&quot;
+     commandId=&quot;org.eclipse.debug.ui.commands.StepOver&quot; /&gt;
+   &lt;/set&gt;
+  &lt;/set&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;There is currently no public API for declaring bindings or associated elements other than this extension point.&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;Copyright (c) 2004 IBM Corporation and others.&lt;/p&gt;
+&lt;p&gt;All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>
