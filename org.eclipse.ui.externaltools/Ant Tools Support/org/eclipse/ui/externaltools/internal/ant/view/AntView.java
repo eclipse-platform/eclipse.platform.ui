@@ -56,11 +56,11 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
-import org.eclipse.ui.externaltools.internal.ant.view.actions.GoToBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
@@ -93,7 +93,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	/**
 	 * Key used to store the ant view's orientation
 	 */
-	private static String ANT_VIEW_ORIENTATION= "AntView.orientationSetting";
+	private static String ANT_VIEW_ORIENTATION= "AntView.orientationSetting"; //$NON-NLS-1$
 
 	/**
 	 * XML tag used to identify an ant project in storage
@@ -159,7 +159,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
-	private GoToBuildFileAction goToBuildFileAction;
 	// TargetsViewer actions
 	private RunActiveTargetsAction runActiveTargetsAction;
 	private DeactivateTargetAction deactivateTargetAction;
@@ -346,8 +345,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			menu.add(new Separator());
 			menu.add(runTargetAction);
 			menu.add(activateTargetAction);
-			menu.add(new Separator());
-			menu.add(goToBuildFileAction);
+			addOpenWithMenu(menu);
 			menu.add(new Separator());
 			menu.add(removeProjectAction);
 			menu.add(removeAllAction);
@@ -359,6 +357,23 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			menu.add(moveDownAction);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	private void addOpenWithMenu(IMenuManager menu) {
+		IStructuredSelection selection= (IStructuredSelection)getProjectViewer().getSelection();
+		if (selection.size() == 1) {
+			Object element= selection.getFirstElement(); 
+			if (element instanceof ProjectNode) {
+				IFile buildFile= ((ProjectNode)element).getBuildFile();
+				if (buildFile != null) {
+					menu.add(new Separator("group.open")); //$NON-NLS-1$
+					IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.Open_With_3"));  //$NON-NLS-1$
+					
+					submenu.add(new OpenWithMenu(getViewSite().getPage(), buildFile));
+					menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+				}
+			}
+		}
 	}
 
 	/**
@@ -410,8 +425,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		updateActions.add(moveUpAction);
 		moveDownAction = new TargetMoveDownAction(this);
 		updateActions.add(moveDownAction);
-		goToBuildFileAction = new GoToBuildFileAction(this);
-		updateActions.add(goToBuildFileAction);
 		horizontalOrientationAction= new SwitchAntViewOrientation(this, SWT.HORIZONTAL);
 		verticalOrientationAction= new SwitchAntViewOrientation(this, SWT.VERTICAL);
 	}
@@ -422,7 +435,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private void createTargetViewer() {
 		ViewForm targetForm = new ViewForm(sashForm, SWT.NONE);
 		CLabel title = new CLabel(targetForm, SWT.NONE);
-		title.setText("Active Targets");
+		title.setText(AntViewMessages.getString("AntView.Active_Targets_5")); //$NON-NLS-1$
 		targetForm.setTopLeft(title);
 		targetToolBar = new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
 		targetForm.setTopRight(targetToolBar);
@@ -462,7 +475,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private void createProjectViewer() {
 		ViewForm projectForm = new ViewForm(sashForm, SWT.NONE);
 		CLabel title = new CLabel(projectForm, SWT.NONE);
-		title.setText("Build Files");
+		title.setText(AntViewMessages.getString("AntView.Build_Files_6")); //$NON-NLS-1$
 		projectForm.setTopLeft(title);
 		projectToolBar = new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
 		projectForm.setTopRight(projectToolBar);
@@ -491,17 +504,17 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 						StringBuffer message= new StringBuffer(project.getBuildFileName());
 						String description= project.getDescription();
 						if (description != null) {
-							message.append(": ");
+							message.append(": "); //$NON-NLS-1$
 							message.append(description);
 						}
 						messageString= message.toString();
 					} else if (selection instanceof TargetNode){
 						TargetNode target = (TargetNode) selection;
 						StringBuffer message= new StringBuffer(target.getName());
-						message.append(": ");
+						message.append(": "); //$NON-NLS-1$
 						String description= target.getDescription();
 						if (description == null) {
-							description= "(no description)";
+							description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
 						}
 						message.append(description);
 						messageString= message.toString();
@@ -854,7 +867,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * <code>SWT.HORIZONTAL</code> or <code>SWT.VERTICAL</code>
 	 */
 	public void setViewOrientation(int orientation) {
-		Assert.isTrue(orientation == SWT.HORIZONTAL || orientation == SWT.VERTICAL, "Invalid orientation set for Ant view");
+		Assert.isTrue(orientation == SWT.HORIZONTAL || orientation == SWT.VERTICAL, AntViewMessages.getString("AntView.Invalid_orientation_set_for_Ant_view_10")); //$NON-NLS-1$
 		getDialogSettings().put(ANT_VIEW_ORIENTATION, orientation);
 		sashForm.setOrientation(orientation);
 		if (orientation == SWT.HORIZONTAL) {

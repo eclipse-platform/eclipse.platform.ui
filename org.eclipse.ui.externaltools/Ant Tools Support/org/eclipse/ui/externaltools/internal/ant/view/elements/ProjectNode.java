@@ -19,7 +19,12 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.ProjectInfo;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
 /**
@@ -271,7 +276,28 @@ public class ProjectNode extends AntNode {
 		if (super.getName() == null) {
 			parseBuildFile();
 		}
-		return super.getName();
+		String name= super.getName();
+		if (name == null || name.length() == 0) {
+			name= AntViewElementsMessages.getString("ProjectNode.<name_unspecified>_1"); //$NON-NLS-1$
+		}
+		return name;
+	}
+
+	/**
+	 * Returns the build file associated with this project node or null
+	 * if no such file exists.
+	 * 
+	 * @return IFile
+	 */
+	public IFile getBuildFile() {
+		IPath buildFilePath= new Path(getBuildFileName());
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		int matchingSegments= root.getLocation().matchingFirstSegments(buildFilePath);
+		IFile file= root.getFile(buildFilePath.removeFirstSegments(matchingSegments));
+		if (file.exists()) {
+			return file;
+		}
+		return null;
 	}
 
 }
