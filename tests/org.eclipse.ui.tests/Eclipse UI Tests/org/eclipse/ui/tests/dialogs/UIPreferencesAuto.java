@@ -3,7 +3,9 @@ package org.eclipse.ui.tests.dialogs;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
@@ -12,8 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIPreferencesAuto extends TestCase {
 
@@ -23,7 +25,7 @@ public class UIPreferencesAuto extends TestCase {
 	public UIPreferencesAuto(String name) {
 		super(name);
 	}
-	private Shell getShell() {
+	protected Shell getShell() {
 		return DialogCheck.getShell();
 	}
 
@@ -223,4 +225,8 @@ public class UIPreferencesAuto extends TestCase {
 		}
 
 	}
+	
+
+	
+
 }

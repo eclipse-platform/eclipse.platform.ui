@@ -13,7 +13,7 @@ public class PreferenceDialogWrapper extends PreferenceDialog {
 		PreferenceManager manager) {
 		super(parentShell, manager);
 	}
-	protected boolean showPage(IPreferenceNode node) {
+	public boolean showPage(IPreferenceNode node) {
 		return super.showPage(node);
 	}
 
