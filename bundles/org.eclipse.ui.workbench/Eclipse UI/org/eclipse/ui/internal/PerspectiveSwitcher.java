@@ -835,58 +835,68 @@ public class PerspectiveSwitcher {
         // See bug 11282 for more details on why it is done this way.
         if (popupMenu == null) {
             Menu menu = new Menu(toolBar);
-            MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText(WorkbenchMessages
-                    .getString("WorkbenchWindow.close")); //$NON-NLS-1$
-            menuItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    ToolItem perspectiveToolItem = (ToolItem) popupMenu
-                            .getData();
-                    if (perspectiveToolItem != null
-                            && !perspectiveToolItem.isDisposed()) {
-                        PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
-                                .getData();
-                        item.getPage().closePerspective(item.getPerspective(),
-                                true, true);
-                    }
-                }
-            });
-            menuItem = new MenuItem(menu, SWT.NONE);
-            menuItem.setText(WorkbenchMessages
-                    .getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
-            menuItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    ToolItem perspectiveToolItem = (ToolItem) popupMenu
-                            .getData();
-                    if (perspectiveToolItem != null
-                            && !perspectiveToolItem.isDisposed()) {
-                        PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
-                                .getData();
-                        item.getPage().closeAllPerspectives(true, true);
-                    }
-                }
-            });
-
+            addCustomizeItem(menu);
+            addSaveAsItem(menu);
+            addResetItem(menu);
+            addCloseItems(menu);
             new MenuItem(menu, SWT.SEPARATOR);
-            addDockOnSubMenu(menu);
+            addDockOnSubMenu(menu);                      
             addShowTextItem(menu);
+            
             popupMenu = menu;
         }
         popupMenu.setData(toolItem);
 
         // set the state of the menu items to match the preferences
         popupMenu
-                .getItem(4)
+                .getItem(7)
                 .setSelection(
                         PrefUtil
                                 .getAPIPreferenceStore()
                                 .getBoolean(
                                         IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-        updateLocationItems(popupMenu.getItem(3).getMenu(), currentLocation);
+        updateLocationItems(popupMenu.getItem(6).getMenu(), currentLocation);
 
         // Show popup menu.
         popupMenu.setLocation(pt.x, pt.y);
         popupMenu.setVisible(true);
+    }
+
+    /**
+     * @param menu
+     */
+    private void addCloseItems(Menu menu) {
+        MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText(WorkbenchMessages
+                .getString("WorkbenchWindow.close")); //$NON-NLS-1$
+        menuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ToolItem perspectiveToolItem = (ToolItem) popupMenu
+                        .getData();
+                if (perspectiveToolItem != null
+                        && !perspectiveToolItem.isDisposed()) {
+                    PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
+                            .getData();
+                    item.getPage().closePerspective(item.getPerspective(),
+                            true, true);
+                }
+            }
+        });
+        menuItem = new MenuItem(menu, SWT.NONE);
+        menuItem.setText(WorkbenchMessages
+                .getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
+        menuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ToolItem perspectiveToolItem = (ToolItem) popupMenu
+                        .getData();
+                if (perspectiveToolItem != null
+                        && !perspectiveToolItem.isDisposed()) {
+                    PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
+                            .getData();
+                    item.getPage().closeAllPerspectives(true, true);
+                }
+            }
+        });
     }
 
     /**
@@ -999,6 +1009,51 @@ public class PerspectiveSwitcher {
         });
     }
 
+    private void addCustomizeItem(Menu menu) {
+        final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
+        customizeMenuItem.setText(WorkbenchMessages
+                .getString("PerspectiveBar.customize")); //$NON-NLS-1$
+        customizeMenuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (perspectiveBar == null)
+                    return;
+                EditActionSetsAction editAction=new EditActionSetsAction(window);
+                editAction.setEnabled(true);
+                editAction.run();
+            }
+        });
+    }
+    
+    private void addSaveAsItem(Menu menu) {
+        final MenuItem saveasMenuItem = new MenuItem(menu, SWT.Activate);
+        saveasMenuItem.setText(WorkbenchMessages
+                .getString("PerspectiveBar.saveAs")); //$NON-NLS-1$
+        saveasMenuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (perspectiveBar == null)
+                    return;
+                SavePerspectiveAction saveAction=new SavePerspectiveAction(window);
+                saveAction.setEnabled(true);
+                saveAction.run();
+            }
+        });
+    }
+    
+    private void addResetItem(Menu menu) {
+        final MenuItem resetMenuItem = new MenuItem(menu, SWT.Activate);
+        resetMenuItem.setText(WorkbenchMessages
+                .getString("PerspectiveBar.reset")); //$NON-NLS-1$
+        resetMenuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (perspectiveBar == null)
+                    return;
+                ResetPerspectiveAction resetAction=new ResetPerspectiveAction(window);
+                resetAction.setEnabled(true);
+                resetAction.run(); 
+             }
+        });
+    }
+    
     /**
      * Method to save the width of the perspective bar in the 
      */
