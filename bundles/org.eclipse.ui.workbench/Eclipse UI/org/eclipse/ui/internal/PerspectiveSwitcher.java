@@ -409,10 +409,12 @@ public class PerspectiveSwitcher {
 			public void handleEvent(Event event) {
 				ToolBar toolbar = perspectiveBar.getControl();
                 ToolItem item = toolbar.getItem(new Point(event.x, event.y));
-                // ignore the first item, which remains in position Zero
-                if (item.getData() instanceof PerspectiveBarNewContributionItem)
-                	return;
+                
                 if (item != null) {
+                	//ignore the first item, which remains in position Zero
+                    if (item.getData() instanceof PerspectiveBarNewContributionItem)
+                    	return;
+                    
                 	Rectangle bounds = item.getBounds();
                 	Rectangle parentBounds = toolbar.getBounds();
                 	bounds.x += parentBounds.x;
