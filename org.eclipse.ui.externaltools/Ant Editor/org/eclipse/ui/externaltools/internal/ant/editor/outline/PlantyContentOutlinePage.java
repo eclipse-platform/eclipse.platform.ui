@@ -74,7 +74,7 @@ import org.xml.sax.SAXParseException;
 /**
  * Content outline page for planty.
  */
-public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource {
+public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
 	
 	private IFile file;
 	private Menu menu;
@@ -655,5 +655,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	public ShowInContext getShowInContext() {
 		ISelection selection= new StructuredSelection(file);
 		return new ShowInContext(null, selection);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class key) {
+		if (key == IShowInSource.class) {
+			return this;
+		}
+		return null;
 	}
 }
