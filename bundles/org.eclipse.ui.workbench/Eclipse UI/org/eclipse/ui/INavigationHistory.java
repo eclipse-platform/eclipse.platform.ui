@@ -24,7 +24,7 @@ package org.eclipse.ui;
  * the oposit direction, the editor and location should be exactly the same as if
  * nothing as done.
  * 
- * Clients must guaranty that the current location is
+ * Clients must guarantee that the current location is
  * always in the history. Independent if that is done by marking
  * a new location or by updating the current location.
  * 

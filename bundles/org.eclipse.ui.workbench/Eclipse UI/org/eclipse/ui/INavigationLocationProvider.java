@@ -19,7 +19,7 @@ package org.eclipse.ui;
  */
 public interface INavigationLocationProvider {
 	/**
-	 * Creates an empty navigation location. The message <code>restoryState</code>
+	 * Creates an empty navigation location. The message <code>restoreState</code>
 	 * will be sent to the location to restore its state.
 	 * 
 	 * @return INavigationLocation
