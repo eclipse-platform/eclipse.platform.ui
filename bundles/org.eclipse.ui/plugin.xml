@@ -1014,51 +1014,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%PreferencePages.FileEditors"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
-            id="org.eclipse.ui.preferencePages.FileEditors">
-      </page>
-      <page
-            name="%PreferencePages.Views"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
-            id="org.eclipse.ui.preferencePages.Views">
-      </page>
-      <page
-            name="%PreferencePages.Fonts"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.FontPreferencePage"
-            id="org.eclipse.ui.preferencePages.Fonts">
-      </page>
-      <page
-            name="%PreferencePages.Decorators"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
-            id="org.eclipse.ui.preferencePages.Decorators">
-      </page>
-      <page
-            name="%PreferencePages.Startup"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.StartupPreferencePage"
-            id="org.eclipse.ui.preferencePages.Startup">
-      </page>
-      <page
-            name="%PreferencePages.Keys"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.commands.KeysPreferencePage"
-            id="org.eclipse.ui.preferencePages.Keys">
-      </page>
-      <page
-            name="%PreferencePages.WorkbenchWorkInProgress"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.misc.WorkInProgressPreferencePage"
-            id="org.eclipse.ui.preferencePages.WorkInProgress">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.ui.internal.WorkingSetFactory"
