@@ -280,8 +280,6 @@ public final class PresentablePartFolder implements IPresentablePartList {
             // Determine if we need to un-bold this tab
             selectedItem.setBold(false);
             initTab(selectedItem, toSelect);
-
-            setToolbar(toSelect.getToolBar());
         } else {
             setToolbar(null);
         }
@@ -347,6 +345,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
         if (part == getCurrent()) {
             folder.setSelectedInfo(tempPartInfo);
             folder.enablePaneMenu(part.getMenu() != null);
+            
+            setToolbar(part.getToolBar());
         }
     }
 
