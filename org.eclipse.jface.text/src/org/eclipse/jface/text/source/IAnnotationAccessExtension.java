@@ -79,7 +79,8 @@ public interface IAnnotationAccessExtension {
 	
 	/**
 	 * Returns the list of super types for the given annotation type. This does not include the type 
-	 * itself.
+	 * itself. The index in the array of super types indicates the length of the path in the hierarchy
+	 * graph to the given annotation type.
 	 * 
 	 * @param annotationType the annotation type to check
 	 * @return the super types for the given annotation type
