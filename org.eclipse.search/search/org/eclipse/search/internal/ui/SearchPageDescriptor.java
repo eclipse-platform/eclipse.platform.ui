@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o Search dialog not respecting activity enablement
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45729)
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -35,11 +38,12 @@ import org.eclipse.search.ui.ISearchPageScoreComputer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.ui.IPluginContribution;
 
 /**
  * Proxy that represents a search page.
  */
-class SearchPageDescriptor implements Comparable {
+class SearchPageDescriptor implements IPluginContribution, Comparable {
 
 	public final static String PAGE_TAG= "page"; //$NON-NLS-1$
 	private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
@@ -339,4 +343,18 @@ class SearchPageDescriptor implements Comparable {
 			}
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return getId();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return fElement.getDeclaringExtension().getNamespace();
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o Search dialog not respecting activity enablement
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45729)
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -56,6 +59,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -127,7 +131,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		fWorkspace= workspace;
 		fSelection= selection;
 		fEditorPart= editor;
-		fDescriptors= SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId);
+		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
 	}
 
@@ -166,6 +170,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 
 	private void handleCustomizePressed() {
 		List input= SearchPlugin.getDefault().getSearchPageDescriptors();
+		input= filterByActivities(input);
+
 		final ArrayList createdImages= new ArrayList(input.size());
 		ILabelProvider labelProvider= new LabelProvider() {
 			public String getText(Object element) {
@@ -236,6 +242,17 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		destroyImages(createdImages);		
 	}
 
+	private List filterByActivities(List input) {
+		ArrayList filteredList= new ArrayList(input.size());
+		for (Iterator descriptors= input.iterator(); descriptors.hasNext();) {
+			SearchPageDescriptor descriptor= (SearchPageDescriptor) descriptors.next();
+			if (!WorkbenchActivityHelper.filterItem(descriptor))
+			    filteredList.add(descriptor);
+			
+		}
+		return filteredList;
+	}
+
 	private void destroyImages(List images) {
 		Iterator iter= images.iterator();
 		while (iter.hasNext()) {
@@ -279,7 +296,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 
 			for (int i= 0; i < numPages; i++) {			
 				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
-
+				if (WorkbenchActivityHelper.filterItem(descriptor))
+				    continue;
+				
 				final TabItem item= new TabItem(folder, SWT.NONE);
 				item.setText(descriptor.getLabel());
 				item.addDisposeListener(new DisposeListener() {
