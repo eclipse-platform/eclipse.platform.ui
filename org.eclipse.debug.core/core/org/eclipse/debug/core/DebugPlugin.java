@@ -46,6 +46,7 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
+import org.eclipse.debug.internal.core.memory.*;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.w3c.dom.Document;
@@ -201,7 +202,7 @@ public class DebugPlugin extends Plugin {
 	 * The singleton launch manager.
 	 */
 	private LaunchManager fLaunchManager;
-
+	
 	/**
 	 * The collection of debug event listeners.
 	 */
@@ -425,7 +426,7 @@ public class DebugPlugin extends Plugin {
 		}
 		return fExpressionManager;
 	}	
-	
+		
 	/**
 	 * Removes the given listener from the collection of registered debug
 	 * event listeners. Has no effect if an identical listener is not already
@@ -462,6 +463,7 @@ public class DebugPlugin extends Plugin {
 		if (fBreakpointManager != null) {
 			fBreakpointManager.shutdown();
 		}
+		MemoryBlockManager.pluginShutdown();
 		if (fEventListeners != null) {
 			fEventListeners.removeAll();
 		}
