@@ -249,7 +249,7 @@
       <decorator
             lightweight="true"
             adaptable="true"
-            quadrant="BOTTOM_RIGHT"
+            location="BOTTOM_RIGHT"
             label="%DecoratorLinkedResource.label"
             class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             state="true"
