@@ -32,9 +32,7 @@ import org.eclipse.update.search.*;
  * All the methods are static and this class should be a singleton.
  */
 public class UpdateUtils {
-	
-	private static final String PREFIX = UpdateCore.getPlugin().getBundle().getSymbolicName();
-	public static final String P_UPDATE_POLICY_URL = PREFIX + ".updatePolicyURL";
+	public static final String P_UPDATE_POLICY_URL = "updatePolicyURL";
 
 	/**
 	 * Private constructor
@@ -492,22 +490,6 @@ public class UpdateUtils {
 		return null;
 	}
 	
-	
-	/*
-	 * Returns a concrete array type for the elements of the specified
-	 * list. The method assumes all the elements of the list are the same
-	 * concrete type as the first element in the list.
-	 * 
-	 * @param l list
-	 * @return concrete array type, or <code>null</code> if the array type
-	 * could not be determined (the list is <code>null</code> or empty)
-	 * @since 2.0
-	 */
-	private static Object[] arrayTypeFor(List l) {
-		if (l == null || l.size() == 0)
-			return null;
-		return (Object[]) Array.newInstance(l.get(0).getClass(), 0);
-	}
 
 	public static void downloadFeatureContent(
 		IFeature feature,
