@@ -8,8 +8,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -25,21 +25,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static AntCorePlugin plugin;
-
-	/**
-	 * Table of Ant tasks (IConfigurationElement) added through the tasks extension point
-	 */
-	private Map taskExtensions;
-
-	/**
-	 * Table of libraries (IConfigurationElement) added through the extraClasspathEntries extension point
-	 */
-	private Map extraClasspathExtensions;
-
-	/**
-	 * Table of Ant types (IConfigurationElement) added through the types extension point
-	 */
-	private Map typeExtensions;
 
 	/**
 	 * The preferences class for this plugin.	 */
@@ -136,9 +121,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		taskExtensions = extractExtensions(PT_TASKS, NAME);
-		typeExtensions = extractExtensions(PT_TYPES, NAME);
-		extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
 		getPluginPreferences().addPropertyChangeListener(this);
 	}
 
@@ -157,20 +139,15 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 
 	/**
 	 * Given an extension point name, extract its extensions and return them
-	 * as a Map. It uses as keys the attribute specified by the key parameter.
+	 * as a List.
 	 */
-	private Map extractExtensions(String point, String key) {
+	private List extractExtensions(String point, String key) {
 		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
 		if (extensionPoint == null) {
 			return null;
 		}
 		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-		Map result = new HashMap(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			String name = extensions[i].getAttribute(key);
-			result.put(name, extensions[i]);
-		}
-		return result;
+		return Arrays.asList(extensions);
 	}
 
 	/**
@@ -180,7 +157,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 */
 	public AntCorePreferences getPreferences() {
 		if (preferences == null) {
-			preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
+			preferences = new AntCorePreferences(extractExtensions(PT_TASKS, NAME), extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY), extractExtensions(PT_TYPES, NAME));
 		}
 		return preferences;
 	}
