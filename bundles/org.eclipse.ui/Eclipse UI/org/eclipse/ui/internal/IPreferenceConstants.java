@@ -4,7 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 /**
  * The IPreferenceConstants are the internal constants used by the Workbench.
  */
@@ -29,9 +29,13 @@ public interface IPreferenceConstants {
 
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
-	
+
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
+
+	// (int) N recently viewed files will be listed in the File->Open Recent menu.
+	public static final String RECENT_FILES = "RECENT_FILES"; //$NON-NLS-1$
+	public static final int MAX_RECENT_FILES_SIZE = 15;
 
 	// (boolean) If true then reuse open perspectives.
 	public static final String REUSE_PERSPECTIVES = "REUSE_PERSPECTIVES"; //$NON-NLS-1$
@@ -41,7 +45,7 @@ public interface IPreferenceConstants {
 	public static final int OVM_EMBED = 0;
 	public static final int OVM_FAST = 1;
 	public static final int OVM_FLOAT = 2;
-	
+
 	//Identifier for enabled decorators
 	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS";
 }

@@ -4,13 +4,16 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.SWT;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -534,6 +537,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				addManualIncrementalBuildAction();
 		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
 			pinEditorAction.updateState();
+		} else if (event.getProperty() == IPreferenceConstants.RECENT_FILES) {
+			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
+			// work around the fact that the property change event values come as 
+			// both Strings and Integers
+			int newValue = (new Integer(event.getNewValue().toString())).intValue();
+			wb.getEditorHistory().reset(newValue);
+			if (newValue == 0) {
+				// the open recent menu item can go from enabled to disabled
+				window.updateActionBars();
+			}
 		}
 	}
 	/**
