@@ -456,6 +456,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public void resetLayout() {
+		coolBar.setRedraw(false);
 		CoolItem[] coolItems = coolBar.getItems();
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolItem coolItem = coolItems[i];
@@ -465,6 +466,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		coolBar.setWrapIndices(new int[] {});
 		update(true);
+		coolBar.setRedraw(true);
 	}
 	/**
 	 * Removes the given contribution item from the contribution items
@@ -489,6 +491,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void setLayout(CoolBarLayout layout) {
 		if (layout == null) {
+			coolBar.setRedraw(false);
 			CoolItem[] coolItems = coolBar.getItems();
 			for (int i = 0; i < coolItems.length; i++) {
 				CoolItem coolItem = coolItems[i];
@@ -500,8 +503,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				coolItem.setPreferredSize(coolSize);
 				coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
 			}
-			coolBar.setWrapIndices(new int[] {
-			});
+			coolBar.setWrapIndices(new int[] {});
+			coolBar.setRedraw(true);
 			return;
 		}
 
