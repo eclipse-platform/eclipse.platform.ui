@@ -128,8 +128,15 @@ public class HttpResponse implements Response {
 					is = runnable.getInputStream();
 					break;
 				}
-				if (runnable.getIOException() != null) {
-					throw runnable.getIOException();
+				if (runnable.getException() != null) {
+					if (runnable.getException() instanceof IOException)
+						throw (IOException) runnable.getException();
+					else
+						throw new CoreException(new Status(IStatus.ERROR,
+								UpdateCore.getPlugin().getBundle()
+										.getSymbolicName(), IStatus.OK,
+								runnable.getException().getMessage(), runnable
+										.getException()));
 				}
 				t.join(POLLING_INTERVAL);
 			}

@@ -45,7 +45,7 @@ public class ConnectionThreadManager {
 
 	public static class StreamRunnable implements Runnable {
 		private HttpURLConnection urlConnection;
-		private IOException exception;
+		private Exception exception;
 		private InputStream is;
 		private boolean disconnected;
 
@@ -61,7 +61,7 @@ public class ConnectionThreadManager {
 			return urlConnection.getURL();
 		}
 
-		public IOException getIOException() {
+		public Exception getException() {
 			return exception;
 		}
 
@@ -89,7 +89,7 @@ public class ConnectionThreadManager {
 						}
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				exception = e;
 			}
 		}
