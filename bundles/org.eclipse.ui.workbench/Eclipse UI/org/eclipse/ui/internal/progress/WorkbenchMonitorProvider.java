@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,6 +33,136 @@ import org.eclipse.ui.progress.UIJob;
  * workbench and reports accordingly.
  */
 class WorkbenchMonitorProvider {
+
+	List workingMonitors = Collections.synchronizedList(new ArrayList());
+
+	private class BackgroundProgressMonitor implements IProgressMonitor {
+
+		double allWork;
+		double worked;
+		String taskName;
+		String subTask = ""; //$NON-NLS-1$
+
+		/**
+		 * Create a new instance of the receiver with the supplied jobName
+		 * 
+		 * @param jobName
+		 */
+		BackgroundProgressMonitor(String jobName) {
+			taskName = jobName;
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+		 * int)
+		 */
+		public void beginTask(String name, int totalWork) {
+
+			if (name != null && name.length() > 0)
+				taskName = name;
+
+			allWork = totalWork;
+			subTask = ""; //$NON-NLS-1$
+			worked = 0;
+			updateMessage();
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done()
+		 */
+		public void done() {
+			refreshJob.clearStatusLine();
+			refreshJob.schedule(100);
+
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+		 */
+		public void internalWorked(double work) {
+			worked += work;
+			//Do not rely on monitor.done() to clear.
+			if (worked >= allWork)
+				done();
+			else
+				updateMessage();
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		 */
+		public boolean isCanceled() {
+			//No cancel functionality in status line currently
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+		 */
+		public void setCanceled(boolean value) {
+			//No cancel functionality in status line currently
+
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+		 */
+		public void setTaskName(String name) {
+			taskName = name;
+			updateMessage();
+
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+		 */
+		public void subTask(String name) {
+			//Don't show this granularity
+		}
+
+		/*
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+		 */
+		public void worked(int work) {
+			internalWorked(work);
+
+		}
+
+		/**
+		 * Update the message for the receiver.
+		 */
+		private void updateMessage() {
+			if (refreshJob.setMessage(getDisplayString()))
+				refreshJob.schedule(100);
+		}
+
+		/**
+		 * Get the display string for the task.
+		 * 
+		 * @return String
+		 */
+		String getDisplayString() {
+
+			if (worked == IProgressMonitor.UNKNOWN) {
+				if (subTask.length() == 0)
+					return taskName;
+				else
+					return ProgressMessages.format("MonitorProvider.twoValueUnknownMessage", new String[] { taskName, subTask }); //$NON-NLS-1$
+
+			} else {
+				int done = (int) (worked * 100 / allWork);
+				String percentDone = String.valueOf(done);
+
+				if (subTask.length() == 0)
+					return ProgressMessages.format("MonitorProvider.oneValueMessage", new String[] { taskName, percentDone }); //$NON-NLS-1$
+
+				return ProgressMessages.format("MonitorProvider.twoValueMessage", new String[] { taskName, subTask, String.valueOf(done)}); //$NON-NLS-1$
+
+			}
+
+		}
+
+	}
 
 	private class RefreshJob extends UIJob {
 
@@ -52,8 +186,12 @@ class WorkbenchMonitorProvider {
 			if (manager == null)
 				return Status.CANCEL_STATUS;
 			if (clear) {
-				manager.clearProgress();
 				clear = false;
+				BackgroundProgressMonitor next = nextMonitor(monitor);
+				if(next == null)
+					manager.clearProgress();
+				else
+					manager.setProgressMessage(next.getDisplayString());
 			} else
 				manager.setProgressMessage(message);
 			return Status.OK_STATUS;
@@ -88,6 +226,11 @@ class WorkbenchMonitorProvider {
 	 * @return IProgressMonitor
 	 */
 	IProgressMonitor getMonitor(Job job) {
+		
+		//Don't keep track of our own refreshes
+		if(job instanceof RefreshJob)
+			return new NullProgressMonitor();
+		
 		if (job instanceof UIJob) {
 			return getUIProgressMonitor(job.getName());
 		}
@@ -115,134 +258,20 @@ class WorkbenchMonitorProvider {
 	/**
 	 * Get a IProgressMonitor for the background jobs.
 	 * 
-	 * @param jobName The name of the job.
+	 * @param jobName
+	 *           The name of the job.
 	 * @return IProgressMonitor
 	 */
-	private IProgressMonitor getBackgroundProgressMonitor(final String jobName) {
-		return new IProgressMonitor() {
-
-			double allWork;
-			double worked;
-			String taskName;
-			String subTask = ""; //$NON-NLS-1$
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
-			 * int)
-			 */
-			public void beginTask(String name, int totalWork) {
-				
-				if(name == null || name.length() == 0)
-					taskName = jobName;
-				else
-					taskName = name;
-				
-				allWork = totalWork;
-				subTask = ""; //$NON-NLS-1$
-				worked = 0;
-				updateMessage();
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done()
-			 */
-			public void done() {
-				refreshJob.clearStatusLine();
-				refreshJob.schedule(100);
-
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
-			 */
-			public void internalWorked(double work) {
-				worked += work;
-				//Do not rely on monitor.done() to clear.
-				if(worked >= allWork)
-					done();
-				else
-					updateMessage();
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
-			 */
-			public boolean isCanceled() {
-				//No cancel functionality in status line currently
-				return false;
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
-			 */
-			public void setCanceled(boolean value) {
-				//No cancel functionality in status line currently
-
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
-			 */
-			public void setTaskName(String name) {
-				taskName = name;
-				updateMessage();
-
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
-			 */
-			public void subTask(String name) {
-				//Don't show this granularity
-			}
-
-			/*
-			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
-			 */
-			public void worked(int work) {
-				internalWorked(work);
-
-			}
-
-			/**
-			 * Update the message for the receiver.
-			 */
-			private void updateMessage() {
-				if (refreshJob.setMessage(getDisplayString()))
-					refreshJob.schedule(100);
-			}
-
-			/**
-			 * Get the display string for the task.
-			 * @return String
-			 */
-			String getDisplayString() {
-
-				if (worked == IProgressMonitor.UNKNOWN) {
-					if (subTask.length() == 0)
-						return taskName;
-					else
-						return ProgressMessages.format("MonitorProvider.twoValueUnknownMessage", new String[] { taskName, subTask }); //$NON-NLS-1$
-					
-				} else {
-					int done = (int) (worked * 100 / allWork);
-					String percentDone = String.valueOf(done);
-
-					if (subTask.length() == 0)
-						return ProgressMessages.format("MonitorProvider.oneValueMessage", new String[] { taskName, percentDone }); //$NON-NLS-1$
-		
-					return ProgressMessages.format("MonitorProvider.twoValueMessage", new String[] { taskName, subTask, String.valueOf(done)}); //$NON-NLS-1$
-
-				}
-
-			}
-		};
+	private IProgressMonitor getBackgroundProgressMonitor(String jobName) {
+		return new BackgroundProgressMonitor(jobName);
 	}
 
 	/**
-	 * Get a progress monitor for use with UIThreads. This monitor will use the status
-	 * line directly if possible.
-	 * @param jobName. Used if the task name is null.
+	 * Get a progress monitor for use with UIThreads. This monitor will use the
+	 * status line directly if possible.
+	 * 
+	 * @param jobName.
+	 *           Used if the task name is null.
 	 * @return IProgressMonitor
 	 */
 	private IProgressMonitor getUIProgressMonitor(final String jobName) {
@@ -255,11 +284,11 @@ class WorkbenchMonitorProvider {
 			 * int)
 			 */
 			public void beginTask(String name, int totalWork) {
-				
-				if(name == null || name.length() == 0)
+
+				if (name == null || name.length() == 0)
 					getInternalMonitor().beginTask(jobName, totalWork);
 				else
-				getInternalMonitor().beginTask(name, totalWork);
+					getInternalMonitor().beginTask(name, totalWork);
 			}
 
 			/*
@@ -326,12 +355,6 @@ class WorkbenchMonitorProvider {
 			 * Return a NullProgressMonitor if the one from the workbench
 			 * cannot be found.
 			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
 			 * @return IProgressMonitor
 			 */
 			private IProgressMonitor getInternalMonitor() {
@@ -346,5 +369,19 @@ class WorkbenchMonitorProvider {
 			}
 		};
 
+	}
+
+	/**
+	 * Return the next monitor to update with if there is one.
+	 * 
+	 * @param finishedMonitor
+	 * @return BackgroundProgressMonitor or <code>null</code>
+	 */
+	BackgroundProgressMonitor nextMonitor(IProgressMonitor finishedMonitor) {
+		workingMonitors.remove(finishedMonitor);
+
+		if (workingMonitors.size() > 0) 
+			return (BackgroundProgressMonitor) workingMonitors.get(0);
+		return null;
 	}
 }
