@@ -20,7 +20,7 @@ import org.eclipse.search.ui.SearchUI;
  */
 public class OpenFileSearchPageAction implements IWorkbenchWindowActionDelegate {
 
-	private static final String TEXT_SEARCH_PAGE_ID= "org.eclipse.search.internal.ui.text.TextSearchPage";
+	private static final String TEXT_SEARCH_PAGE_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
 	private IWorkbenchWindow fWindow;
 
