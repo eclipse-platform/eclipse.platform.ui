@@ -77,7 +77,6 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	public Menu getMenu(final Menu parent) {
 		dispose(); // ensure old menu gets disposed
 	
-		boolean hasEntries= false;
 		fMenu= new Menu(parent);
 		
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
@@ -111,10 +110,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				action.setToolTipText(sorterDesc.getToolTipText());
 				action.setChecked(checkedId.equals(sorterDesc.getId()));
 				addActionToMenu(fMenu, action);
-				hasEntries= true;
 			}
 		}
-		setEnabled(hasEntries);
 		return fMenu;
 	}
 
@@ -200,5 +197,16 @@ class SortDropDownAction extends Action implements IMenuCreator {
 			mementoElement.putString(TAG_PAGE_ID, (String)entry.getKey());
 			mementoElement.putString(TAG_SORTER_ID, ((SorterDescriptor)entry.getValue()).getId());
 		}
+	}
+
+	int getSorterCount() {
+		int count= 0;
+		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		while (iter.hasNext()) {
+			SorterDescriptor sorterDesc= (SorterDescriptor)iter.next();
+			if (sorterDesc.getPageId().equals(fPageId) || sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
+				count++;
+		}
+		return count;
 	}
 }

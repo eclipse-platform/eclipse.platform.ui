@@ -312,7 +312,8 @@ public class SearchResultViewer extends TableViewer {
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
 		if (getItemCount() > 0) {
 			fSortDropDownAction= fSortDropDownAction.renew();
-			menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
+			if (fSortDropDownAction.getSorterCount() > 1)
+				menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
 		}
 	}
 
