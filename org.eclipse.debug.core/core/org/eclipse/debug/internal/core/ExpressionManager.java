@@ -432,7 +432,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#hasExpressions()
 	 */
 	public boolean hasExpressions() {
-		return fExpressions != null;
+		return fExpressions != null && !fExpressions.isEmpty();
 	}
 
 	/**
