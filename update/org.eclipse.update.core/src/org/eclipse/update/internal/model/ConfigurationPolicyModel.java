@@ -9,7 +9,7 @@ import java.util.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -128,7 +128,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (!found) {
 			list.put(feature,null);
 		} else {
-			UpdateCORE.warn("Feature Reference :"+feature+" already part of the list.");
+			UpdateCore.warn("Feature Reference :"+feature+" already part of the list.");
 		}
 	}
 
@@ -143,8 +143,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 			this.configuredFeatureReferences = new HashMap();
 		if (!configuredFeatureReferences.containsKey(feature)){
 			//DEBUG:
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION){
-				UpdateCORE.debug("Configuring "+feature.getURLString());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION){
+				UpdateCore.debug("Configuring "+feature.getURLString());
 			}
 			this.add(feature, configuredFeatureReferences);
 		}	
@@ -155,7 +155,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences != null) {
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateCORE.warn("Feature not part of Unconfigured list: "+feature.getURLString());			
+				UpdateCore.warn("Feature not part of Unconfigured list: "+feature.getURLString());			
 		}
 
 	}
@@ -169,8 +169,8 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences == null)
 			this.unconfiguredFeatureReferences = new HashMap();
 		if (!unconfiguredFeatureReferences.containsKey(feature)){
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION){
-				UpdateCORE.debug("Unconfiguring "+feature.getURLString());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION){
+				UpdateCore.debug("Unconfiguring "+feature.getURLString());
 			}
 			this.add(feature, unconfiguredFeatureReferences);
 		}	
@@ -180,7 +180,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateCORE.warn("Feature not part of Configured list: "+feature.getURLString());				
+				UpdateCore.warn("Feature not part of Configured list: "+feature.getURLString());				
 		}
 	}
 
@@ -192,13 +192,13 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences!=null){
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateCORE.warn(feature.getURLString()+" not part of unconfigured list.");							
+				UpdateCore.warn(feature.getURLString()+" not part of unconfigured list.");							
 		}
 
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateCORE.warn(feature.getURLString()+" not part of configured list.");							
+				UpdateCore.warn(feature.getURLString()+" not part of configured list.");							
 		}
 	}
 	

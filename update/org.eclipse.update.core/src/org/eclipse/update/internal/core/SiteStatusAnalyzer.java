@@ -73,7 +73,7 @@ public class SiteStatusAnalyzer {
 			feature1 = featureRef1.getFeature();
 			feature2 = featureRef2.getFeature();
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			return 0;
 		}
 
@@ -117,8 +117,8 @@ public class SiteStatusAnalyzer {
 		// validate site
 		ISite featureSite = feature.getSite();
 		if (featureSite == null) {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
 			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull", new Object[] { feature.getURL()});
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
@@ -126,8 +126,8 @@ public class SiteStatusAnalyzer {
 		// validate configured site		
 		ConfiguredSite cSite = (ConfiguredSite) featureSite.getCurrentConfiguredSite();
 		if (cSite == null) {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL.");
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL.");
 			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusConfiguredSiteNull", new Object[] { feature.getURL()});
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
@@ -138,15 +138,15 @@ public class SiteStatusAnalyzer {
 			if (!cSite.getConfigurationPolicy().isConfigured(ref))
 				return createStatus(IStatus.OK, IFeature.STATUS_DISABLED, "", null);
 		} else {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.warn("Unable to find reference for feature " + feature + " in site " + cSite.getSite().getURL());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.warn("Unable to find reference for feature " + feature + " in site " + cSite.getSite().getURL());
 		}
 
 		// check if broken
 		IStatus status = cSite.getBrokenStatus(feature);
 		if (status.getSeverity() != IStatus.OK) {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.debug("Feature broken:" + feature.getLabel() + ".Site:" + cSite.toString());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.debug("Feature broken:" + feature.getLabel() + ".Site:" + cSite.toString());
 			return status;
 		}
 
@@ -194,11 +194,11 @@ public class SiteStatusAnalyzer {
 						childFeature = children[i].getFeature();
 					} catch (CoreException e) {
 						if (!UpdateManagerUtils.isOptional(children[i]))
-							UpdateCORE.warn("Error retrieving feature:" + children[i]);
+							UpdateCore.warn("Error retrieving feature:" + children[i]);
 					}
 
 					if (childFeature == null) {
-						UpdateCORE.warn("getFeatureStatus: Feature is null for:" + children[i]);
+						UpdateCore.warn("getFeatureStatus: Feature is null for:" + children[i]);
 						// Unable to find children feature, broken
 						Object featureAsPrintableObject = children[i].getURL();
 						featureAsPrintableObject = children[i].getVersionedIdentifier();
@@ -298,7 +298,7 @@ public class SiteStatusAnalyzer {
 							msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2", values);
 						}
 
-						UpdateCORE.warn("Found another version of the same plugin on the path:" + compareID.toString());
+						UpdateCore.warn("Found another version of the same plugin on the path:" + compareID.toString());
 						tempmulti.add(createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null));
 					}
 				}
@@ -333,7 +333,7 @@ public class SiteStatusAnalyzer {
 	 * creates a Status
 	 */
 	private IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e) {
-		String id = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
+		String id = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 
 		StringBuffer completeString = new StringBuffer("");
 		if (msg != null)

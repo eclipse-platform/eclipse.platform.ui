@@ -56,8 +56,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		this.config = (InstallConfigurationModel) config;
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
 		bundle = getResourceBundle();
@@ -80,9 +80,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 					Locale.getDefault(),
 					l);
 		} catch (MissingResourceException e) {
-			UpdateCORE.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCORE.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}
@@ -98,8 +98,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		throws SAXException {
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 
@@ -170,7 +170,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 	 	if (entry!=null){	
 		 	configSite.setUpdatable(entry.isUpdateable());
 	 	} else {
-	 		UpdateCORE.warn("Unable to retrieve site:" +platformURLString+" from platform.");
+	 		UpdateCore.warn("Unable to retrieve site:" +platformURLString+" from platform.");
 	 	}
 	 	String updatable = configSite.isUpdatable()?"true":"false";
 
@@ -178,8 +178,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		config.addConfigurationSiteModel(configSite);
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End process config site url:" + urlString + " policy:" + policyString + " updatable:"+updatable ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End process config site url:" + urlString + " policy:" + policyString + " updatable:"+updatable ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 	}
@@ -217,12 +217,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 			entry.resolve(siteURL,null);
 
 			// DEBUG:		
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-				UpdateCORE.debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+				UpdateCore.debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 			}
 
 		} else {
-			UpdateCORE.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception());
+			UpdateCore.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception());
 		}
 
 	}
@@ -259,8 +259,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		config.addActivityModel(activity);
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 	}
@@ -283,8 +283,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		config.setTimeline(timeline);
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End Processing Config Tag: date:" + date+" timeline:"+ timeline); //$NON-NLS-1$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End Processing Config Tag: date:" + date+" timeline:"+ timeline); //$NON-NLS-1$
 		}
 
 	}

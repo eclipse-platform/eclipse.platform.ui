@@ -59,7 +59,7 @@ public final class SiteTypeFactory {
 	private ISiteFactory createFactoryFor(String type) throws CoreException {
 		ISiteFactory result = null;
 		
-		String pluginID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
+		String pluginID = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){

@@ -4,7 +4,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -36,7 +36,7 @@ public class Import extends ImportModel implements IImport {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCORE.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
 			}
 		}
 

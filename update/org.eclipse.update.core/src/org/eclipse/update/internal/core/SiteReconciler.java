@@ -70,9 +70,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			oldConfiguredSites = oldInstallConfiguration.getConfiguredSites();
 
 			// TRACE
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 				for (int i = 0; i < oldConfiguredSites.length; i++) {
-					UpdateCORE.debug("Old Site :" + oldConfiguredSites[i].getSite().getURL());
+					UpdateCore.debug("Old Site :" + oldConfiguredSites[i].getSite().getURL());
 				}
 			}
 		}
@@ -93,8 +93,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			IConfiguredSite currentConfigurationSite = null;
 
 			// TRACE
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug("Checking if:" + resolvedURL + " is a new site or a site to reconcile.");
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("Checking if:" + resolvedURL + " is a new site or a site to reconcile.");
 			}
 
 			// check if SiteEntry has been possibly modified
@@ -114,8 +114,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			// old site not found, this is a new site, create it
 			if (!found) {
 				// TRACE
-				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-					UpdateCORE.debug("Site not found in previous configurations.Create new Configured Site:" + resolvedURL);
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+					UpdateCore.debug("Site not found in previous configurations.Create new Configured Site:" + resolvedURL);
 				}
 				ISite site = SiteManager.getSite(resolvedURL);
 
@@ -130,9 +130,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				ISiteFeatureReference[] newFeaturesRef = site.getFeatureReferences();
 				for (int i = 0; i < newFeaturesRef.length; i++) {
 					// TRACE
-					if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 						String reconciliationType = isOptimistic ? "enable (optimistic)" : "disable (pessimistic)";
-						UpdateCORE.debug("New Site Found:New Feature to create: " + newFeaturesRef[i].getURL() + " as " + reconciliationType);
+						UpdateCore.debug("New Site Found:New Feature to create: " + newFeaturesRef[i].getURL() + " as " + reconciliationType);
 					}
 
 					if (isOptimistic) {
@@ -208,8 +208,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite, boolean isOptimistic) throws CoreException {
 
 		// TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("Configured Site to reconfigure:" + oldConfiguredSite.getSite().getURL() + (isOptimistic ? " OPTIMISTIC" : " PESSIMISTIC"));
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Configured Site to reconfigure:" + oldConfiguredSite.getSite().getURL() + (isOptimistic ? " OPTIMISTIC" : " PESSIMISTIC"));
 		}
 
 		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
@@ -224,9 +224,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IFeatureReference[] oldConfiguredFeaturesRef = oldConfiguredSite.getFeatureReferences();
 
 		// TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 			for (int i = 0; i < oldConfiguredFeaturesRef.length; i++) {
-				UpdateCORE.debug("Old feature :" + oldConfiguredFeaturesRef[i].getURL());
+				UpdateCore.debug("Old feature :" + oldConfiguredFeaturesRef[i].getURL());
 			}
 		}
 
@@ -234,8 +234,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			boolean newFeatureFound = true;
 
 			// TRACE
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug("Is this feature new? :" + foundFeatures[i].getURL());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("Is this feature new? :" + foundFeatures[i].getURL());
 			}
 
 			// if it is an old feature, add it to the list of features to check	
@@ -284,9 +284,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private void configureNewFoundFeature(boolean isOptimistic, ConfigurationPolicy newSitePolicy, ConfigurationPolicy oldSitePolicy, IFeatureReference foundFeature, IFeatureReference[] possibleParents) throws CoreException {
 
 		// TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 			String reconciliationType = isOptimistic ? "enable (optimistic)" : "disable (pessimistic)";
-			UpdateCORE.debug("This feature is new: " + foundFeature.getURL() + " reconciled as " + reconciliationType);
+			UpdateCore.debug("This feature is new: " + foundFeature.getURL() + " reconciled as " + reconciliationType);
 		}
 
 		if (isOptimistic) {
@@ -300,8 +300,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// none of my parents consider me as optional OR I have no parents,
 		// consider as root feature
 		if (allOptionalParents.length == 0) {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug("There are no features who consider the feature as optional. Treat as root feature.");
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("There are no features who consider the feature as optional. Treat as root feature.");
 			}
 			newSitePolicy.unconfigure(foundFeature, true, false);
 			newFoundFeatures.add(foundFeature);
@@ -312,8 +312,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		//At least one of my parent considers me non optional
 		// consider root feature
 		if (allParents.length > allOptionalParents.length) {
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug("At least one parent considers the feature as NON optional. Treat as root feature.");
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("At least one parent considers the feature as NON optional. Treat as root feature.");
 			}
 			newSitePolicy.unconfigure(foundFeature, true, false);
 			newFoundFeatures.add(foundFeature);
@@ -323,8 +323,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		for (int i = 0; i < allOptionalParents.length; i++) {
 			// one parent that consider me optional is enable, enable feature
 			if (oldSitePolicy.isConfigured(allOptionalParents[i])) {
-				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-					UpdateCORE.debug("Found parent feature:" + allOptionalParents[i] + " as enable: Enable optional child feature:" + foundFeature);
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+					UpdateCore.debug("Found parent feature:" + allOptionalParents[i] + " as enable: Enable optional child feature:" + foundFeature);
 				}
 				newSitePolicy.configure(foundFeature, true, false);
 				return;
@@ -333,8 +333,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		// found parent that consider me optional but they are all disable
 		// unconfigure feature without adding it to the list fo new found features
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("No parents are enable. Disable feature.");
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("No parents are enable. Disable feature.");
 		}
 		newSitePolicy.unconfigure(foundFeature, true, false);
 
@@ -375,8 +375,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
 
 		// TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("Compare features within :" + configuredSite.getSite().getURL());
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Compare features within :" + configuredSite.getSite().getURL());
 		}
 
 		for (int indexConfiguredFeatures = 0; indexConfiguredFeatures < configuredFeatures.length - 1; indexConfiguredFeatures++) {
@@ -408,8 +408,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private static int compare(IFeatureReference featureRef1, IFeatureReference featureRef2) throws CoreException {
 
 		// TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("Compare: " + featureRef1 + " && " + featureRef2);
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Compare: " + featureRef1 + " && " + featureRef2);
 		}
 
 		if (featureRef1 == null)
@@ -421,7 +421,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			feature1 = featureRef1.getFeature();
 			feature2 = featureRef2.getFeature();
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			return 0;
 		}
 
@@ -487,7 +487,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private boolean saveNewFeatures() throws CoreException {
 
 		if (getFeatureReferences().length == 0) {
-			UpdateCORE.warn("No new features found");
+			UpdateCore.warn("No new features found");
 			return false;
 		}
 
@@ -501,13 +501,13 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 
 		if (getFeatureReferences().length == 0) {
-			UpdateCORE.warn("No root feature found when saving new features");
+			UpdateCore.warn("No root feature found when saving new features");
 			return false;
 		}
 
 		date = new Date();
 		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_INSTALL_CHANGE_NAME, date);
-		IPath path = UpdateCORE.getPlugin().getStateLocation();
+		IPath path = UpdateCore.getPlugin().getStateLocation();
 		IPath filePath = path.append(fileName);
 		File file = filePath.toFile();
 		// persist list of new features 
@@ -591,7 +591,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites) {
 
 		if (oldConfiguredSites == null) {
-			UpdateCORE.warn("No previous configured sites. Optimistic reconciliation.");
+			UpdateCore.warn("No previous configured sites. Optimistic reconciliation.");
 			return true;
 		}
 
@@ -600,14 +600,14 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		try {
 			platformURL = new URL(platformString);
 		} catch (MalformedURLException e) {
-			UpdateCORE.warn("Unable to resolve platform:/base/. Check you are running a Platform", e);
+			UpdateCore.warn("Unable to resolve platform:/base/. Check you are running a Platform", e);
 			return true;
 		}
 		URL resolvedCurrentBaseURL = null;
 		try {
 			resolvedCurrentBaseURL = Platform.resolve(platformURL);
 		} catch (IOException e) {
-			UpdateCORE.warn("Error while resolving platform:/base/. Check you are running a Platform", e);
+			UpdateCore.warn("Error while resolving platform:/base/. Check you are running a Platform", e);
 			return true;
 		}
 
@@ -626,21 +626,21 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 
 		if (!found) {
-			UpdateCORE.warn("Unable to find an old consifured site with platform:/base/ as a platform URL");
+			UpdateCore.warn("Unable to find an old configured site with platform:/base/ as a platform URL");
 			return true;
 		}
 
 		if (cSite == null) {
-			UpdateCORE.warn("The configuredSite that contains the platform is null");
+			UpdateCore.warn("The configuredSite that contains the platform is null");
 			return true;
 		}
 
 		if (UpdateManagerUtils.sameURL(resolvedCurrentBaseURL, cSite.getSite().getURL())) {
-			UpdateCORE.warn("Platform URL found are the same:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
+			UpdateCore.warn("Platform URL found are the same:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
 			return false;
 		}
 
-		UpdateCORE.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
+		UpdateCore.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
 		return true;
 	}
 
@@ -662,8 +662,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// determine "proposed" list of configured features
 		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
 		// debug
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("Validate configuration of site " + cSite.getSite().getURL());
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Validate configuration of site " + cSite.getSite().getURL());
 		}
 		IFeatureReference[] configuredRefs = cSite.getConfiguredFeatures();
 		ArrayList allPossibleConfiguredFeatures = new ArrayList();
@@ -672,11 +672,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				IFeature feature = configuredRefs[i].getFeature();
 				allPossibleConfiguredFeatures.add(feature);
 				// debug
-				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-					UpdateCORE.debug("   configured feature " + feature.getVersionedIdentifier().toString());
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+					UpdateCore.debug("   configured feature " + feature.getVersionedIdentifier().toString());
 				}
 			} catch (CoreException e) {
-				UpdateCORE.warn("", e);
+				UpdateCore.warn("", e);
 			}
 		}
 
@@ -697,11 +697,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			try {
 				cPolicy.unconfigure(ref, true, false);
 				// debug
-				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-					UpdateCORE.debug("Unconfiguring \"extra\" feature " + feature.getVersionedIdentifier().toString());
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+					UpdateCore.debug("Unconfiguring \"extra\" feature " + feature.getVersionedIdentifier().toString());
 				}
 			} catch (CoreException e) {
-				UpdateCORE.warn("", e);
+				UpdateCore.warn("", e);
 			}
 		}
 	}
@@ -722,7 +722,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			try {
 				children = list[i].getIncludedFeatureReferences();
 			} catch (CoreException e) {
-				UpdateCORE.warn("", e);
+				UpdateCore.warn("", e);
 			}
 
 			if (children != null) {
@@ -737,7 +737,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					} catch (CoreException e) {
 						// if optional, it may not exist, do not throw error for that
 						if (!children[j].isOptional()) {
-							UpdateCORE.warn(null, e);
+							UpdateCore.warn(null, e);
 						}
 					}
 				}
@@ -745,10 +745,10 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 
 		// debug
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("Computed top-level features");
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Computed top-level features");
 			for (int i = 0; i < result.size(); i++) {
-				UpdateCORE.debug("   " + ((IFeature) result.get(i)).getVersionedIdentifier().toString());
+				UpdateCore.debug("   " + ((IFeature) result.get(i)).getVersionedIdentifier().toString());
 			}
 		}
 
@@ -765,8 +765,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					if (rightVid.getVersion().isGreaterOrEqualTo(leftVid.getVersion())) {
 						result.remove(left);
 						// debug
-						if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-							UpdateCORE.debug("Removing \"duplicate\" " + left.getVersionedIdentifier().toString());
+						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+							UpdateCore.debug("Removing \"duplicate\" " + left.getVersionedIdentifier().toString());
 						}
 						break;
 					}
@@ -801,8 +801,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		if (!features.contains(feature)) {
 			features.add(feature);
 			// debug
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString());
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString());
 			}
 		}
 
@@ -811,7 +811,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		try {
 			children = feature.getIncludedFeatureReferences();
 		} catch(CoreException e){
-			UpdateCORE.warn("",e);
+			UpdateCore.warn("",e);
 			return;
 		}
 		
@@ -821,7 +821,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				child = children[j].getFeature();
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
-					UpdateCORE.warn("", e);
+					UpdateCore.warn("", e);
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null)

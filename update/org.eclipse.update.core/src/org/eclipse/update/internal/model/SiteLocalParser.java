@@ -33,9 +33,9 @@ public class SiteLocalParser extends DefaultHandler {
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			UpdateCORE.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCORE.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}
@@ -66,8 +66,8 @@ public class SiteLocalParser extends DefaultHandler {
 		this.site = (SiteLocalModel) site;
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("Start parsing localsite:" + ((SiteLocalModel) site).getLocationURLString()); //$NON-NLS-1$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("Start parsing localsite:" + ((SiteLocalModel) site).getLocationURLString()); //$NON-NLS-1$
 		}
 		
 		bundle = getResourceBundle();
@@ -83,9 +83,9 @@ public class SiteLocalParser extends DefaultHandler {
 		try {
 			url = UpdateManagerUtils.asDirectoryURL(site.getLocationURL());
 		} catch (MissingResourceException e) {
-			UpdateCORE.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCORE.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return url;
 	}
@@ -96,8 +96,8 @@ public class SiteLocalParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 
@@ -151,8 +151,8 @@ public class SiteLocalParser extends DefaultHandler {
 		site.setStamp(stamp);
 	
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End process Site label:" + info); //$NON-NLS-1$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End process Site label:" + info); //$NON-NLS-1$
 		}
 	
 	}
@@ -178,8 +178,8 @@ public class SiteLocalParser extends DefaultHandler {
 			site.addConfigurationModel(config);
 		}
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End Processing Config Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 		}
 	}
 
@@ -188,8 +188,8 @@ public class SiteLocalParser extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		// DEBUG:		
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug("End Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		String tag = localName.trim();

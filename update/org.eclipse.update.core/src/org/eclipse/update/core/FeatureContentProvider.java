@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Base implementation of a feature content provider.
@@ -422,7 +422,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		try {
 			prop.load(permissionReference.getInputStream());
 		} catch (IOException e) {
-			UpdateCORE.warn("", e);
+			UpdateCore.warn("", e);
 		}
 
 		String executables = prop.getProperty(EXECUTABLES);

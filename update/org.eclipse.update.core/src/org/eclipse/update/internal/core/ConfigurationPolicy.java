@@ -84,7 +84,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			return;
 
 		if (featureReference == null) {
-			UpdateCORE.warn("The feature reference to configure is null");
+			UpdateCore.warn("The feature reference to configure is null");
 			return;
 		}
 
@@ -95,14 +95,14 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (!UpdateManagerUtils.isOptional(featureReference)){			
 				URL url = featureReference.getURL();
 				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-				UpdateCORE.warn("Error retrieving feature:" + urlString, e);
+				UpdateCore.warn("Error retrieving feature:" + urlString, e);
 				return;
 			}
 		}
 		if (feature == null) {
 			URL url = featureReference.getURL();
 			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCORE.warn("The feature to unconfigure is null: feature reference is:" + urlString);
+			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString);
 		}
 
 		// Setup optional install handler
@@ -161,12 +161,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	public boolean unconfigure(IFeatureReference featureReference, boolean callInstallHandler, boolean createActivity) throws CoreException {
 
 		if (isUnconfigured(featureReference)){
-			UpdateCORE.warn("Feature already unconfigured");			
+			UpdateCore.warn("Feature already unconfigured");			
 			return true;
 		}
 
 		if (featureReference == null) {
-			UpdateCORE.warn("The feature reference to unconfigure is null");
+			UpdateCore.warn("The feature reference to unconfigure is null");
 			return false;
 		}
 
@@ -177,7 +177,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (!UpdateManagerUtils.isOptional(featureReference)){
 				URL url = featureReference.getURL();
 				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-				UpdateCORE.warn("Error retrieving feature:" + urlString, e);
+				UpdateCore.warn("Error retrieving feature:" + urlString, e);
 				return false;
 			}
 		}
@@ -185,7 +185,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (feature == null) {
 			URL url = featureReference.getURL();
 			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCORE.warn("The feature to unconfigure is null: feature reference is:" + urlString);
+			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString);
 			return false;
 		}
 
@@ -256,7 +256,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (!success) {
 			URL url = featureReference.getURL();
 			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCORE.warn("Unable to unconfigure:" + urlString);
+			UpdateCore.warn("Unable to unconfigure:" + urlString);
 		}
 		return success;
 	}
@@ -275,11 +275,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
 			//           are configured
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.warn("UNCONFIGURED PLUGINS");			
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.warn("UNCONFIGURED PLUGINS");			
 			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-				UpdateCORE.warn("CONFIGURED PLUGINS");			
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.warn("CONFIGURED PLUGINS");			
 			String[] configured = getPluginString(site, getConfiguredFeatures());
 			pluginsToWrite = delta(configured, unconfigured);
 		} else {
@@ -288,10 +288,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		}
 
 		//TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug("GetPluginPath for: " + ((site == null) ? "<No site>" : site.getURL().toString()));
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("GetPluginPath for: " + ((site == null) ? "<No site>" : site.getURL().toString()));
 			for (int i = 0; i < pluginsToWrite.length; i++) {
-				UpdateCORE.debug("To write:" + pluginsToWrite[i]);
+				UpdateCore.debug("To write:" + pluginsToWrite[i]);
 			}
 		}
 
@@ -308,18 +308,18 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		}
 		String[] pluginsNotToWrite = getPluginString(site, arrayOfFeatureRef);
 		//TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER){
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER){
 			for (int i = 0; i < pluginsNotToWrite.length; i++) {
-				UpdateCORE.debug("Not to write:"+pluginsNotToWrite[i]);
+				UpdateCore.debug("Not to write:"+pluginsNotToWrite[i]);
 			}
 		}		
 		
 		String[] included = delta(pluginsNotToWrite, pluginRead);
 		//TRACE
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER){
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER){
 			if (included!=null)
 			for (int i = 0; i < included.length; i++) {
-				UpdateCORE.debug("Delta with read:"+included[i]);
+				UpdateCore.debug("Delta with read:"+included[i]);
 			}
 		}		
 		result = union(included, pluginsToWrite);*/
@@ -386,11 +386,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				try {
 					feature = element.getFeature();
 				} catch (CoreException e) {
-					UpdateCORE.warn(null, e);
+					UpdateCore.warn(null, e);
 				};
 				IPluginEntry[] entries = null;
 				if (feature == null) {
-					UpdateCORE.warn("Null Feature", new Exception());
+					UpdateCore.warn("Null Feature", new Exception());
 					entries = new IPluginEntry[0];
 				} else {
 					entries = feature.getPluginEntries();
@@ -405,7 +405,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 						featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
 						);
 					} catch (CoreException e) {
-						UpdateCORE.warn(null, e);
+						UpdateCore.warn(null, e);
 					}
 
 					// transform into a valid String
@@ -422,8 +422,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 								path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
 								//$NON-NLS-1$ //$NON-NLS-2$
 								pluginsString.add(path);
-								if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-									UpdateCORE.warn("Add plugin: "+path+" to the list");
+								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+									UpdateCore.warn("Add plugin: "+path+" to the list");
 							}
 						}
 					}

@@ -7,7 +7,7 @@ package org.eclipse.update.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Convenience implementation of a feature reference.
@@ -55,7 +55,7 @@ public class SiteFeatureReference extends SiteFeatureReferenceModel implements I
 					categories.add(siteCat);
 				else {
 					String siteURL = getSite().getURL() != null ? getSite().getURL().toExternalForm() : null;
-					UpdateCORE.warn("Category " + categoriesAsString[i] + " not found in Site:" + siteURL);
+					UpdateCore.warn("Category " + categoriesAsString[i] + " not found in Site:" + siteURL);
 				}
 			}
 		}

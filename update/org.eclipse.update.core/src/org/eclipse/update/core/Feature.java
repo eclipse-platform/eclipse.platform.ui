@@ -82,7 +82,7 @@ public class Feature extends FeatureModel implements IFeature {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCORE.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
 			}
 		}
 
@@ -111,7 +111,7 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
-			UpdateCORE.warn("No content Provider", e);
+			UpdateCore.warn("No content Provider", e);
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}
@@ -326,7 +326,7 @@ public class Feature extends FeatureModel implements IFeature {
 				try {
 					childFeature = children[i].getFeature();
 				} catch (CoreException e) {
-					UpdateCORE.warn(null, e);
+					UpdateCore.warn(null, e);
 				}
 				if (childFeature != null) {
 					if (monitor != null)
@@ -564,7 +564,7 @@ public class Feature extends FeatureModel implements IFeature {
 			return getFeatureContentProvider().getDownloadSizeFor(totalPlugins, totalNonPlugins);
 
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 	}
@@ -605,7 +605,7 @@ public class Feature extends FeatureModel implements IFeature {
 			return getFeatureContentProvider().getInstallSizeFor(totalPlugins, totalNonPlugins);
 
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 	}
@@ -766,8 +766,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	private void debug(String trace) {
 		//DEBUG
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_INSTALL) {
-			UpdateCORE.debug(trace);
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
+			UpdateCore.debug(trace);
 		}
 	}
 
@@ -835,11 +835,11 @@ public class Feature extends FeatureModel implements IFeature {
 				if (this.equals(currentReference.getFeature()))
 					return currentReference; // 18867
 			} catch (CoreException e) {
-				UpdateCORE.warn(null, e);
+				UpdateCore.warn(null, e);
 			}
 		}
 
-		UpdateCORE.warn("ValidateAlreadyInstalled:Feature " + this +" not found on site" + this.getURL());
+		UpdateCore.warn("ValidateAlreadyInstalled:Feature " + this +" not found on site:" + this.getURL());
 		return null;
 	}
 
@@ -851,8 +851,8 @@ public class Feature extends FeatureModel implements IFeature {
 
 		if (referenceToReinitialize==null) return;
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
-			UpdateCORE.debug("Re initialize feature reference:" + referenceToReinitialize);
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+			UpdateCore.debug("Re initialize feature reference:" + referenceToReinitialize);
 
 		IFeature feature = null;
 		try {
@@ -873,7 +873,7 @@ public class Feature extends FeatureModel implements IFeature {
 				}
 			}
 		} catch (CoreException e) {
-			UpdateCORE.warn("", e);
+			UpdateCore.warn("", e);
 		}
 	}
 	
@@ -899,8 +899,8 @@ public class Feature extends FeatureModel implements IFeature {
 				if (UpdateManagerUtils.isValidEnvironment(included))
 					list.add(included);
 				else{
-					if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_WARNINGS){
-						UpdateCORE.warn("Filtered out feature reference:"+included);
+					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS){
+						UpdateCore.warn("Filtered out feature reference:"+included);
 					}
 				}
 			}

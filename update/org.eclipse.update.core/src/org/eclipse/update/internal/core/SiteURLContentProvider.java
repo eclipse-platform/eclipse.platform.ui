@@ -51,8 +51,8 @@ public class SiteURLContentProvider extends SiteContentProvider {
 		IArchiveReference[] siteArchives = getSite().getArchives();
 		if (siteArchives.length > 0) {
 			for (int i = 0; i < siteArchives.length && !found; i++) {
-				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_INSTALL)
-					UpdateCORE.debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath());
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
+					UpdateCore.debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath());
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {
 					result = siteArchives[i].getURL();
 					found = true;

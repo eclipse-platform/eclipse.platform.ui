@@ -94,7 +94,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 
 			try {
 				URL remoteURL =
-					new URL(SOURCE_FILE_SITE + "resolved/feature.xml");
+					new URL(SOURCE_FILE_SITE + "parsertests/feature3.xml");
 				DefaultFeatureParser parser =
 					new DefaultFeatureParser();
 				parser.init(new FeatureExecutableFactory());

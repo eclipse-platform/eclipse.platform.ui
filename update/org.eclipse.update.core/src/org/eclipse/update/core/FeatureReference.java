@@ -46,7 +46,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			setURL(ref.getURL());
 		} catch (CoreException e) {
-			UpdateCORE.warn("", e);
+			UpdateCore.warn("", e);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			setURL(ref.getURL());
 		} catch (CoreException e) {
-			UpdateCORE.warn("", e);
+			UpdateCore.warn("", e);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCORE.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
 			}
 		}
 
@@ -171,7 +171,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			versionId = getFeature().getVersionedIdentifier();
 		} catch (CoreException e) {
-			UpdateCORE.warn("", e);
+			UpdateCore.warn("", e);
 		}
 		return versionId;
 	}

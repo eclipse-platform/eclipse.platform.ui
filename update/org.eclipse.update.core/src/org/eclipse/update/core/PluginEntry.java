@@ -5,7 +5,7 @@ package org.eclipse.update.core;
  */
 
 import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Convenience implementation of plug-in entry.
@@ -45,7 +45,7 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCORE.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
 			}
 		}
 

@@ -7,7 +7,7 @@ package org.eclipse.update.configuration;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.Volume;
  
 /**
@@ -220,7 +220,7 @@ public class LocalSystemInfo {
 			System.loadLibrary("update"); //$NON-NLS-1$
 			hasNatives = true;
 		} catch (UnsatisfiedLinkError e) {
-			UpdateCORE.warn("Unable to load native library 'update'."); //$NON-NLS-1$
+			UpdateCore.warn("Unable to load native library 'update'."); //$NON-NLS-1$
 			hasNatives = false;
 		}
 	}
@@ -283,7 +283,7 @@ public class LocalSystemInfo {
 				vol[i].markReadOnly();
 			}
 		} else {
-			UpdateCORE.warn("Unable to find mount points");
+			UpdateCore.warn("Unable to find mount points");
 			// fallback
 			File [] roots = File.listRoots();
 			if (roots.length == 1) {

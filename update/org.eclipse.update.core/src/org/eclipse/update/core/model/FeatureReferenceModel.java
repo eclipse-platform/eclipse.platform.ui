@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.update.core.Site;
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -244,7 +244,7 @@ public class FeatureReferenceModel extends ModelObject {
 		try {
 			url = resolveURL(base, bundleURL, urlString);
 		} catch (MalformedURLException e){
-			UpdateCORE.warn("",e);
+			UpdateCore.warn("",e);
 		}
 	}
 

@@ -46,7 +46,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		String pluginPath = null;
 
 		if (closed) {
-			UpdateCORE.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
@@ -101,7 +101,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void close() throws CoreException {
 
 		if (closed) {
-			UpdateCORE.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
@@ -131,7 +131,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateCORE.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
@@ -149,7 +149,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 		if (!sucess) {
 			String msg = Policy.bind("Unable to delete", oldPath);
-			UpdateCORE.log(msg, null);
+			UpdateCore.log(msg, null);
 		} else {
 			// remove the plugin files;
 			Iterator iter = installedFiles.iterator();

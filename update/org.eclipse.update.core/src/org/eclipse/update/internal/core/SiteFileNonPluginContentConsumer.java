@@ -29,7 +29,7 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
 
 		if (closed) {
-			UpdateCORE.warn("Attempt to store in a closed SiteFileNonPluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to store in a closed SiteFileNonPluginContentConsumer", new Exception());
 			return;
 		}
 
@@ -60,7 +60,7 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	 */
 	public void close() {
 		if (closed) {
-			UpdateCORE.warn("Attempt to close a closed SiteFileNonPluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to close a closed SiteFileNonPluginContentConsumer", new Exception());
 			return;
 		}
 		closed = true;

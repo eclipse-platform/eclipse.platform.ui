@@ -100,7 +100,7 @@ public class Site extends SiteModel implements ISite {
 		try {
 			url = getSiteContentProvider().getURL();
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 		}
 		return url;
 	}
@@ -151,10 +151,10 @@ public class Site extends SiteModel implements ISite {
 		//DEBUG:
 		if (!found) {
 			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>";
-			UpdateCORE.warn(Policy.bind("Site.CannotFindCategory", key, URLString));
+			UpdateCore.warn(Policy.bind("Site.CannotFindCategory", key, URLString));
 			//$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateCORE.warn(Policy.bind("Site.NoCategories"));
+				UpdateCore.warn(Policy.bind("Site.NoCategories"));
 			//$NON-NLS-1$
 		}
 
@@ -197,8 +197,8 @@ public class Site extends SiteModel implements ISite {
 				if (UpdateManagerUtils.isValidEnvironment(included))
 					list.add(included);
 				else{
-					if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_WARNINGS){
-						UpdateCORE.warn("Filtered out feature reference:"+included);
+					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS){
+						UpdateCore.warn("Filtered out feature reference:"+included);
 					}
 				}
 			}
@@ -221,7 +221,7 @@ public class Site extends SiteModel implements ISite {
 	public ISiteFeatureReference getFeatureReference(IFeature feature) {
 
 		if (feature == null) {
-			UpdateCORE.warn("Site:getFeatureReference: The feature is null");
+			UpdateCore.warn("Site:getFeatureReference: The feature is null");
 			return null;
 		}
 
@@ -233,7 +233,7 @@ public class Site extends SiteModel implements ISite {
 				return currentReference;
 		}
 
-		UpdateCORE.warn("Feature " + feature + " not found on site" + this.getURL());
+		UpdateCore.warn("Feature " + feature + " not found on site" + this.getURL());
 		return null;
 	}
 
@@ -323,7 +323,7 @@ public class Site extends SiteModel implements ISite {
 					try {
 						featureToCompare = features[indexFeatures].getFeature();
 					} catch (CoreException e) {
-						UpdateCORE.warn(null, e);
+						UpdateCore.warn(null, e);
 					}
 					if (!feature.equals(featureToCompare)) {
 						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();

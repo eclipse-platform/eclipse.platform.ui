@@ -52,7 +52,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private static final int STATE_IMPORT = 11;
 	private static final int STATE_PLUGIN = 12;
 	private static final int STATE_DATA = 13;
-	private static final String PLUGIN_ID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
+	private static final String PLUGIN_ID = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 
 	private static final String FEATURE = "feature"; //$NON-NLS-1$
 	private static final String INCLUDES = "includes"; //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -476,7 +476,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		}
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("End Element:" + uri + ":" + localName + ":" + qName);
 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -771,7 +771,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(feature);
 
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 				debug("End process DefaultFeature tag: id:" //$NON-NLS-1$
 				+id + " ver:" //$NON-NLS-1$
 				+ver + " label:" //$NON-NLS-1$
@@ -804,7 +804,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		objectStack.push(handler);
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("Processed Handler: url:" //$NON-NLS-1$
 			+handlerURL + " library:" //$NON-NLS-1$
 			+library + " class:" //$NON-NLS-1$
@@ -821,7 +821,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		objectStack.push(inf);
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("Processed Info: url:" + infoURL); //$NON-NLS-1$
 	}
 
@@ -882,7 +882,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		objectStack.push(includedFeature);
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			debug("End process Includes tag: id:" //$NON-NLS-1$
 			+id + " ver:" + ver); //$NON-NLS-1$
 			debug("name =" + name + " optional=" + optional + " match=" + ruleName + " search-location=" + locationName);
@@ -900,7 +900,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		inf.setURLString(infoURL);
 		inf.setAnnotation(label);
 
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("Processed URLInfo: url:" + infoURL + " label:" + label);
 		//$NON-NLS-1$ //$NON-NLS-2$
 
@@ -980,7 +980,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(imp);
 
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 				debug("Processed import: id:" + id + " ver:" + ver);
 				//$NON-NLS-1$ //$NON-NLS-2$
 				debug("Processed import: match:" + match); //$NON-NLS-1$
@@ -1056,7 +1056,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(pluginEntry);
 
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 				debug("Processed Plugin: id:" + id + " ver:" + ver + " fragment:" + fragment);
 				//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				debug("Processed Plugin: os:" + os + " ws:" + ws + " nl:" + nl);
@@ -1124,7 +1124,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(dataEntry);
 
-			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 				debug("Processed Data: id:" + id); //$NON-NLS-1$
 				debug("Processed Data: download size:" //$NON-NLS-1$
 				+download_size + " install size:" //$NON-NLS-1$
@@ -1135,7 +1135,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	private void debug(String s) {
-		UpdateCORE.debug("DefaultFeatureParser: " + s); //$NON-NLS-1$
+		UpdateCore.debug("DefaultFeatureParser: " + s); //$NON-NLS-1$
 	}
 
 	private void logStatus(SAXParseException ex) {
@@ -1171,8 +1171,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 
 		status.add(error);
-		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
-			UpdateCORE.log(error);
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
+			UpdateCore.log(error);
 	}
 
 	private void internalErrorUnknownTag(String msg) {

@@ -7,7 +7,7 @@ package org.eclipse.update.core.model;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.update.internal.core.UpdateCORE;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Annotated URL model object.
@@ -143,7 +143,7 @@ public class URLEntryModel extends ModelObject {
 		try {
 			url = resolveURL(base,bundleURL, urlString);
 		} catch (MalformedURLException e){
-			UpdateCORE.warn("",e);
+			UpdateCore.warn("",e);
 		}
 	}
 }

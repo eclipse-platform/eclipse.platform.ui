@@ -22,7 +22,7 @@ import org.eclipse.update.core.Utilities;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class UpdateCORE extends Plugin {
+public class UpdateCore extends Plugin {
 
 	// debug options
 	public static boolean DEBUG = false;
@@ -36,7 +36,7 @@ public class UpdateCORE extends Plugin {
 	public static boolean DEBUG_SHOW_RECONCILER = false;
 
 	//The shared instance.
-	private static UpdateCORE plugin;
+	private static UpdateCore plugin;
 
 	//log
 	private static UpdateManagerLogWriter log;
@@ -51,7 +51,7 @@ public class UpdateCORE extends Plugin {
 	/**
 	 * The constructor.
 	 */
-	public UpdateCORE(IPluginDescriptor descriptor) {
+	public UpdateCore(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
 	}
@@ -59,7 +59,7 @@ public class UpdateCORE extends Plugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static UpdateCORE getPlugin() {
+	public static UpdateCore getPlugin() {
 		return plugin;
 	}
 
@@ -176,7 +176,7 @@ public class UpdateCORE extends Plugin {
 	 * Logs a status
 	 */
 	public static void log(IStatus status){
-		UpdateCORE.getPlugin().getLog().log(status);		
+		UpdateCore.getPlugin().getLog().log(status);		
 	}
 	
 	/**

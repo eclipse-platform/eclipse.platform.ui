@@ -26,12 +26,12 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	
 	
 	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
+		String pluginID = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
 		return pluginID + PACKAGED_FEATURE_TYPE;
 	}
 	
 	public String getDefaultExecutableFeatureType() {
-		String pluginID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
+		String pluginID = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
 		return pluginID + INSTALLED_FEATURE_TYPE;
 	}		
 	

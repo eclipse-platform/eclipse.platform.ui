@@ -109,7 +109,7 @@ public class SiteFile extends Site {
 	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
 
 		if (feature == null) {
-			UpdateCORE.warn("Feature to remove is null");
+			UpdateCore.warn("Feature to remove is null");
 			return;
 		}
 
@@ -188,7 +188,7 @@ public class SiteFile extends Site {
 				try {
 					childFeature = childrenRef[i].getFeature();
 				} catch (CoreException e) {
-					UpdateCORE.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
+					UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
 				}
 				if (childFeature != null)
 					remove(childrenRef[i].getFeature(), monitor);
@@ -244,7 +244,7 @@ public class SiteFile extends Site {
 		try {
 			result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, nonPluginEntriesToInstall);
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 		return result;
@@ -292,7 +292,7 @@ public class SiteFile extends Site {
 
 			result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, nonPluginEntriesToInstall);
 		} catch (CoreException e) {
-			UpdateCORE.warn(null, e);
+			UpdateCore.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -384,7 +384,7 @@ public class SiteFile extends Site {
 				try {
 					recoveryLog.appendPath(ErrorRecoveryLog.FEATURE_ENTRY, references[i].asFile().getAbsolutePath());
 				} catch (IOException e) {
-					String id = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
+					String id = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 					throw Utilities.newCoreException(Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e);
 					//$NON-NLS-1$
 				}
@@ -419,7 +419,7 @@ public class SiteFile extends Site {
 			try {
 				childFeature = childrenRef[i].getFeature();
 			} catch (CoreException e) {
-				UpdateCORE.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
+				UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
 			}
 			aboutToRemove(childFeature);
 		}

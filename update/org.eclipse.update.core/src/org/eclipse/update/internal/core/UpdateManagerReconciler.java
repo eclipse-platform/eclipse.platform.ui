@@ -55,7 +55,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	public Object run(Object args) throws Exception {
 		
 		// get debug setting and process command line arguments
-		DEBUG = UpdateCORE.DEBUG_SHOW_RECONCILER;
+		DEBUG = UpdateCore.DEBUG_SHOW_RECONCILER;
 		processCommandLine((String[])args);		
 		
 		// obtain current platform configuration and save stamps
@@ -137,9 +137,9 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 			if (DEBUG) 
 				debug(changes ? "changes detected" :"no changes detected"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CoreException e){
-			UpdateCORE.warn(null,e);
+			UpdateCore.warn(null,e);
 		} catch (Exception e) {
-			UpdateCORE.warn(null,e);
+			UpdateCore.warn(null,e);
 		}
 		cfg.refresh(); // recompute stamps and plugin path
 		
@@ -266,6 +266,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	}
 	
 	private void debug(String s) {
-		UpdateCORE.debug(this.getClass().getName()+": "+s); //$NON-NLS-1$
+		UpdateCore.debug(this.getClass().getName()+": "+s); //$NON-NLS-1$
 	}
 }

@@ -47,9 +47,9 @@ public class InstallChangeParser extends DefaultHandler {
 		this.file = file;
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG
-			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug(
+		if (UpdateCore.DEBUG
+			&& UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug(
 				"Start parsing Install Change:");
 			//$NON-NLS-1$
 		}
@@ -79,9 +79,9 @@ public class InstallChangeParser extends DefaultHandler {
 		throws SAXException {
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG
-			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug(
+		if (UpdateCore.DEBUG
+			&& UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug(
 				"Start Element: uri:"
 					+ uri
 					+ " local Name:"
@@ -151,9 +151,9 @@ public class InstallChangeParser extends DefaultHandler {
 			change.addReference(ref);
 
 			// DEBUG:		
-			if (UpdateCORE.DEBUG
-				&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
-				UpdateCORE.debug(
+			if (UpdateCore.DEBUG
+				&& UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug(
 					"End Processing Feature Reference: url:"
 						+ featureURL.toExternalForm());
 				//$NON-NLS-1$
@@ -163,7 +163,7 @@ public class InstallChangeParser extends DefaultHandler {
 					Policy.bind(
 						"InstallConfigurationParser.FeatureReferenceNoURL");
 			//$NON-NLS-1$
-			UpdateCORE.log(msg,new Exception());
+			UpdateCore.log(msg,new Exception());
 		}
 	}
 
@@ -173,9 +173,9 @@ public class InstallChangeParser extends DefaultHandler {
 	private void processNewFeature(Attributes attributes) {
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG
-			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
-			UpdateCORE.debug(
+		if (UpdateCore.DEBUG
+			&& UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug(
 				"End Processing New Features:");
 			//$NON-NLS-1$
 		}
@@ -193,9 +193,9 @@ public class InstallChangeParser extends DefaultHandler {
 		change.setCreationDate(new Date(date));
 
 		// DEBUG:		
-		if (UpdateCORE.DEBUG
-			&& UpdateCORE.DEBUG_SHOW_PARSING) {
-			UpdateCORE.debug(
+		if (UpdateCore.DEBUG
+			&& UpdateCore.DEBUG_SHOW_PARSING) {
+			UpdateCore.debug(
 				"End Processing Change: date:" + date);
 			//$NON-NLS-1$
 		}
