@@ -823,7 +823,7 @@ public class InstallConfiguration
 				if ("file".equals(pluginEntryfullURL.getProtocol())){
 					String fileString = pluginEntryfullURL.getFile();
 					if (!new File(fileString).exists()){
-						UpdateManagerPlugin.log("The URL:"+result+" doesn't point to a valid platform plugin.The URL will not be written in the platform configuration",new Exception());
+						UpdateManagerPlugin.warn("The URL:"+result+" doesn't point to a valid platform plugin.The URL will not be written in the platform configuration",new Exception());
 						return null;
 					}				
 				} 

@@ -4,10 +4,6 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,7 +31,6 @@ public class UpdateManagerPlugin extends Plugin {
 
 	//The shared instance.
 	private static UpdateManagerPlugin plugin;
-	private static SimpleDateFormat formatter = new SimpleDateFormat ("mm:ss:SSS");
 
 
 	// web install
@@ -129,14 +124,10 @@ public class UpdateManagerPlugin extends Plugin {
 	 * dumps a String in the trace
 	 */
 	public static void debug(String s) {
-		Date d = new Date();
-		String dateString = formatter.format(d);
 		StringBuffer msg = new StringBuffer();
 		msg.append(getPlugin().toString());
 		msg.append("^");
 		msg.append(Integer.toHexString(Thread.currentThread().hashCode()));
-		msg.append("@");		
-		msg.append(dateString);		
 		msg.append(" ");
 		msg.append(s);
 		System.out.println(msg.toString());
@@ -146,8 +137,12 @@ public class UpdateManagerPlugin extends Plugin {
 	 * Dumps a String in the log if WARNING is set to true
 	 */
 	public static void warn(String s) {
-		if (DEBUG && DEBUG_SHOW_WARNINGS)
-			debug(s); 
+		if (DEBUG && DEBUG_SHOW_WARNINGS) {
+			if (s!=null){
+				s="WARNING: "+s;
+			}
+			log(s, null); 
+		}
 	}
 
 	/**
@@ -160,11 +155,11 @@ public class UpdateManagerPlugin extends Plugin {
 	public static void warn(String s, Throwable e) {
 		if (DEBUG && DEBUG_SHOW_WARNINGS){
 			if (s!=null){
-				s="Install/Update WARNING:"+s;
+				s="WARNING: "+s;
 			}
 			log(s,e);
 		}
-	} 
+	}
 			
 	/**
 	 * Logs a status
