@@ -38,6 +38,7 @@ public interface ICVSUIConstants {
 	public final String IMG_MODULE = "obj16/module_rep.gif"; //$NON-NLS-1$
 	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif"; //$NON-NLS-1$
 	public final String IMG_DATE = "obj16/date.gif"; //$NON-NLS-1$
+	public final String IMG_CHANGELOG = "obj16/changelog_obj.gif"; //$NON-NLS-1$
 	
 	// toolbar
 	public final String IMG_REFRESH = "elcl16/refresh.gif"; //$NON-NLS-1$

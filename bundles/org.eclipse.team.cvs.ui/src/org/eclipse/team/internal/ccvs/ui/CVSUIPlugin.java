@@ -386,6 +386,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_NO_REMOTEDIR, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_DATE, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_CHANGELOG, baseURL);
 		
 		// special
 		createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$

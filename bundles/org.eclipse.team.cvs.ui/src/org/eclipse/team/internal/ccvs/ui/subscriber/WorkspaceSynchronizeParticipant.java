@@ -12,17 +12,11 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.actions.BranchAction;
-import org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction;
-import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
+import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -150,7 +144,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		configuration.addActionContribution(new WorkspaceActionContribution());
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
-		//configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
+		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
 		
 		// Add context menu groups here to give the client displaying the
 		// page a chance to remove the context menu

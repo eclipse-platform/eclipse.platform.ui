@@ -31,8 +31,6 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -102,20 +100,28 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	}
 	
 	private class FetchLogEntriesJob extends Job {
-		private SyncInfoSet set;
+		private Set syncSets = new HashSet();
 		public FetchLogEntriesJob() {
 			super("Retrieving revision histories");  //$NON-NLS-1$;
 			setUser(true);
-		}
-		public void setSyncInfoSet(SyncInfoSet set) {
-			this.set = set;
 		}
 		public boolean belongsTo(Object family) {
 			return family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
 		}
 		public IStatus run(IProgressMonitor monitor) {
-			if (set != null && !shutdown) {
-				final ISynchronizeModelElement[] nodes = calculateRoots(getSyncInfoSet(), monitor);				
+			if (syncSets != null && !shutdown) {
+				// Determine the sync sets for which to fetch comment nodes
+				SyncInfoSet[] updates;
+				synchronized(syncSets) {
+					updates = (SyncInfoSet[])syncSets.toArray(new SyncInfoSet[syncSets.size()]);
+					syncSets.clear();
+				}
+				
+				for (int i = 0; i < updates.length; i++) {
+					SyncInfoSet set = updates[i];
+					calculateRoots(updates[i], monitor);
+				}
+								
 				UIJob updateUI = new UIJob("") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						StructuredViewer tree = getViewer();	
@@ -128,6 +134,15 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			}
 			return Status.OK_STATUS;
 		}
+		public void add(SyncInfoSet set) {
+			synchronized(syncSets) {
+				syncSets.add(set);
+			}
+			schedule();
+		}
+		public boolean shouldRun() {
+			return !syncSets.isEmpty();
+		}
 	};
 	
 	public static class ChangeLogModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
@@ -136,7 +151,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			return ID;
 		}		
 		public String getName() {
-			return "Grouped By Comment (useful for browing incoming changes)";
+			return "Grouped By Comment (useful for browsing incoming changes)";
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATE);
@@ -161,57 +176,26 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 */
 	protected IDiffElement[] buildModelObjects(ISynchronizeModelElement node) {
 		if(node == getModelRoot()) {
-			if(fetchLogEntriesJob == null) {
-				fetchLogEntriesJob = new FetchLogEntriesJob();
-			}
-			if(fetchLogEntriesJob.getState() != Job.NONE) {
-				fetchLogEntriesJob.cancel();
-				try {
-					fetchLogEntriesJob.join();
-				} catch (InterruptedException e) {
-				}
-			}
-			fetchLogEntriesJob.setSyncInfoSet(getSyncInfoSet());
-			fetchLogEntriesJob.schedule();
+			commentRoots.clear();
+			startUpdateJob(getSyncInfoSet());
 		}
 		return new IDiffElement[0];
 	}
 
+	private void startUpdateJob(SyncInfoSet set) {
+		if(fetchLogEntriesJob == null) {
+			fetchLogEntriesJob = new FetchLogEntriesJob();
+		}
+		fetchLogEntriesJob.add(set);
+	}
+	
 	private ISynchronizeModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		try {
-			commentRoots.clear();
 			SyncInfo[] infos = set.getSyncInfos();
 			RemoteLogOperation logs = getSyncInfoComment(infos, monitor);
-			for (int i = 0; i < infos.length; i++) {	
-				ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)infos[i]);
-				ILogEntry logEntry = logs.getLogEntry(remoteResource);
-				ISynchronizeModelElement element;
-				
-				// If the element has a comment then group with common comment
-				if(remoteResource != null) {
-					DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
-					ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
-					if (changeRoot == null) {
-						changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
-						commentRoots.put(dateComment, changeRoot);
-						try {
-						setAllowRefreshViewer(false);
-						addToViewer(changeRoot);
-						} finally {
-							setAllowRefreshViewer(true);
-						}
-					}
-					element = new FullPathSyncInfoElement(changeRoot, infos[i]);
-				} else {
-					// For nodes without comments, simply parent with the root. These will be outgoing
-					// additions.
-					element = new FullPathSyncInfoElement(getModelRoot(), infos[i]);
-				}	
-				try {
-					setAllowRefreshViewer(false);
-				addToViewer(element);
-				} finally {
-					setAllowRefreshViewer(true);
+			if (logs != null) {
+				for (int i = 0; i < infos.length; i++) {
+					addSyncInfoToCommentNode(infos[i], logs);
 				}
 			}
 			return (ChangeLogDiffNode[]) commentRoots.values().toArray(new ChangeLogDiffNode[commentRoots.size()]);
@@ -223,6 +207,45 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	}
 	
+	/**
+	 * Create a node for the given sync info object. The logs should contain the log for this info.
+	 * 
+	 * @param info the info for which to create a node in the model
+	 * @param log the cvs log for this node
+	 */
+	private void addSyncInfoToCommentNode(SyncInfo info, RemoteLogOperation logs) {
+		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
+		ILogEntry logEntry = logs.getLogEntry(remoteResource);
+		ISynchronizeModelElement element;
+		
+		// If the element has a comment then group with common comment
+		if(remoteResource != null) {
+			DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
+			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
+			if (changeRoot == null) {
+				changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
+				commentRoots.put(dateComment, changeRoot);
+				try {
+				setAllowRefreshViewer(false);
+				addToViewer(changeRoot);
+				} finally {
+					setAllowRefreshViewer(true);
+				}
+			}
+			element = new FullPathSyncInfoElement(changeRoot, info);
+		} else {
+			// For nodes without comments, simply parent with the root. These will be outgoing
+			// additions.
+			element = new FullPathSyncInfoElement(getModelRoot(), info);
+		}	
+		try {
+			setAllowRefreshViewer(false);
+			addToViewer(element);
+		} finally {
+			setAllowRefreshViewer(true);
+		}
+	}
+
 	/**
 	 * How do we tell which revision has the interesting log message? Use the later
 	 * revision, since it probably has the most up-to-date comment.
@@ -318,20 +341,41 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceAdditions(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
 	 */
 	protected void handleResourceAdditions(ISyncInfoTreeChangeEvent event) {
-		reset();
+		startUpdateJob(new SyncInfoSet(event.getAddedResources()));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceChanges(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
 	 */
 	protected void handleResourceChanges(ISyncInfoTreeChangeEvent event) {
-		reset();
+		//	Refresh the viewer for each changed resource
+		SyncInfo[] infos = event.getChangedResources();
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			IResource local = info.getLocal();
+			ISynchronizeModelElement diffNode = getModelObject(local);
+			if (diffNode != null) {
+				if(diffNode instanceof SyncInfoModelElement) {
+					((SyncInfoModelElement)diffNode).update(info);
+					calculateProperties(diffNode, false);
+				}
+			}
+		}	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceRemovals(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
 	 */
 	protected void handleResourceRemovals(ISyncInfoTreeChangeEvent event) {
-		reset();
+		IResource[] removedRoots = event.getRemovedSubtreeRoots();
+		for (int i = 0; i < removedRoots.length; i++) {
+			removeFromViewer(removedRoots[i]);
+		}
+		// We have to look for folders that may no longer be in the set
+		// (i.e. are in-sync) but still have descendants in the set
+		IResource[] removedResources = event.getRemovedResources();
+		for (int i = 0; i < removedResources.length; i++) {
+			removeFromViewer(removedResources[i]);
+		}
 	}
 }
