@@ -42,25 +42,11 @@ public class TitleAreaDialog extends Dialog {
 	 */
 	public final static String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
 
-	// Space between the top of the title area and the title
-	private static final int H_INDENT_TITLE = 7;
-	// Space between the left of the title area and the title
-	private static final int V_INDENT_TITLE = 8;
-	// Space between an image and a label
+		// Space between an image and a label
 	private static final int H_GAP_IMAGE = 5;
-	// Space between the title bottom and message area top
-	private static final int V_INDENT_MSG_AREA = 3;
-	// Space between the left of the title area and the message
-	private static final int H_INDENT_MSG = 11;
-	// Space between the message area top and the top of the message label
-	private static final int V_INDENT_MSG = 3;
-	//Minimum height of the title image
-	private static final int MIN_TITLE_IMAGE_HEIGHT = 64;
-	//Minimum width of the title image
-	private static final int MIN_TITLE_IMAGE_WIDTH = 64;
-	//Minimun dialog width (in dialog units)
+	//Minimum dialog width (in dialog units)
 	private static final int MIN_DIALOG_WIDTH = 350;
-	//Minimun dialog height (in dialog units)
+	//Minimum dialog height (in dialog units)
 	private static final int MIN_DIALOG_HEIGHT = 150;
 	
 	static {
@@ -70,7 +56,8 @@ public class TitleAreaDialog extends Dialog {
 
 	private Label titleLabel;
 	private Label titleImage;
-	private Label fillerLabel;
+	private Label bottomFillerLabel;
+	private Label leftFillerLabel;
 	private Color titleAreaColor;
 	private RGB titleAreaRGB;
 
@@ -240,9 +227,12 @@ private Control createTitleArea(Composite parent) {
 	messageLabel.setFont(JFaceResources.getDialogFont());
 
 	
-	// Message image @ bottom, left
-	fillerLabel = new Label(parent, SWT.CENTER);
-	fillerLabel.setBackground(background);
+	// Filler labels
+	leftFillerLabel = new Label(parent, SWT.CENTER);
+	leftFillerLabel.setBackground(background);
+	
+	bottomFillerLabel = new Label(parent, SWT.CENTER);
+	bottomFillerLabel.setBackground(background);
 	
 	setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
 	
@@ -281,7 +271,7 @@ private void setLayoutsForNormalMessage(
 	int horizontalSpacing) {
 	FormData messageImageData = new FormData();
 	messageImageData.top = new FormAttachment(titleLabel,verticalSpacing);
-	messageImageData.left = new FormAttachment(0,horizontalSpacing);
+	messageImageData.left = new FormAttachment(0,H_GAP_IMAGE);
 	messageImageLabel.setLayoutData(messageImageData);
 	
 	FormData messageLabelData = new FormData();
@@ -298,7 +288,14 @@ private void setLayoutsForNormalMessage(
 	fillerData.left = new FormAttachment(0,horizontalSpacing);
 	fillerData.top = new FormAttachment(messageImageLabel,0);
 	fillerData.bottom = new FormAttachment(messageLabel,0,SWT.BOTTOM);
-	fillerLabel.setLayoutData(fillerData);	
+	bottomFillerLabel.setLayoutData(fillerData);	
+	
+	FormData data = new FormData();
+	data.top = new FormAttachment(messageImageLabel, 0,SWT.TOP);
+	data.left = new FormAttachment(0, 0);
+	data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
+	data.right = new FormAttachment(messageImageLabel, 0);
+	leftFillerLabel.setLayoutData(data);
 }
 /**
  * The <code>TitleAreaDialog</code> implementation of this 
@@ -403,7 +400,8 @@ private void layoutForNewMessage(){
 		
 	} else {
 		messageImageLabel.setVisible(true);
-		fillerLabel.setVisible(true);
+		bottomFillerLabel.setVisible(true);
+		leftFillerLabel.setVisible(true);
 		
 		/**
 		 * Note that we do not use horizontalSpacing here 
@@ -414,7 +412,7 @@ private void layoutForNewMessage(){
 		 */
 
 		FormData data = new FormData();
-		data.left = new FormAttachment(0, 0);
+		data.left = new FormAttachment(0, H_GAP_IMAGE);
 		data.top = new FormAttachment(titleLabel, verticalSpacing);
 		messageImageLabel.setLayoutData(data);
 		
@@ -423,7 +421,14 @@ private void layoutForNewMessage(){
 		data.left = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(messageLabel, 0, SWT.BOTTOM);
 		data.right = new FormAttachment(messageImageLabel, 0, SWT.RIGHT);
-		fillerLabel.setLayoutData(data);
+		bottomFillerLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.top = new FormAttachment(messageImageLabel, 0,SWT.TOP);
+		data.left = new FormAttachment(0, 0);
+		data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
+		data.right = new FormAttachment(messageImageLabel, 0);
+		leftFillerLabel.setLayoutData(data);
 		
 		FormData messageLabelData = new FormData();
 		messageLabelData.top = new FormAttachment(titleLabel,verticalSpacing);
@@ -578,7 +583,8 @@ public void setTitleImage(Image newTitleImage) {
  */
 private void setImageLabelVisible(boolean visible){
 	messageImageLabel.setVisible(visible);
-	fillerLabel.setVisible(visible);
+	bottomFillerLabel.setVisible(visible);
+	leftFillerLabel.setVisible(visible);
 	
 }
 
@@ -596,7 +602,8 @@ private void setMessageBackgrounds(boolean showingError){
 		
 	messageLabel.setBackground(color);
 	messageImageLabel.setBackground(color);
-	fillerLabel.setBackground(color);
+	bottomFillerLabel.setBackground(color);
+	leftFillerLabel.setBackground(color); 
 }
 		
 }
