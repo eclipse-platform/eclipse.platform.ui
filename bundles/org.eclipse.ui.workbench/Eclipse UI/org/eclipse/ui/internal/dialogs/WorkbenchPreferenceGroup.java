@@ -35,8 +35,12 @@ public class WorkbenchPreferenceGroup {
 	private Collection pageIds;
 
 	private ImageDescriptor imageDescriptor;
+	
+	private ImageDescriptor largeImageDescriptor;
 
 	private Image image;
+	
+	private Image largeImage;
 
 	private boolean highlight = false;
 
@@ -51,13 +55,16 @@ public class WorkbenchPreferenceGroup {
 	 * @param ids
 	 * @param icon The ImageDescriptor for the icon for the
 	 * receiver. May be <code>null</code>.
+	 * @param largeIcon The ImageDescriptor for the largeIcon for the
+	 * receiver. May be <code>null</code>.
 	 * @param defaultValue <code>true</code> if this is the default group
 	 */
 	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, Collection ids,
-			ImageDescriptor icon, boolean defaultValue) {
+			ImageDescriptor icon, ImageDescriptor largeIcon,boolean defaultValue) {
 		id = uniqueID;
 		name = displayableName;
 		imageDescriptor = icon;
+		largeImageDescriptor = largeIcon;
 		pageIds = ids;
 		isDefault = defaultValue;
 	}
@@ -93,6 +100,21 @@ public class WorkbenchPreferenceGroup {
 			image = imageDescriptor.createImage();
 		return image;
 	}
+	
+	/**
+	 * Return the image for the receiver. Return a default
+	 * image if there isn't one.
+	 * @return Image
+	 */
+	public Image getLargeImage() {
+
+		if (largeImageDescriptor == null)
+			return null;
+
+		if (largeImage == null)
+			largeImage = largeImageDescriptor.createImage();
+		return largeImage;
+	}
 
 	/**
 	 * Return the name of the receiver.
@@ -107,7 +129,10 @@ public class WorkbenchPreferenceGroup {
 	 *
 	 */
 	public void disposeResources() {
-		image.dispose();
+		if(image != null)
+			image.dispose();
+		if(largeImage != null)
+			largeImage.dispose();
 		image = null;
 	}
 

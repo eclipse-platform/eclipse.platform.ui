@@ -509,7 +509,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
      */
     private void createToolBar(Composite composite) {
 
-        toolBar = new ToolBar(composite, SWT.HORIZONTAL | SWT.CENTER | SWT.FLAT);
+        toolBar = new ToolBar(composite,  SWT.RIGHT | SWT.FLAT);
         toolBar.setBackground(composite.getDisplay().getSystemColor(
                 SWT.COLOR_LIST_BACKGROUND));
 

@@ -38,8 +38,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
  */
 public class PreferencePageRegistryReader extends CategorizedPageRegistryReader {
 
-	private static final String ATT_GROUP = "group"; //$NON-NLS-1$
-
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
@@ -47,7 +45,11 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
+	
+	private static final String TAG_REFERENCE = "pageReference"; //$NON-NLS-1$
 
+	private static final String ATT_LARGE_ICON = "largeIcon"; //$NON-NLS-1$
+	
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 
 	private static final String ATT_GROUP_DEFAULT = "default"; //$NON-NLS-1$
@@ -203,19 +205,26 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
+		String largeIcon = element.getAttribute(ATT_LARGE_ICON);
 		String icon = element.getAttribute(ATT_ICON);
 		boolean defaultValue = TRUE_STRING.equals(element.getAttribute(ATT_GROUP_DEFAULT));
 
 		Collection pageIds = readPages(element);
 
+		ImageDescriptor largeDescriptor = null;
 		ImageDescriptor descriptor = null;
 
 		if (icon != null) {
 			String contributingPluginId = element.getDeclaringExtension().getNamespace();
 			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, icon);
 		}
+		
+		if (largeIcon != null) {
+			String contributingPluginId = element.getDeclaringExtension().getNamespace();
+			largeDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, largeIcon);
+		}
 
-		groups.add(new WorkbenchPreferenceGroup(id, name, pageIds, descriptor, defaultValue));
+		groups.add(new WorkbenchPreferenceGroup(id, name, pageIds, descriptor, largeDescriptor,defaultValue));
 		return true;
 	}
 
@@ -255,7 +264,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * @return Collection the ids of the children
 	 */
 	private Collection readPages(IConfigurationElement element) {
-		IConfigurationElement[] pages = element.getChildren(TAG_PAGE);
+		IConfigurationElement[] pages = element.getChildren(TAG_REFERENCE);
 		HashSet list = new HashSet();
 		for (int i = 0; i < pages.length; i++) {
 			IConfigurationElement page = pages[i];
