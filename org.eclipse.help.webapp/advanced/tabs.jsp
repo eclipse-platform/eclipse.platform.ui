@@ -52,19 +52,7 @@ if (data.isMozilla()){
 	margin:0px;
 	padding:0px;
 	cursor:default;
-<% 
-if (data.isIE()){
-%>
-	filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#CCffffff', endColorstr='#00ffffff', gradientType='0');
-<%
-}else{
-%>
 	background-color:<%=prefs.getViewBackground()%>;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-<%
-}
-%>
 	border-top:1px solid <%=prefs.getViewBackground()%>;
 	border-bottom:1px solid ThreeDShadow;
 }
@@ -78,7 +66,7 @@ if (data.isIE()){
 .separator_pressed {
 	height:100%;
 	background-color:ThreeDShadow;
-	Xborder-top:1px solid <%=prefs.getToolbarBackground()%>;
+	border-top:1px solid <%=prefs.getViewBackground()%>;
 	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
 }
 
