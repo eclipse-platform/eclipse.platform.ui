@@ -25,19 +25,11 @@ import java.util.Set;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -53,8 +45,6 @@ public class RoleManager implements IActivityListener {
 	private Role[] roles = new Role[0];
 	private Hashtable activities = new Hashtable();
 	private Hashtable patternBindings = new Hashtable();
-
-	private IResourceChangeListener listener;
 
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
@@ -80,24 +70,30 @@ public class RoleManager implements IActivityListener {
 
 	public static RoleManager getInstance() {
 		if (singleton == null)
-			singleton = new RoleManager();
+			singleton = new IDERoleManager();
 
 		return singleton;
 
 	}
 
+	/**
+	 * Shutdown the current manager if it exists.
+	 *
+	 */
 	public static void shutdown() {
 		if (singleton == null)
 			return;
 
-		if (singleton.listener != null) {
-			WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(
-				singleton.listener);
-		}
+		singleton.shutdownManager();
+	}
 
-		if (singleton.getRecentActivityManager() != null) {
-			singleton.getRecentActivityManager().shutdown();
-		}
+	/**
+	 * Shutdown the receiver. 
+	 */
+	public void shutdownManager() {
+
+		if (getRecentActivityManager() != null) 
+			getRecentActivityManager().shutdown();
 	}
 
 	/**
@@ -268,15 +264,18 @@ public class RoleManager implements IActivityListener {
 		filterRoles = false;
 	}
 
-	private RoleManager() {
+	protected RoleManager() {
 		if (readRoles()) {
 			// recent activities expire after an hour - create this irre
 			recentActivities = new RecentActivityManager(this, 3600000L);
 			loadEnabledStates();
-			listener = getChangeListener();
-			WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(
-				listener);
+			connectToPlatform();
 		}
+	}
+
+	/**
+	 * Do any operations specific to the platform being hooked. */
+	protected void connectToPlatform() {
 	}
 
 	/**
@@ -452,48 +451,5 @@ public class RoleManager implements IActivityListener {
 	 * @return a delta calculator usable by the calling thread. */
 	private ActivityDeltaCalculator getDeltaCalculator() {
 		return (ActivityDeltaCalculator) deltaCalcs.get();
-	}
-
-	private IResourceChangeListener getChangeListener() {
-		return new IResourceChangeListener() {
-			/*
-			 * (non-Javadoc) @see
-			 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-			 */
-			public void resourceChanged(IResourceChangeEvent event) {
-
-				IResourceDelta mainDelta = event.getDelta();
-
-				if (mainDelta == null)
-					return;
-				//Has the root changed?
-				if (mainDelta.getKind() == IResourceDelta.CHANGED
-					&& mainDelta.getResource().getType() == IResource.ROOT) {
-
-					try {
-						IResourceDelta[] children =
-							mainDelta.getAffectedChildren();
-						for (int i = 0; i < children.length; i++) {
-							IResourceDelta delta = children[i];
-							if (delta.getResource().getType()
-								== IResource.PROJECT
-								&& delta.getKind() == IResourceDelta.ADDED) {
-								IProject project =
-									(IProject) delta.getResource();
-								String[] ids =
-									project.getDescription().getNatureIds();
-								for (int j = 0; j < ids.length; j++) {
-									enableActivities(ids[j]);
-								}
-							}
-						}
-
-					} catch (CoreException exception) {
-						//Do nothing if there is a CoreException
-					}
-				}
-
-			}
-		};
 	}
 }
