@@ -23,11 +23,22 @@ public class DeviceResourceException extends Exception {
     
 	/**
 	 * Creates a DeviceResourceException indicating an error attempting to
-	 * create a resource 
+	 * create a resource and an embedded low-level exception describing the cause 
 	 * 
 	 * @param missingResource
+     * @param cause cause of the exception (or null if none)
 	 */
+    public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
+        super("Unable to create resource " + missingResource.toString(), cause); //$NON-NLS-1$
+    }
+    
+    /**
+     * Creates a DeviceResourceException indicating an error attempting to
+     * create a resource 
+     * 
+     * @param missingResource
+     */
     public DeviceResourceException(DeviceResourceDescriptor missingResource) {
-        super("Unable to create resource " + missingResource.toString(), null); //$NON-NLS-1$
+        this(missingResource, null);
     }
 }

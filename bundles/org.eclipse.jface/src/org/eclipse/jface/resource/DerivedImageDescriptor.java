@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -27,11 +28,16 @@ final class DerivedImageDescriptor extends ImageDescriptor {
     private int flags;
     
     public DerivedImageDescriptor(ImageDescriptor original, int swtFlags) {
+        this.original = original;
         flags = swtFlags;
     }
     
     public Object createResource(Device device) throws DeviceResourceException {
-        return internalCreateImage(device);
+        try {
+            return internalCreateImage(device);
+        } catch (SWTException e) {
+            throw new DeviceResourceException(this, e);
+        }
     }
     
     public Image createImage(Device device) {
