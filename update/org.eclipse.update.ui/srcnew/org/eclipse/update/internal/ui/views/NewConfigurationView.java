@@ -54,8 +54,6 @@ public class NewConfigurationView
 		"ConfigurationView.showUnconf";
 	private Image eclipseImage;
 	private boolean initialized;
-	private SavedFolder savedFolder;
-	private HistoryFolder historyFolder;
 	private Action showUnconfFeaturesAction;
 	private Action revertAction;
 	private Action preserveAction;
@@ -87,78 +85,9 @@ public class NewConfigurationView
 	private static final String KEY_SAVING_ERRORS =
 		"ConfigurationView.savingErrors";
 
-	abstract class ViewFolder extends UIModelObject {
-		private String label;
-		private Image image;
-
-		public ViewFolder(String label) {
-			this.label = label;
-			String imageKey = ISharedImages.IMG_OBJ_FOLDER;
-			image =
-				PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
-		}
-
-		public Object getAdapter(Class key) {
-			return null;
-		}
-
-		public Image getImage() {
-			return image;
-		}
-
-		public String toString() {
-			return label;
-		}
-		public abstract Object[] getChildren();
-	}
-
-	class SavedFolder extends ViewFolder {
-		public SavedFolder() {
-			super(UpdateUI.getString(KEY_SAVED_FOLDER));
-		}
-		public Object[] getChildren() {
-			try {
-				ILocalSite localSite = SiteManager.getLocalSite();
-				return invertArray(
-					makeChildren(localSite.getPreservedConfigurations()));
-			} catch (CoreException e) {
-				return new Object[0];
-			}
-		}
-
-		private Object[] makeChildren(IInstallConfiguration[] preserved) {
-			Object[] children = new Object[preserved.length];
-			for (int i = 0; i < preserved.length; i++) {
-				children[i] = new PreservedConfiguration(preserved[i]);
-			}
-			return children;
-		}
-	}
-
-	class HistoryFolder extends ViewFolder {
-		public HistoryFolder() {
-			super(UpdateUI.getString(KEY_HISTORY_FOLDER));
-		}
-		public Object[] getChildren() {
-			try {
-				ILocalSite localSite = SiteManager.getLocalSite();
-				return invertArray(localSite.getConfigurationHistory());
-			} catch (CoreException e) {
-				return new Object[0];
-			}
-		}
-	}
 
 	class ConfigurationSorter extends ViewerSorter {
-		public int category(Object obj) {
-			// Top level
-			if (obj instanceof ILocalSite)
-				return 1;
-			if (obj.equals(historyFolder))
-				return 2;
-			if (obj.equals(savedFolder))
-				return 3;
-			
+		public int category(Object obj) {			
 			// sites
 			if (obj instanceof IConfiguredSiteAdapter) {
 				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter)obj;
@@ -197,19 +126,14 @@ public class NewConfigurationView
 			if (parent instanceof UpdateModel) {
 				ILocalSite localSite = getLocalSite();
 				if (localSite != null)
-					return new Object[] {
-						localSite,
-						historyFolder,
-						savedFolder };
+					return new Object[] {localSite};
 				else
 					return new Object[0];
 			}
 			if (parent instanceof ILocalSite) {
 				return openLocalSite();
 			}
-			if (parent instanceof ViewFolder) {
-				return ((ViewFolder) parent).getChildren();
-			}
+
 			if (parent instanceof PreservedConfiguration) {
 				// resolve the adapter
 				parent = ((PreservedConfiguration) parent).getConfiguration();
@@ -328,12 +252,6 @@ public class NewConfigurationView
 				ImageDescriptor desc = provider.getLocalSiteDescriptor(csite);
 				return provider.get(desc, flags);
 			}
-			if (obj instanceof SavedFolder) {
-				return provider.get(UpdateUIImages.DESC_SAVED_OBJ);
-			}
-			if (obj instanceof HistoryFolder) {
-				return provider.get(UpdateUIImages.DESC_HISTORY_OBJ);
-			}
 			if (obj instanceof PreservedConfiguration) {
 				obj = ((PreservedConfiguration) obj).getConfiguration();
 			}
@@ -423,8 +341,6 @@ public class NewConfigurationView
 	public NewConfigurationView() {
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		initializeImages();
-		savedFolder = new SavedFolder();
-		historyFolder = new HistoryFolder();
 	}
 
 	private void initializeImages() {
@@ -549,22 +465,12 @@ public class NewConfigurationView
 		return null;
 	}
 
-	public void selectHistoryFolder() {
-		getTreeViewer().setExpandedState(historyFolder, true);
-		getTreeViewer().setSelection(
-			new StructuredSelection(historyFolder),
-			true);
-	}
 	public void selectCurrentConfiguration() {
 		getTreeViewer().setSelection(
 			new StructuredSelection(getLocalSite()),
 			true);
 	}
 
-	public void expandPreservedConfigurations() {
-		getTreeViewer().refresh(savedFolder);
-		getTreeViewer().setExpandedState(savedFolder, true);
-	}
 
 	private boolean canPreserve() {
 		ISelection selection = getTreeViewer().getSelection();
@@ -624,8 +530,6 @@ public class NewConfigurationView
 			} catch (CoreException e) {
 				UpdateUI.logException(e);
 			}
-			getTreeViewer().refresh(savedFolder);
-			getTreeViewer().expandToLevel(savedFolder, 1);
 		}
 		if (errors.size() > 0) {
 			IStatus[] children =
@@ -694,7 +598,6 @@ public class NewConfigurationView
 			} catch (CoreException e) {
 				UpdateUI.logException(e);
 			}
-			getTreeViewer().refresh(savedFolder);
 		}
 	}
 
@@ -752,8 +655,7 @@ public class NewConfigurationView
 		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
-		super.makeActions();
-		initDrillDown();
+
 		revertAction = new Action() {
 			public void run() {
 				Object obj = getSelectedObject();
@@ -930,13 +832,11 @@ public class NewConfigurationView
 			if (adapter.getInstallConfiguration().isCurrent())
 				manager.add(showStatusAction);
 		}
-		//super.fillContextMenu(manager);
+
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration || obj instanceof IFeatureAdapter)
 			manager.add(propertiesAction);
 
-		//defect 14684
-		//super.fillContextMenu(manager);
 	}
 
 	private IConfiguredSite getSelectedSite(Object obj) {
