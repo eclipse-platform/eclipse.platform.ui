@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.preferences;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
