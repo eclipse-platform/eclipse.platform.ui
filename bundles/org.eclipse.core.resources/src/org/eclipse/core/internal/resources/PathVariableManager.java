@@ -212,7 +212,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 		char first = name.charAt(0);
 		if (!Character.isLetter(first) && first != '_') {
-			message = Policy.bind("pathvar.beginChar", String.valueOf(first)); //$NON-NLS-1$
+			message = Policy.bind("pathvar.beginLetter", String.valueOf(first)); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
