@@ -100,6 +100,9 @@ public class Checkout extends Command {
 		if ( ! resourcesToSend.isEmpty()) {
 			resources = (ICVSResource[]) resourcesToSend.toArray(new ICVSResource[resourcesToSend.size()]);
 			new FileStructureVisitor(session, true, true).visit(session, resources, monitor);
+		} else {
+			monitor.beginTask(null, 100);
+			monitor.done();
 		}
 		return resources;
 	}
