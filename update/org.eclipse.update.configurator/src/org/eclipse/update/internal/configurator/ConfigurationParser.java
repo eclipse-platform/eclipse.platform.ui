@@ -33,6 +33,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	private URL currentSiteURL;
 	private Configuration config;
 	private URL configURL;
+	private InputStream input;
 
 	/**
 	 * Constructor for ConfigurationParser
@@ -58,11 +59,15 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		
 		try {
 			configURL = url;
-			parser.parse(new InputSource(url.openStream()), this);
+			input = url.openStream();
+			parser.parse(new InputSource(input), this);
 			return config;
 		} catch (Exception e) {
 			Utils.debug("Error parsing configuration " + e.getMessage());
 			throw e;
+		} finally {
+			if (input != null) 
+				input.close();
 		}
 	}
 
