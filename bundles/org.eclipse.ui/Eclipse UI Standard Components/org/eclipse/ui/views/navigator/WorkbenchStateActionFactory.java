@@ -69,13 +69,17 @@ public class WorkbenchStateActionFactory
 		if (onlyProjectsSelected) {
 			menu.add(openProjectAction);
 			menu.add(closeProjectAction);
+		}
+		
+		if (!selection.isEmpty()) {
 			// Allow manual incremental build only if auto build is off.
-			if (!ResourcesPlugin.getWorkspace().isAutoBuilding())
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 				menu.add(buildAction);
+			}
 			menu.add(rebuildAllAction);
 		}
+		
 		menu.add(localRefreshAction);
-
 	}
 
 	/**

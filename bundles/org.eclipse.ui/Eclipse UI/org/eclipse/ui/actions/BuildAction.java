@@ -14,8 +14,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,6 +39,12 @@ public class BuildAction extends WorkspaceAction {
 	public static final String ID_REBUILD_ALL = PlatformUI.PLUGIN_ID + ".RebuildAllAction";//$NON-NLS-1$
 
 	private int	buildType;
+	
+	/**
+	 * The list of IProjects to build (computed lazily).
+	 */
+	private List	projectsToBuild = null;
+	
 /**
  * Creates a new action of the appropriate type. The action id is 
  * <code>ID_BUILD</code> for incremental builds and <code>ID_REBUILD_ALL</code>
@@ -65,6 +73,14 @@ public BuildAction(Shell shell, int type) {
 		
 	this.buildType = type;
 }
+
+/* (non-Javadoc)
+ * Method declared on WorkspaceAction.
+ */
+protected List getActionResources() {
+	return getProjectsToBuild();
+}
+
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
@@ -83,6 +99,51 @@ String getProblemsMessage() {
 String getProblemsTitle() {
 	return WorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
 }
+
+/**
+ * Returns the projects to build.
+ * This contains the set of projects which have builders, across all selected resources.
+ */
+List getProjectsToBuild() {
+	if (projectsToBuild == null) {
+		projectsToBuild = new ArrayList(3);
+		for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
+			IResource resource = (IResource) i.next();
+			IProject project = resource.getProject();
+			if (project != null) {
+				if (!projectsToBuild.contains(project)) {
+					if (hasBuilder(project)) {
+						projectsToBuild.add(project);
+					}
+				}
+			}
+		}
+	}
+	return projectsToBuild;
+}
+
+/**
+ * Returns whether there are builders configured on the given project.
+ *
+ * @return <code>true</code> if it has builders,
+ *   <code>false</code> if not, or if this couldn't be determined
+ */
+boolean hasBuilder(IProject project) {
+	try {
+		ICommand[] commands = project.getDescription().getBuildSpec();
+		if (commands.length > 0) {
+			return true;
+		}
+	}
+	catch (CoreException e) {
+		// this method is called when selection changes, so
+		// just fall through if it fails.
+		// this shouldn't happen anyway, since the list of selected resources
+		// has already been checked for accessibility before this is called
+	}
+	return false;
+}
+
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
@@ -143,10 +204,6 @@ List pruneResources(List resourceCollection) {
  * open editors so that the updated contents will be used for building.
  */
 public void run() {
-	// Verify that there are builders registered on at
-	// least one project
-	if (!verifyBuildersAvailable())
-		return;
 
 	// Save all resources prior to doing build
 	saveAllResources();
@@ -195,40 +252,10 @@ boolean shouldPerformResourcePruning() {
 /**
  * The <code>BuildAction</code> implementation of this
  * <code>SelectionListenerAction</code> method ensures that this action is
- * enabled only if all of the selected resources are projects.
+ * enabled only if all of the selected resources have buildable projects.
  */
 protected boolean updateSelection(IStructuredSelection s) {
-	return super.updateSelection(s) && selectionIsOfType(IProject.PROJECT);
-}
-/**
- * Returns whether there are builders registered on at least one selected
- * project.
- *
- * @return <code>true</code> if there is something that could be built, and 
- *   <code>false</code> if there is nothing buildable selected
- */
-boolean verifyBuildersAvailable() {
-	List projects = getSelectedResources();
-	if (projects == null || projects.isEmpty())
-		return false;
-	
-	try {
-		for (int i = 0; i < projects.size(); i++) {
-			IProject project = (IProject) projects.get(i);
-			ICommand[] commands = project.getDescription().getBuildSpec();
-			if (commands.length > 0)
-				return true;
-		}
-	}
-	catch (CoreException e) {
-		WorkbenchPlugin.log(WorkbenchMessages.format("BuildAction.verifyExceptionMessage", new Object[] {getClass().getName(), e}));//$NON-NLS-1$
-		MessageDialog.openError(
-			getShell(),
-			WorkbenchMessages.getString("BuildAction.buildProblems"), //$NON-NLS-1$
-			WorkbenchMessages.format("BuildAction.internalError", new Object[] {e.getMessage()})); //$NON-NLS-1$
-		return false;
-	}
-	
-	return false;
+	projectsToBuild = null;
+	return super.updateSelection(s) && getProjectsToBuild().size() > 0;
 }
 }
