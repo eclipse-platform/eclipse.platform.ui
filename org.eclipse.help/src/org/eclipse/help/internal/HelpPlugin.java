@@ -14,11 +14,12 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
 /**
  * Help System Core plug-in
  */
-public class HelpPlugin extends Plugin implements IRegistryChangeListener{
+public class HelpPlugin extends Plugin implements IRegistryChangeListener, BundleListener{
 	public final static String PLUGIN_ID = "org.eclipse.help";
 	// debug options
 	public static boolean DEBUG = false;
@@ -77,6 +78,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	 */
 	public void stop(BundleContext context) throws Exception {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		context.removeBundleListener(this);
 		plugin = null;
 		bundleContext = null;
 		super.stop(context);
@@ -89,6 +91,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 		super.start(context);
 		plugin = this;
 		bundleContext = context;
+		context.addBundleListener(this);
 		Platform.getExtensionRegistry().addRegistryChangeListener(this,
 				HelpPlugin.PLUGIN_ID);
 		// Setup debugging options
@@ -146,6 +149,13 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	}
 	public void removeTocsChangedListener(ITocsChangedListener listener) {
 		tocsChangedListeners.remove(listener);
+	}
+
+	public void bundleChanged(BundleEvent event) {
+		int type = event.getType();
+		if (type != BundleEvent.STARTED && type != BundleEvent.STOPPED) {
+			ResourceLocator.clearZipCache();
+		}
 	}
 
 }

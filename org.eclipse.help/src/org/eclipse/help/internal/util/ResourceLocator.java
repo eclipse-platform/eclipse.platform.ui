@@ -12,15 +12,16 @@ package org.eclipse.help.internal.util;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
-import org.osgi.framework.Bundle;
+import org.osgi.framework.*;
 public class ResourceLocator {
 	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer";
 	public static final String CONTENTPRODUCER_XP_FULLNAME = HelpPlugin.PLUGIN_ID
 			+ "." + CONTENTPRODUCER_XP_NAME;
-	private static final Hashtable zipCache = new Hashtable();
+	private static Hashtable zipCache = new Hashtable();
 	private static final Object ZIP_NOT_FOUND = new Object();
 	// Indicates there is no dynamic content provider for a particular plugin
 	private static final Object STATIC_DOCS_ONLY = ZIP_NOT_FOUND;
@@ -217,7 +218,8 @@ public class ResourceLocator {
 	private static String findZip(Bundle pluginDesc, String zip, String locale) {
 		String pluginID = pluginDesc.getSymbolicName();
 		// check cache
-		Object cached = zipCache.get(pluginID + '/' + zip + '/' + locale);
+		Map cache = zipCache;
+		Object cached = cache.get(pluginID + '/' + zip + '/' + locale);
 		if (cached == null) {
 			// not in cache find on filesystem
 			IPath zipFilePath = new Path(zip);
@@ -237,11 +239,14 @@ public class ResourceLocator {
 				cached = ZIP_NOT_FOUND;
 			}
 			// cache it
-			zipCache.put(pluginID + '/' + zip + '/' + locale, cached);
+			cache.put(pluginID + '/' + zip + '/' + locale, cached);
 		}
 		if (cached == ZIP_NOT_FOUND) {
 			return null;
 		}
 		return (String) cached;
+	}
+	public static void clearZipCache() {
+		zipCache = new Hashtable();
 	}
 }
