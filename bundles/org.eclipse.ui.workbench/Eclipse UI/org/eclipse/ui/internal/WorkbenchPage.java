@@ -500,14 +500,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Notify listeners.
 		window.updateFastViewBar();
 		window.firePerspectiveChanged(
-			this,
-			getPerspective(),
-			CHANGE_FAST_VIEW_ADD);
-		window.firePerspectiveChanged(
 				this,
 				getPerspective(),
 				ref,
 				CHANGE_FAST_VIEW_ADD);
+		window.firePerspectiveChanged(
+			this,
+			getPerspective(),
+			CHANGE_FAST_VIEW_ADD);
 	}
 	/**
 	 * Adds an IPartListener to the part service.
@@ -766,14 +766,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			busyShowView(view, mode);
 			
 			window.firePerspectiveChanged(
-				this,
-				getPerspective(),
-				CHANGE_VIEW_SHOW);
-			window.firePerspectiveChanged(
 					this,
 					getPerspective(),
 					getReference(view),
 					CHANGE_VIEW_SHOW);
+			window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				CHANGE_VIEW_SHOW);
 			// Just in case view was fast.
 			window.updateFastViewBar();
 		}
@@ -913,14 +913,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Close all editors.
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorReference ref = editorRefs[i];
+			// Notify interested listeners before the close
+			window.firePerspectiveChanged(
+					this,
+					getPerspective(),
+					ref,
+					CHANGE_EDITOR_CLOSE);
+			// Close the editor.
 			getEditorManager().closeEditor(ref);
 			activationList.remove(ref);
 			firePartClosed(ref);
-			window.firePerspectiveChanged(
-				this,
-				getPerspective(),
-				ref,
-				CHANGE_EDITOR_CLOSE);
 			disposePart(ref);
 		}
 
@@ -928,7 +930,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			activate(activationList.getActive());
 		}
 
-		// Notify interested listeners
+		// Notify interested listeners after the close
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -977,16 +979,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		//		lastActiveEditor = null;
 		//	}
 
-		// Close the part.
-		getEditorManager().closeEditor(ref);
-		firePartClosed(ref);
+		// Notify interested listeners before the close
 		window.firePerspectiveChanged(
 				this,
 				getPerspective(),
 				ref,
 				CHANGE_EDITOR_CLOSE);
+		// Close the part.
+		getEditorManager().closeEditor(ref);
+		firePartClosed(ref);
 		disposePart(ref);
-		// Notify interested listeners
+		// Notify interested listeners after the close
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -1825,11 +1828,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 	}
 	private void hideView(Perspective persp, IViewReference ref) {
+		// Notify interested listeners before the hide
+		window.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_VIEW_HIDE);
+
 		// Hide the part.
 		persp.hideView(ref);
-
-		// Notify interested listeners
-		window.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_VIEW_HIDE);
 
 		// If the part is no longer reference then dispose it.
 		boolean exists = viewFactory.hasView(ref);
@@ -1848,7 +1851,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			activePart = activationList.getActive();
 		}
 
-		// Notify interested listeners
+		// Notify interested listeners after the hide
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 
 		// Just in case view was fast.
@@ -2218,14 +2221,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				}
 			}
 			window.firePerspectiveChanged(
-				this,
-				getPerspective(),
-				CHANGE_EDITOR_OPEN);
-			window.firePerspectiveChanged(
 					this,
 					getPerspective(),
 					ref,
 					CHANGE_EDITOR_OPEN);
+			window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				CHANGE_EDITOR_OPEN);
 		}
 
 		//	getClientComposite().setRedraw(true);
@@ -2277,14 +2280,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Notify listeners.
 		window.updateFastViewBar();
 		window.firePerspectiveChanged(
-			this,
-			getPerspective(),
-			CHANGE_FAST_VIEW_REMOVE);
-		window.firePerspectiveChanged(
 				this,
 				getPerspective(),
 				ref,
 				CHANGE_FAST_VIEW_REMOVE);
+		window.firePerspectiveChanged(
+			this,
+			getPerspective(),
+			CHANGE_FAST_VIEW_REMOVE);
 	}
 	/**
 	 * Removes an IPartListener from the part service.
