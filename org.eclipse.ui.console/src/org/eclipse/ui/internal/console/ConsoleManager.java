@@ -224,6 +224,7 @@ public class ConsoleManager implements IConsoleManager {
 	public void showConsoleView(final IConsole console) {
 	    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
 	        public void run() {
+                boolean consoleFound = false;
 	            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	            if (window != null) {
 	                IWorkbenchPage page= window.getActivePage();
@@ -237,22 +238,31 @@ public class ConsoleManager implements IConsoleManager {
                             if(IConsoleConstants.ID_CONSOLE_VIEW.equals(viewRef.getId())) {
                                 IWorkbenchPart part = viewRef.getPart(false);
                                 IConsoleView consoleView = null;
-                                if (part == null) {
-                                    try {
-                                        consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-                                    } catch (PartInitException pie) {
-                                        ConsolePlugin.log(pie);
-                                    }
-                                } else if (!(part instanceof IConsoleView)) {
+                                
+                                if (!(part instanceof IConsoleView)) {
                                     continue;
-                                } else {
-                                    consoleView = (IConsoleView) part;
-                                }
+                                } 
+                                consoleFound = true;
+                                consoleView = (IConsoleView) part;
+                                
                                 boolean bringToTop = shouldBringToTop(console, consoleView);
                                 if (bringToTop) {
                                     page.bringToTop(consoleView);
                                 }
                                 consoleView.display(console);        
+                            }
+                        }
+                        
+                        if (!consoleFound) {
+                            try {
+                                IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+                                boolean bringToTop = shouldBringToTop(console, consoleView);
+                                if (bringToTop) {
+                                    page.bringToTop(consoleView);
+                                }
+                                consoleView.display(console);        
+                            } catch (PartInitException pie) {
+                                ConsolePlugin.log(pie);
                             }
                         }
 	                }
