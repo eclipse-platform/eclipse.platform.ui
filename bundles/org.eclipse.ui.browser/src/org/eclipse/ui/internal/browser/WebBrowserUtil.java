@@ -1,0 +1,205 @@
+/*******************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.internal.browser;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+/**
+ * Utility class for the Web browser tooling.
+ */
+public class WebBrowserUtil {
+	private static final String BROWSER_PACKAGE_NAME = "org.eclipse.swt.browser.Browser";
+	public static Boolean isInternalBrowserOperational;
+
+	/**
+	 * WebBrowserUtil constructor comment.
+	 */
+	public WebBrowserUtil() {
+		super();
+	}
+
+	/**
+	 * Returns true if we're running on Windows.
+	 *
+	 * @return boolean
+	 */
+	public static boolean isWindows() {
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().indexOf("win") >= 0)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Returns true if we're running on linux.
+	 *
+	 * @return boolean
+	 */
+	public static boolean isLinux() {
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().indexOf("lin") >= 0)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Open a dialog window.
+	 *
+	 * @param message java.lang.String
+	 */
+	public static void openError(String message) {
+		Display d = Display.getCurrent();
+		if (d == null)
+			d = Display.getDefault();
+	
+		Shell shell = d.getActiveShell();
+		MessageDialog.openError(shell, WebBrowserUIPlugin.getResource("%errorDialogTitle"), message);
+	}
+	
+	/**
+	 * Open a dialog window.
+	 *
+	 * @param message java.lang.String
+	 */
+	public static void openMessage(String message) {
+		Display d = Display.getCurrent();
+		if (d == null)
+			d = Display.getDefault();
+	
+		Shell shell = d.getActiveShell();
+		MessageDialog.openInformation(shell, WebBrowserUIPlugin.getResource("%searchingTaskName"), message);
+	}
+
+	/**
+	 * Returns whether it should be possible to use the internal browser or not, based on whether or not
+	 * the org.eclipse.swt.Browser class can be found/loaded. If it can it means is is supported on the platform in which
+	 * this plugin is running. If not, disable the ability to use the internal browser.
+	 * 
+	 * This method checks to see if it can new up a new ExternalBrowserInstance. If the SWT widget can not be bound
+	 * to the particular operating system it throws an SWTException. We catch that and set a boolean
+	 * flag which represents whether or not we were successfully able to create a ExternalBrowserInstance instance or not.
+	 * If not, don't bother adding the Internal Web ExternalBrowserInstance that uses this widget. Designed to be attemped
+	 * only once and the flag set used throughout.
+	 * 
+	 * @return boolean
+	 */
+	public static boolean canUseInternalWebBrowser() {
+		// if we have already figured this out, don't do it again.
+		if (isInternalBrowserOperational != null)
+			return isInternalBrowserOperational.booleanValue();
+		
+		// check for the class
+		try {
+			Class.forName(BROWSER_PACKAGE_NAME);
+		} catch (ClassNotFoundException e) {
+			isInternalBrowserOperational = new Boolean(false);
+			return false;
+		}
+		
+		// try loading it
+		try {
+			new Browser(new Shell(Display.getCurrent()), SWT.NONE);
+			isInternalBrowserOperational = new Boolean(true);
+			return true;
+		} catch (Throwable t) {
+			WebBrowserUIPlugin.getInstance().getLog().log(new Status(IStatus.WARNING,
+				WebBrowserUIPlugin.PLUGIN_ID, 0, "Internal browser is not operational", t));
+			isInternalBrowserOperational = new Boolean(false);
+			return false;
+		}
+	}
+	
+	public static List getExternalBrowserPaths() {
+		List paths = new ArrayList();
+		Iterator iterator = BrowserManager.getInstance().getWebBrowsers().iterator();
+		while (iterator.hasNext()) {
+			IBrowserDescriptor wb = (IBrowserDescriptor) iterator.next();
+			paths.add(wb.getLocation().toLowerCase());
+		}
+		return paths;
+	}
+
+	/**
+	 * Add any supported EXTERNAL web browsers found after an arbitrary check in specific paths
+	 */
+	public static void addFoundBrowsers(List list) {
+		List paths = getExternalBrowserPaths();
+
+		String os = Platform.getOS();
+		File[] roots = File.listRoots();
+		int rootSize = Math.min(roots.length, 2); // just check the first two drives
+		
+		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
+		int size = browsers.length;
+		for (int i = 0; i < size; i++) {
+			if (browsers[i].getDefaultLocations() != null && browsers[i].getOS().toLowerCase().indexOf(os) >= 0) {
+				for (int k = 0; k < rootSize; k++) {
+					int size2 = browsers[i].getDefaultLocations().length;
+					for (int j = 0; j < size2; j++) {
+						String location = browsers[i].getDefaultLocations()[j];
+						try {
+							File f = new File(roots[k], location);
+							if (!paths.contains(f.getAbsolutePath().toLowerCase())) {
+								if (f.exists()) {
+									BrowserDescriptor browser = new BrowserDescriptor();
+									browser.name = browsers[i].getName();
+									browser.location = f.getAbsolutePath();
+									browser.parameters = browsers[i].getParameters();
+									list.add(browser);
+									j += size2;
+								}
+							}
+						} catch (Exception e) {
+							// ignore
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create an external Web browser if the file matches the default (known) browsers.
+	 * 
+	 * @param file
+	 * @return an external browser working copy
+	 */
+	public static IBrowserDescriptorWorkingCopy createExternalBrowser(File file) {
+		if (file == null || !file.isFile())
+			return null;
+		
+		String executable = file.getName();
+		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
+		int size = browsers.length;
+		for (int i = 0; i < size; i++) {
+			if (executable.equals(browsers[i].getExecutable())) {
+				IBrowserDescriptorWorkingCopy browser = BrowserManager.getInstance().createExternalWebBrowser();
+				browser.setName(browsers[i].getName());
+				browser.setLocation(file.getAbsolutePath());
+				browser.setParameters(browsers[i].getParameters());
+				return browser;
+			}
+		}
+		
+		return null;
+	}
+}
