@@ -53,6 +53,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -60,6 +61,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
@@ -170,10 +172,10 @@ public class InternalAntRunner {
 	 */
 	public void addUserProperties(Map properties) {
 		if (userProperties == null) {
-			userProperties= new HashMap(properties.size());
+			userProperties= new HashMap(properties);
+		} else {
+			userProperties.putAll(properties);
 		}
-		
-		userProperties.putAll(properties);
 		noExplicitUserProperties= false;
 	}
 	
@@ -211,21 +213,29 @@ public class InternalAntRunner {
 		}
 	}
 
-	private void setProperties(Project project) {
+	private void setProperties(Project project, boolean substituteVariables) {
 		setBuiltInProperties(project);
 		if (userProperties != null) {
 			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
-				project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
+				String value= (String) entry.getValue();
+				if (substituteVariables) {
+					try {
+						value= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution((String) entry.getValue());
+					} catch (CoreException e) {
+					}
+				}
+				project.setUserProperty((String) entry.getKey(), value);
+				
 			}
 			//may have properties set (always have the Ant process ID)
 			//using the Arguments and not the Properties page
 			//if set using the arguments, still include the global properties
 			if (noExplicitUserProperties) {
-				setGlobalProperties(project);
+				setGlobalProperties(project, substituteVariables);
 			}
 		} else {
-			setGlobalProperties(project);
+			setGlobalProperties(project, substituteVariables);
 		}
 	}
 
@@ -235,13 +245,13 @@ public class InternalAntRunner {
 		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 	}
 	
-	private void setGlobalProperties(Project project) {
+	private void setGlobalProperties(Project project, boolean substituteVariables) {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		List properties= prefs.getProperties();
 		if (properties != null) {
 			for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
-				String value= property.getValue();
+				String value= property.getValue(substituteVariables);
 				if (value != null) {
 					project.setUserProperty(property.getName(), value);
 				}
@@ -350,7 +360,7 @@ public class InternalAntRunner {
 			setTypes(antProject);
 			processProperties(getArrayList(extraArguments));
 			
-			setProperties(antProject);
+			setProperties(antProject, false);
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 				new InputHandlerSetter().setInputHandler(antProject, "org.eclipse.ant.internal.core.ant.NullInputHandler"); //$NON-NLS-1$
 			}
@@ -571,7 +581,7 @@ public class InternalAntRunner {
 		
 			processProperties(argList);
 			
-			setProperties(getCurrentProject());
+			setProperties(getCurrentProject(), true);
 			
 			addInputHandler(getCurrentProject());
 			
