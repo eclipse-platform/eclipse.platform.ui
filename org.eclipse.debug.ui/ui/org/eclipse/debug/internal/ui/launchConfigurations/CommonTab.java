@@ -12,14 +12,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -30,10 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -46,11 +40,8 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * whether or not it is shared via standard VCM mechanisms, and which perspectives to
  * open/switch to on a run or debug launch.
  */
-public class CommonTab implements ILaunchConfigurationTab {
-	
-	// this pages's control
-	private Control fControl = null;
-	
+public class CommonTab extends AbstractLaunchConfigurationTab {
+		
 	// Local/shared UI widgets
 	private Label fLocalSharedLabel;
 	private Button fLocalRadioButton;
@@ -85,25 +76,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 	 * The label that acts as header for the 'switch to perspective' widgets
 	 */
 	private Label fSwitchToLabel;
-	
-	// The launch configuration dialog that owns this tab
-	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
-	
-	// messages
-	private String fErrorMessage;
-	private String fMessage;
-	
-	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
-	 */
-	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
-		fLaunchConfigurationDialog = dialog;
-	}
-	
-	protected ILaunchConfigurationDialog getLaunchDialog() {
-		return fLaunchConfigurationDialog;
-	}
-	
+		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -156,7 +129,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		getSharedLocationText().setLayoutData(gd);
 		getSharedLocationText().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -348,7 +321,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 
 	protected void handleSharedRadioButtonSelected() {
 		setSharedEnabled(isShared());
-		refreshStatus();
+		updateLaunchConfigurationDialog();
 	}
 	
 	protected void setSharedEnabled(boolean enable) {
@@ -533,26 +506,6 @@ public class CommonTab implements ILaunchConfigurationTab {
 		} else {
 			config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 		}		
-	}	
-
-	protected void refreshStatus() {
-		getLaunchDialog().updateButtons();
-		getLaunchDialog().updateMessage();
-	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-	}
-
-	/**
-	 * Convenience method to get the shell.  It is important that the shell be the one 
-	 * associated with the launch configuration dialog, and not the active workbench
-	 * window.
-	 */
-	private Shell getShell() {
-		return getLocalSharedLabel().getShell();
 	}
 	
 	/**
@@ -561,51 +514,6 @@ public class CommonTab implements ILaunchConfigurationTab {
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-
-	/**
-	 * @see ILaunchConfigurationTab#getControl()
-	 */
-	public Control getControl() {
-		return fControl;
-	}
-
-	/**
-	 * Sets this tab's control.
-	 * 
-	 * @param control The control to set
-	 */
-	private void setControl(Control control) {
-		fControl = control;
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#getErrorMessage()
-	 */
-	public String getErrorMessage() {
-		return fErrorMessage;
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#getMessage()
-	 */
-	public String getMessage() {
-		return fMessage;
-	}
-
-
-	/**
-	 * Sets this page's message.
-	 */
-	protected void setMessage(String message) {
-		fMessage = message;
-	}
-	
-	/**
-	 * Sets this page's error message.
-	 */
-	protected void setErrorMessage(String message) {
-		fErrorMessage = message;
-	}	
 	
 	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
@@ -624,21 +532,6 @@ public class CommonTab implements ILaunchConfigurationTab {
 		}
 		
 		return true;
-	}
-
-	/**
-	 * Do nothing.
-	 * 
-	 * @see ILaunchConfigurationTab#launched(ILaunch)
-	 */
-	public void launched(ILaunch launch) {
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#canChangePage()
-	 */
-	public boolean okToLeave() {
-		return isValid();
 	}
 
 	/**
