@@ -48,11 +48,14 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(NLS.bind(Messages.url_resolvePlugin, url));
-		URL result = target.getEntry("/"); //$NON-NLS-1$
 		if (ix == -1 || (ix + 1) >= spec.length())
+			return target.getEntry("/"); //$NON-NLS-1$
+		URL result = target.getEntry(spec.substring(ix + 1));
+		if (result != null)
 			return result;
-		else
-			return new URL(result, spec.substring(ix + 1));
+		// if the result is null then force the creation of a URL that will throw FileNotFoundExceptions
+		return new URL(target.getEntry("/"), spec.substring(ix + 1)); //$NON-NLS-1$
+		
 	}
 
 	public static void startup() {
