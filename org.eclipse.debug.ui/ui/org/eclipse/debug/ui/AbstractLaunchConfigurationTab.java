@@ -198,16 +198,9 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	/**
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
-	public boolean isValid(ILaunchConfiguration config) {
-		return isValid();
-	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#isValid()
-	 */
-	public boolean isValid() {
+	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return true;
 	}
-		
+
 }
 

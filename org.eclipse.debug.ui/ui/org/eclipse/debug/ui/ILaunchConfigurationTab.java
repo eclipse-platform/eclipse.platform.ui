@@ -136,21 +136,6 @@ public interface ILaunchConfigurationTab {
 	public String getMessage();	
 	
 	/**
-	 * Returns whether this tab is in a valid state.
-	 * <p>
-	 * This information is typically used by the launch configuration
-	 * dialog to decide when it is okay to launch.
-	 * </p>
-	 * <p>
-	 * This method is deprecated.  Clients should use <code>isValid(ILaunchConfiguration)</code> instead.
-	 * </p>
-	 * 
-	 * @deprecated
-	 * @return whether this tab is in a valid state
-	 */
-	public boolean isValid();	
-	
-	/**
 	 * Returns whether this tab is in a valid state in the context of the specified launch configuration.
 	 * <p>
 	 * This information is typically used by the launch configuration
