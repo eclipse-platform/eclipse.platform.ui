@@ -139,6 +139,8 @@ function getChildNode(parent, childTag)
  */
 function getDescendantNode(parent, childTag)
 {	
+	if (parent == null) return null;
+	
 	if (parent.tagName == childTag)
 		return parent;
 		
@@ -162,7 +164,8 @@ function getDescendantNode(parent, childTag)
  * NOTE: MOZILLA BUG WITH A:focus and A:active styles
  */
 function getAnchorNode(node) {
-
+  if (node == null) return null;
+   
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
 	return node.parentNode;
   else if (node.tagName == "A") 
