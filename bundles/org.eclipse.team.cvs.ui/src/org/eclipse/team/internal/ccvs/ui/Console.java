@@ -422,10 +422,12 @@ public class Console extends ViewPart {
 				appendConsoleLine(ConsoleDocument.STATUS, statusText);
 				IStatus[] children = status.getChildren();
 				if (children.length == 0) {
-					appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(status));
+					if (!status.isOK())
+						appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(status));
 				} else {
 					for (int i = 0; i < children.length; i++) {
-						appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(children[i]));
+						if (!children[i].isOK())
+							appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(children[i]));
 					}
 				}
 			} else if (exception != null) {
