@@ -185,7 +185,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 		assertEquals("2.3", location, folder.getLocation());
 		assertTrue("2.4", !location.toFile().exists());
-		// creating child should fail when the OS is Windows
+		// creating child should fail
 		try {
 			folder.getFile("abc.txt").create(getRandomContents(), IResource.NONE, getMonitor());
 			fail("2.5");
@@ -397,6 +397,33 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			}
 		}
 		.performTest(inputs);
+	}
+	public void testCopyProjectWithLinks() {
+//		IPath fileLocation = getRandomLocation();
+//		try {
+//			try {
+//				createFileInFileSystem(fileLocation);
+//				nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
+//				nonExistingFileInExistingProject.createLink(fileLocation, IResource.NONE, getMonitor());
+//			} catch (CoreException e) {
+//				fail("1.0", e);
+//			}
+//
+//			//copy the project
+//			IProject destination = getWorkspace().getRoot().getProject("Copy");
+//			IFolder copiedLinkedFolder = destination.getExistingFolderInExistingProject.getName());
+//			IFile copiedLinkedFile = destination.getFile(nonExistingFileInExistingProject.getName());
+//			try {
+//				existingProject.copy(destination.getFullPath(), nextLocationCounter, monitor)
+//
+//			//ensure copied project has same links to same locations
+//
+//
+//
+//
+//		} finally {
+//			Workspace.clear(fileLocation.toFile());
+//		}
 	}
 	public void testMoveFolder() {
 		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};
