@@ -18,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -87,8 +89,12 @@ public class CVSProviderPlugin extends Plugin {
 	
 	// Directory to cache file contents
 	private static final String CACHE_DIRECTORY = ".cache"; //$NON-NLS-1$
+	// Maximum lifespan of local cache file, in milliseconds
+	private static final long CACHE_FILE_LIFESPAN = 60*60*1000; // 1hr
 	
 	private Hashtable cacheFileNames;
+	private Hashtable cacheFileTimes;
+	private long lastCacheCleanup;
 	private int cacheDirSize;
 	
 	private QuietOption quietness;
@@ -523,6 +529,8 @@ public class CVSProviderPlugin extends Plugin {
 			}
 			file.mkdir();
 			cacheFileNames = new Hashtable();
+			cacheFileTimes = new Hashtable();
+			lastCacheCleanup = -1;
 			cacheDirSize = 0;
 		} catch (IOException e) {
 			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorCreatingCache", e.getMessage()), e)); //$NON-NLS-1$
@@ -536,7 +544,8 @@ public class CVSProviderPlugin extends Plugin {
 			if (file.exists()) {
 				deleteFile(file);
 			}
-			cacheFileNames = null;
+			cacheFileNames = cacheFileTimes = null;
+			lastCacheCleanup = -1;
 			cacheDirSize = 0;
 		} catch (IOException e) {
 			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorDeletingCache", e.getMessage()), e)); //$NON-NLS-1$
@@ -553,15 +562,47 @@ public class CVSProviderPlugin extends Plugin {
 		file.delete();
 	}
 	
-	public File getCacheFileFor(String path) throws IOException {
+	public synchronized File getCacheFileFor(String path) throws IOException {
 		String physicalPath;
 		if (cacheFileNames.containsKey(path)) {
+			/*
+			 * cache hit
+			 */
 			physicalPath = (String)cacheFileNames.get(path);
+			registerHit(path);
 		} else {
+			/*
+			 * cache miss
+			 */
 			physicalPath = String.valueOf(cacheDirSize++);
 			cacheFileNames.put(path, physicalPath);
+			registerHit(path);
+			clearOldCacheEntries();
 		}
+		return getCacheFileForPhysicalPath(physicalPath);
+	}
+	private File getCacheFileForPhysicalPath(String physicalPath) throws IOException {
 		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), physicalPath);
+	}
+	private void registerHit(String path) {
+		cacheFileTimes.put(path, Long.toString(new Date().getTime()));
+	}
+	private void clearOldCacheEntries() throws IOException {
+		long current = new Date().getTime();
+		if ((lastCacheCleanup!=-1) && (current - lastCacheCleanup < CACHE_FILE_LIFESPAN)) return;
+		Enumeration e = cacheFileTimes.keys();
+		while (e.hasMoreElements()) {
+			String f = (String)e.nextElement();
+			long lastHit = Long.valueOf((String)cacheFileTimes.get(f)).longValue();
+			if ((current - lastHit) > CACHE_FILE_LIFESPAN) purgeCacheFile(f);
+		}
+		
+	}
+	private void purgeCacheFile(String path) throws IOException {
+		File f = getCacheFileForPhysicalPath((String)cacheFileNames.get(path));
+		f.delete();
+		cacheFileTimes.remove(path);
+		cacheFileNames.remove(path);
 	}
 	
 	/*
