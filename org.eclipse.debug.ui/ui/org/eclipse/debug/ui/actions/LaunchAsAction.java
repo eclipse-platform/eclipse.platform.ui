@@ -187,7 +187,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 */
 	private void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
 		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
-		action.setActionDefinitionId(ext.getId());
+		action.setActionDefinitionId(ext.getId() + "." + getMode()); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
 			WorkbenchHelp.setHelp(action, helpContextId);

@@ -218,7 +218,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
-		action.setActionDefinitionId(ext.getId());
+		action.setActionDefinitionId(ext.getId() + "." + mode); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
 			WorkbenchHelp.setHelp(action, helpContextId);

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -30,11 +31,20 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
+import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.osgi.framework.Bundle;
 
 
@@ -52,6 +62,38 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	private Expression fStandardLaunchExpr = null;
 	
 	/**
+	 * Command handler for launch shortcut key binding.
+	 */
+	private class LaunchCommandHandler extends AbstractHandler {
+	    // the shortcut to invoke
+	    private LaunchShortcutExtension fShortcut;
+	    private String fMode;
+	    
+	    /**
+	     * Constructs a new command handler for the given shortcut
+	     * 
+	     * @param shortcut
+	     */
+	    public LaunchCommandHandler(LaunchShortcutExtension shortcut, String mode) {
+	        fShortcut = shortcut;
+	        fMode = mode;
+	    }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
+         */
+        public Object execute(Map parameterValuesByName) throws ExecutionException {
+            LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
+            if (action.isEnabled()) {
+                action.run();
+            } else {
+                fShortcut.launch(new StructuredSelection(), fMode);
+            }
+            return null;
+        }
+	}
+	
+	/**
 	 * The configuration element defining this tab.
 	 */
 	private IConfigurationElement fConfig;
@@ -67,7 +109,23 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public LaunchShortcutExtension(IConfigurationElement element) {
 		setConfigurationElement(element);
+		registerLaunchCommandHandlers();
 	}
+	
+	/**
+	 * Registers command handlers for launch shortcut key bindings
+	 */
+    private void registerLaunchCommandHandlers() {
+        Iterator modes = getModes().iterator();
+        IWorkbenchCommandSupport commandSupport = PlatformUI.getWorkbench().getCommandSupport();
+        while (modes.hasNext()) {
+            String mode = (String) modes.next();
+            String id = getId() + "." + mode; //$NON-NLS-1$
+	        IHandler handler = new LaunchCommandHandler(this, mode);
+	        HandlerSubmission submission = new HandlerSubmission(null, null, null, id, handler, Priority.MEDIUM);
+            commandSupport.addHandlerSubmission(submission);
+        }
+    }	
 	
 	/**
 	 * Sets the configuration element that defines the attributes
