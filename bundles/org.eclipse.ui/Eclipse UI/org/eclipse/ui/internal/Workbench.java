@@ -51,6 +51,7 @@ public class Workbench implements IWorkbench,
 	private IPluginDescriptor startingPlugin; // the plugin which caused the workbench to be instantiated
 	private String productInfoFilename;
 	private ProductInfo productInfo;
+	private PlatformInfo platformInfo;
 	private String[] commandLineArgs;
 /**
  * Workbench constructor comment.
@@ -296,6 +297,12 @@ public PreferenceManager getPreferenceManager() {
  */
 public ProductInfo getProductInfo() {
 	return productInfo;
+}
+/**
+ * @return the platform info object
+ */
+public PlatformInfo getPlatformInfo() {
+	return platformInfo;
 }
 /**
  * Returns the shared images for the workbench.
@@ -575,29 +582,35 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 		input);
 }
 /**
- * Reads the product info.
- * The product info contains the product name, product images,
+ * Reads the platform and product info.
+ * This info contains the platform and product name, product images,
  * copyright etc.
  *
  * @return true if the method succeeds
  */
-private boolean readProductInfo() {
+private boolean readPlatformAndProductInfo() {
+	platformInfo = new PlatformInfo();
 	productInfo = new ProductInfo();
-	URL configURL= null;
-	IInstallInfo ii= BootLoader.getInstallationInfo();
-	String configName= ii.getApplicationConfigurationIdentifier();
-	if (configName == null)
-		return false;
-	configURL = ii.getConfigurationInstallURLFor(configName);
+	
+	boolean success = true;
 			
 	try {	
-		productInfo.readINIFile(configURL);
-		return true;
+		platformInfo.readINIFile();
+	} catch (CoreException e) {
+		WorkbenchPlugin.log("Error reading platform info file", e.getStatus()); //$NON-NLS-1$
+		success = false;
+	}
+
+	try {	
+		productInfo.readINIFile();
 	} catch (CoreException e) {
 		WorkbenchPlugin.log("Error reading product info file", e.getStatus()); //$NON-NLS-1$
-		return false;
+		success = false;
 	}
+	
+	return success;
 }
+
 /**
  * Record the workbench UI in a document
  */
@@ -633,7 +646,7 @@ public Object run(Object arg) {
 	Display display = new Display();
 	//Workaround for 1GEZ9UR and 1GF07HN
 	display.setWarnings(false);
-	if (!readProductInfo())
+	if (!readPlatformAndProductInfo())
 		return null;
 	if (getProductInfo().getAppName() != null)
 		Display.setAppName(getProductInfo().getAppName());

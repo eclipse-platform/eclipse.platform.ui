@@ -24,13 +24,15 @@ import org.eclipse.swt.widgets.*;
  */
 public class AboutDialog extends Dialog {
 	private	Image 			image;	//image to display on  dialog
-	private	ProductInfo 	info;	//the product info
+	private	PlatformInfo 	platformInfo;	//the platform info
+	private	ProductInfo 	productInfo;	//the product info
 /**
  * Create an instance of the AboutDialog
  */
 public AboutDialog(Shell parentShell) {
 	super(parentShell);
-	info = ((Workbench)PlatformUI.getWorkbench()).getProductInfo();
+	platformInfo = ((Workbench)PlatformUI.getWorkbench()).getPlatformInfo();
+	productInfo = ((Workbench)PlatformUI.getWorkbench()).getProductInfo();
 }
 public boolean close() {
 	//get rid of the image that was displayed on the left-hand side of the Welcome dialog
@@ -43,7 +45,7 @@ public boolean close() {
  */
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
-	newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {info.getName()})); //$NON-NLS-1$
+	newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {productInfo.getName()})); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(newShell, new Object[] {IHelpContextIds.ABOUT_DIALOG});
 }
 /**
@@ -67,7 +69,7 @@ protected void createButtonsForButtonBar(Composite parent) {
  */
 protected Control createDialogArea(Composite parent) {
 
-	image =  info.getAboutImage();	// may be null
+	image =  productInfo.getAboutImage();	// may be null
 		
 	// page group
 	Composite outer = (Composite)super.createDialogArea(parent);
@@ -89,6 +91,7 @@ protected Control createDialogArea(Composite parent) {
 		Label imageLabel = new Label(topContainer, SWT.NONE);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		data.grabExcessHorizontalSpace = true;
 		imageLabel.setLayoutData(data);
 		imageLabel.setImage(image);
@@ -99,27 +102,50 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.verticalAlignment = GridData.BEGINNING;
-	label.setText(text());
+	label.setText(productText());
 	label.setLayoutData(data);
 
-	Label spacer;
-	
-	spacer = new Label(outer, SWT.LEFT);
+	Label spacer = new Label(topContainer, SWT.LEFT);
+	data = new GridData();
+	data.verticalAlignment = GridData.FILL;
+	data.verticalSpan = 6;
+	spacer.setLayoutData(data);
+
+	// horizontal bar
+	Label bar =  new Label(topContainer, SWT.HORIZONTAL | SWT.SEPARATOR);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
-	data.horizontalSpan = 1;
-	spacer.setLayoutData(data);
+	bar.setLayoutData(data);
+	
+	// text on the right
+	label = new Label(topContainer, SWT.LEFT | SWT.WRAP );
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.verticalAlignment = GridData.BEGINNING;
+	label.setText(platformText());
+	label.setLayoutData(data);
 
 	return outer;
 }
 /**
- * Answer the text to show on the right side of the dialog.
+ * Answer the product text to show on the right side of the dialog.
  */ 
-protected String text() {
-	if (info.getBuildID().length() == 0) {
-		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {info.getDetailedName(),info.getVersion(),info.getCopyright()}); //$NON-NLS-1$
+protected String productText() {
+	if (productInfo.getBuildID().length() == 0) {
+		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {productInfo.getDetailedName(),productInfo.getVersion(),productInfo.getCopyright()}); //$NON-NLS-1$
 	} else {
-		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {info.getDetailedName(),info.getVersion(),info.getBuildID(),info.getCopyright()}); //$NON-NLS-1$
+		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {productInfo.getDetailedName(),productInfo.getVersion(),productInfo.getBuildID(),productInfo.getCopyright()}); //$NON-NLS-1$
+	}
+}
+	
+/**
+ * Answer the platform text to show on the right side of the dialog.
+ */ 
+protected String platformText() {
+	if (platformInfo.getBuildID().length() == 0) {
+		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {platformInfo.getDetailedName(),platformInfo.getVersion(),platformInfo.getCopyright()}); //$NON-NLS-1$
+	} else {
+		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {platformInfo.getDetailedName(),platformInfo.getVersion(),platformInfo.getBuildID(),platformInfo.getCopyright()}); //$NON-NLS-1$
 	}
 }
 }

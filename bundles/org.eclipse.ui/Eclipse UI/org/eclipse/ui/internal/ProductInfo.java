@@ -5,6 +5,8 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.boot.*;
+import org.eclipse.ui.internal.misc.PluginFileFinder;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -64,6 +66,7 @@ public class ProductInfo {
 	private ImageDescriptor productImage = null;
 	private ImageDescriptor splashImage = null;
 	private ImageDescriptor aboutImage = null;
+	private IPluginDescriptor desc;
 	private URL baseURL;
 	private Hashtable configurationPreferences;
 
@@ -268,17 +271,48 @@ private Hashtable readConfigurationPreferences() {
 	
 }
 /**
+ * R1.0 product.ini handling using "main" plugin and fragments for NL
+ */
+public boolean readINIFile() throws CoreException {
+	// determine the identifier of the "dominant" application 
+	IInstallInfo ii= BootLoader.getInstallationInfo();
+	String configName= ii.getApplicationConfigurationIdentifier();
+	if (configName == null)
+		return false;
+		
+	// attempt to locate its corresponding "main" plugin
+	IPluginRegistry reg = Platform.getPluginRegistry();
+	if (reg == null)
+		return false;
+	int index = configName.lastIndexOf("_");
+	if (index == -1) 	
+		this.desc = reg.getPluginDescriptor(configName);
+	else {
+		String mainPluginName = configName.substring(0,index);
+		PluginVersionIdentifier mainPluginVersion = null;
+		try {
+			mainPluginVersion = new PluginVersionIdentifier(configName.substring(index+1));
+		} catch(Exception e) {
+			return false;
+		}
+		this.desc = reg.getPluginDescriptor(mainPluginName, mainPluginVersion);
+	}	
+	if (this.desc == null)
+		return false;
+	this.baseURL = desc.getInstallURL();
+				
+	// load the product.ini file	
+	URL iniURL = PluginFileFinder.getResource(this.desc, "product.ini");
+	if (iniURL == null)
+		return false;
+	readINIFile(iniURL);
+	return true;
+}
+
+/**
  * Read the ini file.
  */
-public void readINIFile(URL baseURL) throws CoreException {
-	
-	this.baseURL= baseURL;
-	URL iniURL= null;
-	try {
-			iniURL = new URL(baseURL, "product.ini");//$NON-NLS-1$
-	} catch (MalformedURLException e) {
-		reportINIFailure(e, "Cannot access product.ini at " + baseURL);//$NON-NLS-1$
-	}
+private void readINIFile(URL iniURL) throws CoreException {
 
 	Properties ini = new Properties();
 	InputStream is = null;
@@ -318,11 +352,9 @@ public void readINIFile(URL baseURL) throws CoreException {
 
 	String welcomePageFileName = (String) ini.get("welcomePage");//$NON-NLS-1$
 	if (welcomePageFileName != null) {
-		try {
-			welcomePageURL = new URL(baseURL, welcomePageFileName);
-		} catch (MalformedURLException e) {
-			reportINIFailure(e, "Cannot access welcome page " + welcomePageFileName);//$NON-NLS-1$
-		}
+		welcomePageURL = PluginFileFinder.getResource(this.desc, welcomePageFileName);
+		if (welcomePageURL == null) 
+			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName);//$NON-NLS-1$
 	}
 		
 	String fileName;
@@ -336,30 +368,24 @@ public void readINIFile(URL baseURL) throws CoreException {
 	if (fileName == null)
 		fileName = (String) ini.get("image");//$NON-NLS-1$
 	if (fileName != null) {
-		try {
-			url = new URL(baseURL, fileName);
+		url = PluginFileFinder.getResource(this.desc, fileName);
+		if (url != null)
 			productImage = ImageDescriptor.createFromURL(url);
-		}
-		catch (MalformedURLException e) {}
 	}
 
 	fileName = (String) ini.get("aboutImage" + suffix);//$NON-NLS-1$
 	if(fileName == null)
 		fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
 	if (fileName != null) {
-		try {
-			url = new URL(baseURL, fileName);
+		url = PluginFileFinder.getResource(this.desc, fileName);
+		if (url != null)
 			aboutImage = ImageDescriptor.createFromURL(url);
-		}
-		catch (MalformedURLException e) {}
 	}
 
 	if ((fileName = (String) ini.get("splashImage") ) != null) {//$NON-NLS-1$
-		try {
-			url = new URL(baseURL, fileName);
+		url = PluginFileFinder.getResource(this.desc, fileName);
+		if (url != null)
 			splashImage = ImageDescriptor.createFromURL(url);
-		}
-		catch (MalformedURLException e) {}
 	}
 
 	if ((defaultPerspId = (String) ini.get("defaultPerspectiveId") ) == null) {//$NON-NLS-1$
