@@ -393,7 +393,9 @@ abstract public class CVSAction extends TeamAction {
 						IWorkbenchPage[] pages = windows[i].getPages();
 						for (int j = 0; j < pages.length; j++) {	
 							okToContinue[0] = pages[j].saveAllEditors(confirm);
+							if (!okToContinue[0]) break;
 						}
+						if (!okToContinue[0]) break;
 					}
 					if (oldPage != null) {
 						oldPage.getWorkbenchWindow().getShell().setFocus();
