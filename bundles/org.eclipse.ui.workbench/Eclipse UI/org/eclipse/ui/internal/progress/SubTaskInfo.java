@@ -66,5 +66,12 @@ class SubTaskInfo extends JobTreeElement {
 	Object getParent() {
 		return job;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
+	 */
+	boolean isJobInfo() {
+		return false;
+	}
 
 }

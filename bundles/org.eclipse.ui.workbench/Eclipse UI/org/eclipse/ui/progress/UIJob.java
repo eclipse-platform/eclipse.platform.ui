@@ -68,8 +68,7 @@ public abstract class UIJob extends Job {
 		Display asyncDisplay = getDisplay();
 
 		if (asyncDisplay == null) {
-			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, ProgressMessages.getString("UIJob.displayNotSet"), //$NON-NLS-1$
-			null);
+			return Status.CANCEL_STATUS;
 		}
 		asyncDisplay.asyncExec(new Runnable() {
 			public void run() {

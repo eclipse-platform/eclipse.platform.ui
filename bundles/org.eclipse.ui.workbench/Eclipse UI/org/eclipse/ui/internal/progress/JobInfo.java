@@ -53,6 +53,15 @@ class JobInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
+		if (status.getCode() == PENDING_STATUS)
+			return ProgressMessages.format(
+				"JobInfo.Pending", //$NON-NLS-1$
+				new Object[] { status.getMessage()});
+		if (status.getCode() == IStatus.ERROR)
+			return ProgressMessages.format(
+				"JobInfo.Error", //$NON-NLS-1$
+				new Object[] { job.getName(), status.getMessage()});
+
 		return status.getMessage();
 	}
 
@@ -127,5 +136,12 @@ class JobInfo extends JobTreeElement {
 	 */
 	void setDone() {
 		status = createStatus(DONE_STATUS, job);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
+	 */
+	boolean isJobInfo() {
+		return true;
 	}
 }

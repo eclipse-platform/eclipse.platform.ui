@@ -39,5 +39,11 @@ abstract class JobTreeElement {
 	 * @return
 	 */
 	abstract String getDisplayString();
+	
+	/**
+	 * Return whether or not the receiver is an info.
+	 * @return boolean
+	 */
+	abstract boolean isJobInfo();
 
 }
