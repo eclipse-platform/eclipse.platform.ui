@@ -376,7 +376,8 @@ public class ContentType implements IContentType {
 	private IContentDescriber invalidateDescriber(Throwable reason) {
 		setValidation(INVALID);
 		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
-		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, reason);
+		// don't log CoreExceptions again
+		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
 		InternalPlatform.getDefault().log(status);
 		return describer = new InvalidDescriber();
 	}
