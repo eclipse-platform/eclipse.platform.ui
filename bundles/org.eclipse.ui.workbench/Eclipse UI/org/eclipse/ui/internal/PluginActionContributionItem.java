@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -87,11 +86,9 @@ public class PluginActionContributionItem extends ActionContributionItem
      * interface.
      */
     public void dispose() {
-        PluginAction proxy = (PluginAction) getAction();
-        if (proxy != null) {
-            if (proxy.getDelegate() instanceof IActionDelegate2) {
-                ((IActionDelegate2) proxy.getDelegate()).dispose();
-            }
+        PluginAction pluginAction = (PluginAction) getAction();
+        if (pluginAction != null) {
+            pluginAction.disposeDelegate();
         }
 
         PlatformUI.getWorkbench().getActivitySupport().getActivityManager()

@@ -28,6 +28,7 @@ import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -327,5 +328,31 @@ public abstract class PluginAction extends Action implements
      */
     public String getPluginId() {
         return pluginId;
+    }
+
+    /**
+     * Disposes the delegate, if created.
+     * 
+     * @since 3.1
+     */
+    public void disposeDelegate() {
+        // avoid calling dispose() twice if the delegate implements
+        // both IActionDelegate2 and IWorkbenchWindowActionDelegate
+        if (getDelegate() instanceof IActionDelegate2) {
+            ((IActionDelegate2) getDelegate()).dispose();
+        }
+        else if (getDelegate() instanceof IWorkbenchWindowActionDelegate) {
+            ((IWorkbenchWindowActionDelegate) getDelegate()).dispose();
+        }
+        delegate = null;
+    }
+
+    /**
+     * Disposes this plugin action.
+     * 
+     * @since 3.1
+     */
+    public void dispose() {
+        disposeDelegate();
     }
 }
