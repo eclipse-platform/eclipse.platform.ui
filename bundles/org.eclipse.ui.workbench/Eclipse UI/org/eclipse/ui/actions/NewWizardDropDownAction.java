@@ -26,6 +26,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * Action which, when run, will open the new wizard dialog.
  * In addition, it has a drop-down showing the new wizard shortcuts
  * associated with the current perspective.
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
  *
  * @since 3.1
  */
