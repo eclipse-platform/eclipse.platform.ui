@@ -25,9 +25,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -43,29 +41,15 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Font font= parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
 		Composite comp= (Composite)fJREBlock.getControl();
+		((GridData)comp.getLayoutData()).grabExcessVerticalSpace= true;
+		((GridData)comp.getLayoutData()).verticalAlignment= SWT.FILL;
 		
-		Composite lowerComp = new Composite(comp, SWT.NONE);
-				
-		GridLayout updateLayout = new GridLayout();
-		updateLayout.numColumns = 2;
-		updateLayout.marginHeight=0;
-		updateLayout.marginWidth=0;
-		lowerComp.setLayout(updateLayout);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 3;
-		lowerComp.setLayoutData(gd);
-		lowerComp.setFont(font);
-		
-		createVerticalSpacer(lowerComp, 2);
-		
-		fVMArgumentsBlock.createControl(lowerComp);
+		fVMArgumentsBlock.createControl(comp);
 		((GridData)fVMArgumentsBlock.getControl().getLayoutData()).horizontalSpan= 2;
-		createVerticalSpacer(lowerComp, 2);
 						
-		fWorkingDirectoryBlock.createControl(lowerComp);		
+		fWorkingDirectoryBlock.createControl(comp);		
 		((GridData)fWorkingDirectoryBlock.getControl().getLayoutData()).horizontalSpan= 2;
 	}
 
