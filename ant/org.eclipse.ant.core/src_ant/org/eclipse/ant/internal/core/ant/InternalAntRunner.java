@@ -125,6 +125,9 @@ public class InternalAntRunner {
 	 */
 	protected String loggerClassname = null;
 
+	/** Extra arguments to be parsed as command line arguments. */
+	protected String extraArguments = null;
+
 	// properties
 	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 
@@ -234,6 +237,8 @@ protected void parseScript(Project project) {
  * Runs the build script.
  */
 public void run() {
+	if (extraArguments != null)
+		processCommandLine(getArrayList(extraArguments));
 	Project project = new Project();
 	Throwable error = null;
     PrintStream originalErr = System.err;
@@ -482,6 +487,13 @@ public void setMessageOutputLevel(int level) {
 }
 
 /**
+ * 
+ */
+public void setArguments(String args) {
+	this.extraArguments = args;
+}
+
+/**
  * Sets the execution targets.
  * 
  */
@@ -694,6 +706,19 @@ private ArrayList getArrayList(String[] args) {
 	ArrayList result = new ArrayList(args.length);
 	for (int i = 0; i < args.length; i++)
 		result.add(args[i]);
+	return result;
+}
+
+/**
+ * Helper method to ensure an array is converted into an ArrayList.
+ */
+private ArrayList getArrayList(String args) {
+	ArrayList result = new ArrayList();
+	for (StringTokenizer tokens = new StringTokenizer(args, ","); tokens.hasMoreTokens();) {
+		String token = tokens.nextToken().trim();
+		if (!token.equals(""))
+			result.add(token);
+	}
 	return result;
 }
 }

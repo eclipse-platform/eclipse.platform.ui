@@ -24,6 +24,7 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 	protected Map userProperties;
 	protected int messageOutputLevel = 2; // Project.MSG_INFO
 	protected String buildLoggerClassName;
+	protected String arguments;
 
 public AntRunner() {
 	buildListeners = new ArrayList(5);
@@ -55,6 +56,13 @@ public void setBuildFileLocation(String buildFileLocation) {
  */
 public void setMessageOutputLevel(int level) {
 	this.messageOutputLevel = level;
+}
+
+/**
+ * 
+ */
+public void setArguments(String arguments) {
+	this.arguments = arguments;
 }
 
 /**
@@ -123,6 +131,11 @@ public void run() throws CoreException {
 		if (targets != null) {
 			Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] {Vector.class});
 			setExecutionTargets.invoke(runner, new Object[] {targets});
+		}
+		// set extra arguments
+		if (arguments != null) {
+			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] {String.class});
+			setArguments.invoke(runner, new Object[] {arguments});
 		}
 		// run
 		Method run = classInternalAntRunner.getMethod("run", null);
