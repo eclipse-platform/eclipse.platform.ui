@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -102,9 +103,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 	};
 	
+	// Console Encoding widgets
     private Button fDefaultEncodingButton;
     private Button fAltEncodingButton;
     private Combo fEncodingCombo;
+    
+    // Console Output widgets
     private Button fConsoleOutput;
     private Button fFileOutput;
     private Text fFileText;
@@ -205,7 +209,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		Dialog.applyDialogFont(parent);
 	}
 	
-    private void addOutputCaptureBlock(Composite parent) {
+    protected void addOutputCaptureBlock(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
         group.setText(LaunchConfigurationsMessages.getString("CommonTab.4")); //$NON-NLS-1$
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -266,7 +270,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return true;
     }
 
-    private void addEncodingBlock(Composite parent) {
+    protected void addEncodingBlock(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	    
@@ -643,16 +647,25 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		    encoding = fEncodingCombo.getText();
 		}
 		configuration.setAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, encoding);
+		boolean captureOutput = false;
 		if (fConsoleOutput.getSelection()) {
+		    captureOutput = true;
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String)null);
 		} else {
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
 		}
 		if (fFileOutput.getSelection()) {
+		    captureOutput = true;
 		    String file = fFileText.getText().replace('\\', '/');
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
 		} else {
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+		}
+		
+		if (!captureOutput) {
+		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
+		} else {
+		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
 		}
 	}
 

@@ -197,6 +197,12 @@ public class DebugPlugin extends Plugin {
 	public static final String ATTR_PROCESS_FACTORY_ID = "process_factory_id"; //$NON-NLS-1$
 	
 	/**
+	 * The launch configuration attribute that designates whether or not it's associated
+	 * launch should capture output or not.
+	 */
+	public static final String ATTR_CAPTURE_OUTPUT = PI_DEBUG_CORE + ".capture_output"; //$NON-NLS-1$
+	
+	/**
 	 * The singleton debug plug-in instance.
 	 */
 	private static DebugPlugin fgDebugPlugin= null;

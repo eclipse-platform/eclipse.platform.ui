@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.core.NullStreamsProxy;
 import org.eclipse.debug.internal.core.StreamsProxy;
 
 
@@ -85,6 +86,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Table of client defined attributes
 	 */
 	private Map fAttributes;
+	
+	/**
+	 * Whether output from the process should be captured or swallowed
+	 */
+	private boolean fCaptureOutput = true;
 
 	/**
 	 * Constructs a RuntimeProcess on the given system process
@@ -108,6 +114,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		} catch (IllegalThreadStateException e) {
 			fTerminated= false;
 		}
+		
+		String captureOutput = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
+		fCaptureOutput = !("false".equals(captureOutput)); //$NON-NLS-1$
+		
 		fStreamsProxy= createStreamsProxy();
 		fMonitor = new ProcessMonitorThread(this);
 		fMonitor.start();
@@ -235,6 +245,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * @see IProcess#getStreamsProxy()
 	 */
 	public IStreamsProxy getStreamsProxy() {
+	    if (!fCaptureOutput) {
+	        return null;
+	    }
 		return fStreamsProxy;
 	}
 	
@@ -244,6 +257,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * @return streams proxy
 	 */
 	protected IStreamsProxy createStreamsProxy() {
+	    if (!fCaptureOutput) {
+	        return new NullStreamsProxy(getSystemProcess());
+	    }
+	    
 		return new StreamsProxy(getSystemProcess());
 	}
 	

@@ -539,6 +539,15 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				throw new CoreException(status);
 			}
 		}
+		
+		boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
+		if(!captureOutput) {
+		    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
+		} else {
+		    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
+		}
+		
+		
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}		
