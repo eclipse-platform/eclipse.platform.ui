@@ -147,8 +147,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private Text fNameText;
 	
-	private boolean fIgnoreNameChange = false;
-	
 	private String fLastSavedName = null;
 	
 	/**
@@ -680,8 +678,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}						
 	}
 	
+	/**
+	 * If the name is valid, rename the current launch configuration.  Otherwise, show an
+	 * appropriate error message.
+	 */
 	protected void updateConfigFromName() {
 		if (getLaunchConfiguration() != null) {
+			try {
+				verifyName();
+			} catch (CoreException ce) {
+				refreshStatus();
+				//setErrorMessage(ce.getMessage());
+				return;				
+			}
+						
 			getLaunchConfiguration().rename(getNameTextWidget().getText().trim());
 			refreshStatus();
 		}
@@ -789,9 +799,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getNameTextWidget().addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					if (!ignoreNameChange()) {
-						updateConfigFromName();
-					}
+					updateConfigFromName();
 				}
 			}
 		);		
@@ -1333,14 +1341,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		return fMode;
  	}
  	
- 	protected void setIgnoreNameChange(boolean ignore) {
- 		fIgnoreNameChange = ignore;
- 	}
- 	
- 	protected boolean ignoreNameChange() {
- 		return fIgnoreNameChange;
- 	}
- 	
 	/**
 	 * Sets the text widget used to display the name
 	 * of the configuration being displayed/edited
@@ -1653,7 +1653,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		// Do the UI-related things required after a save
-		setLastSavedName(fUnderlyingConfig.getName());	
 		updateButtons();
 	}
 	
@@ -1707,6 +1706,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (isWorkingCopyDirty()) {
 			fUnderlyingConfig = workingCopy.doSave();
 			setWorkingCopy(fUnderlyingConfig.getWorkingCopy());
+			setLastSavedName(fUnderlyingConfig.getName()); 
 		}
 	}
 	
