@@ -227,7 +227,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.NONE);        
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
@@ -235,6 +235,11 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         label
                 .setText("Capabilities allow you to enable or disable various product components.  These capabilities are grouped according to a set of predefined categories."); //$NON-NLS-1$
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        data.widthHint = 400;
+        data.horizontalSpan = 2;        
+        label.setLayoutData(data);
+        label = new Label(composite, SWT.NONE); //spacer
+        data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         data.horizontalSpan = 2;
         label.setLayoutData(data);
         createPromptButton(composite);
@@ -313,9 +318,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         {
             Label label = new Label(composite, SWT.NONE);
             label.setText("Cat&egory Description:"); //$NON-NLS-1$
-            descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER);
+            descriptionText = new Text(composite, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
             GridData data = new GridData(GridData.FILL_BOTH);
             data.heightHint = 100;
+            data.widthHint = 200;
             descriptionText.setLayoutData(data);
         }
         {
@@ -339,8 +345,8 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         GridLayout layout = new GridLayout();
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
-        GridData data = new GridData(300, SWT.DEFAULT);
-        data.verticalAlignment = GridData.FILL;
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.widthHint = 200;
         composite.setLayoutData(data);
         Label label = new Label(composite, SWT.NONE);
         label.setText("&Categories:"); //$NON-NLS-1$
