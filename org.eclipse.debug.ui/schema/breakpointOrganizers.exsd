@@ -82,6 +82,9 @@ Organizers with the specified name will be automatically created by the Debug Pl
                <documentation>
                   Optional label for this organizer which is suitable for presentation to the user to describe breakpoints that do not fall into a category supplied by this organizer. For example, if an organizer categorizes breakpoints by working sets, but a breakpoint does not belong to a working set, this label will be used. When unspecified, &quot;Others&quot; is used.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
