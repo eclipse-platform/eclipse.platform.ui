@@ -90,18 +90,20 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 	protected void navigate(Object input) {
 		if (input == null || webBrowser == null)
 			return;
+		
+		// use the client locale to load the correct document
+		String locale = Locale.getDefault().toString();
+		
 		if (input instanceof Topic) {
 			Topic topicElement = (Topic) input;
 			String url = topicElement.getHref();
 			if (url == null || url.equals(""))
 				return; // no content in this topic
-			if (url.indexOf("?resultof=") != -1) {
-				Locale locale = Locale.getDefault();
-				url = url.concat("&lang=") + locale.getDefault().toString();
-			} else {
-				Locale locale = Locale.getDefault();
-				url = url.concat("?lang=") + locale.getDefault().toString();
-			}
+			if (url.indexOf("?resultof=") != -1) 
+				url = url+"&lang=" + locale;
+			else 
+				url = url + "?lang=" + locale;
+			
 			if (url.indexOf("http:") == -1) {
 				try {
 					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
@@ -114,9 +116,12 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				InfoSet infoset = (InfoSet) input;
 				String url = infoset.getHref();
 				if (url == null || url.equals(""))
-					url = defaultSplash;
-				Locale locale = Locale.getDefault();
-				url = url.concat("?lang=") + locale.getDefault().toString();
+					url = defaultSplash 
+					    + "?title="+URLEncoder.encode(infoset.getLabel())
+					    + "&lang=" + locale;
+				else
+					url = url+ "?lang=" + locale;
+					
 				if (url.indexOf("http:") == -1) {
 					try {
 						url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
