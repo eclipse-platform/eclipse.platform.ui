@@ -407,6 +407,15 @@ public interface ILaunchManager {
 	 */
 	public ISourceContainerType getSourceContainerType(String id);
 	
+	/**
+	 * Returns whether the given launch is currently registered.
+	 * 
+	 * @param launch a launch
+	 * @return whether the launch is currently registered
+	 * @since 3.1
+	 */
+	public boolean isRegistered(ILaunch launch);
+	
 }
 
 

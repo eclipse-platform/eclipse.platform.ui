@@ -28,10 +28,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -99,6 +101,9 @@ import org.xml.sax.SAXException;
  *
  * @see ILaunchManager
  */
+/**
+ * LaunchManager
+ */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	/**
@@ -160,6 +165,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Collection of launches
 	 */
 	private Vector fLaunches= new Vector(10);
+	
+	/**
+	 * Set of launches for efficient 'isRegistered()' check
+	 */
+	private Set fLaunchSet = new HashSet(10); 
 
 	/**
 	 * Collection of listeners
@@ -364,10 +374,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param launch the launch to remove
 	 * @return whether the launch was removed
 	 */
-	protected boolean internalRemoveLaunch(ILaunch launch) {
+	protected synchronized boolean internalRemoveLaunch(ILaunch launch) {
 		if (launch == null) {
 			return false;
 		}
+		fLaunchSet.remove(launch);
 		return fLaunches.remove(launch);
 	}
 	
@@ -387,14 +398,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		getLaunchesNotifier().notify(launches, update);
 	}	
 	
-	/**
-	 * Returns whether the given launch is currently registered.
-	 * 
-	 * @param launch a launch
-	 * @return whether the given launch is currently registered
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
 	 */
-	protected boolean isRegistered(ILaunch launch) {
-		return fLaunches.contains(launch);
+	public synchronized boolean isRegistered(ILaunch launch) {
+		return fLaunchSet.contains(launch);
 	}
 
 	/**
@@ -453,11 +461,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param launch launch to register
 	 * @return whether the launch was added
 	 */
-	protected boolean internalAddLaunch(ILaunch launch) {
+	protected synchronized boolean internalAddLaunch(ILaunch launch) {
 		if (fLaunches.contains(launch)) {
 			return false;
 		}
 		fLaunches.add(launch);
+		fLaunchSet.add(launch);
 		return true;
 	}
 	
@@ -1809,4 +1818,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		initializeLaunchModes();
 		return (ILaunchMode) fLaunchModes.get(mode);
 	}
+	
+	
 }

@@ -510,6 +510,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
+	    return launch(mode, monitor, build, true);
+	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
+     */
+    public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
 		ILaunchConfigurationDelegate delegate= getDelegate(mode);
 		ILaunchConfigurationDelegate2 delegate2 = null;
@@ -563,7 +571,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 		}
 		
-		getLaunchManager().addLaunch(launch);
+		if (register) {
+		    getLaunchManager().addLaunch(launch);
+		}
 		try {
 			initializeSourceLocator(launch);
 			delegate.launch(this, mode, launch, subMonitor);
@@ -578,7 +588,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			getLaunchManager().removeLaunch(launch);
 		}
 		return launch;
-
-	}
+    }
 }
 

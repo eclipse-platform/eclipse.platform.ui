@@ -120,6 +120,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * delegate does not implement <code>ILaunchConfigurationDelegate2</code>
 	 * an incremental workspace build will be performed before the launch
 	 * by the debug platform.
+	 * </p>
+	 * <p>
 	 * The resulting launch object is registered with the launch manager
 	 * before passing it to this configuration's delegate launch method, for
 	 * contributions (debug targets and processes).
@@ -146,6 +148,53 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.0
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException;
+	
+	/**
+	 * Launches this configuration in the specified mode by delegating to
+	 * this configuration's launch configuration delegate, and returns the
+	 * resulting launch.
+	 * <p>
+	 * If this configuration's launch delegate implements
+	 * <code>ILaunchConfigurationDelegate2</code>, the launch delegate will
+	 * be consulted to provide a launch object for the launch,
+	 * perform pre-launch checks, and build before the launch.
+	 * If <code>build</code> is <code>true</code> and the associated launch
+	 * delegate does not implement <code>ILaunchConfigurationDelegate2</code>
+	 * an incremental workspace build will be performed before the launch
+	 * by the debug platform.
+	 * </p>
+	 * <p>
+	 * When <code>register</code> is <code>true</code>, the resulting launch object
+	 * is registered with the launch manager before passing it to this configuration's delegate
+	 * launch method, for contributions (debug targets and processes). When
+	 * <code>register</code> is <code>false</code>, the launch is not registered with
+	 * the launch manager. Clients that launch configurations without registering
+	 * a launch should register appropiate debug event filters to intercept events
+	 * from unregistered launches.
+	 * </p>
+	 * <p>
+	 * If the delegate contributes a source locator to the launch, that
+	 * source locator is used. Otherwise an appropriate source locator is
+	 * contributed to the launch  based on the values of
+	 * <code>ATTR_SOURCE_LOCATOR_ID</code> and
+	 * <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch is cancelled (via
+	 * the given progress monitor), the launch is removed from the launch
+	 * manager. The launch is returned whether cancelled or not. Invoking this
+	 * method causes the underlying launch configuration delegate to be
+	 * instantiated (if not already).
+	 * </p>
+	 * @param mode the mode in which to launch, one of the mode constants
+	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
+	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
+	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  framework.
+	 * @param build whether the workspace should be built before the launch
+	 * @param register whether to register the resulting launch with the launch manager
+	 * @return resulting launch
+	 * @throws CoreException if an exception occurrs during the launch sequence
+	 * @since 3.1
+	 */
+	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration supports the

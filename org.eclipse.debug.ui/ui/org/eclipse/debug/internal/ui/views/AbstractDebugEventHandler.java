@@ -52,6 +52,11 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	private EventProcessingJob fUpdateJob = new EventProcessingJob();
 	
 	/**
+	 * Empty event set constant
+	 */
+	protected static final DebugEvent[] EMPTY_EVENT_SET = new DebugEvent[0];
+	
+	/**
 	 * Job to dispatch debug event sets
 	 */
 	private class EventProcessingJob extends UIJob {
@@ -122,11 +127,26 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if (!isAvailable()) {
 			return;
 		}
+		// filter events
+		events = filterEvents(events);
+		if (events.length == 0) {
+		    return;
+		}
 		// add the event set to the queue and schedule update
 		synchronized (fEventSetQueue) {
 		    fEventSetQueue.add(events);
 		}
 		fUpdateJob.schedule();
+	}
+	
+	/**
+	 * Filters the given events before processing.
+	 *  
+	 * @param events event set received for processing
+	 * @return events to be processed
+	 */
+	protected DebugEvent[] filterEvents(DebugEvent[] events) {
+	    return events;
 	}
 	
 	/**

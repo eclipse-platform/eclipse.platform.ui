@@ -22,7 +22,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -56,6 +58,29 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 	
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#filterEvents(org.eclipse.debug.core.DebugEvent[])
+     */
+    protected DebugEvent[] filterEvents(DebugEvent[] events) {
+        for (int i = 0; i < events.length; i++) {
+            DebugEvent event = events[i];
+            Object source = event.getSource();
+            ILaunch launch = null;
+            if (source instanceof IDebugElement) {
+                launch = ((IDebugElement)source).getLaunch();
+            } else if (source instanceof IProcess) {
+                launch = ((IProcess)source).getLaunch();
+            }
+            // we only need to consider the first event, as all events in an event set come
+            // from the same program
+            if (DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
+                return events;
+            }
+            return EMPTY_EVENT_SET;
+        }
+        return events;
+    }
+    
 	/**
 	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
