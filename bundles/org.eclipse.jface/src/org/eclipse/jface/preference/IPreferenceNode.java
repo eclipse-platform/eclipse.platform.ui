@@ -57,14 +57,14 @@ public String getId();
  * Returns the image used to present this node in a preference dialog.
  *
  * @return the image for this node, or <code>null</code>
- *   if these is no image for this node
+ *   if there is no image for this node
  */
 public Image getLabelImage();
 /**
  * Returns the text label used to present this node in a preference dialog.
  *
  * @return the text label for this node, or <code>null</code>
- *   if these is no label for this node
+ *   if there is no label for this node
  */
 public String getLabelText();
 /**

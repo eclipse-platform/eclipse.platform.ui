@@ -40,7 +40,7 @@ public abstract class PartEventAction extends Action implements IPartListener {
  * Creates a new action with the given text.
  *
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  */
 protected PartEventAction(String text) {
 	super(text);

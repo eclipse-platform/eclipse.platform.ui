@@ -64,7 +64,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
  *
  * @param shell the shell (for the modal progress dialog and error messages)
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  */
 protected WorkspaceAction(Shell shell, String text) {
 	super(text);

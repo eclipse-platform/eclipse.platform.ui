@@ -44,7 +44,7 @@ public abstract class ActiveEditorAction extends PageEventAction {
  * Creates a new action with the given text.
  *
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  * @param window the workbench window this action is
  *   registered with.
  */

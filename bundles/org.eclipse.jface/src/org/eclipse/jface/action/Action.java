@@ -136,7 +136,7 @@ protected Action() {
  * Calls the zero-arg constructor, then <code>setText</code>.
  *
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  * @see #setText
  */
 protected Action(String text) {

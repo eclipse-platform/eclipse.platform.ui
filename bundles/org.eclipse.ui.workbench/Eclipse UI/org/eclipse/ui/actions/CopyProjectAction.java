@@ -53,7 +53,7 @@ public class CopyProjectAction extends SelectionListenerAction {
  *
  * @param shell the shell for any dialogs
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  */
 public CopyProjectAction(Shell shell) {
 	this(shell,COPY_TITLE);
@@ -64,7 +64,7 @@ public CopyProjectAction(Shell shell) {
  *
  * @param shell the shell for any dialogs
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  */
 CopyProjectAction(Shell shell, String name) {
 	super(name);

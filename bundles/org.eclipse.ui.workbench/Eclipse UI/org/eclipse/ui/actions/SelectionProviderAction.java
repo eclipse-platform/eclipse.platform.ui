@@ -41,7 +41,7 @@ public abstract class SelectionProviderAction extends Action
  *
  * @param provider the selection provider that will provide selection notification
  * @param text the string used as the text for the action, 
- *   or <code>null</code> if these is no text
+ *   or <code>null</code> if there is no text
  */
 protected SelectionProviderAction(ISelectionProvider provider, String text) {
 	super(text);
