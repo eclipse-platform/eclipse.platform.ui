@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IHandlerActivation;
@@ -79,6 +80,10 @@ public final class CommandService implements ICommandService {
 		return new HandlerActivation(commandId, handler);
 	}
 
+	public final void addExecutionListener(final IExecutionListener listener) {
+		commandManager.addExecutionListener(listener);
+	}
+
 	/**
 	 * Returns the current map of handlers.
 	 * 
@@ -115,5 +120,9 @@ public final class CommandService implements ICommandService {
 
 	public final void readRegistryAndPreferences() {
 		CommandPersistence.read(commandManager, this);
+	}
+
+	public final void removeExecutionListener(final IExecutionListener listener) {
+		commandManager.removeExecutionListener(listener);
 	}
 }

@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IService;
 
@@ -49,6 +50,15 @@ public interface ICommandService extends IService {
 	 *         which this service was retrieved is destroyed.
 	 */
 	public IHandlerActivation activateHandler(String commandId, IHandler handler);
+
+	/**
+	 * Adds an execution listener to the command service. This listener will be
+	 * notified as commands are executed.
+	 * 
+	 * @param listener
+	 *            The listener to add; must not be <code>null</code>.
+	 */
+	public void addExecutionListener(IExecutionListener listener);
 
 	/**
 	 * Retrieves the category with the given identifier. If no such category
@@ -99,4 +109,12 @@ public interface ICommandService extends IService {
 	 * </p>
 	 */
 	public void readRegistryAndPreferences();
+
+	/**
+	 * Removes an execution listener from the command service.
+	 * 
+	 * @param listener
+	 *            The listener to remove; must not be <code>null</code>.
+	 */
+	public void removeExecutionListener(IExecutionListener listener);
 }
