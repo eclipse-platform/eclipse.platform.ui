@@ -176,7 +176,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			if (pluginID != null) {
 				IPluginDescriptor descriptor= pluginRegistry.getPluginDescriptor(pluginID);
 				pluginID = descriptor.getLabel();
-				if ("".equals(pluginID)) {
+				if ("".equals(pluginID)) {   //$NON-NLS-1$
 					pluginID = SystemSummaryMessages.getString("SystemSummary.notSpecified"); //$NON-NLS-1$
 				}
 			} else {
