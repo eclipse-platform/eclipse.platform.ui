@@ -68,6 +68,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void add(IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
+		if (isDuplicate(item)) return;
 		super.add(item);
 	}
 	/**
@@ -162,9 +163,15 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	protected void dispose(CoolItem coolItem) {
-		if (coolItem != null) {
+		if ((coolItem != null) && !coolItem.isDisposed()) {
 			coolItem.setData(null);
-			coolItem.setControl(null);
+			Control control = coolItem.getControl();
+			// if the control is already disposed, setting the coolitem
+			// control to null will cause an SWT exception, workaround
+			// for 19630
+			if ((control != null) && !control.isDisposed()) {
+				coolItem.setControl(null);
+			}
 			coolItem.dispose();
 		}
 	}		
@@ -328,7 +335,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		ArrayList newItems = new ArrayList(coolItems.length);
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
-			newItems.add(item.getId());
+			if (item != null) {
+				newItems.add(item.getId());
+			}
 		}
 		layout.items = newItems;
 		layout.itemSizes = coolBar.getItemSizes();
@@ -429,6 +438,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void insertAfter(String id, IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
+		if (isDuplicate(item)) return;
 		super.insertAfter(id, item);
 		((CoolBarContributionItem)item).setOrderAfter(true);
 	}
@@ -459,8 +469,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void insertBefore(String id, IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
+		if (isDuplicate(item)) return;
 		super.insertBefore(id, item);
 		((CoolBarContributionItem)item).setOrderBefore(true);
+	}
+	protected boolean isDuplicate(IContributionItem item) {
+		if (find(item.getId()) != null) {
+			WorkbenchPlugin.log("Duplicate coolbar item " + item.getId() + " not added."); //$NON-NLS-1$
+			return true;
+		}
+		return false;
 	}
 	/**
 	 */
@@ -491,9 +509,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		CoolItem[] coolItems = coolBar.getItems();
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolItem coolItem = coolItems[i];
-			coolItem.setData(null);
-			coolItem.setControl(null);
-			coolItem.dispose();
+			dispose(coolItem);
 		}
 		coolBar.setWrapIndices(new int[] {});
 		update(true);
@@ -521,6 +537,18 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public void setLayout(CoolBarLayout layout) {
+		try {
+			setLayoutTo(layout);
+		} catch (Exception e) {
+			// A lot can go wrong if the layout is out of sync with the coolbar state.
+			// Try to recover by resetting the layout.
+			WorkbenchPlugin.log("An error has occurred restoring the coolbar layout. " + e.toString()); //$NON-NLS-1$
+			resetLayout();
+		}
+	}
+	/**
+	 */
+	protected void setLayoutTo(CoolBarLayout layout) {
 		if (layout == null) {
 			coolBar.setRedraw(false);
 			CoolItem[] coolItems = coolBar.getItems();
@@ -586,8 +614,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				count++;
 			}
 		}
-		
-		
 
 		coolBar.setRedraw(false);
 		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
@@ -658,7 +684,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				for (int i = 0; i < coolItems.length; i++) {
 					CoolItem coolItem = coolItems[i];
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
-					if (!cbItem.isVisible() && (!cbItemsToRemove.contains(cbItem))) {
+					if ((cbItem != null) && !cbItem.isVisible() && (!cbItemsToRemove.contains(cbItem))) {
 						coolItemsToRemove.add(coolItem);
 					}
 				}

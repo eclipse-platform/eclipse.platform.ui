@@ -35,17 +35,19 @@ protected void addGroup(IContributionManager mgr, String name) {
 	
 	if (mgr instanceof CoolItemToolBarManager) {
 		// In the coolbar case we need to create a CoolBarContributionItem
-		// for the group.
+		// for the group if one does not already exist.
 		CoolItemToolBarManager tBarMgr = (CoolItemToolBarManager)mgr;
 		CoolBarManager cBarMgr = tBarMgr.getParentManager();
-		IContributionItem refItem = findSubInsertionPoint(
-			IWorkbenchActionConstants.MB_ADDITIONS,
-			actionSetId, cBarMgr, true);
-		// Add the CoolBarContributionItem to the CoolBarManager for this group.
-		if (refItem == null) {
-			cBarMgr.add(tBarMgr.getCoolBarItem());
-		} else {
-			cBarMgr.insertAfter(refItem.getId(), tBarMgr.getCoolBarItem());
+		IContributionItem cbItem = cBarMgr.find(actionSetId);
+		if (cbItem == null) {
+			IContributionItem refItem = findSubInsertionPoint(
+				IWorkbenchActionConstants.MB_ADDITIONS, actionSetId, cBarMgr, true);
+			// Add the CoolBarContributionItem to the CoolBarManager for this group.
+			if (refItem == null) {
+				cBarMgr.add(tBarMgr.getCoolBarItem());
+			} else {
+				cBarMgr.insertAfter(refItem.getId(), tBarMgr.getCoolBarItem());
+			}
 		}
 		// Insert the group marker into the group, not the CoolBarmanager.
 		ActionSetSeparator group = new ActionSetSeparator(name, actionSetId);
