@@ -172,9 +172,9 @@ public class AntEditor extends TextEditor {
 				case REDO:
 					fIgnoreTextConverters= true;
 					break;
-				default :
-					super.doOperation(operation);
 			}
+			
+			super.doOperation(operation);
 		}
 		
 		public void setTextConverter(TabConverter tabConverter) {
