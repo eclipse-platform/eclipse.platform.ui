@@ -283,6 +283,8 @@ public class InfosetBuilder {
 			Contribution child = ((HelpInfoView) view).getContribution(fromTopic);
 			if (child == null)
 				child = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
+			else
+				return false;//topic already inserted	
 			((HelpContribution) parent).insertChild(child, positionPreference);
 
 			// keep track of this insertion for handling solo actions
@@ -328,6 +330,8 @@ public class InfosetBuilder {
 			Contribution newSib = ((HelpInfoView) view).getContribution(fromTopic);
 			if (newSib == null)
 				newSib = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
+			else
+				return false;//topic already inserted	
 			((HelpContribution) parent).insertNeighbouringChild(
 				refSib,
 				newSib,
