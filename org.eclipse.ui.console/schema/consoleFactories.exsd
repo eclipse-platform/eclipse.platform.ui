@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.console" id="consoleFactories" name="Console Factories"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         An action to open a console in the console view.
       </documentation>
    </annotation>
 
@@ -44,26 +44,26 @@
    <element name="consoleFactory">
       <complexType>
          <sequence>
-            <element ref="enablement"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  action label to appear in menu
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="image" type="string">
+         <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  optional plug-in relative path to an icon to appear with the action
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  class implementing &lt;code&gt;org.eclipse.ui.console.IConsoleFactory&lt;/code&gt; that will be called when the assocaited action is invoked
                </documentation>
             </annotation>
          </attribute>
@@ -75,7 +75,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.1
       </documentation>
    </annotation>
 
@@ -84,7 +84,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of a console factory extension point: 
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.console.consoleFactories&quot;&gt;
+  &lt;consoleFactory 
+     label=&quot;Command Console&quot;
+     class=&quot;com.example.CommandConsoleFactory&quot;
+     icon=&quot;icons/cmd_console.gif&quot;&gt;
+  &lt;/consoleFactory&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+This extension will cause an entry to appear in the console view&apos;s &lt;b&gt;Open Console&lt;/b&gt; drop-down menu labelled &lt;b&gt;Command Console&lt;/b&gt; with the specified icon. When the action is invoked by a user, the method &lt;b&gt;openConsole()&lt;/b&gt; on the class &lt;b&gt;com.example.CommandConsoleFactory&lt;/b&gt; will be called. The factory can the decide to create a new console or activate an existing console.
       </documentation>
    </annotation>
 
@@ -93,7 +103,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.ui.console.IConsoleFactory&lt;/b&gt;.
       </documentation>
    </annotation>
 
@@ -102,7 +112,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         None.
       </documentation>
    </annotation>
 
@@ -111,7 +121,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
