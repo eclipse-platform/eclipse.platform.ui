@@ -14,11 +14,13 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * The new wizard is responsible for allowing the user to choose which
@@ -121,6 +123,9 @@ public class NewWizard extends Wizard {
 	public boolean performFinish() {
 		//save our selection state
 		mainPage.saveWidgetValues();
+		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
+		RoleManager.getInstance().enableActivities(selectedWizard.getClass().getName());
+
 		return true;
 	}
 	/**
