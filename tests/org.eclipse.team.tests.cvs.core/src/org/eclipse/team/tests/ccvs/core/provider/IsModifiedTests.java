@@ -153,7 +153,7 @@ public class IsModifiedTests extends EclipseTest {
 	 * Assert that the modification state of the provided resources matches the
 	 * provided state and that the other are the opposite state.
 	 */
-	private void assertModificationState(IContainer container, String[] resources, final boolean modified) throws CVSException {
+	private void assertModificationState(IContainer container, String[] resources, final boolean listedResourcesShouldBeModified) throws CVSException {
 		final ICVSFolder rootFolder = CVSWorkspaceRoot.getCVSFolderFor(container);
 		final List resourceList = new ArrayList();
 		final Set modifiedResources = new HashSet();
@@ -174,15 +174,13 @@ public class IsModifiedTests extends EclipseTest {
 			}
 			public void assertModificationState(ICVSResource resource) throws CVSException {
 				IPath relativePath = new Path(resource.getRelativePath(rootFolder));
-				if (modified) {
-					assertTrue(resource.getIResource().getFullPath().toString() 
-						+ " should be modified but isn't",
-						resource.isModified() == resourceList.contains(relativePath));
-				} else {
-					assertTrue(resource.getIResource().getFullPath().toString()
-						+ " should not be modified but it is",
-						!resource.isModified() != resourceList.contains(relativePath));
-				}
+				boolean resourceModified = resource.isModified();
+				boolean resourceListed = resourceList.contains(relativePath);
+				assertTrue(resource.getIResource().getFullPath().toString() 
+						+ (resourceModified ? " should not be modified but is" : " should be modified but isn't"),
+					(listedResourcesShouldBeModified && (resourceModified == resourceListed)) ||
+					(!listedResourcesShouldBeModified && (!resourceModified == resourceListed)));
+
 				IResource iResource = resource.getIResource();
 				if (resource.isModified()) {
 					modifiedResources.add(iResource);
@@ -218,7 +216,7 @@ public class IsModifiedTests extends EclipseTest {
 	 */
 	protected IProject createProject(String prefix, String[] resources) throws CoreException, TeamException {
 		IProject project = super.createProject(prefix, resources);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		return project;
 	}
 
@@ -233,7 +231,7 @@ public class IsModifiedTests extends EclipseTest {
 		commitResources(project, new String[] {"folder1/a.txt"});
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		getProvider(project).get(new IResource[] {project.getFile("changed.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 
 	public void testFileDeletions() throws CoreException, TeamException {
@@ -242,28 +240,28 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFile("folder1/deleted.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/deleted.txt"}, true);
 		commitResources(project, new String[] {"folder1/deleted.txt"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// modify, delete and revert a file
 		setContentsAndEnsureModified(project.getFile("changed.txt"));
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		project.getFile("changed.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		getProvider(project).get(new IResource[] {project.getFile("changed.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// modify, delete and commit a file
 		setContentsAndEnsureModified(project.getFile("changed.txt"));
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		project.getFile("changed.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "changed.txt"}, true);
 		commitResources(project, new String[] {"changed.txt"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// delete, recreate and commit
 		project.getFile("folder1/a.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt"}, true);
 		IResource[] addedResources = buildResources(project, new String[] {"folder1/a.txt"}, false);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt"}, true);
 		commitResources(project, new String[] {"folder1/a.txt"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 	}
 	
@@ -275,17 +273,17 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(addedResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/added.txt"}, true);
 		commitResources(project, new String[] {"folder1/added.txt"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// create, add and delete a file
 		addResources(project, new String[] {"added.txt"}, false);
 		assertModificationState(project, new String[] {".", "added.txt"}, true);
 		project.getFile("added.txt").delete(false, false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// create and delete a file
 		addedResources = buildResources(project, new String[] {"folder1/another.txt"}, false);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/another.txt"}, true);
 		project.getFile("folder1/another.txt").delete(false, false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// create and ignore a file
 		addedResources = buildResources(project, new String[] {"ignored.txt"}, false);
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
@@ -294,7 +292,7 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// delete the .cvsignore to see the modification come back
 		project.getFile(".cvsignore").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "ignored.txt", ".cvsignore"}, true);
@@ -305,16 +303,16 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		project.getFile("ignored.txt").delete(false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// add the ignored file to version control
 		buildResources(project, new String[] {"ignored.txt"}, false);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		getProvider(project).add(new IResource[] {project.getFile("ignored.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testFileMoveAndCopy() throws CoreException, TeamException {
@@ -333,7 +331,7 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(new IResource[] {project.getFile("folder1/a.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		project.getFile("folder2/a.txt").delete(false, DEFAULT_MONITOR);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// Do the above without committing the source
 		project.getFile("folder1/a.txt").move(project.getFile("folder2/a.txt").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt"}, true);
@@ -342,7 +340,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder2/", "folder2/a.txt"}, true);
 		getProvider(project).add(new IResource[] {project.getFile("folder2/a.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testFolderAdditions() throws CoreException, TeamException {
@@ -351,7 +349,7 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFolder("folder1/folder2").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder2/"}, true);
 		getProvider(project).add(new IResource[] {project.getFolder("folder1/folder2/")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 		// create a folder
 		project.getFolder("folder1/folder2/folder3").create(false, true, DEFAULT_MONITOR);
@@ -381,7 +379,7 @@ public class IsModifiedTests extends EclipseTest {
 			"folder1/folder2/folder3/add1.txt"}, true);
 		// commit
 		commitResources(project, new String[] {"folder1/folder2/folder3/add1.txt"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 		// create a folder
 		project.getFolder("folder1/ignored").create(false, true, DEFAULT_MONITOR);
@@ -395,7 +393,7 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
 		commitResources(project, new String[] {"folder1/.cvsignore"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// delete the .cvsignore to see the modification come back
 		project.getFile("folder1/.cvsignore").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore", "folder1/ignored/", "folder1/ignored/file.txt"}, true);
@@ -406,16 +404,16 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
 		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		commitResources(project, new String[] {"folder1/.cvsignore"});
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		project.getFolder("folder/ignored").delete(false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// add the ignored file to version control
 		buildResources(project, new String[] {"folder1/ignored/file.txt"}, false);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		getProvider(project).add(new IResource[] {project.getFile("folder1/ignored/file.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/ignored/", "folder1/ignored/file.txt"}, true);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testFolderDeletions() throws CoreException, TeamException {
@@ -425,7 +423,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder2/"}, true);
 		// delete the folder
 		project.getFolder("folder1/folder2").delete(false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 		// create a folder
 		project.getFolder("folder1/folder2").create(false, true, DEFAULT_MONITOR);
@@ -435,7 +433,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder2/", "folder1/folder2/file.txt"}, true);
 		// delete the folder
 		project.getFolder("folder1/folder2").delete(false, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 		// delete a shared folder with files
 		project.getFolder("folder1").delete(false, DEFAULT_MONITOR);
@@ -444,14 +442,14 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFolder("folder1").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/deleted.txt", "folder1/a.txt"}, true);
 		getProvider(project).get(new IResource[] {project.getFile("folder1/deleted.txt"), project.getFile("folder1/a.txt")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		
 		// delete a shared folder with files
 		project.getFolder("folder1").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/deleted.txt", "folder1/a.txt"}, true);
 		// commit file deletions
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testFolderMoveAndCopy() throws CoreException, TeamException {
@@ -469,7 +467,7 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(project).add(new IResource[] {project.getFile("folder1/folder3/file.txt")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		project.getFolder("folder2/folder3").delete(false, DEFAULT_MONITOR);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 		// Do the above without committing the source
 		project.getFolder("folder1/folder3").move(project.getFolder("folder2/folder3").getFullPath(), false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder3", "folder1/folder3/file.txt", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
@@ -478,7 +476,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
 		getProvider(project).add(new IResource[] {project.getFolder("folder2/folder3/")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		commitProject(project);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testUpdate() throws TeamException, CoreException, IOException {
@@ -487,7 +485,7 @@ public class IsModifiedTests extends EclipseTest {
 
 		// Check the project out under a different name
 		IProject copy = checkoutCopy(project, "-copy");
-		assertModificationState(copy, null, false);
+		assertModificationState(copy, null, true);
 
 		// Perform some operations on the copy and commit
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
@@ -496,7 +494,7 @@ public class IsModifiedTests extends EclipseTest {
 		getProvider(copy).delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
 		assertModificationState(copy, new String[] {".", "added.txt", "folder2/", "folder2/added.txt", "changed.txt", "merged.txt", "deleted.txt"}, true);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertModificationState(copy, null, false);
+		assertModificationState(copy, null, true);
 		
 		// update the project and check status
 		setContentsAndEnsureModified(project.getFile("merged.txt"));
@@ -504,7 +502,7 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "merged.txt"}, true);
 		// can't commit because of merge
 		// commitProject(project);
-		// assertModificationState(project, null, false);
+		// assertModificationState(project, null, true);
 	}
 	
 	public void testUpdateIgnoreLocal() throws TeamException, CoreException, IOException {
@@ -517,7 +515,7 @@ public class IsModifiedTests extends EclipseTest {
 		
 		// peform un update -C
 		getProvider(project).update(new IResource[] {project}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, null, true /*createBackups*/, DEFAULT_MONITOR);
-		assertModificationState(project, null, false);
+		assertModificationState(project, null, true);
 	}
 	
 	public void testExternalModifications() {
