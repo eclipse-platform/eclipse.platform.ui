@@ -12,10 +12,14 @@
  ************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -37,7 +41,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
 import org.eclipse.ui.internal.about.AboutData;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
 
 /**
@@ -52,6 +55,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      * Table height in dialog units (value 200).
      */
     private static final int TABLE_HEIGHT = 200;
+
+	private static final IPath baseNLPath = new Path("$nl$"); //$NON-NLS-1$
 
     private static final String PLUGININFO = "about.html"; //$NON-NLS-1$
 
@@ -265,7 +270,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             return false;
 
         AboutBundleData bundleInfo = bundleInfos[vendorInfo.getSelectionIndex()];
-        URL infoURL = BundleUtility.find(bundleInfo.getId(), PLUGININFO);
+        URL infoURL = getMoreInfoURL(bundleInfo);
 
         // only report ini problems if the -debug command line argument is used
         if (infoURL == null && WorkbenchPlugin.DEBUG)
@@ -300,7 +305,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         if (bundleInfo == null)
             return;
 
-        if (!openBrowser(BundleUtility.find(bundleInfo.getId(), PLUGININFO)))
+        if (!openBrowser(getMoreInfoURL(bundleInfo)))
             MessageDialog.openError(getShell(), WorkbenchMessages
                     .getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
                     WorkbenchMessages.format(
@@ -385,5 +390,27 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     private static String[] createRow(AboutBundleData info) {
         return new String[] { info.getProviderName(), info.getName(),
                 info.getVersion(), info.getId() };
+    }
+
+    /**
+     * Return an url to the plugin's about.html file (what is shown when "More info" is
+     * pressed) or null if no such file exists.  The method does nl lookup to allow for
+     * i18n.
+     * @return
+     */
+    private URL getMoreInfoURL(AboutBundleData bundleInfo) {
+        Bundle bundle = Platform.getBundle(bundleInfo.getId());
+        if (bundle == null)
+            return null;
+
+        URL aboutUrl = Platform.find(bundle, baseNLPath.append(PLUGININFO), null);
+		if (aboutUrl != null)
+		    try {
+		        return Platform.resolve(aboutUrl);
+		    } catch(IOException e) {
+		        // do nothing
+		    }
+
+		return null;
     }
 }
