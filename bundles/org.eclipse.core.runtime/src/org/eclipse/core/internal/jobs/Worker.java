@@ -51,6 +51,8 @@ public class Worker extends Thread {
 				} catch (LinkageError e) {
 					result = handleException(currentJob, e);
 				} finally {
+					//clear interrupted state for this thread
+					Thread.interrupted();
 					pool.endJob(currentJob, result);
 					currentJob = null;
 				}

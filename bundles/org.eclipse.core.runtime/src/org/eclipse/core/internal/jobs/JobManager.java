@@ -34,10 +34,6 @@ public class JobManager implements IJobManager {
 	private static JobManager instance;
 	protected static final long NEVER = Long.MAX_VALUE;
 
-	/**
-	 * Flag to indicate that the system is still up and running.
-	 */
-	private boolean alive = false;
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**
@@ -87,7 +83,6 @@ public class JobManager implements IJobManager {
 	private JobManager() {
 		instance = this;
 		synchronized (lock) {
-			alive = true;
 			waiting = new JobQueue();
 			sleeping = new JobQueue();
 			running = new HashSet(10);
@@ -185,7 +180,6 @@ public class JobManager implements IJobManager {
 	 */
 	private void doShutdown() {
 		synchronized (lock) {
-			alive = false;
 			//cancel all running jobs
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				Job job = (Job) it.next();
@@ -483,7 +477,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#wait(String, IProgressMonitor)
 	 */
-	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException {
+	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		IJobChangeListener listener = null;
 		final List jobs;
 		final int jobCount;
@@ -513,6 +507,8 @@ public class JobManager implements IJobManager {
 					reportedWorkDone = actualWorkDone;
 					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
 				}
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
 				Thread.sleep(200);
 			}
 		} finally {
