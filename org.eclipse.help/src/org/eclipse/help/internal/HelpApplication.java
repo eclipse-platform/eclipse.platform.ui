@@ -59,6 +59,28 @@ public class HelpApplication implements IPlatformRunnable
 			return new Boolean(false);
 
 	}
+	
+	/**
+	 * To be called by the standalone interface to display context sensitive help
+	 */
+	private Boolean displayContext(String contextId, Integer X, Integer Y)
+	{
+		if (helpSupport == null)
+			initializeHelpSupport();
+
+		if (helpSupport != null)
+		{
+			int x = X.intValue();
+			int y = Y.intValue();
+			
+			helpSupport.displayHelp(contextId, x, y);
+			return new Boolean(true);
+		}
+		else
+			return new Boolean(false);
+
+	}
+	
 
 	/**
 	* Initializes the help support system by getting an instance via the extension
@@ -122,6 +144,11 @@ public class HelpApplication implements IPlatformRunnable
 		{
 			if ((argsArray.length== 3)	)
 				return displayHelp((String) argsArray[1], (String) argsArray[2]);
+		}
+		else if ("displayContext".equals(command))
+		{
+			if ((argsArray.length== 4)	)
+				return displayContext((String) argsArray[1], (Integer) argsArray[2], (Integer) argsArray[4]);
 		}
 		return null;
 	}

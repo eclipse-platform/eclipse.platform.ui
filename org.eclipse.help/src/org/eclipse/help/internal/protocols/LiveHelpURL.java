@@ -5,7 +5,7 @@
 package org.eclipse.help.internal.protocols;
 import java.io.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.LiveHelpExtension;
+import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.internal.server.HelpURL;
 import org.eclipse.help.internal.util.Resources;
 /**
@@ -54,8 +54,8 @@ public class LiveHelpURL extends HelpURL {
 		try {
 			Class c = loader.loadClass(className);
 			Object o = c.newInstance();
-			if (o instanceof LiveHelpExtension) {
-				LiveHelpExtension helpExt = (LiveHelpExtension) o;
+			if (o instanceof ILiveHelpAction) {
+				ILiveHelpAction helpExt = (ILiveHelpAction) o;
 				if (arg != null)
 					helpExt.setInitializationString(arg);
 				Thread runnableLiveHelp = new Thread(helpExt);

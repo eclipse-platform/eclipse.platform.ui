@@ -10,7 +10,7 @@ package org.eclipse.help;
  * the class will be loaded and run.
  * @since 2.0
  */
-public interface LiveHelpExtension extends Runnable {
+public interface ILiveHelpAction extends Runnable {
 	/**
 	 * This method will be called upon instantiation of the
 	 * live help extension.  The data will be passed as specified
