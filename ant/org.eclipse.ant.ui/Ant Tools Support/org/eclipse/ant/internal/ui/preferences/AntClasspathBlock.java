@@ -35,7 +35,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -427,7 +426,6 @@ public class AntClasspathBlock {
 
 		antContentProvider = new AntClasspathContentProvider();
 		treeViewer = new TreeViewer(tree);
-		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.setContentProvider(antContentProvider);
 		treeViewer.setLabelProvider(labelProvider);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
