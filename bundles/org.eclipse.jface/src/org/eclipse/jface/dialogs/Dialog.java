@@ -328,7 +328,7 @@ public abstract class Dialog extends Window {
 					Policy.JFACE,
 					IStatus.INFO,
 					this.getClass() + " created with no shell",//$NON-NLS-1$
-					null));
+					new Exception()));
 	}
 
 	/**

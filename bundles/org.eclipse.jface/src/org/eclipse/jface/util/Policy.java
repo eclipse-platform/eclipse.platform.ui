@@ -23,9 +23,13 @@ public class Policy {
 	public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
 	private static ILog log;
 	public static boolean DEBUG_DIALOG_NO_PARENT = DEFAULT;
+	public static boolean TRACE_ACTIONS = DEFAULT;
+	public static boolean TRACE_TOOLBAR = DEFAULT;
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
 			DEBUG_DIALOG_NO_PARENT = getDebugOption("/debug/dialog/noparent"); //$NON-NLS-1$
+			TRACE_ACTIONS = getDebugOption("/trace/actions");
+			TRACE_TOOLBAR = getDebugOption("/trace/toolbarDisposal");
 		}
 	}
 	
@@ -58,7 +62,7 @@ public class Policy {
 			 * @see org.eclipse.core.runtime.ILog#log(org.eclipse.core.runtime.IStatus)
 			 */
 			public void log(IStatus status) {
-				//Do nothing as this is a dummy placeholder
+				System.err.println(status.getMessage());
 			}
 			/*
 			 * (non-Javadoc)
@@ -71,11 +75,14 @@ public class Policy {
 		};
 	}
 	private static boolean getDebugOption(String option) {
-		return "true".equalsIgnoreCase(Platform.getDebugOption(JFACE + option)); //$NON-NLS-1$
+		if(Platform.isRunning())
+			return "true".equalsIgnoreCase(Platform.getDebugOption(JFACE + option)); //$NON-NLS-1$
+		else
+			return false;
 	}
 	
 	/**
-	 * Set the log to be forwarding log,
+	 * Set the log to be forwarding log.
 	 * @param forwardingLog
 	 */
 	public static void setLog(ILog forwardingLog){

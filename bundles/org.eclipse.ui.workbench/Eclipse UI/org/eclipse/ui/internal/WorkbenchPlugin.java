@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -26,6 +25,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
@@ -608,6 +608,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	
     public void start(BundleContext context) throws Exception {
     	super.start(context);
+    	Policy.setLog(getLog());
     }
     
 	/**

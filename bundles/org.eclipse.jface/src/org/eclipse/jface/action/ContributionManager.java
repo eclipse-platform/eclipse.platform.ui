@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.Policy;
 
 /**
  * Abstract base class for all contribution managers, and standard implementation 
@@ -428,8 +429,7 @@ public boolean replaceItem(final String identifier, final IContributionItem repl
 	for (int i = contributions.size() - 1; i > index; i--) {
 	    IContributionItem item = (IContributionItem) contributions.get(i);
 	    if ((item != null) && (identifier.equals(item.getId()))) {
-            if ("true".equalsIgnoreCase(Platform //$NON-NLS-1$
-                    .getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$
+            if (Policy.TRACE_TOOLBAR) { //$NON-NLS-1$
                 System.out.println("Removing duplicate on replace: " + identifier); //$NON-NLS-1$
             }
 	        contributions.remove(i);

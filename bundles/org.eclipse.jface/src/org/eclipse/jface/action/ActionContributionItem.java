@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
@@ -604,7 +605,8 @@ public class ActionContributionItem extends ContributionItem {
 			// Ensure action is enabled first.
 			// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be executed while disabled.
 			if (action.isEnabled()) {
-				boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
+				boolean trace = Policy.TRACE_ACTIONS;
+				
 				long ms = System.currentTimeMillis();
 				if (trace)
 					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
