@@ -512,6 +512,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		
 		prefix = processor.getPrefixFromDocument("<project name= \"test\"><tar", 26);
 		assertEquals("tar", prefix);
+		
+		prefix = processor.getPrefixFromDocument("pro", 3);
+		assertEquals("pro", prefix);
     }    
     
     /**
