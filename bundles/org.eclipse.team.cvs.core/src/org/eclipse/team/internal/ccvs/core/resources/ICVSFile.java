@@ -41,7 +41,7 @@ public interface ICVSFile extends ICVSResource {
 	 * Move the resource to another location. Does overwrite without
 	 * promting.
 	 */
-	void moveTo(ICVSFile mFile) throws CVSException, ClassCastException;
+	void moveTo(String filename) throws CVSException;
 	
 	/**
 	 * Answers the current timestamp for this file. The returned format must be in the

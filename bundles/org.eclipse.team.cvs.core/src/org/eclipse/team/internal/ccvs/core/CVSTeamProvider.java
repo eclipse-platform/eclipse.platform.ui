@@ -47,6 +47,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
@@ -641,7 +642,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/** 
-	 * Get the remote resource corresponding to the base of the local resource
+	 * Get the remote resource corresponding to the base of the local resource.
+	 * Use getRemoteSyncTree() to get the current remote state of HEAD or a branch
 	 */
 	public ICVSRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		checkIsChild(resource);
@@ -651,8 +653,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 			return new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 		} else {
-			// NOTE: This may not provide a proper parent!
-			return new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((ICVSFile)managed).getSyncInfo().getRevision(), new CVSTag());
+			return RemoteFile.createFile((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed);
 		}
 	}
 	
@@ -668,13 +669,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				ICVSRepositoryLocation location = remote.getRepository();
 				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
 			} catch(CVSException e) {
-				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retreiving remote resource tree", e));
+				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
 			}
 			
 		} else {
-			// XXX 
 			remote = getRemoteResource(resource);
-			if(!remote.exists()) {
+			if(!((RemoteFile)remote).updateRevision(tag, progress)) {
 				remote = null;
 			}
 		}

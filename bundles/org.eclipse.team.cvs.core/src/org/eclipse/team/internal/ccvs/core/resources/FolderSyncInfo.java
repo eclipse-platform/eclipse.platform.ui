@@ -26,12 +26,10 @@ public class FolderSyncInfo {
 		}
 	}		
 	
-	/*
-	 *  The provided tag must not be null.
-	 */
 	public FolderSyncInfo(String repo, String root, CVSTag tag, boolean isStatic) {
 		this(repo, root, isStatic);
-		this.tag = new CVSEntryLineTag(tag);
+		if (tag != null)
+			this.tag = new CVSEntryLineTag(tag);
 	}		
 
 	/**

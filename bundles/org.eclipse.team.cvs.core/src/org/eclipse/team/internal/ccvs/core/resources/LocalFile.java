@@ -257,15 +257,21 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		visitor.visitFile(this);
 	}
 
-	public void moveTo(ICVSFile mFile) throws CVSException {
+	public void moveTo(String filename) throws CVSException {
 		
+		// Move the file to newFile (we know we do not need the
+		// original any more anyway)
+		// If this file exists then overwrite it
 		LocalFile file;
 		try {
-			file = (LocalFile)mFile;
+			file = (LocalFile)getParent().getFile(filename);
 		} catch(ClassCastException e) {
 			throw CVSException.wrapException(e);
 		}
-				
+		if (file.exists()) {
+			file.delete();
+		}
+	
 		boolean success;
 		
 		success = ioResource.renameTo(file.getFile());

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -111,6 +112,80 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 
 	/**
+	 * Check whether the given resource is a child of the receiver remotely
+	 */
+	protected boolean exists(ICVSRemoteResource child, IProgressMonitor monitor) throws CVSException {
+		return exists(child, getTag(), monitor);
+	}
+	
+	/**
+	 * Check whether the child exists for the given tag. This additional method is required because
+	 * CVS will signal an error if a folder only contains subfolders when a tag is used. If we get this
+	 * error and we're looking for a folder, we need to reissue the command without a tag.
+	 */
+	protected boolean exists(ICVSRemoteResource child, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		
+		final IProgressMonitor progress = Policy.monitorFor(monitor);
+		
+		// Create the listener for remote files and folders
+		final List errors = new ArrayList();
+		final boolean[] exists = new boolean[] {false};
+		IUpdateMessageListener listener = new IUpdateMessageListener() {
+			public void directoryInformation(IPath path, boolean newDirectory) {
+				exists[0] = true;
+			}
+			public void directoryDoesNotExist(IPath path) {
+			}
+			public void fileInformation(char type, String filename) {
+				exists[0] = true;
+			}
+			public void fileDoesNotExist(String filename) {
+			}
+		};
+		
+		// Build the local options
+		List localOptions = new ArrayList();
+		localOptions.add("-d");
+		if ((tag != null) && (tag.getType() != CVSTag.HEAD)) {
+			localOptions.add(Client.TAG_OPTION);
+			localOptions.add(tag.getName());
+		}
+		
+		// Retrieve the children and any file revision numbers in a single connection
+		try {
+			// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
+			Client.execute(
+				Client.UPDATE,
+				new String[]{Client.NOCHANGE_OPTION}, 
+				(String[])localOptions.toArray(new String[localOptions.size()]), 
+				new String[]{child.getName()}, 
+				this,
+				monitor,
+				getPrintStream(),
+				((CVSRepositoryLocation)getRepository()),
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)});
+
+			return exists[0];
+			
+		} catch (CVSServerException e) {
+			if( ! isNoTagException(errors) || !child.isContainer())
+				throw e;
+				// we now know that this is an exception caused by a cvs bug.
+				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
+				// workaround: retry the request with no tag to get the directory names (if any)
+			Policy.checkCanceled(progress);
+			return exists(child, null, progress);
+		} catch (CVSException e) {
+			if (!errors.isEmpty()) {
+				PrintStream out = getPrintStream();
+				for (int i=0;i<errors.size();i++)
+					out.println(errors.get(i));
+			}
+			throw e;
+		}
+	}
+
+	/**
 	 * @see ICVSRemoteFolder#getMembers()
 	 */
 	public ICVSRemoteResource[] getMembers(IProgressMonitor monitor) throws TeamException {
@@ -129,7 +204,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		
-		// Forget about our children
+		// Forget about any children we used to know about children
 		children = null;
 		
 		// Create the listener for remote files and folders
@@ -220,10 +295,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			c.close();
 		}
 
-		// Forget the children
-		ICVSRemoteResource[] result = children;
-		children = null;
-		return result;
+		// We need to remember the children that were fetched in order to support file
+		// operations that depend on the parent knowing about the child (i.e. RemoteFile#getContents)
+		return children;
 	}
 
 	/**
@@ -337,10 +411,11 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * by running the update + status with only one member?
 	 */
 	public ICVSResource getChild(String path) throws CVSException {
-		ICVSRemoteResource[] children = getChildren();
-		if (path.equals(Client.CURRENT_LOCAL_FOLDER) || children == null)
+		if (path.equals(Client.CURRENT_LOCAL_FOLDER))
 			return this;
-		// NOTE: We only search down one level for now!!!
+		ICVSRemoteResource[] children = getChildren();
+		if (children == null) 
+			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {getName()}));
 		if (path.indexOf(Client.SERVER_SEPARATOR) == -1) {
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
@@ -445,5 +520,80 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
+	}
+	
+	/**
+	 * Update the file revision for the given child such that the revision is the one in the given branch.
+	 * Return true if the file exists and false otherwise
+	 */
+	protected boolean updateRevision(ICVSRemoteFile child, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		
+		ICVSRemoteResource[] oldChildren = children;
+		try {
+			children = new ICVSRemoteResource[] {child};
+			
+			final IProgressMonitor progress = Policy.monitorFor(monitor);
+			
+			// Create the listener for remote files and folders
+			final List errors = new ArrayList();
+			final boolean[] exists = new boolean[] {true};
+			IUpdateMessageListener listener = new IUpdateMessageListener() {
+				public void directoryInformation(IPath path, boolean newDirectory) {
+				}
+				public void directoryDoesNotExist(IPath path) {
+					// If we get this, we can assume that the parent directory no longer exists
+					exists[0] = false;
+				}
+				public void fileInformation(char type, String filename) {
+					// The file was found and has a different revision
+					exists[0] = true;
+				}
+				public void fileDoesNotExist(String filename) {
+					exists[0] = false;
+				}
+			};
+			
+			// Build the local options
+			List localOptions = new ArrayList();
+			if ((tag != null) && (tag.getType() != CVSTag.HEAD)) {
+				localOptions.add(Client.TAG_OPTION);
+				localOptions.add(tag.getName());
+			}
+			
+			// Retrieve the children and any file revision numbers in a single connection
+			Connection c = ((CVSRepositoryLocation)getRepository()).openConnection();
+			try {
+				// Perform a "cvs -n update -d -r tagName fileName" with custom message and error handlers
+				Client.execute(
+					Client.UPDATE,
+					new String[]{Client.NOCHANGE_OPTION}, 
+					(String[])localOptions.toArray(new String[localOptions.size()]), 
+					new String[]{child.getName()}, 
+					this,
+					monitor,
+					getPrintStream(),
+					c,
+					new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+					true);
+	
+				if (!exists[0])
+					return false;
+					
+				updateFileRevisions(c, new String[] {child.getName()}, monitor);
+				return true;
+				
+			} catch (CVSException e) {
+				if (!errors.isEmpty()) {
+					PrintStream out = getPrintStream();
+					for (int i=0;i<errors.size();i++)
+						out.println(errors.get(i));
+				}
+				throw e;
+			} finally {
+				c.close();
+			}
+		} finally {
+			children = oldChildren;
+		}
 	}
 }

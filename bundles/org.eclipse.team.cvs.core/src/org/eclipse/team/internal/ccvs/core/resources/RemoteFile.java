@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
@@ -34,8 +35,18 @@ import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
 public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFile  {
 
 	// cache for file contents received from the server
-	private InputStream contents;
+	private byte[] contents;
 	
+	/**
+	 * Static method which creates a file as a single child of its parent.
+	 * This should only be used when one is only interested in the file alone.
+	 */
+	public static RemoteFile createFile(RemoteFolder parent, ICVSFile managed) throws CVSException {
+		ResourceSyncInfo info = managed.getSyncInfo();
+		RemoteFile file = new RemoteFile(parent, managed.getName(), info.getRevision(), info.getTag());
+		parent.setChildren(new ICVSRemoteResource[] {file});
+		return file;
+	}
 	/**
 	 * Constructor for RemoteFile.
 	 */
@@ -62,15 +73,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @see ICVSRemoteFile#getContents()
 	 */
 	public InputStream getContents(final IProgressMonitor monitor) {
-			
+		
 		try {
-			
 			if(contents==null) {
 				List localOptions = getLocalOptionsForTag();
 				Client.execute(
 					Client.UPDATE,
 					Client.EMPTY_ARGS_LIST, 
-					new String[]{"-r", info.getRevision()},
+					new String[]{"-r", info.getRevision(), "-C"},
 					new String[]{getName()}, 
 					parent,
 					monitor,
@@ -78,7 +88,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 					(CVSRepositoryLocation)getRepository(),
 					null);
 			}
-			return contents;
+			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
 			return null;
 		}
@@ -213,9 +223,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 				LocalFile.transferWithProgress(inputStream, bos, (long)size, monitor, "");
 			else
 				LocalFile.transferText(inputStream, bos, (long)size, monitor, "", false);
-			
-			contents = new ByteArrayInputStream(bos.toByteArray());
-			
+			contents = bos.toByteArray();
 		} catch (IOException ex) {
 			throw CVSException.wrapException(ex);
 		}
@@ -236,16 +244,18 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	/**
 	 * @see IManagedFile#isDirty()
+	 * 
+	 * The file is direty if its contents haven't been fetched yet
 	 */
 	public boolean isDirty() throws CVSException {
-		return false;
+		return contents == null;
 	}
 
 	/**
 	 * @see IManagedFile#moveTo(IManagedFile)
 	 */
-	public void moveTo(ICVSFile mFile) throws CVSException, ClassCastException {		
-		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+	public void moveTo(String mFile) throws CVSException, ClassCastException {		
+		// Do nothing
 	}
 	
 	/*
@@ -267,6 +277,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 */
 	public boolean isFolder() {
 		return false;
+	}
+	
+	public boolean updateRevision(CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		return parent.updateRevision(this, tag, monitor);
 	}
 
 }
