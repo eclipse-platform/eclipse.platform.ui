@@ -1253,19 +1253,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			QuickDiffRestoreAction revertLine= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
 			QuickDiffRestoreAction revertDeletion= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
 			
-			revertSelection.update(true);
-			revertBlock.update(true);
-			revertLine.update(true);
-			revertDeletion.update(true);
-			
 			// only add block action if selection action is not enabled
-			if (revertSelection.isEnabled())
+			if (revertSelection.isEnabled(true))
 				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
-			else if (revertBlock.isEnabled())
+			else if (revertBlock.isEnabled(true))
 				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertBlock);
-			if (revertLine.isEnabled())
+			if (revertLine.isEnabled(true))
 				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertLine);
-			if (revertDeletion.isEnabled())
+			if (revertDeletion.isEnabled(true))
 				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
 		}
 

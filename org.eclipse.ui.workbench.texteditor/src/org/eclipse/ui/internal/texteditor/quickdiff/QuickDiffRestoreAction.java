@@ -76,30 +76,29 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	}
 	
 	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
+	 * @see org.eclipse.jface.action.IAction#isEnabled()
 	 */
-	public final void update() {
-		update(false);
+	public final boolean isEnabled() {
+		return isEnabled(false);
 	}
 	
 	/**
-	 * Updates the receiver. If <code>useRulerInfo</code> is <code>true</code>,
-	 * the line of the last ruler activity is taken into account, if
-	 * <code>false</code>, only the textual selection is used.
+	 * Computes, caches and returns the internal state, including enablement.
 	 * 
-	 * @param useRulerInfo <code>true</code> if the ruler mouse activity
+	 * @param useRulerInfo <code>true</code> if the last ruler activity line
 	 *        should be taken into account
-	 * @since 3.1
+	 * @return <code>true</code> if the action is enabled, <code>false</code>
+	 *         if it is not
 	 */
-	public void update(boolean useRulerInfo) {
-		super.update();
-		if (isEnabled())
-			setEnabled(canModifyEditor());
+	public boolean isEnabled(boolean useRulerInfo) {
+		if (!super.isEnabled())
+			return false;
+
+		if (!canModifyEditor())
+			return false;
 		
-		if (isEnabled())
-			fLastLine= computeLine(useRulerInfo);
-		else
-			fLastLine= -1;
+		fLastLine= computeLine(useRulerInfo);
+		return true;
 	}
 
 	/**

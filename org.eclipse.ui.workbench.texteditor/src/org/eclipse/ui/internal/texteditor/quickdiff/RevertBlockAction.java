@@ -40,42 +40,33 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
 	 */
-	public void update(boolean useRulerInfo) {
-		super.update(useRulerInfo);
+	public boolean isEnabled(boolean useRulerInfo) {
+		if (!super.isEnabled(useRulerInfo))
+			return false;
 		
-		if (!isEnabled())
-			return;
-		
-		fLine= getLastLine();
-		if (!computeEnablement())
-			setEnabled(false);
-	}
-
-	/**
-	 * Computes the enablement state.
-	 * 
-	 * @return the enablement state
-	 */
-	private boolean computeEnablement() {
 		ILineDiffer differ= getDiffer();
 		if (differ == null)
 			return false;
+		
+		fLine= getLastLine();
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED) {
-			boolean hasBlock= false;
-			if (fLine > 0) {
-				info= differ.getLineInfo(fLine - 1);
-				hasBlock= info != null && info.hasChanges();
-			}
-			if (!hasBlock) {
-				info= differ.getLineInfo(fLine + 1);
-				hasBlock= info != null && info.hasChanges();
-			}
-			if (hasBlock)
-				return true;
+		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
+			return false;
+		
+		boolean hasBlock= false;
+		if (fLine > 0) {
+			info= differ.getLineInfo(fLine - 1);
+			hasBlock= info != null && info.hasChanges();
 		}
+		if (!hasBlock) {
+			info= differ.getLineInfo(fLine + 1);
+			hasBlock= info != null && info.hasChanges();
+		}
+		if (hasBlock)
+			return true;
+		
 		return false;
 	}
 

@@ -44,40 +44,27 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
 	 */
-	public void update(boolean useRulerInfo) {
-		super.update(useRulerInfo);
-		
-		if (!isEnabled())
-			return;
+	public boolean isEnabled(boolean useRulerInfo) {
+		if (!super.isEnabled(useRulerInfo))
+			return false;
 
-		
 		fLine= getLastLine();
-		if (!computeEnablement())
-			setEnabled(false);
-	}
-
-	/**
-	 * Computes the enablement state.
-	 * 
-	 * @return the enablement state
-	 */
-	private boolean computeEnablement() {
 		if (fLine == -1)
 			return false;
 		ILineDiffer differ= getDiffer();
 		if (differ == null)
 			return false;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED) {
-			if (info.getChangeType() == ILineDiffInfo.ADDED)
-				setText(QuickDiffMessages.getString(DELETE_KEY));
-			else
-				setText(QuickDiffMessages.getString(REVERT_KEY));
-			return true;
-		}
-		return false;
+		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
+			return false;
+		
+		if (info.getChangeType() == ILineDiffInfo.ADDED)
+			setText(QuickDiffMessages.getString(DELETE_KEY));
+		else
+			setText(QuickDiffMessages.getString(REVERT_KEY));
+		return true;
 	}
 	
 	/*

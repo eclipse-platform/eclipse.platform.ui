@@ -40,24 +40,12 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
 	 */
-	public void update(boolean useRulerInfo) {
-		super.update(useRulerInfo);
-		
-		if (!isEnabled())
-			return;
-		
-		if (!computeEnablement())
-			setEnabled(false);
-	}
+	public boolean isEnabled(boolean useRulerInfo) {
+		if (!super.isEnabled(useRulerInfo))
+			return false;
 
-	/**
-	 * Computes the enablement state and sets the line numbers.
-	 * 
-	 * @return the enablement state
-	 */
-	private boolean computeEnablement() {
 		ITextSelection selection= getSelection();
 		if (selection == null)
 			return false;

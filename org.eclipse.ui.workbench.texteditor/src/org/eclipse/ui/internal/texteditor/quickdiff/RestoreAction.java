@@ -43,49 +43,38 @@ public class RestoreAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
 	 */
-	public void update(boolean useRulerInfo) {
-		super.update(useRulerInfo);
+	public boolean isEnabled(boolean useRulerInfo) {
+		if (!super.isEnabled(useRulerInfo))
+			return false;
 		
-		if (!isEnabled())
-			return;
-		
-		fLine= getLastLine();
-		if (!computeEnablement())
-			setEnabled(false);
-	}
-
-	/**
-	 * Computes the enablement state.
-	 * 
-	 * @return the enablement state
-	 */
-	private boolean computeEnablement() {
 		ILineDiffer differ= getDiffer();
 		if (differ == null)
 			return false;
+		
+		fLine= getLastLine();
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info != null && (info.getRemovedLinesAbove() > 0 || info.getRemovedLinesBelow() > 0)) {
-			if (info.getRemovedLinesBelow() == 0) {
-				fLine--;
-			} else if (info.getRemovedLinesAbove() != 0) {
-//				// if there are deleted lines above and below the line, take the closer one;
-//				int lineHeight= fCachedTextWidget.getLineHeight();
-//				if (fMousePosition != null
-//					&& fMousePosition.y % lineHeight <= lineHeight / 2) {
-//					fLine--;
-//				}
-				// take the one below for now TODO adjust to old viewer-dependent behaviour
-			}
-			info= differ.getLineInfo(fLine);
-			if (info.getRemovedLinesBelow() == 1)
-				setText(QuickDiffMessages.getString(SINGLE_KEY));
-			else
-				setText(QuickDiffMessages.getFormattedString(MULTIPLE_KEY, String.valueOf(info.getRemovedLinesBelow()))); //$NON-NLS-1$
-			return true;
+		if (info == null || (info.getRemovedLinesAbove() <= 0 && info.getRemovedLinesBelow() <= 0))
+			return false;
+		
+		if (info.getRemovedLinesBelow() == 0) {
+			fLine--;
+		} else if (info.getRemovedLinesAbove() != 0) {
+//			// if there are deleted lines above and below the line, take the closer one;
+//			int lineHeight= fCachedTextWidget.getLineHeight();
+//			if (fMousePosition != null
+//			&& fMousePosition.y % lineHeight <= lineHeight / 2) {
+//			fLine--;
+//			}
+			// take the one below for now TODO adjust to old viewer-dependent behaviour
 		}
-		return false;
+		info= differ.getLineInfo(fLine);
+		if (info.getRemovedLinesBelow() == 1)
+			setText(QuickDiffMessages.getString(SINGLE_KEY));
+		else
+			setText(QuickDiffMessages.getFormattedString(MULTIPLE_KEY, String.valueOf(info.getRemovedLinesBelow()))); //$NON-NLS-1$
+		return true;
 	}
 
 	/*
