@@ -1,8 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
@@ -37,7 +43,7 @@ public static Test suite() {
 	return new TestSuite(IProjectTest.class);
 
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new IProjectTest("testProjectMoveVariations"));
+//	suite.addTest(new IProjectTest("testCopy"));
 //	return suite;
 }
 protected void tearDown() throws Exception {
@@ -107,6 +113,25 @@ public void testHasNature() {
 		assertTrue("5.2", !project.hasNature(NATURE_EARTH));
 	} catch (CoreException e) {
 		fail("5.99", e);
+	}
+}
+/**
+ * Note that project copying is tested more thoroughly by IResourceTest#testCopy.
+ */
+public void testCopy() {
+	IProject project = getWorkspace().getRoot().getProject("Source");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		project.createMarker(IMarker.TASK);
+		IProject destination = getWorkspace().getRoot().getProject("Destination");
+		
+		assertTrue("1.0", !destination.exists());
+		project.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+		assertTrue("1.1", destination.exists());
+		assertEquals("1.2", 0, destination.findMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE).length);
+	} catch(CoreException e) {
+		fail("1.99", e);
 	}
 }
 public void testDescriptionConstant() {
