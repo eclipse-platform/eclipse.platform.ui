@@ -7,13 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>ICommandManagerEvent</code> describes changes to an 
+ * instance of <code>ICommandManager</code>. 
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +24,61 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see ICommandManager
+ * @see ICommandManagerListener#commandManagerChanged
  */
 public interface ICommandManagerEvent {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
+	 * Returns the instance of <code>ICommandManager</code> that has changed.
+	 *
+	 * @return the instance of <code>ICommandManager</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	ICommandManager getCommandManager();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveKeyConfigurationIdChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveLocaleChanged();	
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActivePlatformChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveActiveActivityIdsChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveActiveCommandIdsChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedCategoryIdsChanged();
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedCommandIdsChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveDefinedKeyConfigurationIdsChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveEnabledCommandIdsChanged();	
 }

@@ -18,15 +18,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements ICategoryDefinition {
+public final class CategoryDefinition implements ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
 
-	static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
+	public static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -46,7 +45,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 		return map;
 	}
 
-	static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
+	public static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -83,7 +82,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	CategoryDefinition(String description, String id, String name, String pluginId) {
+	public CategoryDefinition(String description, String id, String name, String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
@@ -91,17 +90,17 @@ final class CategoryDefinition implements ICategoryDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		CategoryDefinition categoryDefinition = (CategoryDefinition) object;
-		int compareTo = Util.compare(description, categoryDefinition.description);
+		CategoryDefinition castedObject = (CategoryDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, categoryDefinition.id);	
+			compareTo = Util.compare(id, castedObject.id);	
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, categoryDefinition.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, categoryDefinition.pluginId);								
+					compareTo = Util.compare(pluginId, castedObject.pluginId);								
 			}
 		}
 		
@@ -112,12 +111,12 @@ final class CategoryDefinition implements ICategoryDefinition {
 		if (!(object instanceof CategoryDefinition))
 			return false;
 
-		CategoryDefinition categoryDefinition = (CategoryDefinition) object;	
+		CategoryDefinition castedObject = (CategoryDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, categoryDefinition.description);
-		equals &= Util.equals(id, categoryDefinition.id);
-		equals &= Util.equals(name, categoryDefinition.name);
-		equals &= Util.equals(pluginId, categoryDefinition.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

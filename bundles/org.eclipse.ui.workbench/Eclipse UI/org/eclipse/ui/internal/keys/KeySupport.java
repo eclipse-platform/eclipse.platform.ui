@@ -16,6 +16,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeyStroke;
@@ -145,9 +146,39 @@ public final class KeySupport {
 	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
+	public static int convertEventToUnmodifiedAccelerator(KeyEvent event) {
+		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
+	}
+
+	/**
+	 * Converts the given event into an SWT accelerator value -- considering
+	 * the unmodified character with all modifier keys. This is the first
+	 * accelerator value that should be checked. However, all alphabetic
+	 * characters are considered as their uppercase equivalents.
+	 * 
+	 * @param event
+	 *            The event to be converted; must not be <code>null</code>.
+	 * @return The combination of the state mask and the unmodified character.
+	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
-		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		int character = event.keyCode;
+		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
+	}
+
+	/**
+	 * Converts the given state mask and key code into an SWT accelerator value --
+	 * considering the unmodified character with all modifier keys. All
+	 * alphabetic characters are considered as their uppercase equivalents.
+	 * 
+	 * @param stateMask
+	 *            The integer mask of modifiers keys depressed when this was
+	 *            pressed.
+	 * @param keyCode
+	 *            The key that was pressed, before being modified.
+	 * @return The combination of the state mask and the unmodified character.
+	 */
+	private static int convertEventToUnmodifiedAccelerator(int stateMask, int keyCode) {
+		int modifiers = stateMask & SWT.MODIFIER_MASK;
+		int character = keyCode;
 		return modifiers + toUpperCase(character);
 	}
 
@@ -165,9 +196,9 @@ public final class KeySupport {
 	public static int convertEventToUnshiftedModifiedAccelerator(Event event) {
 		// Disregard alphabetic key strokes.
 		if (Character.isLetter((char) event.keyCode)) {
-			return convertEventToUnmodifiedAccelerator(event); 
+			return convertEventToUnmodifiedAccelerator(event);
 		}
-		
+
 		int modifiers = event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT);
 		char character = topKey(event);
 		return modifiers + toUpperCase(character);

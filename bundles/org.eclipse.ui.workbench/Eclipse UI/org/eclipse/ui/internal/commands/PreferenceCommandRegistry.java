@@ -26,14 +26,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
-final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
+public final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 
 	private final static String KEY = Persistence.PACKAGE_FULL;
 	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 
 	private IPreferenceStore preferenceStore;
 
-	PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
+	public PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
 		if (preferenceStore == null)
 			throw new NullPointerException();
 		
@@ -41,18 +41,22 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 
 		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-				if (KEY.equals(propertyChangeEvent.getProperty())) {
+				if (KEY.equals(propertyChangeEvent.getProperty()))
 					try {
 						load();
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
-				}
 			}
 		});
+		
+		try {
+			load();
+		} catch (IOException eIO) {
+		}
 	}
 
-	void load() 
+	public void load() 
 		throws IOException {
 		String preferenceString = preferenceStore.getString(KEY);
 		
@@ -62,12 +66,12 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				List activeKeyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readActiveKeyConfigurationDefinitions(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+				List activityBindingDefinitions = Collections.unmodifiableList(Persistence.readActivityBindingDefinitions(memento, Persistence.TAG_ACTIVITY_BINDING, null));
 				List categoryDefinitions = Collections.unmodifiableList(Persistence.readCategoryDefinitions(memento, Persistence.TAG_CATEGORY, null));
 				List commandDefinitions = Collections.unmodifiableList(Persistence.readCommandDefinitions(memento, Persistence.TAG_COMMAND, null));
-				List contextBindingDefinitions = Collections.unmodifiableList(Persistence.readContextBindingDefinitions(memento, Persistence.TAG_CONTEXT_BINDING, null));
 				List imageBindingDefinitions = Collections.unmodifiableList(Persistence.readImageBindingDefinitions(memento, Persistence.TAG_IMAGE_BINDING, null));
-				List keyBindingDefinitions = Collections.unmodifiableList(Persistence.readKeyBindingDefinitions(memento, Persistence.TAG_KEY_BINDING, null));
 				List keyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readKeyConfigurationDefinitions(memento, Persistence.TAG_KEY_CONFIGURATION, null));			
+				List keySequenceBindingDefinitions = Collections.unmodifiableList(Persistence.readKeySequenceBindingDefinitions(memento, Persistence.TAG_KEY_SEQUENCE_BINDING, null));
 				boolean commandRegistryChanged = false;
 			
 				if (!activeKeyConfigurationDefinitions.equals(this.activeKeyConfigurationDefinitions)) {
@@ -75,6 +79,11 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 					commandRegistryChanged = true;
 				}	
 
+				if (!activityBindingDefinitions.equals(this.activityBindingDefinitions)) {
+					this.activityBindingDefinitions = activityBindingDefinitions;			
+					commandRegistryChanged = true;
+				}					
+				
 				if (!categoryDefinitions.equals(this.categoryDefinitions)) {
 					this.categoryDefinitions = categoryDefinitions;			
 					commandRegistryChanged = true;
@@ -84,26 +93,21 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 					this.commandDefinitions = commandDefinitions;			
 					commandRegistryChanged = true;
 				}	
-				
-				if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
-					this.contextBindingDefinitions = contextBindingDefinitions;			
-					commandRegistryChanged = true;
-				}	
 			
 				if (!imageBindingDefinitions.equals(this.imageBindingDefinitions)) {
 					this.imageBindingDefinitions = imageBindingDefinitions;			
 					commandRegistryChanged = true;
-				}	
-				
-				if (!keyBindingDefinitions.equals(this.keyBindingDefinitions)) {
-					this.keyBindingDefinitions = keyBindingDefinitions;			
-					commandRegistryChanged = true;
-				}	
+				}				
 				
 				if (!keyConfigurationDefinitions.equals(this.keyConfigurationDefinitions)) {
 					this.keyConfigurationDefinitions = keyConfigurationDefinitions;			
 					commandRegistryChanged = true;
 				}	
+				
+				if (!keySequenceBindingDefinitions.equals(this.keySequenceBindingDefinitions)) {
+					this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;			
+					commandRegistryChanged = true;
+				}					
 				
 				if (commandRegistryChanged)
 					fireCommandRegistryChanged();
@@ -115,16 +119,16 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 		}
 	}
 	
-	void save()
+	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
 		Persistence.writeActiveKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurationDefinitions);		
+		Persistence.writeActivityBindingDefinitions(xmlMemento, Persistence.TAG_ACTIVITY_BINDING, activityBindingDefinitions);
 		Persistence.writeCategoryDefinitions(xmlMemento, Persistence.TAG_CATEGORY, categoryDefinitions);		
 		Persistence.writeCommandDefinitions(xmlMemento, Persistence.TAG_COMMAND, commandDefinitions);
-		Persistence.writeContextBindingDefinitions(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindingDefinitions);
 		Persistence.writeImageBindingDefinitions(xmlMemento, Persistence.TAG_IMAGE_BINDING, imageBindingDefinitions);
-		Persistence.writeKeyBindingDefinitions(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindingDefinitions);
 		Persistence.writeKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
+		Persistence.writeKeySequenceBindingDefinitions(xmlMemento, Persistence.TAG_KEY_SEQUENCE_BINDING, keySequenceBindingDefinitions);
 		Writer writer = new StringWriter();
 
 		try {

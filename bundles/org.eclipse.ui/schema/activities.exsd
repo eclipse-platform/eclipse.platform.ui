@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used to declare activities and activity pattern bindings, using the &lt;code&gt;activity&lt;/code&gt; and &lt;code&gt;activityPatternBinding&lt;/code&gt; elements respectively.
+The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used to declare activities and activity pattern bindings, using the &lt;code&gt;activity&lt;/code&gt; and &lt;code&gt;patternBinding&lt;/code&gt; elements respectively.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -16,7 +16,7 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       <complexType>
          <sequence>
             <element ref="activity"/>
-            <element ref="activityPatternBinding"/>
+            <element ref="patternBinding"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -70,10 +70,17 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the parent of this activity.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="activityPatternBinding">
+   <element name="patternBinding">
       <annotation>
          <documentation>
             This element allows one to bind activities to patterns.
@@ -87,17 +94,17 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="pattern" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The pattern to be bound to the activity. Patterns are regular expressions which match unique identifiers.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="inclusive" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
                   Determines whether this binding should be considered inclusive or exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The pattern to be bound to the activity. Patterns are regular expressions which match unique identifiers.
                </documentation>
             </annotation>
          </attribute>

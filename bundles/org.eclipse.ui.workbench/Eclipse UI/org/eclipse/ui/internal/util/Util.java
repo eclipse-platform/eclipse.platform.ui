@@ -42,6 +42,10 @@ public final class Util {
 	public static int compare(boolean left, boolean right) {
 		return left == false ? (right == true ? -1 : 0) : 1;		
 	}
+
+	public static int compare(int left, int right) {
+		return left - right;		
+	}	
 	
 	public static int compare(Comparable left, Comparable right) {
 		if (left == null && right == null)
@@ -157,6 +161,10 @@ public final class Util {
 	public static boolean equals(boolean left, boolean right) {
 		return left == right;		
 	}	
+
+	public static boolean equals(int left, int right) {
+		return left == right;		
+	}	
 	
 	public static boolean equals(Object left, Object right) {
 		return left == null ? right == null : left.equals(right);
@@ -202,6 +210,10 @@ public final class Util {
 		return b ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
 	}
 
+	public static int hashCode(int i) {
+		return i;
+	}
+	
 	public static int hashCode(Object object) {
 		return object != null ? object.hashCode() : 0;	
 	}

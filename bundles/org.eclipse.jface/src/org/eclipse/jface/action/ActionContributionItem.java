@@ -11,15 +11,29 @@
 package org.eclipse.jface.action;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * A contribution item which delegates to an action.
@@ -152,7 +166,7 @@ public boolean isVisible() {
 		CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 		
 		if (callback != null)
-			return callback.inContext(commandId);
+			return callback.isActive(commandId);
 	}
 	
 	return true;	
@@ -664,9 +678,6 @@ public void update(String propertyName) {
 		
 					if (callback != null) {
 						String commandId = action.getActionDefinitionId();
-				
-						if (commandId == null)
-							commandId = callback.guessCommandIdFromActionId(action.getId());
 				
 						if (commandId != null) {
 							accelerator = callback.getAccelerator(commandId);

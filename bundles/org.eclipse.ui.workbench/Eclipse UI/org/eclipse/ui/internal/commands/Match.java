@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-// TODO package-private
 public final class Match {
 
 	private final static int HASH_FACTOR = 89;
@@ -35,11 +34,11 @@ public final class Match {
 	}
 
 	public int compareTo(Object object) {
-		Match match = (Match) object;
-		int compareTo = value - match.value;
+		Match castedObject = (Match) object;
+		int compareTo = Util.compare(value, castedObject.value);
 		
 		if (compareTo == 0)
-			compareTo = Util.compare(commandId, match.commandId);
+			compareTo = Util.compare(commandId, castedObject.commandId);
 					
 		return compareTo;	
 	}
@@ -48,10 +47,10 @@ public final class Match {
 		if (!(object instanceof Match))
 			return false;
 
-		Match match = (Match) object;	
+		Match castedObject = (Match) object;	
 		boolean equals = true;
-		equals &= Util.equals(commandId, match.commandId);
-		equals &= value == match.value;
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= Util.equals(value, castedObject.value);
 		return equals;
 	}
 
@@ -67,7 +66,7 @@ public final class Match {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + value;			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);			
 			hashCodeComputed = true;
 		}
 			

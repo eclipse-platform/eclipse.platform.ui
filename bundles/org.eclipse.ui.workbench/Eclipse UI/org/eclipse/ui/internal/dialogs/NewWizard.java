@@ -16,12 +16,13 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * The new wizard is responsible for allowing the user to choose which
@@ -124,8 +125,7 @@ public class NewWizard extends Wizard {
 		//save our selection state
 		mainPage.saveWidgetValues();
 		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
-		RoleManager.getInstance().enableActivities(selectedWizard.getClass().getName());
-
+        WorkbenchActivityHelper.enableActivities(selectedWizard.getClass().getName());
 		return true;
 	}
 	/**

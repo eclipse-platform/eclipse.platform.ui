@@ -20,24 +20,25 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 public class ViewContentProvider implements ITreeContentProvider {
-/**
- * Create a new instance of the ViewContentProvider.
- */
-public ViewContentProvider() {
-	super();
-}
-public void dispose() {
-}
-/**
- * Returns the child elements of the given parent element.
- */
-public Object[] getChildren(Object element) {
+	/**
+	 * Create a new instance of the ViewContentProvider.
+	 */
+	public ViewContentProvider() {
+		super();
+	}
+	public void dispose() {
+	}
+	/**
+	 * Returns the child elements of the given parent element.
+	 */
+	public Object[] getChildren(Object element) {
 		if (element instanceof IViewRegistry) {
 			IViewRegistry reg = (IViewRegistry) element;
 			Category[] categories = reg.getCategories();
@@ -45,13 +46,13 @@ public Object[] getChildren(Object element) {
             IObjectActivityManager objectManager = 
             	PlatformUI
             		.getWorkbench()
-            		.getActivityManager(
+            		.getObjectActivityManager(
             			IWorkbenchConstants.PL_VIEWS, false);
             if (objectManager != null) {
                 ArrayList filtered = new ArrayList();
                 Collection activeObjects = objectManager.getActiveObjects();                
     			for (int i = 0; i < categories.length; i++) {
-                    if (activeObjects.contains(RoleManager.createViewCategoryIdKey(categories[i].getId()))) {
+                    if (activeObjects.contains(WorkbenchActivityHelper.createViewCategoryIdKey(categories[i].getId()))) {
                         filtered.add(categories[i]);
                     }
     			}
@@ -63,9 +64,10 @@ public Object[] getChildren(Object element) {
 			if (list != null) {
 
 				IObjectActivityManager objectManager = 
-				PlatformUI.getWorkbench().getActivityManager(
-						IWorkbenchConstants.PL_VIEWS,
-						false);              
+					PlatformUI
+						.getWorkbench()
+						.getObjectActivityManager(
+							IWorkbenchConstants.PL_VIEWS, false);              
                 if (objectManager != null) {
 					Collection activeObjects = objectManager.getActiveObjects();
                     ArrayList filtered = new ArrayList();
@@ -86,32 +88,32 @@ public Object[] getChildren(Object element) {
 
 		return new Object[0];
 	}
-/**
- * Return the children of an element.
- */
-public Object[] getElements(Object element) {
-	return getChildren(element);
-}
-/**
- * Returns the parent for the given element, or <code>null</code> 
- * indicating that the parent can't be computed. 
- */
-public Object getParent(Object element) {
-	return null;
-}
-/**
- * Returns whether the given element has children.
- */
-public boolean hasChildren(java.lang.Object element) {
-	if (element instanceof IViewRegistry)
-		return true;
-	else if (element instanceof Category)
-		return true;
-	return false;
-}
-public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-}
-public boolean isDeleted(Object element) {
-	return false;
-}
+	/**
+	 * Return the children of an element.
+	 */
+	public Object[] getElements(Object element) {
+		return getChildren(element);
+	}
+	/**
+	 * Returns the parent for the given element, or <code>null</code> 
+	 * indicating that the parent can't be computed. 
+	 */
+	public Object getParent(Object element) {
+		return null;
+	}
+	/**
+	 * Returns whether the given element has children.
+	 */
+	public boolean hasChildren(java.lang.Object element) {
+		if (element instanceof IViewRegistry)
+			return true;
+		else if (element instanceof Category)
+			return true;
+		return false;
+	}
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+	public boolean isDeleted(Object element) {
+		return false;
+	}
 }

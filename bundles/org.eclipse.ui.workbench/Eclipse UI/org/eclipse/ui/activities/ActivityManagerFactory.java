@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.activities;
 
-import org.eclipse.ui.internal.csm.activities.ActivityManager;
+import org.eclipse.ui.internal.activities.ActivityManager;
 
 /**
  * <p>

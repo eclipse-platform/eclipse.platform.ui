@@ -10,30 +10,62 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 
 public class PerspContentProvider implements IStructuredContentProvider {
-/**
- * PerspContentProvider constructor comment.
- */
-public PerspContentProvider() {
-	super();
-}
-public void dispose() {
-}
-public Object[] getElements(Object element) {
-	if (element instanceof IPerspectiveRegistry) {
-		IPerspectiveRegistry reg = (IPerspectiveRegistry)element;
-		return RoleManager.getInstance().filteredPerspectives(reg);
-	}
-	return null;
-}
-public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-}
-public boolean isDeleted(Object element) {
-	return false;
-}
+    /**
+     * PerspContentProvider constructor comment.
+     */
+    public PerspContentProvider() {
+    	super();
+    }
+    public void dispose() {
+    }
+    public Object[] getElements(Object element) {
+    	if (element instanceof IPerspectiveRegistry) {
+    		IPerspectiveRegistry reg = (IPerspectiveRegistry)element;
+    		return filteredPerspectives(reg);
+    	}
+    	return null;
+    }
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    }
+    public boolean isDeleted(Object element) {
+    	return false;
+    }
+    
+    /**
+     * Return the list of perspective descriptors in the supplied registry
+     * filtered for roles if appropriate. 
+     * 
+     * @param registry 
+     * @return IPerspectiveDescriptor[] the active descriptors
+     */
+    IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
+        IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+        if (manager == null) {
+            return descriptors;
+        }
+        Collection activePerspectives = manager.getActiveObjects();
+            
+        Collection filtered = new ArrayList();
+        for (int i = 0; i < descriptors.length; i++) {
+            if (activePerspectives.contains(descriptors[i].getId())) {
+                filtered.add(descriptors[i]);
+            }
+        }
+            
+        return (IPerspectiveDescriptor []) filtered.toArray(new IPerspectiveDescriptor [filtered.size()]);        
+    }
 }

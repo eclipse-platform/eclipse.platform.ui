@@ -43,11 +43,7 @@ public class UIDialogs extends TestCase {
 	}
 	public void testAbout() {
 		Dialog dialog = null;
-		try {
-			dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
-		} catch (WorkbenchException e) {
-			e.printStackTrace();
-		}
+		dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testAddProjects() {

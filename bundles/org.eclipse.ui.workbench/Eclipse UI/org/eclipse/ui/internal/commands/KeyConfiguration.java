@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationEvent;
@@ -26,8 +27,8 @@ final class KeyConfiguration implements IKeyConfiguration {
 	private final static int HASH_INITIAL = KeyConfiguration.class.getName().hashCode();
 
 	private boolean active;
-	private IKeyConfigurationEvent keyConfigurationEvent;
 	private List keyConfigurationListeners;
+	private Set keyConfigurationsWithListeners;
 	private boolean defined;
 	private String description;
 	private String id;
@@ -38,10 +39,11 @@ final class KeyConfiguration implements IKeyConfiguration {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	KeyConfiguration(String id) {	
-		if (id == null)
+	KeyConfiguration(Set keyConfigurationsWithListeners, String id) {	
+		if (keyConfigurationsWithListeners == null || id == null)
 			throw new NullPointerException();
 
+		this.keyConfigurationsWithListeners = keyConfigurationsWithListeners;
 		this.id = id;
 	}
 
@@ -54,26 +56,28 @@ final class KeyConfiguration implements IKeyConfiguration {
 		
 		if (!keyConfigurationListeners.contains(keyConfigurationListener))
 			keyConfigurationListeners.add(keyConfigurationListener);
+		
+		keyConfigurationsWithListeners.add(this);
 	}
 
 	public int compareTo(Object object) {
-		KeyConfiguration keyConfiguration = (KeyConfiguration) object;
-		int compareTo = active == false ? (keyConfiguration.active == true ? -1 : 0) : 1;
-
+		KeyConfiguration castedObject = (KeyConfiguration) object;
+		int compareTo = Util.compare(active, castedObject.active);
+		
 		if (compareTo == 0) {
-			compareTo = defined == false ? (keyConfiguration.defined == true ? -1 : 0) : 1;
+			compareTo = Util.compare(defined, castedObject.defined);
 			
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, keyConfiguration.description);
-			
+				compareTo = Util.compare(description, castedObject.description);
+									
 				if (compareTo == 0) {		
-					compareTo = id.compareTo(keyConfiguration.id);			
+					compareTo = Util.compare(id, castedObject.id);			
 				
 					if (compareTo == 0) {
-						compareTo = Util.compare(name, keyConfiguration.name);
-						
+						compareTo = Util.compare(name, castedObject.name);
+
 						if (compareTo == 0)
-							compareTo = Util.compare(parentId, keyConfiguration.parentId);		
+							compareTo = Util.compare(parentId, castedObject.parentId);
 					}
 				}
 			}
@@ -86,14 +90,14 @@ final class KeyConfiguration implements IKeyConfiguration {
 		if (!(object instanceof KeyConfiguration))
 			return false;
 
-		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
+		KeyConfiguration castedObject = (KeyConfiguration) object;	
 		boolean equals = true;
-		equals &= active == keyConfiguration.active;
-		equals &= defined == keyConfiguration.defined;
-		equals &= Util.equals(description, keyConfiguration.description);
-		equals &= id.equals(keyConfiguration.id);
-		equals &= Util.equals(name, keyConfiguration.name);
-		equals &= Util.equals(parentId, keyConfiguration.parentId);
+		equals &= Util.equals(active, castedObject.active);
+		equals &= Util.equals(defined, castedObject.defined);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
 		return equals;
 	}
 
@@ -108,7 +112,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 	public String getId() {
 		return id;	
 	}
-	
+
 	public String getName()
 		throws NotDefinedException {
 		if (!defined)
@@ -123,15 +127,15 @@ final class KeyConfiguration implements IKeyConfiguration {
 			throw new NotDefinedException();
 
 		return parentId;
-	}
-
+	}		
+	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
-			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + id.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
@@ -154,6 +158,9 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 		if (keyConfigurationListeners != null)
 			keyConfigurationListeners.remove(keyConfigurationListener);
+		
+		if (keyConfigurationListeners.isEmpty())
+			keyConfigurationsWithListeners.remove(this);
 	}
 
 	public String toString() {
@@ -178,17 +185,15 @@ final class KeyConfiguration implements IKeyConfiguration {
 		return string;		
 	}
 	
-	void fireKeyConfigurationChanged() {
-		if (keyConfigurationListeners != null) {
-			for (int i = 0; i < keyConfigurationListeners.size(); i++) {
-				if (keyConfigurationEvent == null)
-					keyConfigurationEvent = new KeyConfigurationEvent(this);
-							
+	void fireKeyConfigurationChanged(IKeyConfigurationEvent keyConfigurationEvent) {
+		if (keyConfigurationEvent == null)
+			throw new NullPointerException();
+		
+		if (keyConfigurationListeners != null)
+			for (int i = 0; i < keyConfigurationListeners.size(); i++)
 				((IKeyConfigurationListener) keyConfigurationListeners.get(i)).keyConfigurationChanged(keyConfigurationEvent);
-			}				
-		}			
 	}
-
+	
 	boolean setActive(boolean active) {
 		if (active != this.active) {
 			this.active = active;
@@ -224,8 +229,8 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 		return false;
 	}
-
-	boolean setName(String name) {	
+	
+	boolean setName(String name) {
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
 			hashCodeComputed = false;
@@ -236,7 +241,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 		return false;
 	}
-
+	
 	boolean setParentId(String parentId) {
 		if (!Util.equals(parentId, this.parentId)) {
 			this.parentId = parentId;
@@ -247,5 +252,5 @@ final class KeyConfiguration implements IKeyConfiguration {
 		}		
 
 		return false;
-	}
+	}	
 }

@@ -15,15 +15,11 @@ public final class CommandResolver {
 
 	public static interface ICallback {
 		
-		String guessCommandIdFromActionId(String actionId);
-
 		Integer getAccelerator(String commandId);
 	
 		String getAcceleratorText(String commandId);
 
-		boolean inContext(String commandId);
-		
-		boolean isKeyFilterEnabled();
+		boolean isActive(String commandId);
 	}
 
 	private static CommandResolver instance;

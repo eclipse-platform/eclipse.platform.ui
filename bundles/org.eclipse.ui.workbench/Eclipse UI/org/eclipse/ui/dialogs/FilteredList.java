@@ -116,13 +116,13 @@ public class FilteredList extends Composite {
 			if (label == null)
 				return false;
 			
-			//Do a null check to avoid NPE
-			if(string == null)
-				if(label.string == null)
-					return true;
-				
-			if (!string.equals(label.string))
+			// If the string portions match (whether null or not), fall
+			// through and check the image portion.
+			if (string == null && label.string != null)
+					return false;				
+			if ((string != null) && (!string.equals(label.string)))
 				return false;
+			
 			if (image == null)
 				return label.image == null;
 			return image.equals(label.image);

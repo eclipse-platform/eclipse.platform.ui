@@ -402,11 +402,11 @@ public final class KeyStroke implements Comparable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object object) {
-		KeyStroke keyStroke = (KeyStroke) object;
-		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) keyStroke.modifierKeysAsArray);
+		KeyStroke castedObject = (KeyStroke) object;
+		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) castedObject.modifierKeysAsArray);
 		
 		if (compareTo == 0)
-			compareTo = Util.compare(naturalKey, keyStroke.naturalKey);			
+			compareTo = Util.compare(naturalKey, castedObject.naturalKey);			
 			
 		return compareTo;	
 	}
@@ -418,10 +418,10 @@ public final class KeyStroke implements Comparable {
 		if (!(object instanceof KeyStroke))
 			return false;
 
-		KeyStroke keyStroke = (KeyStroke) object;	
+		KeyStroke castedObject = (KeyStroke) object;	
 		boolean equals = true;
-		equals &= modifierKeys.equals(keyStroke.modifierKeys);
-		equals &= Util.equals(naturalKey, keyStroke.naturalKey);		
+		equals &= modifierKeys.equals(castedObject.modifierKeys);
+		equals &= Util.equals(naturalKey, castedObject.naturalKey);		
 		return equals;
 	}
 

@@ -11,9 +11,8 @@
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -33,14 +32,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.keys.KeySupport;
@@ -301,7 +302,7 @@ public class CyclePartAction extends PageEventAction {
 				int keyCode = e.keyCode;
 				int stateMask = e.stateMask;
 				char character = e.character;
-				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+				int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(e);
 				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 
 				//System.out.println("\nPRESSED");
@@ -310,46 +311,41 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
-				CommandManager commandManager = CommandManager.getInstance();
+				// TODO blind casts
+				CommandManager commandManager = (CommandManager) ((Workbench) WorkbenchPlugin.getDefault().getWorkbench()).getCommandManager();
 
 				if (commandForward != null) {
 					ICommand command = commandManager.getCommand(commandForward);
 					
 					if (command.isDefined()) {
-						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
+						
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 							
-							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
-								
-								if (keyBinding.getKeySequence().equals(keySequence)) {
-									acceleratorForward = true;
-									break;
-								}
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorForward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
-
+				
 				if (commandBackward != null) {
 					ICommand command = commandManager.getCommand(commandBackward);
 					
 					if (command.isDefined()) {
-						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
 								
-							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 									
-								if (keyBinding.getKeySequence().equals(keySequence)) {
-									acceleratorBackward = true;
-									break;
-								}
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorBackward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}

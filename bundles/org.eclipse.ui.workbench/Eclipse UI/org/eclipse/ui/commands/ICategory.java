@@ -7,13 +7,26 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>ICategory</code> is a handle representing a category 
+ * as defined by the extension point <code>org.eclipse.ui.commands</code>. The
+ * identifier of the handle is identifier of the category being represented.
+ * </p>
+ * <p>
+ * An instance of <code>ICategory</code> can be obtained from an instance of 
+ * <code>ICommandManager</code> for any identifier, whether or not a category 
+ * with that identifier defined in the plugin registry.
+ * </p>
+ * <p>
+ * The handle-based nature of this API allows it to work well with runtime 
+ * plugin activation and deactivation, which causes dynamic changes to the 
+ * plugin registry, and therefore, potentially, dynamic changes to the set of 
+ * category definitions.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,50 +36,93 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see ICategoryListener
+ * @see ICommandManager
  */
 public interface ICategory extends Comparable {
 
 	/**
-	 * Registers an ICategoryListener instance with this category.
+	 * Registers an instance of <code>ICategoryListener</code> to listen for
+	 * changes to attributes of this instance.
 	 *
-	 * @param categoryListener the ICategoryListener instance to register.
+	 * @param categoryListener the instance of <code>ICategoryListener</code> to 
+	 * 						  register. Must not be <code>null</code>. If an 
+	 * 						  attempt is made to register an instance of 
+	 *                        <code>ICategoryListener</code> which is already 
+	 *                        registered with this instance, no operation is 
+	 *                        performed.
 	 */	
 	void addCategoryListener(ICategoryListener categoryListener);
 
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns the description of the category represented by this handle, 
+	 * suitable for display to the user.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 * 
-	 * @return
+	 * @return the description of the category represented by this handle. 
+	 *         Guaranteed not to be <code>null</code>.
+	 * @throws NotDefinedException if the category represented by this 
+	 *                                    handle is not defined.
 	 */	
 	String getDescription()
 		throws NotDefinedException;
 	
 	/**
-	 * JAVADOC
+	 * Returns the identifier of this handle.
 	 * 
-	 * @return
+	 * @return the identifier of this handle. Guaranteed not to be 
+	 *         <code>null</code>.
 	 */	
 	String getId();
 	
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * <p>
+	 * Returns the name of the category represented by this handle, suitable for 
+	 * display to the user.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *  
+	 * @return the name of the category represented by this handle. Guaranteed 
+	 *         not to be <code>null</code>.
+	 * @throws NotDefinedException if the category represented by this 
+	 *                                    handle is not defined.
 	 */	
 	String getName()
 		throws NotDefinedException;
-
+	
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns whether or not the category represented by this handle is 
+	 * defined. 
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 * 
-	 * @return
+	 * @return <code>true</code>, iff the category represented by this handle is 
+	 *         defined. 
 	 */	
 	boolean isDefined();
 	
 	/**
-	 * Unregisters an ICategoryListener instance with this category.
+	 * Unregisters an instance of <code>ICategoryListener</code> listening for
+	 * changes to attributes of this instance.
 	 *
-	 * @param categoryListener the ICategoryListener instance to unregister.
+	 * @param categoryListener the instance of <code>ICategoryListener</code> to 
+	 * 						  unregister. Must not be <code>null</code>. If an 
+	 * 						  attempt is made to unregister an instance of 
+	 *                        <code>ICategoryListener</code> which is not 
+	 *                        already registered with this instance, no 
+	 *                        operation is performed.
 	 */
 	void removeCategoryListener(ICategoryListener categoryListener);
 }

@@ -13,17 +13,9 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
-import org.eclipse.ui.internal.commands.api.ICommandDefinition;
-import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.api.IMutableCommandRegistry;
 import org.eclipse.ui.internal.util.Util;
 
-abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
+public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
 	}
@@ -33,6 +25,15 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 		
 		if (!activeKeyConfigurationDefinitions.equals(this.activeKeyConfigurationDefinitions)) {
 			this.activeKeyConfigurationDefinitions = activeKeyConfigurationDefinitions;			
+			fireCommandRegistryChanged();
+		}
+	}
+
+	public void setActivityBindingDefinitions(List activityBindingDefinitions) {
+		activityBindingDefinitions = Util.safeCopy(activityBindingDefinitions, IActivityBindingDefinition.class);	
+		
+		if (!activityBindingDefinitions.equals(this.activityBindingDefinitions)) {
+			this.activityBindingDefinitions = activityBindingDefinitions;			
 			fireCommandRegistryChanged();
 		}
 	}
@@ -55,15 +56,6 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 		}
 	}
 
-	public void setContextBindingDefinitions(List contextBindingDefinitions) {
-		contextBindingDefinitions = Util.safeCopy(contextBindingDefinitions, IContextBindingDefinition.class);	
-		
-		if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
-			this.contextBindingDefinitions = contextBindingDefinitions;			
-			fireCommandRegistryChanged();
-		}
-	}
-
 	public void setImageBindingDefinitions(List imageBindingDefinitions) {
 		imageBindingDefinitions = Util.safeCopy(imageBindingDefinitions, IImageBindingDefinition.class);	
 		
@@ -73,15 +65,6 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 		}	
 	}
 	
-	public void setKeyBindingDefinitions(List keyBindingDefinitions) {
-		keyBindingDefinitions = Util.safeCopy(keyBindingDefinitions, IKeyBindingDefinition.class);	
-		
-		if (!keyBindingDefinitions.equals(this.keyBindingDefinitions)) {
-			this.keyBindingDefinitions = keyBindingDefinitions;			
-			fireCommandRegistryChanged();
-		}
-	}
-	
 	public void setKeyConfigurationDefinitions(List keyConfigurationDefinitions) {
 		commandDefinitions = Util.safeCopy(keyConfigurationDefinitions, IKeyConfigurationDefinition.class);	
 		
@@ -89,5 +72,14 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 			this.keyConfigurationDefinitions = keyConfigurationDefinitions;			
 			fireCommandRegistryChanged();
 		}	
+	}
+	
+	public void setKeySequenceBindingDefinitions(List keySequenceBindingDefinitions) {
+		keySequenceBindingDefinitions = Util.safeCopy(keySequenceBindingDefinitions, IKeySequenceBindingDefinition.class);	
+		
+		if (!keySequenceBindingDefinitions.equals(this.keySequenceBindingDefinitions)) {
+			this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;			
+			fireCommandRegistryChanged();
+		}
 	}
 }

@@ -13,7 +13,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IImageBinding</code> represents a binding between 
+ * a command and an image
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,20 +24,17 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.commands.ICommand
  */
 public interface IImageBinding extends Comparable {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * TODO
 	 */	
 	String getImageStyle();
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * TODO
 	 */	
 	String getImageUri();
 }

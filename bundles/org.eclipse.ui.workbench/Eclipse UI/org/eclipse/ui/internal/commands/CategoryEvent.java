@@ -17,15 +17,33 @@ import org.eclipse.ui.commands.ICategoryEvent;
 final class CategoryEvent implements ICategoryEvent {
 
 	private ICategory category;
+	private boolean definedChanged;
+	private boolean descriptionChanged;
+	private boolean nameChanged;
 
-	CategoryEvent(ICategory category) {
+	CategoryEvent(ICategory category, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
 		if (category == null)
 			throw new NullPointerException();
 		
 		this.category = category;
+		this.definedChanged = definedChanged;
+		this.descriptionChanged = descriptionChanged;
+		this.nameChanged = nameChanged;
 	}
 
 	public ICategory getCategory() {
 		return category;
+	}
+
+	public boolean hasDefinedChanged() {
+		return definedChanged;
+	}	
+	
+	public boolean hasDescriptionChanged() {
+		return descriptionChanged;
+	}
+	
+	public boolean hasNameChanged() {
+		return nameChanged;
 	}
 }

@@ -7,13 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>ICommandEvent</code> describes changes to an instance of 
+ * <code>ICommand</code>. 
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +24,56 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see ICommand
+ * @see ICommandListener#commandChanged
  */
 public interface ICommandEvent {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
+	 * Returns the instance of <code>ICommand</code> that has changed.
+	 *
+	 * @return the instance of <code>ICommand</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	ICommand getCommand();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasCategoryIdChanged();	
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDefinedChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDescriptionChanged();	
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasNameChanged();
+
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveActivityBindingsChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveImageBindingsChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveKeySequenceBindingsChanged();		
 }

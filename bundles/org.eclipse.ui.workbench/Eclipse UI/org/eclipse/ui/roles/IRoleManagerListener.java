@@ -33,8 +33,8 @@ public interface IRoleManagerListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of 
-	 * <code>IRoleManager</code> have changed. Specific details are 
-	 * described in the <code>IRoleManagerEvent</code>.
+	 * <code>IRoleManager</code> have changed. Specific details are described in 
+	 * the <code>IRoleManagerEvent</code>.
 	 *
 	 * @param roleManagerEvent the role manager event. Guaranteed not to be 
 	 *                         <code>null</code>.

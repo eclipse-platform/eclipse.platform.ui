@@ -7,13 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IKeyConfigurationEvent</code> describes changes to an instance of 
+ * <code>IKeyConfiguration</code>. 
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +24,41 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see IKeyConfiguration
+ * @see IKeyConfigurationListener#commandChanged
  */
 public interface IKeyConfigurationEvent {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
+	 * Returns the instance of <code>IKeyConfiguration</code> that has changed.
+	 *
+	 * @return the instance of <code>IKeyConfiguration</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	IKeyConfiguration getKeyConfiguration();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDefinedChanged();
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasDescriptionChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasNameChanged();
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasParentIdChanged();
 }

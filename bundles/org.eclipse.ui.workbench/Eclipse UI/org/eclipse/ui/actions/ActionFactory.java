@@ -43,7 +43,6 @@ import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.actions.RoleConfigurationAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1145,20 +1144,4 @@ public abstract class ActionFactory {
 		}
 	};
 
-	/**
-	 * Workbench action (id "roleConfiguration"): Opens the role configuration dialog.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory ROLE_CONFIGURATION = new ActionFactory("roleConfiguration") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new RoleConfigurationAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
 }

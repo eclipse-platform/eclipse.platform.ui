@@ -7,17 +7,18 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * Signals that an attempt was made to access the attributes of an undefined
+ * object.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
- * </p>
+ * </p> 
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
@@ -27,15 +28,17 @@ package org.eclipse.ui.commands;
 public class NotDefinedException extends Exception {
 
 	/**
-	 * JAVADOC
+	 * Constructs a <code>CommandNotDefinedException</code> with no specified 
+	 * detail message. 
 	 */	
 	public NotDefinedException() {
 	}
 
 	/**
-	 * JAVADOC
+	 * Constructs a <code>CommandNotDefinedException</code> with the specified 
+	 * detail message. 
 	 *
-	 * @param s
+	 * @param s	the detail message.
 	 */	
 	public NotDefinedException(String s) {
 		super(s);

@@ -11,10 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-// TODO private
 public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
@@ -27,18 +25,17 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	// TODO private
 	public ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
 		this.keyConfigurationId = keyConfigurationId;
 		this.pluginId = pluginId;
 	}
 	
 	public int compareTo(Object object) {
-		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;
-		int compareTo = Util.compare(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);			
+		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;
+		int compareTo = Util.compare(keyConfigurationId, castedObject.keyConfigurationId);			
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pluginId, activeKeyConfigurationDefinition.pluginId);								
+			compareTo = Util.compare(pluginId, castedObject.pluginId);								
 
 		return compareTo;	
 	}
@@ -47,10 +44,10 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 		if (!(object instanceof ActiveKeyConfigurationDefinition))
 			return false;
 
-		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;	
+		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);
-		equals &= Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
+		equals &= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.roles&lt;/code&gt; extension point is used to declare roles and role activity bindings, using the &lt;code&gt;role&lt;/code&gt; and &lt;code&gt;roleActivityBinding&lt;/code&gt; elements respectively.
+The &lt;code&gt;org.eclipse.ui.roles&lt;/code&gt; extension point is used to declare roles and role activity bindings, using the &lt;code&gt;role&lt;/code&gt; and &lt;code&gt;activityBinding&lt;/code&gt; elements respectively.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -16,7 +16,7 @@ The &lt;code&gt;org.eclipse.ui.roles&lt;/code&gt; extension point is used to dec
       <complexType>
          <sequence>
             <element ref="role"/>
-            <element ref="roleActivityBinding"/>
+            <element ref="activityBinding"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -73,24 +73,24 @@ The &lt;code&gt;org.eclipse.ui.roles&lt;/code&gt; extension point is used to dec
       </complexType>
    </element>
 
-   <element name="roleActivityBinding">
+   <element name="activityBinding">
       <annotation>
          <documentation>
             This element allows one to bind roles to activities.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="roleId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of the role to bind to an activity.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="activityId" type="string" use="required">
             <annotation>
                <documentation>
                   The unique identifier of the activity to be bound to a role.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="roleId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the role to bind to an activity.
                </documentation>
             </annotation>
          </attribute>

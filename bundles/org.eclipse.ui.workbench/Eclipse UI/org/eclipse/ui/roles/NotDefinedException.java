@@ -25,13 +25,13 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public final class RoleNotDefinedException extends Exception {
+public final class NotDefinedException extends Exception {
 
 	/**
 	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
 	 * detail message. 
 	 */	
-	public RoleNotDefinedException() {
+	public NotDefinedException() {
 	}
 
 	/**
@@ -40,7 +40,7 @@ public final class RoleNotDefinedException extends Exception {
 	 *
 	 * @param s	the detail message.
 	 */	
-	public RoleNotDefinedException(String s) {
+	public NotDefinedException(String s) {
 		super(s);
 	}
 }

@@ -7,13 +7,26 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IKeyConfiguration</code> is a handle representing a key configuration 
+ * as defined by the extension point <code>org.eclipse.ui.commands</code>. The
+ * identifier of the handle is identifier of the key configuration being represented.
+ * </p>
+ * <p>
+ * An instance of <code>IKeyConfiguration</code> can be obtained from an instance of 
+ * <code>ICommandManager</code> for any identifier, whether or not a key configuration 
+ * with that identifier defined in the plugin registry.
+ * </p>
+ * <p>
+ * The handle-based nature of this API allows it to work well with runtime 
+ * plugin activation and deactivation, which causes dynamic changes to the 
+ * plugin registry, and therefore, potentially, dynamic changes to the set of 
+ * key configuration definitions.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,65 +36,126 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @see IKeyConfigurationListener
+ * @see ICommandManager
  */
 public interface IKeyConfiguration extends Comparable {
 
 	/**
-	 * Registers an IKeyConfigurationListener instance with this key configuration.
+	 * Registers an instance of <code>IKeyConfigurationListener</code> to listen for
+	 * changes to attributes of this instance.
 	 *
-	 * @param keyConfigurationListener the IKeyConfigurationListener instance to register.
+	 * @param keyConfigurationListener the instance of <code>IKeyConfigurationListener</code> to 
+	 * 						  register. Must not be <code>null</code>. If an 
+	 * 						  attempt is made to register an instance of 
+	 *                        <code>IKeyConfigurationListener</code> which is already 
+	 *                        registered with this instance, no operation is 
+	 *                        performed.
 	 */	
 	void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns the description of the key configuration represented by this handle, 
+	 * suitable for display to the user.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 * 
-	 * @return
+	 * @return the description of the key configuration represented by this handle. 
+	 *         Guaranteed not to be <code>null</code>.
+	 * @throws NotDefinedException if the key configuration represented by this 
+	 *                                    handle is not defined.
 	 */	
 	String getDescription()
 		throws NotDefinedException;
 	
 	/**
-	 * JAVADOC
+	 * Returns the identifier of this handle.
 	 * 
-	 * @return
+	 * @return the identifier of this handle. Guaranteed not to be 
+	 *         <code>null</code>.
 	 */	
 	String getId();
 	
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * <p>
+	 * Returns the name of the key configuration represented by this handle, suitable for 
+	 * display to the user.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *  
+	 * @return the name of the key configuration represented by this handle. Guaranteed 
+	 *         not to be <code>null</code>.
+	 * @throws NotDefinedException if the key configuration represented by this 
+	 *                                    handle is not defined.
 	 */	
 	String getName()
 		throws NotDefinedException;
-
+	
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * <p>
+	 * Returns the identifier of the parent of the key configuration represented 
+	 * by this handle.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *  
+	 * @return the identifier of the parent of the key configuration represented 
+	 * 		   by this handle. May be <code>null</code>. 
+	 * @throws NotDefinedException if the key configuration represented by this 
+	 *                             handle is not defined.
 	 */	
 	String getParentId()
-		throws NotDefinedException;
+		throws NotDefinedException;	
 
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns whether or not this command is active. Instances of 
+	 * <code>ICommand</code> are activated and deactivated by the instance of
+	 * <code>ICommandManager</code> from whence they were brokered.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 * 
-	 * @return
+	 * @return <code>true</code>, iff this command is active. 
 	 */	
-	boolean isActive();
-
+	boolean isActive();	
+	
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns whether or not the key configuration represented by this handle is 
+	 * defined. 
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 * 
-	 * @return
+	 * @return <code>true</code>, iff the key configuration represented by this handle is 
+	 *         defined. 
 	 */	
 	boolean isDefined();
 	
 	/**
-	 * Unregisters an IKeyConfigurationListener instance with this key configuration.
+	 * Unregisters an instance of <code>IKeyConfigurationListener</code> listening for
+	 * changes to attributes of this instance.
 	 *
-	 * @param keyConfigurationListener the IKeyConfigurationListener instance to unregister.
+	 * @param keyConfigurationListener the instance of <code>IKeyConfigurationListener</code> to 
+	 * 						  unregister. Must not be <code>null</code>. If an 
+	 * 						  attempt is made to unregister an instance of 
+	 *                        <code>IKeyConfigurationListener</code> which is not 
+	 *                        already registered with this instance, no 
+	 *                        operation is performed.
 	 */
 	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 }

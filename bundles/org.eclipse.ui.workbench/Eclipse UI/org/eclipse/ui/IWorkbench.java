@@ -339,7 +339,7 @@ public IElementFactory getElementFactory(String factoryId);
  * @return IObjectActivityManager or <code>null</code>.
  */
 	
-public IObjectActivityManager getActivityManager(String id, boolean create);
+public IObjectActivityManager getObjectActivityManager(String id, boolean create);
 
 /**
  * Return the progress manager for the workbench.

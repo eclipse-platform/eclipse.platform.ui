@@ -15,22 +15,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.api.ICommandRegistry;
-import org.eclipse.ui.internal.commands.api.ICommandRegistryEvent;
-import org.eclipse.ui.internal.commands.api.ICommandRegistryListener;
-
 abstract class AbstractCommandRegistry implements ICommandRegistry {
 
 	private ICommandRegistryEvent commandRegistryEvent;
 	private List commandRegistryListeners;
 	
 	protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;
+	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List categoryDefinitions = Collections.EMPTY_LIST; 
 	protected List commandDefinitions = Collections.EMPTY_LIST; 
-	protected List contextBindingDefinitions = Collections.EMPTY_LIST;
 	protected List imageBindingDefinitions = Collections.EMPTY_LIST;
-	protected List keyBindingDefinitions = Collections.EMPTY_LIST;
-	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;
+	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;	
+	protected List keySequenceBindingDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractCommandRegistry() {
 	}
@@ -50,6 +46,10 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 		return activeKeyConfigurationDefinitions;
 	}
 
+	public List getActivityBindingDefinitions() {
+		return activityBindingDefinitions;
+	}
+
 	public List getCategoryDefinitions() {
 		return categoryDefinitions;
 	}
@@ -58,22 +58,18 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 		return commandDefinitions;
 	}
 
-	public List getContextBindingDefinitions() {
-		return contextBindingDefinitions;
-	}
-
 	public List getImageBindingDefinitions() {
 		return imageBindingDefinitions;
 	}
 	
-	public List getKeyBindingDefinitions() {
-		return keyBindingDefinitions;
-	}
-
 	public List getKeyConfigurationDefinitions() {
 		return keyConfigurationDefinitions;
 	}
-	
+
+	public List getKeySequenceBindingDefinitions() {
+		return keySequenceBindingDefinitions;
+	}
+
 	public void removeCommandRegistryListener(ICommandRegistryListener commandRegistryListener) {
 		if (commandRegistryListener == null)
 			throw new NullPointerException();
@@ -90,6 +86,6 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 							
 				((ICommandRegistryListener) commandRegistryListeners.get(i)).commandRegistryChanged(commandRegistryEvent);
 			}				
-		}						
+		}	
 	}
 }	

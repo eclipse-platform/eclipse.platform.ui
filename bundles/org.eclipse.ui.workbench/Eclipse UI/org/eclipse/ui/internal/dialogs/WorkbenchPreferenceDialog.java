@@ -275,7 +275,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
         IObjectActivityManager prefManager =
 			PlatformUI.getWorkbench()
-        		.getActivityManager(
+        		.getObjectActivityManager(
         			IWorkbenchConstants.PL_PREFERENCES, false);
         if (prefManager != null) {
             Collection activePages = prefManager.getActiveObjects();            

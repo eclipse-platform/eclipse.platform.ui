@@ -23,10 +23,10 @@
 
 
 <!-- Workbench extension points -->
+   <extension-point id="activities" name="%ExtPoint.activities" schema="schema/activities.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
-   <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.exsd"/>
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
@@ -42,11 +42,125 @@
    <extension-point id="popupMenus" name="%ExtPoint.popupMenus " schema="schema/popupMenus.exsd"/>
    <extension-point id="preferencePages" name="%ExtPoint.preferencePages" schema="schema/preferencePages.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
+   <extension-point id="roles" name="%ExtPoint.roles" schema="schema/roles.exsd"/>
    <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
    <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.exsd"/>
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
 
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            description="%activity.editingText.description"
+            id="org.eclipse.ui.textEditorScope"
+            name="%activity.editingText.name">
+      </activity>
+      <activity
+            description="%activity.editingJavaSource.description"            
+            id="org.eclipse.jdt.ui.javaEditorScope"
+            name="%activity.editingJavaSource.name"
+            parentId="org.eclipse.ui.textEditorScope">
+      </activity>
+      <activity
+            description=""
+            id="org.eclipse.debugging"
+            name="Debugging">
+      </activity>
+      <activity
+            description=""
+            id="org.eclipse.externalTools"
+            name="External Tools">
+      </activity>
+      <activity
+            description=""
+            id="org.eclipse.javaDevelopment"
+            name="Java Development">
+      </activity>            
+      <activity
+            description=""
+            id="org.eclipse.plugInDevelopment"
+            name="Plug-In Development"
+            parentId="org.eclipse.javaDevelopment">
+      </activity> 
+      <activity
+            description=""
+            id="org.eclipse.team"
+            name="Team">
+      </activity>           
+      <patternBinding
+            activityId="org.eclipse.debugging"
+            inclusive="true"
+            pattern="org.eclipse.debug.*">
+      </patternBinding>
+      <patternBinding
+            activityId="org.eclipse.externalTools"
+            inclusive="true"
+            pattern="org.eclipse.ant.*">
+      </patternBinding>
+      <patternBinding
+            activityId="org.eclipse.externalTools"
+            inclusive="true"
+            pattern="org.eclipse.ui.externaltools.*">
+      </patternBinding>
+      <patternBinding
+            activityId="org.eclipse.javaDevelopment"
+            inclusive="true"
+            pattern="org.eclipse.jdt.*">
+      </patternBinding>
+      <patternBinding
+            activityId="org.eclipse.plugInDevelopment"
+            inclusive="true"
+            pattern="org.eclipse.pde.*">
+      </patternBinding>
+      <patternBinding
+            activityId="org.eclipse.team"
+            inclusive="true"
+            pattern="org.eclipse.team.*">
+      </patternBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.roles">
+      <role
+            description=""
+            id="org.eclipse.roles.externalToolsRole"
+            name="External Tools">
+      </role>
+      <role
+            description=""
+            id="org.eclipse.roles.javaRole"
+            name="Java">
+      </role>
+      <role
+            description=""
+            id="org.eclipse.roles.pdeRole"
+            name="Plug In Development">
+      </role>
+      <role
+            description=""
+            id="org.eclipse.roles.teamRole"
+            name="Team">
+      </role>
+      <activityBinding
+            activityId="org.eclipse.externalTools"
+            roleId="org.eclipse.roles.externalToolsRole">
+      </activityBinding>
+      <activityBinding
+            activityId="org.eclipse.debugging"
+            roleId="org.eclipse.roles.javaRole">
+      </activityBinding>   
+      <activityBinding
+            activityId="org.eclipse.javaDevelopment"
+            roleId="org.eclipse.roles.javaRole">
+      </activityBinding>      
+      <activityBinding
+            activityId="org.eclipse.plugInDevelopment"
+            roleId="org.eclipse.roles.pdeRole">
+      </activityBinding>
+      <activityBinding
+            activityId="org.eclipse.team"
+            roleId="org.eclipse.roles.teamRole">
+      </activityBinding>
+   </extension>   
    <extension
          point="org.eclipse.ui.commands">
       <activeKeyConfiguration
@@ -983,20 +1097,6 @@
             description="%keyConfiguration.emacs.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
-   </extension>
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            name="%context.editingText.name"
-            description="%context.editingText.description"
-            id="org.eclipse.ui.textEditorScope">
-      </context>
-      <context
-            name="%context.editingJavaSource.name"
-            description="%context.editingJavaSource.description"
-            parentId="org.eclipse.ui.textEditorScope"
-            id="org.eclipse.jdt.ui.javaEditorScope">
-      </context>
    </extension>
    <extension
          point="org.eclipse.ui.views">

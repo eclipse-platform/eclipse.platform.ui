@@ -18,15 +18,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
+public final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
 
-	static Map keyConfigurationDefinitionsById(Collection keyConfigurationDefinitions, boolean allowNullIds) {
+	public static Map keyConfigurationDefinitionsById(Collection keyConfigurationDefinitions, boolean allowNullIds) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -46,7 +45,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 		return map;
 	}
 
-	static Map keyConfigurationDefinitionsByName(Collection keyConfigurationDefinitions, boolean allowNullNames) {
+	public static Map keyConfigurationDefinitionsByName(Collection keyConfigurationDefinitions, boolean allowNullNames) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -84,7 +83,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;	
 	
-	KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
+	public KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
@@ -93,20 +92,20 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;
-		int compareTo = Util.compare(description, keyConfigurationDefintion.description);
+		KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, keyConfigurationDefintion.id);			
+			compareTo = Util.compare(id, castedObject.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, keyConfigurationDefintion.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, keyConfigurationDefintion.parentId);
+					compareTo = Util.compare(parentId, castedObject.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, keyConfigurationDefintion.pluginId);								
+						compareTo = Util.compare(pluginId, castedObject.pluginId);								
 				}							
 			}
 		}
@@ -118,13 +117,13 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 		if (!(object instanceof KeyConfigurationDefinition))
 			return false;
 
-		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;	
+		KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, keyConfigurationDefintion.description);
-		equals &= Util.equals(id, keyConfigurationDefintion.id);
-		equals &= Util.equals(name, keyConfigurationDefintion.name);
-		equals &= Util.equals(parentId, keyConfigurationDefintion.parentId);
-		equals &= Util.equals(pluginId, keyConfigurationDefintion.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

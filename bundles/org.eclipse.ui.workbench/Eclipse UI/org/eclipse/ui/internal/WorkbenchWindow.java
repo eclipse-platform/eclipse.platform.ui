@@ -82,7 +82,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
@@ -471,13 +471,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				Perspective persp = page.getActivePerspective();
 				PerspectivePresentation presentation = persp.getPresentation();
 				presentation.onPartDragOver(e);
-			};
+			}
 			public void drop(PartDropEvent e) {
 				WorkbenchPage page = getActiveWorkbenchPage();
 				Perspective persp = page.getActivePerspective();
 				PerspectivePresentation presentation = persp.getPresentation();
 				presentation.onPartDrop(e);
-			};
+			}
 		};
 		
 		// let the application do further configuration
@@ -516,7 +516,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		}
 
-		getWorkbenchImpl().updateActiveCommandIdsAndActiveContextIds();
+		getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -526,7 +526,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			actionsForGlobalActions.put(
 				command,
 				new ActionHandler(globalAction));
-		getWorkbenchImpl().updateActiveCommandIdsAndActiveContextIds();
+		getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	/*
@@ -854,7 +854,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// TODO time to take back the menu, and not allow any contribution item to set an accelerator unless it cooperates with the command manager.
 		result.setOverrides(new IContributionManagerOverrides() {
 
-			private CommandManager commandManager = CommandManager.getInstance();
+			private CommandManager commandManager = (CommandManager) getWorkbenchImpl().getCommandManager();
 
 			public Integer getAccelerator(IContributionItem contributionItem) {
 				if (!(contributionItem instanceof ActionContributionItem))
@@ -875,14 +875,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keySequenceBindingsByCommandId = commandManager.getKeySequenceBindingsByCommandId();
+					SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId.get(commandId);
 
-					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+					if (keySequenceBindings != null) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.first();
 
-						if (keyBinding != null) {
-							KeySequence keySequence = keyBinding.getKeySequence();
+						if (keySequenceBinding != null) {
+							KeySequence keySequence = keySequenceBinding.getKeySequence();
 							List keyStrokes = keySequence.getKeyStrokes();
 
 							if (keyStrokes.size() == 1) {
@@ -915,14 +915,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keySequenceBindingsByCommandId = commandManager.getKeySequenceBindingsByCommandId();
+					SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId.get(commandId);
 
-					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+					if (keySequenceBindings != null) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.first();
 
-						if (keyBinding != null)
-							return keyBinding.getKeySequence().format();
+						if (keySequenceBinding != null)
+							return keySequenceBinding.getKeySequence().format();
 					}
 				} else {
 					String acceleratorText = commandManager.getAcceleratorText(commandId);
@@ -1165,8 +1165,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (keyBindingService == null) {
 			keyBindingService =
 				new KeyBindingService(
-					getWorkbenchImpl().getActionService(),
-					getWorkbenchImpl().getContextActivationService());
+					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getActionService(),
+					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getContextActivationService());
 			updateActiveActions();
 		}
 
@@ -1499,7 +1499,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				IElementFactory factory =
 					PlatformUI.getWorkbench().getElementFactory(factoryID);
 				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
 					result.add(unableToRestorePage(pageMem));
 					continue;
 				}
