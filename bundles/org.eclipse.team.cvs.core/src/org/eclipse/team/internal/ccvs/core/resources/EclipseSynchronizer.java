@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,7 +18,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
@@ -48,10 +48,26 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * @see ResourceSyncInfo
  * @see FolderSyncInfo
  */
-public class EclipseSynchronizer {	
-	protected static final String IS_DIRTY_INDICATOR = LowLevelSyncInfoCache.IS_DIRTY_INDICATOR;
-	protected static final String NOT_DIRTY_INDICATOR = LowLevelSyncInfoCache.NOT_DIRTY_INDICATOR;
-		
+public class EclipseSynchronizer {
+	// the resources plugin synchronizer is used to cache and possibly persist. These 
+	// are keys for storing the sync info.
+	private static final QualifiedName FOLDER_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-sync"); //$NON-NLS-1$
+	private static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync"); //$NON-NLS-1$
+	private static final QualifiedName IGNORE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-ignore"); //$NON-NLS-1$
+	
+	protected static final QualifiedName IS_DIRTY = new QualifiedName(CVSProviderPlugin.ID, "is-dirty");
+	protected static final QualifiedName CLEAN_UPDATE = new QualifiedName(CVSProviderPlugin.ID, "clean-update");
+	protected static final QualifiedName DIRTY_COUNT = new QualifiedName(CVSProviderPlugin.ID, "dirty-count");
+	protected static final QualifiedName DELETED_CHILDREN = new QualifiedName(CVSProviderPlugin.ID, "deleted");
+	protected static final String IS_DIRTY_INDICATOR = "d";
+	protected static final String NOT_DIRTY_INDICATOR = "c";
+	protected static final String UPDATED_INDICATOR = "u";
+
+	private static final String[] NULL_IGNORES = new String[0];
+	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	private static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
+	
 	// the cvs eclipse synchronizer is a singleton
 	private static EclipseSynchronizer instance;
 	
@@ -60,13 +76,6 @@ public class EclipseSynchronizer {
 	
 	private Set changedResources = new HashSet();
 	private Set changedFolders = new HashSet();
-	
-	private static IContainer cachedFolder;
-	private static Map cachedResourceSyncInfos;
-	private static boolean cacheDirty = false;
-	
-	private SessionPropertySyncInfoCache sessionPropertyCache = new SessionPropertySyncInfoCache();
-	private SynchronizerSyncInfoCache synchronizerCache = new SynchronizerSyncInfoCache();
 	
 	/*
 	 * Package private contructor to allow specialized subclass for handling folder deletions
@@ -79,23 +88,11 @@ public class EclipseSynchronizer {
 	 */
 	public static EclipseSynchronizer getInstance() {		
 		if(instance==null) {
-			instance = new EclipseSynchronizer();
+			instance = new EclipsePhantomSynchronizer();
 		}
 		return instance;
 	}
-	
-	public LowLevelSyncInfoCache getLowLevelCacheFor(IResource resource) {
-		if (resource.isPhantom()) {
-			return synchronizerCache;
-		} else {
-			return sessionPropertyCache;
-		}
-	}
 
-	private boolean isValid(IResource resource) {
-		return resource.exists() || resource.isPhantom();
-	}
-	
 	/**
 	 * Sets the folder sync info for the specified folder.
 	 * The folder must exist and must not be the workspace root.
@@ -106,14 +103,14 @@ public class EclipseSynchronizer {
 	 */
 	public void setFolderSync(IContainer folder, FolderSyncInfo info) throws CVSException {
 		Assert.isNotNull(info); // enforce the use of deleteFolderSync
-		if (folder.getType() == IResource.ROOT || !isValid(folder)) {
+		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
 		try {
 			beginOperation(null);
 			// set folder sync and notify
-			getLowLevelCacheFor(folder).setCachedFolderSync(folder, info);
+			setCachedFolderSync(folder, info);
 			changedFolders.add(folder);
 		} finally {
 			endOperation(null);
@@ -128,11 +125,11 @@ public class EclipseSynchronizer {
 	 * @see #setFolderSync, #deleteFolderSync
 	 */
 	public FolderSyncInfo getFolderSync(IContainer folder) throws CVSException {
-		if (folder.getType() == IResource.ROOT || !isValid(folder)) return null;
+		if (folder.getType() == IResource.ROOT || ! folder.exists()) return null;
 		try {
 			beginOperation(null);
 			// cache folder sync and return it
-			return getLowLevelCacheFor(folder).cacheFolderSync(folder);
+			return cacheFolderSync(folder);
 		} finally {
 			endOperation(null);
 		}
@@ -146,17 +143,17 @@ public class EclipseSynchronizer {
 	 * @see #getFolderSync, #setFolderSync
 	 */
 	public void deleteFolderSync(IContainer folder) throws CVSException {
-		if (folder.getType() == IResource.ROOT || !isValid(folder)) return;
+		if (folder.getType() == IResource.ROOT || ! folder.exists()) return;
 		try {
 			beginOperation(null);
 			// delete folder sync
-			getLowLevelCacheFor(folder).setCachedFolderSync(folder, null);
+			setCachedFolderSync(folder, null);
 			changedFolders.add(folder);
 			// iterate over all children with sync info and prepare notifications
-			getLowLevelCacheFor(folder).cacheResourceSyncForChildren(folder);
-			fastCacheResourceSyncForChildren(folder);
-			for (Iterator iter = cachedResourceSyncInfos.values().iterator(); iter.hasNext();) {
-				ResourceSyncInfo info = (ResourceSyncInfo) iter.next();
+			cacheResourceSyncForChildren(folder);
+			Collection infos = getCachedResourceSyncForChildren(folder);
+			for (Iterator it = infos.iterator(); it.hasNext();) {
+				ResourceSyncInfo info = (ResourceSyncInfo) it.next();
 				IPath path = new Path(info.getName());
 				if(info.isDirectory()) {
 					changedResources.add(folder.getFolder(path));
@@ -165,7 +162,7 @@ public class EclipseSynchronizer {
 				}
 			}
 			// delete resource sync for all children
-			getLowLevelCacheFor(folder).setCachedResourceSyncForChildren(folder, null);
+			deleteCachedResourceSyncForChildren(folder);
 		} finally {
 			endOperation(null);
 		}
@@ -182,14 +179,14 @@ public class EclipseSynchronizer {
 	public void setResourceSync(IResource resource, ResourceSyncInfo info) throws CVSException {
 		Assert.isNotNull(info); // enforce the use of deleteResourceSync
 		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
+		if (parent == null || ! parent.exists() || parent.getType() == IResource.ROOT) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
 		}
 		try {
 			beginOperation(null);
 			// cache resource sync for siblings, set for self, then notify
-			getLowLevelCacheFor(parent).cacheResourceSyncForChildren(parent);
+			cacheResourceSyncForChildren(parent);
 			setCachedResourceSync(resource, info);
 			changedResources.add(resource);		
 		} finally {
@@ -206,11 +203,11 @@ public class EclipseSynchronizer {
 	 */
 	public ResourceSyncInfo getResourceSync(IResource resource) throws CVSException {
 		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) return null;
+		if (parent == null || ! parent.exists() || parent.getType() == IResource.ROOT) return null;
 		try {
 			beginOperation(null);
 			// cache resource sync for siblings, then return for self
-			getLowLevelCacheFor(parent).cacheResourceSyncForChildren(parent);
+			cacheResourceSyncForChildren(parent);
 			return getCachedResourceSync(resource);
 		} finally {
 			endOperation(null);
@@ -225,11 +222,11 @@ public class EclipseSynchronizer {
 	 */
 	public void deleteResourceSync(IResource resource) throws CVSException {
 		IContainer parent = resource.getParent();
-		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) return;
+		if (parent == null || ! parent.exists() || parent.getType() == IResource.ROOT) return;
 		try {
 			beginOperation(null);
 			// cache resource sync for siblings, delete for self, then notify
-			getLowLevelCacheFor(parent).cacheResourceSyncForChildren(parent);
+			cacheResourceSyncForChildren(resource.getParent());
 			if (getCachedResourceSync(resource) != null) { // avoid redundant notifications
 				setCachedResourceSync(resource, null);
 				changedResources.add(resource);
@@ -247,7 +244,7 @@ public class EclipseSynchronizer {
 	 * @see #addIgnored
 	 */
 	public String[] getIgnored(IContainer folder) throws CVSException {
-		if (folder.getType() == IResource.ROOT || ! folder.exists()) return SessionPropertySyncInfoCache.NULL_IGNORES;
+		if (folder.getType() == IResource.ROOT || ! folder.exists()) return NULL_IGNORES;
 		try {
 			beginOperation(null);
 			return cacheFolderIgnores(folder);
@@ -302,16 +299,16 @@ public class EclipseSynchronizer {
 	 * @return the array of members
 	 */
 	public IResource[] members(IContainer folder) throws CVSException {
-		if (! isValid(folder)) return new IResource[0];
+		if (! folder.exists()) return new IResource[0];
 		try {				
 			beginOperation(null);
 			if (folder.getType() == IResource.ROOT) return folder.members();
-			getLowLevelCacheFor(folder).cacheResourceSyncForChildren(folder);
-			fastCacheResourceSyncForChildren(folder);
+			cacheResourceSyncForChildren(folder);
+			Collection infos = getCachedResourceSyncForChildren(folder);
 			// add all children with or without sync info
 			Set childResources = new HashSet();
-			for (Iterator iter = cachedResourceSyncInfos.values().iterator(); iter.hasNext();) {
-				ResourceSyncInfo info = (ResourceSyncInfo) iter.next();
+			for (Iterator it = infos.iterator(); it.hasNext();) {
+				ResourceSyncInfo info = (ResourceSyncInfo) it.next();
 				IPath path = new Path(info.getName());
 				if(info.isDirectory()) {
 					childResources.add(folder.getFolder(path));
@@ -319,8 +316,7 @@ public class EclipseSynchronizer {
 					childResources.add(folder.getFile(path));
 				}
 			}
-			if (folder.exists())
-				childResources.addAll(Arrays.asList(folder.members()));
+			childResources.addAll(Arrays.asList(folder.members()));
 			return (IResource[])childResources.toArray(new IResource[childResources.size()]);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
@@ -356,11 +352,11 @@ public class EclipseSynchronizer {
 	 */
 	public void endOperation(IProgressMonitor monitor) throws CVSException {		
 		try {
-			IStatus status = LowLevelSyncInfoCache.STATUS_OK;
+			IStatus status = STATUS_OK;
 			if (lock.getNestingCount() == 1) {
 				status = commitCache(monitor);
 			}
-			if (!status.isOK()) {
+			if (status != STATUS_OK) {
 				throw new CVSException(status);
 			}
 		} finally {
@@ -397,12 +393,12 @@ public class EclipseSynchronizer {
 			IStatus status = commitCache(Policy.subMonitorFor(monitor, 7));
 			
 			// purge from memory too if we were asked to
-			if (purgeCache) sessionPropertyCache.purgeCache(root, deep);
+			if (purgeCache) purgeCache(root, deep);
 	
 			// prepare for the operation again if we cut the last one short
 			prepareCache(Policy.subMonitorFor(monitor, 1));
 			
-			if (!status.isOK()) {
+			if (status != STATUS_OK) {
 				throw new CVSException(status);
 			}
 		} finally {
@@ -438,94 +434,15 @@ public class EclipseSynchronizer {
 	 * The folder is about to be deleted (including its CVS subfolder).
 	 * Take any appropriate action to remember the CVS information.
 	 */
-	public void prepareForDeletion(IResource resource) throws CVSException {
-		try {
-			beginOperation(null);
-			// Flush the dirty info for the resource and it's ancestors.
-			// Although we could be smarter, we need to do this because the
-			// deletion may fail.
-			String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(resource);
-			if (indicator != null) {
-				flushDirtyCacheWithAncestors(resource);
-			}
-			if (resource.getType() != IResource.FILE) {
-				IContainer container = (IContainer)resource;
-				purgeFastCache();
-				if (container.getType() == IResource.PROJECT) {
-					synchronizerCache.flush((IProject)container);
-				} else {
-					// Move the folder sync info into phantom space
-					FolderSyncInfo info = getFolderSync(container);
-					if (info == null) return;
-					synchronizerCache.setCachedFolderSync(container, info);
-					synchronizerCache.setCachedResourceSyncForChildren(container, sessionPropertyCache.getCachedResourceSyncForChildren(container));
-					changedFolders.add(container);
-					// todo
-					// Move the dirty count into phantom space
-					int dirtyCount = getDirtyCount(container);
-					if (dirtyCount != -1) {
-						synchronizerCache.setCachedDirtyCount(container, dirtyCount);
-					}
-				}
-			}
-		} finally {
-			endOperation(null);
-		}
+	public void prepareForDeletion(IContainer container) throws CVSException {
 	}
 	
 	/**
-	 * Notify the receiver that a folder has been created.
-	 * Any existing phantom sync info will be moved
-	 *
-	 * @param folder the folder that has been created
+	 * Signal to the synchronizer that a folder has been created
+	 * 
+	 * @param folder the folder to be created
 	 */
 	public void folderCreated(IFolder folder) throws CVSException {
-		try {
-			// set the dirty count using what was cached in the phantom it
-			beginOperation(null);
-			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder);
-			if (folderInfo != null) {
-				byte[][] infos = synchronizerCache.getCachedResourceSyncForChildren(folder);
-				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
-					// There is already a CVS subdirectory which indicates that
-					// either the folder was recreated by an external tool or that
-					// a folder with CVS information was copied from another location.
-					// To know the difference, we need to compare the folder sync info.
-					// If they are mapped to the same root and repository then just
-					// purge the phantom info. Otherwise, keep the original sync info.
-
-					// flush the phantom info so we can get what is on disk.
-					synchronizerCache.flush(folder);
-
-					// Get the new folder sync info
-					FolderSyncInfo newFolderInfo = getFolderSync(folder);
-					if (newFolderInfo.getRoot().equals(folderInfo.getRoot())
-						&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
-							// The folder is the same so use what is on disk
-							return;
-					}
-
-					// The folder is mapped to a different location.
-					// Purge new resource sync before restoring from phantom
-					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-					ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
-					for (int i = 0; i < children.length; i++) {
-						ICVSResource resource = children[i];
-						deleteResourceSync(resource.getIResource());
-					}
-				}
-
-				// set the sync info using what was cached in the phantom
-				setFolderSync(folder, folderInfo);
-				sessionPropertyCache.setCachedResourceSyncForChildren(folder, infos);
-			}
-		} finally {
-			try {
-				endOperation(null);
-			} finally {
-				synchronizerCache.flush(folder);
-			}
-		}
 	}
 	
 	/**
@@ -547,49 +464,103 @@ public class EclipseSynchronizer {
 	 * @param monitor the progress monitor, may be null
 	 */
 	private IStatus commitCache(IProgressMonitor monitor) {
-		// write the fast cache to the low level cache
-		IStatus status = LowLevelSyncInfoCache.STATUS_OK;
+		if (changedFolders.isEmpty() && changedResources.isEmpty()) {
+			broadcastResourceStateChanges(new IResource[0]);
+			return STATUS_OK;
+		}
+		List errors = new ArrayList();
 		try {
-			purgeFastCache();
-		} catch (CVSException e) {
-			status = e.getStatus();
-		}
-		
-		// Commit the session property cache to disk.
-		status = mergeStatus(sessionPropertyCache.commitCache(monitor), status);
+			/*** prepare operation ***/
+			// find parents of changed resources
+			Set dirtyParents = new HashSet();
+			for(Iterator it = changedResources.iterator(); it.hasNext();) {
+				IResource resource = (IResource) it.next();
+				IContainer folder = resource.getParent();
+				dirtyParents.add(folder);
+			}
+			
+			monitor = Policy.monitorFor(monitor);
+			int numDirty = dirtyParents.size();
+			int numResources = changedFolders.size() + numDirty;
+			monitor.beginTask(null, numResources);
+			if(monitor.isCanceled()) {
+				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperationCancelled")); //$NON-NLS-1$
+			} else {
+				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperation")); //$NON-NLS-1$
+			}
+			
+			/*** write sync info to disk ***/
+			// folder sync info changes
+			for(Iterator it = changedFolders.iterator(); it.hasNext();) {
+				IContainer folder = (IContainer) it.next();
+				if (folder.exists() && folder.getType() != IResource.ROOT) {
+					try {
+						FolderSyncInfo info = getCachedFolderSync(folder);
+						if (info == null) {
+							// deleted folder sync info since we loaded it
+							SyncFileWriter.deleteFolderSync(folder);
+							dirtyParents.remove(folder);
+						} else {
+							// modified or created new folder sync info since we loaded it
+							SyncFileWriter.writeFolderSync(folder, info);
+						}
+					} catch(CVSException e) {					
+						try {
+							purgeCache(folder, true /* deep */);
+						} catch(CVSException pe) {
+							errors.add(pe.getStatus());
+						}
+						errors.add(e.getStatus());
+					}
+				}
+				monitor.worked(1);
+			}
 
-		/*** broadcast events ***/
-		changedResources.addAll(changedFolders);				
-		IResource[] resources = (IResource[]) changedResources.toArray(
-			new IResource[changedResources.size()]);
-		broadcastResourceStateChanges(resources);
-		changedResources.clear();
-		changedFolders.clear();
-		return status;
-	}
-	
-	/**
-	 * Method mergeStatus.
-	 * @param iStatus
-	 * @param status
-	 * @return IStatus
-	 */
-	private IStatus mergeStatus(IStatus status1, IStatus status2) {
-		if (status1.isOK()) return status2;
-		if (status2.isOK()) return status1;
-		if (status1.isMultiStatus()) {
-			((MultiStatus)status1).merge(status2);
-			return status1;
+			// update progress for parents we will skip because they were deleted
+			monitor.worked(numDirty - dirtyParents.size());
+
+			// resource sync info changes
+			for (Iterator it = dirtyParents.iterator(); it.hasNext();) {
+				IContainer folder = (IContainer) it.next();
+				if (folder.exists() && folder.getType() != IResource.ROOT) {
+					// write sync info for all children in one go
+					try {
+						Collection infos = getCachedResourceSyncForChildren(folder);
+						SyncFileWriter.writeAllResourceSync(folder,
+							(ResourceSyncInfo[]) infos.toArray(new ResourceSyncInfo[infos.size()]));
+					} catch(CVSException e) {
+						try {
+							purgeCache(folder, false /* depth 1 */);
+						} catch(CVSException pe) {
+							errors.add(pe.getStatus());
+						}							
+						errors.add(e.getStatus());
+					}
+				}
+				monitor.worked(1);
+			}
+			
+			/*** broadcast events ***/
+			changedResources.addAll(changedFolders);				
+			IResource[] resources = (IResource[]) changedResources.toArray(
+				new IResource[changedResources.size()]);
+			broadcastResourceStateChanges(resources);
+			changedResources.clear();
+			changedFolders.clear();
+			if ( ! errors.isEmpty()) {
+				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 
+											CVSStatus.COMMITTING_SYNC_INFO_FAILED, 
+											Policy.bind("EclipseSynchronizer.ErrorCommitting"), //$NON-NLS-1$
+											null);
+				for (int i = 0; i < errors.size(); i++) {
+					status.merge((IStatus)errors.get(i));
+				}
+				return status;
+			}
+			return STATUS_OK;
+		} finally {
+			monitor.done();
 		}
-		if (status2.isMultiStatus()) {
-			((MultiStatus)status2).merge(status1);
-			return status2;
-		}
-		return new MultiStatus(CVSProviderPlugin.ID,
-								CVSStatus.COMMITTING_SYNC_INFO_FAILED,
-								new IStatus[] { status1, status2 },
-								Policy.bind("EclipseSynchronizer.ErrorCommitting"), //$NON-NLS-1$
-								null);
 	}
 	
 	/**
@@ -602,6 +573,61 @@ public class EclipseSynchronizer {
 	}
 	
 	/**
+	 * Purges the cache recursively for all resources beneath the container.
+	 * There must not be any pending uncommitted changes.
+	 */
+	private static void purgeCache(IContainer container, boolean deep) throws CVSException {
+		if (! container.exists()) return;
+		try {
+			if (container.getType() != IResource.ROOT) {
+				container.setSessionProperty(RESOURCE_SYNC_KEY, null);
+				container.setSessionProperty(IGNORE_SYNC_KEY, null);
+				container.setSessionProperty(FOLDER_SYNC_KEY, null);
+			}
+			if(deep) {
+				IResource[] members = container.members();
+				for (int i = 0; i < members.length; i++) {
+					IResource resource = members[i];
+					if (resource.getType() != IResource.FILE) {
+						purgeCache((IContainer) resource, deep);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	/**
+	 * If not already cached, loads and caches the resource sync for the children of the container.
+	 * Folder must exist and must not be the workspace root.
+	 * 
+	 * @param container the container
+	 */
+	private static void cacheResourceSyncForChildren(IContainer container) throws CVSException {
+		try {
+			// don't try to load if the information is already cached
+			HashMap children = (HashMap)container.getSessionProperty(RESOURCE_SYNC_KEY);
+			if (children == null) {
+				// load the sync info from disk
+				ResourceSyncInfo[] infos = SyncFileWriter.readAllResourceSync(container);
+				if (infos != null) {
+					children = new HashMap(infos.length);
+					for (int i = 0; i < infos.length; i++) {
+						ResourceSyncInfo syncInfo = infos[i];					
+						children.put(syncInfo.getName(), syncInfo);
+					}
+				} else {
+					children = new HashMap(0);
+				}
+				container.setSessionProperty(RESOURCE_SYNC_KEY, children);
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}		
+	}
+	
+	/**
 	 * Returns the resource sync info for the resource; null if none.
 	 * Parent must exist and must not be the workspace root.
 	 * The resource sync info for the children of the parent container MUST ALREADY BE CACHED.
@@ -610,77 +636,153 @@ public class EclipseSynchronizer {
 	 * @return the resource sync info for the resource, or null
 	 * @see #cacheResourceSyncForChildren
 	 */
-	private ResourceSyncInfo getCachedResourceSync(IResource resource) throws CVSException {
-		fastCacheResourceSyncForChildren(resource.getParent());
-		return (ResourceSyncInfo) cachedResourceSyncInfos.get(resource.getName());
-	}
-
-	private void fastCacheResourceSyncForChildren(IContainer parent) throws CVSException {
-		if (!parent.equals(cachedFolder)) {
-			purgeFastCache();
-			byte[][] infos = getLowLevelCacheFor(parent).getCachedResourceSyncForChildren(parent);
-			if (infos == null) {
+	private static ResourceSyncInfo getCachedResourceSync(IResource resource) throws CVSException {
+		try {
+			IContainer parent = resource.getParent();
+			HashMap children = (HashMap)resource.getParent().getSessionProperty(RESOURCE_SYNC_KEY);
+			if (children == null) {
 				// There should be sync info but it was missing. Report the error
 				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", parent.getFullPath().toString())); //$NON-NLS-1$
 			}
-			HashMap children = new HashMap();
-			for (int i = 0; i < infos.length; i++) {
-				ResourceSyncInfo info = new ResourceSyncInfo(infos[i]);
-				children.put(info.getName(), info);
-			}
-			cachedResourceSyncInfos = children;
-			cachedFolder = parent;
-		}
-	}
-	
-	/**
-	 * Method purgeCurrentFolderCache.
-	 */
-	private void purgeFastCache() throws CVSException {
-		try {
-			beginOperation(null);
-			if (cacheDirty) {
-				byte[][] newInfos;
-				if (cachedResourceSyncInfos.isEmpty()) {
-					newInfos = LowLevelSyncInfoCache.EMPTY_RESOURCE_SYNC_INFOS;
-				} else {
-					newInfos = new byte[cachedResourceSyncInfos.size()][];
-					int i = 0;
-					for (Iterator iter = cachedResourceSyncInfos.values().iterator(); iter.hasNext();) {
-						ResourceSyncInfo info = (ResourceSyncInfo) iter.next();
-						newInfos[i++] = info.getBytes();
-					}
-				}
-				getLowLevelCacheFor(cachedFolder).setCachedResourceSyncForChildren(cachedFolder, newInfos);
-			}
-			cacheDirty = false;
-			cachedFolder = null;
-			cachedResourceSyncInfos = null;
-		} finally {
-			endOperation(null);
+			return (ResourceSyncInfo) children.get(resource.getName());
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 
 	/**
- 	 * Sets the resource sync info for the resource; if null, deletes it. Parent
- 	 * must exist and must not be the workspace root. The resource sync info for
- 	 * the children of the parent container MUST ALREADY BE CACHED.
+	 * Sets the resource sync info for the resource; if null, deletes it.
+	 * Parent must exist and must not be the workspace root.
+	 * The resource sync info for the children of the parent container MUST ALREADY BE CACHED.
 	 * 
 	 * @param resource the resource
 	 * @param info the new resource sync info
 	 * @see #cacheResourceSyncForChildren
 	 */
-	private void setCachedResourceSync(IResource resource, ResourceSyncInfo info) throws CVSException {
-		// Get the old info to trigger caching for the parent
-		fastCacheResourceSyncForChildren(resource.getParent());
-		Assert.isNotNull(cachedResourceSyncInfos);
-		Assert.isTrue(resource.getParent().equals(cachedFolder));
-		if (info == null) {
-			cachedResourceSyncInfos.remove(resource.getName());
-		} else {
-			cachedResourceSyncInfos.put(resource.getName(), info);
+	private static void setCachedResourceSync(IResource resource, ResourceSyncInfo info) throws CVSException {
+		try {
+			IContainer parent = resource.getParent();
+			HashMap children = (HashMap)parent.getSessionProperty(RESOURCE_SYNC_KEY);
+			Assert.isNotNull(children);
+			if (info == null) {
+				children.remove(resource.getName());
+			} else {
+				children.put(resource.getName(), info);
+			}
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
 		}
-		cacheDirty = true;
+	}
+	
+	/**
+	 * Returns the resource sync info for all children of the container.
+	 * Container must exist and must not be the workspace root.
+	 * The resource sync info for the children of the container MUST ALREADY BE CACHED.
+	 * 
+	 * @param container the container
+	 * @return a collection of the resource sync info's for all children
+	 * @see #cacheResourceSyncForChildren
+	 */
+	private static Collection /* of ResourceSyncInfo */ getCachedResourceSyncForChildren(IContainer container) throws CVSException {
+		try {
+			HashMap children = (HashMap)container.getSessionProperty(RESOURCE_SYNC_KEY);
+			if (children == null) {
+				// There should be sync info but it was missing. Report the error
+				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
+			}
+			return children.values();
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/**
+	 * Deletes the resource sync info for all children of the container.
+	 * Container must exist and must not be the workspace root.
+	 * The resource sync info for the children of the container need not have previously been cached.
+	 * 
+	 * @param container the container
+	 */
+	private static void deleteCachedResourceSyncForChildren(IContainer container) throws CVSException {
+		try {
+			HashMap children = (HashMap)container.getSessionProperty(RESOURCE_SYNC_KEY);
+			if (children != null) {
+				children.clear();
+			} else {
+				children = new HashMap(0);
+				container.setSessionProperty(RESOURCE_SYNC_KEY, children);
+			}
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	/**
+	 * If not already cached, loads and caches the folder sync for the container.
+	 * Folder must exist and must not be the workspace root.
+	 * 
+	 * @param container the container
+	 * @return the folder sync info for the folder, or null if none.
+	 */
+	private static FolderSyncInfo cacheFolderSync(IContainer container) throws CVSException {
+		try {
+			// don't try to load if the information is already cached
+			FolderSyncInfo info = (FolderSyncInfo)container.getSessionProperty(FOLDER_SYNC_KEY);
+			if (info == null) {
+				// read folder sync info and remember it
+				info = SyncFileWriter.readFolderSync(container);
+				if (info == null) {
+					container.setSessionProperty(FOLDER_SYNC_KEY, NULL_FOLDER_SYNC_INFO);
+				} else {
+					container.setSessionProperty(FOLDER_SYNC_KEY, info);
+				}
+			} else if (info == NULL_FOLDER_SYNC_INFO) {
+				info = null;
+			}
+			return info;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	/**
+	 * Returns the folder sync info for the container; null if none.
+	 * Folder must exist and must not be the workspace root.
+	 * The folder sync info for the container MUST ALREADY BE CACHED.
+	 * 
+	 * @param container the container
+	 * @return the folder sync info for the folder, or null if none.
+	 * @see #cacheFolderSync
+	 */
+	private static FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+		try {
+			FolderSyncInfo info = (FolderSyncInfo)container.getSessionProperty(FOLDER_SYNC_KEY);
+			if (info == null) {
+				// There should be sync info but it was missing. Report the error
+				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
+			}
+			if (info == NULL_FOLDER_SYNC_INFO) return null;
+			return info;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/**
+	 * Sets the folder sync info for the container; if null, deletes it.
+	 * Folder must exist and must not be the workspace root.
+	 * The folder sync info for the container need not have previously been cached.
+	 * 
+	 * @param container the container
+	 * @param info the new folder sync info
+	 */
+	private static void setCachedFolderSync(IContainer container, FolderSyncInfo info) throws CVSException {
+		try {
+			if (info == null) info = NULL_FOLDER_SYNC_INFO;
+			container.setSessionProperty(FOLDER_SYNC_KEY, info);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/**
@@ -690,8 +792,20 @@ public class EclipseSynchronizer {
 	 * @param container the container
 	 * @return the folder ignore patterns, or an empty array if none
 	 */
-	private String[] cacheFolderIgnores(IContainer container) throws CVSException {
-		return sessionPropertyCache.cacheFolderIgnores(container);
+	private static String[] cacheFolderIgnores(IContainer container) throws CVSException {
+		try {
+			// don't try to load if the information is already cached
+			String[] ignores = (String[])container.getSessionProperty(IGNORE_SYNC_KEY);
+			if (ignores == null) {
+				// read folder ignores and remember it
+				ignores = SyncFileWriter.readCVSIgnoreEntries(container);
+				if (ignores == null) ignores = NULL_IGNORES;
+				container.setSessionProperty(IGNORE_SYNC_KEY, ignores);
+			}
+			return ignores;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/**
@@ -701,8 +815,12 @@ public class EclipseSynchronizer {
 	 * @param container the container
 	 * @param ignores the array of ignore patterns
 	 */
-	private void setCachedFolderIgnores(IContainer container, String[] ignores) throws CVSException {
-		sessionPropertyCache.setCachedFolderIgnores(container, ignores);
+	private static void setCachedFolderIgnores(IContainer container, String[] ignores) throws CVSException {
+		try {
+			container.setSessionProperty(IGNORE_SYNC_KEY, ignores);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/**
@@ -714,22 +832,16 @@ public class EclipseSynchronizer {
 	 */
 	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
 		try {
-			getLowLevelCacheFor(folder).cacheResourceSyncForChildren(folder);
+			cacheResourceSyncForChildren(folder);
 			IResource[] children = folder.members();
-			List folders = new ArrayList();
-			// deal with all files first and then folders to be otimized for caching scheme
 			for (int i = 0; i < children.length; i++) {
 				IResource child = children[i];
 				if(getCachedResourceSync(child)==null) {
 					possibleIgnores.add(child);
 				}
 				if(child.getType()!=IResource.FILE) {
-					folders.add(child);
+					accumulateNonManagedChildren((IContainer)child, possibleIgnores);
 				}
-			}
-			for (Iterator iter = folders.iterator(); iter.hasNext();) {
-				IContainer child = (IContainer) iter.next();
-				accumulateNonManagedChildren(child, possibleIgnores);
 			}
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
@@ -921,7 +1033,17 @@ public class EclipseSynchronizer {
 		// for all folders that have a CVS folder, ensure the sync info is cached
 		for (int i = 0; i < folders.length; i++) {
 			IContainer parent = folders[i];
-			if (!getLowLevelCacheFor(parent).isSyncInfoLoaded(parent)) {
+			try {
+				if (parent.getFolder(new Path(SyncFileWriter.CVS_DIRNAME)).exists()) {
+					if (parent.getSessionProperty(RESOURCE_SYNC_KEY) == null)
+						return false;
+					if (parent.getSessionProperty(FOLDER_SYNC_KEY) == null)
+						return false;
+					if (parent.getSessionProperty(IGNORE_SYNC_KEY) == null)
+						return false;
+				}
+			} catch (CoreException e) {
+				// let future operations surface the error
 				return false;
 			}
 		}
@@ -942,8 +1064,8 @@ public class EclipseSynchronizer {
 			IContainer parent = folders[i];
 			try {
 				beginOperation(null);
-				getLowLevelCacheFor(parent).cacheResourceSyncForChildren(parent);
-				getLowLevelCacheFor(parent).cacheFolderSync(parent);
+				cacheResourceSyncForChildren(parent);
+				cacheFolderSync(parent);
 				cacheFolderIgnores(parent);
 			} finally {
 				endOperation(null);
@@ -1005,11 +1127,46 @@ public class EclipseSynchronizer {
 	}
 	
 	protected void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
-		getLowLevelCacheFor(resource).setDirtyIndicator(resource, indicator);
+		if (resource.getType() == IResource.FILE) {
+			internalSetDirtyIndicator((IFile)resource, indicator);
+		} else {
+			internalSetDirtyIndicator((IContainer)resource, indicator);
+		}
 	}
-	
 	protected String getDirtyIndicator(IResource resource) throws CVSException {
-		return getLowLevelCacheFor(resource).getDirtyIndicator(resource);
+		if (resource.getType() == IResource.FILE) {
+			return internalGetDirtyIndicator((IFile)resource);
+		} else {
+			return internalGetDirtyIndicator((IContainer)resource);
+		}
+	}
+	private void internalSetDirtyIndicator(IFile file, String indicator) throws CVSException {
+		try {
+			file.setSessionProperty(IS_DIRTY, indicator);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private String internalGetDirtyIndicator(IFile file) throws CVSException {
+		try {
+			return (String)file.getSessionProperty(IS_DIRTY);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private void internalSetDirtyIndicator(IContainer container, String indicator) throws CVSException {
+		try {
+			container.setPersistentProperty(IS_DIRTY, indicator);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private String internalGetDirtyIndicator(IContainer container) throws CVSException {
+		try {
+			return container.getPersistentProperty(IS_DIRTY);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	/*
@@ -1018,35 +1175,56 @@ public class EclipseSynchronizer {
 	 * null in that case. For phantom folders, the dirty count is calculated if
 	 * it does not exist yet.
 	 */
-	protected int getDirtyCount(IContainer container) throws CVSException {
+	protected Integer getDirtyCount(IContainer parent) throws CVSException {
+		if (!parent.exists()) return null;
 		try {
 			beginOperation(null);
-			return getLowLevelCacheFor(container).getCachedDirtyCount(container);
+			return (Integer)parent.getSessionProperty(DIRTY_COUNT);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		} finally {
 		  endOperation(null);
 	   }
 	}
 	protected void setDirtyCount(IContainer container, int count) throws CVSException {
+		if (!container.exists()) return;
 		try {
 			beginOperation(null);
-			getLowLevelCacheFor(container).setCachedDirtyCount(container, count);
+			container.setSessionProperty(DIRTY_COUNT, new Integer(count));
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		} finally {
 		   endOperation(null);
 	   	}
 	}
+
+	/*
+	 * Mark the given existing file as either modified or clean using a session
+	 * property. Also notify the parent to adjust it's modified count. Do
+	 * nothing if the modified state is already what we want.
+	 */
+	protected boolean setModified(IFile file, boolean modified) throws CVSException {
+		String indicator = modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR;
+		if (getDirtyIndicator(file) == indicator) return false;
+		setDirtyIndicator(file, indicator);
+		return true;
+	}
 	
 	/*
-	 * Mark the given resource as either modified or clean using a persistant
-	 * property. Do nothing if the modified state is already what we want.
-	 * Return true if the modification state was changed.
+	 * Mark the given existing folder as either modified or clean using a
+	 * persistant property. Do nothing if the modified state is already what we
+	 * want.
 	 */
-	protected boolean setModified(IResource container, boolean modified) throws CVSException {
+	protected void setModified(IContainer container, boolean modified) throws CVSException {
+		if (!container.exists()) return;
 		String indicator = modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR;
+
 		// if it's already set, no need to set the property or adjust the parents count
-		if (indicator.equals(getDirtyIndicator(container))) return false;
+		if (indicator.equals(getDirtyIndicator(container))) return;
+
 		// set the dirty indicator and adjust the parent accordingly
 		setDirtyIndicator(container, indicator);
-		return true;
+		return;
 	}
 	
 	/*
@@ -1054,10 +1232,10 @@ public class EclipseSynchronizer {
 	 * parent should be adjusted
 	 */
 	protected boolean adjustModifiedCount(IContainer container, boolean dirty) throws CVSException {
-		if (container.getType() == IResource.ROOT || !isValid(container)) return false;
-		int count = getDirtyCount(container);
+		if (container.getType() == IResource.ROOT) return false;
+		Integer property = getDirtyCount(container);
 		boolean updateParent = false;
-		if (count == -1) {
+		if (property == null) {
 			// The number of dirty children has not been tallied for this parent.
 			// (i.e. no one has queried this folder yet)
 			if (dirty) {
@@ -1077,6 +1255,7 @@ public class EclipseSynchronizer {
 				// property is still acurate.
 			}
 		} else {
+			int count = property.intValue();
 			if (dirty) {
 				count++;
 				if (count == 1) {
@@ -1102,8 +1281,17 @@ public class EclipseSynchronizer {
 	protected boolean addDeletedChild(IContainer container, IFile file) throws CVSException {
 		try {
 			beginOperation(null);
-			getLowLevelCacheFor(container).addDeletedChild(container, file);
+			Set deletedFiles = getDeletedChildren(container);
+			if (deletedFiles == null)
+				deletedFiles = new HashSet();
+			String fileName = file.getName();
+			if (deletedFiles.contains(fileName))
+				return false;
+			deletedFiles.add(fileName);
+			setDeletedChildren(container, deletedFiles);
 			return true;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		} finally {
 			endOperation(null);
 		}
@@ -1112,8 +1300,18 @@ public class EclipseSynchronizer {
 	protected boolean removeDeletedChild(IContainer container, IFile file) throws CVSException {
 		try {
 			beginOperation(null);
-			getLowLevelCacheFor(container).removeDeletedChild(container, file);
+			Set deletedFiles = getDeletedChildren(container);
+			if (deletedFiles == null || deletedFiles.isEmpty())
+				return false;
+			String fileName = file.getName();
+			if (!deletedFiles.contains(fileName))
+				return false;
+			deletedFiles.remove(fileName);
+			if (deletedFiles.isEmpty()) deletedFiles = null;
+			setDeletedChildren(container, deletedFiles);
 			return true;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		} finally {
 			endOperation(null);
 		}
@@ -1121,49 +1319,76 @@ public class EclipseSynchronizer {
 
 	protected void setDeletedChildren(IContainer parent, Set deletedFiles) throws CVSException {
 		if (!parent.exists()) return;
-		sessionPropertyCache.setDeletedChildren(parent, deletedFiles);
+		try {
+			parent.setSessionProperty(DELETED_CHILDREN, deletedFiles);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	private Set getDeletedChildren(IContainer parent) throws CoreException {
+		return (Set)parent.getSessionProperty(DELETED_CHILDREN);
+	}
+	/*
+	 * Flush all cached info for the container and it's ancestors
+	 */
+	protected void flushModificationCache(IContainer container) throws CVSException {
+		if (container.getType() == IResource.ROOT) return;
+		if (container.exists()) {
+			try {
+				beginOperation(null);
+				container.setSessionProperty(DIRTY_COUNT, null);
+				container.setSessionProperty(DELETED_CHILDREN, null);
+				container.setPersistentProperty(IS_DIRTY, null);
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			} finally {
+				endOperation(null);
+			}
+		}
 	}
 	
-	protected void flushDirtyCache(IResource resource, int depth) throws CVSException {
-		if (resource.getType() == IResource.ROOT) return;
-		if (!isValid(resource)) return;
+	protected void flushModificationCache(IContainer container, int depth) throws CVSException {
+		if (container.getType() == IResource.ROOT) return;
+		final CVSException[] exception = new CVSException[] { null };
 		try {
-			final CVSException[] exception = new CVSException[] { null };
-			beginOperation(null);
-			resource.accept(new IResourceVisitor() {
+			container.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
 					try {
-						getLowLevelCacheFor(resource).flushDirtyCache(resource);
+						if (resource.getType() == IResource.FILE) {
+							flushModificationCache((IFile)resource);
+						} else {
+							flushModificationCache((IContainer)resource);
+						}
 					} catch (CVSException e) {
 						exception[0] = e;
 					}
 					return true;
 				}
 			}, depth, true);
-			if (exception[0] != null) {
-				throw exception[0];
-			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
-		} finally {
-			endOperation(null);
+		}
+		if (exception[0] != null) {
+			throw exception[0];
 		}
 	}
-	
+
 	/*
-	 * Flush all cached info for the file and it's ancestors
+	 * Flush all cached info for
+	 *  the file and it's ancestors
 	 */
-	protected void flushDirtyCacheWithAncestors(IResource resource) throws CVSException {
-		if (resource.getType() == IResource.ROOT) return;
-		try {
-			beginOperation(null);
+	protected void flushModificationCache(IFile file) throws CVSException {
+		if (file.exists()) {
 			try {
-				getLowLevelCacheFor(resource).flushDirtyCache(resource);
+				beginOperation(null);
+				file.setSessionProperty(IS_DIRTY, null);
+				file.setSessionProperty(CLEAN_UPDATE, null);
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
 			} finally {
-				flushDirtyCacheWithAncestors(resource.getParent());
+				endOperation(null);
 			}
-		} finally {
-			endOperation(null);
 		}
 	}
 	
@@ -1175,10 +1400,26 @@ public class EclipseSynchronizer {
 	 * @param mFile
 	 */
 	public void markFileAsUpdated(IFile file) throws CVSException {
-		sessionPropertyCache.markFileAsUpdated(file);
+		try {
+			file.setSessionProperty(CLEAN_UPDATE, UPDATED_INDICATOR);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
 	protected boolean contentsChangedByUpdate(IFile file) throws CVSException {
-		return sessionPropertyCache.contentsChangedByUpdate(file);
+		try {
+			Object indicator = file.getSessionProperty(CLEAN_UPDATE);
+			boolean updated = false;
+			if (indicator == UPDATED_INDICATOR) {
+				// the file was changed due to a clean update (i.e. no local mods) so skip it
+				file.setSessionProperty(CLEAN_UPDATE, null);
+				file.setSessionProperty(IS_DIRTY, NOT_DIRTY_INDICATOR);
+				updated = true;
+			}
+			return updated;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 }

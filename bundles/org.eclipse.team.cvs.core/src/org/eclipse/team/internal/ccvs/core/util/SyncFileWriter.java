@@ -9,11 +9,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -92,7 +90,7 @@ public class SyncFileWriter {
 	 * specified folder and returns ResourceSyncInfo instances for the data stored therein.
 	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static byte[][] readAllResourceSync(IContainer parent) throws CVSException {
+	public static ResourceSyncInfo[] readAllResourceSync(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
 		if (! cvsSubDir.exists()) return null;
 
@@ -125,14 +123,7 @@ public class SyncFileWriter {
 			}
 		}
 		
-		//return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
-		byte[][] result = new byte[infos.size()][];
-		int i = 0;
-		for (Iterator iter = infos.values().iterator(); iter.hasNext();) {
-			ResourceSyncInfo info = (ResourceSyncInfo) iter.next();
-			result[i++] = info.getBytes();
-		}
-		return result;
+		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
 	/**
@@ -160,27 +151,7 @@ public class SyncFileWriter {
 			throw CVSException.wrapException(e);
 		}
 	}
-	
-	public static void writeAllResourceSync(IContainer parent, byte[][] infos) throws CVSException {
-		try {
-			IFolder cvsSubDir = createCVSSubdirectory(parent);
-
-			// format file contents
-			String[] entries = new String[infos.length];
-			for (int i = 0; i < infos.length; i++) {
-				byte[] info = infos[i];
-				entries[i] = new String(info);
-			}
-
-			// write Entries
-			writeLines(cvsSubDir.getFile(ENTRIES), entries);
-
-			// delete Entries.log
-			cvsSubDir.getFile(ENTRIES_LOG).delete(IResource.NONE, null);
-		} catch(CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
+		
 	/**
 	 * Reads the CVS/Root, CVS/Repository, CVS/Tag, and CVS/Entries.static files from
 	 * the specified folder and returns a FolderSyncInfo instance for the data stored therein.
@@ -470,28 +441,6 @@ public class SyncFileWriter {
 	}
 	
 	/*
-	 * Reads all lines of the specified file.
-	 * Returns null if the file does not exist.
-	 */
-	public static byte[][] readLines(InputStream stream) throws CVSException {
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			List fileContentStore = new ArrayList();
-			try {
-				String line;
-				while ((line = reader.readLine()) != null) {
-					fileContentStore.add(line.getBytes());
-				}
-				return (byte[][]) fileContentStore.toArray(new byte[fileContentStore.size()][]);
-			} finally {
-				reader.close();
-			}
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	/*
 	 * Writes all lines to the specified file, using linefeed terminators for
 	 * compatibility with other CVS clients.
 	 */
@@ -536,22 +485,6 @@ public class SyncFileWriter {
 			throw CVSException.wrapException(e);
 		}
 	}
-	
-	public static void writeLines(OutputStream os, byte[][] contents) throws CVSException {
-		try {
-			try {
-				for (int i = 0; i < contents.length; i++) {
-					os.write(contents[i]);
-					os.write(0x0A); // newline byte
-				}
-			} finally {
-				os.close();
-			}
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
 	/**
 	 * Method writeFileToBaseDirectory.
 	 * 

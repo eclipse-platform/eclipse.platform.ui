@@ -386,6 +386,6 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	 * dirty count of it's parent can be reduced if appropriate.
 	 */
 	private void prepareToDelete(ICVSResource resource) throws CVSException {
-		EclipseSynchronizer.getInstance().prepareForDeletion(resource.getIResource());
+		CVSProviderPlugin.getPlugin().getFileModificationManager().prepareToDelete(resource);
 	}
 }

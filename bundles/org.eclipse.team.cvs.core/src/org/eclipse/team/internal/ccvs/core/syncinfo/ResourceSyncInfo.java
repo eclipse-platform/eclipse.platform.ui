@@ -86,10 +86,6 @@ public class ResourceSyncInfo {
 	protected ResourceSyncInfo() {
 	}
 	
-	public ResourceSyncInfo(byte[] entryLine) throws CVSException {
-		this(new String(entryLine), null, null);
-	}
-	
 	/**
 	 * Constructor to create a sync object from entry line formats. The entry lines are parsed by this class.
 	 * The constructor can handle parsing entry lines from the server or from an entry file.
@@ -525,13 +521,5 @@ public class ResourceSyncInfo {
 	
 	public void reported() {
 		// do nothing
-	}
-	
-	/**
-	 * Method getBytes.
-	 * @return byte[]
-	 */
-	public byte[] getBytes() {
-		return getEntryLine().getBytes();
 	}
 }
