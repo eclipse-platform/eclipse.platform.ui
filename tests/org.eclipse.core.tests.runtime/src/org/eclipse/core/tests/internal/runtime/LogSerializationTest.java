@@ -139,7 +139,12 @@ public class LogSerializationTest extends RuntimeTest {
 	}
 
 	protected IStatus[] getInterestingStatuses() {
-		return new IStatus[] {new Status(IStatus.WARNING, "(#(*$%#", 1, "../\\\\\'\'\"", new NullPointerException()), new Status(IStatus.WARNING, "org.foo", 1, "This is the message", null), new Status(IStatus.ERROR, "org.foo", 1, "This is the message", new IllegalStateException()), new Status(IStatus.OK, ".", 1, "This is the message", new NullPointerException()), new Status(IStatus.INFO, "org.asdfhsfhsdf976dsf6sd0f6s", 1, "#*&^$(*&#@^$)(#&)(", null),};
+		return new IStatus[] {
+				new Status(IStatus.WARNING, "(#(*$%#", 1, "../\\\\\'\'\"", new NullPointerException()), //
+				new Status(IStatus.WARNING, "org.foo", 1, "This is the message", null), //
+				new Status(IStatus.ERROR, "org.foo", 1, "This is the message", new IllegalStateException()), //
+				new Status(IStatus.OK, ".", 1, "This is the message", new NullPointerException()), //
+				new Status(IStatus.INFO, "org.asdfhsfhsdf976dsf6sd0f6s", 1, "#*&^$(*&#@^$)(#&)(", null),};
 	}
 
 	protected void doTest(String msg, IStatus[] oldStats) {
