@@ -969,6 +969,24 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			fPartListener = null;
 		}
 	}	
+
+	/**
+	 * Returns a map of the current attribute settings in the model
+	 * presentation in this view associated with the given debug model.
+	 * 
+	 * @return a map of the current attribute settings in the model
+	 * presentation in this view associated with the given debug model
+	 * @since 3.0
+	 */
+	public Map getPresentationAttributes(String modelId) {
+		IDebugModelPresentation presentation = getPresentation(modelId);
+		if (presentation instanceof DelegatingModelPresentation) {
+			return ((DelegatingModelPresentation)presentation).getAttributeMap();
+		} else if (presentation instanceof LazyModelPresentation) {
+			return ((LazyModelPresentation)presentation).getAttributeMap();
+		}
+		return new HashMap();
+	}
 }	
 
 

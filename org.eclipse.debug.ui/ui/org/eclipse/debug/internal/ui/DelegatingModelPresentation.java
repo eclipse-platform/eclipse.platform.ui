@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -345,6 +346,16 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		
 	protected HashMap getAttributes() {
 		return fAttributes;
+	}
+	
+	/**
+	 * Returns a copy of the attribute map for this presentation.
+	 * 
+	 * @return a copy of the attribute map for this presentation
+	 * @since 3.0
+	 */
+	public Map getAttributeMap() {
+		return (Map) getAttributes().clone();
 	}
 
 	protected void setAttributes(HashMap attributes) {

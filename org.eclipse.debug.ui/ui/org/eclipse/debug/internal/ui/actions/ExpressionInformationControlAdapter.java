@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -33,6 +37,7 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 	IWorkbenchPage page;
 	IExpression exp;
 	VariablesViewer viewer;
+	IDebugModelPresentation modelPresentation;
 	
 	public ExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
 		this.page = page;
@@ -53,6 +58,12 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 				viewer.addFilter(filters[i]);
 			}
 			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
+			Map map = view.getPresentationAttributes(exp.getModelIdentifier());
+			Iterator iterator = map.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String)iterator.next();
+				modelPresentation.setAttribute(key, map.get(key));
+			}
 		}
 		viewer.setInput(new Object[]{exp});
 		viewer.expandToLevel(2);
@@ -89,7 +100,8 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		
 		viewer = new VariablesViewer(composite, SWT.NO_TRIM);
 		viewer.setContentProvider(new ExpressionPopupContentProvider());
-		viewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
+		modelPresentation = DebugUITools.newDebugModelPresentation();
+		viewer.setLabelProvider(modelPresentation);
 		gd.heightHint = 100;
 		viewer.getControl().setLayoutData(gd);
 

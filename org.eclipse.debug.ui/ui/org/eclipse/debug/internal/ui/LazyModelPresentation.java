@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -247,5 +248,13 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return null;
 	}
 	
-	
+	/**
+	 * Returns a copy of the attributes in this model presentation.
+	 * 
+	 * @return a copy of the attributes in this model presentation
+	 * @since 3.0
+	 */
+	public Map getAttributeMap() {
+		return (Map) fAttributes.clone();
+	}
 }
