@@ -211,7 +211,7 @@ public class EditorCoolBar {
 		Control focusControl = workbook.getParent().getDisplay ().getFocusControl();
 		editorListLostFocusByButton = (focusControl == dropDownButton);
 	}
-	private void openEditorList() {
+	public void openEditorList() {
 		// don't think this check is necessary, need to verify
 		if (listComposite != null) {
 			return;

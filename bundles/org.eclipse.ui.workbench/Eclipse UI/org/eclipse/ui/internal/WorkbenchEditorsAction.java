@@ -33,6 +33,8 @@ public class WorkbenchEditorsAction extends Action {
 		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
 	}
 	public void run() {
-		new WorkbenchEditorsDialog(window).open();
+		WorkbenchPage page = (WorkbenchPage)window.getActivePage();
+		if(page != null)
+			page.getEditorPresentation().openEditorList();
 	}
 }

@@ -442,4 +442,7 @@ private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
 public ArrayList getWorkbooks() {
 	return editorArea.getEditorWorkbooks();
 }
+public void openEditorList() {
+	editorArea.getActiveWorkbook().openEditorList();
+}
 }

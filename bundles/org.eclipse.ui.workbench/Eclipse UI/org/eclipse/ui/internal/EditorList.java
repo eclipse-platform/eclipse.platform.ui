@@ -9,6 +9,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
@@ -74,6 +75,14 @@ public class EditorList {
 		});
 
 		editorsTable.setMenu(menuMgr.createContextMenu(editorsTable));
+		editorsTable.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				if(e.character == SWT.ESC)
+					destroyControl();
+			}
+			public void keyReleased(KeyEvent e) {
+			}
+		});
 		editorsTable.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				// would have preferred a selectionListener, but 
@@ -98,31 +107,33 @@ public class EditorList {
 				
 			}
 		});
-//		editorsTable.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				TableItem[] items = editorsTable.getSelection();
-//				if (items.length > 0) {
-//					saveAction.setEnabled(true);
-//					closeAction.setEnabled(true); 
-//					
-//					if (items.length == 1) {
-//						Adapter selection = (Adapter)items[0].getData();
-//						selection.activate(true);
-//					}
-//				} else {
-//					saveAction.setEnabled(false);
-//					closeAction.setEnabled(false);
-//				}
-//			}
-//		});
+		editorsTable.addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				TableItem[] items = editorsTable.getSelection();
+				if (items.length > 0) {
+					saveAction.setEnabled(true);
+					closeAction.setEnabled(true); 
+					
+					if (items.length == 1) {
+						Adapter selection = (Adapter)items[0].getData();
+						selection.activate(true);
+					}
+				} else {
+					saveAction.setEnabled(false);
+					closeAction.setEnabled(false);
+				}
+			}
+		});
 		return editorsTable; 
 	}
 
 	public void destroyControl() {
-		ViewForm parent = (ViewForm) editorsTable.getParent();
-		parent.setContent(null);
-		parent.dispose();
-		editorsTable = null;
+		if(editorsTable != null) {
+			ViewForm parent = (ViewForm) editorsTable.getParent();
+			parent.setContent(null);
+			parent.dispose();
+			editorsTable = null;
+		}
 	}
 		
 	public Control getControl() {

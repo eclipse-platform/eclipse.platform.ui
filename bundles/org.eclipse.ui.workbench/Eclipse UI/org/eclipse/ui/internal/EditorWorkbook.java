@@ -171,6 +171,10 @@ public void createControl(Composite parent) {
 		setVisibleEditor((EditorPane) editors.get(0));
 }
 
+public void openEditorList() {
+	if(header != null)
+		header.openEditorList();
+}
 /**
  * Show a title label menu for this pane.
  */
