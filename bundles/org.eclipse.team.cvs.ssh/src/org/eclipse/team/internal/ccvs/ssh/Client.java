@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.PollingInputStream;
@@ -86,7 +87,7 @@ public class Client {
 
 	private Socket socket;
 	private InputStream socketIn;
-	private OutputStream socketOut;
+	private PollingOutputStream socketOut;
 	private InputStream is;
 	private OutputStream os;
 	private boolean connected = false;
@@ -294,16 +295,6 @@ public class Client {
 			}
 		}
 	}
-public Client(InputStream socketIn, OutputStream socketOut, String username, String password) {
-	this.socketIn = socketIn;
-	this.socketOut = socketOut;
-	this.username = username;
-	this.password = password;
-}
-public Client(InputStream socketIn, OutputStream socketOut, String username, String password, String command) {
-	this(socketIn, socketOut, username, password);
-	this.command = command;
-}
 public Client(String host, int port, String username, String password) {
 	this.host = host;
 	this.port = port;
@@ -360,7 +351,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		
 	// Otherwise, set up the connection
 	try {
-		
+		PollingInputStream pollingInputStream = null;
 		// Create the socket (the socket should always be null here)
 		if (socket == null) {
 			try {
@@ -375,8 +366,10 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 			if (timeout >= 0) {
 				socket.setSoTimeout(1000);
 			}
-			socketIn = new BufferedInputStream(new PollingInputStream(socket.getInputStream(),
-				timeout > 0 ? timeout : 1, monitor));
+			pollingInputStream = new PollingInputStream(socket.getInputStream(),
+				timeout > 0 ? timeout : 1, monitor);
+			socketIn = new BufferedInputStream(pollingInputStream);
+			
 			socketOut = new PollingOutputStream(new TimeoutOutputStream(
 				socket.getOutputStream(), 8192 /*bufferSize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/),
 				timeout > 0 ? timeout : 1, monitor);
@@ -385,6 +378,11 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		// read the ssh server id. The socket creation may of failed if the
 		// server cannot accept our connection request. We don't expect the
 		// socket to be closed at this point.
+		// Don't allow cancellation during the initial handshake and login since this
+		// can potentially cause the SSH server to think that it is being hacked and
+		// disable the account.
+		socketOut.setIsCancellable(false /* don't allow cancellation */);
+		pollingInputStream.setIsCancellable(false);
 		StringBuffer buf = new StringBuffer();
 		int c;
 		while ((c = socketIn.read()) != '\n') {
@@ -409,6 +407,9 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		socketOut.flush();
 
 		login();
+
+		socketOut.setIsCancellable(true /* allow cancellation */);
+		pollingInputStream.setIsCancellable(true);
 		
 		// start a shell and enter interactive session or start by
 		// executing the given command.
@@ -420,7 +421,6 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 
 		is = new StandardInputStream();
 		os = new StandardOutputStream();
-
 		connected = true;
 	// If an exception occurs while connected, make sure we disconnect before passing the exception on
 	} finally {
@@ -436,8 +436,11 @@ public void disconnect() throws IOException {
 	}	
 	if (connected) {
 		connected = false;
-		send(SSH_MSG_DISCONNECT, null);
-		cleanup();
+		try {
+			send(SSH_MSG_DISCONNECT, null);
+		} finally {
+			cleanup();
+		}
 	}
 }
 public InputStream getInputStream() throws IOException {

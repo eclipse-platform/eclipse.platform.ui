@@ -108,7 +108,6 @@ public class Session {
 	private int compressionLevel = 0;
 	private List expansions;
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
-	private boolean hasBeenConnected = false;
 	private Map caseMappings;
 	
 	// state need to indicate whether 
@@ -315,9 +314,10 @@ public class Session {
 		if (connection != null) throw new IllegalStateException();
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
+		boolean opened = false;	
+	
 		try {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
-			hasBeenConnected = true;
 			
 			ResponseHandler mtHandler = Request.getResponseHandler("MT"); //$NON-NLS-1$
 			// accept MT messages for all non-standard server
@@ -367,18 +367,15 @@ public class Session {
 			if (CVSProviderPlugin.getPlugin().isDetermineVersionEnabled() && location.getServerPlatform() == CVSRepositoryLocation.UNDETERMINED_PLATFORM) {
 				Command.VERSION.execute(this, location, Policy.subMonitorFor(monitor, 10));
 			}
-		} catch (CVSException e) {
-			// If there is a failure opening, make sure we're closed
-			if (connection != null) {
-				hasBeenConnected = false;
+			opened = true;
+		} finally {
+			if (connection != null && ! opened) {
 				try {
 					close();
 				} catch (CVSException ex) {
 					CVSProviderPlugin.log(ex);
 				}
 			}
-			throw e;
-		} finally {
 			monitor.done();
 		}
 	}		
@@ -389,16 +386,11 @@ public class Session {
 	 * @throws IllegalStateException if the Session is not in the OPEN state
 	 */
 	public void close() throws CVSException {
-		if (connection == null) {
-			if (hasBeenConnected) {
-				throw new IllegalStateException();
-			} else {
-				return;
-			}
+		if (connection != null) {
+			connection.close();
+			connection = null;
+			validRequests = null;
 		}
-		connection.close();
-		connection = null;
-		validRequests = null;
 	}
 	
 	/**

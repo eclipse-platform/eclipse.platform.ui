@@ -32,6 +32,7 @@ public class PollingOutputStream extends FilterOutputStream {
 	private static final boolean DEBUG = Policy.DEBUG_STREAMS;
 	private int numAttempts;
 	private IProgressMonitor monitor;
+	private boolean cancellable;
 	
 	/**
 	 * Creates a new polling output stream.
@@ -44,6 +45,7 @@ public class PollingOutputStream extends FilterOutputStream {
 		super(out);
 		this.numAttempts = numAttempts;
 		this.monitor = monitor;
+		this.cancellable = true;
 	}
 	
 	/**
@@ -56,7 +58,7 @@ public class PollingOutputStream extends FilterOutputStream {
 	public void write(int b) throws IOException {
 		int attempts = 0;
 		for (;;) {
-			if (monitor.isCanceled()) throw new OperationCanceledException();
+			if (checkCancellation()) throw new OperationCanceledException();
 			try {
 				out.write(b);
 				return;
@@ -79,7 +81,7 @@ public class PollingOutputStream extends FilterOutputStream {
 		int count = 0;
 		int attempts = 0;
 		for (;;) {
-			if (monitor.isCanceled()) throw new OperationCanceledException();
+			if (checkCancellation()) throw new OperationCanceledException();
 			try {
 				out.write(buffer, off, len);
 				return;
@@ -113,7 +115,7 @@ public class PollingOutputStream extends FilterOutputStream {
 		int count = 0;
 		int attempts = 0;
 		for (;;) {
-			if (monitor.isCanceled()) throw new OperationCanceledException();
+			if (checkCancellation()) throw new OperationCanceledException();
 			try {
 				out.flush();
 				return;
@@ -151,7 +153,7 @@ public class PollingOutputStream extends FilterOutputStream {
 					out.close();
 					return;
 				} catch (InterruptedIOException e) {
-					if (monitor.isCanceled()) throw new OperationCanceledException();
+					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
 						throw new InterruptedIOException(Policy.bind("PollingOutputStream.closeTimeout")); //$NON-NLS-1$
 					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
@@ -159,4 +161,28 @@ public class PollingOutputStream extends FilterOutputStream {
 			}
  		}
 	}
+	
+	/**
+	 * Called to set whether cancellation will be checked by this stream. Turning cancellation checking
+	 * off can be very useful for protecting critical portions of a protocol that shouldn't be interrupted. 
+	 * For example, it is often necessary to protect login sequences.
+	 * @param cancellable a flag controlling whether this stream will check for cancellation.
+	 */
+	public void setIsCancellable(boolean cancellable) {
+		this.cancellable = cancellable;
+	}
+
+	/**
+	 * Checked whether the monitor for this stream has been cancelled. If the cancellable
+	 * flag is <code>false</code> then the monitor is never cancelled. 
+	 * @return <code>true</code> if the monitor has been cancelled and <code>false</code>
+	 * otherwise.
+	 */	
+	private boolean checkCancellation() {
+		if(cancellable) {
+			return monitor.isCanceled();
+		} else {
+			return false;
+		}
+	} 
 }
