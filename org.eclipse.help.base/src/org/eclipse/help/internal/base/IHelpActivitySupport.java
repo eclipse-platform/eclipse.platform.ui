@@ -24,6 +24,16 @@ public interface IHelpActivitySupport {
 	 * @return
 	 */
 	public boolean isEnabled(String href);
+	/**
+	 * Checks whether topic belongs to a TOC that mathes
+	 * enabled activity.  Enabled children TOCs are searched if linked by
+	 * also enabled TOCs.
+	 * Additionally topic may match description topic of a root TOC.
+	 * @return true if topic belongs to an enabled TOC
+	 * @param href
+	 * @param locale locale for which TOCs are checked
+	 */
+	public boolean isEnabledTopic(String href, String locale);
 
 	/**
 	 * Enables activities with patterns matching the href

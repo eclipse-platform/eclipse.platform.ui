@@ -29,6 +29,9 @@ public class HelpBasePlugin extends Plugin {
 		public boolean isEnabled(String href) {
 			return true;
 		}
+		public boolean isEnabledTopic(String href, String locale) {
+			return true;
+		}
 		public void enableActivities(String href) {
 		}
 	};
