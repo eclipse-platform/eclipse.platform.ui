@@ -39,8 +39,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	private RetargetTextEditorAction fConvertToUNIX;
 	/** Convert to MAC action. */
 	private RetargetTextEditorAction fConvertToMac;
-	/** Encoding action group */
-	private EncodingActionGroup fEncodingActionGroup;
 
 	
 	/**
@@ -53,9 +51,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fConvertToWindows= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows."); //$NON-NLS-1$ 
 		fConvertToUNIX= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToUNIX."); //$NON-NLS-1$ 
 		fConvertToMac= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToMac."); //$NON-NLS-1$
-		
-		// character encoding
-		fEncodingActionGroup= new EncodingActionGroup();
 	}	
 	
 	/**
@@ -80,9 +75,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fConvertToWindows.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS));
 		fConvertToUNIX.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX));
 		fConvertToMac.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC));
-		
-		// character encoding
-		fEncodingActionGroup.retarget(textEditor);
 	}
 	
 	/*
@@ -111,9 +103,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	
 			editMenu.add(subMenu);
 		}		
-		
-		// character encoding
-		fEncodingActionGroup.fillActionBars(bars);
 	}
 	
 	/*

@@ -36,8 +36,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	private Preferences.IPropertyChangeListener fPropertyChangeListener;
 	/** The editor this support is associated with. */
 	private StatusTextEditor fTextEditor;
-	/** The action group of this support. */
-	private EncodingActionGroup fEncodingActionGroup;
 	
 	/**
 	 * Creates a new encoding support.
@@ -64,9 +62,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		
 		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
 		p.addPropertyChangeListener(fPropertyChangeListener);
-		
-		fEncodingActionGroup= new EncodingActionGroup(fTextEditor);
-		fEncodingActionGroup.update();
 	}
 	
 	/**
@@ -76,9 +71,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
 		p.removePropertyChangeListener(fPropertyChangeListener);
 		
-		fEncodingActionGroup.dispose();
-		fEncodingActionGroup= null;
-		
 		fTextEditor= null;
 	}
 	
@@ -87,7 +79,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 * associated editor changed.
 	 */
 	public void reset() {
-		fEncodingActionGroup.update();
 	}
 	
 	/**
@@ -121,7 +112,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 						encodingSetter.run();
 				}
 			}
-			fEncodingActionGroup.update();
 		}
 	}
 	

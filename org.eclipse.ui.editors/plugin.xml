@@ -32,60 +32,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            name="%command.defaultEncoding.name"
-            description="%command.defaultEncoding.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.default">
-      </command>
-      <command
-            name="%command.us_ascii.name"
-            description="%command.us_ascii.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.us-ascii">
-      </command>
-      <command
-            name="%command.iso_8859_1.name"
-            description="%command.iso_8859_1.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
-      </command>
-      <command
-            name="%command.utf_8.name"
-            description="%command.utf_8.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.utf-8">
-      </command>
-      <command
-            name="%command.utf_16be.name"
-            description="%command.utf_16be.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.utf-16be">
-      </command>
-      <command
-            name="%command.utf_16le.name"
-            description="%command.utf_16le.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.utf-16le">
-      </command>
-      <command
-            name="%command.utf_16.name"
-            description="%command.utf_16.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.utf-16">
-      </command>
-      <command
-            name="%command.system.name"
-            description="%command.system.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.system">
-      </command>
-      <command
-            name="%command.custom.name"
-            description="%command.custom.description"
-            categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.text.encoding.custom">
-      </command>
-      <command
             name="%openExternalFile.name"
             category="org.eclipse.ui.category.file"
             description="%openExternalFile.description"

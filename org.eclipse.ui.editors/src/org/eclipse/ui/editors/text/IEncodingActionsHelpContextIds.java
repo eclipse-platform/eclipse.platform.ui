@@ -19,6 +19,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * This interface contains constants only; it is not intended to be implemented.</p>
  * 
  * @since 2.0
+ * @deprecated As of 3.1, encoding needs to be changed via properties dialog
  */
 public interface IEncodingActionsHelpContextIds {
 	
