@@ -104,14 +104,9 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		for (int i= 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages= windows[i].getPages();
 			for (int x= 0; x < pages.length; x++) {
-				IEditorPart[] editors= pages[x].getEditors();
+				IEditorPart[] editors= pages[x].getDirtyEditors();
 				for (int z= 0; z < editors.length; z++) {
-					IEditorPart editor= editors[z];
-					IEditorInput input= editor.getEditorInput();
-					if (editor.isDirty() && !inputs.contains(input)) {
-						inputs.add(input);
-						result.add(editor);
-					}
+						result.add(editors[z]);
 				}
 			}
 		}

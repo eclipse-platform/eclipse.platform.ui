@@ -64,15 +64,7 @@ class GotoMarkerAction extends Action {
 		else
 			editorId= desc.getId();
 
-		IEditorPart editor= null;
-		IEditorPart[] editorParts= page.getEditors();
-		for (int i= 0; i < editorParts.length; i++) {
-			IEditorPart part= editorParts[i];
-			if (input.equals(part.getEditorInput())) {
-				editor= part;
-				break;
-			}
-		}
+		IEditorPart editor= page.findEditor(input);
 		if (editor == null) {
 				if (fEditor != null && !fEditor.isDirty())
 					page.closeEditor(fEditor, false);
