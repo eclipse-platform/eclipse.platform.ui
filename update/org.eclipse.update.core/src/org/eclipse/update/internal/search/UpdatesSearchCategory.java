@@ -152,6 +152,8 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			try {
 				VersionedIdentifier hv1 = hit1.ref.getVersionedIdentifier();
 				VersionedIdentifier hv2 = hit2.ref.getVersionedIdentifier();
+				if (hv1.getIdentifier().equals(hv2.getIdentifier()))
+					return true;
 				return isNewerVersion(hv2, hv1);
 			} catch (CoreException e) {
 				return false;
