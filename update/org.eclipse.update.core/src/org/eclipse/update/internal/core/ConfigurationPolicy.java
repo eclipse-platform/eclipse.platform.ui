@@ -218,6 +218,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (getConfiguredFeatures() != null)
 				arrayOfFeatureRef = getConfiguredFeatures();
 		}
+	
 		String[] pluginToWrite = getPluginString(site, arrayOfFeatureRef);
 
 		// remove from include the plugins that should not be saved 
@@ -228,6 +229,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (getUnconfiguredFeatures() != null)
 				arrayOfFeatureRef = getUnconfiguredFeatures();
 		}
+
 		String[] pluginNotToWrite = getPluginString(site, arrayOfFeatureRef);
 
 		String[] included = delta(pluginNotToWrite, pluginRead);
@@ -259,6 +261,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
+					
 					// obtain the path of the plugin directories on the site
 					ContentReference[] featureContentReference = null;
 					try {
@@ -268,11 +271,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 								.getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
 						);
 					} catch (CoreException e) {
-						// DEDBUG
+						// DEBUG
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 							UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 						}
 					}
+					
+					// transform into a valid String
 					if (featureContentReference != null) {
 						for (int j = 0; j < featureContentReference.length; j++) {
 							URL url =

@@ -67,8 +67,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		resolve(newLocation, null);
 	}
 
-	/**
-	 * 
+	/*
+	 * Returns the list of configured files or an empty array 
 	 */
 	public IConfiguredSite[] getConfiguredSites() {
 		ConfiguredSiteModel[] result = getConfigurationSitesModel();
@@ -78,6 +78,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return (IConfiguredSite[]) result;
 	}
 
+	/*
+	 * Returns the default site policy
+	 */
+	 public int getDefaultPolicy(){
+	 	return IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
+	 } 
+
 	/**
 	 * Creates a Configuration Site and a new Site
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
@@ -86,7 +93,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		throws CoreException {
 
 		ISite site = null;
-		int policy = IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
+		int policy = getDefaultPolicy();
 
 		if (file.exists() && canWrite(file)) {
 			site = InternalSiteManager.createSite(file);

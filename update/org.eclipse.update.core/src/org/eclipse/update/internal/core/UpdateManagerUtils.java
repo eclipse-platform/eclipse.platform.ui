@@ -3,38 +3,27 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.InstallMonitor;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 /**
  * 
  */
 public class UpdateManagerUtils {
-	
+
 	/**
 	 * return the urlString if it is a absolute URL
 	 * otherwise, return the default URL if the urlString is null
 	 * The defaultURL may point ot a file, create a file URL then
 	 * if teh urlString or the default URL are relatives, prepend the rootURL to it
 	 */
-	public static URL getURL(URL rootURL, String urlString, String defaultURL) throws MalformedURLException {
+	public static URL getURL(URL rootURL, String urlString, String defaultURL)
+		throws MalformedURLException {
 		URL url = null;
 
 		// if no URL , provide Default
@@ -55,8 +44,9 @@ public class UpdateManagerUtils {
 		} catch (MalformedURLException e) {
 			// the url is not an absolute URL
 			// try relative
-			url = new URL(rootURL,urlString);
+			url = new URL(rootURL, urlString);
 		}
+
 		return url;
 	}
 
@@ -67,59 +57,115 @@ public class UpdateManagerUtils {
 	public static String getURLAsString(URL rootURL, URL url) {
 		String result = null;
 
+		if (rootURL == null) {
+			return (url == null) ? null : url.toString();
+		}
+
 		// if no URL , return null
 		if (url != null) {
+			//DEBUG
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
+				UpdateManagerPlugin.getPlugin().debug(
+					"getURLAsString root:" + rootURL.toString());
+				UpdateManagerPlugin.getPlugin().debug("getURLAsString url:" + url.toString());
+			}
+
 			result = url.toExternalForm();
-			
-			if (rootURL.getHost()!=null && !rootURL.getHost().equals(url.getHost()))
+
+			if (rootURL.getHost() != null && !rootURL.getHost().equals(url.getHost()))
 				return result;
-			
-			if (rootURL.getProtocol()!=null && !rootURL.getProtocol().equals(url.getProtocol()))
+
+			if (rootURL.getProtocol() != null
+				&& !rootURL.getProtocol().equals(url.getProtocol()))
 				return result;
-			
-			if (rootURL.getPort()!=url.getPort())
+
+			if (rootURL.getPort() != url.getPort())
 				return result;
-			
-			String rootString = rootURL.getFile();
-			rootString.replace(File.separatorChar,'/');
-			if (!rootString.endsWith("/")){
-				int index = rootString.lastIndexOf('/');
-				if (index!=-1){
-					rootString = rootString.substring(0,index);
+
+			String rootURLFileString = rootURL.getFile();
+			rootURLFileString.replace(File.separatorChar, '/');
+			if (!rootURLFileString.endsWith("/")) {
+				int index = rootURLFileString.lastIndexOf('/');
+				if (index != -1) {
+					rootURLFileString = rootURLFileString.substring(0, index);
 				}
 			}
-			String urlString = url.getFile();
-						
-			if (urlString.indexOf(rootString)!=-1){
-				result = urlString.substring(rootString.length());
+			String urlFileString = url.getFile();
+
+			if (urlFileString.startsWith(rootURLFileString)) {
+				result = urlFileString.substring(rootURLFileString.length());
+				result.replace(File.separatorChar, '/');
 			} else {
-				result = urlString;
+				// we need to check the following
+				// file:/C:/ and file:C:/
+				if ("file".equalsIgnoreCase(url.getProtocol())) {
+					File rootFile = new File(rootURLFileString);
+					File urlFile = new File(urlFileString);
+
+					File relativePath = urlFile.getParentFile();
+					while (relativePath != null
+						&& !relativePath.getParentFile().equals(rootFile)) {
+						relativePath = relativePath.getParentFile();
+					}
+
+					if (relativePath == null) {
+						//DEBUG
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+							UpdateManagerPlugin.getPlugin().debug("Cannot calculate relative path");
+						}
+						return url.toString();
+					} else {
+						String relativeRootString = relativePath.getParentFile().getAbsolutePath();
+						String fullString = urlFile.getAbsolutePath();
+						if (!fullString.startsWith(relativeRootString)) {
+							//DEBUG
+							if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+								UpdateManagerPlugin.getPlugin().debug(
+									"Full path:" + fullString + " does not start with " + relativeRootString);
+							}
+
+							return url.toString();
+						} else {
+							String returnString = fullString.substring(relativeRootString.length() + 1);
+							returnString = returnString.replace(File.separatorChar, '/');
+							return returnString;
+						}
+
+					}
+
+				} else {
+					result = url.toString();
+				}
 			}
 		}
-		
-		return result;			
+
+		return result;
 	}
-
-
+	
 	/**
 	 * returns a translated String
 	 */
 	public static String getResourceString(String infoURL, ResourceBundle bundle) {
 		String result = null;
 		if (infoURL != null) {
-			result = UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(infoURL, bundle);
+			result =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(
+					infoURL,
+					bundle);
 		}
 		return result;
 	};
-
-	
 	
 	/**
 	 * 
 	 */
-	public static URL copyToLocal(InputStream sourceContentReferenceStream, String localName, InstallMonitor monitor) throws MalformedURLException, IOException {
+	public static URL copyToLocal(
+		InputStream sourceContentReferenceStream,
+		String localName,
+		InstallMonitor monitor)
+		throws MalformedURLException, IOException {
 		URL result = null;
-
 		// create the Dir is they do not exist
 		// get the path from the File to resolve File.separator..
 		// do not use the String as it may contain URL like separator
@@ -129,19 +175,18 @@ public class UpdateManagerUtils {
 			File dir = new File(localFile.getPath().substring(0, index));
 			if (!dir.exists())
 				dir.mkdirs();
-		}
-
-		// transfer teh content of the File
+		} // transfer teh content of the File
 		if (!localFile.isDirectory()) {
 			OutputStream localContentReferenceStream = new FileOutputStream(localFile);
-			Utilities.copy(sourceContentReferenceStream, localContentReferenceStream,monitor);
+			Utilities.copy(
+				sourceContentReferenceStream,
+				localContentReferenceStream,
+				monitor);
 			localContentReferenceStream.close();
 		}
 		result = localFile.toURL();
-
 		return result;
 	}
-
 	/**
 	 * Returns a random file name for the local system
 	 * attempt to conserve the extension if there is a '.' in the path
@@ -152,27 +197,31 @@ public class UpdateManagerUtils {
 	 * c	-> c953867549
 	 */
 	public static String getLocalRandomIdentifier(String remotePath, Date date) {
-		int dotIndex = remotePath.lastIndexOf("."); //$NON-NLS-1$
+		int dotIndex = remotePath.lastIndexOf(".");
+		//$NON-NLS-1$
 		int fileIndex = remotePath.lastIndexOf(File.separator);
-		
 		// if there is a separator after the dot
 		// do not consider it as an extension
-		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : ""; //$NON-NLS-1$
-		
+		String ext =
+			(dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : "";
+		//$NON-NLS-1$
 		// the name is the string between the separator and the dot
 		// if there is no separator, it is the string up to the dot		
 		// if there is no dot, go to the end of the string 
-		if (fileIndex==-1) fileIndex=0;
-		if (dotIndex==-1) dotIndex=remotePath.length();
+		if (fileIndex == -1)
+			fileIndex = 0;
+		if (dotIndex == -1)
+			dotIndex = remotePath.length();
 		// if I have a separator and no dot: /a/b/c -> c
 		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return teh default temp name
-		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_"; //$NON-NLS-1$
-
+		String name =
+			(fileIndex < dotIndex)
+				? remotePath.substring(fileIndex, dotIndex)
+				: "Eclipse_Update_TMP_";
+		//$NON-NLS-1$
 		String result = name + date.getTime() + ext;
-		
 		return result;
 	}
-
 	
 	/**
 	 * remove a file or directory from the file system.
@@ -181,7 +230,6 @@ public class UpdateManagerUtils {
 	public static void removeFromFileSystem(File file) {
 		if (!file.exists())
 			return;
-			
 		if (file.isDirectory()) {
 			String[] files = file.list();
 			if (files != null) // be careful since file.list() can return null
@@ -189,29 +237,33 @@ public class UpdateManagerUtils {
 					removeFromFileSystem(new File(file, files[i]));
 		}
 		if (!file.delete()) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath()),new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.WARNING,
+					id,
+					IStatus.OK,
+					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath()),
+					new Exception());
+			//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 	}
-
+	
 	/**
 	 * Returns the plugin entries that are in source array and
 	 * not in target array
 	 */
-	public static IPluginEntry[] diff(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
-
-		// No pluginEntry to Install, return Nothing to instal
+	public static IPluginEntry[] diff(
+		IPluginEntry[] sourceArray,
+		IPluginEntry[] targetArray) { // No pluginEntry to Install, return Nothing to instal
 		if (sourceArray == null || sourceArray.length == 0) {
 			return new IPluginEntry[0];
-		}
-
-		// No pluginEntry installed, Install them all
+		} // No pluginEntry installed, Install them all
 		if (targetArray == null || targetArray.length == 0) {
 			return sourceArray;
-		}
-
-		// if a IPluginEntry from sourceArray is NOT in
+		} // if a IPluginEntry from sourceArray is NOT in
 		// targetArray, add it to the list
 		List list1 = Arrays.asList(targetArray);
 		List result = new ArrayList(0);
@@ -223,10 +275,9 @@ public class UpdateManagerUtils {
 		IPluginEntry[] resultEntry = new IPluginEntry[result.size()];
 		if (result.size() > 0)
 			result.toArray(resultEntry);
-
 		return resultEntry;
 	}
-
+	
 	/**
 	 * Returns the parent URL of the given URL, or <code>null</code> if the
 	 * given URL is the root.
@@ -252,7 +303,7 @@ public class UpdateManagerUtils {
 		if (len == 0 || len == 1 && file.charAt(0) == '/')
 			return null;
 		int lastSlashIndex = -1;
-		for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
+		for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i) {
 			if (file.charAt(i) == '/')
 				lastSlashIndex = i;
 		}
@@ -260,19 +311,23 @@ public class UpdateManagerUtils {
 			file = "";
 		else
 			file = file.substring(0, lastSlashIndex + 1);
-	
 		try {
 			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-		} catch(MalformedURLException e){
+		} catch (MalformedURLException e) {
 			Assert.isTrue(false, e.getMessage());
 		}
 		return url;
 	}
 
-	public static CoreException newCoreException(String s, Throwable e) throws CoreException {
+	/**
+	 * 
+	 */
+	public static CoreException newCoreException(String s, Throwable e)
+		throws CoreException {
 		if (e != null && e instanceof CoreException)
-			return (CoreException)e;
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
-	}	
+			return (CoreException) e;
+		String id =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
+	}
 }

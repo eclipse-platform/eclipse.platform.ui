@@ -173,7 +173,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 	}
 
 	/**
-	 * adds a feature in teh list
+	 * adds a feature in the list
 	 * also used by the parser to avoid creating another activity
 	 */
 	public void addUnconfiguredFeatureReference(FeatureReferenceModel feature) {

@@ -152,8 +152,6 @@ public class ConfiguredSite
 		IProgressMonitor monitor)
 		throws CoreException {
 
-System.out.println("in install");
-
 		// ConfigSite is read only
 		if (!isUpdateable()) {
 			String errorMessage=
@@ -313,7 +311,6 @@ System.out.println("in install");
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException {
 		IFeatureReference featureReference= getSite().getFeatureReference(feature);
-System.out.println("Feature ref :"+featureReference);		
 		ConfigurationPolicy configPolicy=
 			((ConfigurationPolicy) getConfigurationPolicyModel());
 		if (configPolicy == null)
@@ -383,8 +380,8 @@ System.out.println("Feature ref :"+featureReference);
 		IFeatureReference[] configuredFeatures= verifyConfiguredFeatures(handler);
 
 		// we only care about unconfigured features if the Site policy is USER_EXCLUDE
-		// otherwise we will onyl set the configured one
-		if (cPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+		// otherwise we will only set the configured one
+		//if (cPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 
 			// calculate all the features we have to unconfigure from the current state to this state
 			// in the history. 				
@@ -419,7 +416,7 @@ System.out.println("Feature ref :"+featureReference);
 					}
 				}
 			}
-		} // end USER_EXCLUDE
+		//} // end USER_EXCLUDE
 	}
 
 	/*
