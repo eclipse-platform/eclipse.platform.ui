@@ -182,12 +182,12 @@ The content file is parsed at run time by the intro framework. Based on the sett
          &lt;implementation
             ws=&quot;win32&quot;
             style=&quot;css/shared.css&quot;
-            class=&quot;org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation&quot;
+            kind=&quot;html&quot;
             os=&quot;win32&quot;&gt;
          &lt;/implementation&gt;
          &lt;implementation
             style=&quot;css/shared_swt.properties&quot;
-            class=&quot;org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation&quot;&gt;
+            kind=&quot;swt&quot;
          &lt;/implementation&gt;
       &lt;/presentation&gt;
    &lt;/config&gt;

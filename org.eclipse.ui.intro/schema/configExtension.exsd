@@ -44,7 +44,7 @@
    <element name="configExtension">
       <annotation>
          <documentation>
-            Defines an extension to an intro configuration. Any page or div in an intro part configuration can be extended, if that page has declared extensability through defining place holders.
+            Defines an extension to an intro configuration. Any page or group in an intro part configuration can be extended, if it has declared extensability by defining anchors.
          </documentation>
       </annotation>
       <complexType>
@@ -69,9 +69,9 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="standbyContentPart">
       <annotation>
          <documentation>
-            standby content part registration. Once registered, standby parts can be launched through an introURL action of the following format:
+            standbyContentPart registration. Once registered, standby parts can be launched through an introURL action of the following format:
 &lt;pre&gt; 
-http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.config.contextHelp
+http://org.eclipse.ui.intro/showStandby?partId=&lt;id of standbyContentPart&gt;
 &lt;/pre&gt;
          </documentation>
       </annotation>
@@ -79,21 +79,21 @@ http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.config.conte
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that identifies this standbyPart.
+                  a unique id that identifies this standbyContentPart.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="pluginId" type="string">
+         <attribute name="pluginId" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of the plugin that holds the class defined in the &quot;class&quot; attribute. (todo - is this needed? shouldn&apos;t the class be in the declaring plugin already.)
+                  the name of the plugin that holds the class defined in the &quot;class&quot; attribute.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.config.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet.
+                  the fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.config.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet.
                </documentation>
             </annotation>
          </attribute>
@@ -103,25 +103,21 @@ http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.config.conte
    <element name="action">
       <annotation>
          <documentation>
-            Custom Intro URL action registration. This can be used to create new Intro URL actions. It can be used to create a shortCut action or create custom actions.
-For example: 
-a short cut command is: 
-
-a custom command is:
+            custom Intro URL action registration. This can be used to create new Intro URL actions or a shortCut to predefined actions.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a unique name that identifies this action.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="replaces" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the macro which replaces the action name in the Intro URL.
                </documentation>
             </annotation>
          </attribute>
@@ -143,7 +139,8 @@ a custom command is:
       </appInfo>
       <documentation>
          Here is an example implementation of this extension point:
-
+&lt;p&gt;
+&lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
     &lt;configExtension
          configId=&quot;com.org.xyz.introConfig&quot; 
@@ -152,8 +149,18 @@ a custom command is:
     &lt;standbyPart
          id=&quot;com.org.xyz.myStandbyPart&quot;
          class=&quot;com.org.xyz.internal.MyStandbyContent&quot;
-         pluginId=&quot;org.eclipse.platform&quot;/&gt; (todo - remove the pluginId?)
+         pluginId=&quot;com.org.xyz&quot;/&gt;
+
+    &lt;action
+         name=&quot;shortcutAction&quot;
+         replaces=&quot;http://org.eclipse.ui.intro/showStandby?partId=com.org.xyz.myStandbyPart&quot;/&gt;
+
+    &lt;action
+         name=&quot;customAction&quot;
+         replaces=&quot;runAction?pluginId=com.org.xyz&amp;amp;class=com.org.xyz.CustomAction&amp;amp;param1=value1&quot;/&gt;
 &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -162,7 +169,7 @@ a custom command is:
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         For further details see the spec for the org.eclipse.ui.intro.config API package.
       </documentation>
    </annotation>
 
