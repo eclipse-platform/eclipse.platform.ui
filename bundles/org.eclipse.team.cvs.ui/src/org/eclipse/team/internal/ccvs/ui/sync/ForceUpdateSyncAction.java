@@ -192,6 +192,7 @@ public class ForceUpdateSyncAction extends MergeAction {
 						case Differencer.ADDITION:
 							// To do: conflicting addition: must make incoming first
 							makeIncoming.add(changed[i]);
+							deletions.add(changed[i]);
 							updateIgnoreLocalShallow.add(resource);
 							break;
 						case Differencer.DELETION:
