@@ -97,7 +97,22 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		fContentProvider= new BreakpointsViewContentProvider();
 		final CheckboxTreeViewer viewer = new CheckboxTreeViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK)) {
 		    public void refresh() {
+		    	BreakpointsViewContentProvider provider = (BreakpointsViewContentProvider) getContentProvider();
+		    	List expanded= new ArrayList();
+		    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+		    	for (int i = 0; i < breakpoints.length; i++) {
+					IBreakpoint breakpoint= breakpoints[i];
+					Object parent = provider.getParent(breakpoint);
+					if (parent instanceof IBreakpointContainer && getExpandedState(parent)) {
+						expanded.add(breakpoint);
+					}
+				}
+		    	provider.clearParentCache();
                 super.refresh();
+                Iterator iter = expanded.iterator();
+                while (iter.hasNext()) {
+                	expandToLevel(iter.next(), ALL_LEVELS);
+                }
                 initializeCheckedState(this, fContentProvider);
             }
 		};

@@ -96,12 +96,20 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		clearParentCache();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+	
+	/**
+	 * Clears the cache of children to their parents. This should be called
+	 * whenever the content is refreshed.
+	 */
+	public void clearParentCache() {
 		fParentMap.clear();
 	}
 
