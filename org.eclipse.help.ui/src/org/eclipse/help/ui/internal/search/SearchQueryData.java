@@ -130,12 +130,17 @@ public class SearchQueryData implements ISearchQuery {
 			q += "&fieldSearch=true";
 		else
 			q += "&fieldSearch=false";
-		if (bookFiltering && selectedBooks != null)
-			for (Iterator iterator = selectedBooks.iterator(); iterator.hasNext();) {
-				IToc toc = (IToc) iterator.next();
-				q += "&scope=" + URLEncoder.encode(toc.getHref());
+		if (bookFiltering) {
+			q += "&scopedSearch=true";
+			if (selectedBooks != null) {
+				for (Iterator iterator = selectedBooks.iterator();
+					iterator.hasNext();
+					) {
+					IToc toc = (IToc) iterator.next();
+					q += "&scope=" + URLEncoder.encode(toc.getHref());
+				}
 			}
-		return q;
+		}		return q;
 	}
 	/**
 	 * Gets the searchWord
