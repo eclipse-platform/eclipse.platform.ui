@@ -1966,8 +1966,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     .getDefault().getPerspectiveRegistry()
                     .findPerspectiveWithId(layoutID);
             if (desc == null)
-                throw new WorkbenchException(WorkbenchMessages
-                        .getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+                throw new WorkbenchException(
+                        WorkbenchMessages
+                                .format(
+                                        "WorkbenchPage.ErrorCreatingPerspective", new String[] { layoutID })); //$NON-NLS-1$
             Perspective persp = createPerspective(desc);
             if (persp == null)
                 return;
