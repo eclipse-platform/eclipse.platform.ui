@@ -182,7 +182,7 @@ public class SimpleLaunchVariableRegistry {
 					}
 					String value= element.getAttribute(VALUE_TAG);
 					if (value.length() > 0) {
-						variable.setText(value);
+						variable.setValue(value);
 					}
 					fVariables.put(name, variable);
 				} else {
@@ -226,7 +226,7 @@ public class SimpleLaunchVariableRegistry {
 			Map.Entry entry= (Map.Entry) iter.next();
 			Element element= document.createElement(VARIABLE_TAG);
 			element.setAttribute(NAME_TAG, (String)entry.getKey());
-			element.setAttribute(VALUE_TAG, ((ISimpleLaunchVariable)entry.getValue()).getText());
+			element.setAttribute(VALUE_TAG, ((ISimpleLaunchVariable)entry.getValue()).getValue());
 			rootElement.appendChild(element);
 		}
 		return LaunchManager.serializeDocument(document);

@@ -80,7 +80,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	/**
 	 * @see ISimpleLaunchVariable#getText()
 	 */
-	public String getText() {
+	public String getValue() {
 		if (fValue == null && getInitializer() != null) {
 			fValue= getInitializer().getText();
 		}
@@ -90,7 +90,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	/**
 	 * @see ISimpleLaunchVariable#setText(String)
 	 */
-	public void setText(String value) {
+	public void setValue(String value) {
 		fValue= value;
 	}
 

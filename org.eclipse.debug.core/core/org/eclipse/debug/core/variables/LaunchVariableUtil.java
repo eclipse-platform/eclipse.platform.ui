@@ -236,7 +236,7 @@ public class LaunchVariableUtil {
 					}
 					return null;
 				}
-				buffer.append(simpleVariable.getText());
+				buffer.append(simpleVariable.getValue());
 			}
 			varDef = extractVariableDefinition(argument, start);
 		}

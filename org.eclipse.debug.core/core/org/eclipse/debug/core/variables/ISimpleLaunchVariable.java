@@ -43,7 +43,7 @@ package org.eclipse.debug.core.variables;
  * &lt;/extension&gt;
  * </pre>
  * <p>
- * Clients may implement this interface.
+ * Clients are not intended to implement this interface.
  * </p>
  * @since 3.0
  */
@@ -56,10 +56,10 @@ public interface ISimpleLaunchVariable extends ILaunchVariable {
 	 * @return the variable's value or <code>null</code> if none can be
 	 * determined
 	 */
-	public String getText();
+	public String getValue();
 	/**
 	 * Sets the text value of this variable
 	 * @param value the value to assign to this variable
 	 */
-	public void setText(String value);
+	public void setValue(String value);
 }

@@ -257,11 +257,11 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * 	<code>false</code> if the user cancelled.
 	 */
 	private boolean editVariable(ISimpleLaunchVariable variable) {
-		InputDialog dialog= new InputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.12"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {variable.getName()}), variable.getText(), null); //$NON-NLS-1$ //$NON-NLS-2$
+		InputDialog dialog= new InputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.12"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {variable.getName()}), variable.getValue(), null); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != Dialog.OK) {
 			return false;
 		}
-		variable.setText(dialog.getValue());
+		variable.setValue(dialog.getValue());
 		variableTable.update(variable, null);
 		return true;
 	}
@@ -365,7 +365,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 					case 0 :
 						return ((ISimpleLaunchVariable) element).getName();		
 					case 1:
-						String value= ((ISimpleLaunchVariable) element).getText(); 
+						String value= ((ISimpleLaunchVariable) element).getValue(); 
 						if (value == null) {
 							value= ""; //$NON-NLS-1$
 						}
