@@ -88,6 +88,10 @@ public abstract class MarkerView extends TableView {
 	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
 	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
+	
+	//A private field for keeping track of the number of markers
+	//before the busy testing started
+	private int preBusyMarkers = 0;
 
 	protected IResource[] focusResources;
 
@@ -136,6 +140,7 @@ public abstract class MarkerView extends TableView {
 	};
 	
 	private MarkerList currentMarkers = new MarkerList();
+	private boolean showingBusy = false;
 	private int totalMarkers = 0;
 	private boolean markerCountDirty = true;
 
@@ -749,7 +754,17 @@ public abstract class MarkerView extends TableView {
      */
     public void showBusy(boolean busy) {
         super.showBusy(busy);
-        getProgressService().warnOfContentChange();
+       
+        if(busy){
+        	preBusyMarkers = totalMarkers;
+        	showingBusy = busy;
+        }
+        else{//Only bold if there has been a change in count
+        	if(showingBusy && totalMarkers != preBusyMarkers)
+        		getProgressService().warnOfContentChange();
+        	showingBusy = false;
+        }
+        
     }
 	
 }
