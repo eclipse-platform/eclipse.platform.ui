@@ -134,9 +134,10 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				if (lastExtent==null)
 				   lastExtent = gc.textExtent(savedWord);
 				int lineWidth = locator.x + lastExtent.x;
-				locator.x = 0;
+
 				saved = last;
 				locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
+				locator.x = 0;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				width = Math.max(width, lineWidth);
@@ -146,7 +147,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 		}
 		String lastString = text.substring(saved, last);
 		Point extent = gc.textExtent(lastString);
-		locator.x = extent.x;
+		locator.x += extent.x;
 		locator.width = width;
 		locator.height = lineHeight;
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);

@@ -33,7 +33,10 @@ public class FormLabel extends Canvas {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		if (text!=null) 
+			this.text = text;
+		else
+			text = "";
 	}
 	
 	public void setUnderlined(boolean underlined) {

@@ -99,6 +99,11 @@ public class FormEngine extends Canvas {
 			public void mouseEnter(MouseEvent e) {
 			}
 			public void mouseExit(MouseEvent e) {
+				if (entered != null) {
+					exitLink(entered);
+					entered = null;
+					setCursor(null);
+				}
 			}
 			public void mouseHover(MouseEvent e) {
 				handleMouseHover(e);
@@ -157,7 +162,11 @@ public class FormEngine extends Canvas {
 	}
 
 	private boolean advance(boolean next) {
+		IHyperlinkSegment current = model.getSelectedLink();
+		if (current!=null) exitLink(current);
+		
 		boolean valid = model.traverseLinks(next);
+		
 		if (valid)
 			enterLink(model.getSelectedLink());
 		redraw();

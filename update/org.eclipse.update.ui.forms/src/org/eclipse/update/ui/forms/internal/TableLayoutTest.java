@@ -5,7 +5,7 @@ package org.eclipse.update.ui.forms.internal;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
@@ -128,25 +128,13 @@ public static void main (String [] args) {
      td.align = TableData.FILL;
      exp.getControl().setLayoutData(td);
      
-     new Label(c, SWT.NULL);
- 
-     StatusLineManager manager = new StatusLineManager();
-     final FormEngine html = new FormEngine(c, SWT.WRAP);
-     html.setHyperlinkSettings(factory.getHyperlinkHandler());
-     HTTPAction action = new HTTPAction();
-     action.setStatusLineManager(manager);
-     html.registerTextObject("urlHandler", action);
-     //html.setBackground(factory.getBackgroundColor());
-     html.setForeground(factory.getForegroundColor());
-     InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
-     //html.setParagraphsSeparated(false);
-     html.load(is, true);
-     td = new TableData();
-     td.colspan = 1;
-     td.align = TableData.FILL;
-     html.setLayoutData(td);
+	 StatusLineManager manager = new StatusLineManager();
+     addFormEngine(c, factory, manager);
+     //addFormEngine(c, factory, manager);
+     //addFormEngine(c, factory, manager);
      
-
+     addRow(c);
+ 
      Control mcontrol = manager.createControl(c);
      td = new TableData();
      td.colspan = 2;
@@ -188,6 +176,41 @@ public static void main (String [] args) {
           if (!display.readAndDispatch ()) display.sleep ();
      }
      display.dispose ();
+}
+
+public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatusLineManager manager) {
+     new Label(c, SWT.NULL);
+     FormEngine html = new FormEngine(c, SWT.WRAP);
+     html.setHyperlinkSettings(factory.getHyperlinkHandler());
+     HTTPAction action = new HTTPAction();
+     action.setStatusLineManager(manager);
+     html.registerTextObject("urlHandler", action);
+     //html.setBackground(factory.getBackgroundColor());
+     html.setForeground(factory.getForegroundColor());
+     InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
+     //html.setParagraphsSeparated(false);
+     html.load(is, true);
+     TableData td = new TableData();
+     td.colspan = 1;
+     td.align = TableData.FILL;
+     html.setLayoutData(td);
+}
+
+public static void addRow(Composite c) {
+	Composite row = new Composite(c, SWT.WRAP);
+	RowLayout layout = new RowLayout();
+	layout.wrap = true;
+	row.setLayout(layout);
+	
+	for (int i=0; i<10; i++) {
+		Button button = new Button(row, SWT.PUSH);
+		button.setText("Button that should be wrapped");
+	}
+	TableData td = new TableData();
+	td.colspan = 2;
+	td.align = TableData.FILL;
+	td.grabHorizontal = true;
+	row.setLayoutData(td);
 }
 
 private static void updateSize(ScrolledComposite sc, Composite c) {

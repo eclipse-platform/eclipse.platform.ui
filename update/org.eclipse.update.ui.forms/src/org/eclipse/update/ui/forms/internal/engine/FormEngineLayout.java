@@ -29,7 +29,6 @@ public class FormEngineLayout extends Layout {
 		int textWidth = textSize.x + 2*engine.marginWidth;
 		int textHeight = textSize.y + 2*engine.marginHeight;
 		Point result = new Point(textWidth, textHeight);
-		//System.out.println("Computed size: "+result);
 		return result;
 	}
 	
@@ -54,6 +53,7 @@ public class FormEngineLayout extends Layout {
 			if (i>0 && engine.paragraphsSeparated) loc.y += lineHeight;
 			
 			loc.rowHeight = 0;
+			loc.x = 0;
 			
 			IParagraphSegment [] segments = p.getSegments();
 			if (segments.length>0) {
@@ -77,6 +77,5 @@ public class FormEngineLayout extends Layout {
 	 * @see Layout#layout(Composite, boolean)
 	 */
 	protected void layout(Composite composite, boolean flushCache) {
-		//System.out.println("Real size: "+composite.getSize());
 	}
 }
