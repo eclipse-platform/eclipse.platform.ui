@@ -951,7 +951,7 @@ public final class WorkbenchKeyboard {
                 break;
             case SWT.Traverse:
                 event.detail = SWT.TRAVERSE_NONE;
-                event.doit = false;
+                event.doit = true;
                 break;
             default:
             }
