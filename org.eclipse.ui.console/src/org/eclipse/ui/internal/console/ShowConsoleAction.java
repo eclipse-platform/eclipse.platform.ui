@@ -27,12 +27,7 @@ public class ShowConsoleAction extends Action {
 	 */
 	public void run() {
 		if (!fConsole.equals(fView.getConsole())) {
-			// only change if required (and pin the console if pinned)
-			if (fView.isPinned()) {
-				fView.pin(fConsole);
-			} else {
-				fView.display(fConsole);
-			}
+		    fView.display(fConsole);
 		}
 	}
 

@@ -34,9 +34,10 @@ public interface IConsoleView extends IViewPart {
 	 * other console can be displayed until this console view is
 	 * un-pinned. Specifying <code>null</code> un-pins this console
 	 *  
-	 * @param console console to pin, or <code>null</code> to un-pin
+	 * @param pin <code>true</code> to pin the current console to the 
+     * top of the stack <code>false</code> otherwise
 	 */
-	public void pin(IConsole console);
+	public void pin(boolean pin);
 	
 	/**
 	 * Returns whether this console view is currently pinned to a

@@ -110,13 +110,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		if (isPinned()) {
-			// if closing the pinned console, un-pin
-			IConsole console = (IConsole)fPartToConsole.get(part);
-			if (console != null && console.equals(getConsole())) {
-				pin(null);
-			}
-		}
 		super.partClosed(part);
 		fPinAction.update();
 	}
@@ -132,31 +125,29 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void showPageRec(PageRec pageRec) {
-		if (!isPinned()) {
-			super.showPageRec(pageRec);
-			fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
-			IConsole tos = null;
-			if (!fStack.isEmpty()) {
-				tos = (IConsole) fStack.get(0);
-			}
-			if (tos != null && !tos.equals(fActiveConsole)) {
-				deactivateParticipants(tos);
-			}
-			if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
-				fStack.remove(fActiveConsole);
-				fStack.add(0,fActiveConsole);
-				activateParticipants(fActiveConsole);
-			}
-			updateTitle();		
-			// update console actions
-			if (fPinAction != null) {
-				fPinAction.update();
-			}
-            IPage page = getCurrentPage();
-            if (page instanceof IOConsolePage) {
-                ((IOConsolePage)page).setAutoScroll(!fScrollLock);
-            }
-		}
+	    super.showPageRec(pageRec);
+	    fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
+	    IConsole tos = null;
+	    if (!fStack.isEmpty()) {
+	        tos = (IConsole) fStack.get(0);
+	    }
+	    if (tos != null && !tos.equals(fActiveConsole)) {
+	        deactivateParticipants(tos);
+	    }
+	    if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
+	        fStack.remove(fActiveConsole);
+	        fStack.add(0,fActiveConsole);
+	        activateParticipants(fActiveConsole);
+	    }
+	    updateTitle();		
+	    // update console actions
+	    if (fPinAction != null) {
+	        fPinAction.update();
+	    }
+	    IPage page = getCurrentPage();
+	    if (page instanceof IOConsolePage) {
+	        ((IOConsolePage)page).setAutoScroll(!fScrollLock);
+	    }
 	}
 	
 	/**
@@ -388,26 +379,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
 	 */
 	public void display(IConsole console) {
-		if (!isPinned()) {
-			ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
-			if (part != null) {
-				partActivated(part);
-			}
-		}
+	    ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
+	    if (part != null) {
+	        partActivated(part);
+	    }
 	}
 
 	/*/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
 	 */
-	public void pin(IConsole console) {
-		if (console == null) {
-			fPinned = false;	
-		} else {
-			fPinned = false; // need this off to change displayed console
-			display(console);
-			fPinned = true;
-		}
-		if (fPinAction != null) {
+	public void pin(boolean pin) {
+        fPinned = pin;
+	    if (fPinAction != null) {
 			fPinAction.update();
 		}
 	}
