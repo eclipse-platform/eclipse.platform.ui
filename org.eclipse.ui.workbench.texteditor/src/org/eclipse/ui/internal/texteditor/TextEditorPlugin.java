@@ -58,9 +58,19 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Creates a plug-in instance.
+	 */
+	public TextEditorPlugin() {
+		super();
+		Assert.isTrue(fgPlugin == null);
+		fgPlugin= this;
+	}
+
+	/**
 	 * Returns the plug-in instance.
 	 * 
 	 * @return the text editor plug-in instance
+	 * @since 3.0
 	 */
 	public static TextEditorPlugin getDefault() {
 		return fgPlugin;
