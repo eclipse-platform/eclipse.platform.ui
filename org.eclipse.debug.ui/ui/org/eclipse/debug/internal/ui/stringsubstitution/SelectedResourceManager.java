@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.util.Stack;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.ITextSelection;
@@ -37,6 +39,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	
 	private IResource fSelectedResource = null;
 	private String fSelectedText = null;
+	private Stack fWindowStack = new Stack();
 	
 	private SelectedResourceManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -65,6 +68,8 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
+		fWindowStack.remove(window);
+		fWindowStack.push(window);
 		ISelectionService service = window.getSelectionService(); 
 		service.addSelectionListener(this);
 		IWorkbenchPage page = window.getActivePage();
@@ -84,25 +89,31 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
 		window.getSelectionService().removeSelectionListener(this);
+		fWindowStack.remove(window);
 	}
 
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowDeactivated(IWorkbenchWindow window) {
-		window.getSelectionService().removeSelectionListener(this);
 	}
 
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
+		windowActivated(window);
 	}
 
 	/**
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
+		if (fWindowStack.isEmpty() || !fWindowStack.peek().equals(window)) {
+			// selection is not in the active window
+			return;
+		}
 		IResource selectedResource = null;
 		if (selection instanceof IStructuredSelection) {
 			Object result = ((IStructuredSelection)selection).getFirstElement();
