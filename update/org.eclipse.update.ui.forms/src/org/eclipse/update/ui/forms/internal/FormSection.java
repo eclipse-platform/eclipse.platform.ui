@@ -249,9 +249,10 @@ public abstract class FormSection implements IPropertyChangeListener {
 		int span) {
 		factory.createLabel(parent, label);
 		Text text = factory.createText(parent, "");
+		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd =
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-		gd.grabExcessHorizontalSpace = true;
+			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
+		//gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
@@ -261,9 +262,10 @@ public abstract class FormSection implements IPropertyChangeListener {
 		FormWidgetFactory factory,
 		int span) {
 		Text text = factory.createText(parent, "");
+		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd =
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-		gd.grabExcessHorizontalSpace = true;
+			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
+		//gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
