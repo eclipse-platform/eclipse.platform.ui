@@ -311,7 +311,6 @@ private void queryNewResourceNameInline(final IResource resource) {
 }
 Composite createParent() {
 	Tree tree = getTree();
-	TreeEditor treeEditor = new TreeEditor(tree);
 	Composite result = new Composite (tree, SWT.NONE);
 	TreeItem[] selectedItems = tree.getSelection();
 	treeEditor.horizontalAlignment = SWT.LEFT;
