@@ -19,9 +19,7 @@ import org.xml.sax.SAXException;
  * This class manages the configurations.
  */
 
-public class SiteLocal
-	extends SiteLocalModel
-	implements ILocalSite, IWritable {
+public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
@@ -36,11 +34,12 @@ public class SiteLocal
 		URL configXML = null;
 		SiteLocal site = new SiteLocal();
 
+		// obtain read/write location
+		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration platformConfig = currentPlatformConfiguration;
 		try {
-			// obtain read/write location
-			IPlatformConfiguration platformConfig =
-				BootLoader.getCurrentPlatformConfiguration();
-			URL location = Platform.resolve(platformConfig.getConfigurationLocation());
+			URL platformConfigurationLocation = platformConfig.getConfigurationLocation();
+			URL location = Platform.resolve(platformConfigurationLocation);
 			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 
 			// set it into the ILocalSite
@@ -52,14 +51,10 @@ public class SiteLocal
 			new SiteLocalParser(resolvedURL.openStream(), site);
 
 			// check if we have to reconcile
-			long bootStamp = BootLoader.getCurrentPlatformConfiguration().getChangeStamp();
+			long bootStamp = currentPlatformConfiguration.getChangeStamp();
 			if (site.getStamp() != bootStamp) {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().debug(
-						"Reconcile platform stamp:"
-							+ bootStamp
-							+ " is different from LocalSite stamp:"
-							+ site.getStamp());
+					UpdateManagerPlugin.getPlugin().debug("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + site.getStamp());
 				}
 				site.setStamp(bootStamp);
 				site.reconcile();
@@ -73,51 +68,19 @@ public class SiteLocal
 			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
 			// and reconcile
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					site.getLocationURLString()
-						+ " does not exist, there is no previous state or install history we can recover, we shall use default.");
+				UpdateManagerPlugin.getPlugin().debug(site.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
-			long bootStamp = BootLoader.getCurrentPlatformConfiguration().getChangeStamp();
+			long bootStamp = currentPlatformConfiguration.getChangeStamp();
 			site.setStamp(bootStamp);
 			site.reconcile();
 			site.save();
 
 		} catch (SAXException exception) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					"Error during parsing of the install config XML:" + site.getLocationURLString(),
-					exception);
-			throw new CoreException(status);
+			throw newCoreException("Error during parsing of the install config XML:" + site.getLocationURLString(), exception);
 		} catch (MalformedURLException exception) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					"Cannot create URL from: "
-						+ site.getLocationURLString()
-						+ " & "
-						+ SITE_LOCAL_FILE,
-					exception);
-			throw new CoreException(status);
+			throw newCoreException("Cannot create URL from: " + site.getLocationURLString() + " & " + SITE_LOCAL_FILE, exception);
 		} catch (IOException exception) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					"Cannot read xml file: " + configXML,
-					exception);
-			throw new CoreException(status);
+			throw newCoreException("Cannot read xml file: " + configXML, exception);
 		}
 
 		return site;
@@ -141,18 +104,14 @@ public class SiteLocal
 				if (removeConfigurationModel(removedConfig)) {
 
 					// DEBUG:
-					if (UpdateManagerPlugin.DEBUG
-						&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
-						UpdateManagerPlugin.getPlugin().debug(
-							"Removed configuration :" + removedConfig.getLabel());
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
+						UpdateManagerPlugin.getPlugin().debug("Removed configuration :" + removedConfig.getLabel());
 					}
 
 					// notify listeners
 					Object[] siteLocalListeners = listeners.getListeners();
 					for (int i = 0; i < siteLocalListeners.length; i++) {
-						(
-							(ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(
-							(IInstallConfiguration) removedConfig);
+						((ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved((IInstallConfiguration) removedConfig);
 					}
 				}
 				// FIXME: remove file ? Can be shared or remote !!!
@@ -168,11 +127,7 @@ public class SiteLocal
 			// notify listeners
 			Object[] siteLocalListeners = listeners.getListeners();
 			for (int i = 0; i < siteLocalListeners.length; i++) {
-				(
-					(
-						ILocalSiteChangedListener) siteLocalListeners[i])
-							.currentInstallConfigurationChanged(
-					config);
+				((ILocalSiteChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
 			}
 		}
 
@@ -216,30 +171,9 @@ public class SiteLocal
 				writer.writeSite(this, fileWriter);
 				fileWriter.close();
 			} catch (FileNotFoundException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						id,
-						IStatus.OK,
-						"Cannot save site into " + file.getAbsolutePath(),
-						e);
-				throw new CoreException(status);
+				throw newCoreException("Cannot save site into " + file.getAbsolutePath(), e);
 			} catch (MalformedURLException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						id,
-						IStatus.OK,
-						"Cannot get handle on configuration file "
-							+ getLocationURL().toExternalForm()
-							+ " : "
-							+ SITE_LOCAL_FILE,
-						e);
-				throw new CoreException(status);
+				throw newCoreException("Cannot get handle on configuration file " + getLocationURL().toExternalForm() + " : " + SITE_LOCAL_FILE, e);
 			}
 		}
 	}
@@ -260,10 +194,7 @@ public class SiteLocal
 			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
 		}
 		w.print("history=\"" + getMaximumHistory() + "\" ");
-		w.print(
-			"stamp=\""
-				+ BootLoader.getCurrentPlatformConfiguration().getChangeStamp()
-				+ "\" ");
+		w.print("stamp=\"" + BootLoader.getCurrentPlatformConfiguration().getChangeStamp() + "\" ");
 		w.println(">");
 		w.println("");
 
@@ -276,10 +207,7 @@ public class SiteLocal
 			}
 		}
 		// write current configuration last
-		writeConfig(
-			gap + increment,
-			w,
-			(InstallConfigurationModel) getCurrentConfiguration());
+		writeConfig(gap + increment, w, (InstallConfigurationModel) getCurrentConfiguration());
 		w.println("");
 
 		if (getPreservedConfigurations() != null) {
@@ -292,20 +220,18 @@ public class SiteLocal
 				writeConfig(gap + increment + increment, w, element);
 			}
 			w.println("");
-			w.print(
-				gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			w.print(gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
 		}
 		// end
 		w.println("</" + SiteLocalParser.SITE + ">");
 	}
 
-	private void writeConfig(
-		String gap,
-		PrintWriter w,
-		InstallConfigurationModel config) {
+	/**
+	 * @since 2.0
+	 */
+	private void writeConfig(String gap, PrintWriter w, InstallConfigurationModel config) {
 		w.print(gap + "<" + SiteLocalParser.CONFIG + " ");
-		String URLInfoString =
-			UpdateManagerUtils.getURLAsString(getLocationURL(), config.getURL());
+		String URLInfoString = UpdateManagerUtils.getURLAsString(getLocationURL(), config.getURL());
 		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
 
 		if (config.getLabel() != null) {
@@ -318,11 +244,7 @@ public class SiteLocal
 	/**
 	 * @since 2.0
 	 */
-	public IInstallConfiguration cloneConfigurationSite(
-		IInstallConfiguration installConfig,
-		URL newFile,
-		String name)
-		throws CoreException {
+	public IInstallConfiguration cloneConfigurationSite(IInstallConfiguration installConfig, URL newFile, String name) throws CoreException {
 
 		// save previous current configuration
 		if (getCurrentConfiguration() != null)
@@ -331,8 +253,7 @@ public class SiteLocal
 		InstallConfiguration result = null;
 		Date currentDate = new Date();
 
-		String newFileName =
-			UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE, currentDate);
+		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE, currentDate);
 		try {
 			if (newFile == null)
 				newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
@@ -343,44 +264,26 @@ public class SiteLocal
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
 		} catch (MalformedURLException e) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					"Cannot create a new configuration in:" + newFileName,
-					e);
-			throw new CoreException(status);
+			throw newCoreException("Cannot create a new configuration in:" + newFileName, e);
 		}
 		return result;
 	}
 
 	/**
-		 * @since 2.0
-		 */
-	public IInstallConfiguration cloneCurrentConfiguration(
-		URL newFile,
-		String name)
-		throws CoreException {
-
+	 * @since 2.0
+	 */
+	public IInstallConfiguration cloneCurrentConfiguration(URL newFile, String name) throws CoreException {
 		return cloneConfigurationSite(getCurrentConfiguration(), newFile, name);
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void revertTo(
-		IInstallConfiguration configuration,
-		IProgressMonitor monitor,
-		IProblemHandler handler)
-		throws CoreException {
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException {
 
 		// create the activity 
 		//Start UOW ?
-		ConfigurationActivity activity =
-			new ConfigurationActivity(IActivity.ACTION_REVERT);
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_REVERT);
 		activity.setLabel(configuration.getLabel());
 		activity.setDate(new Date());
 		IInstallConfiguration newConfiguration = null;
@@ -392,10 +295,7 @@ public class SiteLocal
 			// process delta
 			// the Configured featuresConfigured are the same as the old configuration
 			// the unconfigured featuresConfigured are the rest...
-			((InstallConfiguration) newConfiguration).revertTo(
-				configuration,
-				monitor,
-				handler);
+			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor, handler);
 
 			// add to the stack which will set up as current
 			addConfiguration(newConfiguration);
@@ -411,8 +311,7 @@ public class SiteLocal
 			// because we didn't add the configuration to the history
 		} finally {
 			if (newConfiguration != null)
-				((InstallConfiguration) newConfiguration).addActivityModel(
-					(ConfigurationActivityModel) activity);
+				 ((InstallConfiguration) newConfiguration).addActivityModel((ConfigurationActivityModel) activity);
 		}
 
 	}
@@ -420,16 +319,12 @@ public class SiteLocal
 	/**
 	 * @since 2.0
 	 */
-	public void addToPreservedConfigurations(IInstallConfiguration configuration)
-		throws CoreException {
+	public void addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
 		if (configuration != null) {
 
 			// create new configuration based on the one to preserve
 			InstallConfiguration newConfiguration = null;
-			String newFileName =
-				UpdateManagerUtils.getLocalRandomIdentifier(
-					DEFAULT_PRESERVED_CONFIG_FILE,
-					new Date());
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE, new Date());
 			try {
 				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
 				// pass the date onto teh name
@@ -439,30 +334,14 @@ public class SiteLocal
 				// set teh same date in the installConfig
 				newConfiguration.setCreationDate(currentDate);
 
-				System.out.println(
-					"addToPreserved URL:"
-						+ newFile.toExternalForm()
-						+ " name:"
-						+ name
-						+ " date:"
-						+ currentDate.getTime());
+				System.out.println("addToPreserved URL:" + newFile.toExternalForm() + " name:" + name + " date:" + currentDate.getTime());
 			} catch (MalformedURLException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						id,
-						IStatus.OK,
-						"Cannot create a new preserved configuration in:" + newFileName,
-						e);
-				throw new CoreException(status);
+				throw newCoreException("Cannot create a new preserved configuration in:" + newFileName, e);
 			}
 			((InstallConfiguration) newConfiguration).saveConfigurationFile();
 
 			// add to the list			
-			addPreservedInstallConfigurationModel(
-				(InstallConfigurationModel) newConfiguration);
+			addPreservedInstallConfigurationModel((InstallConfigurationModel) newConfiguration);
 		}
 	}
 
@@ -474,15 +353,10 @@ public class SiteLocal
 		// based on time stamp for now
 		InstallConfigurationModel preservedConfig = null;
 		if (configuration != null) {
-			InstallConfigurationModel[] preservedConfigurations =
-				getPreservedConfigurationsModel();
+			InstallConfigurationModel[] preservedConfigurations = getPreservedConfigurationsModel();
 			if (preservedConfigurations != null) {
-				for (int indexPreserved = 0;
-					indexPreserved < preservedConfigurations.length;
-					indexPreserved++) {
-					if (configuration
-						.getCreationDate()
-						.equals(preservedConfigurations[indexPreserved].getCreationDate())) {
+				for (int indexPreserved = 0; indexPreserved < preservedConfigurations.length; indexPreserved++) {
+					if (configuration.getCreationDate().equals(preservedConfigurations[indexPreserved].getCreationDate())) {
 						preservedConfig = preservedConfigurations[indexPreserved];
 						break;
 					}
@@ -496,8 +370,7 @@ public class SiteLocal
 	/**
 	 * returns a list of PluginEntries that are not used by any other configured feature
 	 */
-	public IPluginEntry[] getUnusedPluginEntries(IFeature feature)
-		throws CoreException {
+	public IPluginEntry[] getUnusedPluginEntries(IFeature feature) throws CoreException {
 
 		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
 
@@ -506,25 +379,17 @@ public class SiteLocal
 		if (entries != null) {
 			// get all the other plugins from all the other features
 			Set allPluginID = new HashSet();
-			InstallConfigurationModel currentConfigurationModel =
-				(InstallConfigurationModel) getCurrentConfiguration();
-			ConfigurationSiteModel[] allConfiguredSites =
-				currentConfigurationModel.getConfigurationSitesModel();
+			InstallConfigurationModel currentConfigurationModel = (InstallConfigurationModel) getCurrentConfiguration();
+			ConfigurationSiteModel[] allConfiguredSites = currentConfigurationModel.getConfigurationSitesModel();
 			if (allConfiguredSites != null) {
-				for (int indexSites = 0;
-					indexSites < allConfiguredSites.length;
-					indexSites++) {
-					IFeatureReference[] features =
-						((IConfigurationSite) allConfiguredSites[indexSites]).getConfiguredFeatures();
+				for (int indexSites = 0; indexSites < allConfiguredSites.length; indexSites++) {
+					IFeatureReference[] features = ((IConfigurationSite) allConfiguredSites[indexSites]).getConfiguredFeatures();
 					if (features != null) {
 						for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
 							if (!features[indexFeatures].equals(feature)) {
-								IPluginEntry[] pluginEntries =
-									features[indexFeatures].getFeature().getPluginEntries();
+								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 								if (pluginEntries != null) {
-									for (int indexEntries = 0;
-										indexEntries < pluginEntries.length;
-										indexEntries++) {
+									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
 										allPluginID.add(entries[indexEntries].getVersionIdentifier());
 									}
 								}
@@ -585,30 +450,19 @@ public class SiteLocal
 	 * @see ILocalSite#removeFromPreservedConfigurations(IInstallConfiguration)
 	 */
 	public void removeFromPreservedConfigurations(IInstallConfiguration configuration) {
-		if (
-			removePreservedConfigurationModel((InstallConfigurationModel) configuration))
+		if (removePreservedConfigurationModel((InstallConfigurationModel) configuration))
 			 ((InstallConfiguration) configuration).remove();
 	}
 
 	/**
 	 * 
 	 */
-	public IInstallConfiguration importConfiguration(URL importURL, String label)
-		throws CoreException {
+	public IInstallConfiguration importConfiguration(URL importURL, String label) throws CoreException {
 		InstallConfiguration config = null;
 		try {
 			config = new InstallConfiguration(importURL, label);
 		} catch (MalformedURLException e) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					"Unable to import Configuration " + importURL.toExternalForm(),
-					e);
-			throw new CoreException(status);
+			throw newCoreException("Unable to import Configuration " + importURL.toExternalForm(), e);
 		}
 		return config;
 	}
@@ -627,10 +481,8 @@ public class SiteLocal
 	 */
 	public void reconcile() throws CoreException {
 		try {
-			IPlatformConfiguration platformConfig =
-				BootLoader.getCurrentPlatformConfiguration();
-			IPlatformConfiguration.ISiteEntry[] siteEntries =
-				platformConfig.getConfiguredSites();
+			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+			IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
 
 			// Either it is a new site or it already exists, or it is deleted
 			// new site only exist in platformConfig
@@ -654,8 +506,7 @@ public class SiteLocal
 					if (configured[index] != null) {
 						if (configured[index].getSite().getURL().equals(resolvedURL)) {
 							found = true;
-							((ConfigurationSite) configured[index]).setPreviousPluginPath(
-								siteEntries[siteIndex].getSitePolicy().getList());
+							((ConfigurationSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
 							modified.add(configured[index]);
 							configured[index] = null;
 						}
@@ -665,16 +516,10 @@ public class SiteLocal
 				if (!found) {
 					ISite site = SiteManager.getSite(resolvedURL);
 					//site policy
-					IPlatformConfiguration.ISitePolicy sitePolicy =
-						siteEntries[siteIndex].getSitePolicy();
-					ConfigurationSite configSite =
-						(ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel(
-							(SiteMapModel) site,
-							sitePolicy.getType());
-					configSite.setPlatformURLString(
-						siteEntries[siteIndex].getURL().toExternalForm());
-					configSite.setPreviousPluginPath(
-						siteEntries[siteIndex].getSitePolicy().getList());
+					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
+					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel) site, sitePolicy.getType());
+					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
+					configSite.setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
@@ -698,8 +543,7 @@ public class SiteLocal
 			// we now have three lists
 
 			// create new InstallConfiguration
-			IInstallConfiguration newDefaultConfiguration =
-				cloneConfigurationSite(null, null, null);
+			IInstallConfiguration newDefaultConfiguration = cloneConfigurationSite(null, null, null);
 
 			// check modified config site
 			// and add them back
@@ -731,28 +575,24 @@ public class SiteLocal
 		}
 	}
 
-	private IConfigurationSite reconcile(IConfigurationSite toReconcile)
-		throws CoreException {
+	private IConfigurationSite reconcile(IConfigurationSite toReconcile) throws CoreException {
 
 		// create a copy of the ConfigSite without any feature
 		// this is not a clone
 		SiteMapModel siteModel = (SiteMapModel) toReconcile.getSite();
 		int policy = toReconcile.getConfigurationPolicy().getPolicy();
-		ConfigurationSiteModel newSiteModel =
-			new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
 
 		// copy values
 		newSiteModel.setInstallSite(toReconcile.isInstallSite());
-		newSiteModel.setPlatformURLString(
-			((ConfigurationSiteModel) toReconcile).getPlatformURLString());
+		newSiteModel.setPlatformURLString(((ConfigurationSiteModel) toReconcile).getPlatformURLString());
 		newSiteModel.setPreviousPluginPath(toReconcile.getPreviousPluginPath());
 
 		// check the Features that are still here
 		List toCheck = new ArrayList();
 		List brokenFeature = new ArrayList();
 		IFeatureReference[] configured = toReconcile.getSite().getFeatureReferences();
-		FeatureReferenceModel[] found =
-			newSiteModel.getSiteModel().getFeatureReferenceModels();
+		FeatureReferenceModel[] found = newSiteModel.getSiteModel().getFeatureReferenceModels();
 
 		for (int i = 0; i < found.length; i++) {
 			for (int j = 0; j < configured.length; j++) {
@@ -788,22 +628,10 @@ public class SiteLocal
 				IPluginEntry[] missing = substract(featuresEntries, result);
 				String listOfMissingPlugins = "";
 				for (int k = 0; k < missing.length; k++) {
-					listOfMissingPlugins =
-						"\r\nplugin:" + missing[k].getVersionIdentifier().toString();
+					listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionIdentifier().toString();
 				}
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						id,
-						IStatus.OK,
-						"The feature "
-							+ element.getURL().toExternalForm()
-							+ " requires some missing plugins from the site:"
-							+ currentSite.getURL().toExternalForm()
-							+ listOfMissingPlugins,
-						null);
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + element.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
 				UpdateManagerPlugin.getPlugin().getLog().log(status);
 			}
 			checkConfigure(element, (ConfigurationSite) newSiteModel);
@@ -826,9 +654,7 @@ public class SiteLocal
 	 * Returns the plugin entries that are in source array and
 	 * missing from target array
 	 */
-	private IPluginEntry[] substract(
-		IPluginEntry[] sourceArray,
-		IPluginEntry[] targetArray) {
+	private IPluginEntry[] substract(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
 
 		// No pluginEntry to Install, return Nothing to instal
 		if (sourceArray == null || sourceArray.length == 0) {
@@ -863,10 +689,7 @@ public class SiteLocal
 	 * A feature may be broken because all the plugins are not in the Site, but may be configured
 	 * because soem of the needed plugins come from other site
 	 */
-	private void checkConfigure(
-		IFeatureReference ref,
-		ConfigurationSite newConfigSite)
-		throws CoreException {
+	private void checkConfigure(IFeatureReference ref, ConfigurationSite newConfigSite) throws CoreException {
 		// check if all the needed plugins are part of all plugin
 		boolean configured = false;
 		//FIXME right now we figure the exact match
@@ -890,11 +713,9 @@ public class SiteLocal
 
 		// there are some plugins the feature need that are not present
 		if (!configured || ref.isBroken()) {
-			(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(
-				(FeatureReferenceModel) ref);
+			(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel) ref);
 		} else {
-			(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(
-				(FeatureReferenceModel) ref);
+			(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel) ref);
 		}
 
 	}
@@ -902,10 +723,8 @@ public class SiteLocal
 	private static IPluginEntry[] getAllRunningPlugin() throws CoreException {
 		if (allRunningPluginEntry == null) {
 			// get all the running plugins
-			URL[] pluginPathURL =
-				BootLoader.getCurrentPlatformConfiguration().getPluginPath();
-			IPluginDescriptor[] descriptors =
-				Platform.getPluginRegistry().getPluginDescriptors();
+			URL[] pluginPathURL = BootLoader.getCurrentPlatformConfiguration().getPluginPath();
+			IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
 			allRunningPluginEntry = new PluginEntry[descriptors.length];
 			if (descriptors.length > 0) {
 				for (int i = 0; i < descriptors.length; i++) {
@@ -918,75 +737,51 @@ public class SiteLocal
 				}
 			}
 		}
-			// we explicitly create instances of PlugiNEntry as we will just compare them
-			/*			allRunningPluginEntry = new PluginEntry[pluginPathURL.length];
-						if (pluginPathURL.length > 0) {
-							DefaultPluginParser parser = new DefaultPluginParser();
-							for (int i = 0; i < pluginPathURL.length; i++) {
-								try {
-									IPluginEntry entry = parser.parse(pluginPathURL[i].openStream());
-									allRunningPluginEntry[i] = entry;
-								} catch (FileNotFoundException e) {
-									//FIXME some of the URL pointot a directory, ignore ???
-									if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-										UpdateManagerPlugin.getPlugin().debug("Cannot find the plugin or fragment:"+pluginPathURL[i].toExternalForm());
-									}
-								} catch (Exception e) {
-									throw newCoreException("Unable to parse file" + pluginPathURL[i] + ".\r\n" + e.toString(), e);
-								}
-							}
-						}
-					}
-					*/
 
-			return allRunningPluginEntry;
-		}
+		return allRunningPluginEntry;
+	}
 
-		/**
-		 * Add teh list of plugins the platform found for each site. This list will ba preserved in 
-		 * a transient way so we do not lose explicitly set plugins
-		 */
-		private void preserveRuntimePluginPath() throws CoreException {
-			try {
-				IPlatformConfiguration platformConfig =
-					BootLoader.getCurrentPlatformConfiguration();
-				IPlatformConfiguration.ISiteEntry[] siteEntries =
-					platformConfig.getConfiguredSites();
+	/**
+	 * Add teh list of plugins the platform found for each site. This list will ba preserved in 
+	 * a transient way so we do not lose explicitly set plugins
+	 */
+	private void preserveRuntimePluginPath() throws CoreException {
+		try {
+			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+			IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
 
-				// sites from the current configuration
-				IConfigurationSite[] configured = new IConfigurationSite[0];
-				if (getCurrentConfiguration() != null)
-					configured = getCurrentConfiguration().getConfigurationSites();
+			// sites from the current configuration
+			IConfigurationSite[] configured = new IConfigurationSite[0];
+			if (getCurrentConfiguration() != null)
+				configured = getCurrentConfiguration().getConfigurationSites();
 
-				// sites from the platform			
-				for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
+			// sites from the platform			
+			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
 
-					URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
-					boolean found = false;
-					for (int index = 0; index < configured.length && !found; index++) {
+				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
+				boolean found = false;
+				for (int index = 0; index < configured.length && !found; index++) {
 
-						// the array may have hole as we set found site to null
-						if (configured[index] != null) {
-							if (configured[index].getSite().getURL().equals(resolvedURL)) {
-								found = true;
-								((ConfigurationSite) configured[index]).setPreviousPluginPath(
-									siteEntries[siteIndex].getSitePolicy().getList());
-								configured[index] = null;
-							}
+					// the array may have hole as we set found site to null
+					if (configured[index] != null) {
+						if (configured[index].getSite().getURL().equals(resolvedURL)) {
+							found = true;
+							((ConfigurationSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
+							configured[index] = null;
 						}
 					}
 				}
-			} catch (IOException e) {
-				throw newCoreException("Cannot create the Local Site: " + e.getMessage(), e);
 			}
-		}
-
-		/**
-		 * returns a Core Exception
-		 */
-		private static CoreException newCoreException(String s, Throwable e)
-			throws CoreException {
-			return new CoreException(
-				new Status(IStatus.ERROR, "org.eclipse.update.core", 0, s, e));
+		} catch (IOException e) {
+			throw newCoreException("Cannot create the Local Site: " + e.getMessage(), e);
 		}
 	}
+
+	/**
+	 * returns a Core Exception
+	 */
+	private static CoreException newCoreException(String message, Throwable exception) throws CoreException {
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR, id, IStatus.OK, message, exception));
+	}
+}

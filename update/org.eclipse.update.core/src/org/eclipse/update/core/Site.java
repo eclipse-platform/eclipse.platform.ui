@@ -490,4 +490,11 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return result;
 	}
 
+	/*
+	 * @see ISite#getDescription()
+	 */
+	public IURLEntry getDescription() {
+		return (IURLEntry)getDescriptionModel();
+	}
+
 }

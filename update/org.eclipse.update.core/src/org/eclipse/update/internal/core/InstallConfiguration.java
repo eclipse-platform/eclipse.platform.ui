@@ -3,22 +3,34 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.IActivity;
+import org.eclipse.update.core.IConfigurationSite;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IInstallConfiguration;
+import org.eclipse.update.core.IInstallConfigurationChangedListener;
+import org.eclipse.update.core.IProblemHandler;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.core.model.InstallConfigurationParser;
-import org.eclipse.update.core.model.SiteMapModel;
-import org.xml.sax.SAXException;
 
 /**
  * An InstallConfigurationModel is 
@@ -77,6 +89,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return (IConfigurationSite[]) result;
 	}
 
+	/**
+	 * 
+	 */
 	public void addConfigurationSite(IConfigurationSite site) {
 		if (!isCurrent() && isReadOnly())
 			return;
@@ -98,7 +113,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		this.addActivityModel((ConfigurationActivityModel) activity);
 	}
 
-	/*
+	/**
 	 * add multiple sites in one activity
 	 */
 	public void setConfigurationSites(IConfigurationSite[] site) {
@@ -114,6 +129,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 	}
 
+	/**
+	 * 
+	 */
 	public void removeConfigurationSite(IConfigurationSite site) {
 
 		if (removeConfigurationSiteModel((ConfigurationSiteModel) site)) { // notify listeners
@@ -178,39 +196,39 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * Saves the configuration into its URL/location
 	 */
 	public void save() throws CoreException {
-	
+
 		// save the configuration.xml file
 		saveConfigurationFile();
 
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
-		
+
 		for (int i = 0; i < configurationSites.length; i++) {
 			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
-			
+
 			// obtain the list of plugins
-			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(),element.getPreviousPluginPath());
-			
+			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(), element.getPreviousPluginPath());
+
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
-			
+
 			// determine the URL to check 
 			URL urlToCheck = null;
 			ConfigurationSiteModel configSiteModel = null;
 			try {
-				configSiteModel = (ConfigurationSiteModel)element;
+				configSiteModel = (ConfigurationSiteModel) element;
 				urlToCheck = new URL(configSiteModel.getPlatformURLString());
-			} catch (MalformedURLException e){
+			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from:"+configSiteModel.getPlatformURLString(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from:" + configSiteModel.getPlatformURLString(), e);
 				throw new CoreException(status);
-			} catch (ClassCastException e){
+			} catch (ClassCastException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Internal Error: The configurationSite object is not a subclass of ConfigurationSiteModel.", e);
 				throw new CoreException(status);
 			}
-			
+
 			// if the URL already exist, set the policy
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry != null) {
@@ -308,15 +326,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				if (oldSite != null) {
 					// the Site existed before, calculate teh delta between its current state and the
 					// state we are reverting to
-					((ConfigurationSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
+					 ((ConfigurationSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
 					nowConfigSites[i] = oldSite;
 				} else {
 					// the site didn't exist in the InstallConfiguration we are reverting to
 					// unconfigure everything from this site so it is still present
 					IFeatureReference[] featuresToUnconfigure = nowConfigSites[i].getSite().getFeatureReferences();
 					for (int j = 0; j < featuresToUnconfigure.length; j++) {
-						nowConfigSites[i].unconfigure(featuresToUnconfigure[j],null);
-					}	
+						nowConfigSites[i].unconfigure(featuresToUnconfigure[j], null);
+					}
 				}
 			}
 			// the new configuration has the exact same sites as the old configuration
@@ -345,8 +363,5 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return new IActivity[0];
 		return (IActivity[]) getActivityModel();
 	}
-
-
-	
 
 }

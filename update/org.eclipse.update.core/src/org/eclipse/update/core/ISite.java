@@ -64,6 +64,14 @@ public interface ISite extends IPluginContainer {
 
 	URL getURL() ;
 	
+	/**
+	 * 
+	 * @return the description of the site
+	 * @since 2.0 
+	 */
+
+	IURLEntry getDescription() ;
+	
 	
 	/**
 	 * 

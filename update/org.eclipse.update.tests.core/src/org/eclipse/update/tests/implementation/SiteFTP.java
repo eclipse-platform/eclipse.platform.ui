@@ -14,6 +14,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IURLEntry;
 
 public class SiteFTP implements ISite {
 
@@ -218,6 +219,13 @@ public class SiteFTP implements ISite {
 	 * @see ISite#getFeatureReference(IFeature)
 	 */
 	public IFeatureReference getFeatureReference(IFeature feature) {
+		return null;
+	}
+
+	/*
+	 * @see ISite#getDescription()
+	 */
+	public IURLEntry getDescription() {
 		return null;
 	}
 
