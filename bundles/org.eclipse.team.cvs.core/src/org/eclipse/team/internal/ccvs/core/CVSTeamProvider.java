@@ -358,74 +358,74 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#delete(IResource[], int, IProgressMonitor)
 	 */
 	public void delete(IResource[] resources, final IProgressMonitor progress) throws TeamException {
-		
-		// Why does the API state that the file must become unmanaged!
-		// CVS requires the file to be deleted before it can be removed!
-		
-		// Concern: I suspect that the file must be deleted but the files parent
-		// must exist for this to work. We may need to modify how Remove works.
-		
-		// Could implement a CVSProvider.DELETE!!!
-				
-		// Delete any files locally and record the names.
-		// Use a resource visitor to ensure the proper depth is obtained
-		final List files = new ArrayList(resources.length);
-		final TeamException[] eHolder = new TeamException[1];
-		for (int i=0;i<resources.length;i++) {
-			checkIsChild(resources[i]);
-			try {
-				if (resources[i].exists()) {
-					resources[i].accept(new IResourceVisitor() {
-						public boolean visit(IResource resource) {
-							try {
-								if (isManaged(resource)) {
-									String name = resource.getFullPath().removeFirstSegments(1).toString();
-									if (resource.getType() == IResource.FILE) {
-										files.add(name);
-										((IFile)resource).delete(false, true, progress);
-									}
-								}
-							} catch (TeamException e) {
-								eHolder[0] = e;
-								// If there was a problem, don't visit the children
-								return false;
-							} catch (CoreException e) {
-								eHolder[0] = wrapException(e);
-								// If there was a problem, don't visit the children
-								return false;
-							}
-							// Always return true and let the depth determine if children are visited
-							return true;
-						}
-					}, IResource.DEPTH_INFINITE, false);
-				} else if (resources[i].getType() == IResource.FILE) {
-					// If the resource doesn't exist but is a file, queue it for removal
-					files.add(resources[i].getFullPath().removeFirstSegments(1).toString());
-				}
-			} catch (CoreException e) {
-				throw wrapException(e);
-			}
-		}
-		// If an exception occured during the visit, throw it here
-		if (eHolder[0] != null)
-			throw eHolder[0];
-		
-		// Remove the files remotely
-		IStatus status;
-		Session s = new Session(getRemoteRoot(), managedProject);
-		s.open(progress);
 		try {
-			status = Command.REMOVE.execute(s,
-			Command.NO_GLOBAL_OPTIONS,
-			Command.NO_LOCAL_OPTIONS,
-			(String[])files.toArray(new String[files.size()]),
-			null,
-			progress);
+			progress.beginTask(null, 100);
+			
+			// Delete any files locally and record the names.
+			// Use a resource visitor to ensure the proper depth is obtained
+			final IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 30);
+			subProgress.beginTask(null, 256);
+			final List files = new ArrayList(resources.length);
+			final TeamException[] eHolder = new TeamException[1];
+			for (int i=0;i<resources.length;i++) {
+				checkIsChild(resources[i]);
+				try {
+					if (resources[i].exists()) {
+						resources[i].accept(new IResourceVisitor() {
+							public boolean visit(IResource resource) {
+								try {
+									if (isManaged(resource)) {
+										String name = resource.getFullPath().removeFirstSegments(1).toString();
+										if (resource.getType() == IResource.FILE) {
+											files.add(name);
+											((IFile)resource).delete(false, true, subProgress);
+										}
+									}
+								} catch (TeamException e) {
+									eHolder[0] = e;
+									// If there was a problem, don't visit the children
+									return false;
+								} catch (CoreException e) {
+									eHolder[0] = wrapException(e);
+									// If there was a problem, don't visit the children
+									return false;
+								}
+								// Always return true and let the depth determine if children are visited
+								return true;
+							}
+						}, IResource.DEPTH_INFINITE, false);
+					} else if (resources[i].getType() == IResource.FILE) {
+						// If the resource doesn't exist but is a file, queue it for removal
+						files.add(resources[i].getFullPath().removeFirstSegments(1).toString());
+					}
+				} catch (CoreException e) {
+					throw wrapException(e);
+				}
+			}
+			subProgress.done();
+			// If an exception occured during the visit, throw it here
+			if (eHolder[0] != null)
+				throw eHolder[0];
+			
+			// Remove the files remotely
+			IStatus status;
+			Session s = new Session(getRemoteRoot(), managedProject);
+			s.open(progress);
+			try {
+				status = Command.REMOVE.execute(s,
+				Command.NO_GLOBAL_OPTIONS,
+				Command.NO_LOCAL_OPTIONS,
+				(String[])files.toArray(new String[files.size()]),
+				null,
+				Policy.subMonitorFor(progress, 70));
+			} finally {
+				s.close();
+			}
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
 		} finally {
-			s.close();
-		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
+			progress.done();
 		}
 	}
 	
@@ -467,48 +467,59 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	public void get(IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		try {
+			progress.beginTask(null, 100);
+			final IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 30);
 			
-		// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
-		ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
-			public void visitFile(ICVSFile file) throws CVSException {
-				ResourceSyncInfo info = file.getSyncInfo();
-				if (info == null || info.isAdded()) {
-					// Delete the file if it's unmanaged or doesn't exist remotely
-					file.delete();
-					file.unmanage();
-				} else if (info.isDeleted()) {
-					// If deleted, null the sync info so the file will be refetched
-					file.unmanage();
-				}
-			}
-
-			public void visitFolder(ICVSFolder folder) throws CVSException {
-				// Visit the children of the folder as appropriate
-				if (depth == IResource.DEPTH_INFINITE)
-					folder.acceptChildren(this);
-				else if (depth == IResource.DEPTH_ONE) {
-					ICVSFile[] files = folder.getFiles();
-					for (int i = 0; i < files.length; i++) {
-						files[i].accept(this);
+			// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
+			ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					ResourceSyncInfo info = file.getSyncInfo();
+					if (info == null || info.isAdded()) {
+						// Delete the file if it's unmanaged or doesn't exist remotely
+						file.delete();
+						file.unmanage();
+					} else if (info.isDeleted()) {
+						// If deleted, null the sync info so the file will be refetched
+						file.unmanage();
 					}
+					subProgress.worked(1);
 				}
+	
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					// Visit the children of the folder as appropriate
+					if (depth == IResource.DEPTH_INFINITE)
+						folder.acceptChildren(this);
+					else if (depth == IResource.DEPTH_ONE) {
+						ICVSFile[] files = folder.getFiles();
+						for (int i = 0; i < files.length; i++) {
+							files[i].accept(this);
+						}
+					}
+					subProgress.worked(1);
+				}
+			};
+			
+			subProgress.beginTask(null, 512);
+			for (int i = 0; i < resources.length; i++) {
+				subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString()));
+				IResource resource = resources[i];
+				getChild(resource).accept(visitor);
+				CVSProviderPlugin.getSynchronizer().save(resource.getLocation().toFile(), progress);
 			}
-		};
-		
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			getChild(resource).accept(visitor);
-			CVSProviderPlugin.getSynchronizer().save(resource.getLocation().toFile(), progress);
+			subProgress.done();
+					
+			// Perform an update, ignoring any local file modifications
+			List options = new ArrayList();
+			options.add(Update.IGNORE_LOCAL_CHANGES);
+			if(depth != IResource.DEPTH_INFINITE) {
+			 options.add(Command.DO_NOT_RECURSE);
+			}
+			LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
+			update(resources, commandOptions, tag, null, Policy.subMonitorFor(progress, 70));
+		} finally {
+			progress.done();
 		}
-				
-		// Perform an update, ignoring any local file modifications
-		List options = new ArrayList();
-		options.add(Update.IGNORE_LOCAL_CHANGES);
-		if(depth != IResource.DEPTH_INFINITE) {
-		 options.add(Command.DO_NOT_RECURSE);
-		}
-		LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-		update(resources, commandOptions, tag, null, progress);
 	}
 	
 	/*
