@@ -502,7 +502,6 @@ public class MessageDialogWithToggle extends MessageDialog {
 
         GridData data = new GridData(SWT.NONE);
         data.horizontalSpan = 2;
-        data.horizontalAlignment = GridData.CENTER;
         button.setLayoutData(data);
         button.setFont(parent.getFont());
 
