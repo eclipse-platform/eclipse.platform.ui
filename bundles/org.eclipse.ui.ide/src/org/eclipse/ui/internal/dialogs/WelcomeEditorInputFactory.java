@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -46,14 +47,16 @@ public IAdaptable createElement(IMemento memento) {
 		return null;
 
 	AboutInfo info = null;
-	// @issue access to about info
-	AboutInfo [] infos = 
-		PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
-	for (int i = 0; i < infos.length; i++) {
-		if (featureId.equals(infos[i].getFeatureId())) {
-			info = infos[i];
-			break;
+	try {
+		AboutInfo [] infos = IDEApplication.getFeatureInfos(); 
+		for (int i = 0; i < infos.length; i++) {
+			if (featureId.equals(infos[i].getFeatureId())) {
+				info = infos[i];
+				break;
+			}
 		}
+	} catch(WorkbenchException e) {
+		IDEWorkbenchPlugin.log("Fail to read about infos in welcome editor input factory.", e.getStatus()); //$NON-NLS-1$
 	}	
 	if (info == null)
 		return null;
