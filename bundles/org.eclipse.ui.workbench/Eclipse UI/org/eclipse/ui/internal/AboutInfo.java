@@ -307,10 +307,18 @@ public class AboutInfo extends NewConfigurationInfo {
 		ArrayList mappingsList = new ArrayList();
 		if (mappingsBundle != null) {
 			boolean found = true;
+			String readValue;
 			int i = 0;
 			while (found) {
 				try {
-					mappingsList.add(mappingsBundle.getString(new Integer(i).toString()));
+					// Substitute $featureVersion if Applicable
+					readValue = mappingsBundle.getString(Integer.toString(i));
+					if("$featureVersion".equals(readValue)) {  //$NON-NLS-1$
+						readValue = getVersion();
+						if (readValue == null)
+							readValue = WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$						
+					}
+					mappingsList.add(readValue);
 				} catch (MissingResourceException e) {
 					found = false;
 				}
@@ -324,20 +332,6 @@ public class AboutInfo extends NewConfigurationInfo {
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
 		aboutText = getResourceString(aboutText, bundle, mappingsArray);
 		
-		// Substitute $featureVersion if applicable
-		int i = aboutText.indexOf("$featureVersion"); //$NON-NLS-1$
-		if (i != -1) {
-			String s1 = aboutText.substring(0,i);
-			String s2 = aboutText.substring(i+15, aboutText.length());
-			String s3 = getVersion();
-			if (s3 == null) {
-				s1 = s1.concat(WorkbenchMessages.getString("AboutDialog.notSpecified")); //$NON-NLS-1$
-			} else {
-				s1 = s1.concat(s3);
-			}
-			aboutText = s1.concat(s2);
-		}
-
 		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
 
 		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
