@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1475,6 +1477,22 @@ public void performedShowIn(String partId) {
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
 		persp.performedShowIn(partId);
+	}
+}
+
+/**
+ * Sorts the given collection of show in target part ids in MRU order.
+ */
+public void sortShowInPartIds(ArrayList partIds) {
+	final Perspective persp = getActivePerspective();
+	if (persp != null) {
+		Collections.sort(partIds, new Comparator() {
+			public int compare(Object a, Object b) {
+				long ta = persp.getShowInTime((String) a);
+				long tb = persp.getShowInTime((String) b);
+				return (ta == tb) ? 0 : ((ta > tb) ? -1 : 1);
+			}
+		});
 	}
 }
 

@@ -175,6 +175,7 @@ private ArrayList getShowInPartIds(IWorkbenchPart sourcePart) {
 			}
 		}
 	}
+	page.sortShowInPartIds(targetIds);
 	return targetIds;
 }
 	

@@ -127,7 +127,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_ALWAYS_ON_ACTION_SET = "alwaysOnActionSet"; //$NON-NLS-1$
 	public static final String TAG_ALWAYS_OFF_ACTION_SET = "alwaysOffActionSet"; //$NON-NLS-1$
 	public static final String TAG_SHOW_VIEW_ACTION = "show_view_action"; //$NON-NLS-1$
-	public static final String TAG_SHOW_IN_PART = "show_in_part"; //$NON-NLS-1$
+	public static final String TAG_SHOW_IN_TIME = "show_in_time"; //$NON-NLS-1$
+	public static final String TAG_TIME = "time"; //$NON-NLS-1$
 	public static final String TAG_NEW_WIZARD_ACTION = "new_wizard_action"; //$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_ACTION = "perspective_action"; //$NON-NLS-1$
 	public static final String TAG_VIEW = "view"; //$NON-NLS-1$

@@ -84,6 +84,7 @@ public class Perspective
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
 	private ArrayList showInPartIds;
+	private HashMap showInTimes = new HashMap();
 	private IViewReference activeFastView;
 	private IViewReference previousActiveFastView;
 	private IMemento memento;
@@ -406,6 +407,15 @@ private float getFastViewWidthRatio(String id) {
  */
 public ArrayList getShowInPartIds() {
 	return showInPartIds;
+}
+
+/**
+ * Returns the time at which the last Show In was performed
+ * for the given target part, or 0 if unknown.
+ */
+public long getShowInTime(String partId) {
+	Long t = (Long) showInTimes.get(partId);
+	return t == null ? 0L : t.longValue();
 }
 /**
  * Returns the ids of the views to list in the Show View shortcuts.
@@ -753,14 +763,10 @@ public void partActivated(IWorkbenchPart activePart) {
 
 /**
  * The user successfully performed a Show In... action on the specified part.
- * Update the list of Show In items accordingly.
+ * Update the history.
  */
 public void performedShowIn(String partId) {
-	// move it to the front of the list;
-	// check to ensure we're just reordering, not adding
-	if (showInPartIds.remove(partId)) {
-		showInPartIds.add(0, partId);
-	}
+	showInTimes.put(partId, new Long(System.currentTimeMillis()));
 }
 
 /**
@@ -988,21 +994,24 @@ public IStatus restoreState() {
 		showViewActionIds.add(id);
 	}
 	
-	// Load "show in parts".
-	actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_PART);
-	showInPartIds = new ArrayList(actions.length);
+	// Load "show in times".
+	actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_TIME);
 	for (int x = 0; x < actions.length; x ++) {
 		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-		if (id != null) {
-			showInPartIds.add(id);
+		String timeStr = actions[x].getString(IWorkbenchConstants.TAG_TIME);
+		if (id != null && timeStr != null) {
+			try {
+				long time = Long.parseLong(timeStr);
+				showInTimes.put(id, new Long(time));
+			}
+			catch (NumberFormatException e) {
+				// skip this one
+			}
 		}
 	}
-	ArrayList regIds = getShowInIdsFromRegistry();
-	for (int i = 0; i < regIds.size(); ++i) {
-		String regId = (String) regIds.get(i);
-		if (!showInPartIds.contains(regId))
-			showInPartIds.add(regId);
-	}
+	
+	// Load "show in parts" from registry, not memento
+	showInPartIds = getShowInIdsFromRegistry();
 	
 	// Load "new wizard actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
@@ -1149,12 +1158,14 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		child.putString(IWorkbenchConstants.TAG_ID, str);
 	}
 
-	// Save "show in parts"
-	enum = showInPartIds.iterator();
+	// Save "show in times"
+	enum = showInTimes.keySet().iterator();
 	while (enum.hasNext()) {
-		String str = (String)enum.next();
-		IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_IN_PART);
-		child.putString(IWorkbenchConstants.TAG_ID, str);
+		String id = (String) enum.next();
+		Long time = (Long) showInTimes.get(id);
+		IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_IN_TIME);
+		child.putString(IWorkbenchConstants.TAG_ID, id);
+		child.putString(IWorkbenchConstants.TAG_TIME, time.toString());
 	}
 
 	// Save "new wizard actions".
