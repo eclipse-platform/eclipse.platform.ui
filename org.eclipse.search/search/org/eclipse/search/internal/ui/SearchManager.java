@@ -343,14 +343,8 @@ public class SearchManager implements IResourceChangeListener {
 					IMarkerDelta markerDelta= markers[i];
 					int kind= markerDelta.getKind();
 					IMarker marker= markerDelta.getMarker();
-					if (markerDelta.isSubtypeOf(SearchUI.SEARCH_MARKER)) {
-						if ((kind & IResourceDelta.ADDED) != 0)
-							handleAddMatch(marker);
-						else if (((kind & IResourceDelta.REMOVED) != 0))
-							handleRemoveMatch(marker);
-						else if ((kind & IResourceDelta.CHANGED) != 0)
-							handleUpdateMatch(marker);
-					}
+					if (markerDelta.isSubtypeOf(SearchUI.SEARCH_MARKER))
+						handleSearchMarkerChanged(kind, marker);
 				}
 				return true;
 			}
@@ -360,6 +354,15 @@ public class SearchManager implements IResourceChangeListener {
 		} catch (CoreException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.resourceChanged.title"), SearchMessages.getString("Search.Error.resourceChanged.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
+	}
+
+	private void handleSearchMarkerChanged(int kind, IMarker marker) {
+		if ((kind & IResourceDelta.ADDED) != 0)
+			handleAddMatch(marker);
+		else if (((kind & IResourceDelta.REMOVED) != 0))
+			handleRemoveMatch(marker);
+		else if ((kind & IResourceDelta.CHANGED) != 0)
+			handleUpdateMatch(marker);
 	}
 
 	private void handleRemoveAll() {

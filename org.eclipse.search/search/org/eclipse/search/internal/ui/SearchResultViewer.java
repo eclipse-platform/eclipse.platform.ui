@@ -96,22 +96,7 @@ class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					int selectionCount= getSelectedEntriesCount();
-					boolean hasSingleSelection= selectionCount == 1;
-					boolean hasElements= getItemCount() > 0;
-					fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
-					fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
-					fGotoMarkerAction.setEnabled(hasSingleSelection);
-					fRemoveMatchAction.setEnabled(hasSingleSelection);
-					fMarkerToShow= -1;
-					String location= ""; //$NON-NLS-1$
-					if (hasSingleSelection) {
-						ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
-						IPath path= entry.getResource().getFullPath();
-						if (path != null)
-							location= path.makeRelative().toString();
-					}
-					setStatusLineMessage(location);
+					handleSelectionChanged();
 				}
 			}
 		);
@@ -136,7 +121,26 @@ class SearchResultViewer extends TableViewer {
 		// Register menu
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
 	}
-
+
+	private void handleSelectionChanged() {
+		int selectionCount= getSelectedEntriesCount();
+		boolean hasSingleSelection= selectionCount == 1;
+		boolean hasElements= getItemCount() > 0;
+		fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
+		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
+		fGotoMarkerAction.setEnabled(hasSingleSelection);
+		fRemoveMatchAction.setEnabled(hasSingleSelection);
+		fMarkerToShow= -1;
+		String location= ""; //$NON-NLS-1$
+		if (hasSingleSelection) {
+			ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
+			IPath path= entry.getResource().getFullPath();
+			if (path != null)
+				location= path.makeRelative().toString();
+		}
+		setStatusLineMessage(location);
+
+	}
 	void enableActions() {
 		/*
 		 * Note: The check before each set operation reduces flickering
@@ -359,7 +363,6 @@ class SearchResultViewer extends TableViewer {
 	}
 		
 	private void selectResult(Table table, int index) {
-		TableItem item= table.getItem(index);
 		table.setSelection(index);
 		table.showSelection();
 	}

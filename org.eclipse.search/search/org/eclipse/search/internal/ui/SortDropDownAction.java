@@ -66,8 +66,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		if (sorterDesc == null)
 			sorterDesc= findSorter(fPageId);
 		if (sorterDesc != null) {
-			fLastCheckedForType.put(fPageId, sorterDesc);
-			fgLastCheckedForType.put(fPageId, sorterDesc);
+			setChecked(sorterDesc);
 			fViewer.setSorter(sorterDesc.createObject());
 		}
 	}
@@ -92,8 +91,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				final Action action= new Action() {
 					public void run() {
 						if (!checkedId.equals(sorterDesc.getId())) {
-							fLastCheckedForType.put(fPageId, sorterDesc);
-							fgLastCheckedForType.put(fPageId, sorterDesc);
+							setChecked(sorterDesc);
 							BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 								public void run() {
 									fViewer.setSorter(sorter);
@@ -141,6 +139,11 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				return sorterDesc;
 		}
 		return null;
+	}
+
+	private void setChecked(SorterDescriptor sorterDesc) {
+		fLastCheckedForType.put(fPageId, sorterDesc);
+		fgLastCheckedForType.put(fPageId, sorterDesc);
 	}
 
 	//--- Persistency -------------------------------------------------

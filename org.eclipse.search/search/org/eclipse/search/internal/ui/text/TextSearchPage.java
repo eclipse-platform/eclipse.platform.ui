@@ -222,22 +222,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		// fPattern.setItems(getPreviousSearchPatterns());
 		fPattern.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (fPattern.getSelectionIndex() < 0)
-					return;
-				int index= fgPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
-				SearchPatternData patternData= (SearchPatternData) fgPreviousSearchPatterns.get(index);
-				fIgnoreCase.setSelection(patternData.ignoreCase);
-				fPattern.setText(patternData.pattern);
-				fFileTypeEditor.setFileTypes(patternData.extensions);
+				handleWidgetSelected();
 			}
 		});
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(fPattern.getText().length() > 0);
+				getContainer().setPerformActionEnabled(getPattern().length() > 0);
 			}
 		});
 		
-		// 1GF90TL: ITPJUI:ALL - Search dialog is missing a width hint
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(30);
 		fPattern.setLayoutData(gd);
@@ -259,6 +252,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		setControl(result);
 		
 		WorkbenchHelp.setHelp(result, new Object[] { ISearchHelpContextIds.TEXT_SEARCH_PAGE });		
+	}
+
+	private void handleWidgetSelected() {
+		if (fPattern.getSelectionIndex() < 0)
+			return;
+		int index= fgPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
+		SearchPatternData patternData= (SearchPatternData) fgPreviousSearchPatterns.get(index);
+		fIgnoreCase.setSelection(patternData.ignoreCase);
+		fPattern.setText(patternData.pattern);
+		fFileTypeEditor.setFileTypes(patternData.extensions);
 	}
 
 	private void initializePatternControl() {

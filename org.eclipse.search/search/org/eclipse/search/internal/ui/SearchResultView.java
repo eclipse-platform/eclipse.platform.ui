@@ -73,7 +73,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		if (fMemento != null)
 			fViewer.restoreState(fMemento);
 		fMemento= null;
-		IWorkspace workspace= SearchPlugin.getWorkspace();
 		SearchManager.getDefault().addSearchChangeListener(fViewer);
 		Search search= SearchManager.getDefault().getCurrentSearch();
 		if (search != null)
@@ -137,7 +136,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				fViewer.setContextMenuTarget(contributor);
+				getViewer().setContextMenuTarget(contributor);
 			}
 		});
 	}
@@ -146,7 +145,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				fViewer.setGotoMarkerAction(gotoMarkerAction);
+				getViewer().setGotoMarkerAction(gotoMarkerAction);
 			}
 		});
 	}

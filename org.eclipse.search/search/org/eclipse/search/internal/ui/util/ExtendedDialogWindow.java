@@ -98,7 +98,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * @return the button bar control
 	 */
 	protected Control createButtonBar(Composite parent) {
-		GridData gd;
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;

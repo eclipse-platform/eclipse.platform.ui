@@ -96,9 +96,9 @@ public class MessageLine extends CLabel {
 	}
 
 	/**
-	     * Display the given error message. A currently displayed message
-	     * is saved and will be redisplayed when the error message is cleared.
-	     */
+     * Display the given error message. A currently displayed message
+     * is saved and will be redisplayed when the error message is cleared.
+     */
 	public void setErrorMessage(String message) {
 		fErrorText= message;
 
@@ -109,7 +109,7 @@ public class MessageLine extends CLabel {
 				fErrorColor= new Color(getDisplay(), fErrorRGB);
 				addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
-						fErrorColor.dispose();
+						getErrorColor().dispose();
 					}
 				});
 			}
@@ -119,9 +119,9 @@ public class MessageLine extends CLabel {
 	}
 
 	/**
-	     * Set the message text. If the message line currently displays an error,
-	     * the message is stored and will be shown after a call to clearErrorMessage
-	     */
+     * Set the message text. If the message line currently displays an error,
+     * the message is stored and will be shown after a call to clearErrorMessage
+     */
 	public void setMessage(String message) {
 		fMessageText= message;
 		if (message == null)
@@ -130,5 +130,9 @@ public class MessageLine extends CLabel {
 			setForeground(fDefaultColor);
 			setText(message);
 		}
+	}
+	
+	protected Color getErrorColor() {
+		return fErrorColor;
 	}
 }

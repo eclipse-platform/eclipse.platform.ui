@@ -90,7 +90,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 		SelectionListener listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fListViewer.setAllChecked(true);
+				getListViewer().setAllChecked(true);
 			}
 		};
 		selectButton.addSelectionListener(listener);
@@ -104,7 +104,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 		listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fListViewer.setAllChecked(false);
+				getListViewer().setAllChecked(false);
 
 			}
 		};
@@ -279,5 +279,9 @@ public class TypeFilteringDialog extends SelectionDialog {
 		addUserDefinedEntries(list);
 		setResult(list);
 		super.okPressed();
+	}
+
+	protected CheckboxTableViewer getListViewer() {
+		return fListViewer;
 	}
 }
