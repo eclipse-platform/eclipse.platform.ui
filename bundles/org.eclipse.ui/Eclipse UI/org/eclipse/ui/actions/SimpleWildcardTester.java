@@ -43,6 +43,10 @@ public static boolean testWildcard(String pattern, String str) {
  * @return <code>true</code> if a match occurs; <code>false</code>otherwise.
  */
 public static boolean testWildcardIgnoreCase(String pattern, String str) {
+	
+	//If str is null there was no extension to test
+	if(str == null)
+		return false;
 	pattern = pattern.toLowerCase();
 	str = str.toLowerCase();
 	return testWildcard(pattern, str);
