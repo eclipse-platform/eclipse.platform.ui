@@ -101,7 +101,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * was created from, or <code>null</code> if this is a new
 	 * working copy created from a launch configuration type.
 	 * 
-	 * @return launch configuration, or <code>null</code>
+	 * @return the original launch configuration, or <code>null</code>
 	 */
 	public ILaunchConfiguration getOriginal();
 	
