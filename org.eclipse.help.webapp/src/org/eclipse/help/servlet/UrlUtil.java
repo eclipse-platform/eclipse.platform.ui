@@ -17,13 +17,7 @@ public class UrlUtil {
 	}
 	public static String decode(String s) {
 		try {
-			if (s.indexOf("%u") < 0) {
-				return new String(urlDecode(s), "UTF8");
-			} else {
-				// String was escaped in javascript 1.3
-				// need to use slower unescape method
-				return unescape(s);
-			}
+			return new String(urlDecode(s), "UTF8");
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
@@ -63,7 +57,7 @@ public class UrlUtil {
 	/**
 	 * Decodes strings encoded with Javascript 1.3 escape
 	 */
-	private static String unescape(String encodedURL) {
+	public static String unescape(String encodedURL) {
 		int len = encodedURL.length();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < len;) {
@@ -76,7 +70,7 @@ public class UrlUtil {
 							tempOs = new ByteArrayOutputStream(1);
 							tempOs.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
 							try {
-								buf.append(new String(tempOs.toByteArray(), "UTF8"));
+								buf.append(new String(tempOs.toByteArray(), "ISO8859_1"));
 							} catch (UnsupportedEncodingException uee) {
 								return null;
 							}
@@ -119,7 +113,7 @@ public class UrlUtil {
 		}
 		return buf.toString();
 	}
-	/**
+		/**
 	 * Obtains parameter from request.
 	 * request.getParameter() returns incorrect string
 	 * for non ASCII queries encoded from UTF-8 bytes
@@ -127,7 +121,16 @@ public class UrlUtil {
 	public static String getRequestParameter(
 		HttpServletRequest request,
 		String parameterName) {
-		String query = request.getQueryString();
+		return getRequestParameter(request.getQueryString(), parameterName);
+	}
+	/**
+	 * Obtains parameter from request query string.
+	 * request.getParameter() returns incorrect string
+	 * for non ASCII queries encoded from UTF-8 bytes
+	 */
+	public static String getRequestParameter(
+		String query,
+		String parameterName) {
 		if (query == null)
 			return null;
 		int start = query.indexOf(parameterName + "=");
@@ -142,7 +145,38 @@ public class UrlUtil {
 		int end = query.indexOf("&", start);
 		if (end <= 0)
 			end = query.length();
-		return UrlUtil.decode(query.substring(start, end));
+		return decode(query.substring(start, end));
+	}
+	/**
+	 * Changes encoding of parameter in the URL query
+	 * from JavaScript 1.3 escape encoding
+	 * to UTF-8 URL encoding
+	 */
+	public static String changeParameterEncoding(
+		String query,
+		String jsParameterName,
+		String newParameterName) {
+		if (query == null)
+			return null;
+		StringBuffer buf=new StringBuffer();
+		int equal, and;
+		for(and=-1; 0<=(equal=query.indexOf('=', and+1));equal=and){
+			String key=query.substring(and+1, equal);
+			and=query.indexOf('&', equal);
+			if(and<0)
+				and=query.length();
+			String value=query.substring(equal+1, and);
+			if(jsParameterName.equals(key)){
+				key=newParameterName;
+				value=encode(unescape(value));
+			}
+			if(buf.length()>0)
+				buf.append('&');
+			buf.append(key);
+			buf.append('=');
+			buf.append(value);
+		}
+		return buf.toString();
 	}
 	/**
 	 * Encodes string for embedding in JavaScript source
