@@ -49,7 +49,7 @@ public class Patcher {
 	private boolean fIgnoreLineDelimiter= true;
 	private boolean fPreserveLineDelimiters= false;
 	private boolean fReverse= false;
-	private boolean fAdjustShift= false;
+	private boolean fAdjustShift= true;
 	
 	
 	Patcher() {
