@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -119,7 +118,7 @@ public class ImportTest extends EclipseTest {
 		
 		// Check it out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + "Copy");
-		CVSWorkspaceRoot.checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
+		checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
 		assertValidCheckout(copy);
 		assertEquals(project, copy);
 	}

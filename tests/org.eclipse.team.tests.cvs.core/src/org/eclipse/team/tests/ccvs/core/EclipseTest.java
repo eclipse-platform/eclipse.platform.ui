@@ -42,7 +42,9 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
@@ -290,24 +292,37 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 protected IProject checkoutCopy(IProject project, String postfix) throws TeamException {
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + postfix);
-		CVSWorkspaceRoot.checkout(getRepository(), copy, CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
+		checkout(getRepository(), copy, CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
 		return copy;
 	 }
 	 
 	 protected IProject checkoutCopy(IProject project, CVSTag tag) throws TeamException {
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + tag.getName());
-		CVSWorkspaceRoot.checkout(getRepository(), copy, 
+		checkout(getRepository(), copy, 
 			CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), 
 			tag, DEFAULT_MONITOR);
 		return copy;
 	 }
 	 
+	public static void checkout(
+		ICVSRepositoryLocation repository,
+		IProject project,
+		String sourceModule,
+		CVSTag tag,
+		IProgressMonitor monitor)
+		throws TeamException {
+		
+		if (sourceModule == null)
+			sourceModule = project.getName();
+		CVSWorkspaceRoot.checkout(new ICVSRemoteFolder[] { new RemoteFolder(null, repository, sourceModule, tag)},
+			new IProject[] { project }, monitor);
+	}
 	 
 	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
 	 	if (project == null)
 	 		project = getWorkspace().getRoot().getProject(new Path(moduleName).lastSegment());
-		CVSWorkspaceRoot.checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
+		checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
 		return project;
 	 }
 	/*
