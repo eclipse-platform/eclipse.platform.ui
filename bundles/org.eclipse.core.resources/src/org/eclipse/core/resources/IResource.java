@@ -1039,8 +1039,35 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  * @param depth valid values are <code>DEPTH_ZERO</code>, 
  *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
  * @see #isLocal
+ * @deprecated since 0.104 call #setLocal(boolean, int, IProgressMonitor)
  */
 public void setLocal(boolean flag, int depth);
+/**
+ * Set whether or not this resource and its members (to the 
+ * specified depth) are expected to have their contents (and properties)
+ * available locally.  The workspace root and projects are always local and 
+ * attempting to set either to non-local (i.e., passing <code>false</code>) 
+ * has no affect on the resource.
+ * <p>
+ * When a resource is not local, its content and properties are
+ * unavailable for both reading and writing.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor.
+ * </p>
+ * 
+ * @param depth valid values are <code>DEPTH_ZERO</code>, 
+ *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> Resource changes are disallowed during resource change event notification.</li>
+ * </ul>
+ * @see #isLocal
+ */
+public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 /**
  * Sets the value of the persistent property of this resource identified
  * by the given key. If the supplied value is <code>null</code>,

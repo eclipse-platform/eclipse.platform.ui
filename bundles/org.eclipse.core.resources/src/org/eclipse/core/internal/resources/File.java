@@ -89,22 +89,22 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 				// if the resource exists (i.e. was just discovered in the local refresh)
 				// then we delete what we just discovered and create the new resource
 				if (exists(flags, false))
-					delete(true, Policy.subMonitorFor(monitor, Policy.opWork / 2));
+					delete(true, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
 			} else {
-				monitor.worked(Policy.opWork / 2);
+				monitor.worked(Policy.opWork * 40 / 100);
 				checkDoesNotExist(flags, false);
 			}
 			workspace.createResource(this, false);
 			if (local) {
 				try {
-					internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork / 2));
+					internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
 				} catch (CoreException e) {
 					// a problem happened creating the file on disk, so delete from the workspace
 					workspace.deleteResource(this);
 					throw e; // rethrow
 				}
 			}
-			setLocal(local, DEPTH_ZERO);
+			setLocal(local, DEPTH_ZERO, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 			if (!local)
 				getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
 		} catch (OperationCanceledException e) {

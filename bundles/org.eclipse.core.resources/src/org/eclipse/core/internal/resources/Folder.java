@@ -99,18 +99,24 @@ public int getType() {
 	return FOLDER;
 }
 public void internalCreate(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
-	workspace.createResource(this, false);
-	if (local) {
-		try {
-			getLocalManager().write(this, force, monitor);
-		} catch (CoreException e) {
-			// a problem happened creating the folder on disk, so delete from the workspace
-			workspace.deleteResource(this);
-			throw e; // rethrow
+	monitor = Policy.monitorFor(monitor);
+	try {
+		monitor.beginTask("Creating file.", Policy.totalWork);
+		workspace.createResource(this, false);
+		if (local) {
+			try {
+				getLocalManager().write(this, force, Policy.subMonitorFor(monitor, Policy.totalWork * 75 / 100));
+			} catch (CoreException e) {
+				// a problem happened creating the folder on disk, so delete from the workspace
+				workspace.deleteResource(this);
+				throw e; // rethrow
+			}
 		}
+		setLocal(local, DEPTH_ZERO, Policy.subMonitorFor(monitor, Policy.totalWork * 25 / 100));
+		if (!local)
+			getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
+	} finally {
+		monitor.done();
 	}
-	setLocal(local, DEPTH_ZERO);
-	if (!local)
-		getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
 }
 }

@@ -819,7 +819,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 			if (getType() != ROOT && !getProject().isAccessible())
 				return;
 			workspace.beginOperation(true);
-			build = getLocalManager().refresh(this, depth, Policy.subMonitorFor(monitor, Policy.totalWork));
+			build = getLocalManager().refresh(this, depth, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -832,19 +832,33 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 }
 /**
  * @see IResource
+ * @deprecated since 0.104 use #setLocal(boolean, int, IProgressMonitor)
  */
 public void setLocal(boolean flag, int depth) {
 	try {
+		setLocal(flag, depth, null);
+	} catch (CoreException e) {
+		// FIXME: decide what to do here. log? throw? nothing?
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+	}
+}
+/**
+ * @see IResource
+ */
+public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		monitor.beginTask("Setting resource local flag.", Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			workspace.beginOperation(true);
 			internalSetLocal(flag, depth);
+			monitor.worked(Policy.opWork);
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
-	} catch (CoreException e) {
-		// FIXME: decide what to do here. log? throw? nothing?
-		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+	} finally {
+		monitor.done();
 	}
 }
 /**
