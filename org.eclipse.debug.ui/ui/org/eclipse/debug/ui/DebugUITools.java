@@ -392,7 +392,7 @@ public class DebugUITools {
 	 *
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param configuration the configuration to display
-	 * @param group identifier of the launch group the launch configuration
+	 * @param groupIdentifier group identifier of the launch group the launch configuration
 	 * belongs to
 	 * @return the return code from opening the launch configuration dialog -
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
@@ -408,7 +408,7 @@ public class DebugUITools {
 	 *
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param configuration the configuration to display
-	 * @param group identifier of the launch group the launch configuration
+	 * @param groupIdentifier group identifier of the launch group the launch configuration
 	 * belongs to
 	 * @param status the status to display, or <code>null</code> if none
 	 * @return the return code from opening the launch configuration dialog -
@@ -439,7 +439,7 @@ public class DebugUITools {
 	 * </p>
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param configuration the configuration to display
-	 * @param group identifier of the launch group the launch configuration
+	 * @param groupIdentifier group identifier of the launch group the launch configuration
 	 * belongs to
 	 * @param status the status to display, or <code>null</code> if none 
 	 * @return the return code from opening the launch configuration dialog -
