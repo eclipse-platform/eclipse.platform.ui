@@ -183,10 +183,12 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object element = selection.getFirstElement();
 		AbstractTreeViewer treeViewer = (AbstractTreeViewer) getViewer();
-		if (treeViewer.getExpandedState(element)) {
-			treeViewer.collapseToLevel(element, AbstractTreeViewer.ALL_LEVELS);
-		} else {
-			TreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
+		if(element != null) {
+			if (treeViewer.getExpandedState(element)) {
+				treeViewer.collapseToLevel(element, AbstractTreeViewer.ALL_LEVELS);
+			} else {
+				TreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
+			}
 		}
 	}
 	
