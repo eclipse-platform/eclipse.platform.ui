@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+
 /**
  * An adapter manager maintains a registry of adapter factories. Clients
  * directly invoke methods on an adapter manager to register and unregister
@@ -60,6 +61,45 @@ package org.eclipse.core.runtime;
  * @see IAdapterFactory
  */
 public interface IAdapterManager {
+
+	/**
+	 * Returns the types that can be obtained by converting <code>adaptableClass</code> 
+	 * via this manager. Converting means that subsequent calls to <code>getAdapter()</code>
+	 * or <code>loadAdapter()</code> could result in an adapted object.
+	 * <p>
+	 * Note that the returned types do not guarantee that
+	 * a subsequent call to <code>getAdapter</code> with the same type as an argument
+	 * will return a non-null result. If the factory's plug-in has not yet been
+	 * loaded, or if the factory itself returns <code>null</code>, then
+	 * <code>getAdapter</code> will still return <code>null</code>.
+	 * </p>
+	 * @param adaptableClass the adaptable class being queried	
+	 * @return an array of type names that can be obtained by converting 
+	 * <code>adaptableClass</code> via this manager. An empty array 
+	 * is returned if there are none.
+	 * @since 3.1
+	 */
+	public String[] computeAdapterTypes(Class adaptableClass);
+	
+	/**
+	 * Returns the class search order for a given class. The search order from a 
+	 * class with the definition <br>
+	 * <code>class X extends Y implements A, B</code><br>
+	 * is as follows:
+	 * <ul>
+	 * <li>the target's class: X
+	 * <li>X's superclasses in order to <code>Object</code>
+	 * <li>a breadth-first traversal of the target class's interfaces in the
+	 * order returned by <code>getInterfaces</code> (in the example, A and its
+	 * superinterfaces then B and its superinterfaces) </il>
+	 * </ul>
+	 * 
+	 * @param clazz the class for which to return the class order. 
+	 * @return the class search order for the given class. The returned
+	 * search order will minimally  contain the target class.
+	 * @since 3.1
+	 */
+	public Class[] computeClassOrder(Class clazz);
 	/**
 	 * Returns an object which is an instance of the given class associated
 	 * with the given object. Returns <code>null</code> if no such object can
@@ -117,7 +157,7 @@ public interface IAdapterManager {
 	 * @since 3.0
 	 */
 	public boolean hasAdapter(Object adaptable, String adapterTypeName);
-
+	
 	/**
 	 * Returns an object that is an instance of the given class name associated
 	 * with the given object. Returns <code>null</code> if no such object can
