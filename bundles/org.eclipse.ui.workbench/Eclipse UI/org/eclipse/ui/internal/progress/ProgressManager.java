@@ -642,12 +642,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Returns the image descriptor with the given relative path.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param source
 	 * @return Image
 	 */
@@ -658,12 +652,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Returns the image descriptor with the given relative path.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 * 	
 	 * @param fileSystemPath
 	 *           The URL for the file system to the image.
 	 * @param loader -
@@ -757,13 +746,14 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
 		dialog.setOpenOnRun(false);
+		final boolean[] busy = {true};
 		
 		UIJob updateJob = new UIJob(ProgressMessages.getString("ProgressManager.openJobName")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-
+				busy[0] = false;
 				dialog.open();
 				if(monitor.isCanceled())
 					return Status.CANCEL_STATUS;
@@ -786,7 +776,15 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			 */
 			public void run() {
 				try {
-					dialog.run(true,true,runnable);
+					dialog.run(true /* fork */ ,true /* cancelable */,runnable);
+					
+					//Run the event loop until the progress job wakes up
+					Display display = Display.getCurrent();
+					while(busy[0]){
+						if (!display.readAndDispatch())
+							display.sleep();
+					}
+						
 				} catch (InvocationTargetException e) {
 					invokes[0] = e;
 				} catch (InterruptedException e) {

@@ -11,6 +11,8 @@
 package org.eclipse.jface.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 
 import org.eclipse.swt.widgets.Display;
@@ -52,7 +54,10 @@ import org.eclipse.jface.util.Assert;
 		private double worked;
 		private IProgressMonitor monitor;
 		
-		public Collector(String subTask, double work, IProgressMonitor monitor) {
+		public Collector(
+				String subTask, 
+				double work, 
+				IProgressMonitor monitor) {
 			this.subTask = subTask;
 			this.worked = work;
 			this.monitor = monitor;
@@ -168,5 +173,48 @@ public synchronized void subTask(final String name) {
  */
 public synchronized void worked(int work) {
 	internalWorked(work);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.ProgressMonitorWrapper#clearBlocked()
+ */
+public void clearBlocked() {
+	
+	//If this is a monitor that can report blocking do so.
+	//Don't bother with a collector as this should only ever
+	//happen once and prevent any more progress.
+	final IProgressMonitor pm = getWrappedProgressMonitor();
+	if(!(pm instanceof IProgressMonitorWithBlocking))
+		return;
+	
+	display.asyncExec(new Runnable(){
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			((IProgressMonitorWithBlocking)pm).clearBlocked();
+		}
+	});
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setBlocked(org.eclipse.core.runtime.IStatus)
+ */
+public void setBlocked(final IStatus reason) {
+	//If this is a monitor that can report blocking do so.
+	//Don't bother with a collector as this should only ever
+	//happen once and prevent any more progress.
+	final IProgressMonitor pm = getWrappedProgressMonitor();
+	if(!(pm instanceof IProgressMonitorWithBlocking))
+		return;
+	
+	display.asyncExec(new Runnable(){
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			((IProgressMonitorWithBlocking)pm).setBlocked(reason);
+		}
+	});
 }
 }
