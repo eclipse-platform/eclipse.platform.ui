@@ -54,7 +54,6 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	 */
 	protected SyncInfoFilter getSyncInfoFilter() {
 		// Update works for all incoming and conflicting nodes
-		// TODO: there should be an instance variable for the filter
 		return new OrSyncInfoFilter(new SyncInfoFilter[] {
 			new SyncInfoDirectionFilter(SyncInfo.INCOMING),
 			new SyncInfoDirectionFilter(SyncInfo.CONFLICTING)
@@ -95,7 +94,7 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		if(nodes.length > 0) {
 			TeamSubscriber subscriber = nodes[0].getSubscriber();
 			if (!(subscriber instanceof CVSMergeSubscriber)) {
-				throw new CVSException("Invalid subscriber: " + subscriber.getId());
+				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", subscriber.getId().toString())); //$NON-NLS-1$
 			}
 			CVSTag startTag = ((CVSMergeSubscriber)subscriber).getStartTag();
 			CVSTag endTag = ((CVSMergeSubscriber)subscriber).getEndTag();
@@ -205,5 +204,12 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		if (!cvsFolder.exists()) {
 			cvsFolder.mkdir();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("MergeUpdateAction.jobName", new Integer(syncSet.size()).toString());
 	}
 }

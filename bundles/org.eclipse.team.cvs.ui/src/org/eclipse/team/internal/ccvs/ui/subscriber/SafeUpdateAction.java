@@ -333,4 +333,12 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	protected String getErrorTitle() {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString());
+	}
+
 }

@@ -103,12 +103,8 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 		return true;
 	}
 	
-	/**
-	 * @param syncSet
-	 * @return
-	 */
 	private IResource[] getUnaddedResources(SyncInfoSet syncSet) throws CVSException {
-		// TODO: should only get outgoing additions (since conflicting additions 
+		// TODO: Should only get outgoing additions (since conflicting additions 
 		// could be considered to be under version control already)
 		IResource[] resources = syncSet.getResources();
 		List result = new ArrayList();
@@ -200,7 +196,6 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 						}
 						break;
 					case SyncInfo.CONFLICTING:
-						// TODO: what about conflicting deletions
 						// Convert the conflicting change to an outgoing change
 						makeOutgoing.add(changedNode);
 						break;
@@ -228,9 +223,6 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 			if (makeOutgoing.size() > 0) {
 				makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
 			}
-			
-			// TODO: There was special handling for undoing incoming deletions
-			// This should be handled by makeOutgoing but we'll need to verify
 
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 			if (additions.size() != 0) {
@@ -241,7 +233,6 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 			}
 			manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, Policy.subMonitorFor(monitor, commits.size() * 100));
 			
-			// TODO: are there any cases that need to have folders pruned?
 		} catch (TeamException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -286,5 +277,12 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	
 	protected String getErrorTitle() {
 		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("CommitAction.jobName", new Integer(syncSet.size()).toString());
 	}
 }

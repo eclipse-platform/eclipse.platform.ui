@@ -60,5 +60,10 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		}
 	}
 
+	protected boolean canRunAsJob() {
+		// There's no sense doing this operation in the background since
+		// it does not contact the server
+		return false;
+	}
 
 }
