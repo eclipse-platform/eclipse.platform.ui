@@ -457,7 +457,7 @@
             adaptable="true"
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="*.xml"
-            id="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+            id="org.eclipse.ui.tests.testObjectStateContentType">
          <visibility>
             <objectState
                   name="contentTypeId"
@@ -470,7 +470,7 @@
                tooltip="This is a contribution for ObjectContributionTest.testObjectStateContentType"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+               id="org.eclipse.ui.tests.testObjectStateContentType">
          </action>
       </objectContribution>
       
