@@ -4,15 +4,17 @@ import java.io.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.PlatformClassLoader;
 import org.eclipse.core.internal.runtime.PlatformLogReader;
 import org.eclipse.core.internal.runtime.PlatformLogWriter;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class LogSerializationTest extends RuntimeTest {
 	
-	protected File logFile = new File("c:\\temp\\test\\log.txt");
+	protected File logFile = null;
 
 public LogSerializationTest(String name) {
 	super(name);
@@ -34,7 +36,7 @@ protected void assertEquals(String msg, IStatus[] expected, IStatus[] actual) {
 	}
 	assertEquals(msg + " different number of statuses", expected.length, actual.length);
 	for (int i = 0, imax = expected.length; i < imax; i++) {
-		assertEquals(msg + "differ at status " + i, expected[i], actual[i]);
+		assertEquals(msg + " differ at status " + i, expected[i], actual[i]);
 	}
 }
 protected void assertEquals(String msg, IStatus expected, IStatus actual) {
@@ -57,7 +59,7 @@ protected void assertEquals(String msg, Throwable expected, Throwable actual) {
 	assertEquals(msg + " stack trace", 
 		encodeStackTrace(expected),
 		encodeStackTrace(actual));
-	assertEquals(msg + " message", expected.getMessage(), actual.getMessage());
+		assertEquals(msg + " message", expected.getMessage(), actual.getMessage());
 }
 protected String encodeStackTrace(Throwable t) {
 	StringWriter sWriter = new StringWriter();
@@ -66,6 +68,38 @@ protected String encodeStackTrace(Throwable t) {
 	t.printStackTrace(pWriter);
 	pWriter.flush();
 	return sWriter.toString();
+}
+protected IStatus[] getInterestingMultiStatuses() {
+	IStatus[] interesting = getInterestingStatuses();
+	int len = interesting.length;
+	IStatus[][] interestingChildren = new IStatus[len][];
+	for (int i = 0; i < len; i++) {
+		IStatus[] subArray = new IStatus[len];
+		System.arraycopy(interesting, 0, subArray, 0, len);
+		interestingChildren[i] = subArray;
+	}
+	int childOff = 0;
+	return new IStatus[] {
+		new MultiStatus("plugin-id", 1, interestingChildren[childOff++ % len], "message", null),
+		new MultiStatus("org.foo.bar", 5, interestingChildren[childOff++ % len], "message", new NullPointerException()),
+		new MultiStatus("plugin-id", 8, interestingChildren[childOff++ % len], "message", null),
+		new MultiStatus("plugin-id", 0, interestingChildren[childOff++ % len], "message", new IllegalStateException()),
+		new MultiStatus("plugin-id", 65756, interestingChildren[childOff++ % len], "message", null),
+		new MultiStatus(".", 1, interestingChildren[childOff++ % len], "message", null),
+		new MultiStatus("org.foo.blaz", 1, interestingChildren[childOff++ % len], "", null),
+		new MultiStatus("plugin-id", 1, interestingChildren[childOff++ % len], "%$(% 98%(%(*^", null),
+		new MultiStatus("plugin-id", 1, "message", null),
+		new MultiStatus("..", 87326, "", null),
+	};
+}
+protected IStatus[] getInterestingStatuses() {
+	return new IStatus[] {
+		new Status(IStatus.WARNING, "(#(*$%#", 1, "../\\\\\'\'\"", new NullPointerException()),
+		new Status(IStatus.WARNING, "org.foo", 1, "This is the message", null),
+		new Status(IStatus.ERROR, "org.foo", 1, "This is the message", new IllegalStateException()),
+		new Status(IStatus.OK, ".", 1, "This is the message", new NullPointerException()),
+		new Status(IStatus.INFO, "org.asdfhsfhsdf976dsf6sd0f6s", 1, "#*&^$(*&#@^$)(#&)(", null),
+	};
 }
 protected void doTest(String msg, IStatus[] oldStats) {
 	writeLog(oldStats);
@@ -81,15 +115,61 @@ protected IStatus[] readLog() {
 }
 protected void setUp() throws Exception {
 	super.setUp();
+	//XXX spoof up the classloader so we can load XML classes. See bug 5801
+	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
+	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
+
+	//setup the log file
+	if (logFile == null) {
+		File parent = Platform.getLocation().toFile();
+		String logName = Long.toString(System.currentTimeMillis()) + ".log";
+		logFile = new File(parent, logName);
+	}
+
 }
 protected void tearDown() throws Exception {
 	super.tearDown();
 	logFile.delete();
+	PlatformClassLoader.getDefault().setImports(null);
+}
+public void testDeepMultiStatus() {
+	MultiStatus multi = new MultiStatus("id", 1, getInterestingMultiStatuses(), "ok", null);
+	for (int i = 0; i < 5; i++) {
+		multi = new MultiStatus("id", 1, new IStatus[] {multi}, "ok", null);
+		doTest("1." + i, multi);
+	}
+}
+public void testMultiMultiStatusSerialize() {
+	IStatus[] interesting = getInterestingMultiStatuses();
+	int len = interesting.length;
+	for (int i = 1; i < len; i++) {
+		IStatus[] subArray = new IStatus[len];
+		System.arraycopy(interesting, 0, subArray, 0, len);
+		doTest("1." + i, subArray);
+	}	
+}
+public void testMultiSerialize() {
+	IStatus[] interesting = getInterestingStatuses();
+	int len = interesting.length;
+	for (int i = 1; i < len; i++) {
+		IStatus[] subArray = new IStatus[len];
+		System.arraycopy(interesting, 0, subArray, 0, len);
+		doTest("1." + i, subArray);
+	}	
+}
+public void testMultiStatus() {
+	IStatus[] interesting = getInterestingMultiStatuses();
+	for (int i = 0; i < interesting.length; i++) {
+		doTest("1." + i, interesting[i]);
+	}
 }
 public void testSimpleSerialize() {
-	IStatus status = new Status(IStatus.WARNING, "org.foo", 1, "This is the message", new NullPointerException());
-	doTest("1.0", status);
+	IStatus[] interesting = getInterestingStatuses();
+	for (int i = 0; i < interesting.length; i++) {
+		doTest("1." + i, interesting[i]);
+	}
 }
+
 protected void writeLog(IStatus status) {
 	writeLog(new IStatus[] {status});
 }

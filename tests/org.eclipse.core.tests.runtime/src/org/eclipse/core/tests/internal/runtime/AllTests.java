@@ -22,6 +22,7 @@ public AllTests(String name) {
 		suite.addTest(AuthorizationDatabaseTest.suite());
 		suite.addTest(CipherStreamsTest.suite());
 		suite.addTest(CipherTest.suite());
+		suite.addTest(LogSerializationTest.suite());
 		return suite;
 	}
 }
