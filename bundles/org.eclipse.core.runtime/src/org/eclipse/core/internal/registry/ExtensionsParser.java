@@ -454,9 +454,9 @@ public class ExtensionsParser extends DefaultHandler {
 
 	private void unknownElement(String element, String parent) {
 		if (locator == null)
-			internalError(Messages.bind(Messages.parse_unknownAttribute, parent, element));
+			internalError(Messages.bind(Messages.parse_unknownElement, parent, element));
 		else
-			internalError(Messages.bind(Messages.parse_unknownAttributeLine, new String[] {parent, element, Integer.toString(locator.getLineNumber())}));
+			internalError(Messages.bind(Messages.parse_unknownElementLine, new String[] {parent, element, Integer.toString(locator.getLineNumber())}));
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {

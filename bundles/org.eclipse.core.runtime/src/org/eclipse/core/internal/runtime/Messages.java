@@ -35,8 +35,6 @@ public class Messages extends PlatformMessages {
 	public static String plugin_shutdownProblems;
 	public static String plugin_pluginDisabled;
 	public static String plugin_unableToResolve;
-	public static String plugin_mismatchRuntime;
-	public static String plugin_delegatingLoaderTrouble;
 	public static String plugin_eventListenerError;
 
 	// parsing/resolve
@@ -48,13 +46,11 @@ public class Messages extends PlatformMessages {
 	public static String parse_prereqDisabled;
 	public static String parse_unsatisfiedPrereq;
 	public static String parse_prereqLoop;
-	public static String parse_registryProblems;
 	public static String parse_fragmentMissingAttr;
 	public static String parse_fragmentMissingIdName;
 	public static String parse_pluginMissingAttr;
 	public static String parse_pluginMissingIdName;
 	public static String parse_unknownTopElement;
-	public static String parse_initializationTrouble;
 	public static String parse_internalStack;
 	public static String parse_validMatch;
 	public static String parse_validExport;
@@ -86,8 +82,6 @@ public class Messages extends PlatformMessages {
 	public static String parse_badPrereqOnFrag;
 	public static String parse_duplicateFragment;
 	public static String parse_duplicateLib;
-
-	// new parsing messages
 	public static String parse_problems;
 	public static String parse_missingAttribute;
 	public static String parse_missingAttributeLine;
@@ -98,46 +92,27 @@ public class Messages extends PlatformMessages {
 	public static String parse_xmlParserNotAvailable;
 	public static String parse_failedParsingManifest;
 
-
 	// metadata
 	public static String meta_appNotInit;
 	public static String meta_instanceDataUnspecified;
-	public static String meta_instanceDataAlreadySpecified;
 	public static String meta_keyringFileAlreadySpecified;
 	public static String meta_noDataModeSpecified;
 	public static String meta_authFormatChanged;
 	public static String meta_couldNotCreate;
 	public static String meta_exceptionParsingLog;
-	public static String meta_failCreateLock;
-	public static String meta_inUse;
 	public static String meta_notDir;
-	public static String meta_platform;
 	public static String meta_pluginProblems;
 	public static String meta_readonly;
-	public static String meta_readPlatformMeta;
 	public static String meta_unableToReadAuthorization;
 	public static String meta_unableToWriteAuthorization;
-	public static String meta_writePlatformMeta;
-	public static String meta_invalidRegDebug;
-	public static String meta_infoRegDebug;
-	public static String meta_unableToDeleteCache;
-	public static String meta_writeVersion;
-	public static String meta_versionCheckRun;
-	public static String meta_checkVersion;
-	public static String meta_fileManagerInitializationFailed;
 
 	// Extension Registry
 	public static String meta_registryCacheWriteProblems;
 	public static String meta_registryCacheReadProblems;
-	public static String meta_regCacheIOExceptionWriting;
 	public static String meta_regCacheIOExceptionReading;
-	public static String meta_registryCacheEOFException;
 	public static String meta_registryCacheInconsistent;
-	public static String meta_unableToWriteRegistry;
 	public static String meta_unableToCreateCache;
 	public static String meta_unableToReadCache;
-	public static String meta_unableToCreateRegDebug;
-	public static String meta_unableToWriteDebugRegistry;
 
 	// URL
 	public static String url_noaccess;
@@ -148,26 +123,19 @@ public class Messages extends PlatformMessages {
 	public static String url_resolvePlugin;
 
 	// Preferences
-	public static String preferences_errorReading;
 	public static String preferences_errorWriting;
 	public static String preferences_fileNotFound;
 	public static String preferences_incompatible;
-	public static String preferences_invalidProperty;
 	public static String preferences_validate;
 	public static String preferences_validationException;
-
-	public static String preferences_removeRoot;
 	public static String preferences_classCast;
 	public static String preferences_removedNode;
-	public static String preferences_syncException;
 	public static String preferences_loadException;
 	public static String preferences_saveException;
 	public static String preferences_exportProblems;
 	public static String preferences_importProblems;
 	public static String preferences_missingScopeAttribute;
 	public static String preferences_failedDelete;
-	public static String preferences_noLocation;
-	public static String preferences_invalidParentClass;
 	public static String preferences_applyProblems;
 	public static String preferences_saveProblems;
 	public static String preferences_invalidExtensionSuperclass;
