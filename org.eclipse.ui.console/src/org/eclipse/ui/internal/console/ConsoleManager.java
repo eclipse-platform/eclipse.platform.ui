@@ -177,32 +177,32 @@ public class ConsoleManager implements IConsoleManager {
 	 * @see IConsoleManager#showConsoleView(IConsole)
 	 */
 	public void showConsoleView(final IConsole console) {
-		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage page= window.getActivePage();
-					if (page != null) {
-						IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-						if (consoleView == null) {
-							try {
-								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-							} catch (PartInitException pie) {
-								ConsolePlugin.log(pie);
-							}
-						} else {
-							boolean bringToTop = shouldBringToTop(console, consoleView);
-							if (bringToTop) {
-								page.bringToTop(consoleView);
-							}
-						}
-						if (consoleView instanceof IConsoleView) {
-							((IConsoleView)consoleView).display(console);
-						}
-					}
-				}
-			}
-		});
+	    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+	        public void run() {
+	            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	            if (window != null) {
+	                IWorkbenchPage page= window.getActivePage();
+	                if (page != null) {
+	                    IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+	                    if (consoleView == null) {
+	                        try {
+	                            consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+	                        } catch (PartInitException pie) {
+	                            ConsolePlugin.log(pie);
+	                        }
+	                    } 
+	                    boolean bringToTop = shouldBringToTop(console, consoleView);
+	                    if (bringToTop) {
+	                        page.bringToTop(consoleView);
+	                    }
+	                    
+	                    if (consoleView instanceof IConsoleView) {
+	                        ((IConsoleView)consoleView).display(console);
+	                    }
+	                }
+	            }
+	        }
+	    });
 	}	
 	
 	/**
