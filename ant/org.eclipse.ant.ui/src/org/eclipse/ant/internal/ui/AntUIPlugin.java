@@ -5,8 +5,7 @@ package org.eclipse.ant.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.util.*;import org.eclipse.core.runtime.*;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The plug-in runtime class for the AntUI plug-in.
@@ -18,6 +17,8 @@ public final class AntUIPlugin extends AbstractUIPlugin {
 	 * for the Ant UI plug-in.
 	 */
 	public static final String PI_ANTUI= "org.eclipse.ant.ui";
+	
+	public static final String PROPERTIES_MESSAGES = "org.eclipse.ant.internal.ui.Messages";
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
@@ -29,5 +30,17 @@ public final class AntUIPlugin extends AbstractUIPlugin {
 	}
 	public static AntUIPlugin getPlugin() {
 		return plugin;
+	}
+	public static ResourceBundle getResourceBundle() {
+		try {
+			return ResourceBundle.getBundle(PROPERTIES_MESSAGES);
+		} catch (MissingResourceException e) {
+			ErrorDialog.openError(
+				plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				"Missing Resource Bundle",
+				"The properties for the Ant UI plugin could not be found",
+				new Status(IStatus.ERROR,PI_ANTUI,0,e.getMessage(),e));
+			return null;
+		}
 	}
 }
