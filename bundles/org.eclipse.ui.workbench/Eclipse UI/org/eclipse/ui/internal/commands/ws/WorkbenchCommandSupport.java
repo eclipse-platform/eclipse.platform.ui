@@ -105,7 +105,19 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
+    private final static int TIME = 100;
+
     private boolean processingHandlerSubmissions;
+
+    private boolean request = false;
+
+    private Runnable timer = new Runnable() {
+
+        public void run() {
+            request = false;
+            processHandlerSubmissionsImpl(true);
+        }
+    };
 
     private IWindowListener windowListener = new IWindowListener() {
 
@@ -211,6 +223,13 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     private void processHandlerSubmissions(boolean force) {
         if (!processingHandlerSubmissions) return;
 
+        if (!request) {
+            request = true;
+            Display.getCurrent().timerExec(TIME, timer);
+        }
+    }
+
+    private void processHandlerSubmissionsImpl(boolean force) {
         Map handlersByCommandId = new HashMap();
         String activePartId = null;
         String activePerspectiveId = null;

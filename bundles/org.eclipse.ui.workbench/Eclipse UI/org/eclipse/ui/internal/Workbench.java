@@ -899,8 +899,8 @@ public final class Workbench implements IWorkbench {
 		forceOpenPerspective();
 
 		isStarting = false;
-		// TODO workbenchCommandSupport.setProcessingHandlerSubmissions(true);
-		// TODO workbenchContextSupport.setProcessingEnabledSubmissions(true);
+		workbenchCommandSupport.setProcessingHandlerSubmissions(true);
+		workbenchContextSupport.setProcessingEnabledSubmissions(true);
 		return true;
 	}
 
