@@ -106,9 +106,11 @@ public final class HelpSystem {
 	 */
 	public static HelpNavigationManager getNavigationManager() {
 		if (getInstance().navigationManager == null) {
-			getInstance().navigationManager = new HelpNavigationManager();
 			// launch the help server to serve documents
+			// Do this first to ensure that the HelpSystem server info is valid.
 			HelpServer.instance();
+			
+			getInstance().navigationManager = new HelpNavigationManager();
 		}
 		return getInstance().navigationManager;
 	}
