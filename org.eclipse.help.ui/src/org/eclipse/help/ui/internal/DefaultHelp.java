@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.ui.internal.util.*;
 
@@ -268,9 +269,9 @@ public class DefaultHelp implements IHelp {
 
 	private String getBaseURL() {
 		return "http://"
-			+ org.eclipse.tomcat.AppServer.getHost()
+			+ WebappManager.getHost()
 			+ ":"
-			+ org.eclipse.tomcat.AppServer.getPort()
+			+ WebappManager.getPort()
 			+ "/help/index.jsp";
 	}
 

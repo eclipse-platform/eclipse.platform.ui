@@ -13,11 +13,12 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.appserver"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.tomcat"/>
    </requires>
 
 
@@ -41,7 +42,7 @@
       </page>
       <page
             name="%appserver_preferences_page_name"
-            class="org.eclipse.help.ui.internal.TomcatPreferencePage"
+            class="org.eclipse.help.ui.internal.AppserverPreferencePage"
             id="org.eclipse.help.ui.appserverPreferancePage">
       </page>
    </extension>
@@ -237,22 +238,22 @@
             id="org.eclipse.help.ui.helpsearchhitsorter">
       </sorter>
    </extension>
+
 <!-- Help Working Set Page -->
-   <extension
-         point="org.eclipse.ui.workingSets">
-      <workingSet
-            name="%HelpWorkingSet"
-            pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage"
-            icon="icons/workingset.gif"
-            id="org.eclipse.help.ui.HelpWorkingSetPage">
-      </workingSet>
-   </extension>
-   <extension
-         point="org.eclipse.ui.elementFactories">
-      <factory
-            class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
-            id="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
-      </factory>
-   </extension>
+<extension point="org.eclipse.ui.workingSets">
+	<workingSet
+		id="org.eclipse.help.ui.HelpWorkingSetPage"
+		icon="icons/workingset.gif"
+		name="%HelpWorkingSet"
+		pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage">
+	</workingSet>
+</extension>
+
+<extension
+    point = "org.eclipse.ui.elementFactories">
+    <factory id ="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
+      class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
+	</factory>
+</extension>
 
 </plugin>

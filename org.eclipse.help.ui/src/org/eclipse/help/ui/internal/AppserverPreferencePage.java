@@ -11,14 +11,14 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.tomcat.internal.*;
+import org.eclipse.help.internal.appserver.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 
 /**
  * Preference page for Tomcat network interface and port.
  */
-public class TomcatPreferencePage
+public class AppserverPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	private Text textServerAddr;
@@ -43,7 +43,7 @@ public class TomcatPreferencePage
 
 		Label label = new Label(mainComposite, SWT.NONE);
 		label.setText(
-			WorkbenchResources.getString("TomcatPreferencePage.description"));
+			WorkbenchResources.getString("AppserverPreferencePage.description"));
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -60,14 +60,14 @@ public class TomcatPreferencePage
 		label.setFont(font);
 		label.setText(
 			WorkbenchResources.getString(
-				"TomcatPreferencePage.hostDescription"));
+				"AppserverPreferencePage.hostDescription"));
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
 		//Label labelHost = new Label(mainComposite, SWT.LEFT);
 		//labelHost.setText(
-		//	WorkbenchResources.getString("TomcatPreferencePage.host"));
+		//	WorkbenchResources.getString("AppserverPreferencePage.host"));
 		//data = new GridData();
 		//labelHost.setLayoutData(data);
 		//labelHost.setFont(font);
@@ -92,7 +92,7 @@ public class TomcatPreferencePage
 		label.setFont(font);
 		label.setText(
 			WorkbenchResources.getString(
-				"TomcatPreferencePage.portDescription"));
+				"AppserverPreferencePage.portDescription"));
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -100,7 +100,7 @@ public class TomcatPreferencePage
 
 		//Label labelPort = new Label(mainComposite, SWT.LEFT);
 		//labelPort.setText(
-		//	WorkbenchResources.getString("TomcatPreferencePage.port"));
+		//	WorkbenchResources.getString("AppserverPreferencePage.port"));
 		//data = new GridData();
 		//labelPort.setLayoutData(data);
 		//labelPort.setFont(font);
@@ -124,7 +124,7 @@ public class TomcatPreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
-			WorkbenchResources.getString("TomcatPreferencePage.Note"));
+			WorkbenchResources.getString("AppserverPreferencePage.Note"));
 		label.setFont(JFaceResources.getBannerFont());
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//data.horizontalSpan = 2;
@@ -134,14 +134,14 @@ public class TomcatPreferencePage
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
 			WorkbenchResources.getString(
-				"TomcatPreferencePage.requireRestart"));
+				"AppserverPreferencePage.requireRestart"));
 		data = new GridData();
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
-		Preferences pref = TomcatPlugin.getDefault().getPluginPreferences();
-		textServerAddr.setText(pref.getString(TomcatPlugin.HOST_KEY));
-		textServerPort.setText(pref.getString(TomcatPlugin.PORT_KEY));
+		Preferences pref = AppserverPlugin.getDefault().getPluginPreferences();
+		textServerAddr.setText(pref.getString(AppserverPlugin.HOST_KEY));
+		textServerPort.setText(pref.getString(AppserverPlugin.PORT_KEY));
 
 		return mainComposite;
 	}
@@ -159,19 +159,19 @@ public class TomcatPreferencePage
 	 * </p>
 	 */
 	protected void performDefaults() {
-		Preferences pref = TomcatPlugin.getDefault().getPluginPreferences();
-		textServerAddr.setText(pref.getDefaultString(TomcatPlugin.HOST_KEY));
-		textServerPort.setText(pref.getDefaultString(TomcatPlugin.PORT_KEY));
+		Preferences pref = AppserverPlugin.getDefault().getPluginPreferences();
+		textServerAddr.setText(pref.getDefaultString(AppserverPlugin.HOST_KEY));
+		textServerPort.setText(pref.getDefaultString(AppserverPlugin.PORT_KEY));
 		super.performDefaults();
 	}
 	/**
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref = TomcatPlugin.getDefault().getPluginPreferences();
-		pref.setValue(TomcatPlugin.HOST_KEY, textServerAddr.getText());
-		pref.setValue(TomcatPlugin.PORT_KEY, textServerPort.getText());
-		TomcatPlugin.getDefault().savePluginPreferences();
+		Preferences pref = AppserverPlugin.getDefault().getPluginPreferences();
+		pref.setValue(AppserverPlugin.HOST_KEY, textServerAddr.getText());
+		pref.setValue(AppserverPlugin.PORT_KEY, textServerPort.getText());
+		AppserverPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 

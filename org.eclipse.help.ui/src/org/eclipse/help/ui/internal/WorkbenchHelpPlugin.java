@@ -4,13 +4,13 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.ui.browser.*;
-import org.eclipse.help.ui.internal.browser.*;
-import org.eclipse.help.ui.internal.workingset.*;
-import org.eclipse.tomcat.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.workingset.HelpWorkingSetSynchronizer;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
   * This class is a UI plugin. This may need to change to regular 
@@ -42,7 +42,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		// stop the web app
-		AppServer.remove("help", "org.eclipse.help.webapp");
+		WebappManager.stop("help");
 		BrowserManager.getInstance().closeAll();
 		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
 			PlatformUI
