@@ -77,10 +77,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private boolean useProxy;
   private boolean useAuth;
 
-  private Label keyTypeLabel;
-  private Combo keyTypeCombo;
   private Button ssh2HomeBrowse;
-  private Button keyGenerate;
+  private Button keyGenerateDSA;
+  private Button keyGenerateRSA;
+  private Button keyLoad;
   private Button keyExport;
   private Button saveKeyPair;
   private Label keyCommentLabel;
@@ -354,31 +354,27 @@ public class CVSSSH2PreferencePage extends PreferencePage
     GridLayout layout=new GridLayout();
     layout.numColumns=3;
     group.setLayout(layout);
-    GridData data = new GridData();
-    data.horizontalAlignment = GridData.FILL;
-    group.setLayoutData(data);
+    GridData gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+    group.setLayoutData(gd);
 
-    keyTypeLabel=new Label(group, SWT.NONE);
-    keyTypeLabel.setText(Policy.bind("CVSSSH2PreferencePage.37")); //$NON-NLS-1$
-    keyTypeCombo=new Combo(group, SWT.READ_ONLY);
-    keyTypeCombo.setFont(group.getFont());
-    GridData gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    keyTypeCombo.setLayoutData(gd);
+    keyGenerateDSA=new Button(group, SWT.NULL);
+    keyGenerateDSA.setText(Policy.bind("CVSSSH2PreferencePage.131")); //$NON-NLS-1$
+    gd=new GridData();
+    gd.horizontalSpan=1;
+    keyGenerateDSA.setLayoutData(gd);
 
-    keyGenerate=new Button(group, SWT.NULL);
-    keyGenerate.setText(Policy.bind("CVSSSH2PreferencePage.38")); //$NON-NLS-1$
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
-    gd.horizontalSpan=columnSpan;
-    keyGenerate.setLayoutData(gd);
+    keyGenerateRSA=new Button(group, SWT.NULL);
+    keyGenerateRSA.setText(Policy.bind("CVSSSH2PreferencePage.132")); //$NON-NLS-1$
+    gd=new GridData();
+    gd.horizontalSpan=1;
+    keyGenerateRSA.setLayoutData(gd);
 
-/*
     keyLoad=new Button(group, SWT.NULL);
-    keyLoad.setText("Load(not implemented)");
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
-    gd.horizontalSpan=columnSpan;
+    keyLoad.setText(Policy.bind("CVSSSH2PreferencePage.128"));  //$NON-NLS-1$
+    gd=new GridData();
+    gd.horizontalSpan=1;
     keyLoad.setLayoutData(gd);
-*/
 
     publicKeylabel=new Label(group, SWT.NONE);
     publicKeylabel.setText(Policy.bind("CVSSSH2PreferencePage.39")); //$NON-NLS-1$
@@ -539,19 +535,21 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.horizontalSpan=columnSpan;
     saveKeyPair.setLayoutData(gd);
 
-    keyGenerate.addSelectionListener(new SelectionAdapter(){
+    SelectionAdapter keygenadapter=new SelectionAdapter(){
 	public void widgetSelected(SelectionEvent e){
 	  JSch jsch=JSchSession.getJSch();
 	  boolean ok=true;
-	  String _type=keyTypeCombo.getText();
+	  String _type="";
 
 	  try{
 	    int type=0;
-	    if(_type.equals(DSA)){
+	    if(e.widget==keyGenerateDSA){
 	      type=KeyPair.DSA;
+	      _type=DSA;
 	    }
-	    else if(_type.equals(RSA)){
+	    else if(e.widget==keyGenerateRSA){
 	      type=KeyPair.RSA;
+	      _type=RSA;
 	    }
 	    else{
 	      return;
@@ -583,6 +581,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    publicKeyText.setText(out.toString());
 	    keyFingerPrintText.setText(kpair.getFingerPrint());
 	    keyCommentText.setText(kpairComment);
+	    keyPassphrase1Text.setText(""); //$NON-NLS-1$
+	    keyPassphrase2Text.setText(""); //$NON-NLS-1$
 	    updateControls();
 	  }
 	  catch(IOException ee){
@@ -595,6 +595,68 @@ public class CVSSSH2PreferencePage extends PreferencePage
  	    MessageDialog.openError(getShell(),
 				    Policy.bind("CVSSSH2PreferencePage.error"),  //$NON-NLS-1$
 				    Policy.bind("CVSSSH2PreferencePage.47"));  //$NON-NLS-1$
+	  }
+	}
+      };
+    keyGenerateDSA.addSelectionListener(keygenadapter);
+    keyGenerateRSA.addSelectionListener(keygenadapter);
+
+    keyLoad.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  boolean ok=true;
+	  String home=ssh2HomeText.getText();
+	  FileDialog fd=new FileDialog(getShell(), SWT.OPEN);
+	  fd.setFilterPath(home);
+	  Object o=fd.open();
+	  if(o==null){ // cancel
+	    return;
+	  }
+	  String pkey=fd.getFileName();
+	  String pkeyab=(new File(fd.getFilterPath(), pkey)).getAbsolutePath();
+	  try{
+	    JSch jsch=JSchSession.getJSch();
+	    KeyPair _kpair=KeyPair.load(jsch, pkeyab);
+	    PassphrasePrompt prompt=null;
+	    while(_kpair.isEncrypted()){
+	      if(prompt==null){
+		prompt=new PassphrasePrompt(Policy.bind("CVSSSH2PreferencePage.126")+pkey);   //$NON-NLS-1$
+	      }
+	      Display.getDefault().syncExec(prompt);
+	      String passphrase=prompt.getPassphrase();
+	      if(passphrase==null) break;
+	      if(_kpair.decrypt(passphrase)){
+		break;
+	      }
+	      MessageDialog.openError(getShell(),
+				      Policy.bind("CVSSSH2PreferencePage.error"),  //$NON-NLS-1$
+				      Policy.bind("CVSSSH2PreferencePage.129")+pkey);  //$NON-NLS-1$
+	    }
+	    if(_kpair.isEncrypted()){
+	      return;
+	    }
+	    kpair=_kpair;
+	    String _type=(kpair.getKeyType()==KeyPair.DSA)?DSA:RSA;
+	    ByteArrayOutputStream out=new ByteArrayOutputStream();
+	    kpairComment=_type+"-1024"; //$NON-NLS-1$
+	    kpair.writePublicKey(out, kpairComment);
+	    out.close();
+	    publicKeyText.setText(out.toString());
+	    keyFingerPrintText.setText(kpair.getFingerPrint());
+	    keyCommentText.setText(kpairComment);
+	    keyPassphrase1Text.setText(""); //$NON-NLS-1$
+	    keyPassphrase2Text.setText(""); //$NON-NLS-1$
+	    updateControls();
+	  }
+	  catch(IOException ee){
+	    ok=false;
+	  }
+	  catch(JSchException ee){
+	    ok=false;
+	  }
+	  if(!ok){
+	    MessageDialog.openError(getShell(),
+				    Policy.bind("CVSSSH2PreferencePage.error"),  //$NON-NLS-1$
+				    Policy.bind("CVSSSH2PreferencePage.130"));  //$NON-NLS-1$
 	  }
 	}
       });
@@ -743,10 +805,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  }
 	}
       });
-
-    keyTypeCombo.add(DSA);
-    keyTypeCombo.add(RSA);
-    keyTypeCombo.select(0);
 
     return group;
   }
@@ -1102,6 +1160,94 @@ class ExportDialog extends Dialog {
 
   protected void cancelPressed() {
     target=null;
+    super.cancelPressed();
+  }
+}
+
+class PassphrasePrompt implements Runnable{
+  private String message;
+  private String passphrase;
+  PassphrasePrompt(String message){
+    this.message=message;
+  }
+  public void run(){
+    Display display=Display.getCurrent();
+    Shell shell=new Shell(display);
+    PassphraseDialog dialog=new PassphraseDialog(shell, message);
+    dialog.open();
+    shell.dispose();
+    passphrase=dialog.getPassphrase();
+  }
+  public String getPassphrase(){
+    return passphrase;
+  }
+}
+
+class PassphraseDialog extends Dialog {
+  protected Text passphraseField;
+  protected String passphrase = null;
+  protected String message = null;
+
+  public PassphraseDialog(Shell parentShell, String message) {
+    super(parentShell);
+    this.message = message;
+  }
+
+  protected void configureShell(Shell newShell) {
+    super.configureShell(newShell);
+    newShell.setText(message);
+  }
+
+  public void create() {
+    super.create();
+    passphraseField.setFocus();
+  }
+
+  protected Control createDialogArea(Composite parent) {
+    Composite main=new Composite(parent, SWT.NONE);
+
+    GridLayout layout=new GridLayout();
+    layout.numColumns=3;
+    main.setLayout(layout);
+    main.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+    if (message!=null) {
+      Label messageLabel=new Label(main, SWT.WRAP);
+      messageLabel.setText(message);
+      GridData data=new GridData(GridData.FILL_HORIZONTAL);
+      data.horizontalSpan=3;
+      messageLabel.setLayoutData(data);
+    }
+
+    createPassphraseFields(main);
+    return main;
+  }
+
+  protected void createPassphraseFields(Composite parent) {
+    new Label(parent, SWT.NONE).setText(Policy.bind("CVSSSH2PreferencePage.127")); //$NON-NLS-1$
+    passphraseField=new Text(parent, SWT.BORDER);
+    GridData data=new GridData(GridData.FILL_HORIZONTAL);
+    data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
+    passphraseField.setLayoutData(data);
+    passphraseField.setEchoChar('*');
+
+    new Label(parent, SWT.NONE);
+  }
+
+  public String getPassphrase() {
+    return passphrase;
+  }
+
+  protected void okPressed() {
+    String _passphrase = passphraseField.getText();
+    if(_passphrase==null || _passphrase.length()==0){
+      return;
+    }
+    passphrase=_passphrase;
+    super.okPressed();
+  }
+  protected void cancelPressed() {
+    passphrase=null;
     super.cancelPressed();
   }
 }
