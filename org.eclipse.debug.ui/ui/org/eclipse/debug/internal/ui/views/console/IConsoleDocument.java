@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jface.text.BadLocationException;
 
 /**
  * A document that populates the console with output. Implementors
@@ -34,4 +35,14 @@ public interface IConsoleDocument {
 	 * streams to be connected to the console.
 	 * 	 * @param streamMonitor	 * @param streamIdentifer	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer);
+	
+	/**
+	 * Adds the given link to this console document. The link will be notified
+	 * when entered, exited, and activated.
+	 * 
+	 * @param link
+	 * @exception BadLocationException if the link's region is not with in this
+	 * document's current bounds
+	 */
+	public void addLink(IConsoleHyperLink link) throws BadLocationException;
 }

@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -174,6 +175,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public void connect(IDocument document) {
 		fDocument = document;
+		fDocument.addPositionCategory(HyperLinkPosition.HYPER_LINK_CATEGORY);
 		document.setDocumentPartitioner(this);
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		fWrap = store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
@@ -649,4 +651,17 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	protected IConsoleDocumentContentProvider getContentProvider() {
 		return fContentProvider;
 	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocument#addLink(org.eclipse.debug.internal.ui.views.console.IConsoleHyperLink)
+	 */
+	public void addLink(IConsoleHyperLink link) throws BadLocationException {
+		try {
+			fDocument.addPosition(HyperLinkPosition.HYPER_LINK_CATEGORY, new HyperLinkPosition(link));
+		} catch (BadPositionCategoryException e) {
+			// internal error
+			DebugUIPlugin.log(e);
+		}
+	}
+
 }
