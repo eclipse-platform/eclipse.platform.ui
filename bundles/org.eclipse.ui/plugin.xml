@@ -21,12 +21,12 @@
       <import plugin="org.eclipse.ui.workbench" export="true"/>
    </requires>
 
-
 <!-- Workbench extension points -->
    <extension-point id="activities" name="%ExtPoint.activities" schema="schema/activities.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
+   <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.exsd"/>
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
@@ -48,15 +48,15 @@
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
 
    <extension
-         point="org.eclipse.ui.activities">
+         point="org.eclipse.ui.contexts">
       <activity
-            name="%activity.editingText.name"
-            description="%activity.editingText.description"
+            name="%context.editingText.name"
+            description="%context.editingText.description"
             id="org.eclipse.ui.textEditorScope">
       </activity>
       <activity
-            name="%activity.editingJavaSource.name"
-            description="%activity.editingJavaSource.description"
+            name="%context.editingJavaSource.name"
+            description="%context.editingJavaSource.description"
             parentId="org.eclipse.ui.textEditorScope"
             id="org.eclipse.jdt.ui.javaEditorScope">
       </activity>
