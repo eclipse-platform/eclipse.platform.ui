@@ -11,16 +11,29 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-
-import java.util.*;
-import java.util.List;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * A perspective presentation is a collection of parts with a layout.
@@ -61,8 +74,19 @@ public PerspectivePresentation(WorkbenchPage workbenchPage, RootLayoutContainer 
 	this.page = workbenchPage;
 	this.mainLayout = mainLayout;
 
-	// Should ask the actual control
-	this.detachable = workbenchPage.getWorkbenchWindow().getShell().isReparentable();
+	// Determine if reparenting is allowed by checking if some arbitrary Composite
+	// supports reparenting... this is a hack. This is used to determine if undocked
+	// views should be enabled, which should not depend on SWT's reparenting facilities.
+	// Views can be destroyed and recreated if SWT does not support reparenting.
+	this.detachable = false;
+	
+	Composite client = workbenchPage.getClientComposite();
+	if (client != null) {
+		Composite testChild = new Composite(client, SWT.NONE);
+		this.detachable = testChild.isReparentable();
+		testChild.dispose();
+	}
+	
 	initDETACHABLE();
 	  	
 	this.partDropListener = new IPartDropListener() {
