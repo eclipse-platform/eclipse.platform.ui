@@ -42,6 +42,10 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		//reset the static fields so that the decorators will fail
+	    HeavyNullImageDecorator.fail = true;
+	    HeavyNullTextDecorator.fail = true;
+	    NullImageDecorator.fail = true;
 		DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault().getDecoratorManager()
 				.getAllDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {

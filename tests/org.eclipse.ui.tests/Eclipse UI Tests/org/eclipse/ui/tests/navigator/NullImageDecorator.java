@@ -9,6 +9,11 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  */
 public class NullImageDecorator implements ILightweightLabelDecorator {
 	/**
+     * Whether we should fail with an exception
+     */
+	public static boolean fail = false;
+	
+	/**
 	 *
 	 */
 	public NullImageDecorator() {
@@ -25,7 +30,10 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
-		throw new NullPointerException("Lighweight boom");
+		if (fail) {
+		    fail = false;
+			throw new NullPointerException("Lighweight boom");
+		}
 	}
 	
 	/* (non-Javadoc)

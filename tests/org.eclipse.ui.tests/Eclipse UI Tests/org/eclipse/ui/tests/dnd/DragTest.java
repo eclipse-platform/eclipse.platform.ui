@@ -15,8 +15,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
@@ -130,13 +128,13 @@ public class DragTest extends UITestCase {
 	String intendedResult;
 
 	// 
-	IProject project;
-	IFile file1, file2;
+	static IProject project;
+	static IFile file1, file2;
 	IEditorPart editor1, editor2;
-	IFile file3;
+	static IFile file3;
 	IEditorPart editor3;
-	WorkbenchWindow window;
-	WorkbenchPage page;
+	static WorkbenchWindow window;
+	static WorkbenchPage page;
 	
 	public DragTest(TestDragSource dragSource, AbstractTestDropTarget dropTarget) {
 		super("drag " + dragSource.toString() + " to " + dropTarget.toString());
@@ -167,20 +165,30 @@ public class DragTest extends UITestCase {
 	}
 	
 	public void doSetUp() throws Exception {
+		// don't allow UITestCase to manage the deactivation of our window
+		manageWindows(false);
 		//window = (WorkbenchWindow)openTestWindow();
 		
-		window = (WorkbenchWindow)
-			fWorkbench.openWorkbenchWindow(
-				"org.eclipse.ui.tests.dnd.dragdrop",
-				ResourcesPlugin.getWorkspace());
+		//initialize the window
+		if (window == null) {
+			window = (WorkbenchWindow)
+				fWorkbench.openWorkbenchWindow(
+						"org.eclipse.ui.tests.dnd.dragdrop",
+						ResourcesPlugin.getWorkspace());
+					
+			page = (WorkbenchPage) window.getActivePage();
+			
+			project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
+			file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
+			file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
+			file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
+		}
+		
+		page.resetPerspective();
+		page.closeAllEditors(false);
+		//ensure that contentoutline is the focus part (and at the top of its stack)
+		page.showView("org.eclipse.ui.views.ContentOutline");
 
-		page = (WorkbenchPage)window.getActivePage();
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-				
-		project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
-		file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
-		file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
-		file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
 		editor1 = page.openEditor(new FileEditorInput(file1), MockEditorPart.ID1);
 		editor2 = page.openEditor(new FileEditorInput(file2), MockEditorPart.ID2);
 		editor3 = page.openEditor(new FileEditorInput(file3), MockEditorPart.ID2);
@@ -206,8 +214,12 @@ public class DragTest extends UITestCase {
 	 */
 	public String performTest() throws Exception {
 		setUp();
-		String result = internalTest();
-		tearDown();
-		return result;
+		try {
+			String result = internalTest();
+			return result;
+		}
+		finally {
+			tearDown();
+		}
 	}
 }

@@ -10,6 +10,12 @@ import org.eclipse.jface.viewers.ILabelDecorator;
  * @see ILabelDecorator
  */
 public class HeavyNullTextDecorator implements ILabelDecorator {
+
+	/**
+     * Whether we should fail with an exception
+     */
+	public static boolean fail = false;
+
 	/**
 	 *
 	 */
@@ -52,6 +58,10 @@ public class HeavyNullTextDecorator implements ILabelDecorator {
 	 * @see ILabelDecorator#decorateText
 	 */
 	public String decorateText(String text, Object element)  {
-		throw new NullPointerException("Heavy text boom");
+		if (fail) {
+		    fail = false;
+			throw new NullPointerException("Heavy text boom");
+		}
+		return null;
 	}
 }

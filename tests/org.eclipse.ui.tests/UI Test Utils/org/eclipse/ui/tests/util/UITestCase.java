@@ -19,9 +19,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,9 +36,34 @@ import org.eclipse.ui.WorkbenchException;
  */
 public abstract class UITestCase extends TestCase 
 {
+	class TestWindowListener implements IWindowListener {
+		private boolean enabled = true;
+		
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		public void windowActivated(IWorkbenchWindow window) {
+			// do nothing
+		}
+		public void windowDeactivated(IWorkbenchWindow window) {
+			// do nothing
+		}
+
+		public void windowClosed(IWorkbenchWindow window) {
+			if (enabled)
+				testWindows.remove(window);
+		}
+
+		public void windowOpened(IWorkbenchWindow window) {
+			if (enabled)
+				testWindows.add(window);
+		}
+	}
+	
 	protected IWorkbench fWorkbench;
 	private List testWindows;
-	private IWindowListener windowListener;
+	private TestWindowListener windowListener;
 
 
 	public UITestCase(String testName) {
@@ -55,22 +78,7 @@ public abstract class UITestCase extends TestCase
 	 * opened test windows.
 	 */
 	private void addWindowListener() {
-		windowListener = new IWindowListener() {
-			public void windowActivated(IWorkbenchWindow window) {
-				// do nothing
-			}
-			public void windowDeactivated(IWorkbenchWindow window) {
-				// do nothing
-			}
-
-			public void windowClosed(IWorkbenchWindow window) {
-				testWindows.remove(window);
-			}
-
-			public void windowOpened(IWorkbenchWindow window) {
-				testWindows.add(window);
-			}
-		};
+		windowListener = new TestWindowListener();
 		fWorkbench.addWindowListener(windowListener);
 	}
 	
@@ -150,10 +158,17 @@ public abstract class UITestCase extends TestCase
 	 * Open a test window with the empty perspective.
 	 */
 	public IWorkbenchWindow openTestWindow() {
+		return openTestWindow(EmptyPerspective.PERSP_ID);
+	}
+	
+	/**
+     * Open a test window with the provided perspective.
+     */
+	public IWorkbenchWindow openTestWindow(String perspectiveId) {
 		try {
 			return 
 				fWorkbench.openWorkbenchWindow(
-					EmptyPerspective.PERSP_ID,
+					perspectiveId,
 					ResourcesPlugin.getWorkspace());
 		} catch (WorkbenchException e) {
 			fail();
@@ -218,4 +233,10 @@ public abstract class UITestCase extends TestCase
 			pages[i].close();
 	}
 	
+	/**
+	 * Set whether the window listener will manage opening and closing of created windows.
+	 */
+	protected void manageWindows(boolean manage) {
+		windowListener.setEnabled(manage);
+	}
 }

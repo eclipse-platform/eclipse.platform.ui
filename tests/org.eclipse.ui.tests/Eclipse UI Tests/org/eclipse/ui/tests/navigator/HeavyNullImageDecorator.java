@@ -10,6 +10,12 @@ import org.eclipse.jface.viewers.ILabelDecorator;
  * @see ILabelDecorator
  */
 public class HeavyNullImageDecorator implements ILabelDecorator {
+	
+	/**
+     * Whether we should fail with an exception
+     */
+	public static boolean fail = false;
+
 	/**
 	 *
 	 */
@@ -45,7 +51,11 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
 	 * @see ILabelDecorator#decorateImage
 	 */
 	public Image decorateImage(Image image, Object element)  {
-		throw new NullPointerException("Heavy image boom");
+		if (fail) {
+		    fail = false;
+			throw new NullPointerException("Heavy image boom");
+		}
+		return null;
 	}
 
 	/**
