@@ -6,24 +6,25 @@ package org.eclipse.ui.internal;
  */
 
 import java.io.*;
-import java.util.List;
 import java.util.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.part.*;
+import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.window.Window;
 
 /**
@@ -58,7 +59,7 @@ public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
 {
 	super();
 	if (layoutID == null)
-		throw new WorkbenchException("Perspective ID is undefined");
+		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.UndefinedPerspective")); //$NON-NLS-1$
 	init(w, layoutID, input);
 }
 /**
@@ -101,7 +102,7 @@ public void activate(IWorkbenchPart part) {
  * Activates a part.  The part is given focus, the pane is hilighted and the action bars are shown.
  */
 static private void activatePart(final IWorkbenchPart part, final boolean switchActions) {
-	Platform.run(new SafeRunnableAdapter("An error has occurred when activating this view") {
+	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
 				part.setFocus();
@@ -638,14 +639,14 @@ public IAdaptable getInput() {
  * and active perspective.
  */
 public String getLabel() {
-	String label = "<Unknown Label>";
+	String label = WorkbenchMessages.getString("WorkbenchPage.UnknownLabel"); //$NON-NLS-1$
 	if (input != null) {
 		IWorkbenchAdapter adapter = (IWorkbenchAdapter)input.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null)
 			label = adapter.getLabel(input);
 	}
 	if(activePersp != null)
-		label += " : " + activePersp.getDesc().getLabel() + " Perspective";
+		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, activePersp.getDesc().getLabel() }); //$NON-NLS-1$
 	return label;
 }
 /**
@@ -799,7 +800,7 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
 			.getDefault().getPerspectiveRegistry().findPerspectiveWithId(layoutID);
 		if (desc == null)
-			throw new WorkbenchException("Unable to recreate perspective");
+			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 		activePersp = createPerspective(desc);
 		window.firePerspectiveActivated(this, desc);
 	}
@@ -973,7 +974,7 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
 		editorID = (String)marker.getAttribute(EDITOR_ID_ATTR);
 	}
 	catch (CoreException e) {
-		WorkbenchPlugin.log("Error extracting editor ID from marker", e.getStatus());
+		WorkbenchPlugin.log(WorkbenchMessages.getString("WorkbenchPage.ErrorExtractingEditorIDFromMarker"), e.getStatus()); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -1344,7 +1345,7 @@ private IViewPart showView(final String viewID, final boolean activate)
 	else if (result[0] instanceof PartInitException)
 		throw (PartInitException)result[0];
 	else
-		throw new PartInitException("Abnormal Workbench Condition");
+		throw new PartInitException(WorkbenchMessages.getString("WorkbenchPage.AbnormalWorkbenchCondition")); //$NON-NLS-1$
 }
 /**
  * Toggles the visibility of a fast view.  If the view is active it

@@ -314,7 +314,7 @@ public void readINIFile(URL baseURL) throws CoreException {
 	if ((productURL = (String) ini.get("productURL") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'productURL'");//$NON-NLS-2$//$NON-NLS-1$
 
-	appName = (String) ini.get("appName");
+	appName = (String) ini.get("appName"); //$NON-NLS-1$
 
 	String welcomePageFileName = (String) ini.get("welcomePage");//$NON-NLS-1$
 	if (welcomePageFileName != null) {

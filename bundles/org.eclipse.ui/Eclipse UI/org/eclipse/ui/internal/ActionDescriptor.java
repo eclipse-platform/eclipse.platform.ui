@@ -108,7 +108,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {
 		String fullID = helpContextId;
-		if (helpContextId.indexOf(".") == -1)
+		if (helpContextId.indexOf(".") == -1) //$NON-NLS-1$
 			// For backward compatibility we auto qualify the id if it is not qualified)
 			fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;//$NON-NLS-1$
 		WorkbenchHelp.setHelp(action, new String[] {fullID});

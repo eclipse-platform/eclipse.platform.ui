@@ -571,7 +571,7 @@ private boolean readProductInfo() {
 		productInfo.readINIFile(configURL);
 		return true;
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Error reading product info file", e.getStatus());
+		WorkbenchPlugin.log("Error reading product info file", e.getStatus()); //$NON-NLS-1$
 		return false;
 	}
 }

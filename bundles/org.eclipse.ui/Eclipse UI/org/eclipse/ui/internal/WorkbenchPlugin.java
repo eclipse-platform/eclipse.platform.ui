@@ -165,7 +165,7 @@ public IElementFactory getElementFactory(String targetID) {
 		.getPluginRegistry().getExtensionPoint(PI_WORKBENCH, IWorkbenchConstants.PL_ELEMENT_FACTORY);
 		
 	if (extensionPoint == null) {
-		WorkbenchPlugin.log("Unable to find element factory. Extension point: " + IWorkbenchConstants.PL_ELEMENT_FACTORY + " not found");
+		WorkbenchPlugin.log("Unable to find element factory. Extension point: " + IWorkbenchConstants.PL_ELEMENT_FACTORY + " not found"); //$NON-NLS-2$ //$NON-NLS-1$
 		return null;
 	}
 	
@@ -173,7 +173,7 @@ public IElementFactory getElementFactory(String targetID) {
 	IConfigurationElement targetElement = null;
 	IConfigurationElement[] configElements = extensionPoint.getConfigurationElements();
 	for (int j = 0; j < configElements.length; j++){
-		String strID = configElements[j].getAttribute("id");
+		String strID = configElements[j].getAttribute("id"); //$NON-NLS-1$
 		if (strID.equals(targetID)) {
 			targetElement = configElements[j];
 			break;
@@ -181,17 +181,17 @@ public IElementFactory getElementFactory(String targetID) {
 	}
 	if (targetElement == null) {
 		// log it since we cannot safely display a dialog.
-		WorkbenchPlugin.log("Unable to find element factory: "  + targetID);
+		WorkbenchPlugin.log("Unable to find element factory: "  + targetID); //$NON-NLS-1$
 		return null;
 	}
 
 	// Create the extension.
 	IElementFactory factory = null;
 	try {
-		factory = (IElementFactory)createExtension(targetElement, "class");
+		factory = (IElementFactory)createExtension(targetElement, "class"); //$NON-NLS-1$
 	} catch (CoreException e) {
 		// log it since we cannot safely display a dialog.
-		WorkbenchPlugin.log("Unable to create element factory.",e.getStatus());
+		WorkbenchPlugin.log("Unable to create element factory.",e.getStatus()); //$NON-NLS-1$
 		factory = null;
 	}
 	return factory;
@@ -279,7 +279,7 @@ public IViewRegistry getViewRegistry() {
 			reader.readViews(Platform.getPluginRegistry(), viewRegistry);
 		} catch (CoreException e) {
 			// cannot safely show a dialog so log it
-			WorkbenchPlugin.log("Unable to read view registry.", e.getStatus());
+			WorkbenchPlugin.log("Unable to read view registry.", e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	return viewRegistry; 
@@ -387,7 +387,7 @@ public static void log(String message, IStatus status) {
 
 	if (message != null) {
 		getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR,null,message,null));
-		System.err.println(message + "\nReason:");
+		System.err.println(message + "\nReason:"); //$NON-NLS-1$
 	}
 	
 	getDefault().getLog().log(status);

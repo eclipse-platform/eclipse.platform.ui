@@ -10,11 +10,11 @@ package org.eclipse.ui.internal;
  */
 public interface IPreferenceConstants {
 	// (boolean) Whether or not to display the Welcome dialog on startup.
-	public static final String WELCOME_DIALOG = "WELCOME_DIALOG";
+	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
 
 	// (boolean) Cause all editors to save modified resources prior
 	// to running a full or incremental manual build.
-	public static final String SAVE_ALL_BEFORE_BUILD = "SAVE_ALL_BEFORE_BUILD";
+	public static final String SAVE_ALL_BEFORE_BUILD = "SAVE_ALL_BEFORE_BUILD"; //$NON-NLS-1$
 
 	// (boolean) Whether or not to automatically run a build
 	// when a resource is modified. NOTE: The value is not
@@ -22,12 +22,12 @@ public interface IPreferenceConstants {
 	// IWorkspace. This constant is used solely for property
 	// change notification from the preference store so
 	// interested parties can listen for all preference changes.
-	public static final String AUTO_BUILD = "AUTO_BUILD";
+	public static final String AUTO_BUILD = "AUTO_BUILD"; //$NON-NLS-1$
 
 	//Do we show tabs up or down for views
-	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION";
+	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
 
 	//Do we show tabs up or down for editors
-	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION";
+	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 
 }
