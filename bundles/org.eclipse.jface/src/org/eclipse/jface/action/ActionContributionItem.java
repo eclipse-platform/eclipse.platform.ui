@@ -134,6 +134,19 @@ public class ActionContributionItem extends ContributionItem {
          * @since 3.0
          */
         private static class ReferenceCleanerThread extends Thread {
+            
+            /**
+             * The number of reference cleaner threads created.
+             */
+            private static int threads = 0;
+            
+            /**
+             * A marker indicating that the reference cleaner thread should
+             * exit.  This is enqueued when the thread is told to stop.  Any
+             * referenced enqueued after the thread is told to stop will not be
+             * cleaned up.
+             */
+            private final WeakReference endMarker;
 
             /**
              * The reference queue to check; will not be <code>null</code>.
@@ -145,11 +158,6 @@ public class ActionContributionItem extends ContributionItem {
              * <code>null</code>.
              */
             private final Map map;
-
-            /**
-             * Whether this thread should be running.
-             */
-            private boolean running = true;
 
             /**
              * Constructs a new instance of <code>ReferenceCleanerThread</code>.
@@ -166,12 +174,15 @@ public class ActionContributionItem extends ContributionItem {
              */
             private ReferenceCleanerThread(final ReferenceQueue referenceQueue,
                     final Map map) {
+                super("Reference Cleaner - " + ++threads); //$NON-NLS-1$
+                
                 if (referenceQueue == null) { throw new NullPointerException(
                         "The reference queue should not be null."); } //$NON-NLS-1$
 
                 if (map == null) { throw new NullPointerException(
                         "The map should not be null."); } //$NON-NLS-1$
 
+                this.endMarker = new WeakReference(referenceQueue, referenceQueue);
                 this.referenceQueue = referenceQueue;
                 this.map = map;
             }
@@ -181,7 +192,7 @@ public class ActionContributionItem extends ContributionItem {
              * when the cache is shutting down.
              */
             private final void stopCleaning() {
-                this.running = false;
+                endMarker.enqueue();
             }
 
             /**
@@ -189,13 +200,18 @@ public class ActionContributionItem extends ContributionItem {
              * clears it, and disposes of any corresponding images.
              */
             public final void run() {
-                while (running) {
+                while (true) {
                     // Get the next reference to dispose.
                     Reference reference = null;
                     try {
                         reference = referenceQueue.remove();
                     } catch (final InterruptedException e) {
                         // Reference will be null.
+                    }
+                    
+                    // Check to see if we've been told to stop.
+                    if (reference == endMarker) {
+                        break;
                     }
 
                     // Remove the image and dispose it.
