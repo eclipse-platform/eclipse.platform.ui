@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -22,20 +23,18 @@ public class CVSDateFormatter {
 	
 	private static final SimpleDateFormat serverFormat = new SimpleDateFormat(SERVER_FORMAT, Locale.US);
 	private static SimpleDateFormat entryLineFormat = new SimpleDateFormat(ENTRYLINE_FORMAT, Locale.US);
+	
 	static {
-		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 		entryLineFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 	}
-	
 	static public Date serverStampToDate(String text) throws ParseException {
-		// FIXME this cuts the timezone which we do not want
-		if (text.indexOf("-") != -1) {//$NON-NLS-1$
-			text = text.substring(0,text.indexOf("-"));//$NON-NLS-1$
-		}
-		return serverFormat.parse(text);
+		serverFormat.setTimeZone(getTimeZone(text));
+		Date date = serverFormat.parse(text);
+		return date;
 	}
 
 	static public String dateToServerStamp(Date date) {
+		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
 	}	
 	
@@ -45,5 +44,31 @@ public class CVSDateFormatter {
 
 	static public String dateToEntryLine(Date date) {
 		return entryLineFormat.format(date);
+	}
+	
+	/*
+	 * Converts timezone text from date string from CVS server and
+	 * returns a timezone representing the received timezone.
+	 * Timezone string is of the following format: [-|+]MMSS
+	 */
+	static private TimeZone getTimeZone(String dateFromServer) {
+		String tz = null;
+		StringBuffer resultTz = new StringBuffer("GMT");
+		if (dateFromServer.indexOf("-") != -1) {
+			resultTz.append("-");
+			tz = dateFromServer.substring(dateFromServer.indexOf("-"));
+		} else if (dateFromServer.indexOf("+") != -1) {
+			resultTz.append('+');
+			tz = dateFromServer.substring(dateFromServer.indexOf("+"));
+		}
+		try {
+			if(tz!=null) {
+				resultTz.append(tz.substring(1, 3) /*hours*/ + ":" + tz.substring(3, 5) /*minutes*/);
+				return TimeZone.getTimeZone(resultTz.toString());
+			}
+		} catch(IndexOutOfBoundsException e) {
+			return TimeZone.getTimeZone("GMT");
+		}
+		return TimeZone.getTimeZone("GMT");
 	}
 }
