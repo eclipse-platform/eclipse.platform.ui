@@ -24,12 +24,4 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IGestureStroke {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
-	Object getDirection();
-}
+public interface IGestureStroke {}

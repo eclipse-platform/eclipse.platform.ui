@@ -24,47 +24,4 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IKeyStroke {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	char getCharacter();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */		
-	int getKeyCode();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isAlt();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isCommand();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isControl();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isShift();
-}
+public interface IKeyStroke {}
