@@ -71,7 +71,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * 
 	 * @return TargetNode the selected target
 	 */
-	public TargetNode getSelectedTarget() {
+	private TargetNode getSelectedTarget() {
 		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
 		if (selection.isEmpty()) {
 			return null;
