@@ -7,13 +7,18 @@
 
    <runtime>
       <library name="webapp.jar">
-          <packages prefixes="org.eclipse.help.internal.webapp"/>
+         <packages prefixes="org.eclipse.help.internal.webapp"/>
       </library>
    </runtime>
-   
    <requires>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.help"/>
    </requires>
+
+
+   <extension
+         point="org.eclipse.help.webapp">
+         <webapp default="true"/>
+   </extension>
 
 </plugin>
