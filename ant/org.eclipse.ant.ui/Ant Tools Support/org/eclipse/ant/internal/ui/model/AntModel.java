@@ -120,6 +120,9 @@ public class AntModel implements IAntModel {
     private Map fTaskNameToDefiningNode;
     private Map fCurrentNodeIdentifiers;
 	
+	private boolean fReportingProblemsCurrent= false;
+	private boolean fDoNotReportProblems= false;
+	
 	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		init(document, problemRequestor, locationProvider);
 		
@@ -153,6 +156,7 @@ public class AntModel implements IAntModel {
 				} else if (property.equals(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS)) {
 					reconcileForPropertyChange(false);
 				} else if (property.equals(AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE) || property.equals(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL)) {
+					fReportingProblemsCurrent= false;
 					reconcileForPropertyChange(false);
 				}
 			}
@@ -520,6 +524,9 @@ public class AntModel implements IAntModel {
 		}
 	}
 
+	/**
+	 * method assumes sendor has checked whether to report problems
+	 */
     private void checkMissingDependencies(AntElementNode node, AntElementNode originalNode) {
         String missing= ((AntTargetNode)node).checkDependencies();
         if (missing != null) {
@@ -535,26 +542,36 @@ public class AntModel implements IAntModel {
     }
 
     private boolean doNotReportProblems() {
+		if (fReportingProblemsCurrent) {
+			return fDoNotReportProblems;
+		}
+		
+		fReportingProblemsCurrent= true;
+		fDoNotReportProblems= false;
+		
 		if (AntUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL)) {
-			return true;
+			fDoNotReportProblems= true;
+			return fDoNotReportProblems;
 		}
 		String buildFileNames= AntUIPlugin.getDefault().getCombinedPreferenceStore().getString(AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE);
-		if (buildFileNames.length() == 0) {
-			//the user has not specified any names to not report problems for
-			return false;
-		}
-		String[] names= AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
-		for (int i = 0; i < names.length; i++) {
-			String string = names[i];
-			File editedFile= getEditedFile();
-			if (string.equals(editedFile.getName())) {
-				return true;
+		if (buildFileNames.length() > 0) {
+			String[] names= AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
+			String editedFileName= getEditedFile().getName();
+			for (int i = 0; i < names.length; i++) {
+				String string = names[i];
+				if	(string.trim().equals(editedFileName)) {
+					fDoNotReportProblems= true;
+					return fDoNotReportProblems;
+				}
 			}
 		}
 		
-		return false;
+		return fDoNotReportProblems;
 	}
 
+	/**
+	 * method assumes sendor has checked whether to report problems
+	 */
 	private void checkCircularDependencies(AntElementNode node) {
         Target target= ((AntTargetNode)node).getTarget();
         String name= target.getName();
@@ -645,6 +662,9 @@ public class AntModel implements IAntModel {
     }
 
 	private void markHierarchy(AntElementNode openElement, int severity, String message) {
+		if (doNotReportProblems()) {
+			return;
+		}
 		while (openElement != null) {
 			openElement.setProblemSeverity(severity);
 			openElement.setProblemMessage(message);
@@ -1102,9 +1122,6 @@ public class AntModel implements IAntModel {
 			return;
 		}
 		computeEndLocationForErrorNode(node, start, count);
-		if (doNotReportProblems()) {
-			return;
-		}
 		notifyProblemRequestor(exception, start, count, AntModelProblem.SEVERITY_ERROR);
 		markHierarchy(fLastNode, AntModelProblem.SEVERITY_ERROR, exception.getMessage());
 	} 
@@ -1121,9 +1138,6 @@ public class AntModel implements IAntModel {
 			}
 		}
 		computeEndLocationForErrorNode(node, lineNumber, column);
-		if (doNotReportProblems()) {
-			return;
-		}
 		notifyProblemRequestor(exception, node, AntModelProblem.SEVERITY_ERROR);
 		markHierarchy(node, AntModelProblem.SEVERITY_ERROR, exception.getMessage());
 	}
@@ -1554,9 +1568,6 @@ public class AntModel implements IAntModel {
     	fIsDirty= true;
     	reconcile();
     	AntModelCore.getDefault().notifyAntModelListeners(new AntModelChangeEvent(this, true));
-		if (doNotReportProblems()) {
-			return;
-		}
     	fMarkerUpdater.updateMarkers();
     }
 
