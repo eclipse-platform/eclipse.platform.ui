@@ -1,11 +1,10 @@
 package org.eclipse.help.internal.ui;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.util.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -23,10 +22,7 @@ public class ContextHelpDialog {
 	private Color foregroundColour = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
-	private Map menuItems;
 	private Shell shell;
-	private int x;
-	private int y;
 	/**
 	 * Constructor:
 	 * @param context an array of String or an array of IContext
@@ -35,8 +31,6 @@ public class ContextHelpDialog {
 	 */
 	ContextHelpDialog(IContext context, int x, int y) {
 		this.context = context;
-		this.x = x;
-		this.y = y;
 		Display display = Display.getCurrent();
 		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
@@ -106,8 +100,6 @@ public class ContextHelpDialog {
 		} catch (Throwable ex) {
 		}
 	}
-	/**
-	 */
 	protected Control createContents(Composite contents) {
 		contents.setBackground(backgroundColour);
 		GridLayout layout = new GridLayout();
@@ -118,8 +110,6 @@ public class ContextHelpDialog {
 		// create the dialog area and button bar
 		createInfoArea(contents);
 		createLinksArea(contents);
-		// if any errors or parsing errors have occurred, display them in a pop-up
-		ErrorUtil.displayStatus();
 		return contents;
 	}
 	private Control createInfoArea(Composite parent) {
@@ -127,7 +117,9 @@ public class ContextHelpDialog {
 		String styledText = context.getText();
 		if (styledText == null) // no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
-		StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY /* | SWT.WRAP*/);
+		StyledText text =
+			new StyledText(parent, SWT.MULTI | SWT.READ_ONLY /* | SWT.WRAP*/
+		);
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
@@ -158,7 +150,6 @@ public class ContextHelpDialog {
 	}
 	private Control createLinksArea(Composite parent) {
 		IHelpResource[] relatedTopics = context.getRelatedTopics();
-		relatedTopics = removeDuplicates(relatedTopics);
 		if (relatedTopics == null)
 			return null;
 		// Create control
@@ -195,31 +186,13 @@ public class ContextHelpDialog {
 		return composite;
 	}
 	/**
-	 * Check if two context topic are the same.
-	 * They are considered the same if both labels and href are equal
-	 */
-	private boolean equal(IHelpResource topic1, IHelpResource topic2) {
-		return topic1.getHref().equals(topic2.getHref())
-			&& topic1.getLabel().equals(topic2.getLabel());
-	}
-	/**
-	 * Checks if topic labels and href are not null and not empty strings
-	 */
-	private boolean isValidTopic(IHelpResource topic) {
-		return topic != null
-			&& topic.getHref() != null
-			&& !"".equals(topic.getHref())
-			&& topic.getLabel() != null
-			&& !"".equals(topic.getLabel());
-	}
-	/**
 	 * Called when related link has been chosen
-	 * Opens view with list of all related topics
+	 * Opens help viewer with list of all related topics
 	 */
-	private void launchFullViewHelp(IHelpResource selectedTopic) {
+	private void launchLinks(IHelpResource selectedTopic) {
 		close();
 		if (Logger.DEBUG)
-			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
+			Logger.logDebugMessage("ContextHelpDialog", "launchLinks: closes shell");
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(context, selectedTopic);
 	}
@@ -234,40 +207,13 @@ public class ContextHelpDialog {
 		} catch (Throwable e) {
 		}
 	}
-	/**
-	 * Filters out the duplicate topics from an array
-	 * TODO move this check to ContextManager
-	 */
-	private IHelpResource[] removeDuplicates(IHelpResource links[]) {
-		if (links == null || links.length <= 0)
-			return links;
-		ArrayList filtered = new ArrayList();
-		for (int i = 0; i < links.length; i++) {
-			IHelpResource topic1 = links[i];
-			if (!isValidTopic(topic1))
-				continue;
-			boolean dup = false;
-			for (int j = 0; j < filtered.size(); j++) {
-				IHelpResource topic2 = (IHelpResource) filtered.get(j);
-				if (!isValidTopic(topic2))
-					continue;
-				if (equal(topic1, topic2)) {
-					dup = true;
-					break;
-				}
-			}
-			if (!dup)
-				filtered.add(links[i]);
-		}
-		return (IHelpResource[]) filtered.toArray(new IHelpResource[filtered.size()]);
-	}
 	class LinkListener extends HyperlinkAdapter {
 		IHelpResource topic;
 		public LinkListener(IHelpResource topic) {
 			this.topic = topic;
 		}
 		public void linkActivated(Control c) {
-			launchFullViewHelp(topic);
+			launchLinks(topic);
 		}
 	}
 }
