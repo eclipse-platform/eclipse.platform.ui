@@ -542,10 +542,10 @@ public class SyncFileWriter {
 				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
 			}
 			if (file.exists()) {
-				file.delete(true, Policy.subMonitorFor(monitor, 10));
+				file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 10));
 			}
 			// Copy the file so the timestamp is maintained
-			source.move(file.getFullPath(), false /* force */, Policy.subMonitorFor(monitor, 100));
+			source.move(file.getFullPath(), false /* force */, true /* keep history */,Policy.subMonitorFor(monitor, 100));
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		} finally {
