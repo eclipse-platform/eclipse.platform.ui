@@ -64,6 +64,17 @@ public class AntTargetNode extends AntElementNode {
 		return targetName.equals(fTarget.getProject().getDefaultTarget());
 	}
 	
+	/**
+	 * Returns whether this target is an internal target. Internal
+	 * targets are targets which has no description. The default target
+	 * is never considered internal.
+	 * @return whether the given target is an internal target
+	 */
+	public boolean isInternal() {
+		Target target= getTarget();
+		return target.getDescription() == null && !isDefaultTarget();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */

@@ -54,7 +54,13 @@ public class AntModelContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object anInputElement) {
-		return ((AntModel) anInputElement).getRootElements();
+		if (anInputElement instanceof AntModel ) {
+			return ((AntModel) anInputElement).getRootElements();
+		}
+		if (anInputElement instanceof AntTargetNode[]) {
+			return (Object[])anInputElement;
+		}
+		return EMPTY_ARRAY;
 	}
 
 }

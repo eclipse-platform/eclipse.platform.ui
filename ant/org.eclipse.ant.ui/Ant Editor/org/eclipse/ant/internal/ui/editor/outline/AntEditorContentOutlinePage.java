@@ -17,7 +17,6 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.List;
 
-import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
@@ -27,13 +26,14 @@ import org.eclipse.ant.internal.ui.model.AntImportNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
+import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -68,8 +68,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private static final int EXPAND_TO_LEVEL= 2;
 
-	private Menu menu;
-	private AntOpenWithMenu openWithMenu;
+	private Menu fMenu;
+	private AntOpenWithMenu fOpenWithMenu;
 	
 	private IAntModelListener fListener;
 	private AntModel fModel;
@@ -89,25 +89,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ViewerSorter fSorter;
 	
 	private AntEditor fEditor;
-	
-	/**
-	 * A viewer filter that removes internal targets
-	 */
-	private class InternalTargetFilter extends ViewerFilter {
-		
-		/**
-		 * Returns whether the given target is an internal target. Internal
-		 * targets are targets which have no description. The default target
-		 * is never considered internal.
-		 */
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof AntTargetNode) {
-				Target target= ((AntTargetNode)element).getTarget();
-				return target.getDescription() != null || ((AntTargetNode)element).isDefaultTarget();
-			} 
-			return true;
-		}
-	}
 	
 	/**
 	 * A viewer filter that removes imported elements except an imported default target
@@ -353,11 +334,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
 	public void dispose() {
-		if (menu != null) {
-			menu.dispose();
+		if (fMenu != null) {
+			fMenu.dispose();
 		}
-		if (openWithMenu != null) {
-			openWithMenu.dispose();
+		if (fOpenWithMenu != null) {
+			fOpenWithMenu.dispose();
 		}
 		if (fListener != null) {
 			fCore.removeAntModelListener(fListener);
@@ -396,8 +377,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				contextMenuAboutToShow(menuManager);
 			}
 		});
-		menu= manager.createContextMenu(viewer.getTree());
-		viewer.getTree().setMenu(menu);
+		fMenu= manager.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(fMenu);
 
 		IPageSite site= getSite();
 		site.registerContextMenu(IAntUIConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
@@ -412,7 +393,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IMenuManager viewMenu= site.getActionBars().getMenuManager();
 		viewMenu.add(new ToggleLinkWithEditorAction(fEditor));
 		
-		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
+		fOpenWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -518,12 +499,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		if (file != null) {
 			menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 			IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
-			openWithMenu.setFile(file);
+			fOpenWithMenu.setFile(file);
 			if (element.getImportNode() != null) {
 				int[] lineAndColumn= element.getExternalInfo();
-				openWithMenu.setExternalInfo(lineAndColumn[0], lineAndColumn[1]);
+				fOpenWithMenu.setExternalInfo(lineAndColumn[0], lineAndColumn[1]);
 			}
-			submenu.add(openWithMenu);
+			submenu.add(fOpenWithMenu);
 			menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 		}
 	}
