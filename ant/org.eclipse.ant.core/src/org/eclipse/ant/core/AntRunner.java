@@ -35,6 +35,7 @@ public class AntRunner implements IPlatformRunnable {
 	protected String[] arguments;
 	protected String[] propertyFiles;
 	protected URL[] customClasspath;
+	protected String antHome;
 
 	/**
 	 * Sets the build file location on the file system.
@@ -274,6 +275,11 @@ public class AntRunner implements IPlatformRunnable {
 				setInputHandler.invoke(runner, new Object[] { inputHandlerClassName });
 			}
 			
+			if (antHome != null) {	
+				Method setAntHome = classInternalAntRunner.getMethod("setAntHome", new Class[] { String.class }); //$NON-NLS-1$
+				setAntHome.invoke(runner, new Object[] { antHome });
+			}
+			
 			// add progress monitor
 			if (monitor != null) {
 				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
@@ -453,4 +459,13 @@ public class AntRunner implements IPlatformRunnable {
 	public void setCustomClasspath(URL[] customClasspath) {
 		this.customClasspath = customClasspath;
 	}
+	
+	/**
+	 * Sets the Ant home to use for this build
+	 * @param String specifying the Ant home to use
+	 * @since 2.1
+	 */
+ 	public void setAntHome(String antHome) {
+ 		this.antHome= antHome;
+ 	}
 }

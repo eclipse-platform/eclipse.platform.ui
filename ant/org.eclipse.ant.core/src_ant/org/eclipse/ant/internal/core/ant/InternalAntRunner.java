@@ -135,6 +135,8 @@ public class InternalAntRunner {
      * handler.
      */
     private String inputHandlerClassname = null;
+    
+    private String buildAntHome= null;
 
 	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 
@@ -207,10 +209,6 @@ public class InternalAntRunner {
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		if (prefs.getAntHome() != null) {
-			System.setProperty("ant.home", prefs.getAntHome()); //$NON-NLS-1$
-		}
-		
 		Property[] properties= prefs.getCustomProperties();
 		if (properties != null) {
 			for (int i = 0; i < properties.length; i++) {
@@ -470,6 +468,7 @@ public class InternalAntRunner {
 		SecurityManager originalSM= System.getSecurityManager();
 		setJavaClassPath();
 		scriptExecuted= true;
+		processAntHome(false);
 		try {
 			getCurrentProject().init();
 			if (argList != null) {
@@ -557,7 +556,25 @@ public class InternalAntRunner {
 			if (error == null && scriptExecuted) {
 				logMessage(getCurrentProject(), getTimeString(System.currentTimeMillis() - startTime), Project.MSG_INFO);
 			}
+			processAntHome(true);
 		}
+	}
+	
+	private void processAntHome(boolean finished) {
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		String antHome= prefs.getAntHome();
+		if (buildAntHome != null && !finished) {
+			antHome= buildAntHome;
+		}
+		if (antHome == null || antHome.length() == 0) {
+			System.getProperties().remove("ant.home"); //$NON-NLS-1$
+		} else {
+			System.setProperty("ant.home", antHome); //$NON-NLS-1$
+		}
+	}
+	
+	public void setAntHome(String antHome) {
+		this.buildAntHome= antHome;
 	}
 	
 	private String getTimeString(long milliseconds) {
