@@ -62,6 +62,14 @@
       <property name="classname"
                 value="org.eclipse.jface.tests.viewers.AllTests"/>
     </ant>
+    
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="parts_data_folder"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname"
+                value="org.eclipse.ui.parts.tests.PartsReferencesTestSuite"/>
+    </ant>
+    
   </target>
 
   <!-- This target holds code to cleanup the testing environment after -->
