@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.console;
+package org.eclipse.debug.internal.ui.views.console;
 
 import java.text.MessageFormat;
 
@@ -18,6 +18,9 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.console.IConsole;
+import org.eclipse.debug.internal.ui.console.IConsolePage;
+import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**

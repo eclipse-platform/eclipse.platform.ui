@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.console;
+package org.eclipse.debug.internal.ui.views.console;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +29,9 @@ import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.KeyBindingFollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
+import org.eclipse.debug.internal.ui.console.IConsolePage;
+import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.internal.ui.views.console.ConsoleDocument;
-import org.eclipse.debug.internal.ui.views.console.ConsoleViewer;
-import org.eclipse.debug.internal.ui.views.console.ScrollLockAction;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;

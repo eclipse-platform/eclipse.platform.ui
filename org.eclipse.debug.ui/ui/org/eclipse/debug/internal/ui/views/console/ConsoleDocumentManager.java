@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.console.IConsole;
 import org.eclipse.debug.internal.ui.console.IConsoleManager;
 import org.eclipse.debug.internal.ui.console.IConsoleView;
-import org.eclipse.debug.internal.ui.console.ProcessConsole;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
