@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -19,8 +20,8 @@ import org.eclipse.core.runtime.content.*;
 
 public class ContentTypeManager implements IContentTypeManager, IRegistryChangeListener {
 	private static ContentTypeManager instance;
-	private static final int MARK_LIMIT = 0x100;
-	 public static final String PT_CONTENTTYPES= "contentTypes"; //$NON-NLS-1$	
+	private static final int MARK_LIMIT = 0x400;
+	public static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$	
 	/*
 	 * Returns the extension for a file name (omiting the leading '.'). 
 	 */
@@ -85,19 +86,34 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	 * @see IContentTypeManager
 	 */
 	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;
 		if (subset == null)
 			subset = getAllContentTypes();
 		List appropriate = new ArrayList();
 		for (int i = 0; i < subset.length; i++) {
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
-			if (describer != null) {
-				contents.mark(MARK_LIMIT);
-				if (describer.describe(contents, null, 0))
+			if (describer != null)
+				if (describe(describer, buffer, null, 0))
 					appropriate.add(subset[i]);
-				contents.reset();
-			}
 		}
 		return mostAppropriate(appropriate);
+	}
+	private ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
+		boolean failed = false;
+		try {
+			contents.mark(MARK_LIMIT);
+			byte[] buffer = new byte[MARK_LIMIT];
+			int read = contents.read(buffer);
+			return read == -1 ? null : new ByteArrayInputStream(buffer, 0, read);
+		} catch (IOException ioe) {
+			failed = true;
+			throw ioe;
+		} finally {
+			if (!failed)
+				contents.reset();
+		}
 	}
 	/**
 	 * @see IContentTypeManager
@@ -109,21 +125,24 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	}
 	/**
 	 * @see IContentTypeManager
-	 */	
+	 */
 	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;
 		if (subset == null)
 			subset = getAllContentTypes();
 		List appropriate = new ArrayList();
 		for (int i = 0; i < subset.length; i++) {
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
-			if (describer != null && describer.describe(contents, null, 0))
+			if (describer != null && describe(describer, buffer, null, 0))
 				appropriate.add(subset[i]);
 		}
 		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
 	}
 	/**
 	 * @see IContentTypeManager
-	 */	
+	 */
 	public IContentType[] findContentTypesForFileName(String fileName) {
 		Set types = new HashSet();
 		for (Iterator iter = catalog.values().iterator(); iter.hasNext();) {
@@ -142,7 +161,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	}
 	/**
 	 * @see IContentTypeManager
-	 */	
+	 */
 	public IContentType[] getAllContentTypes() {
 		List result = new ArrayList(catalog.size());
 		for (Iterator i = catalog.values().iterator(); i.hasNext();) {
@@ -154,7 +173,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	}
 	/**
 	 * @see IContentTypeManager
-	 */	
+	 */
 	public IContentType getContentType(String contentTypeIdentifier) {
 		ContentType type = (ContentType) catalog.get(contentTypeIdentifier);
 		return (type != null && type.isValid()) ? type : null;
@@ -162,8 +181,11 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	/**
 	 * @see IContentTypeManager
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, IContentType[] subset, int optionsMask) throws IOException {
+	public IContentDescription getDescriptionFor(InputStream contents, IContentType[] subset, int optionsMask) throws IOException {		
 		// naïve implementation for now
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;		
 		IContentType selected = findContentTypeFor(contents, subset);
 		if (selected == null)
 			return null;
@@ -171,16 +193,20 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		description.setContentType(selected);
 		// TODO less-than-optimal: causes stream to be read again
 		IContentDescriber selectedDescriber = ((ContentType) selected).getDescriber();
-		if (selectedDescriber != null && (selectedDescriber.getSupportedOptions() & optionsMask) == optionsMask) {
-			contents.mark(MARK_LIMIT);
-			selectedDescriber.describe(contents, description, optionsMask);			
-			contents.reset();
-		}
+		if (selectedDescriber != null && (selectedDescriber.getSupportedOptions() & optionsMask) == optionsMask)
+			describe(selectedDescriber, buffer, description, optionsMask);
 		// check if any of the defaults need to be applied
 		if ((optionsMask & IContentDescription.CHARSET) != 0 && description.getCharset() == null)
 			description.setCharset(selected.getDefaultCharset());
 		description.markAsImmutable();
 		return description;
+	}
+	private boolean describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
+		try {
+			return selectedDescriber.describe(contents, description, optionsMask);
+		} finally {
+			contents.reset();
+		}
 	}
 	private int indexOf(Object[] array, Object object) {
 		for (int i = 0; i < array.length; i++)
