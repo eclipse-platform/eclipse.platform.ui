@@ -22,7 +22,7 @@
    <editor
       id = "org.eclipse.ui.examples.propertysheet.UserEditor"
       name="%Editors.UserEditor"
-      icon="icons/basic/obj16/usereditor.gif"
+      icon="icons/obj16/usereditor.gif"
       extensions="usr"
       class="org.eclipse.ui.examples.propertysheet.UserEditor">
    </editor>

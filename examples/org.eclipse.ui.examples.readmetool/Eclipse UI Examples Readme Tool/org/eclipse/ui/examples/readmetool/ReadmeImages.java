@@ -28,11 +28,7 @@ public class ReadmeImages {
 	static final ImageDescriptor README_WIZARD_BANNER;
 
 	static {
-		String iconPath;
-		if(Display.getCurrent().getIconDepth() > 4)
-			iconPath = "icons/full/";//$NON-NLS-1$
-		else
-			iconPath = "icons/basic/";//$NON-NLS-1$
+		String iconPath = "icons/";
 		
 		String prefix = iconPath + "ctool16/"; //$NON-NLS-1$
 		EDITOR_ACTION1_IMAGE = createImageDescriptor(prefix + "action1.gif"); //$NON-NLS-1$

@@ -56,7 +56,7 @@
 			   label="%ReadmeAction.label"
 			   tooltip="%ReadmeAction.tooltip"
 			   helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
-			   icon="icons/basic/ctool16/openbrwsr.gif"
+			   icon="icons/ctool16/openbrwsr.gif"
 			   class="org.eclipse.ui.examples.readmetool.WindowActionDelegate"
 			   enablesFor="1">
 			   <selection class="org.eclipse.core.resources.IFile"
@@ -69,7 +69,7 @@
 			   label="%ReadmeRetargetAction.label"
 			   tooltip="%ReadmeRetargetAction.tooltip"
 			   helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
-			   icon="icons/basic/ctool16/openbrwsr.gif"
+			   icon="icons/ctool16/openbrwsr.gif"
 			   retarget="true">
 		   </action>
 		   <action id="org_eclipse_ui_examples_readmetool_readmeRelabelRetargetAction"
@@ -78,7 +78,7 @@
 			   label="%ReadmeRelabelRetargetAction.label"
 			   tooltip="%ReadmeRelabelRetargetAction.tooltip"
 			   helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
-			   icon="icons/basic/ctool16/openbrwsr.gif"
+			   icon="icons/ctool16/openbrwsr.gif"
 			   retarget="true"	
 			   allowLabelUpdate="true">
 		   </action>
@@ -97,7 +97,7 @@
       	   name = "%NewWizard.name"
 	   class="org.eclipse.ui.examples.readmetool.ReadmeCreationWizard"
 	   category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
-	   icon="icons/basic/obj16/newreadme_wiz.gif">
+	   icon="icons/obj16/newreadme_wiz.gif">
     	   <description>%NewWizard.desc</description>
 	   <selection class="org.eclipse.core.resources.IResource"/>
 	</wizard>
@@ -108,7 +108,7 @@
 	<editor
   	   id = "org.eclipse.ui.examples.readmetool.ReadmeEditor"
   	   name="%Editors.ReadmeEditor"
-      	   icon="icons/basic/obj16/editor.gif"
+      	   icon="icons/obj16/editor.gif"
       	   class="org.eclipse.ui.examples.readmetool.ReadmeEditor"
 	   extensions="readme"
            contributorClass="org.eclipse.ui.examples.readmetool.ReadmeEditorActionBarContributor">
@@ -125,7 +125,7 @@
 	<view
  	   id="org.eclipse.ui.examples.readmetool.views.SectionsView"
 	   name="%Views.ReadmeSections"
-	   icon="icons/basic/view16/sections.gif"
+	   icon="icons/view16/sections.gif"
 	   category="org.eclipse.ui.examples.readmetool"
 	   class="org.eclipse.ui.examples.readmetool.ReadmeSectionsView">
 	</view>
@@ -164,7 +164,7 @@
 	    nameFilter="*.readme">
 	    <action id="org.eclipse.ui.examples.readmetool.action1"
 	       label="%PopupMenus.action"
-	       icon="icons/basic/ctool16/openbrwsr.gif"
+	       icon="icons/ctool16/openbrwsr.gif"
 	       menubarPath="additions"
 	       helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
 	       class="org.eclipse.ui.examples.readmetool.PopupMenuActionDelegate"	
@@ -176,7 +176,7 @@
         targetID="org.eclipse.ui.examples.readmetool.outline">
 	    <action id="org.eclipse.ui.examples.readmetool.action1"
 	       label="%PopupMenus.action"
-	       icon="icons/basic/ctool16/openbrwsr.gif"
+	       icon="icons/ctool16/openbrwsr.gif"
 	       menubarPath="additions"
 	       helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
 	       class="org.eclipse.ui.examples.readmetool.ViewActionDelegate">	
@@ -193,7 +193,7 @@
               label="%PopupMenu.ResourceNav.label" 
 			  menubarPath="additions"
               toolbarPath="additions" 
-              icon="icons/basic/obj16/editor.gif" 
+              icon="icons/obj16/editor.gif" 
               tooltip="%PopupMenu.ResourceNav.tooltip" 
    	      helpContextId="org.eclipse.ui.examples.readmetool.view_action_context"
               class="org.eclipse.ui.examples.readmetool.ViewActionDelegate" 
@@ -211,7 +211,7 @@
 			<action id="org.eclipse.ui.examples.readmetool.ea1" 
               label="%Editors.Action.label" 
 	      toolbarPath="ReadmeEditor" 
-              icon="icons/basic/obj16/editor.gif" 
+              icon="icons/obj16/editor.gif" 
               tooltip="%Editors.Action.tooltip" 
               class="org.eclipse.ui.examples.readmetool.EditorActionDelegate" 
               /> 
