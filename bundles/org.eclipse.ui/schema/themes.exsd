@@ -223,7 +223,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+                  the font value.  This is in the form: &lt;code&gt;fontname-style-height&lt;/code&gt; where &lt;code&gt;fontname&lt;/code&gt; is the name of a font, &lt;code&gt;style&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;height&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;  
 &lt;p&gt;Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsTo&lt;/code&gt; may be used.&lt;/p&gt;  If &lt;code&gt;value&lt;/code&gt; is specified, additional value definitions may be specified on a per platform/windowing system basis via the &lt;code&gt;fontValue&lt;/code&gt; element.
                </documentation>
@@ -320,7 +320,7 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the overriding value of this font.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+                  the overriding value of this font.  This is in the form: &lt;code&gt;fontname-style-height&lt;/code&gt; where &lt;code&gt;fontname&lt;/code&gt; is the name of a font, &lt;code&gt;style&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;height&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;value&lt;/code&gt; must be defined for a font override.
 Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&gt;defaultsTo&lt;/code&gt; for a &lt;code&gt;fontOverride&lt;/code&gt;.&lt;/p&gt;
@@ -490,7 +490,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+                  the font value.  This is in the form: &lt;code&gt;fontname-style-height&lt;/code&gt; where &lt;code&gt;fontname&lt;/code&gt; is the name of a font, &lt;code&gt;style&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;height&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
                </documentation>
             </annotation>

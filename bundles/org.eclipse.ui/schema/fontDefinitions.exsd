@@ -63,7 +63,7 @@ This extension point has been deprecated in 3.0.  You should now add fontDefinit
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+                  the font value.  This is in the form: &lt;code&gt;fontname-style-height&lt;/code&gt; where &lt;code&gt;fontname&lt;/code&gt; is the name of a font, &lt;code&gt;style&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;height&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;  
 &lt;p&gt;
 Only one (or neither) of value or defaultsTo may be used.
