@@ -118,6 +118,11 @@ public IFile[] findFilesForLocation(IPath location);
  * a trailing separator is ignored.
  * The resulting resource need not exist in the workspace.
  * <p>
+ * This method returns null when the given file system location is not equal to 
+ * or under the location of any existing project in the workspace, or equal to the 
+ * location of the platform working location.
+ * </p>
+ * <p>
  * Warning: This method ignores linked resources and their children.  Since
  * linked resources may overlap other resources, a unique mapping from a
  * file system location to a single resource is not guaranteed.  To find all 
@@ -135,6 +140,10 @@ public IContainer getContainerForLocation(IPath location);
  * in the local file system, or <code>null</code> if none.
  * The path must be absolute; its segments need not be valid names.
  * The resulting file need not exist in the workspace.
+ * <p>
+ * This method returns null when the given file system location is not under
+ * the location of any existing project in the workspace.
+ * </p>
  * <p>
  * Warning: This method ignores linked resources and their children.  Since
  * linked resources may overlap other resources, a unique mapping from a
