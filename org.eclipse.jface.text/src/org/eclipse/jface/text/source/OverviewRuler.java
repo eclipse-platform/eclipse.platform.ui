@@ -56,8 +56,8 @@ import org.eclipse.jface.text.TextEvent;
 
 /**
  * Ruler presented next to a source viewer showing all annotations of the
- * viewer's annotation model in a compact format, i.e. using the same height as
- * the source viewer.<p>
+ * viewer's annotation model in a compact format. The ruler has the same height
+ * as the source viewer.<p>
  * Clients usually instantiate and configure objects of this class.
  * 
  * @since 2.1
