@@ -1359,69 +1359,36 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			if (top > -1) {
 				
 				// scroll vertically
-				
-				int lines= getVisibleLinesInViewport();
-				int bottom= top + lines;
-				
-				// two lines at the top and the bottom should always be left
-				// if window is smaller than 5 lines, always center position is chosen
-				int bufferZone= 2; 
-				
-				if (startLine >= top + bufferZone 
-						&& startLine <= bottom - bufferZone
-						&& endLine >= top + bufferZone 
-						&& endLine <= bottom - bufferZone) {
-						
-					// do not scroll at all as it is already visible
-					
+				int bottom= top + getVisibleLinesInViewport();
+				if (startLine >= top && startLine < bottom
+						&& endLine >= top && endLine < bottom) {
+					// do nothing
 				} else {
-					
-					int delta= Math.max(0, lines - (endLine - startLine));
-					fTextWidget.setTopIndex(startLine - delta/3);
+					fTextWidget.setTopIndex(startLine);
 					updateViewportListeners(INTERNAL);
 				}
 				
 				// scroll horizontally
+				int lineStart= doc.getLineOffset(startLine);
+				int startPixel= getWidthInPixels(doc.get(lineStart, start - lineStart));
 				
-				if (endLine < startLine) {
-					endLine += startLine;
-					startLine= endLine - startLine;
-					endLine -= startLine;
-				}
-				
-				int startPixel= -1;
-				int endPixel= -1;
-				
-				if (endLine > startLine) {
-					// reveal the beginning of the range in the start line
-					IRegion line= doc.getLineInformation(startLine);
-					startPixel= getWidthInPixels(line.getOffset(), start - line.getOffset());
-					endPixel= getWidthInPixels(line.getOffset(), line.getLength());
-				} else {
-					int lineStart= doc.getLineOffset(startLine);
-					startPixel= getWidthInPixels(lineStart, start - lineStart);
-					endPixel= getWidthInPixels(lineStart, end - lineStart);
-				}
+				lineStart= doc.getLineOffset(endLine);
+				int endPixel= getWidthInPixels(doc.get(lineStart, end - lineStart));
 				
 				int visibleStart= fTextWidget.getHorizontalPixel();
 				int visibleEnd= visibleStart + fTextWidget.getClientArea().width;
 				
-				// scroll only if not yet visible
-				if (startPixel < visibleStart || visibleEnd < endPixel) {
-					
-					// set buffer zone to 10 pixels
-					bufferZone= 10;
-					
-					int newOffset= visibleStart;
-					if (startPixel < visibleStart)
-						newOffset= startPixel;
-					else if (endPixel - startPixel  + bufferZone < visibleEnd - visibleStart)
-						newOffset= visibleStart + (endPixel - visibleEnd + bufferZone);
+				int newOffset= visibleStart;
+				if (startPixel < visibleStart)
+					newOffset= startPixel;
+				else if (endPixel > visibleEnd) {
+					if (endPixel - startPixel < visibleEnd - visibleStart)
+						newOffset= visibleStart + (endPixel - visibleEnd);
 					else
 						newOffset= startPixel;
-						
-					fTextWidget.setHorizontalIndex(newOffset / getAverageCharWidth());
 				}
+				
+				fTextWidget.setHorizontalIndex(newOffset / getAverageCharWidth());
 				
 			}
 		} catch (BadLocationException e) {
@@ -1434,44 +1401,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * 
 	 * @param the string to messure
 	 * @return the width of the presentation of the given string
-	 * @deprecated use <code>getWidthInPixels(int, int)</code> instead
 	 */
 	final protected int getWidthInPixels(String text) {
 		GC gc= new GC(fTextWidget);
-		gc.setFont(fTextWidget.getFont());
 		Point extent= gc.textExtent(text);
 		gc.dispose();
 		return extent.x;
-	}
-	
-	/**
-	 * Returns the width of the representation of a text range in this
-	 * viewer's document as drawn in this viewer's widget.
-	 * 
-	 * @param offset the offset text range
-	 * @param length the length of the text range
-	 * @return the width of the presentation of the specified text range
-	 */
-	final protected int getWidthInPixels(int offset, int length) {		
-		
-		int start= offset - getVisibleRegionOffset();
-		int end= start + length;
-		
-		Point left= fTextWidget.getLocationAtOffset(start);
-		Point right= new Point(left.x, left.y);
-		
-		for (int i= start +1; i <= end; i++) {
-			
-			Point p= fTextWidget.getLocationAtOffset(i);
-			
-			if (left.x > p.x)
-				left.x= p.x;
-								
-			if (right.x  < p.x)
-				right.x= p.x;				
-		}
-		
-		return  right.x - left.x;
 	}
 	
 	/**
@@ -1481,7 +1416,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 */
 	final protected int getAverageCharWidth() {
 		GC gc= new GC(fTextWidget);
-		gc.setFont(fTextWidget.getFont());
 		int increment= gc.getFontMetrics().getAverageCharWidth();
 		gc.dispose();
 		return increment;

@@ -1952,16 +1952,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 			
 		if (fShowHighlightRangeOnly) {
-			if (moveCursor) {
-				IRegion visibleRegion= fSourceViewer.getVisibleRegion();
-				if (start != visibleRegion.getOffset() || length != visibleRegion.getLength())
-					fSourceViewer.setVisibleRegion(start, length);
-			}
-		} else {
-			IRegion rangeIndication= fSourceViewer.getRangeIndication();
-			if (rangeIndication == null || start != rangeIndication.getOffset() || length != rangeIndication.getLength())
-				fSourceViewer.setRangeIndication(start, length, moveCursor);
-		}
+			if (moveCursor)
+				fSourceViewer.setVisibleRegion(start, length);
+		} else
+			fSourceViewer.setRangeIndication(start, length, moveCursor);
 	}
 	
 	/*
@@ -2120,12 +2114,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		StyledText styledText= fSourceViewer.getTextWidget();
 		
 		int offset= fSourceViewer.getVisibleRegion().getOffset();
-		int caret= offset + styledText.getCaretOffset();
+		int caret= styledText.getCaretOffset();
 		IDocument document= fSourceViewer.getDocument();
 		
 		try {
 			
-			int line=document.getLineOfOffset(caret);
+			int line=document.getLineOfOffset(offset + caret);
 			
 			int lineOffset= document.getLineOffset(line);
 			int occurrences= 0;
