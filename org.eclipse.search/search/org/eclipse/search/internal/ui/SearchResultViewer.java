@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
@@ -71,6 +72,7 @@ public class SearchResultViewer extends TableViewer {
 	private CopyToClipboardAction fCopyToClipboardAction;
 	private int fMarkerToShow;
 	private boolean fHandleSelectionChangedEvents= true;
+	private ISelection fLastSelection;
 	private boolean fCurrentMatchRemoved= false;
 	private Color fPotentialMatchFgColor;
 	private ActionGroup fActionGroup;
@@ -120,7 +122,10 @@ public class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					handleSelectionChanged();
+					if (fLastSelection == null || !fLastSelection.equals(event.getSelection())) {
+						fLastSelection= event.getSelection();
+						handleSelectionChanged();
+					}
 				}
 			}
 		);
@@ -145,6 +150,11 @@ public class SearchResultViewer extends TableViewer {
 		
 		// Register menu
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
+		
+		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();
+		if (actionBars != null)
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fShowNextResultAction);
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fShowPreviousResultAction);
 	}
 
 	/**
@@ -218,6 +228,7 @@ public class SearchResultViewer extends TableViewer {
 
 
 	protected void inputChanged(Object input, Object oldInput) {
+		fLastSelection= null;
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
 		fMarkerToShow= -1;
@@ -339,14 +350,6 @@ public class SearchResultViewer extends TableViewer {
 				}
 				if (e.character == SWT.DEL) {
 					new RemoveResultAction(SearchResultViewer.this).run();
-					return; // performance
-				}
-				if (e.stateMask == SWT.CTRL && e.character == 'E'-0x40) {
-					showNextResult();
-					return; // performance
-				}
-				if (e.stateMask == (SWT.CTRL | SWT.SHIFT) && e.character == 'E'-0x40) {
-					showPreviousResult();
 					return; // performance
 				}
 			}
@@ -525,6 +528,7 @@ public class SearchResultViewer extends TableViewer {
 
 
 	protected void handleDispose(DisposeEvent event) {
+		fLastSelection= null;
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
