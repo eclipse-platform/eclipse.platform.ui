@@ -40,7 +40,9 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.IDecoratorManager;
@@ -472,51 +474,39 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	}
 
 	public static boolean isDirty(IResource resource) {
+		
+		// No need to decorate non-existant resources
+		if (!resource.exists()) return false;
+		
 		if(resource.getType() == IResource.FILE) {
 			return isDirty((IFile) resource);
 		}
 		
-		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
+		final CVSException DECORATOR_EXCEPTION = new CVSException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
-
-					// a project can't be dirty, continue with its children
-					if (resource.getType() == IResource.PROJECT) {
-						return true;
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			cvsResource.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					if(isDirty(file)) {
+						throw DECORATOR_EXCEPTION;
 					}
-					
-					// if the resource does not exist in the workbench or on the file system, stop searching.
-					if(!resource.exists()) {
-						return false;
-					}
-
-					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-
-					try {
-						if (!cvsResource.isManaged()) {
-							if (cvsResource.isIgnored()) {
-								return false;
-							} else {
-								// new resource, show as dirty
-								throw DECORATOR_EXCEPTION;
-							}
-						}
-					} catch (CVSException e) {
-						// isManaged threw an exception
-						CVSUIPlugin.log(e.getStatus());
-						return false;
-					}
-					if (!cvsResource.isFolder()) {
-						if(isDirty((ICVSFile) cvsResource)) {
+				}
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					if(!folder.exists()) {
+						if (folder.isCVSFolder()) {
+							// The folder contains outgoing file deletions
 							throw DECORATOR_EXCEPTION;
 						}
+						return;
 					}
-					// no change -- keep looking in children
-					return true;
+					if (!folder.isCVSFolder() && !folder.isIgnored()) {
+						// new resource, show as dirty
+						throw DECORATOR_EXCEPTION;
+					}
+					folder.acceptChildren(this);
 				}
-			}, IResource.DEPTH_INFINITE, true);
-		} catch (CoreException e) {
+			});
+		} catch (CVSException e) {
 			//if our exception was caught, we know there's a dirty child
 			return e == DECORATOR_EXCEPTION;
 		}
