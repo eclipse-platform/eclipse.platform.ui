@@ -2,10 +2,10 @@
 <!ELEMENT contexts (context)*  >
 
 <!ELEMENT context (description, topic*) >
-<!ATTLIST context  id  ID  #REQUIRED >
+<!ATTLIST context id ID #REQUIRED >
 
 <!ELEMENT description #PCDATA >
 
-<!ELEMENT topic (topic)* >
+<!ELEMENT topic EMPTY >
 <!ATTLIST topic label CDATA #REQUIRED >
-<!ATTLIST topic href  CDATA #IMPLIED >
+<!ATTLIST topic href CDATA #IMPLIED >

@@ -35,12 +35,11 @@ help documentation for this plug-in.</li>
 contexts manifest file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT contexts (context)* ) ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT context (description?,topic*) ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST context id&nbsp; ID #REQUIRED ></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST context id ID #REQUIRED ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
-<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topic (topic)* ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic id ID #IMPLIED ></tt>
+<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topic EMPTY ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href&nbsp; CDATA #IMPLIED
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED
 ></tt>
 <p>The contexts manifest files provide all the information needed when
 context-sensitive help is requested by the user. The id is passed by the
