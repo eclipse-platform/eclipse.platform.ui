@@ -231,4 +231,17 @@ public class FolderSyncInfo {
 		MutableFolderSyncInfo newSync = new MutableFolderSyncInfo(this);
 		return newSync;
 	}
+
+	/**
+	 * Return true if this FolderSyncInfo is mapped to the same remote directory
+	 * as the other FolderSyncInfo passed as a parameter.
+	 * 
+	 * @param remoteInfo
+	 * @return
+	 */
+	public boolean isSameMapping(FolderSyncInfo other) {
+		if (other == null) return false;
+		return (this.getRoot().equals(other.getRoot()) 
+			&& this.getRepository().equals(other.getRepository())) ;
+	}
 }
