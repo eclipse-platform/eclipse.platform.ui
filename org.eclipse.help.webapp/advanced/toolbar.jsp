@@ -55,21 +55,14 @@ if (data.isIE()) {
 }
 %>
 }
-
-<%
-if (data.isMozilla()) {
-%>
-#hide_nav {
-	display:none;
-}
-<%
-}
-%>
  
+A {
+	display:block; 
+}
 .button a { 
 	display:block; 
-	width:20px;
-	height:20px;
+	width:<%=data.isMozilla()?18:20%>px;
+	height:<%=data.isMozilla()?18:20%>px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
 	writing-mode:tb-rl;
 	vertical-align:middle;
@@ -91,7 +84,7 @@ if (data.isIE()) {
 }else if (data.isMozilla()){
 %>
 	border-top:1px solid ThreeDShadow;
-	height:27px;
+	height:24px;
 <%
 }
 %>
