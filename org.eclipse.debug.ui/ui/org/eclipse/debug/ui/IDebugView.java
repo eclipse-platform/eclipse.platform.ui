@@ -133,7 +133,7 @@ public interface IDebugView extends IViewPart {
 	 * If the action is an instance of <code>IUpdate</code> it is added/remove
 	 * from the collection of updateables associated with this view.
 	 * 
-	 * @param actionId the action id
+	 * @param actionID the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
 	 */
@@ -161,7 +161,7 @@ public interface IDebugView extends IViewPart {
 	/**
 	 * Returns the action installed under the given action id.
 	 *
-	 * @param actionId the action id
+	 * @param actionID the action id
 	 * @return the action, or <code>null</code> if none
 	 * @see #setAction
 	 */

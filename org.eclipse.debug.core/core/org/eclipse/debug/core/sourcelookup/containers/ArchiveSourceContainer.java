@@ -35,7 +35,7 @@ public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	/**
 	 * Creates an archive source container on the given file. 
 	 * 
-	 * @param file archive in the workspace
+	 * @param archive archive in the workspace
 	 * @param detectRootPath whether a root path should be detected. When
 	 *   <code>true</code>, searching is performed relative to a root path
 	 *   within the archive based on fully qualified file names. The root
