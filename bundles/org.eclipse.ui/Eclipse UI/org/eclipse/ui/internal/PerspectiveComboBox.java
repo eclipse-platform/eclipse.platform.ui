@@ -66,6 +66,7 @@ public class PerspectiveComboBox extends ControlContribution
 	 */
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.READ_ONLY);
+		combo.setToolTipText(WorkbenchMessages.getString("ChangePerspectiveType.toolTip")); //$NON-NLS-1$
 		fill();
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
