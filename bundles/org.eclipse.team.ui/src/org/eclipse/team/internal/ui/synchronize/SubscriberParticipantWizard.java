@@ -11,13 +11,12 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * This is the class registered with the org.eclipse.team.ui.synchronizeWizard
@@ -25,7 +24,8 @@ import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 public abstract class SubscriberParticipantWizard extends Wizard {
 
 	private GlobalRefreshResourceSelectionPage selectionPage;
-
+	private IWizard importWizard;
+	
 	public SubscriberParticipantWizard() {
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
 		setNeedsProgressMonitor(false);
@@ -42,24 +42,79 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
-		selectionPage.setTitle(Policy.bind("GlobalRefreshSubscriberPage.1", getName())); //$NON-NLS-1$
-		selectionPage.setMessage(Policy.bind("GlobalRefreshSubscriberPage.2")); //$NON-NLS-1$
-		addPage(selectionPage);
+		if (getRootResources().length == 0) {
+			importWizard = getImportWizard();
+			importWizard.setContainer(getContainer());
+			importWizard.addPages();
+			IWizardPage[] pages = importWizard.getPages();
+			if (pages.length > 0) {
+				pages[0].setTitle(Policy.bind("SubscriberParticipantWizard.0", getName())); //$NON-NLS-1$
+				pages[0].setDescription(Policy.bind("SubscriberParticipantWizard.1", importWizard.getWindowTitle())); //$NON-NLS-1$
+			}
+		} else {
+			selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
+			selectionPage.setTitle(Policy.bind("GlobalRefreshSubscriberPage.1", getName())); //$NON-NLS-1$
+			selectionPage.setMessage(Policy.bind("GlobalRefreshSubscriberPage.2")); //$NON-NLS-1$
+			addPage(selectionPage);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		IResource[] resources = selectionPage.getRootResources();
-		if(resources != null && resources.length > 0) {
-			SubscriberParticipant participant = createParticipant(selectionPage.getSynchronizeScope());
-			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-			// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
-			participant.run(null /* no site */);
+		if (importWizard != null) {
+			return importWizard.performFinish();
+		} else {
+			IResource[] resources = selectionPage.getRootResources();
+			if (resources != null && resources.length > 0) {
+				SubscriberParticipant participant = createParticipant(selectionPage.getSynchronizeScope());
+				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
+				// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
+				participant.run(null /* no site */);
+			}
+			return true;
 		}
-		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public IWizardPage getNextPage(IWizardPage page) {
+		if(importWizard != null ) {
+			return importWizard.getNextPage(page);
+		}
+		return super.getNextPage(page);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#performCancel()
+	 */
+	public boolean performCancel() {
+		if(importWizard != null) {
+			return importWizard.performFinish();
+		}
+		return super.performCancel();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		if(importWizard != null) {
+			return importWizard.canFinish();
+		}
+		return super.canFinish();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#getStartingPage()
+	 */
+	public IWizardPage getStartingPage() {
+		if(importWizard != null) {
+			return importWizard.getStartingPage();
+		}
+		return super.getStartingPage();
 	}
 
 	protected abstract IResource[] getRootResources();
@@ -67,4 +122,6 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	protected abstract SubscriberParticipant createParticipant(ISynchronizeScope scope);
 
 	protected abstract String getName();
+	
+	protected abstract IWizard getImportWizard();
 }

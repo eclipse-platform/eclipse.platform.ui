@@ -132,132 +132,130 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		Composite top = new Composite(parent2, SWT.NULL);
 		top.setLayout(new GridLayout());
 		initializeDialogUnits(top);
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 50;
 		top.setLayoutData(data);
 		setControl(top);
-		
-		if (resources.isEmpty()) {
-			Label l = new Label(top, SWT.NULL);
-			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.4")); //$NON-NLS-1$
-			setPageComplete(false);
-		} else {
-			Label l = new Label(top, SWT.NULL);
-			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
-			
-			// The viewer
-			fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
-			data = new GridData(GridData.FILL_BOTH);
-			//data.widthHint = 200;
-			data.heightHint = 100;
-			fViewer.getControl().setLayoutData(data);
-			fViewer.setContentProvider(new MyContentProvider());
-			fViewer.setLabelProvider( new DecoratingLabelProvider(
-					new MyLabelProvider(),
-					PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-			fViewer.addCheckStateListener(new ICheckStateListener() {
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					updateOKStatus();
+
+		Label l = new Label(top, SWT.NULL);
+		l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
+
+		// The viewer
+		fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
+		data = new GridData(GridData.FILL_BOTH);
+		//data.widthHint = 200;
+		data.heightHint = 100;
+		fViewer.getControl().setLayoutData(data);
+		fViewer.setContentProvider(new MyContentProvider());
+		fViewer.setLabelProvider(new DecoratingLabelProvider(new MyLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		fViewer.addCheckStateListener(new ICheckStateListener() {
+
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateOKStatus();
+			}
+		});
+		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		fViewer.setInput(resources);
+
+		Composite selectGroup = new Composite(top, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		//layout.makeColumnsEqualWidth = false;
+		selectGroup.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		selectGroup.setLayoutData(data);
+
+		Button selectAll = new Button(selectGroup, SWT.NULL);
+		selectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.12")); //$NON-NLS-1$
+		selectAll.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				participantScope.setSelection(true);
+				selectedResourcesScope.setSelection(false);
+				workingSetScope.setSelection(false);
+				updateParticipantScope();
+				scopeCheckingElement = true;
+				updateOKStatus();
+				scopeCheckingElement = false;
+			}
+		});
+		setButtonLayoutData(selectAll);
+
+		Button deSelectAll = new Button(selectGroup, SWT.NULL);
+		deSelectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.13")); //$NON-NLS-1$
+		deSelectAll.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				fViewer.setCheckedElements(new Object[0]);
+				updateOKStatus();
+			}
+		});
+		setButtonLayoutData(deSelectAll);
+
+		// Scopes
+		Group scopeGroup = new Group(top, SWT.NULL);
+		scopeGroup.setText(Policy.bind("GlobalRefreshResourceSelectionPage.6")); //$NON-NLS-1$
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = false;
+		scopeGroup.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 50;
+		scopeGroup.setLayoutData(data);
+
+		participantScope = new Button(scopeGroup, SWT.RADIO);
+		participantScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.7")); //$NON-NLS-1$
+		participantScope.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				updateParticipantScope();
+			}
+		});
+
+		selectedResourcesScope = new Button(scopeGroup, SWT.RADIO);
+		selectedResourcesScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.8")); //$NON-NLS-1$
+		selectedResourcesScope.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				updateSelectedResourcesScope();
+			}
+		});
+		data = new GridData();
+		data.horizontalSpan = 2;
+		selectedResourcesScope.setLayoutData(data);
+
+		workingSetScope = new Button(scopeGroup, SWT.RADIO);
+		workingSetScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.10")); //$NON-NLS-1$
+		workingSetScope.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				if (workingSetScope.getSelection()) {
+					updateWorkingSetScope();
 				}
-			});
-			fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
-			fViewer.setInput(resources);
-				
-			Composite selectGroup = new Composite(top, SWT.NULL);
-			GridLayout layout = new GridLayout();
-			layout.numColumns = 2;
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			//layout.makeColumnsEqualWidth = false;
-			selectGroup.setLayout(layout);
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			selectGroup.setLayoutData(data);
-			
-			Button selectAll = new Button(selectGroup, SWT.NULL);
-			selectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.12")); //$NON-NLS-1$
-			selectAll.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {	
-					participantScope.setSelection(true);
-					selectedResourcesScope.setSelection(false);
-					workingSetScope.setSelection(false);
-					updateParticipantScope();
-					scopeCheckingElement = true;
-					updateOKStatus();
-					scopeCheckingElement = false;
-				}
-			});
-			setButtonLayoutData(selectAll);
-			
-			Button deSelectAll = new Button(selectGroup, SWT.NULL);
-			deSelectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.13")); //$NON-NLS-1$
-			deSelectAll.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					fViewer.setCheckedElements(new Object[0]);
-					updateOKStatus();
-				}
-			});
-			setButtonLayoutData(deSelectAll);
-			
-			// Scopes
-			Group scopeGroup = new Group(top, SWT.NULL);
-			scopeGroup.setText(Policy.bind("GlobalRefreshResourceSelectionPage.6")); //$NON-NLS-1$
-			layout = new GridLayout();
-			layout.numColumns = 3;
-			layout.makeColumnsEqualWidth = false;
-			scopeGroup.setLayout(layout);
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			data.widthHint = 50;
-			scopeGroup.setLayoutData(data);
-			
-			participantScope = new Button(scopeGroup, SWT.RADIO); 
-			participantScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.7")); //$NON-NLS-1$
-			participantScope.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateParticipantScope();
-				}
-			});
-			
-			selectedResourcesScope = new Button(scopeGroup, SWT.RADIO); 
-			selectedResourcesScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.8")); //$NON-NLS-1$
-			selectedResourcesScope.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateSelectedResourcesScope();
-				}
-			});
-			data = new GridData();
-			data.horizontalSpan = 2;
-			selectedResourcesScope.setLayoutData(data);
-			
-			
-			workingSetScope = new Button(scopeGroup, SWT.RADIO); 
-			workingSetScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.10")); //$NON-NLS-1$
-			workingSetScope.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if(workingSetScope.getSelection()) {
-						updateWorkingSetScope();
-					}
-				}
-			});
-			
-			workingSetLabel = new Text(scopeGroup, SWT.BORDER);
-			workingSetLabel.setEditable(false);
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			workingSetLabel.setLayoutData(data);
-			
-			Button selectWorkingSetButton = new Button(scopeGroup, SWT.NULL);
-			selectWorkingSetButton.setText(Policy.bind("GlobalRefreshResourceSelectionPage.11")); //$NON-NLS-1$
-			selectWorkingSetButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					selectWorkingSetAction();
-				}			
-			});
-			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-			selectWorkingSetButton.setLayoutData(data);
-			Dialog.applyDialogFont(selectWorkingSetButton);
-			
-			initializeScopingHint();
-		}
+			}
+		});
+
+		workingSetLabel = new Text(scopeGroup, SWT.BORDER);
+		workingSetLabel.setEditable(false);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		workingSetLabel.setLayoutData(data);
+
+		Button selectWorkingSetButton = new Button(scopeGroup, SWT.NULL);
+		selectWorkingSetButton.setText(Policy.bind("GlobalRefreshResourceSelectionPage.11")); //$NON-NLS-1$
+		selectWorkingSetButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				selectWorkingSetAction();
+			}
+		});
+		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		selectWorkingSetButton.setLayoutData(data);
+		Dialog.applyDialogFont(selectWorkingSetButton);
+
+		initializeScopingHint();
 		Dialog.applyDialogFont(top);
 	}
 	
