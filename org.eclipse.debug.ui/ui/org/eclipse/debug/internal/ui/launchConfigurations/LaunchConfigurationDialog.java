@@ -443,10 +443,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
+		initializeBounds();
 		initializeSashForm();
 		createContextMenu(getTreeViewer().getControl());
 		getLaunchManager().addLaunchConfigurationListener(this);
-		initializeBounds();
+		ensureSelectionAreaWidth();
 		doInitialTreeSelection();
 		return contents;
 	}
@@ -465,6 +466,32 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		}
 		getSashForm().setWeights(sashWeights);
+	}
+
+	/**
+	 * Check if the selection area is currently wide enough so that both the 'New' &
+	 * 'Delete' buttons are shown without truncation.  If so, do nothing.  Otherwise,
+	 * increase the width of this dialog's Shell just enough so that both buttons 
+	 * are shown cleanly.
+	 */
+	protected void ensureSelectionAreaWidth() {
+		Button newButton = getButtonActionNew().getButton();
+		Button deleteButton = getButtonActionDelete().getButton();		
+		int requiredWidth = newButton.getBounds().width + deleteButton.getBounds().width;
+		int marginWidth = ((GridLayout)getSelectionArea().getLayout()).marginWidth;
+		int horizontalSpacing = ((GridLayout)getSelectionArea().getLayout()).horizontalSpacing;
+		requiredWidth += (2 * marginWidth) + horizontalSpacing;
+		int currentWidth = getSelectionArea().getBounds().width + (2 * marginWidth);
+
+		if (requiredWidth > currentWidth) {
+			int[] newSashWeights = new int[2];
+			newSashWeights[0] = requiredWidth;
+			newSashWeights[1] = getEditArea().getBounds().width;
+			Shell shell= getShell();
+			Point shellSize= shell.getSize();
+			setShellSize(shellSize.x + (requiredWidth - currentWidth), shellSize.y);
+			getSashForm().setWeights(newSashWeights);			
+		}
 	}
 	
 	/**
