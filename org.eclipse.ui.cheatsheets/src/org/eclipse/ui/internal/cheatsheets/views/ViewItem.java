@@ -134,16 +134,19 @@ public abstract class ViewItem {
 				form.reflow(true);
 			}
 		});
-		
-
-		//		Set up the title composite for the item.*****************************************
-		titleComposite = toolkit.createComposite(mainItemComposite);
-		titleComposite.setBackground(itemColor);
 
 		// handle item extensions here
 		// check number of extensions for this item and adjust layout accordingly
 		int number = 0;
 		ArrayList itemExts = item.getItemExtensions();
+
+		if((itemExts != null && itemExts.size() > 0) || item.getContextId() != null || item.getHref() != null) {
+			// Set up the title composite for the item.
+			titleComposite = toolkit.createComposite(mainItemComposite);
+			titleComposite.setBackground(itemColor);
+			mainItemComposite.layout();
+		}
+
 		if(itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
 				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
@@ -657,11 +660,13 @@ public abstract class ViewItem {
 	abstract void setStartImage();
 
 	private void setTitleColor(Color color) {
-		titleComposite.setBackground(color);
+		if(titleComposite != null) {
+			titleComposite.setBackground(color);
 
-		Control[] titlechildren = titleComposite.getChildren();
-		for (int i = 0; i < titlechildren.length; i++) {
-			titlechildren[i].setBackground(color);
+			Control[] titlechildren = titleComposite.getChildren();
+			for (int i = 0; i < titlechildren.length; i++) {
+				titlechildren[i].setBackground(color);
+			}
 		}
 	}
 }
