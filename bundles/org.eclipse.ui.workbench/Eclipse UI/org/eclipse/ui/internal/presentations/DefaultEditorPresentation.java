@@ -50,6 +50,10 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        	
+        	if(isDisposed())
+        		return;
+        	
             if (IPreferenceConstants.EDITOR_TAB_POSITION
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {

@@ -39,6 +39,10 @@ public class DefaultViewPresentation extends DefaultPartPresentation {
 		
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+			
+			if(isDisposed())
+        		return;
+			
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 				getTabFolder().setTabPosition(tabLocation);

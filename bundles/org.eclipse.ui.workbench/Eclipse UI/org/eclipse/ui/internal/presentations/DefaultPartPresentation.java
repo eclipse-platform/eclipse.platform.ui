@@ -170,6 +170,10 @@ public class DefaultPartPresentation extends StackPresentation {
 	
 	private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int property) {
+			
+			if(isDisposed())
+				return;
+			
 			if (source instanceof IPresentablePart) {
 				IPresentablePart part = (IPresentablePart) source;
 				childPropertyChanged(part, property);
@@ -226,6 +230,9 @@ public class DefaultPartPresentation extends StackPresentation {
          */
         public void propertyChange(PropertyChangeEvent event) {
             
+        	if(isDisposed())
+        		return;
+        	
             String property = event.getProperty();
             if (property.equals(IThemeManager.CHANGE_CURRENT_THEME)) { 
                 updateGradient();

@@ -109,6 +109,10 @@ public class NativeStackPresentation extends StackPresentation {
 	
 	private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int property) {
+			
+			if(isDisposed())
+        		return;
+			
 			if (source instanceof IPresentablePart) {
 				IPresentablePart part = (IPresentablePart) source;
 				childPropertyChanged(part, property);
