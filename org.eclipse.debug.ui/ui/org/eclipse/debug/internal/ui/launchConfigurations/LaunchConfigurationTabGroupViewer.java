@@ -80,6 +80,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private Composite fViewerControl;
 	
 	/**
+	 * The composite which is hidden/displayed as tabs are required.
+	 */
+	private Composite fVisibleArea;
+	
+	/**
 	 * Name text widget
 	 */
 	private Text fNameWidget;
@@ -163,19 +168,29 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void createControl(Composite parent) {
 		fViewerControl = new Composite(parent, SWT.NONE);
 		GridLayout outerCompLayout = new GridLayout();
-		outerCompLayout.numColumns = 2;
+		outerCompLayout.numColumns = 1;
 		outerCompLayout.marginHeight = 0;
-		outerCompLayout.marginWidth = 5;
+		outerCompLayout.marginWidth = 0;
 		fViewerControl.setLayout(outerCompLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewerControl.setLayoutData(gd);
+		
+		Composite container = new Composite(fViewerControl, SWT.NONE);
+		outerCompLayout = new GridLayout();
+		outerCompLayout.numColumns = 2;
+		outerCompLayout.marginHeight = 0;
+		outerCompLayout.marginWidth = 5;
+		container.setLayout(outerCompLayout);
+		gd = new GridData(GridData.FILL_BOTH);
+		container.setLayoutData(gd);
+		setVisibleArea(container);
 
-		Label nameLabel = new Label(fViewerControl, SWT.HORIZONTAL | SWT.LEFT);
+		Label nameLabel = new Label(container, SWT.HORIZONTAL | SWT.LEFT);
 		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 
-		Text nameText = new Text(fViewerControl, SWT.SINGLE | SWT.BORDER);
+		Text nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
 		setNameWidget(nameText);
@@ -188,12 +203,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		);
 
-		Label spacer = new Label(fViewerControl, SWT.NONE);
+		Label spacer = new Label(container, SWT.NONE);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 
-		fTabComposite = new Composite(fViewerControl, SWT.NONE);
+		fTabComposite = new Composite(container, SWT.NONE);
 		GridLayout outerTabCompositeLayout = new GridLayout();
 		outerTabCompositeLayout.marginHeight = 0;
 		outerTabCompositeLayout.marginWidth = 0;
@@ -214,7 +229,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		});
 
-		Composite buttonComp = new Composite(fViewerControl, SWT.NONE);
+		Composite buttonComp = new Composite(container, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
 		buttonCompLayout.numColumns = 2;
 		buttonComp.setLayout(buttonCompLayout);
@@ -423,7 +438,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		} else {
 			setOriginal(null);
 			setWorkingCopy(null);
-			getControl().setVisible(false);
+			getVisibleArea().setVisible(false);
 			disposeExistingTabs();
 		}
 	}
@@ -469,8 +484,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Turn off initializing flag to update message
 		setInitializingTabs(false);
 		
-		if (!getControl().isVisible()) {
-			getControl().setVisible(true);
+		if (!getVisibleArea().isVisible()) {
+			getVisibleArea().setVisible(true);
 		}
 
 		refreshStatus();		
@@ -1003,4 +1018,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected void errorDialog(CoreException exception) {
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());
 	}	
+	
+	protected void setVisibleArea(Composite control) {
+		fVisibleArea = control;
+	}
+	
+	protected Composite getVisibleArea() {
+		return fVisibleArea;
+	}
 }
