@@ -96,10 +96,13 @@ public class NavigationHistory {
 						if (fLocation != null) {
 							if (memento != null) {
 								memento=  memento.getChild(IWorkbenchConstants.TAG_POSITION);
-								fLocation.restoreAndActivate(fEditorPart, memento);
+								fLocation.clearState();
+								fLocation.setEditorPart(fEditorPart);
+								fLocation.restoreState(memento);
 							}
 							
-							fLocation.restoreLocation(fEditorPart);
+							fLocation.setEditorPart(fEditorPart);
+							fLocation.restore();
 						}
 						
 					} catch (PartInitException e) {
@@ -120,7 +123,8 @@ public class NavigationHistory {
 				
 				if (fLocation != null) {
 					IMemento child= fMemento.createChild(IWorkbenchConstants.TAG_POSITION);
-					fLocation.saveAndDeactivate(fEditorPart, child);
+					fLocation.saveState(child);
+					fLocation.clearState();
 				}
 				
 				fEditorPart= null;
@@ -156,7 +160,7 @@ public class NavigationHistory {
 					return true;
 				if (fLocation == null)
 					return false;
-				return fLocation.differsFromCurrentLocation(part);
+				return !fLocation.equalsLocationOf(part);
 			}
 			
 			public void dispose() { 

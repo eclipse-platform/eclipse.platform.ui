@@ -11,18 +11,42 @@ Contributors:
 
 package org.eclipse.ui;
 
-import org.eclipse.jface.viewers.ISelection;
-
 
 /**
  * 2.1 - WORK_IN_PROGRESS do not use.
  */
 public abstract class NavigationLocation {
-	public abstract void restoreLocation(IEditorPart part);
-	public abstract boolean differsFromCurrentLocation(IEditorPart part);
-	public abstract void dispose();
-	public abstract boolean mergeInto(NavigationLocation entry);
 	
-	public abstract void saveAndDeactivate(IEditorPart part, IMemento memento);
-	public abstract void restoreAndActivate(IEditorPart part, IMemento memento);
+	private IEditorPart editorPart;
+	
+	protected NavigationLocation(IEditorPart editorPart) {
+		this.editorPart= editorPart;
+	}
+	
+	protected IEditorPart getEditorPart() {
+		return editorPart;
+	}
+	
+	public void setEditorPart(IEditorPart editorPart) {
+		this.editorPart= editorPart;
+	}
+	
+	public void dispose() {
+		editorPart= null;
+	}
+	
+	public void clearState() {
+		editorPart= null;
+	}
+	
+	public void saveState(IMemento memento) {
+	}
+	
+	public void restoreState(IMemento memento) {
+	}
+	
+	public abstract void restore();
+	public abstract boolean equalsLocationOf(IEditorPart part);
+	public abstract boolean mergeInto(NavigationLocation entry);
+		
 }

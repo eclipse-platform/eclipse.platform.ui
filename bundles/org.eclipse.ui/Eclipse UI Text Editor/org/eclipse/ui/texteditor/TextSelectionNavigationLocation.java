@@ -45,6 +45,8 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	
 	public TextSelectionNavigationLocation(ITextEditor part) {
 		
+		super(part);
+		
 		ISelection s= part.getSelectionProvider().getSelection();
 		ITextSelection selection= (ITextSelection) s;
 		IDocument document= getDocument(part);
@@ -109,13 +111,13 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return "Selection<" + fPosition + ">";
 	}
 	
-	public boolean differsFromCurrentLocation(IEditorPart part) {
+	public boolean equalsLocationOf(IEditorPart part) {
 		
 		if (fPosition == null)
-			return false;
+			return true;
 			
 		if (fPosition.isDeleted)
-			return true;
+			return false;
 			
 		ISelectionProvider provider= part.getSite().getSelectionProvider();
 		ISelection selection= provider.getSelection();
@@ -125,24 +127,29 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 				String text= textSelection.getText();
 				if (text != null) {
 					try {
-						return !text.equals(fDocument.get(fPosition.offset, fPosition.length));
+						return text.equals(fDocument.get(fPosition.offset, fPosition.length));
 					} catch (BadLocationException e) {
 					}
 				}
 			}
 		}
-		return true;
+		
+		return false;
 	}
 	
 	public void dispose() {
 		uninstallFromDocument(fDocument, fPosition);
-		clearState();
-	}
-
-	private void clearState() {
 		fDocument= null;
 		fPosition= null;
 		fSavedPosition= null;
+		super.dispose();
+	}
+
+	public void clearState() {
+		fDocument= null;
+		fPosition= null;
+		fSavedPosition= null;
+		super.clearState();
 	}
 	
 	public boolean mergeInto(NavigationLocation location) {
@@ -169,20 +176,19 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return s.fDocument == fDocument && s.fPosition.equals(fPosition);
 	}
 	
-	public void restoreLocation(IEditorPart part) {
+	public void restore() {
 		if (fPosition == null || fPosition.isDeleted)
 			return;
 			
-		if (part instanceof ITextEditor) {
-			ITextEditor editor= (ITextEditor) part;
+		if (getEditorPart() instanceof ITextEditor) {
+			ITextEditor editor= (ITextEditor) getEditorPart();
 			editor.selectAndReveal(fPosition.offset, fPosition.length);
 		}
 	}
 	
-	public void restoreAndActivate(IEditorPart part, IMemento memento) {
+	public void restoreState(IMemento memento) {
 		
-		clearState();
-		
+		IEditorPart part= getEditorPart();
 		if (part instanceof ITextEditor) {
 			
 			// restore
@@ -204,7 +210,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		}
 	}
 	
-	public void saveAndDeactivate(IEditorPart part, IMemento memento) {
+	public void saveState(IMemento memento) {
 		
 		// save
 		if (fSavedPosition != null) {
@@ -215,7 +221,6 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		
 		// deactivate
 		uninstallFromDocument(fDocument, fPosition);
-		clearState();
 	}
 	
 	public void partSaved(IEditorPart part) {
