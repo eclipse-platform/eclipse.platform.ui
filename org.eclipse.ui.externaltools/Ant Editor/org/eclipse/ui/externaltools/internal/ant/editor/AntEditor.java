@@ -128,7 +128,7 @@ public class AntEditor extends TextEditor {
 
 	private AntEditorContentOutlinePage getOutlinePage() {
 		if (page == null) {
-			page= new AntEditorContentOutlinePage(XMLCore.getDefault(), this);
+			page= new AntEditorContentOutlinePage(XMLCore.getDefault());
 			page.addPostSelectionChangedListener(selectionChangedListener);
 			setOutlinePageInput(page, getEditorInput());
 		}
