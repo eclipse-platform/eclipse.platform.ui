@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.contexts;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ public final class ContextManager implements IContextManager {
 	private SortedMap contextHandlesById = new TreeMap();
 	private SortedMap contextsById = new TreeMap();
 	private SortedSet definedContextIds = new TreeSet();
-	private RegistryReader registryReader;
+	private PluginRegistry pluginRegistry;
 
 	public ContextManager() {
 		super();
@@ -98,11 +99,16 @@ public final class ContextManager implements IContextManager {
 	}
 
 	public void updateFromRegistry() {
-		if (registryReader == null)
-			registryReader = new RegistryReader(Platform.getPluginRegistry());
+		if (pluginRegistry == null)
+			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
 		
-		registryReader.load();
-		List contexts = registryReader.getContexts();
+		try {
+			pluginRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+
+		List contexts = pluginRegistry.getContexts();
 		SortedMap contextsById = Context.sortedMapById(contexts);			
 		SortedSet contextChanges = new TreeSet();
 		Util.diff(contextsById, this.contextsById, contextChanges, contextChanges, contextChanges);

@@ -48,7 +48,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet definedKeyConfigurationIds = new TreeSet();
 	private SortedMap keyConfigurationHandlesById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
-	private PluginRegistry registryReader;
+	private PluginRegistry pluginRegistry;
 
 	public CommandManager() {
 		super();
@@ -147,24 +147,24 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public void updateFromRegistry() {
-		if (registryReader == null)
-			registryReader = new PluginRegistry(Platform.getPluginRegistry());
+		if (pluginRegistry == null)
+			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
 		
 		try {
-			registryReader.load();
+			pluginRegistry.load();
 		} catch (IOException eIO) {
 			// TODO proper catch
 		}
 			
-		List keyConfigurations = registryReader.getKeyConfigurations();
+		List keyConfigurations = pluginRegistry.getKeyConfigurations();
 		SortedMap keyConfigurationsById = KeyConfiguration.sortedMapById(keyConfigurations);			
 		SortedSet keyConfigurationChanges = new TreeSet();
 		Util.diff(keyConfigurationsById, this.keyConfigurationsById, keyConfigurationChanges, keyConfigurationChanges, keyConfigurationChanges);
-		List commands = registryReader.getCommands();
+		List commands = pluginRegistry.getCommands();
 		SortedMap commandsById = Command.sortedMapById(commands);			
 		SortedSet commandChanges = new TreeSet();
 		Util.diff(commandsById, this.commandsById, commandChanges, commandChanges, commandChanges);
-		List categories = registryReader.getCategories();
+		List categories = pluginRegistry.getCategories();
 		SortedMap categoriesById = Category.sortedMapById(categories);			
 		SortedSet categoryChanges = new TreeSet();
 		Util.diff(categoriesById, this.categoriesById, categoryChanges, categoryChanges, categoryChanges);

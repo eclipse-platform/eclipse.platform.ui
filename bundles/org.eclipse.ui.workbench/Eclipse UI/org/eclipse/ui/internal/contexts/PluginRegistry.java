@@ -11,9 +11,8 @@
 
 package org.eclipse.ui.internal.contexts;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -21,45 +20,48 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
-final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
+final class PluginRegistry extends AbstractRegistry {
+
+	private final class PluginRegistryReader extends RegistryReader {
+
+		protected boolean readElement(IConfigurationElement element) {
+			String name = element.getName();
+
+			if (Persistence.TAG_CONTEXT.equals(name))
+				return readContext(element);
+
+			return true; // TODO return false;
+		}		
+	}
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
-	private List contexts;
 	private IPluginRegistry pluginRegistry;
-	private List unmodifiableContexts;
+	private PluginRegistryReader pluginRegistryReader;
 	
-	RegistryReader(IPluginRegistry pluginRegistry) {
+	PluginRegistry(IPluginRegistry pluginRegistry) {
 		super();	
+
+		if (pluginRegistry == null)
+			throw new NullPointerException();
+		
 		this.pluginRegistry = pluginRegistry;
-		unmodifiableContexts = Collections.EMPTY_LIST;
 	}
 
-	List getContexts() {
-		return unmodifiableContexts;
-	}
-
-	void load() {
+	public void load()
+		throws IOException {	
 		if (contexts == null)
 			contexts = new ArrayList();
 		else 
 			contexts.clear();
 
-		if (pluginRegistry != null)	
-			readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
-			
-		unmodifiableContexts = Collections.unmodifiableList(new ArrayList(contexts));
-	}
+		if (pluginRegistryReader == null)
+			pluginRegistryReader = new PluginRegistryReader();
 
-	protected boolean readElement(IConfigurationElement element) {
-		String name = element.getName();
-
-		if (Persistence.TAG_CONTEXT.equals(name))
-			return readContext(element);
-
-		return false;
+		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 	}
 
 	private String getPluginId(IConfigurationElement element) {

@@ -148,7 +148,7 @@ protected void readExtension(IExtension extension) {
  *	Start the registry reading process using the
  * supplied plugin ID and extension point.
  */
-protected void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
+public void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
 	String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
 	IExtension[] extensions = (IExtension[])extensionPoints.get(pointId); 
 	if (extensions == null) {

@@ -58,17 +58,6 @@ public class Manager {
 		return keyMachine;
 	}
 
-	public String getGestureTextForCommand(String command)
-		throws IllegalArgumentException {
-		String text = null;
-		Sequence sequence = getGestureMachine().getFirstSequenceForCommand(command);
-		
-		if (sequence != null)
-			text = GestureSupport.formatSequence(sequence, true);
-			
-		return text != null ? text : Util.ZERO_LENGTH_STRING;
-	}
-
 	public String getKeyTextForCommand(String command)
 		throws IllegalArgumentException {
 		String text = null;

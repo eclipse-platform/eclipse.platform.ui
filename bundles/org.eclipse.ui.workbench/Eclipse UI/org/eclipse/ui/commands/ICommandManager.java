@@ -66,6 +66,13 @@ public interface ICommandManager {
 	 * JAVADOC
 	 *
 	 * @return
+	 */	
+	// TODO SortedSet getContextBindings();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
 	 */
 	SortedSet getDefinedCategoryIds();
 
@@ -82,6 +89,41 @@ public interface ICommandManager {
 	 * @return
 	 */
 	SortedSet getDefinedKeyConfigurationIds();	
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */	
+	// TODO SortedSet getImageBindings();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */	
+	// TODO SortedSet getKeyBindings();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */	
+	// TODO SortedSet getUserContextBindings();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */	
+	// TODO SortedSet getUserImageBindings();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */	
+	// TODO SortedSet getUserKeyBindings();
 
 	/**
 	 * JAVADOC
