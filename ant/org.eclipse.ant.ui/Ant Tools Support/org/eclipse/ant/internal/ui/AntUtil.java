@@ -23,11 +23,14 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.AntCoreUtil;
@@ -278,7 +281,17 @@ public final class AntUtil {
 			model.dispose();
 			return null;
 		}
-		return getTargets(project);
+		AntTargetNode[] targets= getTargets(project);
+        if (targets == null) {
+            Hashtable antTargets= project.getProject().getTargets();
+            Target implicitTarget= (Target) antTargets.get(""); //$NON-NLS-1$
+            if (implicitTarget != null) {
+                AntTargetNode implicitTargetNode= new AntTargetNode(implicitTarget);
+                project.addChildNode(implicitTargetNode);
+                return new AntTargetNode[] {implicitTargetNode};
+            }
+        }
+        return targets;
 	}
 	
 	public static IAntModel getAntModel(String buildFilePath, boolean needsLexicalResolution, boolean needsPositionResolution, boolean needsTaskResolution) {

@@ -69,8 +69,11 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		}
 		
 		AntProjectNode projectNode = nodes[0].getProjectNode();
-		for (int i = 0; i < nodes.length; i++) {
-            addChildNode(nodes[i]);
+        if (nodes[0].getTargetName().length() != 0) {
+            //not just the implicit target
+            for (int i = 0; i < nodes.length; i++) {
+                addChildNode(nodes[i]);
+            }
         }
 		
 		fModel= projectNode.getAntModel();
