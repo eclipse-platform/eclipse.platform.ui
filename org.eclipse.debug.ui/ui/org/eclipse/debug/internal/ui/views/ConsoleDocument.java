@@ -49,12 +49,14 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	
 	protected IStreamListener fSystemOutListener= new IStreamListener() {
 				public void streamAppended(String newText, IStreamMonitor monitor) {
+					DebugUIPlugin.getDefault().aboutToWriteSystemOut();
 					systemOutAppended(newText);
 				}
 			};
 			
 	protected IStreamListener fSystemErrListener= new IStreamListener() {
 				public void streamAppended(String newText, IStreamMonitor monitor) {
+					DebugUIPlugin.getDefault().aboutToWriteSystemErr();
 					systemErrAppended(newText);
 				}
 			};
@@ -425,4 +427,5 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	protected void setConsoleViewer(ConsoleViewer viewer) {
 		fConsoleViewer = viewer;
 	}
+
 }
