@@ -237,9 +237,12 @@ public void dispose() {
 }
 /**
  * Returns a parent composite for a field editor.
- * This value must not be cached.
- * This method must be called each time a field editor
+ * <p>
+ * This value must not be cached since a new parent
+ * may be created each time this method called. Thus
+ * this method must be called each time a field editor
  * is constructed.
+ * </p>
  *
  * @returns a parent
  */
