@@ -201,11 +201,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		createContextInfoPopup();
 		
 		fContextInfoText.setText(frame.fInformation.getInformationDisplayString());
-		if (fTextPresentation != null) {
+		if (fTextPresentation != null)
 			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-			resize();
-		}
-		
+		resize();
+				
 		if (initial) {
 			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {	
 				fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);

@@ -14,10 +14,6 @@ import org.eclipse.jface.text.ITextViewer;
  * a displayed context information is still valid or should
  * be dismissed. The interface can be implemented by clients. <p>
  * 
- * Because of http://dev.eclipse.org/bugs/show_bug.cgi?id=13926
- * implementers of this interface are also implementing
- * <code>IContextInformationPresenter</code>.
- * 
  * @see IContextInformationPresenter
  */
 public interface IContextInformationValidator {
