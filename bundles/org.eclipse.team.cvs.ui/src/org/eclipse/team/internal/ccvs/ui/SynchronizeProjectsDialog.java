@@ -97,6 +97,9 @@ public class SynchronizeProjectsDialog extends Dialog {
 		});
 		workingSetArea.createArea(composite);
 		
+		// F1 Help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SYNCHRONIZE_PROJECTS_DIALOG);
+		
 		return composite;
 	}
 

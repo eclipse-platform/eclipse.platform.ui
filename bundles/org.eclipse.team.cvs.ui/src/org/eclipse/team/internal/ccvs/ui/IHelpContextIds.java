@@ -16,6 +16,7 @@ package org.eclipse.team.internal.ccvs.ui;
  * WorkbenchHelp.setHelp(actionOrControl, IHelpContextIds.NAME_DEFIED_BELOW);
  */
 public interface IHelpContextIds {
+
 	public static final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
 
 	// Dialogs
@@ -27,6 +28,7 @@ public interface IHelpContextIds {
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
 	public static final String PROJECT_SELECTION_DIALOG = PREFIX + "project_selection_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_TO_VERSION_CONTROL_DIALOG = PREFIX + "add_to_version_control_dialog_context"; //$NON-NLS-1$
+	public static final String SYNCHRONIZE_PROJECTS_DIALOG =  PREFIX + "sychronize_projects_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
