@@ -5,7 +5,7 @@ package com.ibm.oti.vm;
  * because the real class is part of the boot class path.
  */
 
-public class VM {
+abstract public class VM {
 
 public static void enableClassHotSwap(Class clazz) {
 }

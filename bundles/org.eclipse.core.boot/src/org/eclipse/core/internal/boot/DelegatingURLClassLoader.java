@@ -51,7 +51,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
 	
-	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode();
+	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode() & ((VM.class.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) == 0);
 
 	// DelegateLoader. Represents a single class loader this loader delegates to.
 	protected static class DelegateLoader {
@@ -678,25 +678,22 @@ private void setJ9HotSwapPath(ClassLoader cl, URL[] urls) {
 			path.append(file);
 		}
 	}
-	if (path.length() > 0)
+	if (path.length() > 0) {
 		VM.setClassPathImpl(cl, path.toString());
+	}
 }
 
 protected String getFileFromURL(URL target) {
-	String protocol = target.getProtocol();
-	if (protocol.equals(PlatformURLHandler.FILE))
+	if (target.getProtocol().equals(PlatformURLHandler.FILE))
 		return target.getFile();
-//	if (protocol.equals(PlatformURLHandler.VA))
-//		return target.getFile();
-	if (protocol.equals(PlatformURLHandler.JAR)) {
-		// strip off the jar separator at the end of the url then do a recursive call
-		// to interpret the sub URL.
-		String file = target.getFile();
-		file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
-		try {
-			return getFileFromURL(new URL(file));
-		} catch (MalformedURLException e) {
+	try {
+		URLConnection conn= target.openConnection();
+		if (conn instanceof PlatformURLConnection) {
+			target = ((PlatformURLConnection)conn).getURLAsLocal();
+			if (target.getProtocol().equals(PlatformURLHandler.FILE)) 
+				return target.getFile();
 		}
+	} catch (IOException e) {
 	}
 	return null;
 }
