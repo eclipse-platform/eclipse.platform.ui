@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Edit the action sets.
  */
-public class EditActionSetsAction extends Action implements
-        ActionFactory.IWorkbenchAction {
-
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+public class EditActionSetsAction extends PerspectiveAction {
 
     /**
      * This default constructor allows the the action to be called from the welcome page.
@@ -41,15 +33,11 @@ public class EditActionSetsAction extends Action implements
      * @param window the window
      */
     public EditActionSetsAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.EditActionSetsAction_text); 
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
+        super(window);
+        setText(WorkbenchMessages.EditActionSetsAction_text); 
         setActionDefinitionId("org.eclipse.ui.window.customizePerspective"); //$NON-NLS-1$
         // @issue missing action id
         setToolTipText(WorkbenchMessages.EditActionSetsAction_toolTip); 
-        setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
     }
@@ -57,23 +45,8 @@ public class EditActionSetsAction extends Action implements
     /* (non-Javadoc)
      * Method declared on IAction.
      */
-    public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        IWorkbenchPage page = workbenchWindow.getActivePage();
-        if (page == null) {
-            return;
-        }
+    protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
         ((WorkbenchPage) page).editActionSets();
-    }
-
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
-    public void dispose() {
-        workbenchWindow = null;
     }
 
 }

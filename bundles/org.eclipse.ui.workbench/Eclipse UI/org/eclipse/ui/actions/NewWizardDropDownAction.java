@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -40,6 +41,12 @@ public class NewWizardDropDownAction extends Action implements
      * action has been <code>dispose</code>d.
      */
     private IWorkbenchWindow workbenchWindow;
+    
+    /**
+     * Tracks perspective activation, to update this action's
+     * enabled state.
+     */
+    private PerspectiveTracker tracker;
 
     private ActionFactory.IWorkbenchAction showDlgAction;
 
@@ -126,6 +133,7 @@ public class NewWizardDropDownAction extends Action implements
         this.workbenchWindow = window;
         this.showDlgAction = showDlgAction;
         this.newWizardMenu = newWizardMenu;
+        tracker = new PerspectiveTracker(window, this);
         
         setToolTipText(showDlgAction.getToolTipText());
 
@@ -148,6 +156,7 @@ public class NewWizardDropDownAction extends Action implements
             // action has already been disposed
             return;
         }
+        tracker.dispose();
         showDlgAction.dispose();
         newWizardMenu.dispose();
         menuCreator.dispose();

@@ -10,25 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Hides or shows the editor area within the current
  * perspective of the workbench page.
  */
-public class ToggleEditorsVisibilityAction extends Action implements
-        IPerspectiveListener, ActionFactory.IWorkbenchAction {
-
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+public class ToggleEditorsVisibilityAction extends PerspectiveAction implements
+        IPerspectiveListener {
 
     /* (non-Javadoc)
      * Method declared on IPerspectiveListener
@@ -64,37 +56,20 @@ public class ToggleEditorsVisibilityAction extends Action implements
      * @param window the window
      */
     public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.ToggleEditor_hideEditors);
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
+        super(window);
+        setText(WorkbenchMessages.ToggleEditor_hideEditors);
         setActionDefinitionId("org.eclipse.ui.window.hideShowEditors"); //$NON-NLS-1$
         // @issue missing action id
         setToolTipText(WorkbenchMessages.ToggleEditor_toolTip);
-        workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
+        window.getWorkbench().getHelpSystem().setHelp(this,
                 IWorkbenchHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
-        setEnabled(false);
-
-        // Once the API on IWorkbenchPage to hide/show
-        // the editor area is removed, then switch
-        // to using the internal perspective service
-        workbenchWindow.addPerspectiveListener(this);
+        window.addPerspectiveListener(this);
     }
 
     /* (non-Javadoc)
-     * Method declared on IAction.
+     * Method declared on PerspectiveAction.
      */
-    public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        IWorkbenchPage page = workbenchWindow.getActivePage();
-        if (page == null) {
-            return;
-        }
-
+    protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
         boolean visible = page.isEditorAreaVisible();
         if (visible) {
             page.setEditorAreaVisible(false);
@@ -109,12 +84,10 @@ public class ToggleEditorsVisibilityAction extends Action implements
      * Method declared on ActionFactory.IWorkbenchAction.
      */
     public void dispose() {
-        if (workbenchWindow == null) {
-            // already disposed
-            return;
+        if (getWindow() != null) {
+            getWindow().removePerspectiveListener(this);
         }
-        workbenchWindow.removePerspectiveListener(this);
-        workbenchWindow = null;
+        super.dispose();
     }
 
 }

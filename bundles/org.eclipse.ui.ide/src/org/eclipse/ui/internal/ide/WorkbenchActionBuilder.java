@@ -35,8 +35,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -234,8 +232,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IPageListener pageListener;
 
-    private IPerspectiveListener perspectiveListener;
-
     private IResourceChangeListener resourceListener;
     
     /**
@@ -268,12 +264,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         pageListener = new IPageListener() {
             public void pageActivated(IWorkbenchPage page) {
-                enableActions(page.getPerspective() != null);
+                // do nothing
             }
 
             public void pageClosed(IWorkbenchPage page) {
-                IWorkbenchPage pg = getWindow().getActivePage();
-                enableActions(pg != null && pg.getPerspective() != null);
+                // do nothing
             }
 
             public void pageOpened(IWorkbenchPage page) {
@@ -283,19 +278,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             }
         };
         getWindow().addPageListener(pageListener);
-
-        perspectiveListener = new IPerspectiveListener() {
-            public void perspectiveActivated(IWorkbenchPage page,
-                    IPerspectiveDescriptor perspective) {
-                enableActions(true);
-            }
-
-            public void perspectiveChanged(IWorkbenchPage page,
-                    IPerspectiveDescriptor perspective, String changeId) {
-                // do nothing
-            }
-        };
-        getWindow().addPerspectiveListener(perspectiveListener);
 
         prefListener = new Preferences.IPropertyChangeListener() {
             public void propertyChange(Preferences.PropertyChangeEvent event) {
@@ -354,28 +336,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			}
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
-    }
-
-    /**
-     * Enables the menu items dependent on an active
-     * page and perspective.
-     * Note, the show view action already does its own 
-     * listening so no need to do it here.
-     */
-    private void enableActions(boolean value) {
-        hideShowEditorAction.setEnabled(value);
-        savePerspectiveAction.setEnabled(value);
-        lockToolBarAction.setEnabled(value);
-        resetPerspectiveAction.setEnabled(value);
-        editActionSetAction.setEnabled(value);
-        closePerspAction.setEnabled(value);
-        closeAllPerspsAction.setEnabled(value);
-//        newWizardMenu.setEnabled(value);
-        newWizardDropDownAction.setEnabled(value);
-        // Bug 53560.  "Ctrl+N" shouldn't work if the menus are all disabled.
-        newWizardAction.setEnabled(value);
-        importResourcesAction.setEnabled(value);
-        exportResourcesAction.setEnabled(value);
     }
 
     public void fillActionBars(int flags) {
@@ -1057,10 +1017,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         if (pageListener != null) {
             window.removePageListener(pageListener);
             pageListener = null;
-        }
-        if (perspectiveListener != null) {
-            window.removePerspectiveListener(perspectiveListener);
-            perspectiveListener = null;
         }
         if (prefListener != null) {
             ResourcesPlugin.getPlugin().getPluginPreferences()

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -24,14 +22,7 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 /**
  * Action to save the layout of the active perspective.
  */
-public class SavePerspectiveAction extends Action implements
-        ActionFactory.IWorkbenchAction {
-
-    /**
-     * The workbench window; or <code>null</code> if this
-     * action has been <code>dispose</code>d.
-     */
-    private IWorkbenchWindow workbenchWindow;
+public class SavePerspectiveAction extends PerspectiveAction {
 
     /**
      * Creates an instance of this class.
@@ -39,33 +30,20 @@ public class SavePerspectiveAction extends Action implements
      * @param window the workbench window in which this action appears
      */
     public SavePerspectiveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.SavePerspective_text);
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
-        this.workbenchWindow = window;
+        super(window);
+        setText(WorkbenchMessages.SavePerspective_text);
         setActionDefinitionId("org.eclipse.ui.window.savePerspective"); //$NON-NLS-1$
         // @issue missing action id
         setToolTipText(WorkbenchMessages.SavePerspective_toolTip); 
-        setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
     }
 
     /* (non-Javadoc)
-     * Method declared on IAction.
+     * Method declared on PerspectiveAction.
      */
-    public void run() {
-        if (workbenchWindow == null) {
-            // action has been disposed
-            return;
-        }
-        IWorkbenchPage page = workbenchWindow.getActivePage();
-        if (page == null) {
-            return;
-        }
-        PerspectiveDescriptor desc = (PerspectiveDescriptor) page
-                .getPerspective();
+    protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
+        PerspectiveDescriptor desc = (PerspectiveDescriptor) persp;
         if (desc != null) {
             if (desc.isSingleton()) {
                 saveSingleton(page);
@@ -81,7 +59,7 @@ public class SavePerspectiveAction extends Action implements
     private void saveSingleton(IWorkbenchPage page) {
         String[] buttons = new String[] { IDialogConstants.OK_LABEL,
                 IDialogConstants.CANCEL_LABEL };
-        MessageDialog d = new MessageDialog(workbenchWindow.getShell(),
+        MessageDialog d = new MessageDialog(page.getWorkbenchWindow().getShell(),
                 WorkbenchMessages.SavePerspective_overwriteTitle,
                 null, WorkbenchMessages.SavePerspective_singletonQuestion,
                 MessageDialog.QUESTION, buttons, 0);
@@ -99,7 +77,7 @@ public class SavePerspectiveAction extends Action implements
                 .getDefault().getPerspectiveRegistry();
 
         // Get persp name.
-        SavePerspectiveDialog dlg = new SavePerspectiveDialog(workbenchWindow
+        SavePerspectiveDialog dlg = new SavePerspectiveDialog(page.getWorkbenchWindow()
                 .getShell(), reg);
         // Look up the descriptor by id again to ensure it is still valid.
         IPerspectiveDescriptor description = reg.findPerspectiveWithId(oldDesc.getId());
@@ -123,17 +101,6 @@ public class SavePerspectiveAction extends Action implements
 
         // Save state.
         page.savePerspectiveAs(newDesc);
-    }
-
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
-    public void dispose() {
-        if (workbenchWindow == null) {
-            // already disposed
-            return;
-        }
-        workbenchWindow = null;
     }
 
 }

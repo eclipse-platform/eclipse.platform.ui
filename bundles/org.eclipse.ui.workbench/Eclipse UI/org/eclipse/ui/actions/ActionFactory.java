@@ -51,6 +51,7 @@ import org.eclipse.ui.internal.about.AboutAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
+import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1232,6 +1233,25 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             IWorkbenchAction action = new DynamicHelpAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+    
+    /**
+     * Workbench action (id "openPerspectiveDialog"): Open the Open Perspective dialog. This action
+     * is always enabled.
+     *
+     * @since 3.1
+     */
+    public static final ActionFactory OPEN_PERSPECTIVE_DIALOG = new ActionFactory(
+            "openPerspectiveDialog") {//$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new OpenPerspectiveDialogAction(window);
             action.setId(getId());
             return action;
         }

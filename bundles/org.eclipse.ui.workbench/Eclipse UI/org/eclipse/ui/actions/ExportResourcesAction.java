@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -62,6 +63,12 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
      */
     private IWorkbenchWindow workbenchWindow;
 
+    /**
+     * Tracks perspective activation, to update this action's
+     * enabled state.
+     */
+    private PerspectiveTracker tracker;
+
     /** 
      * Listen for the selection changing and update the
      * actions that are interested
@@ -96,6 +103,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
+        tracker = new PerspectiveTracker(window, this);
         setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.ExportResourcesAction_toolTip);
         setId("export"); //$NON-NLS-1$
@@ -191,6 +199,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
             // action has already been disposed
             return;
         }
+        tracker.dispose();
         workbenchWindow.getSelectionService().removeSelectionListener(
                 selectionListener);
         workbenchWindow = null;
