@@ -95,6 +95,12 @@ public final class BootLoader {
 	public static final String ARCH_X86 = "x86";//$NON-NLS-1$
 
 	/**
+	 * Constant string (value "PA_RISC") indicating the platform is running on an
+	 * PA_RISC-based architecture.
+	 */
+	public static final String ARCH_PA_RISC = "PA_RISC";//$NON-NLS-1$
+
+	/**
 	 * Constant string (value "ppc") indicating the platform is running on an
 	 * PowerPC-based architecture.
 	 * 
@@ -149,6 +155,7 @@ public final class BootLoader {
 	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
 
 	private static final String[] ARCH_LIST = {
+		ARCH_PA_RISC,
 		ARCH_PPC,
 		ARCH_SPARC,
 		ARCH_X86
@@ -227,14 +234,15 @@ public static String getNL() {
 	return InternalBootLoader.getNL();
 }
 /**
- * Returns the string name of the current operating system for use in finding files
- * whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is returned
- * if the operating system cannot be determined.  The value may indicate one of the following
- * operating systems known to the platform (<code>OS_WIN32</code>, <code>OS_LINUX</code>,
- * <code>OS_AIX</code>, <code>OS_SOLARIS</code>, <code>OS_HPUX</code> or
- * a user-defined string if the operating system name is specified on the command line.
+ * Returns the string name of the current operating system for use in finding
+ * files whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is
+ * returned if the operating system cannot be determined.  
+ * The value may indicate one of the operating systems known to the platform
+ * (as specified in <code>knownOSValues</code>) or a user-defined string if
+ * the operating system name is specified on the command line.
  *
  * @return the string name of the current operating system
+ * @see #knownOSValues
  * 
  */
 public static String getOS() {
