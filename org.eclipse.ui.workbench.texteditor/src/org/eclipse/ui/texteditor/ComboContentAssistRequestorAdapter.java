@@ -11,14 +11,21 @@
 
 package org.eclipse.ui.texteditor;
 
+import java.util.HashMap;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -68,6 +75,7 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	 * The combo.
 	 */
 	private Combo fCombo;
+	private HashMap fModifyListeners;
 
 
 	/**
@@ -78,6 +86,7 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	public ComboContentAssistRequestorAdapter(Combo combo) {
 		Assert.isNotNull(combo);
 		fCombo= combo;
+		fModifyListeners= new HashMap();
 	}
 
 	/*
@@ -215,5 +224,34 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		fCombo.removeKeyListener(keyListener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
+	 */
+	public void removeSelectionListener(SelectionListener selectionListener) {
+		fCombo.removeSelectionListener(selectionListener);
+		Object listener= fModifyListeners.get(selectionListener);
+		if (listener instanceof Listener)
+			fCombo.removeListener(SWT.Modify, (Listener)listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#addSelectionListener(org.eclipse.swt.events.SelectionListener)
+	 */
+	public boolean addSelectionListener(final SelectionListener selectionListener) {
+		fCombo.addSelectionListener(selectionListener);
+		Listener listener= new Listener() {
+			/*
+			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+			 */
+			public void handleEvent(Event e) {
+				selectionListener.widgetSelected(new SelectionEvent(e));
+	
+			}
+		};
+		fCombo.addListener(SWT.Modify, listener); 
+		fModifyListeners.put(selectionListener, listener);
+		return true;
 	}
 }
