@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -31,10 +30,10 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -78,16 +77,8 @@ public class ViewTabCursorManager
 	private TextKeyListener fTextKeyListener;
 	private MouseEventListener fMouseEventListener;
 	
-	class MouseEventListener implements MouseListener
+	class MouseEventListener extends MouseAdapter
 	{
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent e)
-		{			
-		}
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
@@ -107,9 +98,6 @@ public class ViewTabCursorManager
 			}			
 		}
 
-		/**
-		 * @param e
-		 */
 		private void handleTableMouseEvent(MouseEvent e) {
 			// figure out new cursor position based on here the mouse is pointing
 			TableItem[] selections = fTableViewer.getTable().getSelection();
@@ -155,14 +143,6 @@ public class ViewTabCursorManager
 			fViewTab.updateTableSelection();			
 			
 			setCursorFocus();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseUp(MouseEvent e)
-		{		
-
 		}
 	}
 	
@@ -358,16 +338,8 @@ public class ViewTabCursorManager
 	 * Move edit box to the next cell as user has typed in the max
 	 * number of characters for a cell.
 	 */
-	class TextKeyListener implements KeyListener
+	class TextKeyListener extends KeyAdapter
 	{
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-		 */
-		public void keyTyped(KeyEvent e)
-		{
-		}
-
 		/* (non-Javadoc)
 		 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 		 */
@@ -539,14 +511,6 @@ public class ViewTabCursorManager
 					}
 				}
 			});
-		}
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-		 */
-		public void keyReleased(KeyEvent e)
-		{
-			
 		}
 	}
 	
