@@ -265,7 +265,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			activeManager = cbItem.getToolBarManager();		
 			IContributionItem groupMarker = activeManager.find(toolGroupId);
 			if (groupMarker == null) {
-				activeManager.addAdjunctGroupBefore(toolGroupId, contributingId, beforeGroupId);
+				// disable the beforeGroup processing for now
+				activeManager.addAdjunctGroup(toolGroupId, contributingId);
+//				activeManager.addAdjunctGroupBefore(toolGroupId, contributingId, beforeGroupId);
 			}
 			activeManager.addToGroup(toolGroupId, contributingId, actionContribution);		 
 		}

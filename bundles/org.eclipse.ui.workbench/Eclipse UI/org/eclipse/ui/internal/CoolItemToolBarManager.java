@@ -8,9 +8,8 @@ package org.eclipse.ui.internal;
  */
 
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * CoolItemToolBarManager class
@@ -38,7 +37,7 @@ public class CoolItemToolBarManager extends ToolBarManager {
 			insert(index + 1, group);
 		}	
 	}
-	protected void addAdjunctGroup(String groupId, String contributingId) {
+	/* package */ void addAdjunctGroup(String groupId, String contributingId) {
 		// Add a new adjunct group after the base groups for the toolbar.  Adjunct groups
 		// are added in action set id order.
 		CoolItemGroupSeparator group = new CoolItemGroupSeparator(groupId, contributingId);
@@ -287,27 +286,7 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		parentManager.updateSizeFor(coolBarItem);
 	}
 	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-		if (oldCount == newCount) return;
-		CoolBar coolBar = (CoolBar)toolBar.getParent();
-		CoolItem[] coolItems = coolBar.getItems();
-		CoolItem coolItem = null;
-		for (int i = 0; i < coolItems.length; i++) {	
-			CoolItem item = coolItems[i];
-			if (item.getControl() == toolBar) {
-				coolItem = item;
-				break;
-			}						
-		}
-		// recompute preferred size so chevron will work correctly when
-		// items are added/removed from the toolbar, don't set the size of
-		// the coolItem since that would affect the position of other
-		// coolItems on the toolbar
-		if (coolItem != null) {
-			Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point coolSize = coolItem.computeSize (size.x, size.y);
-			coolItem.setPreferredSize(coolSize);
-		}
-		coolBar.layout();
+		// coolbar manager will handle relayout issues
 	} 
 	protected void setCoolBarItem(CoolBarContributionItem coolBarItem) {
 		this.coolBarItem = coolBarItem;
