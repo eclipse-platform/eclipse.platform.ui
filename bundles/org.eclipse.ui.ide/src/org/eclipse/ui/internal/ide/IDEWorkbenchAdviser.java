@@ -64,12 +64,15 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.internal.EditorAreaDropAdapter;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -303,6 +306,12 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		WorkbenchActionBuilder actionBuilder = new WorkbenchActionBuilder(windowConfigurer);
 		windowConfigurer.setData(ACTION_BUILDER, actionBuilder);
 		actionBuilder.buildActions();
+		
+		// add the drag and drop support for the editor area
+		windowConfigurer.addEditorAreaTransfer(EditorInputTransfer.getInstance());
+		windowConfigurer.addEditorAreaTransfer(ResourceTransfer.getInstance());
+		windowConfigurer.addEditorAreaTransfer(MarkerTransfer.getInstance());
+		windowConfigurer.configureEditorAreaDropListener(new EditorAreaDropAdapter(windowConfigurer.getWindow()));
 		
 		// hook up the listeners to update the window title
 		windowConfigurer.getWindow().addPageListener(new IPageListener () {
