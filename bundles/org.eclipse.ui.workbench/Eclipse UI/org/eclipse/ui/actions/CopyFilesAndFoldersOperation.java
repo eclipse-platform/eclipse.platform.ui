@@ -829,9 +829,19 @@ public class CopyFilesAndFoldersOperation {
 	 *   resource's parent container is the same as the destination 
 	 */
 	boolean isDestinationSameAsSource(IResource[] sourceResources, IContainer destination) {
+		IPath destinationLocation = destination.getLocation();
+		
 		for (int i = 0; i < sourceResources.length; i++) {
-			if (sourceResources[i].getParent().equals(destination)) {
+			IResource sourceResource = sourceResources[i]; 
+			if (sourceResource.getParent().equals(destination)) {
 				return true;
+			} else if (destinationLocation != null) {
+				// do thorough check to catch linked resources. Fixes bug 29913.
+				IPath sourceLocation = sourceResource.getLocation();
+				IPath destinationResource = destinationLocation.append(sourceResource.getName());
+				if (sourceLocation != null && sourceLocation.isPrefixOf(destinationResource)) {
+					return true;
+				}
 			}
 		}
 		return false;

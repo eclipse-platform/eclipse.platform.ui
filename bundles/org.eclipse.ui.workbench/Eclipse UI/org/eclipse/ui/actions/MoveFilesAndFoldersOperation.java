@@ -156,6 +156,8 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 *
 	 */
 	public String validateDestination(IContainer destination, IResource[] sourceResources) {
+		IPath destinationLocation = destination.getLocation();
+		
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
 
@@ -164,6 +166,16 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				return WorkbenchMessages.format(
 					"MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
 					new Object[] {sourceResource.getName()});
+			}
+			// test if linked source is copied onto itself. Fixes bug 29913.
+			if (destinationLocation != null) {
+				IPath sourceLocation = sourceResource.getLocation();
+				IPath destinationResource = destinationLocation.append(sourceResource.getName());
+				if (sourceLocation != null && sourceLocation.isPrefixOf(destinationResource)) {
+					return WorkbenchMessages.format(
+						"MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
+						new Object[] {sourceResource.getName()});
+				}
 			}
 		}
 		return super.validateDestination(destination, sourceResources);
