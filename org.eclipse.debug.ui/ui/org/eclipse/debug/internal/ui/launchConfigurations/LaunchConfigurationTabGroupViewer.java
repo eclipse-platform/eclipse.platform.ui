@@ -43,6 +43,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -236,18 +237,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		gd.horizontalSpan = 2;
 		fTabComposite.setLayoutData(gd);
 
-		TabFolder tabFolder = new TabFolder(fTabComposite, SWT.NONE);
-		setTabFolder(tabFolder);
-		gd = new GridData(GridData.FILL_BOTH);
-		tabFolder.setLayoutData(gd);
-		tabFolder.setFont(font);
-		getTabFolder().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				if (!isInitializingTabs()) {
-					handleTabSelected();
-				}
-			}
-		});
+		createTabFolder(fTabComposite);
 
 		Composite buttonComp = new Composite(container, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
@@ -283,6 +273,28 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 	}
 	
+	private void createTabFolder(Composite parent) {
+		Point size = null;
+		if (fTabFolder != null) {
+			size = fTabFolder.getSize();
+			fTabFolder.dispose();
+		}
+		fTabFolder = new TabFolder(parent, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		fTabFolder.setLayoutData(gd);
+		fTabFolder.setFont(parent.getFont());
+		if (size != null) {
+			fTabFolder.setSize(size);
+		}
+		getTabFolder().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (!isInitializingTabs()) {
+					handleTabSelected();
+				}
+			}
+		});		
+	}
+	
 	/**
 	 * Sets the apply button
 	 */
@@ -310,13 +322,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected Button getRevertButton() {
 		return fRevertButton;
 	}	
-	
-	/**
-	 * Sets the tab folder
-	 */
-	private void setTabFolder(TabFolder tabFolder) {
-		fTabFolder = tabFolder;
-	}
 	
 	/**
 	 * Sets the tab folder
@@ -1046,6 +1051,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
 		}
+		createTabFolder(fTabComposite);
 		disposeTabGroup();
 		setDisposingTabs(false);
 	}	
