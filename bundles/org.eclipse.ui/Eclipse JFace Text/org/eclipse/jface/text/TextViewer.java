@@ -506,18 +506,26 @@ public class TextViewer extends Viewer implements
 		}
 		
 		public void uninstall() {
+			
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19612
+			
 			IDocument document= TextViewer.this.getDocument();
-			document.removePositionUpdater(this);
-			document.removePosition(fPosition);
+			if (document != null) {
+				document.removePositionUpdater(this);
+				document.removePosition(fPosition);
+			}
 
-			fTextWidget.removeLineBackgroundListener(this);
+			if (fTextWidget != null && !fTextWidget.isDisposed())
+				fTextWidget.removeLineBackgroundListener(this);
+			
 			TextViewer.this.removeTextListener(this);						
 
 			clear();
 		}
 		
 		private void clear() {
-			fTextWidget.redraw();
+			if (fTextWidget != null && !fTextWidget.isDisposed())
+				fTextWidget.redraw();
 		}
 		
 		private void paint() {
@@ -568,6 +576,7 @@ public class TextViewer extends Viewer implements
 
 		private FindReplaceRange fRange;
 		private Color fScopeHighlightColor;
+		private IDocumentPartitioner fRememberedPartitioner;
 		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
@@ -729,16 +738,37 @@ public class TextViewer extends Viewer implements
 		 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
 		 */
 		public void setReplaceAllMode(boolean replaceAll) {
+			
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18232
+			
 			if (replaceAll) {
+				
 				TextViewer.this.setRedraw(false);
 				TextViewer.this.startSequentialRewriteMode(false);
+				
 				if (fUndoManager != null)
 					fUndoManager.beginCompoundChange();
+				
+				IDocument document= TextViewer.this.getDocument();
+				fRememberedPartitioner= document.getDocumentPartitioner();
+				if (fRememberedPartitioner != null) {
+					fRememberedPartitioner.disconnect();
+					document.setDocumentPartitioner(null);
+				}
+
 			} else {
+				
 				TextViewer.this.setRedraw(true);
 				TextViewer.this.stopSequentialRewriteMode();
+				
 				if (fUndoManager != null)
 					fUndoManager.endCompoundChange();
+					
+				if (fRememberedPartitioner != null) {
+					IDocument document= TextViewer.this.getDocument();
+					fRememberedPartitioner.connect(document);
+					document.setDocumentPartitioner(fRememberedPartitioner);
+				}
 			}
 		}
 	};
@@ -1861,8 +1891,11 @@ public class TextViewer extends Viewer implements
 				end= e;
 			end -= p.getOffset();
 				
-		} else
-			return; 
+		} else {
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
+			start= start < p.getOffset() ? 0 : p.getLength();
+			end= start;
+		}
 		
 		internalRevealRange(start, end);
 	}
@@ -2602,8 +2635,8 @@ public class TextViewer extends Viewer implements
 			if (lineCount >= 20) {
 				partitioner= d.getDocumentPartitioner();
 				if (partitioner != null) {
-					d.setDocumentPartitioner(null);
 					partitioner.disconnect();
+					d.setDocumentPartitioner(null);
 				}
 			}
 			
@@ -2647,8 +2680,8 @@ public class TextViewer extends Viewer implements
 		} finally {
 
 			if (partitioner != null) {
-				d.setDocumentPartitioner(partitioner);
 				partitioner.connect(d);
+				d.setDocumentPartitioner(partitioner);
 			}
 			
 			stopSequentialRewriteMode();
