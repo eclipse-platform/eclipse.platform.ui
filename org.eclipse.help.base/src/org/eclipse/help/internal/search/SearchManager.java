@@ -147,7 +147,6 @@ public class SearchManager {
 			pm.beginTask("", 1);
 			pm.worked(1);
 			pm.done();
-			progressDistrib.removeMonitor(pm);
 			return;
 		}
 		if (HelpBasePlugin.DEBUG_SEARCH) {
@@ -160,7 +159,6 @@ public class SearchManager {
 				pm.beginTask("", 1);
 				pm.worked(1);
 				pm.done();
-				progressDistrib.removeMonitor(pm);
 				return;
 			}
 			IndexingOperation indexer = new IndexingOperation(index);
