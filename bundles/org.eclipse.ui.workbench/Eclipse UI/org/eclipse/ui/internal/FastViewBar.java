@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,17 +23,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.ui.IViewReference;
-
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -64,6 +62,9 @@ class FastViewBar implements IWindowTrim {
 	private IntModel side = new IntModel(SWT.LEFT);
 	private RadioMenu radioButtons;
 	private IViewReference selectedView;
+	private int lastSide;
+	private Label fastViewLabel;
+	private int oldLength = 0;
 	
 	/**
 	 * Constructs a new fast view bar for the given workbench window.
@@ -73,8 +74,6 @@ class FastViewBar implements IWindowTrim {
 	public FastViewBar(WorkbenchWindow theWindow) {
 		window = theWindow;
 		
-		fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
-		fastViewBar.add(new ShowFastViewContribution(window));
 	}
 	
 	/**
@@ -86,7 +85,28 @@ class FastViewBar implements IWindowTrim {
 	 */
 	public void createControl(Composite parent) {
 		control = new Composite(parent, SWT.NONE);
-					
+		
+		side.addChangeListener(new IChangeListener() {
+			public void update(boolean changed) {
+				if (changed && (Geometry.isHorizontal(getSide()) != Geometry.isHorizontal(lastSide))) {
+					disposeChildControls();
+					createChildControls();
+				}
+				lastSide = getSide();
+			}
+		});
+		createChildControls();
+	}
+	
+	protected void createChildControls() {
+		int newSide = getSide();
+		int flags = Geometry.isHorizontal(newSide) ? SWT.HORIZONTAL : SWT.VERTICAL;
+		
+		//flags = SWT.HORIZONTAL;
+		
+		fastViewBar = new ToolBarManager(SWT.FLAT /*| SWT.WRAP*/ | flags);
+		fastViewBar.add(new ShowFastViewContribution(window));
+		
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				if (event.type == SWT.MenuDetect) {
@@ -95,6 +115,18 @@ class FastViewBar implements IWindowTrim {
 			}
 		};
 
+		GridLayout controlLayout = new GridLayout();
+		controlLayout.numColumns = 1;
+		controlLayout.marginHeight = 0;
+		controlLayout.marginWidth = 0;
+		control.setLayout(controlLayout);
+		
+		if (newSide == SWT.BOTTOM) {
+			controlLayout.numColumns = 2;
+			fastViewLabel = new Label(control, SWT.NONE);
+			fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER));
+			fastViewLabel.addListener(SWT.MenuDetect, listener);
+		}
 		fastViewBar.createControl(control);
 		getToolBar().addListener(SWT.MenuDetect, listener);
 		
@@ -206,18 +238,18 @@ class FastViewBar implements IWindowTrim {
 			
 		};
 		
-		GridLayout controlLayout = new GridLayout();
-		controlLayout.marginHeight = 0;
-		controlLayout.marginWidth = 0;
-		control.setLayout(controlLayout);
-		
 		toolBarData = new GridData(GridData.FILL_BOTH);
 		toolBarData.widthHint = HIDDEN_WIDTH;
+		visible = false;
 		
 		getToolBar().setLayoutData(toolBarData);
 		
 		DragUtil.addDragSource(getToolBar(), fastViewDragSource);
 		DragUtil.addDragTarget(getControl(), fastViewDragTarget);
+		if (fastViewLabel != null) {
+			DragUtil.addDragSource(fastViewLabel, fastViewDragSource);
+		}
+		
 		
 		update(true);
 	}
@@ -310,6 +342,7 @@ class FastViewBar implements IWindowTrim {
 				
 				radioButtons.addMenuItem(WorkbenchMessages.getString("FastViewBar.Left"), new Integer(SWT.LEFT)); //$NON-NLS-1$
 				radioButtons.addMenuItem(WorkbenchMessages.getString("FastViewBar.Right"), new Integer(SWT.RIGHT)); //$NON-NLS-1$
+				radioButtons.addMenuItem(WorkbenchMessages.getString("FastViewBar.Bottom"), new Integer(SWT.BOTTOM)); //$NON-NLS-1$
 				
 				showOn.setMenu(sidesMenu);
 			}
@@ -340,6 +373,19 @@ class FastViewBar implements IWindowTrim {
 		if (radioButtons != null) {
 			radioButtons.dispose();
 		}
+		
+		disposeChildControls();
+	}
+	
+	protected void disposeChildControls() {
+		fastViewBar.dispose();
+		fastViewBar = null;
+		
+		if (fastViewLabel != null) {
+			fastViewLabel.dispose();
+			fastViewLabel = null;
+		}
+		oldLength = 0;
 	}
 	
 	/**
@@ -359,7 +405,8 @@ class FastViewBar implements IWindowTrim {
 			}
 			
 			visible = shouldExpand;
-			control.getParent().layout();
+			//control.layout(true);
+			//control.getParent().layout();
 		}
 	}
 	
@@ -373,6 +420,10 @@ class FastViewBar implements IWindowTrim {
 		fastViewBar.update(force);
 		ToolItem[] items = fastViewBar.getControl().getItems();
 		expand(items.length > 0);
+		if (items.length != oldLength) {
+			control.getParent().layout();
+			oldLength = items.length;
+		}
 	}
 
 	/**
@@ -443,7 +494,7 @@ class FastViewBar implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
 	public int getValidSides() {
-		return SWT.LEFT | SWT.RIGHT;
+		return SWT.LEFT | SWT.RIGHT | SWT.BOTTOM;
 	}
 
 	/* (non-Javadoc)

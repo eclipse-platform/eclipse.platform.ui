@@ -2042,22 +2042,32 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (getWindowConfigurer().getShowCoolBar() || getWindowConfigurer().getShowShortcutBar()) {
 			layout.addTrim(topBar, SWT.TOP, null);
 		}
-		if (getWindowConfigurer().getShowProgressIndicator()) {
-			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null, animationItem.getPreferredWidth(), SWT.DEFAULT);
-		}
 		if (getWindowConfigurer().getShowStatusLine()) {
 			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
 		}
-		// need to set the bottom trim size if either the progress indicator or the 
-		// status line is shown, and it doesn't hurt to set it if neither are shown
-		layout.setTrimSize(SWT.BOTTOM, 
-			getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		if (getWindowConfigurer().getShowProgressIndicator()) {
+			TrimLayoutData animationData = new TrimLayoutData(false, 
+					animationItem.getPreferredWidth(), 
+					getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+
+			animationItem.getControl().setLayoutData(animationData);
+			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null);
+		}
 		layout.setCenterControl(getClientComposite());
 		
 		if (getWindowConfigurer().getShowShortcutBar()) {
 			fastViewBar.addDockingListener(new IChangeListener() {
 				public void update(boolean changed) {
-					layout.addTrim(fastViewBar.getControl(), fastViewBar.getSide(), null);
+					Control reference = null;
+					int side = fastViewBar.getSide(); 
+					
+					fastViewBar.getControl().setLayoutData(new TrimLayoutData(side != SWT.BOTTOM, SWT.DEFAULT, SWT.DEFAULT));
+					
+					if (side == SWT.BOTTOM && getWindowConfigurer().getShowStatusLine()) {
+						reference = getStatusLineManager().getControl();	
+					}
+					
+					layout.addTrim(fastViewBar.getControl(), side, reference);
 					WorkbenchPage page = getActiveWorkbenchPage(); 
 					
 					if (page != null) {

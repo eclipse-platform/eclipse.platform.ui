@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -43,6 +47,7 @@ import org.eclipse.swt.widgets.Layout;
  */
 class TrimLayout extends Layout {
 
+	private static final TrimLayoutData defaultData = new TrimLayoutData();
 	private Control centerArea;
 	
 	private List[] controls;
@@ -55,6 +60,7 @@ class TrimLayout extends Layout {
 	private int bottomSpacing;
 	private int leftSpacing;
 	private int rightSpacing;
+	private Map mapPartOntoPosition = new HashMap();
 	
 	// Position constants -- correspond to indices in the controls array, above.
 	private static final int TOP = 0;
@@ -62,23 +68,6 @@ class TrimLayout extends Layout {
 	private static final int LEFT = 2;
 	private static final int RIGHT = 3;
 	private static final int NONTRIM = 4;
-	
-	private class TrimLayoutData {
-		TrimLayoutData(int idx, int widthHint, int heightHint) {
-			positionIndex = idx;
-			this.widthHint = widthHint;
-			this.heightHint = heightHint;
-		}
-		
-		/**
-		 * See the position constants, above. Corresponds to an index in the
-		 * controls array.
-		 */
-		int positionIndex;
-		
-		int widthHint = SWT.DEFAULT;
-		int heightHint = SWT.DEFAULT;
-	}
 	
 	/**
 	 * Creates a new (initially empty) trim layout.
@@ -155,26 +144,156 @@ class TrimLayout extends Layout {
 	}
 	
 	/**
+	 * Returns the sum of the sizes of all controls in the list
+	 * 
+	 * @param controls list of controls
+	 * @param hint the known dimension (or SWT.DEFAULT if unknown). If width=true, 
+	 * this is a height. If width=false, this is a width.
+	 * @param width determines whether we're computing the sum of the control widths or the sum of the control
+	 * heights. 
+	 * @return returns the sum of the control widths if width=true, or the sum of the heights if width=false
+	 */
+	private int getFixedSize(List controls, int hint, boolean width) {
+		int sum = 0;
+		Iterator iter = controls.iterator();
+		
+		while (iter.hasNext()) {
+			Control next = (Control)iter.next();
+
+			TrimLayoutData data = getData(next);
+			
+			sum += getSize(next, hint, width);	
+		}
+		
+		return sum;
+	}
+	
+	/**
+	 * This method separates resizable controls from non-resizable controls.
+	 * 
+	 * @param input the list to filter
+	 * @param resizable will contain resizable controls from the input list
+	 * @param nonResizable will contain non-resizable controls from the input list
+	 * @param width if true, we're interested in horizontally-resizable controls. Else we're interested in
+	 * vertically resizable controls
+	 */
+	private static void filterResizable(List input, List resizable, List nonResizable, boolean width) {		
+		Iterator iter = input.iterator();
+		while (iter.hasNext()) {
+			Control next = (Control)iter.next();
+	
+			if (isResizable(next, width)) {
+				resizable.add(next);
+			} else {
+				nonResizable.add(next);
+			}
+		}
+	}
+	
+	private static boolean isResizable(Control control, boolean horizontally) {
+		TrimLayoutData data = getData(control);
+		
+		if (!data.resizable) {
+			return false;
+		}
+		
+		if (horizontally) {
+			return data.widthHint == SWT.DEFAULT;
+		} else {
+			return data.heightHint == SWT.DEFAULT;
+		}
+	}
+	
+	private static TrimLayoutData getData(Control control) {
+		TrimLayoutData data = (TrimLayoutData)control.getLayoutData();
+		if (data == null) {
+			data = defaultData;
+		}		
+		
+		return data;
+	}
+	
+	private static Point computeSize(Control toCompute, int widthHint, int heightHint) {
+		TrimLayoutData data = getData(toCompute);
+		
+		if (widthHint == SWT.DEFAULT) {
+			widthHint = data.widthHint;
+		}
+		
+		if (heightHint == SWT.DEFAULT) {
+			heightHint = data.heightHint;
+		}
+		
+		if (widthHint == SWT.DEFAULT || heightHint == SWT.DEFAULT) {
+			return toCompute.computeSize(widthHint, heightHint);
+		}
+
+		return new Point(widthHint, heightHint);
+	}
+	
+	private static int getSize(Control toCompute, int hint, boolean width) {		
+		if (width) {
+			return computeSize(toCompute, SWT.DEFAULT, hint).x;
+		} else {
+			return computeSize(toCompute, hint, SWT.DEFAULT).y;
+		}
+	}
+	
+	/**
 	 * Computes the maximum dimensions of controls in the given list
 	 * 
 	 * @param controls
 	 * @return
 	 */
-	private static Point maxDimensions(List controls, int widthHint, int heightHint) {
+	private static int maxDimension(List controls, int hint, boolean width) {
 		
-		int individualWidthHint = (widthHint == SWT.DEFAULT) ? SWT.DEFAULT : widthHint / controls.size();
-		int individualHeightHint = (heightHint == SWT.DEFAULT) ? SWT.DEFAULT : heightHint / controls.size();
+		if (hint == SWT.DEFAULT) {
+			int result = 0;
+			Iterator iter = controls.iterator();
+			
+			while (iter.hasNext()) {
+				Control next = (Control)iter.next();
+				
+				result = Math.max(getSize(next, SWT.DEFAULT, width), result);
+			}
+			
+			return result;
+		}
 		
-		Point result = new Point(0,0);
-		Iterator iter = controls.iterator();
+		List resizable = new ArrayList(controls.size());
+		List nonResizable = new ArrayList(controls.size());
+		
+		filterResizable(controls, resizable, nonResizable, width);
+		
+		int result = 0;
+		int usedHeight = 0;
+				
+		Iterator iter = nonResizable.iterator();
 		
 		while (iter.hasNext()) {
 			Control next = (Control)iter.next();
+
+			Point nextSize = computeSize(next, SWT.DEFAULT, SWT.DEFAULT);
+
+			if (width) {
+				result = Math.max(result, nextSize.x);
+				usedHeight += nextSize.y;
+			} else {
+				result = Math.max(result, nextSize.y);
+				usedHeight += nextSize.x;				
+			}
+		}
+
+		if (resizable.size() > 0) {
+			int individualHint = (hint - usedHeight) / resizable.size();
 			
-			Point dimension = next.computeSize(individualWidthHint, individualHeightHint);
+			iter = resizable.iterator();
 			
-			result.x = Math.max(result.x, dimension.x);
-			result.y = Math.max(result.y, dimension.y);
+			while (iter.hasNext()) {
+				Control next = (Control)iter.next();
+
+				result = Math.max(result, getSize(next, individualHint, width));
+			}			
 		}
 		
 		return result;
@@ -204,7 +323,7 @@ class TrimLayout extends Layout {
 	public int getTrimLocation(Control trimControl) {
 		return convertIndexToSwtConstant(getIndex(trimControl));
 	}
-	
+		
 	/**
 	 * Adds the given control to the layout's trim. Note that this must be called
 	 * for every trim control. If the given widget is already a trim
@@ -220,25 +339,7 @@ class TrimLayout extends Layout {
 	 * this side of the layout. Otherwise, the control will be inserted before the given
 	 * widget.
 	 */
-	public void addTrim(Control control, int location, Control position) {
-		addTrim(control, location, position, SWT.DEFAULT, SWT.DEFAULT);
-	}
-	
-	/**
-	 * Adds the given control to the layout's trim. The width and height hints may be used to
-	 * override the control's preferred size in one or both directions.
-	 * 
-	 * @param control new trim widget to be added
-	 * @param location one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
-	 * @param position if null, the control will be inserted as the last trim widget on
-	 * this side of the layout. Otherwise, the control will be inserted before the given
-	 * widget.
-	 * @param widthHint specifies the width of the control or SWT.DEFAULT to ask the control
-	 * for its preferred size.
-	 * @param heightHint specifies the height of the control or SWT.DEFAULT to ask the control
-	 * for its preferred size.
-	 */
-    public void addTrim(Control control, int location, Control position, int widthHint, int heightHint) {
+    public void addTrim(Control control, int location, Control position) {
 		removeTrim(control);
 		
 		int index = convertSwtConstantToIndex(location);
@@ -246,7 +347,7 @@ class TrimLayout extends Layout {
 		
 		insertBefore(list, control, position);
 		
-		control.setLayoutData(new TrimLayoutData(index, widthHint, heightHint));
+		mapPartOntoPosition.put(control, new Integer(index));
 	}
 	
 	/**
@@ -272,15 +373,16 @@ class TrimLayout extends Layout {
 	 * @param toRemove
 	 */
 	public void removeTrim(Control toRemove) {
-		// If this isn't a trim widget.
-		if (toRemove.getLayoutData() == null) {
-			return;
-		}
 		
 		int idx = getIndex(toRemove);
 		
+		// If this isn't a trim widget.
+		if (idx == NONTRIM) {
+			return;
+		}
+		
 		controls[idx].remove(toRemove);
-		toRemove.setLayoutData(null);
+		mapPartOntoPosition.remove(toRemove);
 	}
 	
 	/**
@@ -291,13 +393,13 @@ class TrimLayout extends Layout {
 	 * @return
 	 */
 	private int getIndex(Control toQuery) {
-		TrimLayoutData data = (TrimLayoutData)toQuery.getLayoutData();
+		Integer position = (Integer)mapPartOntoPosition.get(toQuery);
 		
-		if (data == null) {
+		if (position == null) {
 			return NONTRIM;
 		}
 		
-		return data.positionIndex;
+		return position.intValue();
 	}
 	
 	/**
@@ -339,16 +441,16 @@ class TrimLayout extends Layout {
 		}
 		
 		if (trimSize[TOP] == SWT.DEFAULT) {
-			trimSize[TOP] = maxDimensions(controls[TOP], widthHint, SWT.DEFAULT).y;
+			trimSize[TOP] = maxDimension(controls[TOP], widthHint, false);
 		}
 		if (trimSize[BOTTOM] == SWT.DEFAULT) {	
-			trimSize[BOTTOM] = maxDimensions(controls[BOTTOM], widthHint, SWT.DEFAULT).y;
+			trimSize[BOTTOM] = maxDimension(controls[BOTTOM], widthHint, false);
 		}
 		if (trimSize[LEFT] == SWT.DEFAULT) {
-			trimSize[LEFT] = maxDimensions(controls[LEFT], SWT.DEFAULT, heightHint).x;
+			trimSize[LEFT] = maxDimension(controls[LEFT], heightHint, true);
 		}
 		if (trimSize[RIGHT] == SWT.DEFAULT) {
-			trimSize[RIGHT] = maxDimensions(controls[RIGHT], SWT.DEFAULT, heightHint).x;
+			trimSize[RIGHT] = maxDimension(controls[RIGHT], heightHint, true);
 		}		
 		return trimSize;
 	}
@@ -407,10 +509,10 @@ class TrimLayout extends Layout {
 		int heightOfCenterPane = clientArea.height - trimSize[TOP] - trimSize[BOTTOM] - topSpacing - bottomSpacing;
 		int bottomOfCenterPane = clientArea.y + clientArea.height - trimSize[BOTTOM];
 		
-		arrangeHorizontally(new Rectangle(leftOfLayout, topOfLayout, clientArea.width, trimSize[TOP]), controls[TOP]);
-		arrangeHorizontally(new Rectangle(leftOfCenterPane, bottomOfCenterPane, widthOfCenterPane, trimSize[BOTTOM]), controls[BOTTOM]);
-		arrangeVertically(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT], clientArea.height - trimSize[TOP]), controls[LEFT]);
-		arrangeVertically(new Rectangle(rightOfCenterPane, topOfCenterPane, trimSize[RIGHT], clientArea.height - trimSize[TOP]), controls[RIGHT]);
+		arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width, trimSize[TOP]), controls[TOP], true);
+		arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane, widthOfCenterPane, trimSize[BOTTOM]), controls[BOTTOM], true);
+		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT], clientArea.height - trimSize[TOP]), controls[LEFT], false);
+		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane, trimSize[RIGHT], clientArea.height - trimSize[TOP]), controls[RIGHT], false);
 		
 		if (centerArea != null) {
 			centerArea.setBounds(leftOfCenterPane, topOfCenterPane, widthOfCenterPane, heightOfCenterPane);
@@ -423,63 +525,57 @@ class TrimLayout extends Layout {
 	 * @param area area to be filled by the controls
 	 * @param controls controls that will span the rectangle
 	 */
-	private static void arrangeHorizontally(Rectangle area, List controls) {
+	private static void arrange(Rectangle area, List controls, boolean horizontally) {
 		Point currentPosition = new Point(area.x, area.y);
+
+		List resizable = new ArrayList(controls.size());
+		List nonResizable = new ArrayList(controls.size());
 		
-		Iterator iter = controls.iterator();
+		filterResizable(controls, resizable, nonResizable, horizontally);
+
+		int[] sizes = new int[nonResizable.size()];
+		
+		int idx = 0;
+		int used = 0;
+		int hint = Geometry.getDimension(area, !horizontally);
+		
+		// Compute the sizes of non-resizable controls
+		Iterator iter = nonResizable.iterator();
 		
 		while (iter.hasNext()) {
 			Control next = (Control)iter.next();
-
-			if (iter.hasNext()) {
-
-				TrimLayoutData data = (TrimLayoutData)next.getLayoutData();
-				
-				int width = data.widthHint;
-				if (width == SWT.DEFAULT) {	
-					width = next.computeSize(SWT.DEFAULT, area.height).x;
-				}
-				
-				next.setBounds(currentPosition.x, currentPosition.y, width, area.height);
-
-				currentPosition.x += width;
-				
-			} else {
-				next.setBounds(currentPosition.x, currentPosition.y, area.width - currentPosition.x + area.x, area.height);
-			}			
-		}
-	}
-
-	/**
-	 * Arranges all the given controls in a horizontal row that fills the given rectangle
-	 * 
-	 * @param area area to be filled by the controls
-	 * @param controls controls that will span the rectangle
-	 */
-	private static void arrangeVertically(Rectangle area, List controls) {
-		Point currentPosition = new Point(area.x, area.y);
-		
-		Iterator iter = controls.iterator();
-		
-		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
-		
-			if (iter.hasNext()) {
-				TrimLayoutData data = (TrimLayoutData)next.getLayoutData();
-				
-				int height = data.heightHint;
-				if (height == SWT.DEFAULT) {
-					height = next.computeSize(area.width, SWT.DEFAULT).y;
-				}
 			
-				next.setBounds(currentPosition.x, currentPosition.y, area.width, height);
+			sizes[idx] = getSize(next, hint, horizontally);
+			used += sizes[idx];
+			idx++;
+		}
+		
+		int available = Geometry.getDimension(area, horizontally) - used;
+		idx = 0;
+		int remainingResizable = resizable.size();
+		
+		iter = controls.iterator();
+		
+		while (iter.hasNext()) {
+			Control next = (Control)iter.next();
 
-				currentPosition.y += height;
-				
+			int thisSize;
+			if (isResizable(next, horizontally)) {
+				thisSize = available / remainingResizable;
+				available -= thisSize;
+				remainingResizable--;
 			} else {
-				next.setBounds(currentPosition.x, currentPosition.y, area.width, area.height 
-						- currentPosition.y + area.y);
+				thisSize = sizes[idx];
+				idx++;
 			}
+			
+			if (horizontally) {
+				next.setBounds(currentPosition.x, currentPosition.y, thisSize, hint);
+				currentPosition.x += thisSize;
+			} else {
+				next.setBounds(currentPosition.x, currentPosition.y, hint, thisSize);
+				currentPosition.y += thisSize;
+			}			
 		}
 	}
 
