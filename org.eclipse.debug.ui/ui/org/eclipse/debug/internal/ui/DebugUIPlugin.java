@@ -37,11 +37,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
-import org.eclipse.debug.internal.ui.preferences.DebugPreferencePage;
-import org.eclipse.debug.internal.ui.preferences.LaunchHistoryPreferencePage;
-import org.eclipse.debug.internal.ui.preferences.VariableViewsPreferencePage;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -57,6 +54,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -64,6 +62,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 import org.w3c.dom.Document;
 
 /**
@@ -293,10 +292,34 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
-		DebugPreferencePage.initDefaults(prefs);
-		ConsolePreferencePage.initDefaults(prefs);
-		LaunchHistoryPreferencePage.initDefaults(prefs);
-		VariableViewsPreferencePage.initDefaults(prefs);
+		//Debug PreferencePage
+		prefs.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);
+		prefs.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
+		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
+		prefs.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
+		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
+		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, false);
+		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
+		
+		//ConsolePreferencePage
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
+		WorkbenchChainedTextFontFieldEditor.startPropagate(prefs, IDebugPreferenceConstants.CONSOLE_FONT);
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
+		
+		//LaunchHistoryPreferencePage
+		prefs.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);
+		
+		//VariableViewsPreferencePage
+		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, false);
+		prefs.setDefault(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false);
+		prefs.setDefault(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

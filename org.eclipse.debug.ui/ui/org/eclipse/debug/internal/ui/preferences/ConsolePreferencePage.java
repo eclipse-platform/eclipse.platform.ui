@@ -17,7 +17,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
@@ -102,18 +101,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
 		FontData fontData= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
 		return fontData;
-	}
-	
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
-		store.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);
-		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
-		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
-		WorkbenchChainedTextFontFieldEditor.startPropagate(store, IDebugPreferenceConstants.CONSOLE_FONT);
-		
-		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
-		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
-		PreferenceConverter.setDefault(store, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
 	}
 		
 	/**
