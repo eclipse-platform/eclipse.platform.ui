@@ -45,6 +45,7 @@ public AllTests(String name) {
 		suite.addTest(Bug_28981.suite());
 		suite.addTest(Bug_29116.suite());
 		suite.addTest(Bug_29671.suite());
+		suite.addTest(Bug_32076.suite());
 		return suite;
 	}
 }

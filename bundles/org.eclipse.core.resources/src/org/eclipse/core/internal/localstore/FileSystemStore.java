@@ -219,9 +219,11 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 			// double-check to ensure we really did move
 			// since java.io.File#renameTo sometimes lies
 			if (!caseRenaming && source.exists()) {
+				// XXX: document when this occurs
 				if (destination.exists()) {
 					// couldn't delete the source so remove the destination
 					// and throw an error
+					// XXX: if we fail deleting the destination, the destination (root) may still exist
 					Workspace.clear(destination);
 					String message = Policy.bind("localstore.couldnotDelete", source.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(source.getAbsolutePath()), message, null));
@@ -254,9 +256,13 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 			canceled = true;
 			throw e;
 		} finally {
-			if (success)
-				Workspace.clear(source);
-			else {
+			if (success) {
+				// fail if source cannot be successfully deleted
+				String message =  Policy.bind("localstore.couldnotDelete", source.getAbsolutePath()); //$NON-NLS-1$ 
+				MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
+				if (!delete(source, result))
+					throw new ResourceException(result);
+			} else {			
 				if (!canceled) {
 					// We do not want to delete the destination in case of failure. It might
 					// the case where we already had contents in the destination, so we would

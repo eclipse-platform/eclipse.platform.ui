@@ -1089,11 +1089,11 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			}
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
-			if (!tree.getStatus().isOK())
-				throw new ResourceException(tree.getStatus());
 			//update any aliases of this resource and the destination
 			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
-			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
+			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);			
+			if (!tree.getStatus().isOK())
+				throw new ResourceException(tree.getStatus());
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
