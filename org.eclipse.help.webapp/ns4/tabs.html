@@ -1,0 +1,134 @@
+
+<html>
+<head>
+<title>Tabs</title>
+ 
+<style>
+BODY {
+	/*background-color:ActiveBorder;*/
+	background-color:#D4D0C8;
+	background-image:url(../images/eclipse_tabbackground.gif);
+	background-repeat:repeat-x;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin-width:0;
+	margin-left:0px;
+	border-bottom: 2px solid #848284;
+	cursor:default;
+}
+
+TABLE
+	{
+		/*font: 9pt ms sans serif,sans-serif;*/
+		font: 8pt Tahoma;
+	}
+
+A 
+{
+	text-decoration:none;
+	color:WindowText;
+	font: 8pt Tahoma;
+	cursor:default;
+	top:0;
+	padding:0px 2px 0px 2px;
+}
+
+.tab {
+	height:20;
+	margin-top:2;
+	border:0;
+}
+
+.pressed {
+	margin-top:1;
+	height:20;
+	border:1;
+	border-bottom:1px solid #ffffff;
+	border-top:1px solid #ffffff;
+}
+
+
+IMG {
+	margin:0;
+	border:0;
+	padding-left:0;
+}
+</style>
+     
+<script language="JavaScript">
+ 
+// input parameters
+var args = parent.parseQueryString();
+
+
+/* 
+ * Switch tabs.
+ */ 
+function switchTab(nav)
+{
+ 	// show the appropriate pressed tab
+  	var buttons = document.links;
+  	for (var i=0; i<buttons.length; i++)
+  	{
+  		if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
+			buttons[i].className = "pressed";
+		else
+			buttons[i].className = "tab";
+ 	 }
+  
+  	// set the images for borders
+  	var tocI = document.images["tocI"];
+  	var searchI = document.images["searchI"];
+  	var linksI = document.images["linksI"];
+  	
+  	if (nav == "toc")
+  	{
+  		parent.frames["NavFrame"].location = "tocs.jsp";
+  		tocI.src = "../images/rightBorder.gif";
+		searchI.src = "../images/middleBorder.gif";
+		linksI.src = "../images/noBorder.gif";
+  	}
+  	else if (nav == "search")
+  	{
+  		parent.frames["NavFrame"].location = "search.html";
+  		tocI.src = "../images/leftBorder.gif";
+		searchI.src = "../images/rightBorder.gif";
+		linksI.src = "../images/noBorder.gif";
+  	}
+  	else if (nav == "links")
+  	{
+  		parent.frames["NavFrame"].location = "links.jsp";
+  		tocI.src = "../images/middleBorder.gif";
+		searchI.src = "../images/leftBorder.gif";
+		linksI.src = "../images/rightBorder.gif";
+  	}	
+}
+ 
+function onloadHandler()
+{	
+	var tab = "toc";
+	if (args && args["tab"])
+	    tab = args["tab"];
+	switchTab(tab);
+}
+ 
+</script>
+
+
+</head>
+   
+<body onload="onloadHandler()">
+   <table cellspacing="0" cellpadding="0" border="0">
+   <tr>
+   <td align=centre><a class="tab" name="toc" href="javascript:switchTab('toc')">&nbsp;Content</a></td>
+   <td><img name="tocI" src="../images/rightBorder.gif" width="2" height="20"></td>
+   <td align=center><a class="tab" name="search" href="javascript:switchTab('search')">Search</a></td>
+   <td><img name="searchI" src="../images/middleBorder.gif" width="2" height="20"></td>
+   <td align=top><a class="tab" name="links" href="javascript:switchTab('links')">Links</a></td>
+   <td><img name="linksI" src="../images/noBorder.gif" width="2" height="20"></td>
+   </tr>
+   </table>
+   
+</body>
+</html>
+

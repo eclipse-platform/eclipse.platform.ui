@@ -1,0 +1,163 @@
+
+<html>
+<head>
+<title>Navigation</title>
+
+<script language="JavaScript">
+
+var args = parent.parseQueryString();
+
+
+/**
+ * Shows the TOC frame, loads appropriate TOC, and selects the topic
+ */
+function displayTocFor(topic)
+{
+	// first ensure the TOC frame is loaded
+	// TO DO....
+	
+	parent.TabsFrame.switchTab("toc");
+	// remove the query, if any
+	var i = topic.indexOf('?');
+	if (i != -1)
+		topic = topic.substring(0, i);
+	
+	var selected = document.layers[toc].selectTopic(topic);
+	if (!selected)
+		document.layers[toc].src = "toc.jsp?topic="+topic;
+}
+
+/** 
+ * Shows the specified internal frame.
+ * To be called by the tabs.html frame.
+ */ 
+function turnToFrame(nav)
+{
+	this.currentNavFrame=nav;
+ 	var layer = document.layers[nav];
+ 	if (!layer) return;
+ 
+  	// show the appropriate frame
+ 	var layers = document.layers;
+ 	for (var i=0; i<layers.length; i++)
+ 	{			
+  		if (layers[i] != layer)
+  		{
+   			layers[i].visibility = "hide";
+   			layers[i].width = 0;
+   			layers[i].height = 0;
+   			layers[i].border = 0;
+   			layers[i].margin = 0;
+   			layer.moveAbove(layers[i]);
+  		}
+  	}
+
+	layer.visibility = "show";
+	layer.width = "100%";
+	layer.height = "100%";
+	if (!layer.src)
+		layer.src = getFrameInput(nav);
+
+ 	// set title
+ 	if (nav == "search")
+ 		setToolbarTitle("Search");
+ 	else if (nav == "links")
+ 		setToolbarTitle("Links");
+ 	else if (nav == "toc")
+ 		setToolbarTitle(tocTitle);		
+}
+ 
+var tocTitle = null;
+var currentNavFrame;
+/**
+ * Needs to be called from a subframe
+ */
+function setToolbarTitle(title)
+{
+	parent.ToolbarFrame.setToc(title);
+}
+
+/**
+ * Returns the input source for a frame
+ */
+function getFrameInput(nav)
+{
+	switch(nav)
+	{
+	case "toc":
+		// load frames
+		var tocUrl="";
+
+		if(args && args["toc"])
+		{
+			tocUrl="toc.jsp?toc="+args["toc"];
+			if(args["topic"])
+				return tocUrl+"&topic="+args["topic"];
+			return tocUrl;
+		}
+		else
+			return "tocs.jsp";
+			
+		break;
+		
+	case "search":
+		
+		if(args && args["query"])
+			return "search.html?query="+args["query"];
+		else
+			return "search.html";
+			
+		break;
+		
+	case "links":
+		if(args && args["contextId"])
+			return "links.jsp?contextId="+args["contextId"];
+		else
+			return "blank.html";
+		break;
+		
+	default:
+		return "blank.html";
+		break;
+	}
+}
+
+/**
+ * Loads the specified table of contents.
+ * This is added from the tocs.jsp
+ */		
+function loadTOC(tocId)
+{
+alert("load toc");
+	// navigate to this toc
+	document.layers["toc"].src = "toc.jsp?toc="+tocId;
+}
+
+function showBookshelf()
+{
+alert("show bookshlef");
+	document.layers["toc"].src = "tocs.jsp";
+}
+
+function onloadHandler()
+{
+	// load all the layers
+	if (!document.layers["toc"].src)
+		document.layers["toc"].src = getFrameInput("toc");
+	if (!document.layers["search"].src)
+		document.layers["search"].src = getFrameInput("search");
+	if (document.layers["links"].src)
+		document.layers["links"].src = getFrameInput("links");
+}
+ 
+</script>
+
+</head>
+   
+<body onload="onloadHandler()">
+     <layer visibility="hide" width="100%" height="100%" name="toc" id="toc" class="nav" title="Table of Contents"></layer>  
+   	 <layer visibility="hide" width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></layer> 
+	 <layer visibility="hide" width="100%" height="100%"  name="links" id="links" class="nav" title="Links"></layer> 
+</body>
+</html>
+
