@@ -123,6 +123,9 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
+			//Don't bother updating for disposed status
+			if(statusLine.isDisposed())
+				return;
 			statusLine.setCanceled(value);
 
 		}
