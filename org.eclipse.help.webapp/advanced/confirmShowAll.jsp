@@ -15,4 +15,5 @@
 	<jsp:param name="header"	value="<%=ServletResources.getString("confirmShowAllQuestion", request)%>"/>
 	<jsp:param name="message"	value="<%=ServletResources.getString("confirmShowAllExplanation", request)%>"/>
 	<jsp:param name="confirmCallback"	value="<%="showAll()"%>"/>
+	<jsp:param name="initialFocus"	value="cancel"/>
 </jsp:include>

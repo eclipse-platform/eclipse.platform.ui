@@ -63,7 +63,7 @@ if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
 %>
 	sizeButtons();
 <%}%>
-	document.getElementById("cancel").focus();
+	document.getElementById("<%=request.getParameter("initialFocus")%>").focus();
 }
 
 function sizeButtons() {
