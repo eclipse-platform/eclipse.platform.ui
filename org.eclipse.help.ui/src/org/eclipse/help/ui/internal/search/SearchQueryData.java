@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.search;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.ui.*;
@@ -34,7 +35,7 @@ public class SearchQueryData {
 	private int maxHits;
 	private boolean bookFiltering;
 	private IWorkingSet[] workingSets;
-	
+
 	/**
 	 * HelpSearchQuery constructor.
 	 * @param key java.lang.String
@@ -42,9 +43,27 @@ public class SearchQueryData {
 	 */
 	public SearchQueryData() {
 		searchQuery = new SearchQuery();
-		bookFiltering = false;
 		maxHits = MAX_HITS;
-		workingSets = new IWorkingSet[0];
+
+		String workingSetName =
+			HelpPlugin.getDefault().getPluginPreferences().getString(
+				HelpSystem.WORKING_SET);
+		if (workingSetName == null || workingSetName.length() == 0) {
+			bookFiltering = false;
+			workingSets = new IWorkingSet[0];
+		} else {
+			// Assumption: we only remember one working set (no multi selection)
+			IWorkingSet iws =
+				PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(
+					workingSetName);
+			if (iws == null) {
+				bookFiltering = false;
+				workingSets = new IWorkingSet[0];
+			} else {
+				bookFiltering = true;
+				workingSets = new IWorkingSet[] { iws };
+			}
+		}
 	}
 	public ISearchQuery getSearchQuery() {
 		return searchQuery;
@@ -95,7 +114,7 @@ public class SearchQueryData {
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
 		this.workingSets = workingSets;
 	}
-	
+
 	/**
 	 * Sets search to be performed on the fields only.
 	 * @param fieldSearch true if field only search
@@ -131,7 +150,7 @@ public class SearchQueryData {
 		else
 			q += "&fieldSearch=false";
 		if (bookFiltering) {
-			for (int i=0; i<workingSets.length; i++ ) {
+			for (int i = 0; i < workingSets.length; i++) {
 				q += "&scope=" + URLCoder.encode(workingSets[i].getName());
 			}
 		}

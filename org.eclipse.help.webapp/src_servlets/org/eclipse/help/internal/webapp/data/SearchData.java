@@ -217,13 +217,18 @@ public class SearchData extends RequestData {
 			return;
 		// if a working set is defined, set it in the preferences
 		String workingSet = getDBCSParameter("scope");
-		if (workingSet != null
-			&& !workingSet.equals(
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					HelpSystem.WORKING_SET))) {
+		String lastWS =
+			HelpPlugin.getDefault().getPluginPreferences().getString(
+				HelpSystem.WORKING_SET);
+		if (workingSet != null && !workingSet.equals(lastWS)) {
 			HelpPlugin.getDefault().getPluginPreferences().setValue(
 				HelpSystem.WORKING_SET,
 				workingSet);
+			HelpPlugin.getDefault().savePluginPreferences();
+		} else if (workingSet == null && lastWS != null && lastWS.length() > 0) {
+			HelpPlugin.getDefault().getPluginPreferences().setValue(
+				HelpSystem.WORKING_SET,
+				"");
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
 	}

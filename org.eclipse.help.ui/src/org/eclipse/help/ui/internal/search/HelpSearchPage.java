@@ -12,6 +12,8 @@ package org.eclipse.help.ui.internal.search;
 
 import java.lang.reflect.*;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.*;
@@ -170,7 +172,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 						.getWorkingSetManager()
 						.createWorkingSetSelectionDialog(
 							selected.getShell(),
-							true);
+							false);
+				// no multiple selection
 
 				if (dialog.open() == Window.OK) {
 					all.setSelection(false);
@@ -190,8 +193,24 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 */
 	public boolean performAction() {
 		searchQueryData.setSearchWord(searchWordCombo.getText());
-		searchQueryData.setFieldsSearch(false /*headingsButton.getSelection()*/
-		);
+		searchQueryData.setFieldsSearch(false);
+
+		// Save working set
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		String lastWS = prefs.getString(HelpSystem.WORKING_SET);
+		IWorkingSet[] iws = searchQueryData.getSelectedWorkingSets();
+		if (searchQueryData.isBookFiltering()
+			&& iws != null
+			&& iws.length > 0
+			&& !iws[0].getName().equals(lastWS)) {
+			prefs.setValue(HelpSystem.WORKING_SET, iws[0].getName());
+			HelpPlugin.getDefault().savePluginPreferences();
+		} else if (
+			!searchQueryData.isBookFiltering()
+				&& (lastWS != null || lastWS.length() > 0)) {
+			prefs.setValue(HelpSystem.WORKING_SET, "");
+			HelpPlugin.getDefault().savePluginPreferences();
+		}
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
 		boolean dontCancel = false;
