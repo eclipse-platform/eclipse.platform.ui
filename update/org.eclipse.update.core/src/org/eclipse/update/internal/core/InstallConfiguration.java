@@ -826,4 +826,21 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
 		configurator.installBundles();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof InstallConfiguration))
+			return false;
+		
+		InstallConfiguration config = (InstallConfiguration)obj;
+	
+		return getCreationDate().equals(config.getCreationDate()) && 
+				getLabel().equals(config.getLabel()) &&
+				getLocationURLString().equals(config.getLocationURLString());
+	}
 }

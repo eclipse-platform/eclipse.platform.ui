@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.wizards.ShowActivitiesDialog;
 
 public class ShowActivitiesAction extends Action {
 	Shell shell;
@@ -25,7 +26,7 @@ public class ShowActivitiesAction extends Action {
 	public void run() {
 		ShowActivitiesDialog dialog = new ShowActivitiesDialog(shell);
 		dialog.create();
-		dialog.getShell().setSize(500,500);
+		dialog.getShell().setText(UpdateUI.getString("ShowActivitiesDialog.title"));
 		dialog.open();
 	}
 }

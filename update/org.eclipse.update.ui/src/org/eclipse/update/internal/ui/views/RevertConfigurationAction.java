@@ -25,7 +25,7 @@ public class RevertConfigurationAction extends Action {
 		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(UpdateUI.getActiveWorkbenchShell().getText());
-		dialog.getShell().setSize(500,500);
+		dialog.getShell().setSize(600,500);
 		dialog.open();
 	}
 }

@@ -34,6 +34,16 @@ public class ActivitiesTableViewer{
 	static class ActivitiesContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
+		
+		private boolean showCurrentOnly;
+		
+		public ActivitiesContentProvider(boolean showCurrentOnly){
+			this.showCurrentOnly = showCurrentOnly;
+		}
+		public ActivitiesContentProvider(){
+			this.showCurrentOnly = false;
+		}
+		
 		public Object[] getElements(Object element) {
 			InstallConfiguration currentConfig = (InstallConfiguration)element;
 			InstallConfiguration[] configs = parser.getConfigurations();
@@ -42,18 +52,18 @@ public class ActivitiesTableViewer{
 			for (int i = 0; i<configs.length; i++){
 				if (configs[i].equals(currentConfig) && !hitCurrentConfig)
 					hitCurrentConfig = true;
-				if (hitCurrentConfig){
+				if (hitCurrentConfig && showCurrentOnly)
+					return configs[i].getActivities();
+				else if (hitCurrentConfig){
 					IActivity[] activities = configs[i].getActivities();
-//					System.out.println(configs[i].getCreationDate() + ": " + configs[i].getActivities().length);
 					for (int j = 0; j<activities.length; j++)
-						activitiesList.add(activities[j]);
+						activitiesList.add(activities[j]);	
 				}
 				
 			}
-//			System.out.println("num activities " + activitiesList.size());
 			return (IActivity[])activitiesList.toArray(new IActivity[activitiesList.size()]);
-//			return currentConfig.getActivities();
 		}
+		
 	}
 
 	static class ActivitiesLabelProvider
@@ -111,11 +121,9 @@ public class ActivitiesTableViewer{
 		}
 	}
 
-	public static TableViewer createViewer(Composite parent) {
-//		if (parser == null){
-			parser = new InstallLogParser();
-			parser.parseInstallationLog();
-//		}
+	public static TableViewer createViewer(Composite parent, boolean showCurrentOnly) {
+		parser = new InstallLogParser();
+		parser.parseInstallationLog();
 		Table table = new Table(parent, SWT.BORDER);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setHeaderVisible(true);
@@ -133,7 +141,7 @@ public class ActivitiesTableViewer{
 
 		TableViewer activitiesViewer = new TableViewer(table);
 		activitiesViewer.setLabelProvider(new ActivitiesLabelProvider());
-		activitiesViewer.setContentProvider(new ActivitiesContentProvider());
+		activitiesViewer.setContentProvider(new ActivitiesContentProvider(showCurrentOnly));
 		return activitiesViewer;
 	}
 

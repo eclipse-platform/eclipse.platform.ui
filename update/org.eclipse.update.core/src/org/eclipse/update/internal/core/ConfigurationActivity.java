@@ -67,4 +67,16 @@ public class ConfigurationActivity
 	public IInstallConfiguration getInstallConfiguration() {
 		return (IInstallConfiguration) getInstallConfigurationModel();
 	}
+	
+	public boolean equals(Object other) {
+		if (!(other instanceof ConfigurationActivity))
+			return false;
+		if (this == other)
+			return true;
+		
+		ConfigurationActivity activity = (ConfigurationActivity) other;
+		return getAction() == activity.getAction()
+				&& getLabel().equals(activity.getLabel())
+				&& getStatus() == activity.getStatus();
+	}
 }

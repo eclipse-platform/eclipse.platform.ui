@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -38,27 +39,29 @@ public class RevertConfigurationWizardPage extends WizardPage {
 	private TableViewer activitiesViewer;
 	private TableViewer configViewer;
 	public static Color blueBGColor;
+	private SashForm sashForm;
 
 	public RevertConfigurationWizardPage() {
 		super("RevertConfiguration"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString("RevertConfigurationWizardPage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("RevertConfigurationWizardPage.desc")); //$NON-NLS-1$
 		blueBGColor = new Color(null, 238,238,255);
+		
 	}
 
 	public void createControl(Composite parent) {
-		SashForm composite = new SashForm(parent, SWT.VERTICAL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayout(new GridLayout());
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createConfigurationsSection(composite);
-		createActivitiesSection(composite);
-		setControl(composite);
+		createConfigurationsSection(sashForm);
+		createActivitiesSection(sashForm);
+		setControl(sashForm);
 
 		Object element = configViewer.getElementAt(0);
 		if (element != null)
 			configViewer.setSelection(new StructuredSelection(element));
-		Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(sashForm);
 	}
 
 	private void createConfigurationsSection(Composite parent) {
@@ -66,13 +69,13 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		tableContainer.setLayout(layout);
-		tableContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		tableContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(tableContainer, SWT.NONE);
 		label.setText(UpdateUI.getString("RevertConfigurationWizardPage.label")); //$NON-NLS-1$
 
 		Table table = new Table(tableContainer, SWT.BORDER | SWT.V_SCROLL);
-		table.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		configViewer = new TableViewer(table);
 		configViewer.setLabelProvider(new LabelProvider() {
@@ -123,8 +126,8 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				for (int i =0; i<items.length; i++){
 					IActivity activity = (IActivity)items[i].getData();
 					// for now, we test exact config match. If needed, we can also compare dates, etc.
-					if (activity.getInstallConfiguration() == currentConfig)
-						items[i].setBackground(blueBGColor);//activitiesViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+					if (((InstallConfiguration)activity.getInstallConfiguration()).equals(currentConfig))
+						items[i].setBackground(blueBGColor);
 					else
 						items[i].setBackground(activitiesViewer.getControl().getBackground());
 				}
@@ -137,38 +140,44 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		}
 	}
 
-
 	private void createActivitiesSection(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		final Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
-
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.grabExcessVerticalSpace = true;
 		composite.setLayoutData(gd);
 
-		Label line = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 1;
-		line.setLayoutData(gd);
+
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(
 			UpdateUI.getString("RevertConfigurationWizardPage.activities")); //$NON-NLS-1$
-		activitiesViewer = ActivitiesTableViewer.createViewer(composite);
+		activitiesViewer = ActivitiesTableViewer.createViewer(composite, false);
 
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(8, 20, false));
-		layout.addColumnData(new ColumnWeightData(50, 160, true));
+		layout.addColumnData(new ColumnWeightData(5, 20, false));
+		layout.addColumnData(new ColumnWeightData(30, 100, true));
 		layout.addColumnData(new ColumnWeightData(50, 183, true));
 		layout.addColumnData(new ColumnWeightData(50, 100, true));
 
 		activitiesViewer.getTable().setLayout(layout);
+
 		TableItem[] configs = configViewer.getTable().getItems();
 		if (configs.length >0)
 			activitiesViewer.setInput((InstallConfiguration)configs[0].getData());
+		
+		composite.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				int sashHeight = getSashForm().getSize().y;
+				int sashWidth = getSashForm().getSize().x;
+				if (composite.getSize().y > (sashHeight*0.85) && composite.getSize().x > (sashWidth*0.5)){
+					getSashForm().setOrientation(SWT.HORIZONTAL);
+				} else {
+					getSashForm().setOrientation(SWT.VERTICAL);
+				}
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -178,6 +187,9 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		blueBGColor.dispose();
 	}
 	
+	public SashForm getSashForm(){
+		return sashForm;
+	}
 	public boolean performFinish() {
 		Shell shell = getContainer().getShell();
 		boolean result =
@@ -246,5 +258,4 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			return false;
 		}
 	}
-
 }

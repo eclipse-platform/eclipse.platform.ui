@@ -12,7 +12,7 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
-import java.text.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -30,7 +30,6 @@ public class InstallLogParser {
 	private BufferedReader buffRead;
 	private InstallConfiguration currentConfiguration;
 	private HashMap installConfigMap;
-	private ArrayList activities;
 	private Comparator comparator;
 	
 	private static final String FEATURE_INSTALL = "feature-install"; //$NON-NLS-1$
@@ -43,7 +42,6 @@ public class InstallLogParser {
 	private static final String RECONCILIATION = "reconciliation"; //$NON-NLS-1$
 	private static final String PRESERVED = "preserve-configuration"; //$NON-NLS-1$	
 	
-	private static final String CONFIGURATION = "!CONFIGURATION"; //$NON-NLS-1$
 	private static final String ACTIVITY = "!ACTIVITY"; //$NON-NLS-1$
 	
 	public static final String SUCCESS = "success"; //$NON-NLS-1$
@@ -53,17 +51,15 @@ public class InstallLogParser {
 	public InstallLogParser(){
 		String loc = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation().getFile();
 		logPath = new Path(loc).removeLastSegments(1).append(".install-log"); 
-		activities = new ArrayList();
 		installConfigMap = new HashMap();
 		try {
-			IInstallConfiguration[] configs = SiteManager.getLocalSite().getConfigurationHistory();
-			for (int i=0;i <configs.length; i++){
-				((InstallConfiguration)configs[i]).resetActivities();
+			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();
+			for (int i=0;i<configs.length; i++){
 				installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
-			}
+			}	
 		} catch (CoreException e) {
 			UpdateCore.log(e);
-		}
+		} 
 		comparator = new Comparator(){
 			public int compare(Object e1, Object e2) {
 				Date date1 = ((InstallConfiguration)e1).getCreationDate();
@@ -72,7 +68,7 @@ public class InstallLogParser {
 			}
 		};
 	}
-	
+
 	public void parseInstallationLog(){
 		try {
 			openLog();
@@ -134,10 +130,7 @@ public class InstallLogParser {
 					
 					action = htmlCode.nextToken();
 					status = htmlCode.nextToken();
-
-					IActivity activity = createActivity(action, date, status, target.toString(), currentConfiguration);
-					// keep activities in reverse order, most recent first
-					activities.add(0,activity);
+					createActivity(action, date, status, target.toString(), currentConfiguration);
 				}  else {
 					StringBuffer date;
 					date = new StringBuffer();
@@ -192,16 +185,22 @@ public class InstallLogParser {
 		a.setLabel(target);
 		a.setInstallConfigurationModel(config);
 		
-		if (config != null)
+		if (config != null && !configContainsActivity(config, a)){
 			config.addActivity(a);
+		}
 		
 		return a;
 	}
 	
-	public IActivity[] getActivities() {
-		return (IActivity[])activities.toArray(new ConfigurationActivity[activities.size()]);
+	private boolean configContainsActivity(InstallConfiguration c, IActivity a){
+		IActivity[] activities = c.getActivities();
+		for (int i = 0 ; i<activities.length; i++){
+			if (a.equals(activities[i]))
+				return true;
+		}
+		return false;
 	}
-	
+
 	public InstallConfiguration[] getConfigurations(){
 		Collection configSet = installConfigMap.values();
 		InstallConfiguration[] configs = (InstallConfiguration[]) configSet.toArray(new InstallConfiguration[configSet.size()]);
