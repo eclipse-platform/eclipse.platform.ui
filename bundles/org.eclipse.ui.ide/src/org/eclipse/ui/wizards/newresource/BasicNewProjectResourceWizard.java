@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -58,9 +59,12 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Standard workbench wizard that creates a new project resource in the
@@ -375,16 +379,19 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	/**
 	 * Updates the perspective based on the current settings in the
 	 * Workbench/Perspectives preference page.
+	 * 
+	 * Use the setting for the new perspective opening if we
+	 * are set to open in a new perspective.
 	 * <p>
 	 * A new project wizard class will need to implement the
 	 * <code>IExecutableExtension</code> interface so as to gain access to the
 	 * wizard's <code>IConfigurationElement</code>. That is the configuration
 	 * element to pass into this method.
 	 * </p>
+	 * @param configElement - the element we are updating with
 	 * 
-	 * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
-	 * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
-	 * @see IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
+	 * @see IPreferenceConstants#OPM_NEW_WINDOW
+	 * @see IPreferenceConstants#OPM_ACTIVE_PAGE
 	 * @see IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
 	 */
 	public static void updatePerspective(IConfigurationElement configElement) {
@@ -394,13 +401,17 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 			return;
 
 		// Retrieve the new project open perspective preference setting
-		String perspSetting = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(
-						IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE);
+		String perspSetting = PrefUtil.getAPIPreferenceStore().getString(
+				IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE);
 
-		// Return if do not switch perspective setting
-		if (perspSetting
-				.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
+		String promptSetting = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(
+						IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+
+		// Return if do not switch perspective setting and are not prompting
+		if (!(promptSetting.equals(MessageDialogWithToggle.PROMPT))
+				&& perspSetting
+						.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
 			return;
 
 		// Read the requested perspective id to be opened.
@@ -478,21 +489,18 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 			}
 		}
 
+		int workbenchPerspectiveSetting =
+			WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+		
 		// open perspective in new window setting
-		if (perspSetting
-				.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
+		if (workbenchPerspectiveSetting == IPreferenceConstants.OPM_NEW_WINDOW) {
 			openInNewWindow(finalPersp);
 			return;
 		}
 
-		// replace active perspective setting
-		if (perspSetting
-				.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
-			replaceCurrentPerspective(finalPersp);
-			return;
-		}
+		// replace active perspective setting otherwise
+		replaceCurrentPerspective(finalPersp);
 	}
-
 	/**
 	 * Adds to the list all perspective IDs in the Workbench who's original ID
 	 * matches the given ID.
@@ -551,12 +559,22 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 						false /* toggle is initially unchecked */, store,
 						IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
 		int result = dialog.getReturnCode();
-		if (result > 0 && dialog.getToggleState()) {
+
+		//If we are not going to prompt anymore propogate the choice.
+		if (dialog.getToggleState()) {
+			String preferenceValue;
+			if (result == IDialogConstants.YES_ID) 
+				//Doesn't matter if it is replace or new window
+				//as we are going to use the open perspective setting
+				preferenceValue = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+			else
+				preferenceValue = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+
 			// update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
-			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+			PrefUtil.getAPIPreferenceStore().setValue(
 					IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
-					IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE);
+					preferenceValue);
 		}
-		return result == 0;
+		return result == IDialogConstants.YES_ID;
 	}
 }
