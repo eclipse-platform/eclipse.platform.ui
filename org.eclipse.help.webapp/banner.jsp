@@ -152,7 +152,7 @@ function doSearch()
 		</table>
 	</td>
 	</tr>
-	</able>
+	</table>
 </td>
 </table>
 				
