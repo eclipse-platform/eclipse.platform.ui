@@ -371,10 +371,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         synchronized(patterns) {
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
-                int start = pattern.end;
-                if (event.fLength > 0) {
-                	start = Math.min(pattern.end, event.fOffset);
-                }
+                int start = Math.min(pattern.end, event.fOffset);
                 try {
                     testForMatch(pattern, start);
                 } catch (BadLocationException e) {
@@ -389,10 +386,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         Matcher matcher = compiled.pattern.matcher(contents);
         IPatternMatchListener notifier = compiled.listener;
         while(matcher.find()) {
-        	String group = matcher.group();
-        	int matchOffset = documentOffset + matcher.start();
-        	notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
-        	compiled.end = matcher.end() + documentOffset + 1;
+            String group = matcher.group();
+            int matchOffset = documentOffset + matcher.start();
+            notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
+            compiled.end = matcher.end() + documentOffset;
         }
     }
 
