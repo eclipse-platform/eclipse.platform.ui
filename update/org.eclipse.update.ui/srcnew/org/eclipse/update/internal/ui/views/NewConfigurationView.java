@@ -27,7 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.forms.RevertSection;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 
@@ -41,6 +40,12 @@ public class NewConfigurationView
 		IInstallConfigurationChangedListener,
 		IConfiguredSiteChangedListener,
 		ILocalSiteChangedListener {
+	private Action hideSitesAction;
+	private Action hideNestedFeaturesAction;
+	private Action swapVersionAction;
+	private Action uninstallFeatureAction;
+	private Action disableFeatureAction;
+	private Action enableFeatureAction;
 	private static final String KEY_CURRENT = "ConfigurationView.current";
 	private static final String KEY_SHOW_UNCONF_FEATURES =
 		"ConfigurationView.showUnconfFeatures";
@@ -57,19 +62,14 @@ public class NewConfigurationView
 	private Action showUnconfFeaturesAction;
 	private Action revertAction;
 	private Action preserveAction;
-	private Action unlinkAction;
-	private Action removePreservedAction;
+	private Action disableSiteAction;
 	private Action propertiesAction;
 	private Action showStatusAction;
 	private SiteStateAction siteStateAction;
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock=false;
-	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
 	private static final String KEY_PRESERVE =
 		"ConfigurationView.Popup.preserve";
-	private static final String KEY_UNLINK = "ConfigurationView.Popup.unlink";
-	private static final String KEY_REMOVE_PRESERVED =
-		"ConfigurationView.Popup.removePreserved";
 	private static final String KEY_SHOW_STATUS =
 		"ConfigurationView.Popup.showStatus";
 	private static final String KEY_STATUS_TITLE =
@@ -451,23 +451,6 @@ public class NewConfigurationView
 	}
 
 
-	private boolean canPreserve() {
-		ISelection selection = getTreeViewer().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.isEmpty())
-				return false;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				if (!(obj instanceof IInstallConfiguration
-					|| obj instanceof ILocalSite))
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
 	private void doPreserve() {
 		ISelection selection = getTreeViewer().getSelection();
 		ILocalSite localSite;
@@ -526,60 +509,6 @@ public class NewConfigurationView
 		}
 	}
 
-	private boolean canDelete() {
-		ISelection selection = getTreeViewer().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.isEmpty())
-				return false;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				if (!(obj instanceof PreservedConfiguration))
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private void doDelete() {
-		ISelection selection = getTreeViewer().getSelection();
-		ILocalSite localSite;
-
-		if (!confirmDeletion())
-			return;
-
-		int nremoved = 0;
-		try {
-			localSite = SiteManager.getLocalSite();
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-			return;
-		}
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.isEmpty())
-				return;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				IInstallConfiguration target = null;
-				if (obj instanceof PreservedConfiguration)
-					target = ((PreservedConfiguration) obj).getConfiguration();
-				if (target == null)
-					continue;
-				localSite.removeFromPreservedConfigurations(target);
-				nremoved++;
-			}
-		}
-		if (nremoved > 0) {
-			try {
-				localSite.save();
-			} catch (CoreException e) {
-				UpdateUI.logException(e);
-			}
-		}
-	}
-
 	private IInstallConfiguration getSelectedConfiguration(
 		Object obj,
 		boolean onlyPreserved) {
@@ -594,24 +523,138 @@ public class NewConfigurationView
 		return null;
 	}
 
-	private boolean isPreserved(IInstallConfiguration config) {
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration[] preservedConfigs =
-				localSite.getPreservedConfigurations();
-			for (int i = 0; i < preservedConfigs.length; i++) {
-				if (preservedConfigs[i].equals(config))
-					return true;
-			}
-			return false;
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-
 	protected void makeActions() {
 		super.makeActions();
+		
 		initDrillDown();
+		
+		makeDisableSiteAction();
+		makePreserveAction();
+		makePropertiesAction();
+		makeRevertAction();
+		makeShowStatusAction();
+		makeShowUnconfiguredFeaturesAction();
+		makeDisableFeatureAction();
+		makeEnableFeatureAction();
+		makeUninstallFeatureAction();
+		makeSwapVersionAction();
+		makeHideSitesAction();
+		makeHideNestedFeaturesAction();
+		
+		siteStateAction = new SiteStateAction();
+	}
+
+	private void makeDisableSiteAction() {
+		disableSiteAction = new Action() {
+			public void run() {
+			}
+		};
+		disableSiteAction.setText("Disable");
+	}
+
+	private void makeHideNestedFeaturesAction() {
+		hideNestedFeaturesAction = new Action() {
+			public void run() {
+			}
+		};
+		hideNestedFeaturesAction.setText("Hide Nested Features");
+	}
+
+	private void makeHideSitesAction() {
+		hideSitesAction = new Action() {
+			public void run() {
+			}
+		};
+		hideSitesAction.setToolTipText("Hide Sites");
+	}
+
+	private void makeSwapVersionAction() {
+		swapVersionAction = new Action() {
+			public void run() {
+			}
+		};
+		swapVersionAction.setText("Swap version...");
+	}
+
+	private void makeUninstallFeatureAction() {
+		uninstallFeatureAction = new Action() {
+			public void run() {
+			}
+		};
+		uninstallFeatureAction.setText("Uninstall");
+	}
+
+	private void makeEnableFeatureAction() {
+		enableFeatureAction = new Action() {
+			public void run() {
+			}
+		};
+		enableFeatureAction.setText("Enable");		
+	}
+
+	private void makeDisableFeatureAction() {
+		disableFeatureAction = new Action() {
+			public void run() {
+			}
+		};
+		disableFeatureAction.setText("Disable");
+	}
+
+	private void makePreserveAction() {
+		preserveAction = new Action() {
+			public void run() {
+				doPreserve();
+			}
+		};
+		WorkbenchHelp.setHelp(
+			preserveAction,
+			"org.eclipse.update.ui.CofigurationView_preserveAction");
+		preserveAction.setText(UpdateUI.getString(KEY_PRESERVE));
+	}
+	
+	private void makePropertiesAction() {
+		propertiesAction =
+			new PropertyDialogAction(
+				UpdateUI.getActiveWorkbenchShell(),
+				getTreeViewer());
+		WorkbenchHelp.setHelp(
+			propertiesAction,
+			"org.eclipse.update.ui.CofigurationView_propertiesAction");
+	}
+
+	private void makeRevertAction() {
+		revertAction = new Action() {
+			public void run() {
+			}
+		};
+		revertAction.setText("Revert...");
+		WorkbenchHelp.setHelp(
+			revertAction,
+			"org.eclipse.update.ui.CofigurationView_revertAction");		
+	}
+	
+	private void makeShowStatusAction() {
+		showStatusAction = new Action() {
+			public void run() {
+				Object obj = getSelectedObject();
+				try {
+					if (obj instanceof IFeatureAdapter) {
+						IFeature feature =
+							((IFeatureAdapter) obj).getFeature(null);
+						showFeatureStatus(feature);
+					}
+				} catch (CoreException e) {
+					UpdateUI.logException(e);
+				}
+			}
+		};
+		WorkbenchHelp.setHelp(
+			showStatusAction,
+			"org.eclipse.update.ui.CofigurationView_showStatusAction");
+		showStatusAction.setText(UpdateUI.getString(KEY_SHOW_STATUS));		
+	}
+	
+	private void makeShowUnconfiguredFeaturesAction() {
 		final IDialogSettings settings =
 			UpdateUI.getDefault().getDialogSettings();
 		boolean showUnconfState = settings.getBoolean(STATE_SHOW_UNCONF);
@@ -634,80 +677,8 @@ public class NewConfigurationView
 		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
-
-		revertAction = new Action() {
-			public void run() {
-				Object obj = getSelectedObject();
-				IInstallConfiguration target =
-					getSelectedConfiguration(obj, false);
-				if (target != null)
-					RevertSection.performRevert(target);
-			}
-		};
-		revertAction.setText(UpdateUI.getString(KEY_RESTORE));
-		WorkbenchHelp.setHelp(
-			revertAction,
-			"org.eclipse.update.ui.CofigurationView_revertAction");
-
-		showStatusAction = new Action() {
-			public void run() {
-				Object obj = getSelectedObject();
-				try {
-					if (obj instanceof IFeatureAdapter) {
-						IFeature feature =
-							((IFeatureAdapter) obj).getFeature(null);
-						showFeatureStatus(feature);
-					}
-				} catch (CoreException e) {
-					UpdateUI.logException(e);
-				}
-			}
-		};
-		WorkbenchHelp.setHelp(
-			showStatusAction,
-			"org.eclipse.update.ui.CofigurationView_showStatusAction");
-		showStatusAction.setText(UpdateUI.getString(KEY_SHOW_STATUS));
-
-		preserveAction = new Action() {
-			public void run() {
-				doPreserve();
-			}
-		};
-		WorkbenchHelp.setHelp(
-			preserveAction,
-			"org.eclipse.update.ui.CofigurationView_preserveAction");
-		preserveAction.setText(UpdateUI.getString(KEY_PRESERVE));
-		removePreservedAction = new Action() {
-			public void run() {
-				doDelete();
-			}
-		};
-		WorkbenchHelp.setHelp(
-			removePreservedAction,
-			"org.eclipse.update.ui.CofigurationView_removePreservedAction");
-		removePreservedAction.setText(UpdateUI.getString(KEY_REMOVE_PRESERVED));
-
-		unlinkAction = new Action() {
-			public void run() {
-				performUnlink();
-			}
-		};
-		WorkbenchHelp.setHelp(
-			unlinkAction,
-			"org.eclipse.update.ui.CofigurationView_unlinkAction");
-		unlinkAction.setText(UpdateUI.getString(KEY_UNLINK));
-
-		siteStateAction = new SiteStateAction();
-
-		propertiesAction =
-			new PropertyDialogAction(
-				UpdateUI.getActiveWorkbenchShell(),
-				getTreeViewer());
-		WorkbenchHelp.setHelp(
-			propertiesAction,
-			"org.eclipse.update.ui.CofigurationView_propertiesAction");
 	}
-
+	
 	private void showFeatureStatus(IFeature feature) throws CoreException {
 		IStatus status;
 		if (feature instanceof MissingFeature) {
@@ -778,67 +749,35 @@ public class NewConfigurationView
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		Object obj = getSelectedObject();
-		IInstallConfiguration config = getSelectedConfiguration(obj, false);
-		if (config != null && !config.isCurrent()) {
+		
+		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
+			manager.add(preserveAction);
+			manager.add(new Separator());
+		} else if (obj instanceof IConfiguredSiteAdapter) {
+			manager.add(disableSiteAction);
+			manager.add(new Separator());
+		} else if (obj instanceof IConfiguredFeatureAdapter) {
+			IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter)obj;
+			if (adapter.isConfigured()) {
+				manager.add(swapVersionAction);
+				manager.add(new Separator());
+				manager.add(disableFeatureAction);
+			} else {
+				manager.add(enableFeatureAction);
+			}
+			manager.add(uninstallFeatureAction);
 			manager.add(new Separator());
 		}
-		if (canPreserve())
-			manager.add(preserveAction);
-		if (canDelete())
-			manager.add(removePreservedAction);
-
-		IConfiguredSite site = getSelectedSite(obj);
-		if (site != null) {
-			IInstallConfiguration cfg = site.getInstallConfiguration();
-			if (cfg != null && cfg.isCurrent()) {
-				try {
-					if (site.isExtensionSite() && !site.isNativelyLinked()) {
-						manager.add(unlinkAction);
-					}
-				} catch (CoreException e) {
-					UpdateUI.logException(e);
-				}
-			}
-			siteStateAction.setSite(site);
-			manager.add(siteStateAction);
-		}
-		manager.add(new Separator());
+		
 		addDrillDownAdapter(manager);
-		manager.add(new Separator());
+		
 		if (obj instanceof IConfiguredFeatureAdapter) {
-			IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter) obj;
-			if (adapter.getInstallConfiguration().isCurrent())
-				manager.add(showStatusAction);
-		}
-
-		if (obj instanceof PreservedConfiguration
-			|| obj instanceof IInstallConfiguration || obj instanceof IFeatureAdapter)
+			manager.add(new Separator());
+			manager.add(showStatusAction);
 			manager.add(propertiesAction);
-
-	}
-
-	private IConfiguredSite getSelectedSite(Object obj) {
-		if (obj instanceof ConfiguredSiteAdapter) {
-			return ((ConfiguredSiteAdapter) obj).getConfiguredSite();
-		}
-		return null;
-	}
-
-	private void performUnlink() {
-		IConfiguredSite site = getSelectedSite(getSelectedObject());
-		if (site == null)
-			return;
-		IInstallConfiguration config = site.getInstallConfiguration();
-		config.removeConfiguredSite(site);
-		try {
-			getLocalSite().save();
-			UpdateUI.informRestartNeeded();
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
 		}
 	}
-
 
 																																											 
 	public void installSiteAdded(IConfiguredSite csite) {
