@@ -252,6 +252,9 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	 */
 	public boolean accepts(ILaunchConfiguration configuration) {
 		try {
+			if (!LaunchConfigurationManager.isVisible(configuration)) {
+				return false;
+			}
 			if (configuration.getType().supportsMode(getLaunchGroup().getMode())) {
 				String launchCategory = null;
 				launchCategory = configuration.getCategory();
@@ -259,7 +262,7 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 				if (launchCategory == null || category == null) {
 					return launchCategory == category;
 				}
-				return category.equals(launchCategory) && LaunchConfigurationManager.isVisible(configuration);
+				return category.equals(launchCategory);
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
