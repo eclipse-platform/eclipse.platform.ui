@@ -69,8 +69,11 @@ public class ConfigurationActivator implements BundleActivator {
 		installBundles();
 	}
 
-	private void initialize() {
+
+	private void initialize() throws Exception {
 		platform = acquirePlatform();
+		if (platform==null)
+			throw new Exception("Can not start"); 
 		URL installURL = platform.getInstallURL();
 		configArea = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
@@ -148,13 +151,6 @@ public class ConfigurationActivator implements BundleActivator {
 			platformTracker.open();
 		}
 		IPlatform result = (IPlatform) platformTracker.getService();
-		while (result == null) {
-			try {
-				platformTracker.waitForService(1000);
-				result = (IPlatform) platformTracker.getService();
-			} catch (InterruptedException ie) {
-			}
-		}
 		return result;
 	}
 
