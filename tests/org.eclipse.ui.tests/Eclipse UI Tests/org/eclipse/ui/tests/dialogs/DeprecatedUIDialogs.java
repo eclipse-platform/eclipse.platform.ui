@@ -13,13 +13,11 @@ package org.eclipse.ui.tests.dialogs;
 import junit.framework.TestCase;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPartLabelProvider;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class DeprecatedUIDialogs extends TestCase {
@@ -31,9 +29,6 @@ public class DeprecatedUIDialogs extends TestCase {
 	}
 	private Shell getShell() {
 		return DialogCheck.getShell();
-	}
-	private IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
 	}
 	
 	public void testSaveAll() {

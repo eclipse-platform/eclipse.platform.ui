@@ -20,6 +20,7 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.util.ActionUtil;
 import org.eclipse.ui.tests.util.FileUtil;
@@ -138,7 +139,7 @@ public class TextSelectionActionExpressionTest extends UITestCase
 	{
 		IProject proj = FileUtil.createProject("TextSelectionActionExpressionTest");
 		IFile file = FileUtil.createFile(fileName, proj);
-		return (ExtendedTextEditor)fPage.openEditor(file);
+		return (ExtendedTextEditor)IDE.openEditor(fPage, file, true);
 	}
 	
 	/**

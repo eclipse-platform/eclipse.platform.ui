@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CoolBarContributionItem;
 import org.eclipse.ui.internal.CoolBarManager;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockAction;
 import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
 import org.eclipse.ui.tests.api.MockEditorPart;
@@ -120,7 +121,7 @@ public class EditorActionBarsTest extends UITestCase {
 	{
 		IProject proj = FileUtil.createProject("IEditorActionBarsTest");
 		IFile file = FileUtil.createFile("test" + suffix + ".txt", proj);
-		return (MockEditorPart)page.openEditor(file, EDITOR_ID);
+		return (MockEditorPart)page.openEditor(new FileEditorInput(file), EDITOR_ID);
 	}
 	
 	/**
