@@ -61,10 +61,15 @@ public NavigationHistory(WorkbenchPage page) {
 				String id = editor.getSite().getId();
 				Iterator e= editors.iterator();
 				NavigationHistoryEditorInfo info = null;
+				NavigationHistoryEditorInfo currentInfo = null;
+				NavigationHistoryEntry current = getEntry(activeEntry);
+				if(current != null)
+					 currentInfo = current.editorInfo;
 				while (e.hasNext()) {
 					info = (NavigationHistoryEditorInfo) e.next();
 					if(id.equals(info.editorID) && input.equals(info.editorInput)) {
-						info.handlePartClosed();
+						if(info != currentInfo)
+							info.handlePartClosed();
 						break;
 					} else {
 						info = null;
@@ -245,12 +250,12 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 	if(markLocation && part instanceof INavigationLocationProvider)
 		location = ((INavigationLocationProvider)part).createNavigationLocation();
 		
-	NavigationHistoryEntry e= createEntry(page, part, location);
 	NavigationHistoryEntry current= getEntry(activeEntry);
 	if (current != null && current.editorInfo.memento != null) {
 		current.editorInfo.restoreEditor(); 
 		checkDuplicates(current.editorInfo);
-	}
+	}		
+	NavigationHistoryEntry e= createEntry(page, part, location);
 	if (current == null) {
 		add(e);
 	} else {

@@ -153,6 +153,8 @@ public class NavigationHistoryEntry {
 				} else {
 					return location.mergeInto(currentEntry.location);
 				}
+			} else if(currentEntry.location == null) {
+				return true;
 			}
 		}
 		return false; 
