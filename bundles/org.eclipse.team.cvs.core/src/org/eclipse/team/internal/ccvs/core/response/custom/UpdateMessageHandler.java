@@ -25,6 +25,7 @@ public class UpdateMessageHandler extends ResponseHandler {
 	public static final String NAME = "M";
 
 	IUpdateMessageListener updateMessageListener;
+	boolean merging = false;
 
 	public UpdateMessageHandler(IUpdateMessageListener updateMessageListener) {
 		this.updateMessageListener = updateMessageListener;
@@ -50,7 +51,17 @@ public class UpdateMessageHandler extends ResponseHandler {
 		if (line.indexOf(' ') == 1) {
 			// We have a message that indicates the type of update (A, R, M, U, C, ?) and the file name
 			String path = line.substring(2);
-			updateMessageListener.fileInformation(line.charAt(0), path);
+			char changeType = line.charAt(0);
+			if (merging) {
+				// If we are merging, use 'C' as the change type to indicate that there is a conflict
+				if (changeType == 'M')
+					changeType = 'C';
+				merging = false;
+			}
+			updateMessageListener.fileInformation(changeType, path);
+		} else if (line.startsWith("Merging")) {
+			// We are merging two files
+			merging = true;	
 		}
 	}
 }
