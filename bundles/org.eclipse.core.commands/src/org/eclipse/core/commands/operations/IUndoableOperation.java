@@ -149,14 +149,6 @@ public interface IUndoableOperation {
 	boolean hasContext(UndoContext context);
 	
 	/**
-	 * Returns whether the operation is a composite operation.
-	 * 
-	 * @return <code>true</code> if the operation is a composite, and <code>false</code> if
-	 * it is not.
-	 */
-	boolean isComposite();
-
-	/**
 	 * Redo the operation. This method should only be called after an operation
 	 * has been undone.
 	 * 

@@ -102,20 +102,20 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Close the current composite operation. Send listeners a <code>done</code>
-	 * and <code>operationAdded</code> for the composite.
+	 * Close the current operation. Send listeners a <code>done</code>
+	 * and <code>operationAdded</code> notification for the operation.
 	 * <p>
 	 * Any operations that are executed and added will no longer be considered
-	 * children of this operation.
+	 * part of this operation.
 	 * <p>
 	 * This method has no effect if the caller has not previously called
-	 * {@link #openCompositeOperation}.
+	 * {@link #openOperation}.
 	 * 
 	 * <p>
 	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
 	 * or be removed before the final release.
 	 */
-	void closeCompositeOperation();
+	void closeOperation();
 
 	/**
 	 * Return whether there is a redoable operation available in the given
@@ -249,30 +249,45 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Use the specified composite operation as the parent for all subsequent
-	 * operations that are executed (or added) until the composite operation is
-	 * closed. Listeners will immediately receive an <code>aboutToExecute</code>)
-	 * notification for the composite. Notifications for execution or adding of
-	 * the child operations will not be sent as long as the composite is open.
+	 * Open this operation and consider it the primary operation in a batch of
+	 * related operations.  Consider all operations that are subsequently executed
+	 * (or added) to be part of this operation. When an operation is opened, 
+	 * listeners will immediately receive an <code>aboutToExecute</code>) notification 
+	 * for this operation.  Notifications for execution or adding subsequent operations 
+	 * will not be sent as long as this operation is open.
 	 * 
 	 * <p>
-	 * When the composite is open, operations that are added to the history,
-	 * will be added to the composite instead. Operations that are executed will
-	 * first be executed and then added to the composite.
+	 * Note: This method is intended to be used by legacy undo frameworks that do not
+	 * expect related undo operations to appear in the same undo stack as the 
+	 * triggering undo operation.  When an operation is open, any subsequent
+	 * operations added or executed are assumed to be triggered by model change events
+	 * caused by the originating operation.   Therefore, they will not be considered as
+	 * independent operations.  Instead, they will be added to the open operation.
+	 * Once the operation is closed, requests to undo or redo it will result in only
+	 * the originating (primary) operation being undone or redone.  The assumption
+	 * is that the undos corresponding to the batched operations will be triggered 
+	 * by model change notifications similar  to those that triggered the original 
+	 * operations.  
 	 * 
 	 * <p>
-	 * Composite operations cannot be nested. If this method is called when
-	 * another composite is open, that composite will be closed first.
+	 * When an operation is open, operations that are added to the history
+	 * will be considered part of the open operation instead. Operations that are 
+	 * executed while an operation is open will first be executed and then added 
+	 * to the open operation.
 	 * 
-	 * @param composite -
-	 *            the composite to be used as the parent for all subsequent
-	 *            operations.
+	 * <p>
+	 * Open operations cannot be nested. If this method is called when
+	 * another operation is open, that operation will be closed first.
+	 * 
+	 * @param operation -
+	 *            the operation to be considered as the primary operation for
+	 *            all subsequent operations.
 	 * 
 	 * <p>
 	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
 	 * or be removed before the final release.
 	 */
-	void openCompositeOperation(CompositeOperation composite);
+	void openOperation(IUndoableOperation operation);
 
 	/**
 	 * Get the operation that will next be undone in the given context. This

@@ -127,10 +127,6 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		return fContexts.contains(context);
 	}
 
-	public boolean isComposite() {
-		return false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.operations;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.commands.operations.CompositeOperation;
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
@@ -25,6 +24,7 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.internal.commands.util.BatchingOperation;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -191,105 +191,54 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getUndoHistory(c2).length == 1);
 	}
 	
-	public void testComposite() {
+	public void testOpenOperation() {
 		// clear out history which will also reset operation execution counts
 		history.dispose(null, true, true);
-		CompositeOperation comp = new CompositeOperation(op1);
+		history.openOperation(op1);
 		op1.execute(null);
-		comp.add(op2);
-		op2.execute(null);
-		comp.add(op3);
-		op3.execute(null);
-		history.add(comp);
-		assertTrue("Composite should be undoable", comp.canUndo());
-		history.undo(null, null);
-		assertTrue("Composite should be redoable", comp.canRedo());
-		history.redo(null, null);
-		assertTrue("Operation should be undoable", op1.canUndo());
-		assertTrue("Operation should be undoable", op2.canUndo());
-		assertTrue("Operation should be undoable", op3.canUndo());
-		assertTrue("Operation should be undoable", comp.canUndo());
-	}
-	
-	public void testCompositeRollback() {
-		// clear out history which will also reset operation execution counts
-		history.dispose(null, true, true);
-		CompositeOperation comp = new CompositeOperation(op1);
-		op1.execute(null);
-		comp.add(op2);
-		op2.execute(null);
-		comp.add(op3);
-		op3.execute(null);
-		history.add(comp);
-		assertTrue("Composite should be undoable", comp.canUndo());
-		history.undo(null, null);
-		assertTrue("Composite should be redoable", comp.canRedo());
-		// now we reach in and redo the middle operation
-		op2.redo(null);
-		// composite thinks it's okay because it only checks the first one
-		assertTrue("Composite should be redoable", comp.canRedo());
-		// but op2 should be unable to redo
-		assertFalse("operation should not be redoable", op2.canRedo());
-		// so redo of composite should fail in the middle and should roll back op1
-		IStatus status = history.redo(null, null);
-		assertFalse("redo should fail", status.isOK());
-		// composite is removed from history since it failed
-		assertFalse("Composite should not be in history", history.getRedoOperation(null) == comp);
-	}
-	
-	public void testOpenComposite() {
-		// clear out history which will also reset operation execution counts
-		history.dispose(null, true, true);
-		CompositeOperation comp = new CompositeOperation(op1);
-		op1.execute(null);
-		history.openCompositeOperation(comp);
 		op2.execute(null);
 		history.add(op2);
 		history.execute(op3, null);
 		IUndoableOperation op = history.getUndoOperation(null);
-		assertFalse("Composite should not be in history yet", op == comp);
-		assertFalse("Suboperation should not be in history", op == op3);
-		history.closeCompositeOperation();
+		assertTrue("no operations should be in history yet", op == null);
+		history.closeOperation();
 		op = history.getUndoOperation(null);
-		assertTrue("Composite should be at top of history", op == comp);
-		assertFalse("Composite should have children", comp.isEmpty());
-		assertTrue("Composite should have three children", comp.getChildren().length == 3);
-		assertSame("Composite should have label of first operation", comp.getLabel(), op1.getLabel());
-		comp.removeContext(c2);
-		assertTrue("Composite should have three children", comp.getChildren().length == 3);
-		assertFalse("Composite should not have context", comp.hasContext(c2));
+		assertTrue("Operation should be batching", op instanceof BatchingOperation);
+		assertSame("Operation should look like op1", op.getLabel(), op1.getLabel());
+		assertSame("Operation should look like op1", op.getLabel(), op1.getLabel());
+		op.removeContext(c2);
+		assertFalse("Composite should not have context", op.hasContext(c2));
 		assertTrue("Removal of composite context should not affect child", op2.hasContext(c2));
 	}
 	
-	public void testMultipleOpenComposite() {
+	public void testMultipleOpenOperation() {
 		// clear out history which will also reset operation execution counts
 		history.dispose(null, true, true);
-		CompositeOperation comp = new CompositeOperation(op1);
+		history.openOperation(op1);
 		op1.execute(null);
-		history.openCompositeOperation(comp);
 		op2.execute(null);
 		history.add(op2);
 		history.execute(op3, null);
-		CompositeOperation comp2 = new CompositeOperation(op1);
-		history.openCompositeOperation(comp2);
+		history.openOperation(op4);
 		IUndoableOperation op = history.getUndoOperation(null);
-		assertSame("First composite should be closed", op, comp);
-		history.closeCompositeOperation();
+		assertSame("First operation should be closed", op.getLabel(), op1.getLabel());
+		history.closeOperation();
 		op = history.getUndoOperation(null);
-		assertSame("Second composite should be closed", op, comp2);
+		assertSame("Second composite should be closed", op.getLabel(), op4.getLabel());
 	}
 	
-	public void testAbortedOpenComposite() {
-		history.remove(op1);
-		history.remove(op2);
-		CompositeOperation comp = new CompositeOperation(op1);
-		history.openCompositeOperation(comp);
-		history.execute(op2, null);
+	public void testAbortedOpenOperation() {
 		history.dispose(null, true, true);
-		history.add(op1);
-		history.closeCompositeOperation();
+		history.openOperation(op1);
+		op1.execute(null);
+		history.execute(op2, null);
+		// flush history while operation is open
+		history.dispose(null, true, true);
+		// op3 should be added as its own op since we flushed while open
+		history.add(op3);
+		history.closeOperation();
 		IUndoableOperation op = history.getUndoOperation(null);
-		assertTrue("Composite should be flushed", op == op1);
+		assertTrue("Open operation should be flushed", op == op3);
 	}
 
 	public void testOperationApproval() {

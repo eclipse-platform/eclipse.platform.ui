@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.internal.commands.util.Assert;
+import org.eclipse.core.internal.commands.util.BatchingOperation;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,7 +78,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 
 	private List fUndo = new ArrayList();
 	
-	private CompositeOperation fMergingComposite = null;
+	private BatchingOperation fBatchingComposite = null;
 
 	
 	/*
@@ -89,13 +90,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		Assert.isNotNull(operation);
 		
 		/*
-		 * If we are in the middle of executing an open composite operation, and this is not that
-		 * composite, then we need only add the new operation to the composite.  Listeners  will be 
-		 * notified when the execution and adding of the parent operation is
+		 * If we are in the middle of executing an open batching operation, and this is not that
+		 * operation, then we need only add the new operation to the batch.  Listeners  will be 
+		 * notified when the execution and adding of the batched operation is
 		 * complete.
 		 */
-		if (fMergingComposite != null && fMergingComposite != operation) {
-			fMergingComposite.add(operation);
+		if (fBatchingComposite != null && fBatchingComposite != operation) {
+			fBatchingComposite.add(operation);
 			return;
 		}
 		
@@ -199,9 +200,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		// placed back in the undo history.
 		if (status.isOK()) {
 			fRedo.remove(operation);
-			checkUndoLimit(operation);
-			fUndo.add(operation);
-
+			// Only add the operation to the undo stack if it can indeed be undone.
+			// This conservatism is added to support the integration of existing 
+			// frameworks (such as Refactoring) that produce undo and redo behavior
+			// on the fly and cannot guarantee that a successful redo means a
+			// successful undo will be available. 
+			// See bug #84444
+			if (operation.canUndo()) {
+				checkUndoLimit(operation);
+				fUndo.add(operation);
+			}
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
 		} else {
@@ -231,9 +239,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		// placed in the redo history.
 		if (status.isOK()) {
 			fUndo.remove(operation);
-			checkRedoLimit(operation);
-			fRedo.add(operation);
-
+			// Only add the operation to the redo stack if it can indeed be redone.
+			// This conservatism is added to support the integration of existing 
+			// frameworks (such as Refactoring) that produce undo and redo behavior
+			// on the fly and cannot guarantee that a successful undo means a
+			// successful redo will be available. 
+			// See bug #84444
+			if (operation.canRedo()) {
+				checkRedoLimit(operation);
+				fRedo.add(operation);
+			}
 			// notification occurs after the undo and redo histories are
 			// adjusted
 			notifyUndone(operation);
@@ -255,16 +270,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 		
 		/*
-		 * If we are in the middle of an open composite, then we should add this operation to the
-		 * composite first.  We still want to execute it, but we do not want to notify listeners.
+		 * If we are in the middle of an open batch, then we should add this operation to the
+		 * batch first.  We still want to execute it, but we do not want to notify listeners.
 		 */
 		boolean merging = false;
-		if (fMergingComposite != null) {
+		if (fBatchingComposite != null) {
 			// the composite shouldn't be executed explicitly while it is still open
-			if (fMergingComposite == operation) {
+			if (fBatchingComposite == operation) {
 				return OPERATION_INVALID_STATUS;
 			}
-			fMergingComposite.add(operation);
+			fBatchingComposite.add(operation);
 			merging = true;
 		}
 
@@ -279,7 +294,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 		if (!merging) {
 			if (status.isOK()) {
 				notifyDone(operation);
-				add(operation);
+				// Only add the operation to the history if it can indeed be undone.
+				// This conservatism is added to support the integration of existing 
+				// frameworks (such as Refactoring) that may be using a history to execute 
+				// all operations, even those that are not undoable.  
+				// See bug #84444
+				if (operation.canUndo()) {
+					add(operation);
+				}
 			} else {
 				notifyNotOK(operation);
 			}
@@ -344,15 +366,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 				operation.removeContext(context);
 			}
 		}
-		// there may be an open composite.  Notify listeners that it did not complete.
+		// there may be an open batch.  Notify listeners that it did not complete.
 		// Since we did not add it, there's no need to notify of its removal.
-		if (fMergingComposite != null) {
-			if (context == null || fMergingComposite.getContexts().length == 1) {
-				notifyNotOK(fMergingComposite);
-				fMergingComposite = null;
-			} else {
-				fMergingComposite.removeContext(context);
-			}
+		if (fBatchingComposite != null) {
+			if (context == null || fBatchingComposite.hasContext(context)) {
+				notifyNotOK(fBatchingComposite.getPrimaryOperation());
+				fBatchingComposite = null;
+			} 
 		}
 	}
 
@@ -500,77 +520,152 @@ public class DefaultOperationHistory implements IOperationHistory {
 		notifyRemoved(operation);
 	}
 
+	/*
+	 * Notify listeners that an operation is about to execute.
+	 */
 	protected void notifyAboutToExecute(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation);
+				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation is about to redo.
+	 */
 	protected void notifyAboutToRedo(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_REDO, this, operation);
+				OperationHistoryEvent.ABOUT_TO_REDO, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
-
+	
+	/*
+	 * Notify listeners that an operation is about to undo.
+	 */
 	protected void notifyAboutToUndo(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation);
+				OperationHistoryEvent.ABOUT_TO_UNDO, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation has been added.
+	 */
 	protected void notifyAdd(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_ADDED, this, operation);
+				OperationHistoryEvent.OPERATION_ADDED, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation is done executing.
+	 */
 	protected void notifyDone(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.DONE, this, operation);
+				OperationHistoryEvent.DONE, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation did not succeed after
+	 * an attempt to execute, undo, or redo was made.
+	 */
 	protected void notifyNotOK(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_NOT_OK, this, operation);
-
+				OperationHistoryEvent.OPERATION_NOT_OK, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation was redone.
+	 */
 	protected void notifyRedone(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.REDONE, this, operation);
+				OperationHistoryEvent.REDONE, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation has been removed from the
+	 * history.
+	 */
 	protected void notifyRemoved(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_REMOVED, this, operation);
+				OperationHistoryEvent.OPERATION_REMOVED, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
 	}
 
+	/*
+	 * Notify listeners that an operation has been undone.
+	 */
 	protected void notifyUndone(IUndoableOperation operation) {
+		IUndoableOperation op = getNotifyOperation(operation);
 		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.UNDONE, this, operation);
+				OperationHistoryEvent.UNDONE, this, op);
+		preNotifyOperation(op, event);
 		for (int i = 0; i < fListeners.size(); i++)
 			((IOperationHistoryListener) fListeners.get(i))
 					.historyNotification(event);
+	}
+
+	/*
+	 * A history notification is about to be sent.  Notify the operation before hand
+	 * if it implements IHistoryNotificationAwareOperation.
+	 * 
+	 * This method is provided for legacy undo frameworks that rely on notification
+	 * from their undo managers before any listeners are notified about changes
+	 * in the operation.
+	 */
+
+	private void preNotifyOperation(IUndoableOperation operation, OperationHistoryEvent event) {
+		if (operation instanceof IHistoryNotificationAwareOperation) {
+			((IHistoryNotificationAwareOperation)operation).aboutToNotify(event);
+		}
+	}
+	
+	/*
+	 * A history notification is about to be sent.  Answer the operation that should
+	 * be used in the event.
+	 * 
+	 * This method is provided so that notifications about batched operations will
+	 * look like notifications about the primary operation.
+	 */
+	private IUndoableOperation getNotifyOperation(IUndoableOperation operation) {
+		if (operation instanceof BatchingOperation) {
+			return ((BatchingOperation)operation).getPrimaryOperation();
+		} 
+		return operation;
 	}
 
 	public IStatus redo(UndoContext context, IProgressMonitor monitor) {
@@ -691,23 +786,21 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void openCompositeOperation(CompositeOperation composite) {
-		if (fMergingComposite == null) {
-			fMergingComposite = composite;
-		} else {
-			closeCompositeOperation();
-			fMergingComposite = composite;
-		}
-		notifyAboutToExecute(composite);	
+	public void openOperation(IUndoableOperation operation) {
+		if (fBatchingComposite != null) {
+			closeOperation();	
+		} 
+		fBatchingComposite = new BatchingOperation(operation);
+		notifyAboutToExecute(operation);	
 	}
 	/**
 	 * {@inheritDoc}
 	 */
-	public void closeCompositeOperation() {
-		if (fMergingComposite != null) {
-			notifyDone(fMergingComposite);
-			add(fMergingComposite);
-			fMergingComposite = null;
+	public void closeOperation() {
+		if (fBatchingComposite != null) {
+			notifyDone(fBatchingComposite.getPrimaryOperation());
+			add(fBatchingComposite);
+			fBatchingComposite = null;
 		}
 	}
 
