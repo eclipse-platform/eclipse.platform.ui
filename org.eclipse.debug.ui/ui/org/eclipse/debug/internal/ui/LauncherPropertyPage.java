@@ -5,26 +5,30 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import java.util.ArrayList;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * A preference page to enable/disable default launchers for a resource.
@@ -85,7 +89,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 		ImageRegistry registry= DebugUIPlugin.getDefault().getImageRegistry();
 
 		ILauncher[] launchers= getLaunchManager().getLaunchers();
-		java.util.List list = new ArrayList(1);
+		List list = new ArrayList(1);
 		list.add(DebugUIMessages.getString("LauncherPropertyPage.none_2")); //$NON-NLS-1$
 		for (int i = 0; i < launchers.length; i++) {
 			if (DebugUIPlugin.getDefault().isVisible(launchers[i]))
@@ -94,7 +98,6 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 		String[] items= new String[list.size()];
 		list.toArray(items);
 
-		//Composite box= createComposite(pageComponent, 2);
 		Composite launcherComponent= createComposite(pageComponent, 2);
 		createLabel(launcherComponent, DebugUIMessages.getString("LauncherPropertyPage.Run/Debug_3"), registry.get(IDebugUIConstants.IMG_ACT_DEBUG)); //$NON-NLS-1$
 		fCombo= createCombo(launcherComponent, items);
@@ -192,7 +195,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 	}
 
 	/**
-	 * @see IWorkbenchPreferencePage
+	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench desktop) {
 		doGetPreferenceStore();
