@@ -61,7 +61,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	/**
 	 * Job that appends pending partitions to the document.
 	 */
-	private DocumentUpdaterJob updateJob;	    
+	private QueueProcessingJob queueJob;	    
 	/**
 	 * The input stream attached to this document.
 	 */
@@ -118,8 +118,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		partitions = new ArrayList();
 		pendingPartitions = new ArrayList();
 		inputPartitions = new ArrayList();
-		updateJob = new DocumentUpdaterJob();
-		updateJob.setSystem(true);
+		queueJob = new QueueProcessingJob();
+		queueJob.setSystem(true);
+		queueJob.setRule(console.getSchedulingRule());
 		connected = true;
 	}
 	
@@ -149,7 +150,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         synchronized (pendingPartitions) {
             pendingPartitions.add(consoleClosedPartition);
         }
-        updateJob.schedule(); //ensure that all pending partitions are processed.
+        queueJob.schedule(); //ensure that all pending partitions are processed.
     }
 	
 	/*
@@ -427,7 +428,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-				updateJob.schedule(100);
+				queueJob.schedule(100);
 			}
 		}
 	}
@@ -453,9 +454,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Updates the document. Will append everything that is available before 
 	 * finishing.
 	 */
-	private class DocumentUpdaterJob extends Job {
+	private class QueueProcessingJob extends Job {
 
-        DocumentUpdaterJob() {
+        QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
 		

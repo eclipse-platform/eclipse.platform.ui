@@ -342,7 +342,7 @@ public abstract class TextConsole extends AbstractConsole {
      */
     private class MatcherSchedulingRule implements ISchedulingRule {
         public boolean contains(ISchedulingRule rule) {
-            return false;
+            return rule == this;
         }
 
         public boolean isConflicting(ISchedulingRule rule) {
