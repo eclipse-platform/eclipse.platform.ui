@@ -24,7 +24,7 @@ package org.eclipse.ui.internal.csm.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleActivityBinding extends Comparable {
+public interface IActivityBinding extends Comparable {
 
 	/**
 	 * JAVADOC
@@ -32,11 +32,4 @@ public interface IRoleActivityBinding extends Comparable {
 	 * @return
 	 */	
 	String getActivityId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	// TODO String getRoleId();	
 }

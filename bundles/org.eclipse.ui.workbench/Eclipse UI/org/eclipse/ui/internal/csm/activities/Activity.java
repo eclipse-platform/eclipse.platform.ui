@@ -100,7 +100,7 @@ final class Activity implements IActivity {
 		return equals;
 	}
 
-	public Set getActivityPatternBindings() {
+	public Set getPatternBindings() {
 		// TODO 
 		return null;
 	}

@@ -11,28 +11,28 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-import org.eclipse.ui.internal.csm.activities.api.IActivityPatternBinding;
+import org.eclipse.ui.internal.csm.activities.api.IPatternBinding;
 
-final class ActivityPatternBinding implements IActivityPatternBinding {
+final class ActivityPatternBinding implements IPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityPatternBinding.class.getName().hashCode();
 
-	private String activityId;
+	private String pattern;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	
-	ActivityPatternBinding(String activityId) {	
-		if (activityId == null)
+	ActivityPatternBinding(String pattern) {	
+		if (pattern == null)
 			throw new NullPointerException();
 
-		this.activityId = activityId;
+		this.pattern = pattern;
 	}
 
 	public int compareTo(Object object) {
 		ActivityPatternBinding activityBinding = (ActivityPatternBinding) object;
-		int compareTo = activityId.compareTo(activityBinding.activityId);			
+		int compareTo = pattern.compareTo(activityBinding.pattern);			
 		return compareTo;	
 	}
 	
@@ -42,18 +42,18 @@ final class ActivityPatternBinding implements IActivityPatternBinding {
 
 		ActivityPatternBinding activityBinding = (ActivityPatternBinding) object;	
 		boolean equals = true;
-		equals &= activityId.equals(activityBinding.activityId);
+		equals &= pattern.equals(activityBinding.pattern);
 		return equals;
 	}
 
-	public String getActivityId() {
-		return activityId;
+	public String getPattern() {
+		return pattern;
 	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + activityId.hashCode();
+			hashCode = hashCode * HASH_FACTOR + pattern.hashCode();
 			hashCodeComputed = true;
 		}
 			
@@ -61,6 +61,6 @@ final class ActivityPatternBinding implements IActivityPatternBinding {
 	}
 
 	public String toString() {
-		return activityId;		
+		return pattern;		
 	}
 }

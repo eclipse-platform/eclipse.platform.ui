@@ -40,13 +40,6 @@ public interface IActivity extends Comparable {
 	 * 
 	 * @return
 	 */	
-	Set getActivityPatternBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getDescription()
 		throws ActivityNotDefinedException;
 	
@@ -64,6 +57,13 @@ public interface IActivity extends Comparable {
 	 */	
 	String getName()
 		throws ActivityNotDefinedException;
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	Set getPatternBindings();
 
 	/**
 	 * JAVADOC

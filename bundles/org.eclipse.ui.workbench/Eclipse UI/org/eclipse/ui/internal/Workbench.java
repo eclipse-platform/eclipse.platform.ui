@@ -81,6 +81,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -89,6 +92,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -147,6 +151,7 @@ import org.eclipse.ui.internal.roles.IDERoleManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -194,6 +199,84 @@ public class Workbench
 	}
 
 	/* begin command and context support */
+		
+	/** The properties key for the key strokes that should be processed out of
+	 * order.
+	 */
+	private static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
+	/** The collection of keys that are to be processed out-of-order. */
+	private static KeySequence outOfOrderKeys;
+	
+	static {
+		initializeOutOfOrderKeys();
+	}
+	
+	/**
+	 * A listener that makes sure that global key bindings are processed if no
+	 * other listeners do any useful work.
+	 * 
+	 * @since 3.0
+	 */
+	private class OutOfOrderListener implements Listener {		
+		public void handleEvent(Event event) {
+			// Always remove myself as a listener.
+			event.widget.removeListener(event.type, this);
+				
+			/* If the event is still up for grabs, then re-route through the
+			 * global key filter.
+			 */
+			if (event.doit) {
+				processKeyEvent(event);
+			}
+		}
+	}
+	
+	/**
+	 * A listener that makes sure that out-of-order processing occurs if no
+	 * other verify listeners do any work.
+	 * 
+	 * @since 3.0
+	 */
+	private class OutOfOrderVerifyListener implements VerifyKeyListener {		
+		/**
+		 * Checks whether any other verify listeners have triggered.  If not,
+		 * then it sets up the top-level out-of-order listener.
+		 * 
+		 * @param event The verify event after it has been processed by all
+		 * other verify listeners; must not be <code>null</code>.
+		 */
+		public void verifyKey(VerifyEvent event) {
+			// Always remove myself as a listener.
+			Widget widget = event.widget;
+			if (widget instanceof StyledText) {
+				((StyledText) widget).removeVerifyKeyListener(this);
+			}
+
+			// If the event is still up for grabs, then re-route through the
+			// global key filter.
+			if (event.doit) {
+				widget.addListener(SWT.KeyDown, outOfOrderListener);
+			}
+		}
+	}
+
+	/** The listener that runs key events past the global key bindings. */
+	private final Listener keyBindingFilter = new Listener() {
+		public void handleEvent(Event event) {
+			filterKeyBindings(event);
+		}
+	};
+	/** 
+	 * The listener that allows out-of-order key processing to hook back into
+	 * the global key bindings.
+	 */
+	private final OutOfOrderListener outOfOrderListener = new OutOfOrderListener();
+	/**
+	 * The listener that allows out-of-order key processing on 
+	 * <code>StyledText</code> widgets to detect useful work in a verify key
+	 * listener.
+	 */
+	private final OutOfOrderVerifyListener outOfOrderVerifyListener = new OutOfOrderVerifyListener();
 	
 	private final Listener modeCleaner = new Listener() {
 		public void handleEvent(Event event) {
@@ -201,39 +284,6 @@ public class Workbench
 			manager.setMode(KeySequence.getInstance()); // clear the mode
 			// TODO Remove this when mode listener updating becomes available.
 			updateModeLines(manager.getMode());
-		}
-	};
-
-	private final Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
-				return;
-
-			if (event.widget instanceof Control) {
-				Shell shell = ((Control) event.widget).getShell();
-				if (shell.getParent() != null)
-					return;
-			}
-			
-			KeyStroke[] keyStrokes = new KeyStroke[3];
-			keyStrokes[0] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event));
-			keyStrokes[1] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
-			keyStrokes[2] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event));
-
-			if (press(keyStrokes, event)) {
-				switch (event.type) {
-					case SWT.KeyDown :
-						event.doit = false;
-						break;
-					case SWT.Traverse :
-						event.detail = SWT.TRAVERSE_NONE;
-						event.doit = true;
-						break;
-					default :
-						}
-
-				event.type = SWT.NONE;
-			}
 		}
 	};
 
@@ -398,14 +448,14 @@ public class Workbench
 
 	public final void disableKeyFilter() {
 		final Display display = Display.getCurrent();
-		display.removeFilter(SWT.KeyDown, listener);
-		display.removeFilter(SWT.Traverse, listener);
+		display.removeFilter(SWT.KeyDown, keyBindingFilter);
+		display.removeFilter(SWT.Traverse, keyBindingFilter);
 	}
 
 	public final void enableKeyFilter() {
 		final Display display = Display.getCurrent();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
+		display.addFilter(SWT.KeyDown, keyBindingFilter);
+		display.addFilter(SWT.Traverse, keyBindingFilter);
 	}
 
 	public String getName(String commandId) {
@@ -425,6 +475,161 @@ public class Workbench
 	}
 
 	/**
+	 * Initializes the <code>outOfOrderKeys</code> member variable using the
+	 * keys defined in the properties file.
+	 * 
+	 * @since 3.0
+	 */
+	private static void initializeOutOfOrderKeys() {
+		// Get the key strokes which should be out of order.
+		String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
+		outOfOrderKeys = KeySequence.getInstance();
+		try {
+			outOfOrderKeys = KeySequence.getInstance(keysText);
+		} catch (ParseException e) {
+			String message = "Could not parse out-of-order keys definition: '" + keysText + "'.  Continuing with no out-of-order keys."; //$NON-NLS-1$ //$NON-NLS-2$
+			WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Launches the command matching a the typed key.  This filter an incoming
+	 * <code>SWT.KeyDown</code> or <code>SWT.Traverse</code> event at the level
+	 * of the display (i.e., before it reaches the widgets).  It does not allow
+	 * processing in a dialog or if the key strokes does not contain a natural
+	 * key.
+	 * </p>
+	 * <p>
+	 * Some key strokes (defined as a property) are declared as out-of-order
+	 * keys.  This means that they are processed by the widget <em>first</em>.
+	 * Only if the other widget listeners do no useful work does it try to
+	 * process key bindings.  For example, "ESC" can cancel the current widget
+	 * action, if there is one, without triggering key bindings.
+	 * </p>
+	 *  
+	 * @param event The incoming event; must not be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private void filterKeyBindings(Event event) {
+		/* Only process key strokes containing natural keys to trigger key 
+		 * bindings
+		 */
+		if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+			return;
+
+		// Don't allow dialogs to process key bindings.
+		if (event.widget instanceof Control) {
+			Shell shell = ((Control) event.widget).getShell();
+			if (shell.getParent() != null)
+				return;
+		}
+			
+		// Allow special key out-of-order processing.
+		if (isOutOfOrderKey(event)) {
+			if (event.type == SWT.KeyDown) {
+				Widget widget = event.widget;
+				if (widget instanceof StyledText) {
+					/* KLUDGE.  Some people try to do useful work in verify
+					 * listeners.  The way verify listeners work in SWT, we
+					 * need to verify the key as well; otherwise, we can
+					 * detect that useful work has been done.
+					 */
+					((StyledText) widget).addVerifyKeyListener(outOfOrderVerifyListener);
+				} else {
+					widget.addListener(SWT.KeyDown, outOfOrderListener);
+				}
+			}
+			/* Otherwise, we count on a key down arriving eventually.
+			 * Expecting out of order handling on Ctrl+Tab, for example, is
+			 * a bad idea (stick to keys that are not window traversal 
+			 * keys). 
+			 */
+		} else {
+			processKeyEvent(event);
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Determines whether the given event represents a key press that should be
+	 * handled as an out-of-order event.  An out-of-order key press is one that
+	 * is passed to the focus control first.  Only if the focus control fails to
+	 * respond will the regular key bindings get applied.
+	 * </p>
+	 * <p>
+	 * Care must be taken in choosing which keys are chosen as out-of-order
+	 * keys.  This method has only been designed and test to work with the
+	 * unmodified "Escape" key stroke.
+	 * </p>
+	 * 
+	 * @param event The event containing key strokes; must not be 
+	 * <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private static boolean isOutOfOrderKey(Event event) {
+		// Get the key strokes from the event.
+		KeyStroke[] keyStrokes = generatePossibleKeyStrokes(event);
+		
+		// Compare to see if one of the possible key strokes is out of order.
+		for (int i = 0; i < keyStrokes.length; i++) {
+			if (outOfOrderKeys.getKeyStrokes().contains(keyStrokes[i])) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Generates any key strokes that are near matches to the given event.  The
+	 * first such key stroke is always the exactly matching key stroke.
+	 * 
+	 * @param event The event from which the key strokes should be generated;
+	 * must not be <code>null</code>.
+	 * @return An array of nearly matching key strokes.  It is never 
+	 * <code>null</code> and never empty; however, duplicates may exist. 
+	 * 
+	 * @since 3.0
+	 */
+	private static KeyStroke[] generatePossibleKeyStrokes(Event event) {
+		KeyStroke[] keyStrokes = new KeyStroke[3];
+		keyStrokes[0] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event));
+		keyStrokes[1] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
+		keyStrokes[2] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event));
+		return keyStrokes;
+	}
+	
+	/**
+	 * Actually performs the processing of the key event by interacting with the
+	 * <code>ICommandManager</code>.  If work is carried out, then the event is
+	 * stopped here (i.e., <code>event.doit = false</code>).
+	 * 
+	 * @param event The event to process; must not be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private void processKeyEvent(Event event) {
+		KeyStroke[] keyStrokes = generatePossibleKeyStrokes(event);
+		if (press(keyStrokes, event)) {
+			switch (event.type) {
+				case SWT.KeyDown :
+					event.doit = false;
+					break;
+				case SWT.Traverse :
+					event.detail = SWT.TRAVERSE_NONE;
+					event.doit = true;
+					break;
+				default :
+					}
+
+			event.type = SWT.NONE;
+		}
+	}
+	
+	/**
 	 * Processes a key press with respect to the key binding architecture.  This
 	 * updates the mode of the command manager, and runs the current handler for
 	 * the command that matches the key sequence, if any.
@@ -435,6 +640,8 @@ public class Workbench
 	 * 
 	 * @return <code>true</code> if a command is executed; <code>false</code>
 	 * otherwise.
+	 * 
+	 * @since 3.0
 	 */
 	public boolean press(KeyStroke[] potentialKeyStrokes, Event event) {
 		// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
@@ -473,8 +680,8 @@ public class Workbench
 							try {
 								action.execute(event);
 							} catch (Exception e) {
-								String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$
-								WorkbenchPlugin.log(message, new Status(Status.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+								String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
+								WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
 							}
 						}
 	
@@ -782,8 +989,8 @@ public class Workbench
 		commandManager.addCommandManagerListener(commandManagerListener);
 		contextManager.addContextManagerListener(contextManagerListener);
 		updateActiveContextIds();
-		display.addFilter(SWT.Traverse, listener);
-		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, keyBindingFilter);
+		display.addFilter(SWT.KeyDown, keyBindingFilter);
 		display.addFilter(SWT.FocusOut, modeCleaner);
 		addWindowListener(windowListener);
 		updateActiveCommandIdsAndActiveContextIds();

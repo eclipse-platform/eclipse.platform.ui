@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
-import org.eclipse.ui.internal.csm.roles.api.IRoleActivityBinding;
+import org.eclipse.ui.internal.csm.roles.api.IActivityBinding;
 
-final class ActivityBinding implements IRoleActivityBinding {
+final class ActivityBinding implements IActivityBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActivityBinding.class.getName().hashCode();

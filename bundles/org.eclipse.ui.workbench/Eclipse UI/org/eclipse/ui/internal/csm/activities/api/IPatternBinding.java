@@ -24,19 +24,12 @@ package org.eclipse.ui.internal.csm.activities.api;
  * 
  * @since 3.0
  */
-public interface IActivityPatternBinding extends Comparable {
+public interface IPatternBinding extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getActivityId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	// TODO String getPattern();
+	String getPattern();
 }
