@@ -63,7 +63,8 @@ public class UpdateUIPluginImages {
 	/**
 	 * OBJ16
 	 */
-	public static final ImageDescriptor DESC_ECLIPSE_OBJ = create(PATH_OBJ, "eclipse_obj.gif");
+	public static final ImageDescriptor DESC_ECLIPSE_OBJ = create(PATH_OBJ, "eclipse2_obj.gif");
+	public static final ImageDescriptor DESC_CDROM_OBJ = create(PATH_OBJ, "cd_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
 	public static final ImageDescriptor DESC_UNINSTALL_OBJ = create(PATH_OBJ, "uninstall_obj.gif");
 	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif");

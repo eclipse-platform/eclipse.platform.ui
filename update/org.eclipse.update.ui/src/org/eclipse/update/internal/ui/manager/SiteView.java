@@ -31,6 +31,7 @@ public class SiteView extends BaseTreeView implements IUpdateModelChangedListene
 	private Action deleteAction;
 	private Image siteImage;
 	private Image featureImage;
+	private Image cdromImage;
 	private Action refreshAction;
 	private SelectionChangedListener selectionListener;
 	
@@ -45,11 +46,13 @@ class SiteProvider extends DefaultContentProvider
 
 	public Object[] getChildren(Object parent) {
 		if (parent instanceof UpdateModel) {
-			UpdateModel model = (UpdateModel)parent;
-			return model.getBookmarks();
+			return getBookmarks((UpdateModel)parent);
 		}
 		if (parent instanceof SiteBookmark) {
 			return getSiteCatalog((SiteBookmark)parent);
+		}
+		if (parent instanceof CDROM) {
+			return ((CDROM)parent).getChildren(parent);
 		}
 		if (parent instanceof SiteCategory) {
 			final SiteCategory category = (SiteCategory)parent;
@@ -80,6 +83,9 @@ class SiteProvider extends DefaultContentProvider
 	public boolean hasChildren(Object parent) {
 		if (parent instanceof SiteBookmark)
 		   return true;
+		if (parent instanceof CDROM) {
+			return ((CDROM)parent).getChildren(parent).length>0;
+		}
 		if (parent instanceof SiteCategory) {
 			return ((SiteCategory)parent).getChildCount()>0;
 		}
@@ -112,6 +118,9 @@ class SiteLabelProvider extends LabelProvider {
 		if (obj instanceof SiteBookmark) {
 			return siteImage;
 		}
+		if (obj instanceof CDROM) {
+			return cdromImage;
+		}
 		if (obj instanceof SiteCategory) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
@@ -130,6 +139,7 @@ public SiteView() {
 	model.addUpdateModelChangedListener(this);
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+	cdromImage = UpdateUIPluginImages.DESC_CDROM_OBJ.createImage();
 	selectionListener = new SelectionChangedListener();
 }
 
@@ -138,6 +148,7 @@ public void dispose() {
 	model.removeUpdateModelChangedListener(this);	
 	siteImage.dispose();
 	featureImage.dispose();
+	cdromImage.dispose();
 	super.dispose();
 }
 
@@ -234,6 +245,16 @@ private void performRefresh() {
 			}
 		});
 	}
+}
+
+private Object [] getBookmarks(UpdateModel model) {
+	SiteBookmark [] bookmarks = model.getBookmarks();
+	Object [] array = new Object[1 + bookmarks.length];
+	array [0] = new CDROM();
+	for (int i=1; i<array.length; i++) {
+		array[i] = bookmarks[i-1];
+	}
+	return array;
 }
 
 class CatalogBag {

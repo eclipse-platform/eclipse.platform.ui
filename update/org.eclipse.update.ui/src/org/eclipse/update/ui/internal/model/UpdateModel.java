@@ -16,6 +16,7 @@ public class UpdateModel {
 	private IDialogSettings settings;
 	private static final String KEY_BOOKMARK_NAMES = "bookmark.names"; 
 	private static final String KEY_BOOKMARK_URLS = "bookmark.urls";
+	private AvailableUpdates availableUpdates;
 	
 	public UpdateModel() {
 		settings = UpdateUIPlugin.getDefault().getDialogSettings();
@@ -153,5 +154,11 @@ public class UpdateModel {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
 			listener.objectChanged(object, property);
 		}
+	}
+	
+	public AvailableUpdates getUpdates() {
+		if (availableUpdates==null)
+		   availableUpdates = new AvailableUpdates();
+		return availableUpdates;
 	}
 }

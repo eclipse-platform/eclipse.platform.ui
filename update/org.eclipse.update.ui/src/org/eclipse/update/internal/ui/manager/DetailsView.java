@@ -29,6 +29,8 @@ public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String CONFIG_PAGE = "Config";
 public static final String INSTALL_SITE_PAGE = "InstallSite";
+public static final String CDROM_PAGE = "CDROM";
+public static final String UPDATES_PAGE = "Updates";
 
 private Action homeAction;
 private UpdateAction backAction;
@@ -62,6 +64,8 @@ public void createPages() {
 	addPage(SITE_PAGE, sitePage);
 	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
+	addPage(CDROM_PAGE, new CDROMPage(this, "CDROM"));
+	addPage(UPDATES_PAGE, new UpdatesPage(this, "Available Updates"));
 	if (SWT.getPlatform().equals("win32")) {
 		addWebBrowser();
 	}
@@ -158,6 +162,14 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 			}
 			if (el instanceof ISite) {
 				showPageWithInput(INSTALL_SITE_PAGE, el);
+				return;
+			}
+			if (el instanceof CDROM) {
+				showPageWithInput(CDROM_PAGE, el);
+				return;
+			}
+			if (el instanceof AvailableUpdates) {
+				showPageWithInput(UPDATES_PAGE, el);
 				return;
 			}
 		}

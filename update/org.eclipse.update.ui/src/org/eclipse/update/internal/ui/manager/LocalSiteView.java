@@ -36,23 +36,6 @@ import org.eclipse.swt.graphics.*;
 public class LocalSiteView extends BaseTreeView 
 				implements IInstallConfigurationChangedListener,
 							ISiteChangedListener {
-	
-class FolderObject {
-	String label;
-	
-	public FolderObject(String label) {
-		this.label = label;
-	}
-	
-	public String getLabel() {
-		return label;
-	}
-	public String toString() {
-		return getLabel();
-	}
-}
-
-FolderObject updates = new FolderObject("Available Updates");
 Image eclipseImage;
 Image updatesImage;
 Image featureImage;
@@ -66,9 +49,10 @@ class LocalSiteProvider extends DefaultContentProvider
 	 */
 	public Object[] getChildren(Object parent) {
 		if (parent instanceof UpdateModel) {
+			UpdateModel model = (UpdateModel)parent;
 			ILocalSite localSite = getLocalSite();
 			if (localSite!=null)
-				return new Object [] { getLocalSite(), updates };
+				return new Object [] { getLocalSite(), model.getUpdates() };
 			else
 				return new Object [0];
 		}
@@ -78,8 +62,8 @@ class LocalSiteProvider extends DefaultContentProvider
 		if (parent instanceof ISite) {
 			return getSiteFeatures((ISite)parent);
 		}
-		if (parent == updates) {
-			return checkForUpdates();
+		if (parent instanceof AvailableUpdates) {
+			return ((AvailableUpdates)parent).getChildren(parent);
 		}
 		return new Object[0];
 	}
@@ -144,7 +128,7 @@ class LocalSiteLabelProvider extends LabelProvider {
 	public Image getImage(Object obj) {
 		if (obj  instanceof ILocalSite)
 		   return eclipseImage;
-		if (obj.equals(updates))
+		if (obj instanceof AvailableUpdates)
 		   return updatesImage;
 		if (obj instanceof IFeature)
 		   return featureImage;
@@ -192,20 +176,6 @@ private Object [] openLocalSite() {
 		UpdateUIPlugin.logException(e);
 		return new Object[0];
 	}
-}
-
-private Object [] checkForUpdates() {
-	BusyIndicator.showWhile(viewer.getTree().getDisplay(),
-					new Runnable() {
-		public void run() {
-			try {
-			   Thread.currentThread().sleep(2000);
-			}
-			catch (InterruptedException e) {
-			}
-		}
-	});
-	return new Object[0];
 }
 
 public void dispose() {

@@ -334,7 +334,6 @@ public void expandTo(final Object obj) {
 
 private String getInstalledVersion(IFeature feature) {
 	alreadyInstalled = false;
-	String defaultValue = "Not installed";
 	try {
 		ILocalSite localSite = SiteManager.getLocalSite();
 	   	IInstallConfiguration config = localSite.getCurrentConfiguration();
@@ -357,14 +356,15 @@ private String getInstalledVersion(IFeature feature) {
 		if (buf.length()>0)
 	   		return buf.toString();
 		else
-	   		return defaultValue;
+	   		return null;
 	}
 	catch (CoreException e) {
-		return defaultValue;
+		return null;
 	}
 }
 
 private void inputChanged(IFeature feature) {
+	boolean newerVersion=false;
 	if (currentFeature!=null) {
 		saveSettings(currentFeature);
 	}
@@ -374,7 +374,12 @@ private void inputChanged(IFeature feature) {
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
-	installedVersionLabel.setText(getInstalledVersion(feature));
+	String installedVersion = getInstalledVersion(feature);
+	if (installedVersion==null)
+	   installedVersion = "Not installed";
+	else
+	   newerVersion = true;
+	installedVersionLabel.setText(installedVersion);
 	sizeLabel.setText("0KB");
 	descriptionText.setText(feature.getDescription().getText());
 	Image logoImage = loadProviderImage(feature);
@@ -383,12 +388,7 @@ private void inputChanged(IFeature feature) {
 	imageLabel.setImage(logoImage);
 	infoLinkURL = feature.getDescription().getURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
-	if (feature.getSite() instanceof ILocalSite) {
-		doButton.setText("Uninstall");
-	}
-	else {
-		doButton.setText("Install");
-	}
+	updateButtonText(feature, newerVersion);
 	setOS(feature.getOS());
 	setWS(feature.getWS());
 	setNL(feature.getNL());
@@ -397,7 +397,6 @@ private void inputChanged(IFeature feature) {
 	copyrightGroup.setInfo(feature.getCopyright());
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	doButton.setEnabled(!model.checklistContains(feature));
-	doButton.setVisible(!alreadyInstalled);
 	
 	restoreSettings(feature);
 	reflow();
@@ -405,6 +404,17 @@ private void inputChanged(IFeature feature) {
 	((Composite)getControl()).redraw();
 
 	currentFeature = feature;
+}
+
+private void updateButtonText(IFeature feature, boolean update) {
+	if (alreadyInstalled) {
+		doButton.setText("&Uninstall");
+	}
+	else if (update) {
+		doButton.setText("&Update");
+	}
+	else
+	  	doButton.setText("&Install");
 }
 
 private void restoreSettings(IFeature feature) {
@@ -502,7 +512,8 @@ private void setWS(String ws) {
 		String [] array = getTokens(ws);
 		StringBuffer buf = new StringBuffer();
 		for (int i=0; i<array.length; i++) {
-			buf.append(mapWS(array[i])+"\n");
+			if (i>0) buf.append("\n");
+			buf.append(mapWS(array[i]));
 		}
 		wsLabel.setText(buf.toString());
 	}
@@ -514,7 +525,8 @@ private void setNL(String nl) {
 		String [] array = getTokens(nl);
 		StringBuffer buf = new StringBuffer();
 		for (int i=0; i<array.length; i++) {
-			buf.append(mapNL(array[i])+"\n");
+			if (i>0) buf.append("\n");
+			buf.append(mapNL(array[i]));
 		}
 		nlLabel.setText(buf.toString());
 	}
@@ -542,7 +554,7 @@ private void openURL(final String url) {
 private void doButtonSelected() {
 	if (currentFeature!=null) {
 		int mode = ChecklistJob.INSTALL;
-		if (currentFeature.getSite() instanceof ILocalSite) {
+		if (alreadyInstalled) {
 			mode = ChecklistJob.UNINSTALL;
 		}
 		final ChecklistJob job = new ChecklistJob(currentFeature, mode);
@@ -556,8 +568,10 @@ private void doButtonSelected() {
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
 				if (wizard.isSuccessfulInstall()) {
-					String title = "Install";
-					String message="The feature has been successfully installed. You will need to restart the workbench to be able to use it.";
+					String title = alreadyInstalled?"Uninstall":"Install";
+					String message=alreadyInstalled?
+					"The feature has been successfully uninstalled. You will need to restart the workbench to see the effects of the action.":
+					"The feature has been successfully installed. You will need to restart the workbench to be able to use it.";
 					MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(),
 							title,
 							message);
