@@ -14,18 +14,19 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -174,7 +175,37 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadWorkingSets(ext);
 			return;
 		}
-				
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_POPUP_MENU)) {
+			loadPopupMenu(ext);
+			return;
+		}
+		
+	}
+
+	/**
+	 * TODO: object contributions are easy to update, but viewer contributions are not because they're 
+	 * statically cached in anonymous PopupMenuExtenders.  Currently you will be prompted to restart in 
+	 * the case of a viewer contribtion. 
+	 * 
+	 * We can implement this refresh by keeping a weak set of references to PopupMenuExtenders and 
+	 * iterating over them on a delta.  We add a method to PopupMenuExtender that will supply an extension
+	 * to the underlying staticActionBuilder for processing. 
+	 */
+	private void loadPopupMenu(IExtension ext) {
+		ObjectActionContributorManager oMan = ObjectActionContributorManager.getManager();
+		ObjectActionContributorReader oReader = new ObjectActionContributorReader();
+		oReader.setManager(oMan);
+		IConfigurationElement[] elements = ext.getConfigurationElements();
+		boolean restartNeeded = false;
+		// takes care of object contributions
+		for (int i = 0; i < elements.length; i++) {
+			oReader.readElement(elements[i]);
+			if (elements[i].getName().equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE))
+				restartNeeded = true;	
+		}
+
+		if (restartNeeded) 
+			restartPrompt(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_view_contributions")); //$NON-NLS-1$
 	}
 
 	private void revoke(IExtensionPoint extPt, IExtension ext) {
@@ -791,6 +822,18 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 						((WorkbenchPage)pages[j]).hideActionSet(id);
 				}
 			}
+		}
+	}
+	
+	private void restartPrompt(String message) {
+		Shell parentShell = null;
+		IWorkbenchWindow window =workbench.getActiveWorkbenchWindow();
+		if (window != null)
+			parentShell = window.getShell();
+
+		message +=  ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_restart"); //$NON-NLS-1$
+		if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.restart_workbench"), message)) { //$NON-NLS-1$
+			workbench.restart();
 		}
 	}
 }
