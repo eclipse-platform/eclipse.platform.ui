@@ -38,14 +38,6 @@ public class RefactoringUI {
 	}
 	
 	/**
-	 * The id of the refactoring action set containing the undo and redo
-	 * action (value <code>"_org.eclipse.ltk.ui.refactoring.actionSet.refactoring"</code>).
-	 */
-	// the underscore in front of the name is on purpose to ensure correct 
-	// ordering of the action sets in the shared menu. 
-	public static final String REFACTORING_ACTION_SET= "_org.eclipse.ltk.ui.refactoring.actionSet.refactoring"; //$NON-NLS-1$
-	
-	/**
 	 * Creates a dialog to present a {@link RefactoringStatus} to the user. Depending
 	 * on the parameter <code>backButton</code> the following values are returned
 	 * from the dialogs open method: {@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID

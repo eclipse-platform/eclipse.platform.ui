@@ -30,7 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
-abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
+public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 
 	private static final int MAX_LENGTH= 30;
 
