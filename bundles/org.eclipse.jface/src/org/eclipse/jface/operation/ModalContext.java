@@ -78,7 +78,12 @@ public class ModalContext {
          * Indicates whether to continue event queue dispatching.
          */
         private volatile boolean continueEventDispatching = true;
-
+        
+        /**
+         * The thread that forked this modal context thread.
+         */
+        private Thread callingThread;
+        
         /**
          * Creates a new modal context.
          * 
@@ -94,6 +99,7 @@ public class ModalContext {
             runnable = operation;
             progressMonitor = new AccumulatingProgressMonitor(monitor, display);
             this.display = display;
+            this.callingThread = Thread.currentThread();
         }
 
         /* (non-Javadoc)
@@ -115,6 +121,10 @@ public class ModalContext {
             } catch (Error e) {
                 throwable = e;
             } finally {
+                //notify the operation of change of thread of control
+            	if (runnable instanceof IThreadListener)
+            		((IThreadListener)runnable).threadChange(callingThread);
+            	
                 // Make sure that all events in the asynchronous event queue
                 // are dispatched.
                 display.syncExec(new Runnable() {
@@ -228,7 +238,8 @@ public class ModalContext {
 
     /**
      * Returns whether the given thread is running a modal context.
-     *
+     * 
+     * @param thread The thread to be checked
      * @return <code>true</code> if the given thread is running a modal context, <code>false</code> if not
      */
     public static boolean isModalContextThread(Thread thread) {
@@ -241,7 +252,16 @@ public class ModalContext {
      * The modal nesting level is increased by one from the perspective
      * of the given runnable.
      * </p>
-     *
+     *<p>
+     * If the supplied operation implements <code>IThreadListener</code>, it
+     * will be notified of any thread changes required to execute the operation.
+     * Specifically, the operation will be notified of the thread that will call its 
+     * <code>run</code> method before it is called, and will be notified of the
+     * change of control back to the thread calling this method when the operation
+     * completes.  These thread change notifications give the operation an 
+     * opportunity to transfer any thread-local state to the execution thread before 
+     * control is transferred to the new thread.
+     *</p>
      * @param operation the runnable to run
      * @param fork <code>true</code> if the runnable should run in a separate thread,
      *   and <code>false</code> if in the same thread
@@ -275,6 +295,8 @@ public class ModalContext {
                     runInCurrentThread(operation, monitor);
                 } else {
                     t = new ModalContextThread(operation, monitor, display);
+                	if (operation instanceof IThreadListener)
+                		((IThreadListener)operation).threadChange(t);
                     t.start();
                     t.block();
                     Throwable throwable = t.throwable;
