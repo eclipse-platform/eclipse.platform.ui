@@ -12,10 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
@@ -23,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderMemberFetcher;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * Fetch the members of a remote folder in the background, passing incremental

@@ -12,26 +12,19 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation.RemoteFolderFilter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 public class CVSTagElement extends CVSModelElement implements IDeferredWorkbenchAdapter {
 	CVSTag tag;

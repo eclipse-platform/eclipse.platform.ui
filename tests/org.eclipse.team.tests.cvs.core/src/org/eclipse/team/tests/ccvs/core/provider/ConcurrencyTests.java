@@ -12,22 +12,20 @@ package org.eclipse.team.tests.ccvs.core.provider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.ui.progress.IElementCollector;
 
 public class ConcurrencyTests extends EclipseTest {
 

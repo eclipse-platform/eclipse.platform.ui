@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -22,6 +21,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 public class VersionCategory
  extends CVSModelElement
