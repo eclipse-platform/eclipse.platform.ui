@@ -21,6 +21,7 @@ import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
@@ -156,8 +157,7 @@ public final class IDE {
 		
 		// if no valid editor found, bail out
 		if (editorDesc == null) {
-			// @issue we need an NLS error message here
-			throw new PartInitException("Could not find valid editor for file input.");
+			throw new PartInitException(IDEWorkbenchMessages.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
 		}
 		
 		// open the editor on the file

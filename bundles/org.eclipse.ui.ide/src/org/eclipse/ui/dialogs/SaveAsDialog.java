@@ -44,7 +44,6 @@ public class SaveAsDialog extends TitleAreaDialog {
 	// widgets
 	private ResourceAndContainerGroup resourceGroup;
 	private Button okButton;
-	private Button cancelButton;
 
 	/**
 	 * Image for title area
@@ -98,7 +97,7 @@ public boolean close() {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
