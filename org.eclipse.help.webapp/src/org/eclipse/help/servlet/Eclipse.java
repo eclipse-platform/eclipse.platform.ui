@@ -91,7 +91,7 @@ public class Eclipse {
 			//System.out.println("URL for bootloader:" + bootUrl);
 
 			bootLoader =
-				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(
+				new URLClassLoader(new URL[] { bootUrl }, this.getClass().getClassLoader()).loadClass(
 					BOOTLOADER);
 		}
 		return bootLoader;
