@@ -45,6 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AddPropertyDialog;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
@@ -258,11 +259,9 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 */
 	private static final class AntPropertiesLabelProvider extends LabelProvider implements ITableLabelProvider {
 		private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
-		private static final String IMG_PROPERTY = "icons/full/obj16/prop_ps.gif"; //$NON-NLS-1$;
 
 		private Image classpathImage;
 		private Image fileImage;
-		private Image propertyImage;
 	
 		/**
 		 * Creates an instance.
@@ -280,10 +279,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 				classpathImage.dispose();
 				classpathImage = null;
 			}
-			if (propertyImage != null) {
-				propertyImage.dispose();
-				propertyImage = null;
-			}
 		}
 		
 		/* (non-Javadoc)
@@ -291,7 +286,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (element instanceof Property) {
-				return getPropertyImage();
+				return ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY);
 			} else {
 				return getFileImage();
 			}
@@ -309,14 +304,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 				fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 			return fileImage;
-		}
-		
-		private Image getPropertyImage() {
-			if (propertyImage == null) {
-				ImageDescriptor desc= ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_PROPERTY);
-				propertyImage = desc.createImage();
-			} 
-			return propertyImage;
 		}
 		
 		private Image getClasspathImage() {
@@ -391,7 +378,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return labelProvider.getPropertyImage();
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY);
 	}
 
 	/**

@@ -67,6 +67,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetActi
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AntViewOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.EditLaunchConfigurationAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
@@ -179,6 +180,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
 	private AntViewOpenWithMenu openWithMenu;
+	private EditLaunchConfigurationAction editConfigAction;
+	
 	// TargetsViewer actions
 	private RunActiveTargetsAction runActiveTargetsAction;
 	private DeactivateTargetAction deactivateTargetAction;
@@ -279,6 +282,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			menu.add(new Separator());
 			menu.add(runTargetAction);
 			menu.add(activateTargetAction);
+			menu.add(editConfigAction);
 			addOpenWithMenu(menu);
 			menu.add(new Separator());
 			menu.add(removeProjectAction);
@@ -364,6 +368,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		horizontalOrientationAction= new SwitchAntViewOrientation(this, SWT.HORIZONTAL);
 		verticalOrientationAction= new SwitchAntViewOrientation(this, SWT.VERTICAL);
 		showTargetViewerAction= new ShowTargetViewerAction(this);
+		editConfigAction= new EditLaunchConfigurationAction(this);
+		updateActions.add(editConfigAction);
 	}
 	
 	/**

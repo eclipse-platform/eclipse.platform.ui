@@ -14,18 +14,18 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Label provider for property elements
  */
 final class AntPropertiesLabelProvider extends LabelProvider implements ITableLabelProvider {
 	private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
-	private static final String IMG_PROPERTY = "icons/full/obj16/prop_ps.gif"; //$NON-NLS-1$;
 
 	private Image classpathImage;
 	private Image fileImage;
-	private Image propertyImage;
 
 	/**
 	 * Creates an instance.
@@ -43,10 +43,6 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 			classpathImage.dispose();
 			classpathImage = null;
 		}
-		if (propertyImage != null) {
-			propertyImage.dispose();
-			propertyImage = null;
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -54,7 +50,7 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (element instanceof Property) {
-			return getPropertyImage();
+			return ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY);
 		} else {
 			return getFileImage();
 		}
@@ -72,14 +68,6 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 			fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 		}
 		return fileImage;
-	}
-	
-	public Image getPropertyImage() {
-		if (propertyImage == null) {
-			ImageDescriptor desc= ExternalToolsPlugin.getDefault().getImageDescriptor(AntPropertiesLabelProvider.IMG_PROPERTY);
-			propertyImage = desc.createImage();
-		} 
-		return propertyImage;
 	}
 	
 	public Image getClasspathImage() {
