@@ -32,16 +32,58 @@
 
 <!-- Extensions -->
    <extension
-         point="org.eclipse.ui.fontDefinitions">
+         point="org.eclipse.ui.themes">
+      <themeElementCategory
+            label="%textCompareAppearance.label"
+            id="org.eclipse.compare.contentmergeviewer.TextMergeViewer">
+      </themeElementCategory>
+      <colorDefinition
+            label="%compareIncomingColor.label"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            value="COLOR_BLUE"
+            id="INCOMING_COLOR">
+         <description>
+            %compareIncomingColor.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%compareOutgoingColor.label"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            value="COLOR_BLACK"
+            id="OUTGOING_COLOR">
+         <description>
+            %compareOutgoingColor.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%compareConflictColor.label"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            value="COLOR_RED"
+            id="CONFLICTING_COLOR">
+         <description>
+            %compareConflictColor.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%compareResolvedColor.label"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            value="COLOR_GREEN"
+            id="RESOLVED_COLOR">
+         <description>
+            %compareResolvedColor.description
+         </description>
+      </colorDefinition>
       <fontDefinition
             label="%compareFontDefiniton.label"
             defaultsTo="org.eclipse.jface.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
             id="org.eclipse.compare.contentmergeviewer.TextMergeViewer">
-         <description>
+          <description>
             %compareFontDefiniton.description
          </description>
       </fontDefinition>
    </extension>
+   
    <extension
          id="rejectedPatchMarker"
          name="%rejectedPatchMarker.name"

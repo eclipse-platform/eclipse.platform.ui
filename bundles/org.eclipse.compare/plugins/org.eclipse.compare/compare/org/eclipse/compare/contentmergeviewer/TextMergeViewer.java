@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -141,7 +142,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	};
 					
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
-			
+	
+	// the following symbolic constants must match the IDs in Compare's plugin.xml
+	private static final String INCOMING_COLOR= "INCOMING_COLOR"; //$NON-NLS-1$
+	private static final String OUTGOING_COLOR= "OUTGOING_COLOR"; //$NON-NLS-1$
+	private static final String CONFLICTING_COLOR= "CONFLICTING_COLOR"; //$NON-NLS-1$
+	private static final String RESOLVED_COLOR= "RESOLVED_COLOR"; //$NON-NLS-1$
+	
 	// constants
 	/** Width of left and right vertical bar */
 	private static final int MARGIN_WIDTH= 6;
@@ -697,6 +704,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fBirdsEyeCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		
 		JFaceResources.getFontRegistry().addListener(fPreferenceChangeListener);
+		JFaceResources.getColorRegistry().addListener(fPreferenceChangeListener);
 		updateFont();
 	}
 	
@@ -785,20 +793,22 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fRight != null)
 			fRight.setBackgroundColor(color);
 						
+		ColorRegistry registry= JFaceResources.getColorRegistry();
+		
 		RGB bg= getBackground(display);
-		SELECTED_INCOMING= new RGB(0, 0, 255);
+		SELECTED_INCOMING= registry.getRGB(INCOMING_COLOR);
 		INCOMING= interpolate(SELECTED_INCOMING, bg, 0.6);
 		INCOMING_FILL= interpolate(SELECTED_INCOMING, bg, 0.97);
 
-		SELECTED_CONFLICT= new RGB(255, 0, 0);
+		SELECTED_CONFLICT= registry.getRGB(CONFLICTING_COLOR);
 		CONFLICT= interpolate(SELECTED_CONFLICT, bg, 0.6);
 		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.97);
 	
-		SELECTED_OUTGOING= getForeground(display);
+		SELECTED_OUTGOING= registry.getRGB(OUTGOING_COLOR);
 		OUTGOING= interpolate(SELECTED_OUTGOING, bg, 0.6);
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
 		
-		RESOLVED= new RGB(0, 255, 0);
+		RESOLVED= registry.getRGB(RESOLVED_COLOR);
 				
 		refreshBirdsEyeView();
 		invalidateLines();
@@ -902,6 +912,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		if (fPreferenceChangeListener != null) {
 			JFaceResources.getFontRegistry().removeListener(fPreferenceChangeListener);
+			JFaceResources.getColorRegistry().removeListener(fPreferenceChangeListener);
 			if (fPreferenceStore != null)
 				fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
@@ -3005,6 +3016,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		} else if (key.equals(fSymbolicFontName)) {
 			updateFont();
+			invalidateLines();
+
+		} else if (key.equals(INCOMING_COLOR) || key.equals(OUTGOING_COLOR) || key.equals(CONFLICTING_COLOR) || key.equals(RESOLVED_COLOR)) {
+			updateColors(null);
 			invalidateLines();
 			
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
