@@ -1020,37 +1020,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return message;
 	}
 	
-	/**
-	 * Cause a snapshot (this saves the sync info to disk)
-	 */
-	static void snapshot(IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		monitor.subTask(Policy.bind("CVSTeamProvider.snapshot"));
-		ResourcesPlugin.getWorkspace().save(false, monitor);
-	}
-	/*
-	 * @see ITeamProvider#isOutOfDate(IResource)
-	 * XXX to be removed when sync methods are removed from ITeamProvider
-	 */
-	public boolean isOutOfDate(IResource resource) {
-		Assert.isTrue(false);
-		return false;
-	}
-	/*
-	 * @see ITeamProvider#isDirty(IResource)
-	 */
-	public boolean isDirty(IResource resource) {
-		try {
-			ICVSResource cvsResource = getChild(resource);
-			if(cvsResource.isFolder()) {
-				return false;
-			} else {
-				return ((ICVSFile)cvsResource).isDirty();
-			}
-		} catch(CVSException e) {
-			return true;
-		}
-	}
 	/*
 	 * @see ITeamProvider#validateEdit(IFile[], Object)
 	 */
@@ -1084,11 +1053,26 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			}
 		}
 	}
+
 	/*
 	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
 	 */
 	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-		// XXX this will likely be removed from the API. Nothing to do here...keep on moving...
+		Assert.isTrue(false);
 	}
-
+	/*
+	 * @see ITeamProvider#isOutOfDate(IResource)
+	 * XXX to be removed when sync methods are removed from ITeamProvider
+	 */
+	public boolean isOutOfDate(IResource resource) {
+		Assert.isTrue(false);
+		return false;
+	}
+	/*
+	 * @see ITeamProvider#isDirty(IResource)
+	 */
+	public boolean isDirty(IResource resource) {
+		Assert.isTrue(false);
+		return false;
+	}
 }
