@@ -20,13 +20,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Position;
@@ -61,6 +58,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.search2.internal.ui.basic.views.CollapseAllAction;
 import org.eclipse.search2.internal.ui.basic.views.ExpandAllAction;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
@@ -84,7 +82,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -123,7 +120,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				// disposed the control while the UI was posted.
 				return Status.OK_STATUS;
 			}
-			fViewPart.updateLabel();
 			runBatchedUpdates();
 			if (hasMoreUpdates() || isQueryRunning()) {
 				schedule(500);
@@ -131,6 +127,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				fIsUIUpdateScheduled= false;
 				turnOnDecoration();
 			}
+			fViewPart.updateLabel();
 			return Status.OK_STATUS;
 		}
 		
@@ -406,21 +403,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected abstract void configureTableViewer(TableViewer viewer);
 
-	private static void createStandardGroups(IContributionManager menu) {
-		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
-		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
-		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
-		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
-		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
-		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
-		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
-		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
-		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
-		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
-	}
-
 	/**
 	 * Fills the context menu for this page. Subclasses may override this
 	 * method.
@@ -448,7 +430,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fMenu.setParent(getSite().getActionBars().getMenuManager());
 		fMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
-				createStandardGroups(mgr);
+				SearchView.createStandardGroups(mgr);
 				fillContextMenu(mgr);
 				fViewPart.fillContextMenu(mgr);
 			}
@@ -628,7 +610,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
 		tbm.removeAll();
-		createStandardGroups(tbm);
+		SearchView.createStandardGroups(tbm);
 		fillToolbar(tbm);
 		tbm.update(false);
 		fViewer.addOpenListener(new IOpenListener() {
@@ -918,6 +900,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		super.init(pageSite);
 		addLayoutActions(pageSite.getActionBars().getMenuManager());
 		initActionDefinitionIDs(pageSite.getWorkbenchWindow());
+		pageSite.getActionBars().getMenuManager().updateAll(true);
+		pageSite.getActionBars().updateActionBars();
 	}
 
 	private void initActionDefinitionIDs(IWorkbenchWindow window) {

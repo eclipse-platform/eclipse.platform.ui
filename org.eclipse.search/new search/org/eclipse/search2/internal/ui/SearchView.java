@@ -18,12 +18,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.GroupMarker;
@@ -32,7 +26,20 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultPage;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search2.internal.ui.text.AnnotationManagers;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
@@ -52,17 +59,6 @@ import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.IQueryListener;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.ISearchResultPage;
-import org.eclipse.search.ui.ISearchResultViewPart;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search2.internal.ui.text.AnnotationManagers;
-
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
 	private HashMap fPartsToPages;
@@ -78,7 +74,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private IMemento fPageState;
 
 	
-	private static void createStandardGroups(IContributionManager menu) {
+	public static void createStandardGroups(IContributionManager menu) {
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
@@ -295,7 +291,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 		createActions();
 		initializeToolBar();
-		createStandardGroups(getViewSite().getActionBars().getMenuManager());
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 	}
 
@@ -388,6 +383,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+		createStandardGroups(site.getActionBars().getMenuManager());
 		fPageState= memento;
 		IWorkbenchSiteProgressService progressService= getProgressService();
 		if (progressService != null)

@@ -13,7 +13,6 @@ package org.eclipse.search2.internal.ui.basic.views;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -50,7 +49,14 @@ public class TreeViewerNavigator implements INavigate {
 		TreeItem[] roots= fViewer.getTree().getItems();
 		if (roots.length == 0)
 			return null;
-		return getFirstChildWithMatches(roots[0]);
+		for (int i = 0; i < roots.length; i++) {
+			if (hasMatches(roots[i]))
+				return roots[i];
+			TreeItem firstChild= getFirstChildWithMatches(roots[0]);
+			if (firstChild != null)
+				return firstChild;
+		}
+		return null;
 	}
 	
 	private TreeItem getLastItem() {
@@ -159,13 +165,10 @@ public class TreeViewerNavigator implements INavigate {
 	}
 
 	private boolean hasMatches(TreeItem item) {
-		AbstractTextSearchResult result= fPage.getInput();
-		if (result == null)
-			return false;
 		Object element= item.getData();
 		if (element == null)
 			return false;
-		return result.getMatchCount(element) > 0;
+		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 
 	private TreeItem getCurrentItem(boolean forward) {
