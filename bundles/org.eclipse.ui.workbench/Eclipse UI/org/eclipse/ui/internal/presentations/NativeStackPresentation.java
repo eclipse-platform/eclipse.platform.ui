@@ -460,5 +460,12 @@ public class NativeStackPresentation extends StackPresentation {
 	public IPresentablePart getCurrentPart() {
 		return current;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
+	 */
+	public void setActive(int newState) {
+		
+	}
 	
 }

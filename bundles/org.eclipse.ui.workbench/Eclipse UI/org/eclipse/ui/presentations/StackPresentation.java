@@ -108,26 +108,7 @@ public abstract class StackPresentation {
 	 * 
 	 * @param isActive one of AS_INACTIVE, AS_ACTIVE, or AS_ACTIVE_NOFOCUS
 	 */
-	public void setActive(int newState) {
-		setActive(newState == AS_ACTIVE_FOCUS);
-	}
-	
-	/**
-	 * This is invoked to notify the presentation that one of its parts
-	 * has gained or lost keyboard focus. It should not change the part's focus.
-	 * Only one presentation may be active at a time.
-	 * <p>
-	 * This method relates specifically to keyboard focus, and should
-	 * not be confused with the notion of an "active" part (which would
-	 * be the part that most recently had focus if no part currently
-	 * has focus). 
-	 * </p> 
-	 * 
-	 * @param isActive
-	 * @deprecated presentation authors should override setActive(int) instead
-	 */
-	public void setActive(boolean isActive) {
-	}
+	public abstract void setActive(int newState);
 	
 	/**
 	 * This causes the presentation to become visible or invisible. 
