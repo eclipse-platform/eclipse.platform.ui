@@ -415,14 +415,18 @@ public class DecoratorManager
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] elements = event.getElements();
 		
-		//Assume that someone is going to care about the 
-		//decoration result and just start it right away
-		for(int i = 0; i < elements.length; i ++){
-			Object adapted = getResourceAdapter(elements[i]);
-			//Force an update in case full decorators are the only ones enabled
-			scheduler.queueForDecoration(elements[i],adapted,true);
-		}
-			
+		//If the elements are not specified send out a general update
+		if(elements == null)
+			fireListeners(event);
+		else{
+		  //Assume that someone is going to care about the 
+		  //decoration result and just start it right away
+		  for(int i = 0; i < elements.length; i ++){
+			  Object adapted = getResourceAdapter(elements[i]);
+			  //Force an update in case full decorators are the only ones enabled
+			  scheduler.queueForDecoration(elements[i],adapted,true);
+		  }
+		}			
 	}
 
 	/**
