@@ -55,6 +55,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	private List fBreakpoints= null;
 	
+	//properties set before execution
+	private Map fInitialProperties= null;
 	private Map fProperties= null;
 	
 	/**
@@ -193,6 +195,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
+		if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
+			fInitialProperties= event.getProject().getProperties();
+		}
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
 		fTasks.push(fCurrentTask);
@@ -301,9 +306,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    Map currentProperties= null;
+	    Map currentUserProperties= null;
 	    if (!fTasks.isEmpty()) {
 	        currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
-	        
+	        currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
 	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
 	            //no new properties
 	            sendRequestResponse(propertiesRepresentation.toString());
@@ -328,6 +334,18 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	                propertiesRepresentation.append(propertyValue);
 	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	                if (fInitialProperties.get(propertyName) != null) { //properties set before the start of the build
+	                	if (currentUserProperties.get(propertyName) == null) {
+	                		propertiesRepresentation.append(DebugMessageIds.PROPERTY_SYSTEM);
+	                	} else {
+	                		propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
+	                	}
+	                } else if (currentUserProperties.get(propertyName) == null){
+	                	propertiesRepresentation.append(DebugMessageIds.PROPERTY_RUNTIME);
+	                } else {
+	                	propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
+	                }
+	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	            }
 	        }
 	    }
@@ -340,7 +358,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		if (fBreakpoints == null) {
 			fBreakpoints= new ArrayList();
 		}
-		fBreakpoints.add(new RemoteAntBreakpoint(breakpointRepresentation));
+		RemoteAntBreakpoint newBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
+		if (!fBreakpoints.contains(newBreakpoint)) {
+			fBreakpoints.add(newBreakpoint);	
+		}
 	}
 	
 	protected void removeBreakpoint(String breakpointRepresentation) {
@@ -400,5 +421,14 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 			}
 			return null;
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
+	 */
+	public void targetStarted(BuildEvent event) {
+		if (fInitialProperties == null) {
+			fInitialProperties= event.getProject().getProperties();
+		}
+		super.targetStarted(event);
 	}
 }
