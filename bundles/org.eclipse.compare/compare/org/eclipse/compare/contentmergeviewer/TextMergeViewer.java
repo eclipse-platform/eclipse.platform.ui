@@ -150,6 +150,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
 	/** */
 	private static final int RESOLVE_SIZE= 5;
+	/** if true copying conflicts from one side to other concatenates both sides */
+	private static final boolean APPEND_CONFLICT= true;
 
 	/** line width of change borders */
 	private static final int LW= 1;
@@ -1247,7 +1249,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 							fCenterButton.setVisible(false);
 							if (fButtonDiff != null) {
 								setCurrentDiff(fButtonDiff, false);
-								copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT, false);
+								copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT);
 							}
 						}
 					}
@@ -3683,7 +3685,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 								target.beginCompoundChange();
 								compoundChangeStarted= true;
 							}
-							copy(diff, leftToRight, false);
+							copy(diff, leftToRight);
 						}
 						break;
 					case RangeDifference.RIGHT:
@@ -3692,7 +3694,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 								target.beginCompoundChange();
 								compoundChangeStarted= true;
 							}
-							copy(diff, leftToRight, false);
+							copy(diff, leftToRight);
 						}
 						break;
 					default:
@@ -3755,18 +3757,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 
 	private void copyDiffLeftToRight() {
-		copy(fCurrentDiff, true, false, false);
+		copy(fCurrentDiff, true, false);
 	}
 
 	private void copyDiffRightToLeft() {
-		copy(fCurrentDiff, false, false, false);
+		copy(fCurrentDiff, false, false);
 	}
 		
 	/*
 	 * Copy the contents of the given diff from one side to the other.
 	 */
-	private void copy(Diff diff, boolean leftToRight, boolean both, boolean gotoNext) {
-		if (copy(diff, leftToRight, both)) {
+	private void copy(Diff diff, boolean leftToRight, boolean gotoNext) {
+		if (copy(diff, leftToRight)) {
 			if (gotoNext) {
 				navigate(true, true, true);
 			} else {
@@ -3781,7 +3783,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * doesn't reveal anything.
 	 * Returns true if copy was succesful.
 	 */
-	private boolean copy(Diff diff, boolean leftToRight, boolean both) {
+	private boolean copy(Diff diff, boolean leftToRight) {
 		
 		if (diff != null && !diff.isResolved()) {
 
@@ -3823,9 +3825,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					case RangeDifference.ANCESTOR:
 						break;
 					case RangeDifference.CONFLICT:
-						s= fromDoc.get(fromStart, fromLen);
-						if (both)
-							s+= toDoc.get(toStart, toLen);
+						if (APPEND_CONFLICT) {
+							s= toDoc.get(toStart, toLen);
+							s+= fromDoc.get(fromStart, fromLen);
+						} else
+							s= fromDoc.get(fromStart, fromLen);
 						break;
 					}
 					if (s != null) {
