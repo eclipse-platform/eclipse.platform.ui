@@ -192,9 +192,11 @@ public void run(IProgressMonitor monitor) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
 	} catch (InvocationTargetException e) {
 		Throwable realException = e.getTargetException();
-		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), realException)); //$NON-NLS-1$
+		String message = (realException.getMessage() == null) ? Policy.bind("error.buildFailed") : realException.getMessage(); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), e)); //$NON-NLS-1$
+		String message = (e.getMessage() == null) ? Policy.bind("error.buildFailed") : e.getMessage(); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e));
 	}
 }
 
