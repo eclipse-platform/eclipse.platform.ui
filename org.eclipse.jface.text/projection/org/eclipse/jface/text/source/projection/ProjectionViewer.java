@@ -992,11 +992,39 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#setRangeIndication(int, int, boolean)
 	 */
-	public void setRangeIndication(int start, int length, boolean moveCursor) {
-		// TODO experimental code
-		if (moveCursor)
-			exposeModelRange(new Region(start, length));
-		super.setRangeIndication(start, length, moveCursor);
+	public void setRangeIndication(int offset, int length, boolean moveCursor) {
+		
+		List expand= new ArrayList(2);
+		if (moveCursor) {
+			
+			// expand the immediate effected collapsed regions
+			Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
+				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
+					expand.add(annotation);
+			}
+			
+			if (!expand.isEmpty()) {
+				Iterator e= expand.iterator();
+				while (e.hasNext())
+					fProjectionAnnotationModel.expand((Annotation) e.next());
+			}
+		}
+		
+		super.setRangeIndication(offset, length, moveCursor);
+	}
+	
+	private boolean willAutoExpand(Position position, int offset, int length) {
+		if (position == null || position.isDeleted())
+			return false;
+		// right or left boundary
+		if (position.getOffset() == offset || position.getOffset() + position.getLength() == offset + length)
+			return true;
+		// completely embedded in given position
+		if (position.getOffset() < offset && offset + length < position.getOffset() + position.getLength())
+			return true;
+		return false;
 	}
 	
 	/*
