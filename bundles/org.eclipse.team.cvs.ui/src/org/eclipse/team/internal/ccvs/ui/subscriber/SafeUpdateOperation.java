@@ -223,12 +223,12 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		try {
 			monitor.beginTask(null, 100);
 
-			if (parentCreationElements.size() > 0) {
-				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]), Policy.subMonitorFor(monitor, 25));				
-			}
 			if (updateDeletions.size() > 0) {
 				runUpdateDeletions((SyncInfo[])updateDeletions.toArray(new SyncInfo[updateDeletions.size()]), Policy.subMonitorFor(monitor, 25));
 			}			
+			if (parentCreationElements.size() > 0) {
+				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]), Policy.subMonitorFor(monitor, 25));				
+			}
 			if (updateShallow.size() > 0) {
 				runSafeUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, 50));
 			}
