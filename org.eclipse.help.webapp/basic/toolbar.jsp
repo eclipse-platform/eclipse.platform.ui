@@ -9,6 +9,7 @@
      IBM Corporation - initial API and implementation
 --%>
 <%@ include file="header.jsp"%>
+<%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 
 	ToolbarData data = new ToolbarData(application,request);

@@ -8,7 +8,7 @@
  Contributors:
      IBM Corporation - initial API and implementation
 --%>
-<%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	request.setCharacterEncoding("UTF-8");
