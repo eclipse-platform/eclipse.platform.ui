@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -271,6 +271,7 @@ public interface IMarker extends IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void delete() throws CoreException;
 /**
@@ -428,6 +429,7 @@ public boolean isSubtypeOf(String superType) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void setAttribute(String attributeName, int value) throws CoreException;
 /**
@@ -449,6 +451,7 @@ public void setAttribute(String attributeName, int value) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void setAttribute(String attributeName, Object value) throws CoreException;
 /**
@@ -467,6 +470,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException;
 /**
@@ -490,6 +494,7 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
 /**
@@ -514,6 +519,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void setAttributes(Map attributes) throws CoreException;
 }

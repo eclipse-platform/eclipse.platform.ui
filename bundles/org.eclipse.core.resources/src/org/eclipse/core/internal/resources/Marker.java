@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.Map;
+
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
-import java.util.Map;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 /**
  * An abstract marker implementation.
  * Subclasses must implement the <code>clone</code> method, and
@@ -57,12 +59,13 @@ private void checkInfo(MarkerInfo info) throws CoreException {
  * @see IMarker#delete
  */
 public void delete() throws CoreException {
+	final ISchedulingRule rule = Rules.markerRule(resource);
 	try {
-		getWorkspace().prepareOperation(null, null);
+		getWorkspace().prepareOperation(rule, null);
 		getWorkspace().beginOperation(true);
 		getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 	} finally {
-		getWorkspace().endOperation(null, false, null);
+		getWorkspace().endOperation(rule, false, null);
 	}
 }
 /**

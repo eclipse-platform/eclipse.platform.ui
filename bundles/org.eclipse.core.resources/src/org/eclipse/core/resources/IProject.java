@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public interface IProject extends IContainer, IAdaptable {
  * @see IncrementalProjectBuilder#build
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+ * @see IResourceRuleFactory#buildRule
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException;
 /** 
@@ -110,6 +111,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
  * @see IProjectDescription
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+ * @see IResourceRuleFactory#buildRule
  */
 public void build(int kind, IProgressMonitor monitor) throws CoreException;
 /**
@@ -145,6 +147,7 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * </ul>
  * @see #open
  * @see #isOpen
+ * @see IResourceRuleFactory#modifyRule
  */
 public void close(IProgressMonitor monitor) throws CoreException;
 
@@ -189,6 +192,7 @@ public void close(IProgressMonitor monitor) throws CoreException;
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
+ * @see IResourceRuleFactory#createRule
  */
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
@@ -237,6 +241,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
+ * @see IResourceRuleFactory#createRule
  */
 public void create(IProgressMonitor monitor) throws CoreException;
 
@@ -274,6 +279,7 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * @see #open
  * @see #close
  * @see IResource#delete(int,IProgressMonitor)
+ * @see IResourceRuleFactory#deleteRule
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -472,6 +478,7 @@ public boolean isOpen();
  * </ul>
  * @see IResourceDelta#getFlags
  * @see IResource#move(IProjectDescription,int,IProgressMonitor)
+ * @see IResourceRuleFactory#moveRule
  */
 public void move(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -500,6 +507,7 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #close
+ * @see IResourceRuleFactory#moveRule
  */
 public void open(IProgressMonitor monitor) throws CoreException;
 
@@ -542,6 +550,7 @@ public void open(IProgressMonitor monitor) throws CoreException;
  * @see IProjectNature#configure
  * @see IProjectNature#deconfigure
  * @see #setDescription(IProjectDescription,int,IProgressMonitor)
+ * @see IResourceRuleFactory#modifyRule
  */
 public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
@@ -631,6 +640,7 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
  * @see IProjectNature#deconfigure
  * @see IResource#FORCE
  * @see IResource#KEEP_HISTORY
+ * @see IResourceRuleFactory#modifyRule
  * @since 2.0
  */
 public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;

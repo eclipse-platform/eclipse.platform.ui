@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -558,6 +558,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
+ * @see IResourceRuleFactory#copyRule
  * @since 2.0
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -673,6 +674,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
+ * @see IResourceRuleFactory#copyRule
  * @since 2.0
  */
 public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -690,6 +692,7 @@ public void copy(IProjectDescription description, int updateFlags, IProgressMoni
  * <li> This resource does not exist.</li>
  * <li> This resource is a project that is not open.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public IMarker createMarker(String type) throws CoreException;
 
@@ -827,6 +830,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * @see #KEEP_HISTORY
  * @see #ALWAYS_DELETE_PROJECT_CONTENT
  * @see #NEVER_DELETE_PROJECT_CONTENT
+ * @see IResourceRuleFactory#deleteRule
  * @since 2.0
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -854,6 +858,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
+ * @see IResourceRuleFactory#markerRule
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 /**
@@ -1563,6 +1568,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @see #SHALLOW
+ * @see IResourceRuleFactory#moveRule
  * @since  2.0
  */
 public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1712,6 +1718,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @see #SHALLOW
+ * @see IResourceRuleFactory#moveRule
  * @since  2.0
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1749,6 +1756,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
+ * @see IResourceRuleFactory#refreshRule
  */
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
 /**
@@ -1976,6 +1984,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#modifyRule
  */ 
 public void touch(IProgressMonitor monitor) throws CoreException;
 }

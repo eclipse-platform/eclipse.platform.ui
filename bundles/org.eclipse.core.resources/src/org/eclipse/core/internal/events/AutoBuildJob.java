@@ -9,12 +9,12 @@
  **********************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.resources.ICoreConstants;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -81,8 +81,9 @@ class AutoBuildJob extends Job {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, Policy.opWork);
+			final ISchedulingRule rule = Rules.buildRule();
 			try {
-				workspace.prepareOperation(workspace.getRoot(), monitor);
+				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD);
 				if (shouldBuild())
@@ -93,7 +94,7 @@ class AutoBuildJob extends Job {
 				// operation so open it
 				if (workspace.getElementTree().isImmutable())
 					workspace.newWorkingTree();
-				workspace.endOperation(workspace.getRoot(), false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
 			}
 		} finally {
 			monitor.done();

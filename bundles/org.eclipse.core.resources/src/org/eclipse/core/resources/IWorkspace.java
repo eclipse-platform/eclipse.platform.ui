@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,6 +164,7 @@ public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participan
  * @see #computeProjectOrder
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+ * @see IResourceRuleFactory#buildRule
  */
 public void build(int kind, IProgressMonitor monitor) throws CoreException;
 /**
@@ -420,6 +421,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#copy(IPath,int,IProgressMonitor)
+ * @see IResourceRuleFactory#copyRule
  * @since 2.0
  */
 public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -497,6 +499,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
  *    The status contained in the exception is a multi-status indicating 
  *    where the individual failures occurred.
  * @see IResource#delete(int,IProgressMonitor)
+ * @see IResourceRuleFactory#deleteRule
  * @since 2.0
  */
 public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -515,6 +518,7 @@ public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor m
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#markerRule
  */
 public void deleteMarkers(IMarker[] markers) throws CoreException;
 /**
@@ -584,6 +588,14 @@ public IWorkspaceDescription getDescription();
  * @return the workspace root
  */
 public IWorkspaceRoot getRoot();
+/**
+ * Returns a factory for obtaining scheduling rules prior to modifying
+ * resources in the workspace.
+ * 
+ * @see IResourceRuleFactory
+ * @return a resource rule factory
+ */
+public IResourceRuleFactory getRuleFactory();
 /**
  * Returns the synchronizer for this workspace.
  *
@@ -742,6 +754,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#move(IPath,int,IProgressMonitor)
+ * @see IResourceRuleFactory#moveRule
  * @since 2.0
  */
 public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -845,6 +858,7 @@ public void removeSaveParticipant(Plugin plugin);
  * @exception CoreException if the operation failed.
  * 
  * @see #AVOID_UPDATE
+ * @see IResourceRuleFactory
  * @since 3.0
  */
 public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
@@ -1184,6 +1198,7 @@ public String[] sortNatureSet(String[] natureIds);
  *   as an <code>Object</code> to avoid any direct references on the SWT component)
  * @return a status object that is OK if things are fine, otherwise a status describing
  *    reasons why modifying the given files is not reasonable
+ * @see IResourceRuleFactory#validateEditRule
  * @since 2.0
  */
 public IStatus validateEdit(IFile[] files, Object context);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -560,7 +560,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		monitor.beginTask(message, Policy.totalWork);
 		Policy.checkCanceled(monitor);
 		checkValidPath(path, FOLDER, true);
-		ISchedulingRule rule = getProject();
+		final ISchedulingRule rule = Rules.createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			//if the location doesn't have a device, see if the OS will assign one
@@ -601,8 +601,9 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  */
 public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
+	final ISchedulingRule rule = Rules.markerRule(this);
 	try {
-		workspace.prepareOperation(null, null);
+		workspace.prepareOperation(rule, null);
 		checkAccessible(getFlags(getResourceInfo(false, false)));
 		workspace.beginOperation(true);
 		MarkerInfo info = new MarkerInfo();
@@ -611,7 +612,7 @@ public IMarker createMarker(String type) throws CoreException {
 		workspace.getMarkerManager().add(this, info);
 		return new Marker(this, info.getId());
 	} finally {
-		workspace.endOperation(null, false, null);
+		workspace.endOperation(rule, false, null);
 	}
 }
 
@@ -686,15 +687,16 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * @see IResource
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
+	final ISchedulingRule rule = Rules.markerRule(this);
 	try {
-		workspace.prepareOperation(null, null);
+		workspace.prepareOperation(rule, null);
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 
 		workspace.beginOperation(true);
 		workspace.getMarkerManager().removeMarkers(this, type, includeSubtypes, depth);
 	} finally {
-		workspace.endOperation(null, false, null);
+		workspace.endOperation(rule, false, null);
 	}
 }
 /**
@@ -1177,12 +1179,12 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
 		String message = Policy.bind("resources.setLocal"); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(null, monitor);
 			workspace.beginOperation(true);
 			internalSetLocal(flag, depth);
 			monitor.worked(Policy.opWork);
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(null, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -1251,8 +1253,9 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	try {
 		String message = Policy.bind("resources.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkAccessible(flags);
@@ -1268,7 +1271,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

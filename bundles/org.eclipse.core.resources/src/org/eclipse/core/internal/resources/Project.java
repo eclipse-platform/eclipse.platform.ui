@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,8 +54,9 @@ protected MultiStatus basicSetDescription(ProjectDescription description) {
  * @see IProject#build
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+	final ISchedulingRule rule = Rules.buildRule();
 	try {
-		workspace.prepareOperation(workspace.getRoot(), monitor);
+		workspace.prepareOperation(rule, monitor);
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		if (!exists(flags, true) || !isOpen(flags))
@@ -67,15 +68,16 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
 		//building may close the tree, but we are still inside an operation so open it
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
-		workspace.endOperation(workspace.getRoot(), false, null);
+		workspace.endOperation(rule, false, null);
 	}
 }
 /** 
  * @see IProject#build
  */
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+	final ISchedulingRule rule = Rules.buildRule();
 	try {
-		workspace.prepareOperation(workspace.getRoot(), monitor);
+		workspace.prepareOperation(rule, monitor);
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		if (!exists(flags, true) || !isOpen(flags))
@@ -87,7 +89,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		//building may close the tree, but we are still inside an operation so open it
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
-		workspace.endOperation(workspace.getRoot(), false, null);
+		workspace.endOperation(rule, false, null);
 	}
 }
 /**
@@ -139,10 +141,11 @@ public void close(IProgressMonitor monitor) throws CoreException {
 	try {
 		String msg = Policy.bind("resources.closing.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
 			// Do this before the prepare to allow lifecycle participants to change the tree.
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);
@@ -165,7 +168,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -214,8 +217,9 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 	try {
 		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
 		checkValidPath(path, PROJECT, false);
+		final ISchedulingRule rule = Rules.createRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
 			if (description != null)
 				checkDescription(this, description, false);
@@ -257,7 +261,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -680,8 +684,9 @@ public void open(IProgressMonitor monitor) throws CoreException {
 		String msg = Policy.bind("resources.opening.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
 		monitor.subTask(msg);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			ProjectInfo info = (ProjectInfo)getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);
@@ -710,7 +715,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -791,7 +796,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork); //$NON-NLS-1$
-		ISchedulingRule rule = workspace.getRoot();
+		final ISchedulingRule rule = workspace.getRoot();
 		try {
 			//need to use root rule because nature configuration calls third party code
 			workspace.prepareOperation(rule, monitor);
@@ -861,8 +866,9 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	try {
 		String message = Policy.bind("resource.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 			workspace.beginOperation(true);
 			super.touch(Policy.subMonitorFor(monitor, Policy.opWork));
@@ -870,7 +876,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

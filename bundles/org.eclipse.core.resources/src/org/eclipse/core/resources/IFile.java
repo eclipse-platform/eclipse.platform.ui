@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,6 +193,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see IResourceRuleFactory#modifyRule
  * @since 2.0
  */
 public void appendContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -291,6 +292,7 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#createRule
  * @since 2.0
  */
 public void create(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -391,6 +393,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#delete(int,IProgressMonitor)
+ * @see IResourceRuleFactory#deleteRule
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
@@ -544,6 +547,7 @@ public boolean isReadOnly();
  * </ul>
  *
  * @see IResource#move(IPath,int,IProgressMonitor)
+ * @see IResourceRuleFactory#moveRule
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
@@ -692,6 +696,7 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see IResourceRuleFactory#modifyRule
  * @since 2.0
  */
 public void setContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -757,6 +762,7 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see IResourceRuleFactory#modifyRule
  * @since 2.0
  */
 public void setContents(IFileState source, int updateFlags, IProgressMonitor monitor) throws CoreException;

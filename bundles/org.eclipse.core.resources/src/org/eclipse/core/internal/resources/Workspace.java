@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
+	// whether the resources plugin is in debug mode.
+	public static boolean DEBUG = false;
+	protected static final String REFRESH_ON_STARTUP = "-refresh"; //$NON-NLS-1$
 	protected WorkspacePreferences description;
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
@@ -55,7 +58,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	protected final HashSet lifecycleListeners = new HashSet(10);
 
-	protected static final String REFRESH_ON_STARTUP = "-refresh"; //$NON-NLS-1$
+	/**
+	 * Scheduling rule factory
+	 */
+	private IResourceRuleFactory ruleFactory;
 
 	/**
 	 * File modification validation.  If it is true and validator is null, we try/initialize 
@@ -77,8 +83,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected TeamHook teamHook = null;
 
-	// whether the resources plugin is in debug mode.
-	public static boolean DEBUG = false;
 
 	/**
 	 * This field is used to control access to the workspace tree during
@@ -94,6 +98,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public Workspace() {
 		super();
 		localMetaArea = new LocalMetaArea();
+		ruleFactory = new Rules.DefaultFactory(this);
 		tree = new ElementTree();
 		/* tree should only be modified during operations */
 		tree.immutable();
@@ -157,17 +162,18 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
+		final ISchedulingRule rule = Rules.buildRule();
 		try {
 			monitor.beginTask(null, Policy.opWork);
 			try {
-				prepareOperation(getRoot(), monitor);
+				prepareOperation(rule, monitor);
 				beginOperation(true);
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
 					newWorkingTree();
-				endOperation(getRoot(), false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
 			}
 		} finally {
 			monitor.done();
@@ -776,13 +782,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// clone to avoid outside changes
 		markers = (IMarker[]) markers.clone();
 		try {
-			prepareOperation(getRoot(), null);
+			prepareOperation(null, null);
 			beginOperation(true);
 			for (int i = 0; i < markers.length; ++i)
 				if (markers[i] != null && markers[i].getResource() != null)
 					markerManager.removeMarker(markers[i].getResource(), markers[i].getId());
 		} finally {
-			endOperation(getRoot(), false, null);
+			endOperation(null, false, null);
 		}
 	}
 	/**
@@ -1050,6 +1056,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public IWorkspaceRoot getRoot() {
 		return defaultRoot;
+	}
+	public IResourceRuleFactory getRuleFactory() {
+		return ruleFactory;
 	}
 	public SaveManager getSaveManager() {
 		return saveManager;

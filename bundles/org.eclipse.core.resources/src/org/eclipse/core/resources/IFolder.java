@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,6 +129,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @see IResourceRuleFactory#createRule
  * @since 2.0
  */
 public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException;
@@ -228,6 +229,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
+ * @see IResourceRuleFactory#deleteRule
  * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -305,6 +307,7 @@ public IFolder getFolder(String name);
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
+ * @see IResourceRuleFactory#moveRule
  * @see IResource#move(IPath,int,IProgressMonitor)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;

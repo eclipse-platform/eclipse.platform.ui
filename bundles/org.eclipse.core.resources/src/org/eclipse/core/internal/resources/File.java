@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,9 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 		Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 		if (workspace.shouldValidate) 
 			workspace.validateSave(this);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			workspace.beginOperation(true);
@@ -48,7 +49,7 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -101,7 +102,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 		String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE, true);
-		final ISchedulingRule rule = getParent();
+		final ISchedulingRule rule = Rules.createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
@@ -271,8 +272,9 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 		monitor.beginTask(message, Policy.totalWork);
 		if (workspace.shouldValidate) 
 			workspace.validateSave(this);
+		final ISchedulingRule rule = Rules.modifyRule(this);
 		try {
-			workspace.prepareOperation(this, monitor);
+			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			workspace.beginOperation(true);
@@ -281,7 +283,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
