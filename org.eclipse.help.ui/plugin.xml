@@ -60,7 +60,7 @@
          <action
                label="%helpcontents"
                icon="icons/view.gif"
-               helpContextId="org.eclipse.help.ui.helpContentsMenu"
+               helpContextId="org.eclipse.ui.HelpContents_action_context"
                class="org.eclipse.help.ui.internal.HelpContentsAction"
                tooltip="%openhelpcontents"
                menubarPath="help/helpEnd"
