@@ -55,6 +55,7 @@ import org.eclipse.ui.internal.commands.registry.KeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.registry.PluginCommandRegistry;
 import org.eclipse.ui.internal.commands.registry.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 
@@ -155,7 +156,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public static boolean validateKeyStroke(KeyStroke keyStroke) {
-		return keyStroke.getNaturalKey().equals("\u0000");
+		return !keyStroke.getNaturalKey().equals(CharacterKey.getInstance('\0'));
 	}
 
 	private Map actionsById = new HashMap();	
