@@ -32,13 +32,7 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationPropertiesDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -331,8 +325,8 @@ public class DebugUITools {
 	 *
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param configuration the configuration to display
-	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
-	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
+	 * @param group identifier of the launch group the launch configuration
+	 * belongs to
 	 * @return the return code from opening the launch configuration dialog -
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.1
