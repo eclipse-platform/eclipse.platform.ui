@@ -231,6 +231,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 *            unsaved changes
 	 * @return <code>true</code> if the editors were successfully closed, and
 	 *         <code>false</code> if the editors are still open
+	 * @since 3.0
 	 */
 	public boolean closeEditors(IEditorReference[] editorRefs, boolean save);
 	
