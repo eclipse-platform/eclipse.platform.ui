@@ -17,16 +17,19 @@ import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 
 /**
  * An enhanced implementation of the <code>ICompletionProposal</code> interface implementing all the extension interfaces.
  */
-final class PositionBasedCompletionProposal implements ICompletionProposal {
+final class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
 	
 	/** The string to be displayed in the completion proposal popup */
 	private String fDisplayString;
@@ -112,7 +115,7 @@ final class PositionBasedCompletionProposal implements ICompletionProposal {
 	}
 
 	/*
-	 * @see ICompletionProposal#getDisplayString()
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
 	public String getDisplayString() {
 		if (fDisplayString != null)
@@ -125,6 +128,39 @@ final class PositionBasedCompletionProposal implements ICompletionProposal {
 	 */
 	public String getAdditionalProposalInfo() {
 		return fAdditionalProposalInfo;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
+	 */
+	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
+		apply(viewer.getDocument());
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
+	 */
+	public void selected(ITextViewer viewer, boolean smartToggle) {
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
+	 */
+	public void unselected(ITextViewer viewer) {
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
+	 */
+	public boolean validate(IDocument document, int offset, DocumentEvent event) {
+		try {
+			String content= document.get(fReplacementPosition.getOffset(), fReplacementPosition.getLength());
+			if (content.startsWith(fReplacementString))
+				return true;
+		} catch (BadLocationException e) {
+			// ignore concurrently modified document
+		}
+		return false;
 	}
 
 }
