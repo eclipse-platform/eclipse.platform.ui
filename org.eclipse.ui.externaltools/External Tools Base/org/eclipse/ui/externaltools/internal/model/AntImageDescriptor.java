@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
- * A JDIImageDescriptor consists of a main icon and several adornments. The adornments
+ * A image descriptor consisting of a main icon and several adornments. The adornments
  * are computed according to flags set on creation of the descriptor.
  */
 public class AntImageDescriptor extends CompositeImageDescriptor {
