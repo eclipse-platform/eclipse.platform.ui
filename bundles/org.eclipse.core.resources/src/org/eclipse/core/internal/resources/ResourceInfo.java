@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class ResourceInfo implements IElementTreeData, ICoreConstants {
 
-	/** Set of flags which reflect various states of the info (dirty, transient, ...). */
+	/** Set of flags which reflect various states of the info (used, derived, ...). */
 	protected int flags = 0;
 
 	/** The generation count for encoding changes. */
