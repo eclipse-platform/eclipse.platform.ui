@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 
 public abstract class FileBuffer implements IFileBuffer {
@@ -63,6 +64,7 @@ public abstract class FileBuffer implements IFileBuffer {
 				try {
 					execute();
 				} catch (Exception x) {
+					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "Exception when synchronizing", x)); //$NON-NLS-1$
 					fManager.fireStateChangeFailed(FileBuffer.this);
 				}
 			}
