@@ -21,14 +21,21 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
  */
 public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate {
 	
-
 	private ExecutionAction fLaunchAction;
 	
 	public LaunchDropDownAction(ExecutionAction launchAction) {
-		fLaunchAction= launchAction;		
+		setLaunchAction(launchAction);		
 	}
 
-	private void createMenuForAction(Menu parent, Action action) {
+	private void createMenuForAction(Menu parent, Action action, int count) {
+		if (count > 0) {
+			//add the numerical accelerator
+			StringBuffer label= new StringBuffer("&");
+			label.append(count);
+			label.append(' ');
+			label.append(action.getText());
+			action.setText(label.toString());
+		}
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
@@ -44,27 +51,44 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 */
 	public Menu getMenu(Control parent) {
 		Menu menu= new Menu(parent);
+		return createMenu(menu);
+	}
+	
+	/**
+	 * @see IMenuCreator#getMenu(Menu)
+	 */
+	public Menu getMenu(Menu parent) {
+		Menu menu= new Menu(parent);
+		return createMenu(menu);
+	}
+
+	protected Menu createMenu(Menu menu) {
 		LaunchHistoryElement[] historyList= getHistory();
 		int count= 0;
 		for (int i = 0; i < historyList.length; i++) {
 			LaunchHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction);
+			createMenuForAction(menu, newAction, i+1);
 			count++;
 		}
-		if (count > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
+		
+		if (getLaunchAction() != null) {
+			//used in the tool bar drop down for the cascade launch with menu
+			if (count > 0) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
+		
+			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);
 		}
-		createMenuForAction(menu, new LaunchWithAction(getMode()));
 
 		return menu;
 	}
-
+	
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		fLaunchAction.run();
+		getLaunchAction().run();
 	}
 	
 	/**
@@ -88,5 +112,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.
 	 */
 	public abstract String getMode();
+	
+	protected ExecutionAction getLaunchAction() {
+		return fLaunchAction;
+	}
+
+	protected void setLaunchAction(ExecutionAction launchAction) {
+		fLaunchAction = launchAction;
+	}
 }
 

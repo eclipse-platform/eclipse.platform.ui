@@ -14,6 +14,10 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	public DebugDropDownAction() {
 		super(new DebugAction());
 	}
+	
+	protected DebugDropDownAction(ExecutionAction action) {
+		super(action);
+	}
 
 	/**
 	 * @see LaunchDropDownAction#getMode()

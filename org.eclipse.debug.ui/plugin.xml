@@ -165,6 +165,20 @@
             id="org.eclipse.debug.internal.ui.DebugDropDownAction">
       </action>
        <action
+            label="%RunHistoryMenuAction.label"
+            icon="icons/full/ctool16/run_exc.gif"
+            class="org.eclipse.debug.internal.ui.RunHistoryMenuAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.RunHistoryMenuAction">
+      </action>
+      <action
+            label="%DebugHistoryMenuAction.label"
+            icon="icons/full/ctool16/debug_exc.gif"
+            class="org.eclipse.debug.internal.ui.DebugHistoryMenuAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.DebugHistoryMenuAction">
+      </action>
+       <action
             label="%RunWithAction.label"
             icon="icons/full/ctool16/run_exc.gif"
             class="org.eclipse.debug.internal.ui.RunWithAction"

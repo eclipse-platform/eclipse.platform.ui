@@ -13,6 +13,10 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	public RunDropDownAction() {
 		super(new RunAction());
 	}
+	
+	protected RunDropDownAction(ExecutionAction action) {
+		super(action);
+	}
 
 	/**
 	 * @see LaunchDropDownAction#getMode()
