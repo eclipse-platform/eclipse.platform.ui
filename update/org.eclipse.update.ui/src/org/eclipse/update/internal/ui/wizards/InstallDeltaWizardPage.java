@@ -20,10 +20,7 @@ import org.eclipse.update.internal.ui.model.MissingFeature;
 import org.eclipse.update.internal.ui.parts.*;
 
 /**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
+ * 
  */
 public class InstallDeltaWizardPage extends WizardPage {
 	private ISessionDelta[] deltas;
