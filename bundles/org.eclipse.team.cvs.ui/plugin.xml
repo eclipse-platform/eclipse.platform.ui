@@ -28,9 +28,9 @@
 	
 	<!-- *************** Decorator **************** -->
 	<extension point="org.eclipse.team.ui.decorators">
-	<decorator 
-		class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
-		natureId="org.eclipse.team.cvs.core.cvsnature"/>
+		<decorator 
+			class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
+			natureId="org.eclipse.team.cvs.core.cvsnature"/>
 	</extension>
 
 	
@@ -124,6 +124,11 @@
 				label="%ShowHistoryAction.label"
 				tooltip="%ShowHistoryAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.autoDefine"
+				label="%AutoDefineTagsAction.label"
+				tooltip="%AutoDefineTagsAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AutoDefineTagsAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.LogEntryContributions"
@@ -133,6 +138,29 @@
 				label="%OpenLogEntryAction.label"
 				tooltip="%OpenLogEntryAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
+			objectClass="org.eclipse.team.ccvs.core.IRemoteRoot">
+			<action
+				id="org.eclipse.team.ccvs.ui.defineTag"
+				label="%DefineTagAction.label"
+				tooltip="%DefineTagAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.DefineTagAction"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.removeRoot"
+				label="%RemoveRootAction.label"
+				tooltip="%RemoveRootAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.TagContributions"
+			objectClass="org.eclipse.team.internal.ccvs.ui.model.Tag">
+			<action
+				id="org.eclipse.team.ccvs.ui.removeTag"
+				label="%RemoveTagAction.label"
+				tooltip="%RemoveTagAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveTagAction"/>
 		</objectContribution>
 	</extension> 
 
@@ -148,18 +176,6 @@
 		</actionSet>
 	</extension>
 	
-	<!-- ************* Property pages ************** -->
-<!--
-	<extension point="org.eclipse.ui.propertyPages">
-		<page name="CVS" 
-			id="org.eclipse.team.ccvs.ui.ResourcePropertiesPage" 
-			objectClass="org.eclipse.core.resources.IResource" 
-			class="org.eclipse.team.internal ccvs.ui.ResourcePropertiesPage">
-			<filter name="projectNature" value="org.eclipse.team.ccvs.cvsnature"/> 
-		</page>
-	</extension>
--->
-
 	<!-- ************** Views ********************** -->
 	<extension point="org.eclipse.ui.views">
 		<category 

@@ -14,6 +14,7 @@ public interface ICVSUIConstants {
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif";
+	public final String IMG_TAG = "obj16/tag.gif";
 	
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif";

@@ -51,6 +51,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	private static CVSUIPlugin plugin;
 	
 	/**
+	 * The repository manager
+	 */
+	private RepositoryManager repositoryManager;
+	
+	/**
 	 * CVSUIPlugin constructor
 	 * 
 	 * @param descriptor  the plugin descriptor
@@ -100,6 +105,15 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Returns the repository manager
+	 * 
+	 * @return the repository manager
+	 */
+	public RepositoryManager getRepositoryManager() {
+		return repositoryManager;
+	}
+	
+	/**
 	 * Initializes the table of images used in this plugin.
 	 */
 	private void initializeImages() {
@@ -109,6 +123,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_REPOSITORY, baseURL); 
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_TAG, baseURL);
 	}
 	/**
 	 * Convenience method for logging statuses to the plugin log
@@ -141,5 +156,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		initializeImages();
 		initializePreferences();
+		repositoryManager = new RepositoryManager();
 	}
 }

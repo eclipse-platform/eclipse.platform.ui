@@ -25,8 +25,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.IRemoteRoot;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
+import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ccvs.ui.wizards.LocationWizard;
@@ -46,8 +48,8 @@ public class RepositoriesView extends ViewPart {
 	// The tree viewer
 	private TreeViewer viewer;
 	
-	// The roots
-	private AdaptableList roots;
+	// The root
+	private AllRootsElement root;
 	
 	private OpenRemoteFileAction openAction;
 	
@@ -58,14 +60,8 @@ public class RepositoriesView extends ViewPart {
 	 * Add a new repository based on the given properties to the viewer.
 	 */
 	private void addRepository(Properties properties) {
-		try {
-			roots.add(CVSTeamProvider.getRemoteRoot(properties));
-			if (viewer != null) {
-				viewer.refresh();
-			}
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-		}
+		IRemoteRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
+		viewer.refresh();
 	}
 	/**
 	 * Contribute actions to the view
@@ -143,7 +139,8 @@ public class RepositoriesView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new RemoteContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setInput(roots);
+		viewer.setInput(root);
+		viewer.setSorter(new RepositorySorter());
 		drillPart = new DrillDownAdapter(viewer);
 		contributeActions();
 	}
@@ -175,7 +172,7 @@ public class RepositoriesView extends ViewPart {
 	 * Initialize the repositories and actions
 	 */
 	private void initialize() {
-		roots = new AdaptableList();
+		root = new AllRootsElement();
 	}
 	/*
 	 * @see WorkbenchPart#setFocus

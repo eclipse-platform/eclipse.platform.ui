@@ -41,4 +41,11 @@ public class RemoteRootElement extends RemoteFolderElement {
 	public Object getParent(Object o) {
 		return null;
 	}
+	/**
+	 * Return all tags
+	 */
+	public Object[] getChildren(Object o) {
+		if (!(o instanceof IRemoteRoot)) return null;
+		return CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags((IRemoteRoot)o);
+	}
 }
