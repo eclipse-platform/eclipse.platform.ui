@@ -130,6 +130,8 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 	 * @param location
 	 */
 	public void cancelJobs(ICVSRepositoryLocation location) {
-		manager.cancel(location);
+		if (manager != null) {
+			manager.cancel(location);
+		}
 	}
 }
