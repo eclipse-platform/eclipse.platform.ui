@@ -17,7 +17,6 @@ public class DebugMessageIds extends MessageIds {
 	public final static String MESSAGE_DELIMITER= ","; //$NON-NLS-1$
 	
 	public final static String BUILD_STARTED=   "build_started"; //$NON-NLS-1$
-	public final static String BUILD_FINISHED= "build_finished"; //$NON-NLS-1$
 	public final static String TARGET_STARTED= "target_started"; //$NON-NLS-1$
 	public final static String TARGET_FINISHED= "target_finished"; //$NON-NLS-1$
 	public final static String TASK_STARTED= "task_started"; //$NON-NLS-1$

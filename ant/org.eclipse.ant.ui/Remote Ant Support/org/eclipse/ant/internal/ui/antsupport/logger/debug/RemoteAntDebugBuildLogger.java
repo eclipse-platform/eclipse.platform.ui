@@ -190,14 +190,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void buildFinished(BuildEvent event) {
-		marshalMessage(-1, DebugMessageIds.BUILD_FINISHED);
-		super.buildFinished(event);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {

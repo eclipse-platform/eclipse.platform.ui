@@ -75,8 +75,6 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		}
 		if (message.startsWith(DebugMessageIds.BUILD_STARTED)) {
 			buildStarted();
-		} else if (message.startsWith(DebugMessageIds.BUILD_FINISHED)) {
-			fTarget.terminated();
 		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
 			handleSuspendMessage(message);
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
@@ -168,7 +166,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		if (fDebug) {
 			System.out.println("shutdown " + fRequestPort); //$NON-NLS-1$
 		}
-		
+		fTarget.terminated();
 		fLaunch= null;
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		try {
