@@ -95,8 +95,12 @@ import org.eclipse.swt.widgets.*;
 		
 			if (composite == null)
 				return;
+				
+			// StatusLineManager skips over the standard status line widgets 
+			// in its update method. There is thus a dependency
+			// between the layout of the standard widgets and the update method.
 			
-			// Make sure cancel button and progress bar are at the end.
+			// Make sure cancel button and progress bar are before contributions.
 			fMessageLabel.moveAbove(null);
 			fToolBar.moveBelow(fMessageLabel);
 			fProgressBar.moveBelow(fToolBar);
@@ -176,6 +180,11 @@ import org.eclipse.swt.widgets.*;
 				handleDispose();
 			}
 		});
+
+		// StatusLineManager skips over the standard status line widgets 
+		// in its update method. There is thus a dependency
+		// between this code defining the creation and layout of the standard 
+		// widgets and the update method.
 
 		setLayout(new StatusLineLayout());
 
