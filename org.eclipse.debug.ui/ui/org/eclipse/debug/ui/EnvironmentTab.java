@@ -105,7 +105,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				String[] varNames = new String[m.size()];
 				m.keySet().toArray(varNames);
 				for (int i = 0; i < m.size(); i++) {
-					elements[i] = new EnvironmentVariable((String) varNames[i], (String) m.get(varNames[i]));
+					elements[i] = new EnvironmentVariable(varNames[i], (String) m.get(varNames[i]));
 				}
 			}
 			return elements;

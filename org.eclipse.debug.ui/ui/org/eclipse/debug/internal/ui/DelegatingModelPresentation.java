@@ -266,7 +266,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		if (element instanceof IDebugElement) {
-			IDebugModelPresentation lp= getConfiguredPresentation((IDebugElement) element);
+			IDebugModelPresentation lp= getConfiguredPresentation(element);
 			if (lp != null) {
 				return lp.isLabelProperty(element, property);
 			}

@@ -84,12 +84,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				case DebugEvent.TERMINATE :
 					removeInstructionPointerAnnotations(source);
 					if (source instanceof IThread) {
-						clearSourceSelection((IThread)source);
+						clearSourceSelection(source);
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
 						if (source instanceof IDebugTarget) {
-							clearSourceSelection((IDebugTarget)source);
+							clearSourceSelection(source);
 						}
 						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(source);
 						refresh(parent);
@@ -403,7 +403,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				if (entryValue == null) {
 					continue;
 				}
-				stopTime= ((Long)entryValue).longValue();
+				stopTime= entryValue.longValue();
 				if (stopTime <= currentTime) {
 					// The timer has expired for this thread.
 					// Refresh the UI to show that the thread

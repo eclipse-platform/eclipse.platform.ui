@@ -1250,7 +1250,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 			if (lp instanceof LazyModelPresentation) {
 				if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
-					return (IDebugModelPresentation)lp;
+					return lp;
 				}
 			}
 		}

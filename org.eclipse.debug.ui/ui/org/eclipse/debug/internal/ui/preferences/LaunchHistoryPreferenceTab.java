@@ -293,7 +293,7 @@ public class LaunchHistoryPreferenceTab {
 		boolean last= false;
 		int lastFav= favs.size() - 1;
 		while (elements.hasNext()) {
-			Object element = (Object) elements.next();
+			Object element = elements.next();
 			if(!first && favs.indexOf(element) == 0) {
 				first= true;
 			}

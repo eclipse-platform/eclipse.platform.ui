@@ -352,7 +352,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
 		if (isShared()) {
 			String containerPathString = getSharedLocationText().getText();
-			IContainer container = (IContainer) getContainer(containerPathString);
+			IContainer container = getContainer(containerPathString);
 			config.setContainer(container);
 		} else {
 			config.setContainer(null);
