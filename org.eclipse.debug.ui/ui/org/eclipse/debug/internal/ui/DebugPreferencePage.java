@@ -55,7 +55,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 											"Launching style", 
 											1,
 											new String[][] {
-												{"La&uncher-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, 
+												{"Launc&her-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, 
 												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} 
 											},
 											getFieldEditorParent()));
@@ -99,9 +99,9 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	
 	private void createSaveBeforeLaunchEditors(Composite parent) {
 		fSaveRadioFieldEditor = new RadioGroupFieldEditor(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, "Save dirty editors before launching", 1, 
-										new String[][] {{"Never", IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
-														{"Prompt", IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
-														{"Auto-save", IDebugUIConstants.PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH}},
+										new String[][] {{"&Never", IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
+														{"&Prompt", IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
+														{"Auto-sav&e", IDebugUIConstants.PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH}},
 										parent);
 		addField(fSaveRadioFieldEditor);
 		
