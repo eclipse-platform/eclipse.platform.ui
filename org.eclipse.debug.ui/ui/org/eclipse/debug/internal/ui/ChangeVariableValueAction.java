@@ -19,7 +19,8 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	protected Text fEditorText;
 	protected TreeEditor fTreeEditor;
 	protected IVariable fVariable;
-
+	protected boolean fKeyReleased= false;
+	
 	private static final String PREFIX= "change_variable_value_action.";
 	private static final String ERROR= PREFIX + "error.";
 	private static final String DIALOG_TITLE= PREFIX + "dialog.title";
@@ -89,22 +90,31 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		fComposite.setVisible(true);
 		fEditorText.setFocus();
 	
-		// CR means commit the change, ESC means abort changing the value
+		// CR means commit the changes, ESC means abort changing the value
 		fEditorText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent event) {
 				if (event.character == SWT.CR) {
-					saveChangesAndCleanup(fVariable, activeShell);
+					if (fKeyReleased) {
+						saveChangesAndCleanup(fVariable, activeShell);
+					} else {
+						cleanup();
+					}
 				}
 				if (event.character == SWT.ESC) {
 					cleanup();
 				}
+				fKeyReleased= true;
 			}
 		});
 	
-		// If the focus is lost, then act as if user hit CR and commit change
+		// If the focus is lost, then act as if user hit CR and commit changes
 		fEditorText.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent fe) {
-				saveChangesAndCleanup(fVariable, activeShell);
+				if (fKeyReleased) {
+					saveChangesAndCleanup(fVariable, activeShell);
+				} else {
+					cleanup();
+				}
 			}
 		});				
 	}
@@ -131,6 +141,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * Tidy up the widgets that were used
 	 */
 	private void cleanup() {
+		fKeyReleased= false;
 		if (fEditorText != null) {
 			fEditorText.dispose();
 			fEditorText = null;
