@@ -258,11 +258,13 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 					for (int i = 0; i < regions.length; i++) {
 						StreamPartition partition = (StreamPartition)regions[i];
 						Color color = contentProvider.getColor(partition.getStreamIdentifier());
-						//System.out.println(partition.getType() + " : " + partition.getOffset() + " : " + partition.getLength());
 						styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
 					}	
-					//System.out.println();
-					getTextWidget().setStyleRanges(styles);
+					try {
+						getTextWidget().setStyleRanges(styles);
+					} catch (IllegalArgumentException e) {
+						// style ranges are out of bounds - likely an old/changed document.
+					}
 				}
 			};
 			getControl().getDisplay().asyncExec(r);
