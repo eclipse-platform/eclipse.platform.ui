@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IDocument;
  * 
  * @since 3.1
  */
-public class DocumentInputStream extends InputStream {
+class DocumentInputStream extends InputStream {
 	
 	/** the document */
 	private IDocument fDocument;
