@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
@@ -110,16 +111,20 @@ import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.RoleManagerFactory;
@@ -906,17 +911,50 @@ public class Workbench
 		
         // establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
+			
 			public Integer getAccelerator(String commandId) {
-				return ((CommandManager) commandManager).getAccelerator(commandId);		
-			}
-	
+				Integer accelerator = null;
+				ICommand command = commandManager.getCommand(commandId);
+				
+				if (command.isDefined()) {
+					List keySequenceBindings = command.getKeySequenceBindings();	
+
+					if (!keySequenceBindings.isEmpty()) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+						KeySequence keySequence = keySequenceBinding.getKeySequence();
+						List keyStrokes = keySequence.getKeyStrokes();
+						
+						if (keyStrokes.size() == 1) {
+							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+							accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+						}
+					}
+				}
+
+				return accelerator;
+			}	
+			
 			public String getAcceleratorText(String commandId) {
-				return ((CommandManager) commandManager).getAcceleratorText(commandId);		
+				String acceleratorText = null;
+				ICommand command = commandManager.getCommand(commandId);
+				
+				if (command.isDefined()) {
+					List keySequenceBindings = command.getKeySequenceBindings();	
+
+					if (!keySequenceBindings.isEmpty()) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+						acceleratorText = keySequenceBinding.getKeySequence().format();
+					}
+				}
+
+				return acceleratorText;
 			}
 			
 			public boolean isAcceleratorInUse(int accelerator) {
-				return ((CommandManager) commandManager).isAcceleratorInUse(accelerator);						
-			}
+				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				// TODO fix cast
+				return ((CommandManager) commandManager).isPerfectMatch(keySequence) || ((CommandManager) commandManager).isPartialMatch(keySequence);
+			}					
 			
 			public final boolean isActive(final String commandId) {
 				if (commandId != null) {

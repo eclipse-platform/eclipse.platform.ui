@@ -35,12 +35,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationServiceEvent;
-import org.eclipse.ui.contexts.IContextActivationServiceListener;
-import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
@@ -48,6 +42,11 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
@@ -277,11 +276,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 	final Listener modeCleaner = new Listener() {
 		public void handleEvent(Event event) {
-			((CommandManager) workbench.getCommandManager()).setMode(KeySequence.getInstance()); // clear
-			// the
-			// mode
-			// TODO Remove this when mode listener updating becomes available.
-			updateModeLines(((CommandManager) workbench.getCommandManager()).getMode());
+			setMode(KeySequence.getInstance()); 
 		}
 	};
 	/**
@@ -455,6 +450,27 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		return name;
 	}
 
+	private KeySequence getMode() {
+		return ((CommandManager) workbench.getCommandManager()).getMode();	
+	}
+
+	private void setMode(KeySequence keySequence) {
+		((CommandManager) workbench.getCommandManager()).setMode(keySequence);
+		updateModeStatusLines();
+	}
+	
+	private String getPerfectMatch(KeySequence keySequence) {
+		return ((CommandManager) workbench.getCommandManager()).getPerfectMatch(keySequence);
+	}		
+	
+	private boolean isPartialMatch(KeySequence keySequence) {
+		return ((CommandManager) workbench.getCommandManager()).isPartialMatch(keySequence);
+	}
+
+	private boolean isPerfectMatch(KeySequence keySequence) {
+		return ((CommandManager) workbench.getCommandManager()).isPerfectMatch(keySequence);
+	}	
+	
 	/**
 	 * Processes a key press with respect to the key binding architecture. This
 	 * updates the mode of the command manager, and runs the current handler
@@ -468,94 +484,39 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @return <code>true</code> if a command is executed; <code>false</code>
 	 *         otherwise.
 	 * @since 3.0
-	 */
+	 */	
+	// TODO remove event parameter once key-modified actions are removed	
 	public boolean press(List potentialKeyStrokes, Event event) {
-		// TODO move this method to CommandManager once getMode() is added to
-		// ICommandManager (and triggers and change event)
-		// TODO remove event parameter once key-modified actions are removed
+		KeySequence modeBeforeKeyStroke = getMode();
+				
+		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
+			KeySequence modeAfterKeyStroke = KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());		
 
-		// Check every potential key stroke until one matches.
-		Iterator keyStrokeItr = potentialKeyStrokes.iterator();
-		while (keyStrokeItr.hasNext()) {
-			KeySequence modeBeforeKeyStroke = ((CommandManager) workbench.getCommandManager()).getMode();
-			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
-			keyStrokes.add(keyStrokeItr.next());
-			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
-			Map matchesByKeySequenceForModeBeforeKeyStroke =((CommandManager) workbench.getCommandManager()).getMatchesByKeySequenceForMode();
-			((CommandManager) workbench.getCommandManager()).setMode(modeAfterKeyStroke);
-			Map matchesByKeySequenceForModeAfterKeyStroke = ((CommandManager) workbench.getCommandManager()).getMatchesByKeySequenceForMode();
-			boolean consumeKeyStroke = false;
-			boolean matchingSequence = false;
+			if (isPartialMatch(modeAfterKeyStroke)) {
+				setMode(modeAfterKeyStroke);
+				return true;				
+			} else if (isPerfectMatch(modeAfterKeyStroke)) {
+				String commandId = getPerfectMatch(modeAfterKeyStroke);
+				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
+				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
 
-			if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
-				// this key stroke is part of one or more possible completions:
-				// consume the keystroke
-				updateModeLines(modeAfterKeyStroke);
-				consumeKeyStroke = true;
-				matchingSequence = true;
-			} else {
-				// there are no possible longer multi-stroke sequences, allow a
-				// completion now if possible
-				Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
-
-				if (match != null) {
-					// a completion was found.
-					String commandId = match.getCommandId();
-					Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
-					org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
-
-					if (action != null) {
-						// an action was found corresponding to the completion
-
-						if (action.isEnabled()) {
-							updateModeLines(modeAfterKeyStroke);
-							try {
-								action.execute(event);
-							} catch (Exception e) {
-								String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
-								WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
-							}
-						}
-
-						// consume the keystroke
-						consumeKeyStroke = true;
+				if (action != null && action.isEnabled()) {
+					setMode(modeAfterKeyStroke);
+							
+					try {
+						action.execute(event);
+					} catch (Exception e) {
+						String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
+						WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
 					}
-
-					matchingSequence = true;
 				}
 
-				// possibly no completion was found, or no action was found
-				// corresponding to the completion, but if we were already in a
-				// mode consume the keystroke anyway.
-				if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
-					consumeKeyStroke = true;
-
-				// clear mode
-				((CommandManager) workbench.getCommandManager()).setMode(KeySequence.getInstance());
-				updateModeLines(KeySequence.getInstance());
-			}
-
-			// TODO is this necessary?
-			updateActiveActivityIds();
-
-			if (consumeKeyStroke) {
-				// We found a match, so stop now.
-				return consumeKeyStroke;
-			} else {
-				/*
-				 * If we haven't consumed the stroke, but we found a command
-				 * That matches, then we should break the loop.
-				 */
-				if (matchingSequence) {
-					break;
-				} else {
-					// Restore the mode, so we can try again.
-					((CommandManager) workbench.getCommandManager()).setMode(modeBeforeKeyStroke);
-				}
+				setMode(KeySequence.getInstance());
+				return action != null || modeBeforeKeyStroke.isEmpty();
 			}
 		}
 
-		// No key strokes match.
+		setMode(KeySequence.getInstance());				
 		return false;
 	}
 
@@ -753,9 +714,9 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 *            The mode which should be used to update the status line; must
 	 *            not be <code>null</code>.
 	 */
-	void updateModeLines(KeySequence mode) {
+	void updateModeStatusLines() {
 		// Format the mode into text.
-		String text = mode.format();
+		String text = getMode().format();
 
 		// Update each open window's status line.
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();

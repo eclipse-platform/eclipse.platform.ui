@@ -39,12 +39,9 @@ import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationEvent;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
 
 public final class CommandManager implements ICommandManager {
 
@@ -757,98 +754,44 @@ public final class CommandManager implements ICommandManager {
 		return keyConfigurationEventsByKeyConfigurationId;			
 	}
 
-
-
-
-	// TODO move to workbench?
-	public Integer getAccelerator(String commandId) {
-		Integer accelerator = null;
-		ICommand command = getCommand(commandId);
+	public Map getPartialMatches(KeySequence keySequence) {
+		Map map = new HashMap(keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence));
 		
-		if (command.isDefined()) {
-			List keySequenceBindings = command.getKeySequenceBindings();	
-
-			if (!keySequenceBindings.isEmpty()) {
-				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-				KeySequence keySequence = keySequenceBinding.getKeySequence();
-				List keyStrokes = keySequence.getKeyStrokes();
-	
-				if (keyStrokes.size() == 1) {
-					KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-					accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
-				}
-			}
-		}
-
-		return accelerator;
-	}	
-	
-	// TODO move to workbench?
-	public String getAcceleratorText(String commandId) {
-		String acceleratorText = null;
-		ICommand command = getCommand(commandId);
+		for (Iterator iterator = map.values().iterator(); iterator.hasNext();) {
+			Map.Entry entry	= (Map.Entry) iterator.next();
+			entry.setValue(((Match) entry.getValue()).getCommandId());
+		}		
 		
-		if (command.isDefined()) {
-			List keySequenceBindings = command.getKeySequenceBindings();	
-
-			if (!keySequenceBindings.isEmpty()) {
-				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-				acceleratorText = keySequenceBinding.getKeySequence().format();
-			}
-		}
-
-		return acceleratorText;
+		return Collections.unmodifiableMap(map);
 	}
 	
-	// TODO move to workbench?
-	public boolean isAcceleratorInUse(int accelerator) {
-		KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-		return isPerfectMatch(keySequence) || isPartialMatch(keySequence);
-	}	
-
-	
-	
-	
-	private String getPerfectMatch(KeySequence keySequence) {
+	public String getPerfectMatch(KeySequence keySequence) {
 		Match match = (Match) keySequenceBindingMachine.getMatchesByKeySequence().get(keySequence);
 		return match != null ? match.getCommandId() : null;
 	}
 
-	boolean isPartialMatch(KeySequence keySequence) {
-		return !keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence).isEmpty();
+	public boolean isPartialMatch(KeySequence keySequence) {
+		return !getPartialMatches(keySequence).isEmpty();
 	}
 	
-	private boolean isPerfectMatch(KeySequence keySequence) {
+	public boolean isPerfectMatch(KeySequence keySequence) {
 		return getPerfectMatch(keySequence) != null;
 	}
 
-	
-	
-	
-	
-	/*
-	public Map getKeySequenceBindingsByCommandId() {
-		return keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
-	}
-	*/
-	
-	/*
-	public Map getMatchesByKeySequence() {
-		return keySequenceBindingMachine.getMatchesByKeySequence();
-	}
-	*/
 
+	
+	
 	public Map getMatchesByKeySequenceForMode() {
 		return keySequenceBindingMachine.getMatchesByKeySequenceForMode();
 	}
 
-	// TODO necessary?
+	
+	
 	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
 	}
 
-	// TODO necessary?
-	public IMutableCommandRegistry getMutableCommandRegistry() {
+	IMutableCommandRegistry getMutableCommandRegistry() {
 		return mutableCommandRegistry;
 	}
 	

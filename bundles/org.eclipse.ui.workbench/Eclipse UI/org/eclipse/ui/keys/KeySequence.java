@@ -134,6 +134,25 @@ public final class KeySequence implements Comparable {
 	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
 	}
+	
+	/**
+	 * Gets an instance of <code>KeySequence</code> given a key sequence and 
+	 * a key stroke.
+	 * 
+	 * @param  KeySequence a key sequence. Must not be <code>null</code>.
+	 * @param  keyStroke   a key stroke. Must not be <code>null</code>.
+	 * @return             a key sequence that is equal to the given key 
+	 * 					   sequence with the given key stroke appended to the 
+	 * 					   end. Guaranteed not to be <code>null</code>.
+	 */	
+	public static KeySequence getInstance(KeySequence keySequence, KeyStroke keyStroke) {
+		if (keySequence == null || keyStroke == null)
+			throw new NullPointerException();
+		
+		List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
+		keyStrokes.add(keyStroke);		
+		return new KeySequence(keyStrokes);
+	}	
 
 	/**
 	 * Gets an instance of <code>KeySequence</code> by parsing a given a formal
@@ -310,6 +329,16 @@ public final class KeySequence implements Comparable {
 	 */
 	public boolean isComplete() {
 		return keyStrokes.isEmpty() || ((KeyStroke) keyStrokes.get(keyStrokes.size() - 1)).isComplete();
+	}	
+
+	/**
+	 * Returns whether or not this key sequence is empty. Key sequences are 
+	 * complete iff they have no key strokes.
+	 * 
+	 * @return <code>true</code>, iff the key sequence is empty.
+	 */
+	public boolean isEmpty() {
+		return keyStrokes.isEmpty();
 	}	
 	
 	/**
