@@ -31,6 +31,7 @@ public interface ISynchronizer {
  *		or <code>IResource.DEPTH_INFINITE</code>.
  * @exception CoreException if this operation fails. Reasons include:
  *    <ul>
+ *    <li>The resource does not exist.</li>
  *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
  			 The sync partner is not registered.</li>
  *    </ul>
@@ -58,6 +59,7 @@ public void add(QualifiedName partner);
  *		or <code>IResource.DEPTH_INFINITE</code>.
  * @exception CoreException if this operation fails. Reasons include:
  *    <ul>
+ *    <li>The resource does not exist.</li>
  *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
  			 The sync partner is not registered.</li>
  *    </ul>
