@@ -23,11 +23,11 @@ class HistorySorter extends ViewerSorter {
 	
 	// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
 	private int[][] SORT_ORDERS_BY_COLUMN = {
-		{0, 4, 1, 2, 3},	/* version */ 
+		{0, 2, 3, 4, 1},	/* revision */ 
 		{1, 0, 2, 3, 4},	/* tags */
-		{1, 4, 0, 2, 3},	/* date */
-		{2, 4, 1, 3, 0},	/* author */
-		{3, 4, 1, 2, 0}	/* comment */
+		{2, 0, 3, 4, 1},	/* date */
+		{3, 0, 2, 4, 1},	/* author */
+		{4, 0, 2, 3, 1}		/* comment */
 	};
 	
 	/**
@@ -59,7 +59,7 @@ class HistorySorter extends ViewerSorter {
 	 */
 	int compareColumnValue(int columnNumber, ILogEntry e1, ILogEntry e2) {
 		switch (columnNumber) {
-			case 0: /* version */
+			case 0: /* revision */
 				return versionCollator.compare(e1.getRevision(), e2.getRevision());
 			case 1: /* tags */
 				CVSTag[] tags1 = e1.getTags();
