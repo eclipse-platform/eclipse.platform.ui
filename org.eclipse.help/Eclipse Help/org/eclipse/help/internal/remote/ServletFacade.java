@@ -89,9 +89,6 @@ public class ServletFacade implements IPlatformRunnable {
 
 			is.close();
 		} catch (Exception e) {
-			// pass the error to System.err AND to the internal platform log.
-			System.err.println(Resources.getString("E004", iniPathURL.toString()));
-
 			HelpPlugin.getDefault().getLog().log(
 				new Status(
 					IStatus.ERROR,
