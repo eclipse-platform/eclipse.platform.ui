@@ -61,29 +61,45 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 		fireChange();
 	}
 
+	/**
+	 * Update this element with a changed sync info. The remote and base handles have to be updated
+	 * with the new handles in the sync info.
+	 * 
+	 * @param info the new sync info
+	 */
 	public void update(SyncInfo info) {
 		this.info = info;
 		// update state
 		setKind(info.getKind());		
 		// never have to update the local, it's always the workspace resource
-		// remote
+		// Remote
 		RemoteResourceTypedElement rightEl = (RemoteResourceTypedElement)getRight(); 
-		if(rightEl == null && info.getRemote() != null) {
+		IResourceVariant remote = info.getRemote();
+		if(rightEl == null && remote != null) {
 			setRight(createRemoteTypeElement(info));
-		} else if(rightEl != null){
-			rightEl.update(info.getRemote());
+		} else if(rightEl != null) {
+			if(remote == null) {
+				setRight(null);
+			} else {
+				rightEl.update(remote);
+			}
 		}
-		// base
+		// Base
 		RemoteResourceTypedElement ancestorEl = (RemoteResourceTypedElement)getRight(); 
-		if(ancestorEl == null && info.getBase() != null) {
+		IResourceVariant base = info.getBase();
+		if(ancestorEl == null && base != null) {
 			setAncestor(createBaseTypeElement(info));
-		} else if(ancestorEl != null){
-			ancestorEl.update(info.getBase());
+		} else if(ancestorEl != null) {
+			if(base == null) {
+				setAncestor(null);
+			} else {
+				ancestorEl.update(base);
+			}
 		}
 		
 		fireChange();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.structuremergeviewer.DiffElement#getKind()
 	 */
