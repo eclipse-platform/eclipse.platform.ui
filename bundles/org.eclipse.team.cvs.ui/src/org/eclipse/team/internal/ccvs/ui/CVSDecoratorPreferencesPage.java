@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -84,7 +85,12 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		});
 		Button b = new Button(composite, SWT.NONE);
 		b.setText(buttonText);
-		b.setLayoutData(new GridData());
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		b.setLayoutData(data);
 		final Text formatToInsert = format;
 		b.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent (Event event) {

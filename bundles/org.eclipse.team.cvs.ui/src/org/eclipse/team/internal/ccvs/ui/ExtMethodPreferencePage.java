@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -54,7 +54,12 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		final Button b = new Button(composite, SWT.NONE);
 		b.setText(Policy.bind("ExtMethodPreferencePage_Browse")); //$NON-NLS-1$
-		b.setLayoutData(new GridData());
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		b.setLayoutData(data);
 		b.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent (Event event) {
 				FileDialog d = new FileDialog(getShell());
