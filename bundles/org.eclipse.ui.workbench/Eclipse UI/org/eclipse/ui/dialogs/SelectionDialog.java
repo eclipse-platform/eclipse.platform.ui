@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 /**
  * The abstract implementation of a selection dialog. It can be primed with
- * initial selections (<code>setElementSelections</code>), and returns
+ * initial selections (<code>setInitialSelections</code>), and returns
  * the final selection (via <code>getResult</code>) after completion.
  * <p>
  * Clients may subclass this dialog to inherit its selection facilities.
@@ -72,7 +72,9 @@ protected void createButtonsForButtonBar(Composite parent) {
  */
 protected Label createMessageArea(Composite composite) {
 	Label label = new Label(composite,SWT.NONE);
-	label.setText(message); 
+	if (message != null) {
+		label.setText(message);
+	} 
 	label.setFont(composite.getFont());
 	return label;
 }
