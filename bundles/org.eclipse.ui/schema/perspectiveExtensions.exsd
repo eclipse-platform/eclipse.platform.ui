@@ -119,6 +119,18 @@ are appended to the initial definition.
       </complexType>
    </element>
 
+   <element name="showInPart">
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  the unique identifier of the view which will be added to the perspective's "Show In..." prompter in the Navigate menu.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="view">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -240,6 +252,7 @@ added beside the Resource Navigator.
          
       </documentation>
    </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>

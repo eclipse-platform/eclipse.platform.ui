@@ -250,6 +250,11 @@
             id="org.eclipse.ui.navigate.goToResource">
       </actionDefinition>
       <actionDefinition
+            name="%ActionDefinition.showIn.name"
+            description="%ActionDefinition.showIn.description"
+            id="org.eclipse.ui.navigate.showIn">
+      </actionDefinition>
+      <actionDefinition
             name="%ActionDefinition.openResource.name"
             description="%ActionDefinition.openResource.description"
             id="org.eclipse.ui.navigate.openResource">
@@ -739,6 +744,10 @@
          <accelerator
                key="Alt+ARROW_RIGHT"
                id="org.eclipse.ui.navigate.forwardHistory">
+         </accelerator>
+         <accelerator
+               key="Alt+Shift+S"
+               id="org.eclipse.ui.navigate.showIn">
          </accelerator>
          <accelerator
                key="Ctrl+B"

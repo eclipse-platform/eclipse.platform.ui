@@ -52,6 +52,12 @@ are appended to the initial definition.<p><b><i>Configuration Markup:</i></b><p>
 <br><samp>&nbsp;&nbsp; &gt;</samp>
 <ul>
 <li><b>id</b> - the unique identifier of the new wizard which will be added to the perspective's "New" submenu of the "File" menu.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT showInPart EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST showInPart</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - the unique identifier of the view which will be added to the perspective's "Show In..." prompter in the Navigate menu.</li></ul>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT view EMPTY&gt;</samp>
 <br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST view</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
@@ -75,20 +81,20 @@ If this attribute is not used, the view will be initially visible by default.</l
 <b><i>Examples: </i></b>The following is an example of a perspective extension (note the subelements and the way attributes are used):
 <p>
 <pre>
-    &lt;extension point=&quot;org.eclipse.ui.perspectiveExtensions&quot;&gt; 
+    &lt;extension point="org.eclipse.ui.perspectiveExtensions"&gt; 
         &lt;perspectiveExtension 
-            targetID=&quot;org.eclipse.ui.resourcePerspective&quot;&gt; 
-            &lt;actionSet id=&quot;org.eclipse.jdt.ui.JavaActionSet&quot;/&gt; 
-            &lt;viewShortcut id=&quot;org.eclipse.jdt.ui.PackageExplorer&quot;/&gt; 
-            &lt;newWizardShortcut id=&quot;org.eclipse.jdt.ui.wizards.NewProjectCreationWizard&quot;/&gt; 
-            &lt;perspectiveShortcut id=&quot;org.eclipse.jdt.ui.JavaPerspective&quot;/&gt; 
-            &lt;view id=&quot;org.eclipse.jdt.ui.PackageExplorer&quot; 
-                relative=&quot;org.eclipse.ui.views.ResourceNavigator&quot; 
-                relationship=&quot;stack&quot;/&gt; 
-            &lt;view id=&quot;org.eclipse.jdt.ui.TypeHierarchy&quot; 
-                relative=&quot;org.eclipse.ui.views.ResourceNavigator&quot; 
-                relationship=&quot;left&quot; 
-                ratio=&quot;0.50&quot;/&gt; 
+            targetID="org.eclipse.ui.resourcePerspective"&gt; 
+            &lt;actionSet id="org.eclipse.jdt.ui.JavaActionSet"/&gt; 
+            &lt;viewShortcut id="org.eclipse.jdt.ui.PackageExplorer"/&gt; 
+            &lt;newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewProjectCreationWizard"/&gt; 
+            &lt;perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective"/&gt; 
+            &lt;view id="org.eclipse.jdt.ui.PackageExplorer" 
+                relative="org.eclipse.ui.views.ResourceNavigator" 
+                relationship="stack"/&gt; 
+            &lt;view id="org.eclipse.jdt.ui.TypeHierarchy" 
+                relative="org.eclipse.ui.views.ResourceNavigator" 
+                relationship="left" 
+                ratio="0.50"/&gt; 
         &lt;/perspectiveExtension&gt; 
     &lt;/extension&gt; 
 </pre>
