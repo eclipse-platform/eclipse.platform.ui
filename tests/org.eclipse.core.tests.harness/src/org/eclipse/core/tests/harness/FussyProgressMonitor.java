@@ -23,6 +23,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class FussyProgressMonitor extends TestProgressMonitor {
 	public class FussyProgressAssertionFailed extends AssertionFailedError {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 		FussyProgressAssertionFailed(String name) {
 			super(name);
 		}

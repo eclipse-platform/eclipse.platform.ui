@@ -14,6 +14,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 public class RemoteTestException extends Exception {
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String stackText;
 	private String message;

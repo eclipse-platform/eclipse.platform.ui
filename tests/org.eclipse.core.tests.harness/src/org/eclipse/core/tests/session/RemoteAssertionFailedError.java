@@ -15,6 +15,10 @@ import java.io.PrintWriter;
 import junit.framework.AssertionFailedError;
 
 public class RemoteAssertionFailedError extends AssertionFailedError {
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Object stackText;
 	private String message;

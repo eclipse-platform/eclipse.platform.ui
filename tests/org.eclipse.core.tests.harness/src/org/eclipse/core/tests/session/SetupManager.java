@@ -20,6 +20,10 @@ import org.xml.sax.SAXException;
 
 public class SetupManager {
 	public class SetupException extends Exception {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 		public SetupException(String message, Throwable cause) {
 			super(message, cause);
 		}

@@ -22,6 +22,10 @@ public class ProcessController {
 	 * of time allowed for it to complete.
 	 */
 	public class TimeOutException extends Exception {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 		public TimeOutException() {
 			super();
 		}
@@ -119,7 +123,7 @@ public class ProcessController {
 	 * Forwards the process standard output to the given output stream.
 	 * Must be called before execution has started.
 	 * 
-	 * @param err an output stream where to forward the process 
+	 * @param out an output stream where to forward the process 
 	 * standard output to
 	 */
 	public void forwardOutput(OutputStream out) {
@@ -159,7 +163,7 @@ public class ProcessController {
 		return process;
 	}
 
-	private synchronized boolean isFinished() {
+	protected synchronized boolean isFinished() {
 		return finished;
 	}
 
@@ -180,7 +184,7 @@ public class ProcessController {
 		notifyAll();
 	}
 
-	private synchronized boolean timedOut() {
+	protected synchronized boolean timedOut() {
 		return System.currentTimeMillis() - startupTime > timeLimit;
 	}
 
@@ -198,7 +202,7 @@ public class ProcessController {
 	 * Forwards the given input stream to the process standard input.
 	 * Must be called before execution has started.
 	 * 
-	 * @param err an input stream where the process 
+	 * @param in an input stream where the process 
 	 * standard input will be forwarded to 
 	 */
 	public void forwardInput(InputStream in) {

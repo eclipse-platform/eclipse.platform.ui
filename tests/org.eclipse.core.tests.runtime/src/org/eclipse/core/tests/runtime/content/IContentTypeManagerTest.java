@@ -677,6 +677,10 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 
 		// induce regular IOExceptions... these should be thrown to clients
 		class FakeIOException extends IOException {
+			/**
+			 * All serializable objects should have a stable serialVersionUID
+			 */
+			private static final long serialVersionUID = 1L;
 			public String getMessage() {
 				return "This exception was thrown for testing purposes";
 			}
