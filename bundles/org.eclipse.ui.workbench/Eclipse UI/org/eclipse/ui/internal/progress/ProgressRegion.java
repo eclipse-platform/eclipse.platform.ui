@@ -65,6 +65,25 @@ public class ProgressRegion {
 		int widthPreference = AnimationManager.getInstance().getPreferredWidth() + 25;
 		item = new ProgressAnimationItem(this);
 		item.createControl(region);
+		
+		item.setAnimationContainer(new AnimationItem.IAnimationContainer(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
+			 */
+			public void animationDone() {
+				//Add an extra refresh to the viewer in case
+				//of stale input
+				viewer.refresh();
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
+			 */
+			public void animationStart() {
+				// Nothing by default here.
+
+			}
+		});
 		Control itemControl = item.getControl();
 		gd= new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint= widthPreference;
