@@ -430,7 +430,8 @@ public abstract class AbstractElementListSelectionDialog
 	}
 
 	/*
-	 * @see Window#open()
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
 		super.open();
@@ -442,7 +443,8 @@ public abstract class AbstractElementListSelectionDialog
 	}
 
 	/*
-	 * @see Window#create(Shell)
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
 

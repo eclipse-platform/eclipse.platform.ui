@@ -14,17 +14,31 @@ package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -155,6 +169,10 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		fHeight = height;
 	}
 
+	/**
+	 * Validate the receiver and update the ok status.
+	 *
+	 */
 	protected void updateOKStatus() {
 		if (!fIsEmpty) {
 			if (fValidator != null) {
@@ -182,7 +200,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	}
 
 	/*
-	 * @see Window#open()
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
 		fIsEmpty = evaluateIfTreeEmpty(fInput);
@@ -210,7 +229,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	}
 
 	/*
-	 * @see Window#create()
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -333,10 +353,22 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		return elements.length == 0;
 	}
 
+	/**
+	 * Set the result using the super class implementation of
+	 * buttonPressed.
+	 * @param id
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
 	protected void access$superButtonPressed(int id) {
 		super.buttonPressed(id);
 	}
 
+	/**
+	 * Set the result using the super class implementation of
+	 * setResult.
+	 * @param result
+	 * @see SelectionStatusDialog#setResult(int, Object)
+	 */
 	protected void access$setResult(List result) {
 		super.setResult(result);
 	}

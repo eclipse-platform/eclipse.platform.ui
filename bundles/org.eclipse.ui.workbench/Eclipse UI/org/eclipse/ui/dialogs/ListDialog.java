@@ -49,7 +49,7 @@ public class ListDialog extends SelectionDialog {
 	}
 	
 	/**
-	 * @param input The inpuit for the list.
+	 * @param input The input for the list.
 	 */
 	public void setInput(Object input) {
 		fInput = input;
@@ -115,6 +115,11 @@ public class ListDialog extends SelectionDialog {
 		table.setFont(container.getFont());
 		return parent;
 	}
+	
+	/**
+	 * Return the style flags for the table viewer.
+	 * @return int
+	 */
 	protected int getTableStyle() {
 		return SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 	}
