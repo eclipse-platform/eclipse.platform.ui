@@ -33,7 +33,6 @@ import org.eclipse.swt.custom.TextChangingEvent;
  * @since 3.1
  */
 public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
-    private static final String DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$;
     
     private int consoleWidth = -1;
     private ArrayList textChangeListeners;
@@ -85,7 +84,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
                     }
                 }
             }
-            if (line != null && line.endsWith(DELIMITER)) {
+            if (line != null && lineEndsWithDelimeter(line)) {
                 lines.add(""); //$NON-NLS-1$
             }
             
@@ -97,6 +96,20 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         }
     }
     
+    /**
+     * Returns true if the line ends with a legal line delimiter
+     * @return true if the line ends with a legal line delimiter, false otherwise
+     */
+    private boolean lineEndsWithDelimeter(String line) {
+        String[] lld = document.getLegalLineDelimiters();
+        for (int i = 0; i < lld.length; i++) {
+            if (line.endsWith(lld[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentAdapter#setDocument(org.eclipse.jface.text.IDocument)
      */
@@ -178,7 +191,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.swt.custom.StyledTextContent#getLineDelimiter()
      */
     public String getLineDelimiter() {
-        return DELIMITER;
+        return System.getProperty("line.separator"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -229,6 +242,10 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public synchronized void documentAboutToBeChanged(DocumentEvent event) {
+        if (document == null) {
+            return;
+        }
+        
         TextChangingEvent changeEvent = new TextChangingEvent(this);
         changeEvent.start = event.fOffset;
         changeEvent.newText = (event.fText == null ? "" : event.fText); //$NON-NLS-1$
@@ -255,11 +272,12 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @return The number of lines necessary to display the string in the viewer.
      */
     private int countLines(String string) {
-        if (string.equals(DELIMITER)) {
+        String delimiter = getFirstDelimiter(string);
+        if (delimiter == null || string.equals(delimiter)) {
             return 1;
         }
-        int delimLength = DELIMITER.length();
-        int index = string.indexOf(DELIMITER);
+        int delimLength = delimiter.length();
+        int index = string.indexOf(delimiter);
         if (index == -1) {
             return consoleWidth > 0 ? string.length() / consoleWidth : 1;
         } else if (index == string.length()-delimLength) {
@@ -279,10 +297,36 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         }
     }
 
+    /**
+     * Returns the first line delimiter in the string
+     * @param string The String to be searched for line delimiters
+     * @return The first line delimiter in the string or null if the string does
+     * not contain any legal line delimiters.
+     */
+    private String getFirstDelimiter(String string) {
+        String[] lld = document.getLegalLineDelimiters();
+        String delimiter = null;
+        int index = Integer.MAX_VALUE;
+        
+        for (int i = 0; i < lld.length; i++) {
+            int newIndex = string.indexOf(lld[i]);
+            if (newIndex > -1 && newIndex < index) {
+                index = newIndex;
+                delimiter = lld[i];
+            }
+        }
+        
+        return delimiter;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public synchronized void documentChanged(DocumentEvent event) {
+        if (document == null) {
+            return;
+        }
+        
         repairLines(event.fOffset);
         
         TextChangedEvent changeEvent = new TextChangedEvent(this);

@@ -48,6 +48,7 @@ import org.eclipse.ui.console.IConsoleHyperlink;
 
 /**
  * Viewer used to display an IOConsole
+ * 
  * @since 3.1
  */
 public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
@@ -140,8 +141,8 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     }
     
     protected void revealEndOfDocument() {
-        if (autoScroll) {
-            StyledText text = getTextWidget();
+        StyledText text = getTextWidget();
+        if (text != null && autoScroll) {
             int charCount = text.getCharCount();
             text.setCaretOffset(charCount);
             text.showSelection();
@@ -313,6 +314,13 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 		}		
 	}
 
+	/**
+	 * Returns the current value of <code>hyperlink</code> field
+	 * @return The current value of <code>hyperlink</code> field
+	 */
+	public IConsoleHyperlink getHyperlink() {
+	    return hyperlink;
+	}
 	
 	public IConsoleHyperlink getHyperlink(int offset) {
 		if (offset >= 0 && getDocument() != null) {
@@ -396,5 +404,12 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      */
     public void setReadOnly() {
         getTextWidget().setEditable(false);
+    }
+
+    /**
+     * @return false if text is editable
+     */
+    public boolean isReadOnly() {
+        return !getTextWidget().getEditable();
     }
 }
