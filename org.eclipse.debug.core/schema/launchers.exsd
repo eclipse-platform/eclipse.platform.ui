@@ -2,16 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="launchers" name="Launcher"/>
-   </appInfo>
-   <documentation>
-      This extension point allows tools to contribute launchers. 
-A launcher is responsible for initiating a debug session 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="launchers" name="Launcher (Obsolete)"/>
+      </appInfo>
+      <documentation>
+         This extension point has been replaced by the launchConfigurationTypes extension point. Extensions of this type are obsolete as of release 2.0 and are ignored. This extension point was used to contribute launchers. 
+A launcher was responsible for initiating a debug session 
 or running a program and registering the result with the 
 launch manager.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -35,7 +35,7 @@ launch manager.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -45,7 +45,7 @@ launch manager.
    <element name="launcher">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" iconName="icon"/>
+            <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -72,7 +72,7 @@ this launcher.
             <annotation>
                <documentation>
                   A comma separated list of modes this launcher supports. 
-The two supported modes are "run" and "debug" - 
+The two supported modes are &quot;run&quot; and &quot;debug&quot; - 
 as defined in &lt;samp&gt;org.eclipse.debug.core.ILaunchManager&lt;/samp&gt;. 
 A launcher may be capable of launching in one or both modes.
                </documentation>
@@ -103,7 +103,7 @@ and launch specific attributes.
             <annotation>
                <documentation>
                   whether a launcher is publically visible in the debug UI.
-If "true",  the launcher will be available from the 
+If &quot;true&quot;,  the launcher will be available from the 
 debug UI - the launcher will appear as a choice 
 for a default launcher, launches created by this 
 launcher will appear in the launch history, and the 
@@ -153,16 +153,16 @@ in the UI if specified.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-      point = "org.eclipse.debug.core.launchers"&gt; 
+      point = &quot;org.eclipse.debug.core.launchers&quot;&gt; 
          &lt;launcher 
-             id = "com.example.ExampleLauncher"
-             class = "com.example.launchers.ExampleLauncher" 
-             modes = "run, debug"
-        label = "Example Launcher"
-      wizard = "com.example.launchers.ui.ExampleLaunchWizard"     
-      public = "true"
-      description = "Launches example programs"
-      perspective= "com.example.JavaPerspective"&gt;  
+             id = &quot;com.example.ExampleLauncher&quot;
+             class = &quot;com.example.launchers.ExampleLauncher&quot; 
+             modes = &quot;run, debug&quot;
+        label = &quot;Example Launcher&quot;
+      wizard = &quot;com.example.launchers.ui.ExampleLaunchWizard&quot;     
+      public = &quot;true&quot;
+      description = &quot;Launches example programs&quot;
+      perspective= &quot;com.example.JavaPerspective&quot;&gt;  
          &lt;/launcher&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -171,8 +171,8 @@ In the example above, the specified launcher supports
 both run and debug modes. Following a successful launch, 
 the debug UI will change to the Java perspective. When 
 the debug UI presents the user with a list of launchers 
-to choose from, "Example Launcher" will appear as one of 
-the choices with the "Launches example programs" as the 
+to choose from, &quot;Example Launcher&quot; will appear as one of 
+the choices with the &quot;Launches example programs&quot; as the 
 description, and the wizard specified by 
 &lt;samp&gt;com.example.launchers.ui.ExampleLaunchWizard&lt;/samp&gt;
 will be used to configure any launch specific details.
@@ -208,7 +208,7 @@ implements &lt;samp&gt;org.eclipse.debug.ui.ILaunchWizard&lt;/samp&gt;.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt; 
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
