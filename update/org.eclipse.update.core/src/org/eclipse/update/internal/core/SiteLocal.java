@@ -177,14 +177,30 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		// and set runtim info for next startup
 		return ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 	}
+	
+//	/**
+//	 * Method createNewInstallConfiguration.
+//	 * @return IInstallConfiguration
+//	 */
+//	private IInstallConfiguration createNewInstallConfiguration() throws CoreException {
+//		InstallConfiguration newInstallConfig = createConfigurationSite(null);
+//		newInstallConfig.setTimeline(newInstallConfig.getCreationDate().getTime());
+//		return newInstallConfig;
+//	}
+
 
 	/**
 	 * @since 2.0
 	 * @deprecated This method should not be used. The current install configuration is to be used.
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
-		// This method should be deprecated
-		return getCurrentConfiguration();
+		try {
+			// This method should be deprecated
+//		return getCurrentConfiguration();
+			return new InstallConfiguration(getCurrentConfiguration());
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException("Clonning current configuration", e);
+		}
 	}
 
 	/**
