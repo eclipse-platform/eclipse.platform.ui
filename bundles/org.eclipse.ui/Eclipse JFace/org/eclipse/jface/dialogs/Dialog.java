@@ -82,12 +82,12 @@ public abstract class Dialog extends Window {
 	/**
 	 * The dialog area; <code>null</code> until dialog is layed out.
 	 */
-	private Control dialogArea;
+	Control dialogArea;
 
 	/**
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
-	private Control buttonBar;
+	Control buttonBar;
 	
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
