@@ -300,6 +300,7 @@ public class InternalAntRunner {
 			antProject= new InternalProject();
 		}
 		antProject.init();
+		//setTypes(antProject);
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();
@@ -308,11 +309,17 @@ public class InternalAntRunner {
 		infos.add(antProject.getName());
 		infos.add(antProject.getDescription());
 		List info;
+		Target target;
 		boolean defaultFound= false;
 		while (targets.hasMoreElements()) {
-			Target target = (Target) targets.nextElement();
+			target = (Target) targets.nextElement();
+			String name= target.getName();
+			if (name.length() == 0) {
+				//"no name" implicit target of Ant 1.6
+				continue;
+			}
 			info= new ArrayList(4);
-			info.add(target.getName());
+			info.add(name);
 			if (target.getName().equals(defaultTarget)) {
 				defaultFound= true;
 			}
@@ -795,33 +802,23 @@ public class InternalAntRunner {
 	}
 
 	private String getAntVersion() throws BuildException {
-		if (antVersion == null) {
+		return Main.getAntVersion();
+	}
+	
+	private String getAntVersionNumber() throws BuildException {
+		if (antVersionNumber == null) {
 			try {
 				Properties props = new Properties();
 				InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt"); //$NON-NLS-1$
 				props.load(in);
 				in.close();
-
-				StringBuffer msg = new StringBuffer(InternalAntMessages.getString("InternalAntRunner.Ant_version__7")); //$NON-NLS-1$
 				String versionNumber= props.getProperty("VERSION");  //$NON-NLS-1$
 				antVersionNumber= versionNumber;
-				msg.append(versionNumber);
-				msg.append(' ');
-				msg.append(InternalAntMessages.getString("InternalAntRunner.compiled_on__8")); //$NON-NLS-1$
-				msg.append(props.getProperty("DATE")); //$NON-NLS-1$
-				antVersion= msg.toString();
 			} catch (IOException ioe) {
 				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._{0}_9"), new String[]{ioe.getMessage()})); //$NON-NLS-1$
 			} catch (NullPointerException npe) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Could_not_load_the_version_information._10")); //$NON-NLS-1$
 			}
-		}
-		return antVersion;
-	}
-	
-	private String getAntVersionNumber() throws BuildException {
-		if (antVersionNumber == null) {
-			getAntVersion();
 		}
 		return antVersionNumber;
 	}
