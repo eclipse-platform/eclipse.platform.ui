@@ -20,6 +20,7 @@ public class StateDumper extends AbstractDumper {
 
 	protected void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
 		PlatformAdmin admin = Platform.getPlatformAdmin();
+		// use the deprecated API to support running against a 3.0 Eclipse
 		State state = admin.getFactory().readState(new DataInputStream(input));
 		contents.append("State resolved: ");
 		contents.append(state.isResolved());
