@@ -97,7 +97,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData());
 		
 		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
-		intro.setText(Policy.bind("ExtMethodPreferencePage.0")); //$NON-NLS-1$
+		intro.setText(Policy.bind("ExtMethodPreferencePage.2")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
