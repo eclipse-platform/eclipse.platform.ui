@@ -202,6 +202,9 @@ public abstract class SelectionListenerAction extends Action implements ISelecti
 	public final void selectionChanged(IStructuredSelection selection) {
 		this.selection = selection;
 		selectionDirty = true;
+		// clear out the lists in case computeResources does not get called immediately
+		resources = null;
+		nonResources = null;
 		setEnabled(updateSelection(selection));
 	}
 	
