@@ -214,13 +214,9 @@ protected void validateInput() {
 		errorMessage = validator.isValid(text.getText());
 	}
 
-	if (errorMessage == null) {
-		errorMessage = "";//$NON-NLS-1$
-	}
-
-	errorMessageLabel.setText(errorMessage);
-
-	okButton.setEnabled(errorMessage.length() == 0);
+	// Bug 16256: important not to treat "" (blank error) the same as null (no error)
+	errorMessageLabel.setText(errorMessage == null ? "" : errorMessage);
+	okButton.setEnabled(errorMessage == null);
 
 	errorMessageLabel.getParent().update();
 }
