@@ -96,7 +96,8 @@ public final class URLEncoder {
 		String file = url.getFile();
 		String ref = url.getRef();
 
-		return new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, ref));
+		URL result =  new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, ref));
+		return result;
 	}
 	private static String encodeSegment(String segment) {
 		
