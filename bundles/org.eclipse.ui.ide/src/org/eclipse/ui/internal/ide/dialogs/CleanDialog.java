@@ -9,15 +9,15 @@
  **********************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -34,9 +34,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -115,17 +113,12 @@ public class CleanDialog extends MessageDialog {
         final boolean buildAll = buildNowButton != null
                 && buildNowButton.getSelection();
         super.buttonPressed(buttonId);
-        if (buttonId == IDialogConstants.OK_ID) {
-            try {
-                //batching changes ensures that autobuild runs after cleaning
-
-                PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                        new WorkspaceModifyOperation() {
-                            protected void execute(IProgressMonitor monitor)
-                                    throws CoreException {
-                                doClean(cleanAll, monitor);
-                            }
-                        });
+        if (buttonId != IDialogConstants.OK_ID)
+        	return;
+        //batching changes ensures that autobuild runs after cleaning
+    	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.getString("CleanDialog.taskName")) { //$NON-NLS-1$
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+                doClean(cleanAll, monitor);
                 //see if a build was requested
                 if (buildAll) {
                     //start an immediate workspace build
@@ -133,17 +126,13 @@ public class CleanDialog extends MessageDialog {
                             IncrementalProjectBuilder.INCREMENTAL_BUILD);
                     build.run();
                 }
-            } catch (InvocationTargetException e) {
-                //we only throw CoreException above
-                Throwable target = e.getTargetException();
-                if (target instanceof CoreException)
-                    ErrorDialog.openError(getShell(), null, null,
-                            ((CoreException) target).getStatus());
-            } catch (InterruptedException e) {
-                //cancelation
-            }
-        }
-
+                return Status.OK_STATUS;
+    		}
+    	};
+        cleanJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory()
+                .buildRule());
+        cleanJob.setUser(true);
+        cleanJob.schedule();
     }
 
     protected void createButtonsForButtonBar(Composite parent) {
