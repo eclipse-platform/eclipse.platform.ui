@@ -71,7 +71,8 @@ public class PerspectiveBarManager extends ToolBarManager {
 			return;
 		}
 		CoolItem item = (CoolItem) event.widget;
-		Control control = item.getControl();
+		//ToolBar toolbar = (ToolBar)getControl();
+		Control control = getControl();
 		if (!(control instanceof ToolBar))
 			return; // currently we only deal with toolbar items
 		/* Retrieve the current bounding rectangle for the selected cool item. */

@@ -791,11 +791,41 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			perspectiveCoolBarWrapper = new CacheWrapper(topBar);
 			perspectiveCoolBar = new CoolBar(perspectiveCoolBarWrapper.getControl(), SWT.FLAT);
 			final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
-			perspectiveBar.createControl(perspectiveCoolBar);
-			coolItem.setControl(perspectiveBar.getControl());
+			final CacheWrapper toolbarWrapper = new CacheWrapper(perspectiveCoolBar); 
+			perspectiveBar.createControl(toolbarWrapper.getControl());
+			coolItem.setControl(toolbarWrapper.getControl());
 			perspectiveCoolBar.setLocked(true);
 			perspectiveBar.setParent(perspectiveCoolBar);
 			perspectiveBar.update(true);			
+			
+			// adjust the toolbar size to display as many items as possible
+			perspectiveCoolBar.addControlListener(new ControlAdapter() {
+				public void controlResized(ControlEvent e) {
+					// NOTE: this listener previously had an algorithm that exhaustively tested all possible
+					// widths to determine the smallest width that can fit in the available space. This was
+					// intentionally removed since it was using about 50% of the CPU time during layouts. Please
+					// do not bring it back -- whatever algorithm ends up running here, it must run
+					// in constant time.
+					
+					// Would it be possible to fit the toolbar in this space if we wrapped it? 
+					Rectangle area = perspectiveCoolBar.getClientArea();
+
+					Point offset = coolItem.computeSize(0,0);
+					
+					Point wrappedSize = toolbarWrapper.getControl().computeSize(area.width - offset.x, SWT.DEFAULT);
+
+					if (wrappedSize.y <= area.height - offset.y) { 
+						coolItem.setSize(wrappedSize.x + offset.x, wrappedSize.y + offset.y);
+						return;
+					}
+					
+					// Otherwise, leave the toolbar at its preferred size and show a chevron
+					Point toolbarSize = toolbarWrapper.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					coolItem.setSize(toolbarSize.x + offset.x, toolbarSize.y + offset.y);
+ 				}
+
+			});
+			
 			
 			coolItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
