@@ -34,7 +34,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 	public static void initDefaults(IPreferenceStore store) {
 		RGB lightSkyBlue= new RGB(176, 226, 255);
-		PreferenceConverter.setValue(store, POTENTIAL_MATCH_BG_COLOR, lightSkyBlue);
+		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_BG_COLOR, lightSkyBlue);
 		store.setDefault(REUSE_EDITOR, false);
 	}
 
