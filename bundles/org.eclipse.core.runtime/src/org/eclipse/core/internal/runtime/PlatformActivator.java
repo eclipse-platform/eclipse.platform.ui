@@ -305,7 +305,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					IProduct product = InternalPlatform.getDefault().getProduct();
 					if (product != null) {
 						applicationId = product.getApplication();
-						System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
+						if (applicationId != null)
+							System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
 					}
 				}
 				if (applicationId == null)
