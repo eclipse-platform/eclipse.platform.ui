@@ -134,7 +134,11 @@ public class CVSWorkspaceRoot {
 	}
 
 	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
-		return CVSProvider.getInstance().getRepository(localRoot.getFolderSyncInfo().getRoot());
+		FolderSyncInfo info = localRoot.getFolderSyncInfo();
+		if (info == null) {
+			throw new CVSException(Policy.bind("CVSWorkspaceRoot.notCVSFolder", localRoot.getName()));
+		}
+		return CVSProvider.getInstance().getRepository(info.getRoot());
 	}
 
 	public ICVSFolder getLocalRoot() {
