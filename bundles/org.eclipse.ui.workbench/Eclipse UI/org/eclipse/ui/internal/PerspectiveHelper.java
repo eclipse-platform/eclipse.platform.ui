@@ -51,7 +51,6 @@ public class PerspectiveHelper {
 
     private ViewSashContainer mainLayout;
 
-    private IWorkbenchPartReference zoomPart;
 
     private ArrayList detachedWindowList = new ArrayList(1);
 
@@ -263,11 +262,8 @@ public class PerspectiveHelper {
      * corner of the presentation.
      */
     public void addPart(LayoutPart part) {
-        // If part added / removed always zoom out.
-        if (isZoomed())
-            zoomOut();
-
-        // Look for a placeholder.
+        
+    	// Look for a placeholder.
         PartPlaceholder placeholder = null;
         LayoutPart testPart = null;
         String primaryId = part.getID();
@@ -357,11 +353,15 @@ public class PerspectiveHelper {
                 }
             }
         }
-
-        // enable direct manipulation
-        //enableDrop(part);
     }
     
+    private void zoomOutIfNecessary(LayoutPart part) {
+        // Check if we should really zoom out.
+        if (isZoomed()) {
+    		if (partChangeAffectsZoom(part))
+    			zoomOut();
+        }
+    }
     
     /**
      * Attaches a part that was previously detached to the mainLayout. 
@@ -369,9 +369,8 @@ public class PerspectiveHelper {
      * @param ref
      */
     public void attachPart(IViewReference ref) {
-		if(isZoomed())
-			zoomOut();
 		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();	
+		
 		derefPart(pane);
 		addPart(pane);
 		bringPartToTop(pane);
@@ -1067,19 +1066,6 @@ public class PerspectiveHelper {
         return mainLayout;
     }
 
-    ///**
-    // * Returns the zoomed part.
-    // * <p>
-    // * If the zoomed part is an editor, it will be the
-    // * editor which caused the workbook it is in to be zoomed. It may not be
-    // the
-    // * visible editor. The zoomed part will always be an editor in the zoomed
-    // * workbench.
-    // * </p>
-    // */
-    ///*package*/ IWorkbenchPart getZoomPart() {
-    //	return zoomPart;
-    //}
     /**
      * Gets the active state.
      */
@@ -1102,7 +1088,7 @@ public class PerspectiveHelper {
      * Returns whether the presentation is zoomed.
      */
     public boolean isZoomed() {
-        return (zoomPart != null);
+        return mainLayout.getZoomedPart() != null;
     }
 
     /**
@@ -1127,34 +1113,16 @@ public class PerspectiveHelper {
      * conditions for this .. - we are zoomed. - the part is contained in the
      * main window. - the part is not the zoom part - the part is not a fast
      * view - the part and the zoom part are not in the same editor workbook
+	 * - the part and the zoom part are not in the same view stack.
      */
-    public boolean partChangeAffectsZoom(PartPane pane) {
-        if (zoomPart == null)
-            return false;
-        if (pane.getWindow().getShell() != page.getWorkbenchWindow().getShell())
-            return false;
-        if (pane.isZoomed())
-            return false;
-        if (isFastView(pane.getPartReference()))
-            return false;
-
-        PartPane zoomPane = ((WorkbenchPartReference) zoomPart).getPane();
-        if (pane instanceof EditorPane && zoomPane instanceof EditorPane) {
-            if (((EditorPane) pane).getWorkbook().equals(
-                    ((EditorPane) zoomPane).getWorkbook()))
-                return false;
-        }
-
-        return true;
+    public boolean partChangeAffectsZoom(LayoutPart pane) {
+        return pane.isObscuredByZoom();
     }
-
+    
     /**
      * Remove all references to a part.
      */
     public void removePart(LayoutPart part) {
-        // If part added / removed always zoom out.
-        if (isZoomed())
-            zoomOut();
 
         // Reparent the part back to the main window
         Composite parent = mainLayout.getParent();
@@ -1186,11 +1154,12 @@ public class PerspectiveHelper {
                     LayoutPart cPart = (LayoutPart) container;
                     Window oldWindow = cPart.getWindow();
                     if (oldWindow instanceof WorkbenchWindow) {
+                        
                         // PR 1GDFVBY: ViewStack not disposed when page
                         // closed.
                         if (container instanceof ViewStack)
                             ((ViewStack) container).dispose();
-
+                        
                         // replace the real container with a
                         // ContainerPlaceholder
                         ILayoutContainer parentContainer = cPart.getContainer();
@@ -1198,6 +1167,7 @@ public class PerspectiveHelper {
                                 cPart.getID());
                         placeholder.setRealContainer(container);
                         parentContainer.replace(cPart, placeholder);
+                        
                     } else if (oldWindow instanceof DetachedWindow) {
                         DetachedPlaceHolder placeholder = new DetachedPlaceHolder(
                                 "", oldWindow.getShell().getBounds()); //$NON-NLS-1$
@@ -1223,10 +1193,7 @@ public class PerspectiveHelper {
      * fact to locate the parent.
      */
     public void replacePlaceholderWithPart(LayoutPart part) {
-        // If part added / removed always zoom out.
-        if (isZoomed())
-            zoomOut();
-
+        
         // Look for a PartPlaceholder that will tell us how to position this
         // object
         PartPlaceholder[] placeholders = collectPlaceholders();
@@ -1256,9 +1223,6 @@ public class PerspectiveHelper {
             }
         }
 
-        // If there was no placeholder then the editor workbook is not in the
-        // workbench.
-        // That's OK. Just return.
     }
 
     /**
@@ -1327,52 +1291,12 @@ public class PerspectiveHelper {
     public void zoomIn(IWorkbenchPartReference ref) {
         PartPane pane = ((WorkbenchPartReference) ref).getPane();
 
-        // Save zoom part.
-        zoomPart = ref;
 
-        // If view ..
-        if (pane instanceof ViewPane) {
-            parentWidget.setRedraw(false);
-            try {
-                ILayoutContainer parentContainer = ((ViewPane) pane)
-                        .getContainer();
-                if (parentContainer instanceof ViewStack) {
-                    //Check if it is a ViewStack as we only want to zoom
-                    //the folder. 
-                    //TODO: Remove once all views are in ViewStack
-                    //TODO: See Bug 48794
-                    ViewStack parent = (ViewStack) parentContainer;
-                    if (perspective != null && ref instanceof IViewReference
-                            && page.isFastView((IViewReference) ref)) {
-                        perspective.hideFastViewSash();
-                    }
-                    mainLayout.zoomIn(parent);
-                    pane.setZoomed(true);
-                }
-            } finally {
-                parentWidget.setRedraw(true);
-            }
-        }
-
-        // If editor ..
-        else if (pane instanceof EditorPane) {
-            parentWidget.setRedraw(false);
-            try {
-                EditorStack wb = ((EditorPane) pane).getWorkbook();
-                EditorSashContainer ea = wb.getEditorArea();
-                mainLayout.zoomIn(ea);
-                ea.zoomIn(wb);
-                wb.setZoomed(true);
-                pane.setZoomed(true);
-            } finally {
-                parentWidget.setRedraw(true);
-            }
-        }
-
-        // Otherwise.
-        else {
-            zoomPart = null;
-            return;
+        parentWidget.setRedraw(false);
+        try {
+            pane.requestZoomIn();
+        } finally {
+            parentWidget.setRedraw(true);
         }
     }
 
@@ -1380,38 +1304,10 @@ public class PerspectiveHelper {
      * Zoom out.
      */
     public void zoomOut() {
-        // Sanity check.
-        if (zoomPart == null)
-            return;
-
-        PartPane pane = ((WorkbenchPartReference) zoomPart).getPane();
-
-        if (pane instanceof ViewPane) {
-            parentWidget.setRedraw(false);
-            mainLayout.zoomOut();
-            pane.setZoomed(false);
-            if (perspective != null && zoomPart instanceof IViewReference
-                    && page.isFastView((IViewReference) zoomPart)) {
-                perspective.showFastView((IViewReference) zoomPart);
-            }
-            parentWidget.setRedraw(true);
-        } else if (pane instanceof EditorPane) {
-            parentWidget.setRedraw(false);
-            EditorStack wb = ((EditorPane) pane).getWorkbook();
-            EditorSashContainer ea = wb.getEditorArea();
-            wb.setZoomed(false);
-            ea.zoomOut();
-            mainLayout.zoomOut();
-            pane.setZoomed(false);
-            parentWidget.setRedraw(true);
-        } else { //if null
-            parentWidget.setRedraw(false);
-            mainLayout.zoomOut();
-            parentWidget.setRedraw(true);
+        LayoutPart zoomPart = mainLayout.getZoomedPart();
+        if (zoomPart != null) {
+            zoomPart.requestZoomOut();
         }
-
-        // Deref all.
-        zoomPart = null;
     }
 
 }

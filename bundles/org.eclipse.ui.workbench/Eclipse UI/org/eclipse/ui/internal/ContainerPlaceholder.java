@@ -139,4 +139,11 @@ public class ContainerPlaceholder extends PartPlaceholder implements
     public boolean allowsAutoFocus() {
         return false;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#isZoomed(org.eclipse.ui.internal.LayoutPart)
+     */
+    public boolean childIsZoomed(LayoutPart toTest) {
+        return false;
+    }
 }

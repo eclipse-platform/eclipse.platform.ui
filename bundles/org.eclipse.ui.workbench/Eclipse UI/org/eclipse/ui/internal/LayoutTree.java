@@ -387,7 +387,7 @@ public class LayoutTree implements ISizeProvider {
     /**
      * Called to flush any cached information in this tree and its parents.
      */
-    public void flushCache() {
+    public void flushNode() {
         
         // Clear cached sizes
         cachedMinimumWidthHint = SWT.DEFAULT;
@@ -405,10 +405,32 @@ public class LayoutTree implements ISizeProvider {
         // The next setBounds call should trigger a layout even if set to the same bounds since
         // one of the children has changed.
         forceLayout = true;
-
+    }
+    
+    /**
+     * Flushes all cached information about this node and all of its children.
+     * This should be called if something may have caused all children to become
+     * out of synch with their cached information (for example, if a lot of changes
+     * may have happened without calling flushCache after each change)
+     * 
+     * @since 3.1
+     */
+    public void flushChildren() {
+        flushNode();
+    }
+    
+    /**
+     * Flushes all cached information about this node and all of its ancestors.
+     * This should be called when a single child changes.
+     * 
+     * @since 3.1
+     */
+    public final void flushCache() {
+        flushNode();
+        
     	if (parent != null) {
     		parent.flushCache();
-    	}
+    	}        
     }
     
     public final int getSizeFlags(boolean width) {

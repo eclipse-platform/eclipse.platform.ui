@@ -448,13 +448,6 @@ public class EditorSashContainer extends PartSashContainer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
-     */
-    public boolean allowsAutoFocus() {
-        return true;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
      */
     public boolean isStackType(LayoutPart toTest) {
@@ -497,6 +490,13 @@ public class EditorSashContainer extends PartSashContainer {
         return refPart.getVisibleEditor();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartSashContainer#pickPartToZoom()
+     */
+    public LayoutPart pickPartToZoom() {
+        return getActiveWorkbook();
+    }
+    
     /**
      * Restore the presentation state.  Loop over the workbooks, create the appropriate serializer and pass to the presentation.
      *

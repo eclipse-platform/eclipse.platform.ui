@@ -229,13 +229,6 @@ public class ViewSashContainer extends PartSashContainer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
-     */
-    public boolean allowsAutoFocus() {
-        return true;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.PartSashContainer#getDockingRatio(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart)
      */
     protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {

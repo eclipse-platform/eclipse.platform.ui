@@ -571,8 +571,6 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * TODO: I am certain this isn't correct but I'll be damned if I know what is.
      */
     public void reparent(Composite newParent) {
-        if (isZoomed())
-            setZoomed(false);
         super.reparent(newParent);
     }
 

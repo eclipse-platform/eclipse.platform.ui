@@ -30,7 +30,7 @@ public interface ILayoutContainer {
      * Replace one child with another
      */
     public void replace(LayoutPart oldPart, LayoutPart newPart);
-
+    
     public void findSashes(LayoutPart toFind, PartPane.Sashes result);
 
     /**
@@ -44,7 +44,39 @@ public interface ILayoutContainer {
      */
     public boolean allowsAutoFocus();
 
-    public void setZoomed(boolean isZoomed);
+    /**
+     * Called by child parts to request a zoom in, given an immediate child 
+     * 
+     * @param toZoom
+     * @since 3.1
+     */
+    public void childRequestZoomIn(LayoutPart toZoom);
+    
+    /**
+     * Called by child parts to request a zoom out
+     * 
+     * @since 3.1
+     */
+    public void childRequestZoomOut();
+    
+    /**
+     * Returns true iff the given child is obscured due to the fact that the container is zoomed into
+     * another part. 
+     * 
+     * @param toTest
+     * @return
+     * @since 3.1
+     */
+    public boolean childObscuredByZoom(LayoutPart toTest);
+    
+    /**
+     * Returns true iff we are zoomed into the given part, given an immediate child of this container.
+     * 
+     * @param toTest
+     * @return
+     * @since 3.1
+     */
+    public boolean childIsZoomed(LayoutPart toTest);
 
     /**
      * Called when the preferred size of the given child has changed, requiring a

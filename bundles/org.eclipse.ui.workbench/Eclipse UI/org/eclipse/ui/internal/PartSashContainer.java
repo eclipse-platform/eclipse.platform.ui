@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -30,6 +31,7 @@ import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 
 /**
  * Abstract container that groups various layout
@@ -47,7 +49,7 @@ public abstract class PartSashContainer extends LayoutPart implements
 
     protected LayoutTree root;
 
-    protected LayoutTree unzoomRoot;
+    private LayoutPart zoomedPart;
 
     protected WorkbenchPage page;
 
@@ -162,11 +164,23 @@ public abstract class PartSashContainer extends LayoutPart implements
         this.page = page;
         resizeListener = new ControlAdapter() {
             public void controlResized(ControlEvent e) {
-                resizeSashes(parent.getClientArea());
+                resizeSashes();
             }
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#obscuredByZoom(org.eclipse.ui.internal.LayoutPart)
+     */
+    public boolean childObscuredByZoom(LayoutPart toTest) {
+        LayoutPart zoomPart = getZoomedPart();
+        
+        if (zoomPart != null && toTest != zoomPart) {
+            return true;
+        }
+        return isObscuredByZoom();
+    }
+    
     /**
      * Given an object associated with a drag (a PartPane or PartStack), this returns
      * the actual PartPanes being dragged.
@@ -433,8 +447,6 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     public RelationshipInfo[] computeRelation() {
         LayoutTree treeRoot = root;
-        if (isZoomed())
-            treeRoot = unzoomRoot;
         ArrayList list = new ArrayList();
         if (treeRoot == null)
             return new RelationshipInfo[0];
@@ -464,13 +476,18 @@ public abstract class PartSashContainer extends LayoutPart implements
             LayoutPart child = (LayoutPart) children.get(i);
             child.setContainer(this);
             child.createControl(parent);
+            child.setVisible(zoomedPart == null || child == zoomedPart);
         }
 
         if (root != null) {
-            root.createControl(parent);
+            root.flushChildren();
+            if (!isZoomed()) {
+                root.createControl(parent);
+            }
         }
+        
         active = true;
-        resizeSashes(parent.getClientArea());
+        resizeSashes();
     }
 
     /**
@@ -495,7 +512,6 @@ public abstract class PartSashContainer extends LayoutPart implements
             parent.removeControlListener(resizeListener);
         }
 
-        resizeSashes(new Rectangle(-200, -200, 0, 0));
 
         if (children != null) {
             for (int i = 0, length = children.size(); i < length; i++) {
@@ -509,6 +525,7 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
 
         disposeParent();
+        disposeSashes();
         this.parent = null;
 
         active = false;
@@ -529,6 +546,27 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#setVisible(boolean)
+     */
+    public void setVisible(boolean makeVisible) {
+        
+        if (makeVisible == getVisible()) {
+            return;
+        }
+        
+        if (!SwtUtil.isDisposed(this.parent)) {
+            this.parent.setEnabled(makeVisible);
+        }
+        super.setVisible(makeVisible);
+        
+        ArrayList children = (ArrayList) this.children.clone();
+        for (int i = 0, length = children.size(); i < length; i++) {
+            LayoutPart child = (LayoutPart) children.get(i);
+            child.setVisible(makeVisible && (zoomedPart == null || child == zoomedPart));
+        }
+    }
+    
     /**
      * Return the most bottom right part or null if none.
      */
@@ -544,14 +582,6 @@ public abstract class PartSashContainer extends LayoutPart implements
     public Rectangle getBounds() {
         return this.parent.getBounds();
     }
-
-//    // getMinimumHeight() added by cagatayk@acm.org 
-//    /**
-//     * @see LayoutPart#getMinimumHeight()
-//     */
-//    public int computeMinimumSize(boolean width, int knownHeight) {
-//        return getLayoutTree().computeMinimumSize(width, knownHeight);
-//    }
 
     /**
      * @see ILayoutContainer#getChildren
@@ -606,7 +636,7 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Returns whether this container is zoomed.
      */
     public boolean isZoomed() {
-        return (unzoomRoot != null);
+        return (zoomedPart != null);
     }
 
     /* (non-Javadoc)
@@ -629,8 +659,8 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Remove a part.
      */
     public void remove(LayoutPart child) {
-        if (isZoomed())
-            zoomOut();
+        if (child == getZoomedPart())
+            childRequestZoomOut();
 
         if (!isChild(child))
             return;
@@ -656,7 +686,7 @@ public abstract class PartSashContainer extends LayoutPart implements
 		super.flushLayout();
 		
 		if (layoutDirty) {
-			resizeSashes(parent.getClientArea());
+			resizeSashes();
 		}
 	}
 	
@@ -664,20 +694,19 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Replace one part with another.
      */
     public void replace(LayoutPart oldChild, LayoutPart newChild) {
-        if (isZoomed())
-            zoomOut();
 
         if (!isChild(oldChild)) {
             return;
         }
-
-        LayoutTree leaf = null;
-        if (root != null) {
-            leaf = root.find(oldChild);
-        }
-
-        if (leaf == null) {
-            return;
+        
+        if (oldChild == getZoomedPart()) {
+            if (newChild instanceof PartPlaceholder) {
+                childRequestZoomOut();
+            } else {
+                zoomedPart.setZoomed(false);
+                zoomedPart = newChild;
+                zoomedPart.setZoomed(true);
+            }
         }
 
         children.remove(oldChild);
@@ -685,7 +714,14 @@ public abstract class PartSashContainer extends LayoutPart implements
 
         childAdded(newChild);
 
-        leaf.setPart(newChild);
+        if (root != null) {
+            LayoutTree leaf = null;
+
+            leaf = root.find(oldChild);
+            if (leaf != null) {
+                leaf.setPart(newChild);
+            }
+        }
 
         childRemoved(oldChild);
         if (active) {
@@ -693,17 +729,22 @@ public abstract class PartSashContainer extends LayoutPart implements
             oldChild.setContainer(null);
             newChild.createControl(parent);
             newChild.setContainer(this);
-            newChild.setVisible(true);
+            newChild.setVisible(zoomedPart == null || zoomedPart == newChild);
             resizeChild(newChild);
         }
     }
 
-    private void resizeSashes(Rectangle parentSize) {
+    private void resizeSashes() {
     	layoutDirty = false;
         if (!active)
             return;
-        if (root != null) {
-            root.setBounds(parentSize);
+        
+        if (isZoomed()) {
+            getZoomedPart().setBounds(parent.getClientArea());
+        } else {
+	        if (root != null) {
+	            root.setBounds(parent.getClientArea());
+	        }
         }
     }
 
@@ -717,6 +758,10 @@ public abstract class PartSashContainer extends LayoutPart implements
      * @return returns a new point where point.x is <= availableWidth and point.y is <= availableHeight
      */
     public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+        if (isZoomed()) {
+            return getZoomedPart().computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
+        }
+        
     	if (root != null) {
     		return root.computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
     	}
@@ -725,6 +770,10 @@ public abstract class PartSashContainer extends LayoutPart implements
     }
 	
     public int getSizeFlags(boolean width) {
+        if (isZoomed()) {
+            return getZoomedPart().getSizeFlags(width);
+        }
+        
         if (root != null) {
             return root.getSizeFlags(width);
         }
@@ -749,21 +798,101 @@ public abstract class PartSashContainer extends LayoutPart implements
      *
      * Note: Method assumes we are active.
      */
-    public void zoomIn(LayoutPart part) {
+    private void zoomIn(LayoutPart part) {
         // Sanity check.
-        if (unzoomRoot != null)
+        if (isZoomed())
             return;
-
-        // Hide main root.
-        Rectangle oldBounds = root.getBounds();
-        root.setBounds(new Rectangle(0, 0, 0, 0));
-        unzoomRoot = root;
-
-        // Show zoom root.
-        root = new LayoutTree(part);
-        root.setBounds(oldBounds);
+        
+        // Hide the sashes
+        root.disposeSashes();
+        
+        // Make all parts invisible except for the zoomed part
+        LayoutPart[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            LayoutPart child = children[i];
+            
+            child.setVisible(child == part);
+        }
+        
+        zoomedPart = part;
+                
+        // Notify the part that it has been zoomed
+        part.setZoomed(true);
+        
+        // Remember that we need to trigger a layout
+        layoutDirty = true;
     }
 
+    /**
+     * Returns the currently zoomed part or null if none
+     * 
+     * @return the currently zoomed part or null if none
+     * @since 3.1
+     */
+    public LayoutPart getZoomedPart() {
+        return zoomedPart;
+    }
+    
+    public void childRequestZoomIn(LayoutPart toZoom) {
+        if (!SwtUtil.isDisposed(this.parent)) {
+            this.parent.setRedraw(false);
+        }
+        try {
+	        zoomIn(toZoom);
+	        
+	        requestZoomIn();
+	        
+	        if (layoutDirty) {
+	            resizeSashes();
+	        }
+        } finally {
+            if (!SwtUtil.isDisposed(this.parent)) {
+                this.parent.setRedraw(true);
+            }
+        }
+    }
+    
+    public void childRequestZoomOut() { 
+        if (!SwtUtil.isDisposed(this.parent)) {
+            this.parent.setRedraw(false);
+        }
+        try {
+	        zoomOut();
+	        
+	        requestZoomOut();
+	        
+	        if (layoutDirty) {
+	            resizeSashes();
+	        }
+        } finally {
+            if (!SwtUtil.isDisposed(this.parent)) {
+                this.parent.setRedraw(true);
+            }
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#setZoomed(boolean)
+     */
+    public void setZoomed(boolean isZoomed) {
+        if (!isZoomed) {
+            zoomOut();
+        } else {
+            if (!isZoomed()) {
+                LayoutPart toZoom = pickPartToZoom();
+                
+                if (toZoom != null) {
+                    zoomIn(toZoom);
+                }
+            }
+        }
+        super.setZoomed(isZoomed);
+    }
+    
+    public LayoutPart pickPartToZoom() {
+        return findBottomRight();
+    }
+    
     /**
      * Zoom out.
      *
@@ -771,19 +900,32 @@ public abstract class PartSashContainer extends LayoutPart implements
      * 
      * Note: Method assumes we are active.
      */
-    public void zoomOut() {
+    private void zoomOut() {
         // Sanity check.
-        if (unzoomRoot == null)
+        if (!isZoomed())
             return;
+               
+        LayoutPart zoomedPart = this.zoomedPart;
+        this.zoomedPart = null;
+        // Inform the part that it is no longer zoomed
+        zoomedPart.setZoomed(false);
+        
+        // Make all children visible
+        LayoutPart[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            LayoutPart child = children[i];
+            
+            child.setVisible(true);
+        }
+        
+        // Recreate the sashes
+        root.createControl(getParent());
+        
+        // Ensure that the part being un-zoomed will have its size refreshed.
+        LayoutTree node = root.find(zoomedPart);
+        node.flushCache();
 
-        // Dispose zoom root.
-        Rectangle oldBounds = root.getBounds();
-        root.setBounds(new Rectangle(0, 0, 0, 0));
-
-        // Show main root.
-        root = unzoomRoot;
-        root.setBounds(oldBounds);
-        unzoomRoot = null;
+        layoutDirty = true;
     }
 
     /* (non-Javadoc)
@@ -1062,8 +1204,6 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     void add(LayoutPart child, int relationship, int left, int right,
             LayoutPart relative) {
-        if (isZoomed())
-            zoomOut();
 
         if (child == null)
             return;
@@ -1083,26 +1223,42 @@ public abstract class PartSashContainer extends LayoutPart implements
         addChild(info);
     }
 
-//    /* (non-Javadoc)
-//     * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
-//     */
-//    public boolean isMinimized(boolean width) {
-//        if (root == null) {
-//            return false;
-//        }
-//        return root.isMinimized(width);
-//    }
-
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#isZoomed(org.eclipse.ui.internal.LayoutPart)
+     */
+    public boolean childIsZoomed(LayoutPart toTest) {
+        return toTest == getZoomedPart();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
+     */
+    public boolean allowsAutoFocus() {
+        return true;
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
      */
     public void testInvariants() {
         super.testInvariants();
 
-        LayoutPart[] children = getChildren();
+        // If we have a parent container, ensure that we are displaying the zoomed appearance iff 
+        // our parent is zoomed in on us
+        if (getContainer() != null) {
+            Assert.isTrue((getZoomedPart() != null) == (getContainer().childIsZoomed(this)));
+        }
+        
+        LayoutPart[] childArray = getChildren();
 
-        for (int idx = 0; idx < children.length; idx++) {
-            children[idx].testInvariants();
+        for (int idx = 0; idx < childArray.length; idx++) {
+            childArray[idx].testInvariants();
+        }
+        
+        // If we're zoomed, ensure that we're actually zoomed into one of our children
+        if (isZoomed()) {
+            Assert.isTrue(children.contains(zoomedPart));
         }
     }
 }

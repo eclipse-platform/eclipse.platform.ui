@@ -162,7 +162,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
     };
 
-    private static final PartStackDropResult dropResult = new PartStackDropResult(); 
+    private static final PartStackDropResult dropResult = new PartStackDropResult();
+
+    private boolean isMinimized;
             
     protected abstract boolean isMoveable(IPresentablePart part);
 
@@ -304,6 +306,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 }
             }
         }
+        
+        // Check to that we're displaying the zoomed icon iff we're actually maximized
+        Assert.isTrue((getState() == IStackPresentationSite.STATE_MAXIMIZED) 
+                == (getContainer() != null && getContainer().childIsZoomed(this)));
+
     }
 
     /* (non-Javadoc)
@@ -798,7 +805,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         remove(oldChild);
     }
-
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#computePreferredSize(boolean, int, int, int)
 	 */
@@ -813,7 +820,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @see org.eclipse.ui.internal.LayoutPart#getSizeFlags(boolean)
      */
     public int getSizeFlags(boolean horizontal) {
-        return getPresentation().getSizeFlags(horizontal);
+        StackPresentation presentation = getPresentation();
+        
+        if (presentation != null) {
+            return presentation.getSizeFlags(horizontal);
+        } 
+        
+        return 0;
     }
     
     /**
@@ -876,6 +889,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#setVisible(boolean)
+     */
+    public void setVisible(boolean makeVisible) {
+        super.setVisible(makeVisible);
+        
+        StackPresentation presentation = getPresentation();
+        
+        if (presentation != null) {
+            presentation.setVisible(makeVisible);
+        }
+    }
+    
     /**
      * @see IPersistable
      */
@@ -940,9 +966,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void setActive(int activeState) {
 
         if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
-            if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
-                setState(IStackPresentationSite.STATE_RESTORED);
-            }
+            setMinimized(false);
         }
 
         presentationSite.setActive(activeState);
@@ -1007,51 +1031,121 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	return presentationSite.getState();
     }
     
-    protected void setState(int newState) {
-        if (!supportsState(newState) || newState == presentationSite.getState()) {
-            return;
-        }
-
-        int oldState = presentationSite.getState();
-
-        if (current != null) {
-            if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-                PartPane pane = getVisiblePart();
-                if (pane != null) {
-                    pane.doZoom();
-                }
-            } else {
-                presentationSite.setPresentationState(newState);
-
-                WorkbenchPage page = getPage();
-                if (page != null) {
-                    if (page.isZoomed()) {
-                        page.zoomOut();
-                    }
-
-                    flushLayout();
-                }
-            }
-        }
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
-            WorkbenchPage page = getPage();
-
-            if (page != null) {
-                page.refreshActiveView();
-            }
+    /**
+     * Sets the minimized state for this stack. The part may call this method to minimize or restore
+     * itself. The minimized state only affects the view when unzoomed. If the 
+     */
+    public void setMinimized(boolean minimized) {
+        if (minimized != isMinimized) {
+            isMinimized = minimized;
+            
+            refreshPresentationState();            
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#obscuredByZoom(org.eclipse.ui.internal.LayoutPart)
+     */
+    public boolean childObscuredByZoom(LayoutPart toTest) {
+        return isObscuredByZoom();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#requestZoom(org.eclipse.ui.internal.LayoutPart)
+     */
+    public void childRequestZoomIn(LayoutPart toZoom) {
+        super.childRequestZoomIn(toZoom);
+        
+        requestZoomIn();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#requestZoomOut()
+     */
+    public void childRequestZoomOut() {
+        super.childRequestZoomOut();
+        
+        requestZoomOut();
+    }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.ILayoutContainer#isZoomed(org.eclipse.ui.internal.LayoutPart)
+     */
+    public boolean childIsZoomed(LayoutPart toTest) {
+        return isZoomed();
+    }
+    
+    protected void setState(int newState) {
+        int oldState = presentationSite.getState();
+        if (!supportsState(newState) || newState == oldState) {
+            return;
+        }
+        
+        boolean minimized = (newState == IStackPresentationSite.STATE_MINIMIZED);
+        
+        setMinimized(minimized);
+        
+        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+            requestZoomIn();
+        } else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
+            requestZoomOut();
+        }
+    }
+    
+
+    /**
+     * Called by the workbench page to notify this part that it has been zoomed or unzoomed.
+     * The PartStack should not call this method itself -- it must request zoom changes by 
+     * talking to the WorkbenchPage.
+     */
     public void setZoomed(boolean isZoomed) {
+        
         super.setZoomed(isZoomed);
-
-        if (isZoomed) {
-            presentationSite
-                    .setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
-        } else if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-            presentationSite
-                    .setPresentationState(IStackPresentationSite.STATE_RESTORED);
+        
+        LayoutPart[] children = getChildren();
+        
+        for (int i = 0; i < children.length; i++) {
+            LayoutPart next = children[i];
+            
+            next.setZoomed(isZoomed);
+        }
+        
+        refreshPresentationState();
+    }
+    
+    public boolean isZoomed() {
+        ILayoutContainer container = getContainer();
+        
+        if (container != null) {
+            return container.childIsZoomed(this);
+        }
+        
+        return false;
+    }
+    
+    private void refreshPresentationState() {
+        if (isZoomed()) {
+            presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
+        } else {
+            
+            boolean wasMinimized = (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED);
+            
+            if (isMinimized) {
+                presentationSite.setPresentationState(IStackPresentationSite.STATE_MINIMIZED);
+            } else {
+                presentationSite.setPresentationState(IStackPresentationSite.STATE_RESTORED);
+            }
+            
+            if (isMinimized != wasMinimized) {
+                flushLayout();
+                
+                if (isMinimized) {
+	                WorkbenchPage page = getPage();
+	
+	                if (page != null) {
+	                    page.refreshActiveView();
+	                }
+                }
+            }
         }
     }
 

@@ -56,6 +56,16 @@ public class LayoutTreeNode extends LayoutTree {
         super(sash);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutTree#flushChildren()
+     */
+    public void flushChildren() {
+        super.flushChildren();
+        
+        children[0].flushChildren();
+        children[1].flushChildren();
+    }
+    
     /**
      * Traverses the tree to find the part that intersects the given point
      * 
@@ -115,7 +125,6 @@ public class LayoutTreeNode extends LayoutTree {
         children[0].disposeSashes();
         children[1].disposeSashes();
         getSash().dispose();
-        flushCache();
     }
 
     /**

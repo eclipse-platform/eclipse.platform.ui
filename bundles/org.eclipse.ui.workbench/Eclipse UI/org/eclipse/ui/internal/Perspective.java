@@ -466,12 +466,6 @@ public class Perspective {
         editorHolder = new PartPlaceholder(editorArea.getID());
         presentation.getLayout().replace(editorArea, editorHolder);
 
-        // Disable the entire editor area so if an editor had
-        // keyboard focus it will let it go.
-        if (editorArea.getControl() != null)
-            editorArea.getControl().setEnabled(false);
-
-        setEditorAreaVisible(false);
     }
 
     /**
@@ -744,19 +738,10 @@ public class Perspective {
      * activate.
      */
     protected void onActivate() {
+        
         // Update editor area state.
         if (editorArea.getControl() != null) {
-            if (isEditorAreaVisible()) {
-                // Enable the editor area now that it will be made
-                // visible and can accept keyboard focus again.
-                editorArea.getControl().setEnabled(true);
-                setEditorAreaVisible(true);
-            } else {
-                // Disable the entire editor area so if an editor had
-                // keyboard focus it will let it go.
-                editorArea.getControl().setEnabled(false);
-                setEditorAreaVisible(false);
-            }
+            editorArea.setVisible(isEditorAreaVisible());
         }
 
         // Update fast views.
@@ -1649,29 +1634,9 @@ public class Perspective {
         if (isEditorAreaVisible())
             return;
 
-        // Enable the editor area now that it will be made
-        // visible and can accept keyboard focus again.
-        if (editorArea.getControl() != null)
-            editorArea.getControl().setEnabled(true);
-
-        setEditorAreaVisible(true);
-
         // Replace the part holder with the editor area.
         presentation.getLayout().replace(editorHolder, editorArea);
         editorHolder = null;
-    }
-
-    private void setEditorAreaVisible(boolean visible) {
-        ArrayList workbooks = ((EditorSashContainer) editorArea)
-                .getEditorWorkbooks();
-        for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
-            EditorStack workbook = (EditorStack) iter.next();
-            workbook.setVisible(visible);
-            EditorPane pane = workbook.getVisibleEditor();
-            if (pane != null)
-                pane.setVisible(visible);
-        }
-        editorArea.setVisible(visible);
     }
 
     /**
@@ -1911,7 +1876,7 @@ public class Perspective {
      * Sanity-checks the LayoutParts in this perspective. Throws an Assertation exception
      * if an object's internal state is invalid.
      */
-    public void testInvariants() {
+    public void testInvariants() {        
         getPresentation().getLayout().testInvariants();
     }
 

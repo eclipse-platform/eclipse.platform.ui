@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -239,7 +240,20 @@ abstract public class LayoutPart implements ISizeProvider {
     }
 
     /**
-     * Returns true if this part is visible.
+     * Returns true if this part was set visible. This returns whatever was last passed into
+     * setVisible, but does not necessarily indicate that the part can be seen (ie: one of its
+     * ancestors may be invisible) 
+     */
+    public boolean getVisible() {
+        Control ctrl = getControl();
+        if (!SwtUtil.isDisposed(ctrl))
+            return ctrl.getVisible();
+        return false;    
+    }
+    
+    /**
+     * Returns true if this part can be seen. Returns false if the part or any of its ancestors
+     * are invisible.
      */
     public boolean isVisible() {
         Control ctrl = getControl();
@@ -253,7 +267,7 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public void setVisible(boolean makeVisible) {
         Control ctrl = getControl();
-        if (ctrl != null && !ctrl.isDisposed()) {
+        if (!SwtUtil.isDisposed(ctrl)) {
             if (makeVisible == ctrl.getVisible())
                 return;
 
@@ -304,11 +318,12 @@ abstract public class LayoutPart implements ISizeProvider {
      * Sets the parent for this part.
      */
     public void setContainer(ILayoutContainer container) {
-        //		if (this.container != null) {
-        //			this.container.wasRemoved(this);
-        //		}
-
+        
         this.container = container;
+        
+        if (container != null) {
+            setZoomed(container.childIsZoomed(this));
+        }
     }
 
     /**
@@ -335,12 +350,48 @@ abstract public class LayoutPart implements ISizeProvider {
         return null;
     }
 
-    public void setZoomed(boolean isZoomed) {
+    public void childRequestZoomIn(LayoutPart toZoom) {
+        
+    }
+    
+    public void childRequestZoomOut() {
+        
+    }
+    
+    public final void requestZoomOut() {
         ILayoutContainer container = getContainer();
-
         if (container != null) {
-            container.setZoomed(isZoomed);
+            container.childRequestZoomOut();
         }
+    }
+    
+    public final void requestZoomIn() {
+        ILayoutContainer container = getContainer();
+        if (container != null) {
+            container.childRequestZoomIn(this);
+        }
+    }
+    
+    public final boolean isObscuredByZoom() {
+        ILayoutContainer container = getContainer();
+        
+        if (container != null) {
+            return container.childObscuredByZoom(this);
+        }
+        
+        return false;
+    }
+    
+    public boolean childObscuredByZoom(LayoutPart toTest) {
+        return false;
+    }
+    
+    public boolean childIsZoomed(LayoutPart childToTest) {
+        return false;
+    }
+    
+    public void setZoomed(boolean isZoomed) {
+
     }
 
     /**

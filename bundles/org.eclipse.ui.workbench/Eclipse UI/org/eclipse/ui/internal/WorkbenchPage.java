@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -76,6 +77,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -454,8 +456,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return;
 
         // If zoomed, unzoom.
-        if (isZoomed() && partChangeAffectsZoom(getReference(part)))
-            zoomOut();
+        zoomOutIfNecessary(part);
 
         if (part instanceof MultiEditor) {
             part = ((MultiEditor) part).getActiveEditor();
@@ -498,10 +499,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null)
             return;
 
-        // If view is zoomed unzoom.
-        if (isZoomed() && partChangeAffectsZoom(ref))
-            zoomOut();
-
+        if (persp.isFastView(ref)) {
+            return;
+        }
+        
         // Do real work.
         persp.addFastView(ref);
 
@@ -782,7 +783,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Show the view.
         view = persp.showView(viewID, secondaryID);
         if (view != null) {
-            zoomOutIfNecessary(view);
             busyShowView(view, mode);
 
             window.firePerspectiveChanged(this, getPerspective(),
@@ -1005,7 +1005,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Activate new part.
         if (partWasActive) {
             IWorkbenchPart top = activationList.getTopEditor();
-            zoomOutIfNecessary(top);
             if (top == null) {
                 // Fix for bug #31122 (side effect from fix 28031 above)
                 actionSwitcher.updateTopEditor(null);
@@ -1020,7 +1019,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 setActivePart(null);
         } else if (partWasVisible) {
             IEditorPart top = activationList.getTopEditor();
-            zoomOutIfNecessary(top);
 
             // The editor we are bringing to top may already the visible
             // editor (due to editor manager behavior when it closes and
@@ -1029,6 +1027,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // firePartBroughtToTop.
             // We must fire it from here.
             if (top != null) {
+                zoomOutIfNecessary(top);
                 boolean isTop = editorMgr.getVisibleEditor() == top;
                 bringToTop(top);
                 if (isTop)
@@ -1890,8 +1889,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         // If part is added / removed always unzoom.
         IViewReference ref = (IViewReference) getReference(view);
-        if (isZoomed() && !isFastView(ref))
-            zoomOut();
 
         // Confirm.
         if (!persp.canCloseView(view))
@@ -2048,39 +2045,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp.getPresentation() == null)
             return false;
         return persp.getPresentation().isZoomed();
-    }
-
-    /**
-     * Returns <code>true</code> if the window needs to unzoom for the given
-     * IWorkbenchPart to be seen by the user. Returns false otherwise.
-     * 
-     * @param part
-     *            the part whose visibility is to be determined
-     * @return <code>true</code> if the window needs to unzoom for the given
-     *         IWorkbenchPart to be seen by the user, <code>false</code>
-     *         otherwise.
-     */
-    private boolean needToZoomOut(IWorkbenchPart part) {
-        // part is an editor
-        if (part instanceof IEditorPart) {
-            if (getActivePart() instanceof IViewPart) {
-                return true;
-            }
-            EditorSite site = (EditorSite) part.getSite();
-            EditorPane pane = (EditorPane) site.getPane();
-            EditorStack book = pane.getWorkbook();
-            return !book.equals(book.getEditorArea().getActiveWorkbook());
-        }
-        // part is a view
-        if (part instanceof IViewPart) {
-            if (isFastView((IViewReference) getReference(part))
-                    || part.equals(getActivePart()))
-                return false;
-            else
-                return true;
-        }
-
-        return true;
     }
 
     /**
@@ -2362,9 +2326,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null)
             return;
 
-        // If parts change always update zoom.
-        if (isZoomed())
-            zoomOut();
+        if (!persp.isFastView(ref)) {
+            return;
+        }
 
         // Do real work.
         persp.removeFastView(ref);
@@ -3201,7 +3165,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         PartStack parent = ((PartStack)pane.getContainer());
         
         if (parent != null) {
-        	parent.setState(newState);
+            parent.setMinimized(newState == IStackPresentationSite.STATE_MINIMIZED);
         }
     }
     
@@ -3303,7 +3267,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            the part to be made viewable
      */
     private void zoomOutIfNecessary(IWorkbenchPart part) {
-        if (isZoomed() && needToZoomOut(part))
+        if (isZoomed() && partChangeAffectsZoom(((PartSite)part.getSite()).getPartReference()))
             zoomOut();
     }
 
@@ -3454,16 +3418,42 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return getActive(parts.size() - 2);
         }
 
+        private IWorkbenchPart getActive(int start) {
+            IWorkbenchPartReference ref = getActiveReference(start, false);
+            
+            if (ref == null) {
+                return null;
+            }
+            
+            return ref.getPart(true);
+        }
+        
+        private IWorkbenchPartReference getActiveReference(int start, boolean editorsOnly) {
+            // First look for parts that aren't obscured by the current zoom state
+            IWorkbenchPartReference nonObscured = getActiveReference(start, editorsOnly, true);
+            
+            if (nonObscured != null) {
+                return nonObscured;
+            }
+            
+            // Now try all the rest of the parts
+            return getActiveReference(start, editorsOnly, false);
+        }
+        
         /*
          * Find a part in the list starting from the end and filter fast views
          * and views from other perspectives.
          */
-        private IWorkbenchPart getActive(int start) {
+        private IWorkbenchPartReference getActiveReference(int start, boolean editorsOnly, boolean skipPartsObscuredByZoom) {
             IWorkbenchPartReference[] views = getViewReferences();
             for (int i = start; i >= 0; i--) {
                 WorkbenchPartReference ref = (WorkbenchPartReference) parts
                         .get(i);
 
+                if (editorsOnly && !(ref instanceof IEditorReference)) {
+                    continue;
+                }
+                
                 // Skip parts whose containers have disabled auto-focus
                 PartPane pane = ref.getPane();
 
@@ -3472,6 +3462,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     if ((container != null) && (!container.allowsAutoFocus())) {
                         continue;
                     }
+                    
+                    if (skipPartsObscuredByZoom) {
+                        if (pane.isObscuredByZoom()) {
+                            continue;
+                        }
+                    }
                 }
 
                 // Skip fastviews
@@ -3479,12 +3475,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     if (!((IViewReference) ref).isFastView()) {
                         for (int j = 0; j < views.length; j++) {
                             if (views[j] == ref) {
-                                return ref.getPart(true);
+                                return ref;
                             }
                         }
                     }
                 } else {
-                    return ref.getPart(true);
+                    return ref;
                 }
             }
             return null;
@@ -3562,11 +3558,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Returns the topmost editor on the stack, or null if none.
          */
         IEditorPart getTopEditor() {
-            IEditorReference editors[] = getEditors();
-            if (editors.length > 0) {
-                return editors[editors.length - 1].getEditor(true);
+            IEditorReference editor = (IEditorReference)getActiveReference(parts.size() - 1, true);
+            
+            if (editor == null) {
+                return null;
             }
-            return null;
+            
+            return editor.getEditor(true);
         }
     }
 
@@ -3908,5 +3906,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         // recursive call to continue up the tree
         findSashParts(parent, sashes, info);
+    }
+    
+    /**
+     * Sanity-checks the objects in this page. Throws an Assertation exception
+     * if an object's internal state is invalid. ONLY INTENDED FOR USE IN THE 
+     * UI TEST SUITES. 
+     */
+    public void testInvariants() {
+        Perspective persp = getActivePerspective();
+        
+        if (persp != null) {
+
+            persp.testInvariants();
+            
+            // When we have widgets, ensure that there is no situation where the editor area is visible
+            // and the perspective doesn't want an editor area. 
+            if (!SwtUtil.isDisposed(getClientComposite()) && editorPresentation.getLayoutPart().isVisible()) {
+                Assert.isTrue(persp.isEditorAreaVisible());
+            }
+        }
+        
     }
 }
