@@ -82,26 +82,30 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 		// find the synchronize info object for the memory block
 		SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(memoryBlock);
 		
-		if (info != null)
+		// if info is not available, need to create one to hold the property
+		if (info == null)
 		{
-			// get the value of the property
-			Object oldValue = info.getProperty(propertyId);
-			
-			if (oldValue == null)
-			{
-				// if the value has never been added to the info object
-				// set the property and fire a change event
-				info.setProperty(propertyId, value);
-				info.firePropertyChanged(propertyId);
-				return;
-			}
-			else if (!oldValue.equals(value))
-			{
-				// if the value has changed
-				// set the property and fire a change event
-				info.setProperty(propertyId, value);
-				info.firePropertyChanged(propertyId);
-			}
+			info = new SynchronizeInfo(memoryBlock);
+			fSynchronizeInfo.put(memoryBlock, info);
+		}
+		
+		// get the value of the property
+		Object oldValue = info.getProperty(propertyId);
+		
+		if (oldValue == null)
+		{
+			// if the value has never been added to the info object
+			// set the property and fire a change event
+			info.setProperty(propertyId, value);
+			info.firePropertyChanged(propertyId);
+			return;
+		}
+		else if (!oldValue.equals(value))
+		{
+			// if the value has changed
+			// set the property and fire a change event
+			info.setProperty(propertyId, value);
+			info.firePropertyChanged(propertyId);
 		}
 	}
 
