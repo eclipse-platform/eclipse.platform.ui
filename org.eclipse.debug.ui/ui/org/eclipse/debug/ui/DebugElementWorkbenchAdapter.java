@@ -8,10 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -22,13 +19,9 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
@@ -48,29 +41,15 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * </p>
  * <p>
  * Clients may subclass this class to provide custom adapters for elements in a debug
- * model.
+ * model. The debug platform provides <code>IWorkbenchAdapters</code> for the standard debug
+ * elements. Clients may override the default content in the debug view by providing an
+ * <code>IWorkbenchAdapter</code> or <code>IDeferredWorkbenchAdapter</code> for a debug
+ * element.
  * </p>
  * @since 3.1
  */
 public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
-    // a model presentation that can provide images & labels for debug elements
-    private static DelegatingModelPresentation fgPresenetation;
-    
-    // map of images to image descriptors
-    private static Map fgImages = new HashMap();
-    
-    /**
-     * Disposes this adapater
-     */
-    public static void dispose() {
-        fgImages.clear();
-        if (fgPresenetation != null) {
-            fgPresenetation.dispose();
-            fgPresenetation = null;
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
@@ -83,7 +62,6 @@ public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkben
 				return ((IThread)parent).getStackFrames();
 			}			
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
 		}
 		if (parent instanceof ILaunch) {
 			return ((ILaunch)parent).getChildren();
@@ -98,35 +76,14 @@ public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkben
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object object) {
-        Image image = getPresentation().getImage(object);
-        if (image != null) {
-            ImageDescriptor descriptor = (ImageDescriptor) fgImages.get(image);
-            if (descriptor == null) {
-                descriptor = new ImageImageDescriptor(image);
-                fgImages.put(image, descriptor);
-            }
-            return descriptor;
-        }
-        return null;
+        return DebugElementHelper.getImageDescriptor(object);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
     public String getLabel(Object o) {
-        return getPresentation().getText(o);
-    }
-    
-    /**
-     * Returns a model presentation to use to retrieve lables & images.
-     * 
-     * @return a model presentation to use to retrieve lables & images
-     */
-    private DelegatingModelPresentation getPresentation() {
-        if (fgPresenetation == null) {
-            fgPresenetation = new DelegatingModelPresentation();
-        }
-        return fgPresenetation;
+        return DebugElementHelper.getLabel(o);
     }
 
     /* (non-Javadoc)
@@ -155,33 +112,21 @@ public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkben
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
      */
     public RGB getForeground(Object element) {
-        Color color = getPresentation().getForeground(element);
-        if (color != null) {
-            return color.getRGB();
-        }
-        return null;
+        return DebugElementHelper.getForeground(element);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
      */
     public RGB getBackground(Object element) {
-        Color color = getPresentation().getBackground(element);
-        if (color != null) {
-            return color.getRGB();
-        }
-        return null;
+        return DebugElementHelper.getBackground(element);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
      */
     public FontData getFont(Object element) {
-        Font font = getPresentation().getFont(element);
-        if (font != null) {
-            return font.getFontData()[0];
-        }
-        return null;
+        return DebugElementHelper.getFont(element);
     }
 
 }

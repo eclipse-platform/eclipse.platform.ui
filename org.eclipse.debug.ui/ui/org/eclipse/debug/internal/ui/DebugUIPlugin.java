@@ -53,7 +53,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementWorkbenchAdapter;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.internal.ui.views.launch.DeferredContentAdapterFactory;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
 import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
@@ -323,7 +323,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				fMemBlkViewSynchronizer.shutdown();
 			}
 			
-			DebugElementWorkbenchAdapter.dispose();
+			DebugElementHelper.dispose();
 			
 		} finally {
 			super.stop(context);
