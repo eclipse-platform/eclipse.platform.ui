@@ -44,6 +44,13 @@ public interface IBreakpointContainer {
 	public IBreakpointContainer getParentContainer();
 	
 	/**
+	 * Sets this container's parent to the given container or
+	 * <code>null</code> if this is a root container.
+	 * @param parentContainer the parent container or <code>null</code>
+	 */
+	public void setParentContainer(IBreakpointContainer parentContainer);
+	
+	/**
 	 * Returns the containers within this container, if any. This
 	 * container's breakpoints are divided up among the returned
 	 * containers.
@@ -66,6 +73,12 @@ public interface IBreakpointContainer {
 	 *  if none
 	 */
 	public Image getContainerImage();
+	
+	/**
+	 * Sets this container's image to the given image.
+	 * @param image the image
+	 */
+	public void setContainerImage(Image image);
 	
 	/**
 	 * Returns this container's name

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
@@ -27,23 +28,17 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * A breakpoint container factory that divides breakpoints based on their
+ * A breakpoint container factory delegate that divides breakpoints based on their
  * containing project.
  */
-public class BreakpointProjectContainerFactory extends AbstractBreakpointContainerFactory {
+public class BreakpointProjectContainerFactoryDelegate extends AbstractBreakpointContainerFactoryDelegate {
 	
 	private ILabelProvider fImageProvider= new WorkbenchLabelProvider();
-	// Handle to the image for the "other" container. Maintained so it can be disposed.
-	private Image fOtherImage= null;
-	
-	public BreakpointProjectContainerFactory() {
-	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer) {
-	    IBreakpoint[] breakpoints= getBreakpoints(parentContainer);
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints) {
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -72,25 +67,26 @@ public class BreakpointProjectContainerFactory extends AbstractBreakpointContain
 			List list= (List) map.get(project);
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
-					parentContainer,
-					this,
+					fFactory,
 					project.getName());
-			container.setImage(fImageProvider.getImage(project));
+			container.setContainerImage(fImageProvider.getImage(project));
 			containers.add(container);
 		}
 		if (other.size() > 0) {
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
-					parentContainer,
-					this,
+					fFactory,
 					DebugUIViewsMessages.getString("BreakpointProjectContainerFactory.0")); //$NON-NLS-1$
-			fOtherImage= PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
-			container.setImage(fOtherImage);
+			Image image= PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
+			container.setContainerImage(image);
 			containers.add(container);
 		}
 		return (IBreakpointContainer[]) containers.toArray(new IBreakpointContainer[containers.size()]);
 	}
 	
+	/**
+	 * Dispose the label provider.
+	 */
 	public void dispose() {
 		fImageProvider.dispose();
 	}

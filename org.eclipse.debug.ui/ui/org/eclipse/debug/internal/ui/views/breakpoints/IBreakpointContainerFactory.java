@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -40,24 +41,11 @@ public interface IBreakpointContainerFactory {
 	public String getLabel();
 	
 	/**
-	 * Sets this breakpoint container factory's label. This label must be suitable
-	 * for presentation to the user in views, actions, etc.
-	 * @param label the label
-	 */
-	public void setLabel(String label);
-	
-	/**
 	 * Returns an image for presentation along with this factory or <code>null</code>
 	 * if none.
 	 * @return an image for presentation along with this factory or <code>null</code>
 	 */
 	public ImageDescriptor getImageDescriptor();
-	
-	/**
-	 * Sets this breakpoint container factory's image.
-	 * @param image the image
-	 */
-	public void setImageDescriptor(ImageDescriptor image);
 	
 	/**
 	 * Returns this breakpoint container factory's unique identifier.
@@ -66,17 +54,15 @@ public interface IBreakpointContainerFactory {
 	public String getIdentifier();
 	
 	/**
-	 * Sets this breakpoint container factory's unique identifier.
-	 * This method should only be called by the BreakpointContainerFactoryManager
-	 * at startup.
-	 * @param identifier the identifier
+	 * Returns the delegate that this factory uses to create breakpoint containers
+	 * or <code>null</code> if none was correctly specified.
+	 * @return this factory's delegate or <code>null</code>
 	 */
-	public void setIdentifier(String identifier);
+	public IBreakpointContainerFactoryDelegate getDelegate();
 	
 	/**
-	 * Disposes this container factory. Allows the factory to clean up any
-	 * resources related to images that it may have used for containers 
-	 * it created.
+	 * Disposes this container factory and its delegate. Allows clients to clean
+	 * up any resources (such as images) that it may have in use.
 	 */
 	public void dispose();
 

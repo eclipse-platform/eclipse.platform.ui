@@ -10,22 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.osgi.framework.Bundle;
 
 /**
- * 
+ * Manager which provides access to the breakpoint container factories
+ * which are contributed via the org.eclipse.debug.ui.breakpointContainerFactories
+ * extension point.
  */
 public class BreakpointContainerFactoryManager {
 	
@@ -33,6 +30,10 @@ public class BreakpointContainerFactoryManager {
 	
 	private Map fFactories= new HashMap();
 
+	/**
+	 * Returns the singleton instance of the breakpoint container
+	 * factory manager.
+	 */
 	public static BreakpointContainerFactoryManager getDefault() {
 		if (fgManager == null) {
 			fgManager= new BreakpointContainerFactoryManager();
@@ -40,58 +41,38 @@ public class BreakpointContainerFactoryManager {
 		return fgManager;
 	}
 	
-	public BreakpointContainerFactoryManager() {
+	/**
+	 * Creates and initializes a new breakpoint container factory.
+	 */
+	private BreakpointContainerFactoryManager() {
 		loadContainerFactories();
 	}
 
 	/**
-	 * 
+	 * Loads all contributed breakpoint container factories contributed via extension.
 	 */
 	private void loadContainerFactories() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_CONTAINER_FACTORIES);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element= configurationElements[i];
-			String id= element.getAttribute("id"); //$NON-NLS-1$
-			String label= element.getAttribute("label"); //$NON-NLS-1$
-			if (id != null && label != null) {
-				try {
-					IBreakpointContainerFactory factory = (IBreakpointContainerFactory) element.createExecutableExtension("class"); //$NON-NLS-1$
-					if (factory != null) {
-						factory.setLabel(label);
-						factory.setIdentifier(id);
-						ImageDescriptor imageDescriptor = getImageDescriptor(element);
-						if (imageDescriptor != null) {
-							factory.setImageDescriptor(imageDescriptor);
-						}
-						fFactories.put(id, factory);
-					}
-				} catch (CoreException e) {
-				}
+			IBreakpointContainerFactory factory = new BreakpointContainerFactory(element);
+			if (validateFactory(factory)) {
+				fFactories.put(factory.getIdentifier(), factory);
 			}
 		}
 	}
 	
 	/**
-	 * Returns the image for this shortcut, or <code>null</code> if none
-	 * 
-	 * @return the image for this shortcut, or <code>null</code> if none
+	 * Validates the given factory. Checks that certain required attributes
+	 * are available.
+	 * @param factory the factory to validate
+	 * @return whether the given factory is valid
 	 */
-	public ImageDescriptor getImageDescriptor(IConfigurationElement element) {
-		ImageDescriptor descriptor= null;
-		String iconPath = element.getAttribute("icon"); //$NON-NLS-1$
-		// iconPath may be null because icon is optional
-		if (iconPath != null) {
-			try {
-				Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
-				URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-				iconURL = new URL(iconURL, iconPath);
-				descriptor = ImageDescriptor.createFromURL(iconURL);
-			} catch (MalformedURLException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-		return descriptor;
+	protected static boolean validateFactory(IBreakpointContainerFactory factory) {
+		String id = factory.getIdentifier();
+		String label = factory.getLabel();
+		return id != null && id.length() > 0 && label != null && label.length() > 0;
 	}
 	
 	/**

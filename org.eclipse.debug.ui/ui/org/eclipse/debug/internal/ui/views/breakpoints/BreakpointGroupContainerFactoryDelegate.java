@@ -20,21 +20,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
 
 /**
- * A breakpoint container factory that divides breakpoints based on their
+ * A breakpoint container factory delegate that divides breakpoints based on their
  * "custom group".
  */
-public class BreakpointGroupContainerFactory extends AbstractBreakpointContainerFactory {
-
-	public BreakpointGroupContainerFactory() {
-	}
+public class BreakpointGroupContainerFactoryDelegate extends AbstractBreakpointContainerFactoryDelegate {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer) {
-	    IBreakpoint[] breakpoints= getBreakpoints(parentContainer);
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints) {
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -65,16 +62,14 @@ public class BreakpointGroupContainerFactory extends AbstractBreakpointContainer
 			List list= (List) map.get(group);
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
-					parentContainer,
-					this,
+					fFactory,
 					group);
 			containers.add(container);
 		}
 		if (other.size() > 0) {
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
-					parentContainer,
-					this,
+					fFactory,
 					DebugUIViewsMessages.getString("BreakpointGroupContainerFactory.0")); //$NON-NLS-1$
 			containers.add(container);
 		}

@@ -14,7 +14,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * 
+ * @see IBreakpointContainer
  */
 public class BreakpointContainer implements IBreakpointContainer {
 	
@@ -29,29 +29,53 @@ public class BreakpointContainer implements IBreakpointContainer {
 		// Do not call
 	}
 	
+	/**
+	 * Creates a new container with the given name, created for the given factory,
+	 * which contains the given breakpoints.
+	 * @param breakpoints the breakpoints to put in this container
+	 * @param creatingFactory the parent factory that created this container
+	 * @param name this container's name
+	 */
 	public BreakpointContainer(IBreakpoint[] breakpoints,
-	        IBreakpointContainer parentContainer,
 	        IBreakpointContainerFactory creatingFactory,
 	        String name) {
 	    fBreakpoints= breakpoints;
-	    fParentContainer= parentContainer;
 	    fCreatingFactory= creatingFactory;
 	    fName= name;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#getParentContainer()
+	 */
 	public IBreakpointContainer getParentContainer() {
 	    return fParentContainer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#setParentContainer(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
+	 */
+	public void setParentContainer(IBreakpointContainer parentContainer) {
+		fParentContainer= parentContainer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#getContainers()
+	 */
 	public IBreakpointContainer[] getContainers() {
 	    return fContainers;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#setContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer[])
+	 */
 	public void setContainers(IBreakpointContainer[] containers) {
 	    fContainers= containers;
 	}
-	
-	public void setImage(Image image) {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#setContainerImage(org.eclipse.swt.graphics.Image)
+	 */
+	public void setContainerImage(Image image) {
 		fImage= image;
 	}
 
@@ -85,7 +109,7 @@ public class BreakpointContainer implements IBreakpointContainer {
 	
 	/**
 	 * Breakpoint containers are equal if they have the same name and the
-	 * same parent.
+	 * same parent container.
 	 */
 	public boolean equals(Object object) {
 		if (object instanceof BreakpointContainer) {

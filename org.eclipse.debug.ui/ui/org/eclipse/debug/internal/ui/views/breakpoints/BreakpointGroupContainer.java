@@ -19,13 +19,10 @@ import org.eclipse.debug.core.model.IBreakpoint;
 public class BreakpointGroupContainer extends BreakpointContainer {
 
     /**
-     * @param breakpoints
-     * @param parentContainer
-     * @param creatingFactory
-     * @param name
+     * @see BreakpointContainer#BreakpointContainer(IBreakpoint[], IBreakpointContainerFactory, String)
      */
-    public BreakpointGroupContainer(IBreakpoint[] breakpoints, IBreakpointContainer parentContainer, IBreakpointContainerFactory creatingFactory, String name) {
-        super(breakpoints, parentContainer, creatingFactory, name);
+    public BreakpointGroupContainer(IBreakpoint[] breakpoints, IBreakpointContainerFactory creatingFactory, String name) {
+        super(breakpoints, creatingFactory, name);
     }
 
 }
