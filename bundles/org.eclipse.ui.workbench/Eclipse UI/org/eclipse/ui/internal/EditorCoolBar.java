@@ -33,7 +33,10 @@ public class EditorCoolBar {
 	private boolean mouseDownListenerAdded = false;
 	private boolean editorListIsOpen = false;
 
-	
+	private boolean singleClick = false;
+	private boolean dragEvent = false;
+	private boolean doubleClick = false;
+			
 	public EditorCoolBar(IWorkbenchWindow window, EditorWorkbook workbook, int style) {
 		this.window = window;
 		this.workbook = workbook;
@@ -105,8 +108,6 @@ public class EditorCoolBar {
 		bookMarkToolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				ToolItem item = (ToolItem) event.widget;
-//				if (item.getSelection()) {
-//					selectedBookMark = item;
 				EditorShortcut shortcut = (EditorShortcut)item.getData();
 				if (shortcut != null && shortcut.getInput() != null)
 					try {
@@ -247,48 +248,75 @@ public class EditorCoolBar {
 		Point p1 = dropDownComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point p = dropDownItem.computeSize(p1.x, p1.y);
 		dropDownItem.setSize(0,p.y);
-	
- 		dropDownLabel.addMouseListener(new MouseAdapter() {
-			private boolean isActivating;
- 			public void mouseUp(final MouseEvent e) {
-				isActivating = true;
- 				(new Thread() {
-					public void run() {
-						try { Thread.sleep(dropDownLabel.getDisplay().getDoubleClickTime()); 
-						} catch (Exception e){
-						}
-//						if(isActivating) {
-							Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									if (isActivating) {
-//									isActivating = false;
-					 				EditorPane visibleEditor = workbook.getVisibleEditor();
-									if (e.button == 3) {
-										visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
-									} else {
-										if ((e.button == 1) && overImage(visibleEditor, e.x)) {
-											visibleEditor.showPaneMenu();
-										} else {
-						 					displayEditorList();
+		
+		dropDownLabel.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				singleClick = true;
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+				doubleClick = true;
+			}			
+
+			public void mouseUp(final MouseEvent e) {
+				final int doubleClickTime = dropDownLabel.getDisplay().getDoubleClickTime();
+				if (singleClick == doubleClick) {
+					doubleClick = false;
+					singleClick = false;
+	 				EditorPane visibleEditor = workbook.getVisibleEditor();
+	 				if (visibleEditor != null) {
+	 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
+	 				}					
+				} else {
+	 				(new Thread() {
+						public void run() {
+							try { 
+								Thread.sleep(doubleClickTime);
+							} catch (InterruptedException e){
+							}
+							if (singleClick) {
+								Display.getDefault().asyncExec(new Runnable() {
+									public void run() {
+										if (singleClick) {
+											singleClick = false;
+											if (dragEvent) {
+												dragEvent = false;
+												return;
+											}
+							 				EditorPane visibleEditor = workbook.getVisibleEditor();
+											if (e.button == 3) {
+												visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
+											} else {
+												if ((e.button == 1) && overImage(visibleEditor, e.x)) {
+													visibleEditor.showPaneMenu();
+												} else {
+								 					displayEditorList();
+												}
+											}												
 										}
 									}
-									}
-								}
-							});
-//						}
-					}
-				}).start();
- 			}
- 			
- 			public void mouseDoubleClick(MouseEvent event) {
- 				isActivating = false;
- 				EditorPane visibleEditor = workbook.getVisibleEditor();
- 				if (visibleEditor != null) {
- 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
- 				}
+								});
+							}
+						}
+					}).start();
+				}								
+
 			}
- 		});
- 		
+			
+		});	
+		
+		dropDownLabel.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				if (singleClick) {
+					if (!dragEvent) {					
+					}
+					dragEvent = true;
+					return;
+				}
+			}
+		});
+				
+
  		// register the interested mouse down listener
 		if (!mouseDownListenerAdded && workbook.getEditorArea() != null) {
 			dropDownLabel.addListener(SWT.MouseDown, workbook.getEditorArea().getMouseDownListener());

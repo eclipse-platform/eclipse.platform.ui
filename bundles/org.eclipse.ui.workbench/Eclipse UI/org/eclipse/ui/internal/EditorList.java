@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -25,14 +24,10 @@ public class EditorList {
 
 	private SaveAction saveAction;
 	private CloseEditorAction closeAction;
-//	private CloseAllAction closeAllAction;
 	private SelectionAction selectAllAction;
-//	private SelectionAction invertSelectionAction;
-//	private SelectionAction selectCleanAction;
 	private FullNameAction fullNameAction;
 	private SortAction nameSortAction;
 	private SortAction MRUSortAction;
-//	private SortAction tabOrderSortAction;
 	private SetScopeAction windowScopeAction;
 	private SetScopeAction pageScopeAction;
 	private SetScopeAction tabGroupScopeAction;
@@ -46,7 +41,6 @@ public class EditorList {
 
 	private static final int NAME_SORT = 0;
 	private static final int MRU_SORT = 1;
-//	private static final int TAB_ORDER_SORT = 2;
 	private static int sortOrder = NAME_SORT;
 	
 	private static final int SET_WINDOW_SCOPE = 0;
@@ -58,17 +52,13 @@ public class EditorList {
 		this.workbook = workbook;
 		saveAction = new SaveAction();
 		closeAction = new CloseEditorAction();
-//		closeAllAction = new CloseAllAction();
 		selectAllAction = new SelectionAction(SELECT_ALL);
-//		invertSelectionAction = new SelectionAction(INVERT_SELECTION);
-//		selectCleanAction = new SelectionAction(SELECT_CLEAN);
 		fullNameAction = new FullNameAction();
 		windowScopeAction = new SetScopeAction(SET_WINDOW_SCOPE);
 	  	pageScopeAction = new SetScopeAction(SET_PAGE_SCOPE);
 	  	tabGroupScopeAction = new SetScopeAction(SET_TAB_GROUP_SCOPE);
 		nameSortAction = new SortAction(NAME_SORT);
 	 	MRUSortAction = new SortAction(MRU_SORT);
-//	  	tabOrderSortAction = new SortAction(TAB_ORDER_SORT);
 	  	bookMarkAction = new BookMarkAction();
 	}
 	
@@ -120,9 +110,6 @@ public class EditorList {
 		case MRU_SORT:
 			// The elements are already in MRU order
 			break;
-//		case TAB_ORDER_SORT:
-//			// The elements are already in tab order
-//			break;
 		}
 	}
 	/**
@@ -170,25 +157,13 @@ public class EditorList {
 		MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
 		sortMenuMgr.add(nameSortAction);
 		sortMenuMgr.add(MRUSortAction);
-//		sortMenuMgr.add(tabOrderSortAction);
-
-		// Apply to SubMenu
-//		MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
-//		applyToMenuMgr.add(windowScopeAction);
-//		applyToMenuMgr.add(pageScopeAction);
-//		applyToMenuMgr.add(tabGroupScopeAction);
-								
+						
 		menuMgr.add(saveAction);
 		menuMgr.add(closeAction);
-//		menuMgr.add(closeAllAction);
 		menuMgr.add(new Separator());
 		menuMgr.add(selectAllAction);
-//		menuMgr.add(invertSelectionAction);
-//		menuMgr.add(selectCleanAction);
 		menuMgr.add(new Separator());
 		menuMgr.add(fullNameAction);
-//		menuMgr.add(applyToMenuMgr);
-//		menuMgr.add(new Separator());
 		menuMgr.add(sortMenuMgr);
 		menuMgr.add(bookMarkAction);
 	}
@@ -204,45 +179,20 @@ public class EditorList {
 
 //		// Create the context menu						
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
-//		menuMgr.setRemoveAllWhenShown(true);
-//		menuMgr.addMenuListener(new IMenuListener() {
-//			public void menuAboutToShow(IMenuManager manager) {
-//				EditorList.this.fillContextMenu(manager);
-//			}
-//		});
-		MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
-		sortMenuMgr.add(nameSortAction);
-		sortMenuMgr.add(MRUSortAction);
-//		sortMenuMgr.add(tabOrderSortAction);
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				EditorList.this.fillContextMenu(manager);
+			}
+		});
 
-		// Apply to SubMenu
-//		MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
-//		applyToMenuMgr.add(windowScopeAction);
-//		applyToMenuMgr.add(pageScopeAction);
-//		applyToMenuMgr.add(tabGroupScopeAction);
-								
-		menuMgr.add(saveAction);
-		menuMgr.add(closeAction);
-//		menuMgr.add(closeAllAction);
-		menuMgr.add(new Separator());
-		menuMgr.add(selectAllAction);
-//		menuMgr.add(invertSelectionAction);
-//		menuMgr.add(selectCleanAction);
-		menuMgr.add(new Separator());
-		menuMgr.add(fullNameAction);
-//		menuMgr.add(applyToMenuMgr);
-//		menuMgr.add(new Separator());
-		menuMgr.add(sortMenuMgr);
-		menuMgr.add(bookMarkAction);
-		
 		editorsTable.setMenu(menuMgr.createContextMenu(editorsTable));
 		editorsTable.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = editorsTable.getSelection();
 				if (items.length > 0) {
 					saveAction.setEnabled(true);
-					closeAction.setEnabled(true);
-//					closeAllAction.setEnabled(true); 
+					closeAction.setEnabled(true); 
 					
 					if (items.length == 1) {
 						Adapter selection = (Adapter)items[0].getData();
@@ -251,7 +201,6 @@ public class EditorList {
 				} else {
 					saveAction.setEnabled(false);
 					closeAction.setEnabled(false);
-//					closeAllAction.setEnabled(false);
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -259,7 +208,6 @@ public class EditorList {
 				if (items.length > 0) {
 					saveAction.setEnabled(true);
 					closeAction.setEnabled(true);
-//					closeAllAction.setEnabled(true); 
 					
 					if (items.length == 1) {
 						Adapter selection = (Adapter)items[0].getData();
@@ -268,7 +216,6 @@ public class EditorList {
 				} else {
 					saveAction.setEnabled(false);
 					closeAction.setEnabled(false);
-//					closeAllAction.setEnabled(false);
 				}
 			}
 		});
@@ -487,11 +434,6 @@ public class EditorList {
 				setText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.text")); //$NON-NLS-1$
 				setToolTipText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.toolTip")); //$NON-NLS-1$
 				break;
-//			case TAB_ORDER_SORT:
-//				setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
-//				setText(WorkbenchMessages.getString("EditorList.SortByTabOrder.text")); //$NON-NLS-1$
-//				setToolTipText(WorkbenchMessages.getString("EditorList.SortByTabOrder.toolTip")); //$NON-NLS-1$
-//				break;
 			default:
 				break;
 			}
@@ -505,7 +447,6 @@ public class EditorList {
 			EditorList.sortOrder = this.sortOrder;
 			nameSortAction.setChecked(EditorList.sortOrder==NAME_SORT);
 			MRUSortAction.setChecked(EditorList.sortOrder==MRU_SORT);
-//			tabOrderSortAction.setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
 			TableItem[] items = editorsTable.getItems();
 			if(items.length == 0) {
 				return;
