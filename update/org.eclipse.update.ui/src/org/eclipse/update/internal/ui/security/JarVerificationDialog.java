@@ -22,7 +22,7 @@ import org.eclipse.update.internal.ui.*;
  * 
  */
 public class JarVerificationDialog extends TitleAreaDialog {
-
+	public final static int INSTALL_ALL = CANCEL + OK + 1;
 	private IVerificationResult _VerificationResult = null;
 	private IDialogPage _DialogPage;
 	private Composite pageContainer;
@@ -64,7 +64,14 @@ public class JarVerificationDialog extends TitleAreaDialog {
 					UpdateUI.getString("JarVerificationDialog.Continue"), //$NON-NLS-1$
 					false);				
 			}
-
+			// Radio button: Install all without prompting
+			//----------------------------------
+			createButton(
+				parent,
+				IDialogConstants.YES_TO_ALL_ID,
+				UpdateUI.getString("JarVerificationDialog.InstallAll"), //$NON-NLS-1$
+				false);		
+			
 			// Radio button: Cancel installation
 			//----------------------------------
 			createButton(
@@ -120,5 +127,19 @@ public class JarVerificationDialog extends TitleAreaDialog {
 			defaultImage = null;
 		}
 		return super.close();		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		if (IDialogConstants.YES_TO_ALL_ID == buttonId)
+			installAllPressed();
+		else
+			super.buttonPressed(buttonId);
+	}
+	
+	private void installAllPressed() {
+        setReturnCode(JarVerificationDialog.INSTALL_ALL);
+        close();
 	}
 }

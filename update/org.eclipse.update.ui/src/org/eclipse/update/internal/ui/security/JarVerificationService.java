@@ -27,10 +27,9 @@ public class JarVerificationService implements IVerificationListener {
 	 * bacause we want to reuse it upon multiple calls
 	 */
 
-	/*
-	 * the Shell
-	 */
 	private Shell shell;
+	// keep track of the last verify code.
+	private int lastVerifyCode = -1;
 	
 	/**
 	 * Processed ContentRefernces.  They will be skipped if prompted
@@ -78,11 +77,13 @@ public class JarVerificationService implements IVerificationListener {
 		dialog.getShell().setSize(600, 500);
 		dialog.getShell().setText(UpdateUI.getString("JarVerificationDialog.wtitle")); //$NON-NLS-1$
 		dialog.open();
-		if (dialog.getReturnCode() == JarVerificationDialog.OK)
+		if (dialog.getReturnCode() == JarVerificationDialog.OK) {
+			code = CHOICE_INSTALL_TRUST_ONCE;
+		} else if (dialog.getReturnCode() == JarVerificationDialog.INSTALL_ALL) {
 			code = CHOICE_INSTALL_TRUST_ALWAYS;
-		else
+		} else { 
 			code = CHOICE_ABORT;
-
+		}
 		return code;
 
 	}
@@ -97,6 +98,8 @@ public class JarVerificationService implements IVerificationListener {
 		if (verificationResult.alreadySeen()) return CHOICE_INSTALL_TRUST_ALWAYS;
 		
 		if(see(verificationResult)) return CHOICE_INSTALL_TRUST_ALWAYS;
+		
+		if (lastVerifyCode == CHOICE_INSTALL_TRUST_ALWAYS) return CHOICE_INSTALL_TRUST_ALWAYS;
 
 		switch (verificationResult.getVerificationCode()) {
 			case IVerificationResult.UNKNOWN_ERROR :
@@ -110,14 +113,13 @@ public class JarVerificationService implements IVerificationListener {
 				return CHOICE_INSTALL_TRUST_ALWAYS;				
 			
 			default :
-				{
-					final int[] wizardResult = new int[1];					
+				{				
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							wizardResult[0] = openWizard(verificationResult);
+							lastVerifyCode = openWizard(verificationResult);
 						}
 					});
-					return wizardResult[0];
+					return lastVerifyCode;
 				}
 		}
 	}
