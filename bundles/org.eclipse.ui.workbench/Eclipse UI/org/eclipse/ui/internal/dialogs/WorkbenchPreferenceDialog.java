@@ -567,12 +567,12 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			if (lastGroupId != null) {
 				for (int i = 0; i < groups.length; i++) {
 					if (lastGroupId.equals(groups[i].getId())) {
-						groupSelected(groups[i]);
+						selectAndRevealInToolBar(groups[i]);
 						return;
 					}
 				}
 			}
-			groupSelected(groups[0]);
+			selectAndRevealInToolBar(groups[0]);
 		} else {
 			getTreeViewer().setInput(getPreferenceManager());
 			super.selectSavedItem();
@@ -581,18 +581,20 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
-	 * A group has been selected. Update the tree viewer.
+	 * Select the group and reveal it in the toolbar.
 	 * @param group
 	 */
-	private void groupSelected(final WorkbenchPreferenceGroup group) {
+	private void selectAndRevealInToolBar(WorkbenchPreferenceGroup group) {
+		selectGroupInToolBar(group);
+		groupSelected(group);
+	}
 
-		ToolItem[] items = toolBar.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (group.equals(items[i].getData())) {
-				items[i].setSelection(true);
-				break;
-			}
-		}
+	/**
+	 * A group has been selected. Update the tree viewer.
+	 * @param group
+	 * tool item.
+	 */
+	private void groupSelected(final WorkbenchPreferenceGroup group) {
 
 		lastGroupId = group.getId();
 		currentGroup = group;
@@ -602,6 +604,19 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		if (selection == null)
 			selection = group.getGroupsAndNodes()[0];
 		getTreeViewer().setSelection(new StructuredSelection(selection), true);
+	}
+
+	/**
+	 * @param group
+	 */
+	private void selectGroupInToolBar(final WorkbenchPreferenceGroup group) {
+		ToolItem[] items = toolBar.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (group.equals(items[i].getData())) {
+				items[i].setSelection(true);
+				break;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -723,20 +738,16 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			 */
 			public void run() {
 				groupedMode = !groupedMode;
-				Object input;
-
+				
 				if (groupedMode) {
-					input = currentGroup;
+					if(currentGroup == null)
+						currentGroup = getGroups()[0];
 					createToolBar(toolBarComposite);
+					selectAndRevealInToolBar(currentGroup);
 				} else {
 					toolBar.dispose();
-					input = getPreferenceManager();
+					getTreeViewer().setInput(getPreferenceManager());
 				}
-
-				//Clear the input
-				getTreeViewer().setInput(input);
-
-				getTreeViewer().refresh();
 				getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				getShell().layout(true);
 

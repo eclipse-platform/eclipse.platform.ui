@@ -82,6 +82,8 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	public Object getParent(Object element) {
 		if(groupedMode)
 			return currentInput.findParent(element);
+		if(element instanceof WorkbenchPreferenceGroup)
+			return null;//Handle the case where input changes and the selection is invalid
 		return super.getParent(element);
 
 	}
