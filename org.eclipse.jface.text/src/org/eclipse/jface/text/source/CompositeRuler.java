@@ -24,8 +24,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -39,7 +37,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -124,8 +124,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		
 		/** The list of listeners added to this canvas. */
 		private List fCachedListeners= new ArrayList();
-		/** Internal mouse listener for opening the context menu. */
-		private MouseListener fMouseListener;
+		/** Internal listener for opening the context menu. */
+		private Listener fMenuDetectListener;
 		
 		/**
 		 * Creates a new composite ruler canvas.
@@ -135,15 +135,12 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		 */
 		public CompositeRulerCanvas(Composite parent, int style) {
 			super(parent, style);
-			fMouseListener= new MouseAdapter() {
-				public void mouseUp(MouseEvent e) {
-					if (3 == e.button) {
+			fMenuDetectListener= new Listener() {
+				public void handleEvent(Event event) {
+				  	if (event.type == SWT.MenuDetect) {
 						Menu menu= getMenu();
 						if (menu != null) {
-							Control c= (Control) e.widget;
-							Point p= new Point(e.x, e.y);
-							Point p2= c.toDisplay(p);
-							menu.setLocation(p2.x, p2.y);
+							menu.setLocation(event.x, event.y);
 							menu.setVisible(true);
 						}
 					}
@@ -317,7 +314,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
 					addListener(info.fClass, child, info.fListener);
 				}
-				child.addMouseListener(fMouseListener);
+				child.addListener(SWT.MenuDetect, fMenuDetectListener);
 			}
 		}
 		
@@ -333,7 +330,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
 					removeListener(info.fClass, child, info.fListener);
 				}
-				child.removeMouseListener(fMouseListener);
+				child.removeListener(SWT.MenuDetect, fMenuDetectListener);
 			}
 		}
 		
@@ -596,9 +593,9 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		fComposite= new CompositeRulerCanvas(parent, SWT.NONE);
 		fComposite.setLayout(new RulerLayout());
 		
-		Iterator e= fDecorators.iterator();
-		while (e.hasNext()) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
+		Iterator iter= fDecorators.iterator();
+		while (iter.hasNext()) {
+			IVerticalRulerColumn column= (IVerticalRulerColumn) iter.next();
 			column.createControl(this, fComposite);
 			fComposite.childAdded(column.getControl());
 		}
