@@ -240,6 +240,17 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 		super.setPart(part);
 		this.part = (IViewPart)part;
 	}
+	public String getRegisteredName() {
+		if(part != null)
+			return part.getSite().getRegisteredName();
+			
+		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+		IViewDescriptor desc = reg.find(viewId);
+		if(desc != null)
+			return desc.getLabel();	
+		return getTitle();
+	}
+	
 	/**
 	 * @see IWorkbenchPartReference#getPart(boolean)
 	 */

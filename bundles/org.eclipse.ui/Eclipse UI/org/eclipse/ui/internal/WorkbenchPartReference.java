@@ -44,4 +44,5 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	}
 	public abstract void setPane(PartPane pane);
 	public abstract PartPane getPane();
+	public abstract String getRegisteredName();
 }

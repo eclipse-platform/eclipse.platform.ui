@@ -1136,6 +1136,11 @@ public class EditorManager {
 				return part.getEditorInput().getName();
 			return name;
 		}
+		public String getRegisteredName() {
+			if(part != null)
+				return part.getSite().getRegisteredName();
+			return getName();
+		}
 		public IWorkbenchPart getPart(boolean restore) {
 			return getEditor(restore);
 		}
