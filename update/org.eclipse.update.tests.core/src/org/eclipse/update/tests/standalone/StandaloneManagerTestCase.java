@@ -26,28 +26,26 @@ import org.eclipse.update.tests.*;
 public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	public static StringBuffer errOutput;
 	public static Integer exitValue= new Integer(-1);
+	public static URL TARGET_FILE_SITE;
+	
+	static {
+		// setup cache site to true
+		InternalSiteManager.globalUseCache = true;
+		
+		File targetDir = new File(System.getProperty("java.io.tmpdir"));
+		targetDir = new File(targetDir, "standalone");
+		targetDir = new File(targetDir, "mytarget");
+		if (targetDir.exists())
+			deleteDirectory(targetDir);
+		try {
+			TARGET_FILE_SITE = targetDir.toURL();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public StandaloneManagerTestCase (String arg0){
 		super(arg0);
-	}
-	
-	public static boolean configuredSiteExists(URL url){
-		try {
-			ILocalSite local = SiteManager.getLocalSite();
-			IInstallConfiguration currentConfig = local.getCurrentConfiguration();
-			IConfiguredSite[] sites = currentConfig.getConfiguredSites();
-
-			for (int i = 0; i<sites.length; i++){
-				if (sites[i].getSite().getURL().getFile().equals(url.getFile())){
-					System.out.println("match found!");
-					return true;
-				}
-			}
-			return false;
-		} catch (CoreException e) {
-			System.err.println(e);
-			return false;
-		}
 	}
 	
 	public void checkConfiguredSites(){
@@ -74,15 +72,17 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	
 	// get the first configured site found because this is the one we're most likely to 
 	// have installed into
-	public ISite getConfiguredSite(String target){
+	public ISite getConfiguredSite(URL target){
 		try {
 			ILocalSite local = SiteManager.getLocalSite();
 			IInstallConfiguration currentConfig = local.getCurrentConfiguration();
 			IConfiguredSite[] sites = currentConfig.getConfiguredSites();
 			System.out.println("\nretrieving configured sites...");
+			String targetFile = new File(target.getFile()).getAbsolutePath();
 			for (int i = 0; i<sites.length ; i++){
-				System.out.println("site["+i+"]: " + sites[i].getSite().getURL().getFile());
-				if (sites[i].getSite().getURL().getFile().equals(target))
+				System.out.println("site["+i+"]: " + sites[i].getSite().getURL());
+				String siteFile = new File(sites[i].getSite().getURL().getFile()).getAbsolutePath();
+				if (targetFile.equals(siteFile))
 					return sites[i].getSite();
 			}
 			if (sites.length == 0)
@@ -93,46 +93,6 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 			return null;
 		}
 	}
-	// create configured site if current one is non-existent
-	public static void createConfiguredSite(URL url){
-		if (configuredSiteExists(url))
-			return;
-		try {
-			System.out.println("creating configured site in TestInstall");
-			File file = new File(url.getFile());
-			ILocalSite local = SiteManager.getLocalSite();
-			IInstallConfiguration currentConfig = local.getCurrentConfiguration();
-			if (!file.exists()){
-				System.out.println("creating dirs for new config site");
-				file.mkdirs();
-			}
-						
-			IConfiguredSite configuredSite = currentConfig.createConfiguredSite(file);
-			currentConfig.addConfiguredSite(configuredSite);
-			local.save();
-			IStatus status = configuredSite.verifyUpdatableStatus();
-			
-			String msg = "The site "+file+" should be updatable.";
-			
-			if (!status.isOK()){
-				System.out.println("bad status! : " + msg+ "\n" + status.getMessage());
-				fail(msg+status.getMessage());
-			}
-			
-//			// Get site to install to
-			IConfiguredSite[] sites = currentConfig.getConfiguredSites();
-//	
-//			// start of config site print
-			System.out.println("GETTING CONFIGURED SITES in createConfiguredSite");
-			for (int i = 0; i<sites.length; i++){
-				System.out.println("site #" + i + ": " + sites[i].getSite().getURL().getFile());
-			}
-			System.out.println("HIT");
-		} catch (Exception e){
-			System.err.println(e);
-		}
-	}
-	
 	//WatchDog thread to kill mirroring process if it hangs (or takes too long)
 	public static class Timer extends Thread{
 		private Process proc;
@@ -351,4 +311,16 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 		return localFile;
 	}
 	
+	private static void deleteDirectory(File dir) {
+		File[] list = dir.listFiles();
+		if (list == null)
+			return;
+			
+		for (int i=0; i<list.length; i++) {
+			if (list[i].isDirectory()) 
+				deleteDirectory(list[i]);
+			if (!list[i].delete())
+				System.out.println("Unable to delete "+list[i].toString());
+		}
+	}
 }

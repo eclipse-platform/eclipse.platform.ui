@@ -22,25 +22,17 @@ import org.eclipse.update.internal.standalone.*;
 
 public class TestFeatureEnable extends StandaloneManagerTestCase {
 	public static boolean isEnabled;
-	public URL TARGET_FILE_SITE;
 	
 	public TestFeatureEnable(String arg0) {
 		super(arg0);
 		isEnabled = false;
-		try {
-			TARGET_FILE_SITE = new URL("file", null, "D:/temp/standalone/mytarget/");
-//			TARGET_FILE_SITE = new URL("file", null, dataPath + "standalone/mytarget/");
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void umSetUp() {
 
 		String featureId = "my.alphabet";
 		String version = "1.0.0";
-		String config = "file:D:/temp/standalone/config/";
+
 		checkConfiguredSites();
 		if (!isEnabled) {
 			System.out.println(
@@ -70,7 +62,8 @@ public class TestFeatureEnable extends StandaloneManagerTestCase {
 	}
 
 	public void testFeatureStatus() throws Exception {
-		String config = "D:/temp/standalone/config/";
+		URL configURL = BootLoader.getCurrentPlatformConfiguration().getConfigurationLocation();
+		String config = new File(configURL.getFile()).getParent();
 		ISite localSite = SiteManager.getSite(new URL("file", null, config), null);
 
 		File localFile =

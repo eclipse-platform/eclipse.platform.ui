@@ -62,7 +62,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
 		URL dataURL = new URL(resolvedURL, DATA_PATH);
 		dataPath = dataURL.getFile();
-		String homePath = (System.getProperty("user.home")).replace(File.separatorChar, '/');
+		String homePath = (System.getProperty("java.io.tmpdir")).replace(File.separatorChar, '/');
 
 		if (bundle == null) {
 			ClassLoader l = new URLClassLoader(new URL[] { dataURL }, null);
@@ -84,9 +84,6 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		// cleanup info about just installed plugins
 		InstallRegistry.cleanup();
-
-		// setup cache site to false
-		InternalSiteManager.globalUseCache = false;
 	}
 
 	/**

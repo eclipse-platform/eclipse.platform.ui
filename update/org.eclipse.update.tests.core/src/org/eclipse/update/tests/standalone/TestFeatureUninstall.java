@@ -22,18 +22,10 @@ import org.eclipse.update.internal.standalone.*;
 
 public class TestFeatureUninstall extends StandaloneManagerTestCase {
 	public static boolean isUninstalled;
-	public URL TARGET_FILE_SITE;
 	
 	public TestFeatureUninstall(String arg0){
 		super(arg0);
 		isUninstalled = false;
-		try {
-			TARGET_FILE_SITE = new URL("file", null, "D:/temp/standalone/mytarget/");
-//			TARGET_FILE_SITE = new URL("file", null, dataPath + "standalone/mytarget/");
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void umSetUp() {
@@ -42,7 +34,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 		
 		String featureId = "my.alphabet";
 		String version = "1.0.0";
-		String config = "file:D:/temp/standalone/config/";
+
 		if(!isUninstalled){
 			System.out.println(
 				"==============" + this.getClass() + "=============");
@@ -52,7 +44,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 					"install",
 					featureId,
 					version,
-					config,
+					null,
 					null,
 					TARGET_FILE_SITE.getFile()));
 			} catch (Exception e) {
@@ -71,11 +63,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 	
 	public void testFeaturesUninstalled() throws Exception {
 		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
-			}
+			ISite localSite = getConfiguredSite(TARGET_FILE_SITE);
 			
 			// get feature references 
 			IFeatureReference[] localFeatures =
@@ -99,13 +87,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 	}
 	
 	public void testPluginsUninstalled() throws Exception {
-		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
-			
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
-			}
+			ISite localSite = getConfiguredSite(TARGET_FILE_SITE);
 			
 			IPluginEntry[] pluginEntries = localSite.getPluginEntries();
 			ArrayList list = new ArrayList();
@@ -125,10 +107,7 @@ public class TestFeatureUninstall extends StandaloneManagerTestCase {
 					"my.alphabet.round.letters_1.0.0",
 					"my.alphabet.straight.letters_1.0.0",
 					"my.alphabet_1.0.0" };
-			assertTrue(checkFilesNotInList(pluginNames, list));
-		} catch (CoreException e) {
-			System.err.println(e);
-		}		
+			assertTrue(checkFilesNotInList(pluginNames, list));	
 	}
 	
 	// makes sure all files/directories in "names" are NOT in the directory listing "list"

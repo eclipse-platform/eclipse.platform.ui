@@ -21,24 +21,19 @@ import org.eclipse.update.internal.standalone.*;
 
 public class TestFeatureInstall extends StandaloneManagerTestCase {
 	private static boolean isInstalled;
-	public URL TARGET_FILE_SITE;
+
 	public TestFeatureInstall(String arg0) {
 		super(arg0);
 		isInstalled = false;
-		try {
-			TARGET_FILE_SITE = new URL("file", null, "D:/temp/standalone/mytarget/");
-		} catch (MalformedURLException e) {
-			System.err.println(e);
-		}
 	}
 
 	public void umSetUp() {
-		System.out.println("looking at configured sites available....");
-		checkConfiguredSites();
+		//System.out.println("looking at configured sites available....");
+		//checkConfiguredSites();
 		
 		String featureId = "my.alphabet";
 		String version = "1.0.0";
-		String config = "file:D:/temp/standalone/config/";
+
 		String fromRemoteSiteUrl =
 			"http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-update-home/3.0/site/";
 		if (!isInstalled) {
@@ -50,7 +45,7 @@ public class TestFeatureInstall extends StandaloneManagerTestCase {
 					"install",
 					featureId,
 					version,
-					config,
+					null,
 					fromRemoteSiteUrl,
 					TARGET_FILE_SITE.getFile()));
 			} catch (Exception e) {
@@ -58,53 +53,41 @@ public class TestFeatureInstall extends StandaloneManagerTestCase {
 				e.printStackTrace();
 			}
 			isInstalled = true;
-			createConfiguredSite(TARGET_FILE_SITE);
 		}
 		
 	}
 
 	public void testPluginsExist() {
-		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
-			System.out.println("TARGET_FILE_SITE: " + TARGET_FILE_SITE);
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
+		ISite localSite = getConfiguredSite(TARGET_FILE_SITE);
+		
+		System.out.println("localSite: " + localSite.getURL().getFile());
+		IPluginEntry[] pluginEntries = localSite.getPluginEntries();
+		ArrayList list = new ArrayList();
+		if (pluginEntries == null || pluginEntries.length == 0){
+			System.err.println("No plugin entries on the target site");
+			fail("No plugin entries on the target site");
+		} else{
+			for (int i = 0; i < pluginEntries.length; i++){
+				System.out.println("found plugin: " + pluginEntries[i].getVersionedIdentifier().toString());
+				list.add(pluginEntries[i].getVersionedIdentifier().toString());
 			}
-			System.out.println("localSite: " + localSite.getURL().getFile());
-			IPluginEntry[] pluginEntries = localSite.getPluginEntries();
-			ArrayList list = new ArrayList();
-			if (pluginEntries == null || pluginEntries.length == 0){
-				System.err.println("No plugin entries on the target site");
-				fail("No plugin entries on the target site");
-			} else{
-				for (int i = 0; i < pluginEntries.length; i++){
-					System.out.println("found plugin: " + pluginEntries[i].getVersionedIdentifier().toString());
-					list.add(pluginEntries[i].getVersionedIdentifier().toString());
-				}
-			}
-
-			String[] pluginNames =
-				{	"my.alphabet.letter.a_1.0.0",
-					"my.alphabet.letter.b_1.0.0",
-					"my.alphabet.letter.c_1.0.0",
-					"my.alphabet.letter.e_1.0.0",
-					"my.alphabet.round.letters_1.0.0",
-					"my.alphabet.straight.letters_1.0.0",
-					"my.alphabet_1.0.0" };
-			assertTrue(checkFilesInList(pluginNames, list));
-		} catch (CoreException e) {
-			System.err.println(e);
 		}
+
+		String[] pluginNames =
+			{	"my.alphabet.letter.a_1.0.0",
+				"my.alphabet.letter.b_1.0.0",
+				"my.alphabet.letter.c_1.0.0",
+				"my.alphabet.letter.e_1.0.0",
+				"my.alphabet.round.letters_1.0.0",
+				"my.alphabet.straight.letters_1.0.0",
+				"my.alphabet_1.0.0" };
+		assertTrue(checkFilesInList(pluginNames, list));
 	}
 
 	public void testFeaturesExist() {
 		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
-			}
+			ISite localSite =  getConfiguredSite(TARGET_FILE_SITE);
+
 			System.out.println("localSite: " + localSite.getURL().getFile());
 			// get feature references 
 			IFeatureReference[] localFeatures =

@@ -11,6 +11,7 @@
 package org.eclipse.update.tests;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateCore;
 
 /**
@@ -37,7 +38,9 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-
+		// setup cache site to false. 
+		// Note: the standalone tests will set it back to true
+		InternalSiteManager.globalUseCache = false;
 	}
 
 	/**

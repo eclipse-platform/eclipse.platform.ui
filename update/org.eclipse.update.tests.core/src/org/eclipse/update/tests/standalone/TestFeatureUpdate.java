@@ -21,16 +21,10 @@ import org.eclipse.update.internal.standalone.*;
 
 public class TestFeatureUpdate extends StandaloneManagerTestCase {
 	public static boolean isUpdated;
-	public URL TARGET_FILE_SITE;
 	
 	public TestFeatureUpdate(String arg0) {
 		super(arg0);
 		isUpdated = false;
-		try {
-			TARGET_FILE_SITE = new URL("file", null, "D:/temp/standalone/mytarget/");
-		} catch (MalformedURLException e) {
-			System.err.println(e);
-		}
 	}
 
 	public void umSetUp() {
@@ -38,8 +32,8 @@ public class TestFeatureUpdate extends StandaloneManagerTestCase {
 		checkConfiguredSites();
 		
 		String featureId = "my.alphabet";
-		String version = "1.0.0";
-		String config = "file:D:/temp/standalone/config/";
+		String version = "1.0.1";
+
 		if (!isUpdated) {
 			System.out.println(
 				"==============" + this.getClass() + "=============");
@@ -49,7 +43,7 @@ public class TestFeatureUpdate extends StandaloneManagerTestCase {
 						"update",
 						featureId,
 						version,
-						config,
+						null,
 						null,
 						TARGET_FILE_SITE.getFile()));
 			} catch (Exception e) {
@@ -68,13 +62,8 @@ public class TestFeatureUpdate extends StandaloneManagerTestCase {
 	}
 	
 	public void testPluginsExist() {
-		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
 
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
-			}
+			ISite localSite =  getConfiguredSite(TARGET_FILE_SITE);
 
 			IPluginEntry[] pluginEntries = localSite.getPluginEntries();
 			ArrayList list = new ArrayList();
@@ -103,18 +92,11 @@ public class TestFeatureUpdate extends StandaloneManagerTestCase {
 					"my.alphabet.straight.letters_1.0.1",
 					"my.alphabet_1.0.1" };
 			assertTrue(checkFilesInList(pluginNames, list));
-		} catch (CoreException e) {
-			System.err.println(e);
-		}
 	}
 
 	public void testFeaturesExist() {
 		try {
-			ISite localSite = SiteManager.getSite(TARGET_FILE_SITE, null);
-			if (localSite.getCurrentConfiguredSite() == null) {
-				System.out.println("local site has null current config site");
-				localSite = getConfiguredSite(TARGET_FILE_SITE.getFile());
-			}
+			ISite localSite = getConfiguredSite(TARGET_FILE_SITE);
 
 			// get feature references
 			IFeatureReference[] localFeatures =
