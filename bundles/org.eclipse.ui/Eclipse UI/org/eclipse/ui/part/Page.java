@@ -100,7 +100,7 @@ public void init(IPageSite pageSite) {
  * 
  * @return the site which contains this page
  */
-protected IPageSite getSite() {
+public IPageSite getSite() {
 	return site;
 }	
 	
