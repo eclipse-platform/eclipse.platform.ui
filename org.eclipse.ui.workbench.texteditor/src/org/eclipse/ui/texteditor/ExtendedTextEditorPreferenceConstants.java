@@ -89,6 +89,7 @@ public class ExtendedTextEditorPreferenceConstants {
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
 	 * @since 2.1
+	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION= "othersIndication"; //$NON-NLS-1$
 
@@ -103,6 +104,7 @@ public class ExtendedTextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 2.1
+	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
 
@@ -113,6 +115,7 @@ public class ExtendedTextEditorPreferenceConstants {
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
 	 * @since 2.1
+	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER= "othersIndicationInOverviewRuler"; //$NON-NLS-1$
 
