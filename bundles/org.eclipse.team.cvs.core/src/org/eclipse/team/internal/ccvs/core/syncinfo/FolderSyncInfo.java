@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  */
  
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -49,8 +50,29 @@ public class FolderSyncInfo {
 		Assert.isNotNull(root);
 		this.repository = repo;
 		this.root = root;
+		ensureRepositoryRelativeToRoot();
 		this.isStatic = isStatic;
 		setTag(tag);
+	}
+
+	/**
+	 * Method ensureRepositoryRelativeToRoot.
+	 */
+	private void ensureRepositoryRelativeToRoot() {
+		String rootDir;
+		try {
+			rootDir = getRootDirectory();
+		} catch (CVSException e) {
+			// Log this error for now. Using the root will show the error to the user.
+			CVSProviderPlugin.log(e);
+			return;
+		}
+		if (repository.startsWith(rootDir)) {
+			repository = repository.substring(rootDir.length());
+			if (repository.startsWith(ResourceSyncInfo.SEPERATOR)) {
+				repository = repository.substring(ResourceSyncInfo.SEPERATOR.length());
+			}
+		}
 	}
 	
 	public boolean equals(Object other) {
@@ -81,6 +103,40 @@ public class FolderSyncInfo {
 		return root;
 	}
 
+	/**
+	 * Answer the directory portion of the root. For example, if
+	 *    root = :pserver:user@host:/home/user/repo
+	 * then /home/user/repo is return.
+	 * <p>
+	 * The root does not neccesarily contain a user name, in which cas the format is
+	 * :pserver:host:/home/user/repo.
+	 *
+	 * 
+	 * @return String
+	 */
+	private String getRootDirectory() throws CVSException {
+		String result;
+		
+		try {
+			String root = getRoot();
+			int index = root.indexOf('@');
+			if (index == -1) {
+				// If the username is mising, we have to find the third ':'.
+				index = root.indexOf(':');
+				index = root.indexOf(':', index + 1);
+				index = root.indexOf(':', index + 1);
+			} else {
+				// If the username was there, we find the first ':' past the '@'
+				index = root.indexOf(':', index + 1);
+			}
+			result = getRoot().substring(index + 1); 
+		} catch (IndexOutOfBoundsException e) {
+			throw new CVSException(Policy.bind("FolderSyncInfo_Maleformed_root_4")); //$NON-NLS-1$
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Gets the tag, may be <code>null</code>.
 	 * 
@@ -131,26 +187,7 @@ public class FolderSyncInfo {
 	 * @throws a CVSException if the root or repository is malformed.
 	 */
 	public String getRemoteLocation() throws CVSException {
-		
-		String result;
-		
-		try {
-			String root = getRoot();
-			int index = root.indexOf('@');
-			if (index == -1) {
-				// If the username is mising, we have to find the third ':' instead.
-				index = root.indexOf(':');
-				index = root.indexOf(':', index + 1);
-				index = root.indexOf(':', index + 1);
-			} 
-			result = getRoot().substring(index+1);
-			result = result.substring(result.indexOf(":")+1); //$NON-NLS-1$
-			result = result + "/" + getRepository(); //$NON-NLS-1$
-		} catch (IndexOutOfBoundsException e) {
-			throw new CVSException(Policy.bind("FolderSyncInfo_Maleformed_root_4")); //$NON-NLS-1$
-		}
-		
-		return result;
+		return getRootDirectory() + ResourceSyncInfo.SEPERATOR + getRepository(); //$NON-NLS-1$
 	}
 	
 	/*
