@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 
@@ -20,11 +19,13 @@ public class Product implements IProduct {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_APPLICATION = "application"; //$NON-NLS-1$
+	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+
 	String application = null;
 	String name = null;
 	String id = null;
 	String description = null;
-	Dictionary properties;
+	HashMap properties;
 
 	public Product(IConfigurationElement element) {
 		if (element == null)
@@ -37,12 +38,14 @@ public class Product implements IProduct {
 	}
 
 	private void loadProperties(IConfigurationElement element) {
-		String[] attributes = element.getAttributeNames();
-		properties = new Hashtable(attributes.length);
-		for (int i = 0; i < attributes.length; i++) {
-			if (attributes[i].equalsIgnoreCase(ATTR_DESCRIPTION) || attributes[i].equalsIgnoreCase(ATTR_ID) || attributes[i].equalsIgnoreCase(ATTR_NAME) || attributes[i].equalsIgnoreCase(ATTR_APPLICATION))
-				continue;
-			properties.put(attributes[i], element.getAttribute(attributes[i]));
+		IConfigurationElement[] children = element.getChildren();
+		properties = new HashMap(children.length);
+		for (int i = 0; i < children.length; i++) {
+			IConfigurationElement child = children[i];
+			String key = child.getAttribute(ATTR_NAME);
+			String value = child.getAttribute(ATTR_VALUE);
+			if (key != null && value != null)
+				properties.put(key, value);
 		}
 	}
 
