@@ -394,6 +394,7 @@ public class AntCorePreferences {
 		updateTasks(prefs);
 		updateTypes(prefs);
 		updateURLs(prefs);
+		AntCorePlugin.getPlugin().savePluginPreferences();
 	}
 
 	protected void updateTasks(Preferences prefs) {
