@@ -186,8 +186,8 @@
       <editor
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
-            class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
+            class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
       </editor>
    </extension>
@@ -230,8 +230,8 @@
                definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
                icon="icons/full/elcl16/gotoobj_tsk.gif"
-               menubarPath="navigate/goTo/"
                retarget="true"
+               menubarPath="navigate/goTo/"
                id="goToResource">
          </action>
          <action
@@ -243,16 +243,28 @@
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
       </actionSet>
+      <actionSet
+            label="%ActivitiesActionSet.label"
+            description="%ActivitiesActionSet.description"
+            visible="true"
+            id="org.eclipse.ui.Activities">
+         <action
+               label="%ConfigureActivities.label"
+               class="org.eclipse.ui.internal.actions.ActivityEnablerAction"
+               menubarPath="window/additionsend"
+               id="org.eclipse.ui.configureActivities">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            adaptable="true"
             quadrant="BOTTOM_RIGHT"
+            adaptable="true"
             label="%DecoratorLinkedResource.label"
-            class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             state="true"
+            class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             id="org.eclipse.ui.LinkedResourceDecorator">
          <description>
             %DecoratorLinkedResource.description
@@ -404,21 +416,20 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
       </page>
       <page
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             name="%PropertyPages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file">
       </page>
    </extension>
-
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -527,5 +538,6 @@
             keySequence="Command+B"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
-   </extension>         
+   </extension>
+
 </plugin>

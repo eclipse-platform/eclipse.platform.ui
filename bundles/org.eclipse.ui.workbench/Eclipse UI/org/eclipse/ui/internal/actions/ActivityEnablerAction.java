@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
@@ -28,24 +29,10 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
  * 
  * @since 3.0
  */
-public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
+public class ActivityEnablerAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchActivitySupport activitySupport;
 	private ActivityEnabler enabler;
 	private IWorkbenchWindow workbenchWindow;
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @since 3.0
-	 */
-	public ActivityEnablerAction(IWorkbenchWindow window) {
-		super(ActivityMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
-		if (window == null) {
-			throw new IllegalArgumentException();
-		}
-		this.workbenchWindow = window;
-		this.activitySupport = window.getWorkbench().getActivitySupport();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -54,14 +41,24 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 	 */
 	public void dispose() {
 		workbenchWindow = null;
+		activitySupport = null;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+     */
+    public void init(IWorkbenchWindow window) {
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		this.activitySupport = window.getWorkbench().getActivitySupport();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
-	public void run() {
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
+    public void run(IAction action) {
 		if (workbenchWindow == null) {
 			// action has been disposed
 			return;
@@ -115,5 +112,12 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 			}
 		};
 		d.open();
-	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+     */
+    public void selectionChanged(IAction action, ISelection selection) {
+        //no-op
+    }
 }

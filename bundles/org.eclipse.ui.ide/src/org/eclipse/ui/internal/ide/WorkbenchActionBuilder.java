@@ -35,8 +35,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -114,7 +112,6 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction upAction;
 	private IWorkbenchAction nextAction;
 	private IWorkbenchAction previousAction;
-    private IWorkbenchAction categoryAction;
 
 	// IDE-specific actions
 	private IWorkbenchAction projectPropertyDialogAction;
@@ -495,11 +492,6 @@ public final class WorkbenchActionBuilder {
 		menu.add(workbenchEditorsAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
-
-        //Only add it if role filtering is on
-        if (categoryAction != null) 
-            menu.add(categoryAction);
-
         menu.add(openPreferencesAction);
                 
 		menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
@@ -918,9 +910,6 @@ public final class WorkbenchActionBuilder {
 		upAction.dispose();
 		nextAction.dispose();
 		previousAction.dispose();
-		if (categoryAction != null) {
-			categoryAction.dispose();
-		}
 
 		// editorsDropDownAction is not currently an IWorkbenchAction		
 		// editorsDropDownAction.dispose();
@@ -1210,19 +1199,7 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(closeProjectAction);
 		
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
-		registerGlobalAction(projectPropertyDialogAction);
-
-		//Only add the role manager action if we are using role support
-		
-		IWorkbenchActivitySupport workbenchActivitySupport = getWindow().getWorkbench().getActivitySupport();
-
-		
-		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-				
-		if (!activityManager.getDefinedCategoryIds().isEmpty()) { 
-			categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
-        	registerGlobalAction(categoryAction);
-		}		
+		registerGlobalAction(projectPropertyDialogAction);	
 		
 		if (getWindow().getWorkbench().getIntroManager().hasIntro()) {
 			introAction = ActionFactory.INTRO.create(window);

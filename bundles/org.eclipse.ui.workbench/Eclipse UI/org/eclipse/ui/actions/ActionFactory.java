@@ -9,11 +9,9 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.IAction;
-
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
@@ -44,7 +42,6 @@ import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.actions.ActivityEnablerAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -209,24 +206,6 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ClosePerspectiveAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-
-	/**
-	 * Workbench action (id "configureActivities"): Activity Configuration This
-	 * action launches the dialog which allows for post-install configuration
-	 * of enabled activities. This action should be configurable via extension
-	 * point in some fashion with the action shown here as the default.
-	 */
-		public static final ActionFactory CONFIGURE_ACTIVITIES = new ActionFactory("configureActivities") {//$NON-NLS-1$
-	/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new ActivityEnablerAction(window);
 			action.setId(getId());
 			return action;
 		}
