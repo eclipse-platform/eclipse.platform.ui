@@ -445,13 +445,22 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			destProject.internalSetDescription(destDesc, false);
 
 			// call super.copy for each child (excluding project description file)
+			//make it a best effort copy
+			message = Policy.bind("resources.copyProblem"); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
+
 			IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			final int childCount = children.length;
 			final int childWork = childCount > 1 ? Policy.opWork * 50 / 100 / (childCount- 1) : 0;
 			for (int i = 0; i < childCount; i++) {
 				IResource child = children[i];
-				if (!isProjectDescriptionFile(child))
-					child.copy(destProject.getFullPath().append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, childWork));
+				if (!isProjectDescriptionFile(child)) {
+					try {
+						child.copy(destProject.getFullPath().append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, childWork));
+					} catch (CoreException e) {
+						problems.merge(e.getStatus());
+					}
+				}
 			}
 
 			// write out the new project description to the meta area
@@ -470,6 +479,8 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			// refresh local
 			monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			if (!problems.isOK())
+				throw new ResourceException(problems);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
