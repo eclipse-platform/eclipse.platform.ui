@@ -56,13 +56,18 @@ public class ReleaseCommentDialog extends Dialog {
 		text.setLayoutData(data);
 		text.setText(comment);
 		text.selectAll();
-/*		text.addListener(SWT.KeyDown, new Listener() {
+		text.addListener(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
 				if (((e.stateMask & SWT.CTRL) != 0) && (e.character == '\n')) {
 					okPressed();
 				}
 			}
-		});*/
+		});
+		// Hack: need to add the verify to make the key listener work. Don't know why.
+		text.addListener(SWT.Verify, new Listener() {
+			public void handleEvent(Event e) {
+			}
+		});
 		return composite;
 	}
 	/**
