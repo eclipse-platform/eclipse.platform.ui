@@ -852,7 +852,7 @@ public static class Writer {
 					nextIncrement += len;
 					// update monitor periodically
 					if (nextIncrement >= INCREMENT_SIZE){ 	
-						monitor.incrementCount(nextIncrement);
+						monitor.setCopyCount(nextIncrement);
 						nextIncrement = 0;
 					}
 					if (monitor.isCanceled()) {
@@ -868,7 +868,7 @@ public static class Writer {
 				len = is.read(buf);
 			}
 			if (nextIncrement > 0 && monitor != null)
-				monitor.incrementCount(nextIncrement);
+				monitor.setCopyCount(nextIncrement);
 			if(expectedLength>0 && offset!=expectedLength)
 				throw new IOException(Policy.bind("UpdateManagerUtils.inputStreamEnded", String.valueOf(offset), String.valueOf(expectedLength))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return -1;

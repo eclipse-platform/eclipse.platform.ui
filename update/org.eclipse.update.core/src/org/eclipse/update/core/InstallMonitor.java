@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -44,15 +44,18 @@ public class InstallMonitor implements IProgressMonitor {
 		private String subTaskString;
 		private boolean showDetails;
 		private long totalCopyCount;
+        private long currentCount;
 
 		private MonitorState(
 			String taskString,
 			String subTaskString,
 			boolean showDetails,
+            long currentCount,
 			long totalCopyCount) {
 			this.taskString = taskString;
 			this.subTaskString = subTaskString;
 			this.showDetails = showDetails;
+            this.currentCount = currentCount;
 			this.totalCopyCount = totalCopyCount;
 		}
 
@@ -68,6 +71,10 @@ public class InstallMonitor implements IProgressMonitor {
 			return this.showDetails;
 		}
 
+        private long getCurrentCount() {
+            return this.currentCount;
+        }
+        
 		private long getTotalCopyCount() {
 			return this.totalCopyCount;
 		}
@@ -190,7 +197,7 @@ public class InstallMonitor implements IProgressMonitor {
 	 */
 	public void saveState() {
 		tasks.push(
-			new MonitorState(taskString, subTaskString, showDetails, totalCopyCount));
+			new MonitorState(taskString, subTaskString, showDetails, currentCount, totalCopyCount));
 	}
 
 	/**
@@ -205,6 +212,7 @@ public class InstallMonitor implements IProgressMonitor {
 			setTaskName(state.getTaskString());
 			subTask(state.getSubTaskString());
 			this.showDetails = state.getShowDetails();
+            this.currentCount = state.getCurrentCount();
 			this.totalCopyCount = state.getTotalCopyCount();
 		}
 	}
@@ -262,10 +270,8 @@ public class InstallMonitor implements IProgressMonitor {
 	/**
 	 * Increments the number of bytes copied.
 	 * 
-	 * @see #showCopyDetails(boolean)
-	 * @see #setTotalCount(long)
 	 * @param increment number of new bytes  copied.
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public void incrementCount(long increment) {
 		setCopyCount(currentCount + increment);

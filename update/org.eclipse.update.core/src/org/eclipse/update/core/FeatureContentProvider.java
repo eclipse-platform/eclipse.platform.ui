@@ -273,7 +273,7 @@ public abstract class FeatureContentProvider
 				if (localFileFragment != null) {
 					bytesCopied = localFileFragment.getSize();
 					if (monitor != null) {
-						monitor.incrementCount(bytesCopied);
+						monitor.setCopyCount(bytesCopied);
 					}
 				}
 
