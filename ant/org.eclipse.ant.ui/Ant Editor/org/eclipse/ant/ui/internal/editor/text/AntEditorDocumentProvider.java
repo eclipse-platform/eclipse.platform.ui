@@ -234,11 +234,11 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 	 */
 	protected class XMLFileInfo extends FileInfo {
 		
-		public AntModel fModel;
+		public AntModel fAntModel;
 		
 		public XMLFileInfo(IDocument document, IAnnotationModel annotationModel, FileSynchronizer fileSynchronizer, AntModel model) {
 			super(document, annotationModel, fileSynchronizer);
-			fModel= model;
+			fAntModel= model;
 		}
 	};
 	
@@ -363,7 +363,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 	    ElementInfo info= getElementInfo(element);
 	    if (info instanceof XMLFileInfo) {
 		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
-		    return xmlInfo.fModel;
+		    return xmlInfo.fAntModel;
 	    }
 	    return null;
     }
@@ -431,8 +431,8 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
     protected void disposeElementInfo(Object element, ElementInfo info) {
 	    if (info instanceof XMLFileInfo) {
 		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
-		    if (xmlInfo.fModel != null)
-			    xmlInfo.fModel.dispose();
+		    if (xmlInfo.fAntModel != null)
+			    xmlInfo.fAntModel.dispose();
 	    }
 	    super.disposeElementInfo(element, info);	
     }
