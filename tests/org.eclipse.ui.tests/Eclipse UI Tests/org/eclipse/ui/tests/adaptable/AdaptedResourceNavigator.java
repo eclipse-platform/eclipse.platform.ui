@@ -117,10 +117,11 @@ public class AdaptedResourceNavigator
 		//	initDrillDownAdapter(viewer);
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new TestAdaptableContentProvider());
+		IDecoratorManager manager = getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager();
 		viewer.setLabelProvider(
 			new DecoratingLabelProvider(
 				new TestAdaptableWorkbenchAdapter(), 
-				getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager()));
+				manager.getLabelDecorator()));
 
 		viewer.setInput(getInitialInput());
 		updateTitle();
@@ -455,10 +456,13 @@ public class AdaptedResourceNavigator
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		DecoratingLabelProvider provider =
 			(DecoratingLabelProvider) getViewer().getLabelProvider();
-		if(decorator == null)
-			provider.setLabelDecorator(getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager());
-		else
+		if(decorator == null) {
+			IDecoratorManager manager = getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager();
+			provider.setLabelDecorator(manager.getLabelDecorator());
+		}
+		else {
 			provider.setLabelDecorator(decorator);
+		}
 	}
 	
 	
