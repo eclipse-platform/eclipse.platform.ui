@@ -9,6 +9,16 @@ var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigat
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var isIE50 = navigator.userAgent.indexOf('MSIE 5.0') != -1;
 
+var tocTitle = "";
+var oldActive;
+
+
+// Preload images
+minus = new Image();
+minus.src = "images/minus_tree.gif";
+plus = new Image();
+plus.src = "images/plus_tree.gif";
+
 /**
  * Returns the node with specified tag
  */
@@ -24,42 +34,45 @@ function getChildNode(parent, childTag)
 
 
 /**
- * Returns the contained UL if any
- */
-
-function getContentNode(node) {
-
-  if (node.nodeType == 3)   //"Node.TEXT_NODE") 
-    return getChildNode(node.parentNode.parentNode.parentNode, "UL");
-  else if (node.tagName == "LI") 
-    return getChildNode(node, "UL");
-  else if (node.tagName == "A") 
-    return getChildNode(node.parentNode, "UL");
-  else if (node.tagName == "NOBR")
-  	return getChildNode(node.parentNode.parentNode, "UL");
-  else if (node.tagName == "UL") 
-    return node;
-
-  return null;
-}
-
-/**
  * Returns the anchor of this click
  * NOTE: MOZILLA BUG WITH A:focus and A:active styles
  */
 function getAnchorNode(node) {
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
-    //return getChildNode(node.parentNode.parentNode, "A");
-	return node.parentNode.parentNode;
+	return node.parentNode;
   else if (node.tagName == "NOBR")
-  	return node.parentNode;
-  else if (node.tagName == "LI") 
-    return getChildNode(node, "A");
+  	return node.lastChild;
   else if (node.tagName == "A") 
     return node;
-  else if (node.tagName == "UL")
+  else if (node.tagName == "IMG")
   	return getChildNode(node.parentNode, "A");
   return null;
+}
+
+/**
+ * Returns the plus/minus icon for this tree node
+ */
+function getPlusMinus(node)
+{
+	if (isPlusMinus(node))
+		return node;
+  	else if (node.nodeType == 3)  //"Node.TEXT_NODE") 
+		return getChildNode(node.parentNode.parentNode, "IMG");
+  	else if (node.tagName == "A") 
+    	return getChildNode(node.parentNode, "IMG");
+   	else if (node.tagName == "NOBR")
+  		return getChildNode(node, "IMG");
+
+ 	return null;
+}
+
+
+/**
+ * Returns true when the node is the plus or minus icon
+ */
+function isPlusMinus(node)
+{
+	return (node.nodeType != 3 && node.tagName == "IMG" && (node.className == "expanded" || node.className == "collapsed"));
 }
 
 /**
@@ -67,17 +80,54 @@ function getAnchorNode(node) {
  */
 function collapse(node) {
   node.className = "collapsed";
-  // workaround for missing CSS functionality
-  node.parentNode.className = "collapsed";
+  node.src = plus.src;
+  // set the UL as well
+  var ul = getChildNode(node.parentNode.parentNode, "UL");
+  if (ul != null) ul.className = "collapsed";
 }
 
 /**
  * Expands a tree rooted at the specified element
  */
 function expand(node) {
-  node.className = "expanded";
-  // workaround for missing CSS functionality
-   node.parentNode.className = "expanded";
+  	node.className = "expanded";
+  	node.src = minus.src;
+  	// set the UL as well
+  	var ul = getChildNode(node.parentNode.parentNode, "UL");
+  	if (ul != null) ul.className = "expanded";
+}
+
+/**
+ * Expands the nodes from root to the specified node
+ */
+function expandPathTo(node)
+{
+	// when the node is a link, get the plus/minus image
+	if (node.tagName == "A") 
+	{
+		var img = getChildNode(node.parentNode, "IMG")
+		if (img == null) return;
+		expandPathTo(img);
+		return;
+	}
+	
+	if (isCollapsed(node))
+		expand(node);
+		
+	var nobr = node.parentNode;
+	if (nobr == null) return;
+	var li = nobr.parentNode;
+	if (nobr == null) return;
+	var ul = li.parentNode;
+	if (ul == null) return;
+	li = ul.parentNode;
+	if (li == null) return;
+	nobr = getChildNode(li, "NOBR");
+	if (nobr == null) return;
+	var img = getChildNode(nobr, "IMG");
+	if (img == null) return;
+		
+	expandPathTo(img);
 }
 
 /**
@@ -94,110 +144,24 @@ function isCollapsed(node) {
   return  node.className == "collapsed";
 }
 
-// NOTE: MOZILLA BUG WITH A:focus and A:active styles
-var oldActive;
-
-
-/**
- * display topic label in the status line on mouse over topic
- */
-function mouseMoveHandler(e) {
-  var overNode;
-  if (isMozilla)
-  	overNode = e.target;
-  else if (isIE)
-   	overNode = window.event.srcElement;
-  else 
-  	return;
-  	
-  overNode = getAnchorNode(overNode);
-  if (overNode == null)
-   return;
- 
-  if (isMozilla)
-     e.cancelBubble = false;
-     
-  window.status = overNode.firstChild.innerHTML;
-}
-
-/**
- * handler for expanding / collapsing topic tree
- */
-function mouseClickHandler(e) {
-  var clickedNode;
-  if (isMozilla)
-  	clickedNode = e.target;
-  else if (isIE)
-   	clickedNode = window.event.srcElement;
-  else 
-  	return;
-  	
-  var treeNode = getContentNode(clickedNode);
-
-  if (treeNode != null && treeNode.parentNode.tagName != "BODY") {
-    if (isCollapsed(treeNode)) {
-   	 expand(treeNode);
-  	}
-  	else if (isExpanded(treeNode)) {
-  	  collapse(treeNode);
- 	}
-  }
-  
-  highlightTopic(clickedNode);
-
-  if (isMozilla)
-  	e.cancelBubble = true;
-}
-
-
-// This takes *forever*
-function expandAll() {
-  var ulNodes = document.getElementsByTagName('ul');
-  var max = ulNodes.length;
-  for (var i = 0; i < max; i++) {
-    var nodeObj = ulNodes.item(i);
-    expand(nodeObj);
-  }
-}
-
-/**
- * Expands the nodes from root to the specified node
- */
-function expandPathTo(node)
-{
-	var parent = node.parentNode;
-	if (parent == null)
-		return;
-	if (isCollapsed(parent))
-		expand(parent);
-	expandPathTo(parent);
-}
-
 /**
  * Highlights link
  */
 function highlightTopic(topic)
 {
-  var a = getAnchorNode(topic); 
-  if (a != null)
-  {
-  	  parent.parent.setToolbarTitle(tocTitle);
-  	  if (oldActive && oldActive != a) {
-  		if (oldActive.className == "activeLeaf" )
-  			oldActive.className = "leaf";
-  		else if (oldActive.className == "activeNode")
-    		oldActive.className="node";
-  	}
-  	oldActive = a;
-  	
-  	if (a.className == "leaf")
-  		a.className = "activeLeaf";
-  	else if (a.className == "node")
-  		a.className = "activeNode";
+  	var a = getAnchorNode(topic); 
+  	if (a != null)
+  	{
+  	  	parent.parent.setToolbarTitle(tocTitle);
+  	  	if (oldActive && oldActive != a) 
+  	  		oldActive.className = "";
+
+  		oldActive = a;
+  		a.className = "active";
   
-  	if (isIE)
-  		a.hideFocus = "true";
-  }
+  		if (isIE)
+  			a.hideFocus = "true";
+  	}
 }
 
 /**
@@ -260,14 +224,68 @@ function scrollIntoView(node)
 
 function focusHandler(e)
 {
-	if (oldActive)
-		oldActive.focus();
+	try{
+		if (oldActive)
+			oldActive.focus();
 		
-	if (isMozilla)
-  		e.cancelBubble = true;
+		if (isMozilla)
+  			e.cancelBubble = true;
+	}
+	catch(e){}
 }
 
-var tocTitle = "";	
+
+/**
+ * display topic label in the status line on mouse over topic
+ */
+function mouseMoveHandler(e) {
+  var overNode;
+  if (isMozilla)
+  	overNode = e.target;
+  else if (isIE)
+   	overNode = window.event.srcElement;
+  else 
+  	return;
+  	
+  overNode = getAnchorNode(overNode);
+  if (overNode == null)
+   return;
+ 
+  if (isMozilla)
+     e.cancelBubble = false;
+  	 
+  window.status = overNode.title;
+}
+
+/**
+ * handler for expanding / collapsing topic tree
+ */
+function mouseClickHandler(e) {
+  	var clickedNode;
+  	if (isMozilla)
+  		clickedNode = e.target;
+  	else if (isIE)
+   		clickedNode = window.event.srcElement;
+  	else 
+  		return;
+
+  	var plus_minus = getPlusMinus(clickedNode);
+  	if (plus_minus != null)
+  	{	
+    	if (isCollapsed(plus_minus)) 
+   			expand(plus_minus);
+  		else if (isExpanded(plus_minus)) 
+  	  		collapse(plus_minus);
+  	  		  		  
+  		highlightTopic(plus_minus);
+  	}
+  
+  	if (isMozilla)
+  		e.cancelBubble = true;
+  	else if (isIE)
+  		window.event.cancelBubble = true;
+}
+	
 /**
  * Handles the onload event
  */
@@ -290,14 +308,8 @@ function onloadHandler(toc, title, tocDescription, isTopicSelected)
 }
 
 
-// listen for clicks
-if (isMozilla) {
-  document.addEventListener('click', mouseClickHandler, true);
-  document.addEventListener('mousemove', mouseMoveHandler, true);
-//  document.addEventListener("focus", focusHandler, true);
-}
-else if (isIE){
-  document.onclick = mouseClickHandler;
-  document.onmousemove = mouseMoveHandler;
+document.onclick = mouseClickHandler;
+document.onmousemove = mouseMoveHandler;
+if (isIE) {
   window.onfocus = focusHandler;
 }

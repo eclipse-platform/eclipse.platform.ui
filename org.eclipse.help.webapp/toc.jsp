@@ -39,7 +39,7 @@ UL {
 
 #root {
 	margin-top:5px;
-	margin-left:24px;
+	margin-left:5px;
 }
   
 UL.expanded {
@@ -52,67 +52,30 @@ UL.collapsed {
 
 LI { 
 	margin-top:3px; 
-}
-
-LI.expanded {
-	list-style-image: url("images/minus_tree.gif");
-}
-
-LI.collapsed {
-	list-style-image: url("images/plus_tree.gif");
-}
-
-LI.leaf {
 	list-style-image:none;
 	list-style-type:none;
 }
 
+IMG {
+	border:0px;
+	margin:0px;
+	padding:0px;
+	margin-right:4px;
+}
+
+
 A, A:visited, A:hover, A:link {
 	text-decoration:none; 
-	color:WindowText; 
-	padding-left:15px;
+	color:WindowText;
 	padding-right:10px;
-	height:100%;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
 
-A.node {
-	background-image: url("images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-      
-A.leaf {
-	background-image: url("images/topic_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-
-
-A.activeNode { 
+A.active{ 
 	background:ButtonFace;
-	background-image: url("images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
 }
      
-A.activeLeaf { 
-	background:ButtonFace;
-	background-image: url("images/topic_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-    
-
-A.book {
-	background-image: url("images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-	margin-top:5px;
-	margin-left:-20px;
-}
-
 </style>  
     
 <base target="MainFrame">
@@ -121,9 +84,7 @@ A.book {
 <script language="JavaScript"> 
  var extraStyle = "";
  if (isMozilla)
-  	 extraStyle = "<style type='text/css'>UL { margin-left:-20px;} #root{ margin-left:-15px; margin-top:5px;} </style>";
- else if (isIE50)
- 	 extraStyle = "<style type='text/css'>A, A:visited, A:hover, A:link{ height:10px;} </style>";
+  	 extraStyle = "<style type='text/css'>UL { margin-left:-20px;} #root{ margin-left:-35px; margin-top:5px;} </style>";
  
  document.write(extraStyle);
 </script>
@@ -173,7 +134,7 @@ if (parent.parent.temp){
 %>
 <body onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
-		<a class='book' href='<%=tocDescription%>'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
+		<nobr class='book'><a class='book' href='<%=tocDescription%>'><img src="images/container_obj.gif"><%=tocElement.getAttribute("label")%></a></nobr>
 <%
 	// JSP does not have good support for recursive calls using scriplets
 	// or at least I could not find a simple way...
@@ -216,23 +177,25 @@ if (parent.parent.temp){
 		else if (href != null && href.length() > 0 && href.charAt(0) == '/')
 			href = "content/help:" + href;
 	
-		String a_className = hasNodes ? "node" : "leaf";
-		String li_className = hasNodes ? "collapsed" : "leaf";
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
-%>
-		<li class='<%=li_className%>'>
-			<a class='<%=a_className%>' href="<%=href%>" title="<%=topic.getAttribute("label")%>"><nobr><%=topic.getAttribute("label")%></nobr></a>
-<%
 		if (hasNodes) {
-			childrenStack.pushChildren(topic);
-			parentStack.push(topic);
-%>	
+%>
+		<li>
+			<nobr>
+			<img src="images/plus_tree.gif" class="collapsed"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/container_obj.gif"><%=topic.getAttribute("label")%></a>
+			</nobr>
 			<ul class='collapsed'>
 <%
-		}else{
+			childrenStack.pushChildren(topic);
+			parentStack.push(topic);
+		} else {
 %>
+		<li>
+			<nobr>
+			<img src="images/plus_tree.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic_obj.gif">&nbsp;<%=topic.getAttribute("label")%></a>
+			</nobr>
 		</li>
-<%		
+<%
 		}		
 	} 
 %>

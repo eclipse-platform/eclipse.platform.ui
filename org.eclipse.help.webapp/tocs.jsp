@@ -45,36 +45,13 @@ A {
 }
 
 DIV {
-	padding-left:20px;
+	xpadding-left:20px;
 	padding-top:5px;
-}
-
-DIV {
-	background-image: url("images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
 }
      
 DIV.active { 
 	background:ButtonFace;
-	background-image: url("images/container_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
 }
-
-#bookshelf {
-	background-image: url("images/home_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-     
-#bookshelf.active { 
-	background:ButtonFace;
-	background-image: url("images/home_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-}
-
 
 </style>
   
@@ -105,7 +82,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>"'><nobr> <%=label%> </nobr> </a></div>
+		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>"'><nobr><img src="images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
 <%		
 }
 %>
