@@ -48,13 +48,13 @@ public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer#setSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
-	public void setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
+	public boolean setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
 		byte[] baseBytes = baseSynchronizer.getSyncBytes(resource);
 		if (baseBytes != null && Util.equals(baseBytes, bytes)) {
 			// Remove the existing bytes so the base will be used (thus saving space)
-			removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
+			return removeSyncBytes(resource, IResource.DEPTH_ZERO);
 		} else {
-			super.setSyncBytes(resource, bytes);
+			return super.setSyncBytes(resource, bytes);
 		}		
 	}
 

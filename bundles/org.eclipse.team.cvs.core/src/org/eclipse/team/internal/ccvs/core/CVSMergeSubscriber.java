@@ -78,7 +78,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private void adjustMergedResources(IResource[] remoteChanges) throws TeamException {
 		for (int i = 0; i < remoteChanges.length; i++) {
 			IResource resource = remoteChanges[i];
-			mergedSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, false /* not silent */);			
+			mergedSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);			
 		}	
 	}
 

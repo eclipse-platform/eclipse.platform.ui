@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.subscribers;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,7 +30,6 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 	private static final byte[] NO_REMOTE = new byte[0];
 	
 	protected QualifiedName syncName;
-	protected Set changedResources = new HashSet();
 	
 	public RemoteBytesSynchronizer(QualifiedName name) {
 		syncName = name;
@@ -87,18 +83,19 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 	 * should be called.
 	 * @param resource
 	 * @param bytes
+	 * @return <code>true</code> if the sync bytes changed
 	 * @throws TeamException
 	 */
-	public void setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
+	public boolean setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
 		Assert.isNotNull(bytes);
 		byte[] oldBytes = internalGetSyncBytes(resource);
-		if (oldBytes != null && equals(oldBytes, bytes)) return;
+		if (oldBytes != null && equals(oldBytes, bytes)) return false;
 		try {
 			getSynchronizer().setSyncInfo(getSyncName(), resource, bytes);
+			return true;
 		} catch (CoreException e) {
 			throw TeamException.asTeamException(e);
 		}
-		changedResources.add(resource);
 	}
 
 	/**
@@ -106,18 +103,18 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 	 * operation <code>isRemoteKnown(resource)</code> will return <code>false</code> 
 	 * and <code>getSyncBytes(resource)</code> will return <code>null</code> for the
 	 * resource (and potentially it's children depending on the value of the depth parameter.
+	 * @return <code>true</code> if there were bytes present which were removed
 	 */
-	public void removeSyncBytes(IResource resource, int depth, boolean silent) throws TeamException {
+	public boolean removeSyncBytes(IResource resource, int depth) throws TeamException {
 		if (resource.exists() || resource.isPhantom()) {
 			try {
 				getSynchronizer().flushSyncInfo(getSyncName(), resource, depth);
+				return true;
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);
 			}
-			if(silent == false) {
-				changedResources.add(resource);
-			}
 		}
+		return false;
 	}
 	
 	/**
@@ -137,9 +134,10 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 	 * there is no remote resource associated with the local resource. After this method
 	 * is invoked, <code>isRemoteKnown(resource)</code> will return <code>true</code> and
 	 * <code>getSyncBytes(resource)</code> will return <code>null</code>.
+	 * @return <code>true</code> if this changes the remote sync bytes
 	 */
-	protected void setRemoteDoesNotExist(IResource resource) throws TeamException {
-		setSyncBytes(resource, NO_REMOTE);
+	protected boolean setRemoteDoesNotExist(IResource resource) throws TeamException {
+		return setSyncBytes(resource, NO_REMOTE);
 	}
 
 	private boolean equals(byte[] syncBytes, byte[] oldBytes) {

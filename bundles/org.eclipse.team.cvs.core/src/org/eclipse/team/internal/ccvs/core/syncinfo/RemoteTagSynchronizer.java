@@ -12,6 +12,7 @@
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -48,19 +50,23 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 		this.tag = tag;
 	}
 
-	public void collectChanges(IResource local, IRemoteResource remote, int depth, IProgressMonitor monitor) throws TeamException {
+	public void collectChanges(IResource local, IRemoteResource remote, Collection changedResources, int depth, IProgressMonitor monitor) throws TeamException {
 		byte[] remoteBytes = getRemoteSyncBytes(local, remote);
+		boolean changed;
 		if (remoteBytes == null) {
-			setRemoteDoesNotExist(local);
+			changed = setRemoteDoesNotExist(local);
 		} else {
-			setSyncBytes(local, remoteBytes);
+			changed = setSyncBytes(local, remoteBytes);
+		}
+		if (changed) {
+			changedResources.add(local);
 		}
 		if (depth == IResource.DEPTH_ZERO) return;
 		Map children = mergedMembers(local, remote, monitor);	
 		for (Iterator it = children.keySet().iterator(); it.hasNext();) {
 			IResource localChild = (IResource) it.next();
 			IRemoteResource remoteChild = (IRemoteResource)children.get(localChild);
-			collectChanges(localChild, remoteChild, 
+			collectChanges(localChild, remoteChild, changedResources,
 				depth == IResource.DEPTH_INFINITE ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
 				monitor);
 		}
@@ -71,7 +77,7 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 			IResource resource = resources[i];
 			if (!children.containsKey(resource)) {
 				// These sync bytes are stale. Purge them
-				removeSyncBytes(resource, IResource.DEPTH_INFINITE, true /* silent*/);
+				removeSyncBytes(resource, IResource.DEPTH_INFINITE);
 			}
 		}
 	}
@@ -204,17 +210,6 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 	}
 
 	/**
-	 * @return
-	 */
-	public IResource[] getChangedResources() {
-		return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
-	}
-	
-	public void resetChanges() {
-		changedResources.clear();
-	}
-
-	/**
 	 * Refreshes the contents of the remote synchronizer and returns the list
 	 * of resources whose remote sync state changed.
 	 * 
@@ -227,31 +222,37 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
 		int work = 100 * resources.length;
 		monitor.beginTask(null, work);
-		resetChanges();
+		List changedResources = new ArrayList();
 		try {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				
-				monitor.setTaskName(Policy.bind("RemoteTagSynchronizer.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
-				
-				// build the remote tree only if an initial tree hasn't been provided
-				IRemoteResource	tree = buildRemoteTree(resource, depth, cacheFileContentsHint, Policy.subMonitorFor(monitor, 70));
-				
-				// update the known remote handles 
-				IProgressMonitor sub = Policy.infiniteSubMonitorFor(monitor, 30);
 				try {
-					sub.beginTask(null, 512);
-					//removeSyncBytes(resource, IResource.DEPTH_INFINITE);
-					collectChanges(resource, tree, depth, sub);
+					// Get a scheduling rule on the project since CVS may obtain a lock higher then
+					// the resource itself.
+					JobManager.getInstance().beginRule(resource.getProject());
+					
+					monitor.setTaskName(Policy.bind("RemoteTagSynchronizer.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
+					
+					// build the remote tree only if an initial tree hasn't been provided
+					IRemoteResource	tree = buildRemoteTree(resource, depth, cacheFileContentsHint, Policy.subMonitorFor(monitor, 70));
+					
+					// update the known remote handles 
+					IProgressMonitor sub = Policy.infiniteSubMonitorFor(monitor, 30);
+					try {
+						sub.beginTask(null, 64);
+						collectChanges(resource, tree, changedResources, depth, sub);
+					} finally {
+						sub.done();	 
+					}
 				} finally {
-					sub.done();	 
+					JobManager.getInstance().endRule();
 				}
 			}
 		} finally {
 			monitor.done();
 		}
-		IResource[] changes = getChangedResources();
-		resetChanges();
+		IResource[] changes = (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
 		return changes;
 	}
 

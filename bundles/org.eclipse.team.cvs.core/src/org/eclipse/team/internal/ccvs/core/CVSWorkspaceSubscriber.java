@@ -88,11 +88,11 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				// TODO outgoing deletions would require special handling
 				if (resource.getType() == IResource.FILE
 						&& (resource.exists() || resource.isPhantom())) {
-					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
+					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
 					if (getBaseSynchronizer().hasRemote(resource)) {
-						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
+						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
 					}
 				}
 			} catch (TeamException e) {
@@ -128,7 +128,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void projectDeconfigured(IProject project) {
 		try {
-			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE, false /* not silent */);
+			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE);
 		} catch (TeamException e) {
 			CVSProviderPlugin.log(e);
 		}
