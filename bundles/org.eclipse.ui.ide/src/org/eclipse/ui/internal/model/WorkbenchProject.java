@@ -49,6 +49,7 @@ protected ImageDescriptor getBaseImage(IResource resource) {
 				}
 				ImageDescriptor natureImage = WorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
 				if (natureImage != null) {
+					// @issue move IDE specific images
 					ImageDescriptor baseImage = WorkbenchImages.getImageDescriptor(baseKey);
 					overlayImage = new OverlayIcon(baseImage, new ImageDescriptor[][] {{ natureImage }}, new Point(16, 16));
 					imageCache.put(imageKey, overlayImage);

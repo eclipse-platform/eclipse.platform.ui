@@ -21,7 +21,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * This class is used to read project capabilities and capability
  * categories from the platform's plugin registry and store the results in
  * a capability registry.
- */
+ * 
+ * @issue need own copy of RegistryReader
+*/
 public class CapabilityRegistryReader extends RegistryReader{	
 	private static final String TAG_CAPABILITY = "capability"; //$NON-NLS-1$
 	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$

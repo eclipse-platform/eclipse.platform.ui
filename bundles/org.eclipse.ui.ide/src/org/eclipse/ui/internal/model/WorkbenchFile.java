@@ -25,6 +25,7 @@ public class WorkbenchFile extends WorkbenchResource {
  *	passed resource
  */
 protected ImageDescriptor getBaseImage(IResource resource) {
+	// @issue move IDE specific images
 	ImageDescriptor image = WorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor((IFile) resource);
 	if (image == null)
 		image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);

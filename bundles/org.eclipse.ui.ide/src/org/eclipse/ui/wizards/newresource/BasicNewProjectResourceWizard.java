@@ -419,10 +419,12 @@ public static void updatePerspective(IConfigurationElement configElement) {
  */
 private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspectiveDescriptor finalPersp) {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	// @issue Constants need to move to IDE project
 	String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
 	if (!IPreferenceConstants.PSPM_PROMPT.equals(pspm)) {
 		return true;
 	}
+	// @issue need to clone MessageDialogWithToggle
 	MessageDialogWithToggle dialog = MessageDialogWithToggle.openQuestion(
 		window.getShell(),
 		ResourceMessages.getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$

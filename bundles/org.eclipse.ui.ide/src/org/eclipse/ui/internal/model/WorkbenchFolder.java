@@ -26,6 +26,7 @@ public class WorkbenchFolder extends WorkbenchResource {
  *	passed resource
  */
 protected ImageDescriptor getBaseImage(IResource resource) {
+	// @issue move IDE specific images
 	return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 }
 /**

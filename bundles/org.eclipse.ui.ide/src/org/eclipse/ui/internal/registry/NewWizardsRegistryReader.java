@@ -45,6 +45,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
 
 	private class CategoryNode {
+		// @issue new own Category
 		private Category category;
 		private String path;
 		public CategoryNode(Category cat) {
@@ -166,6 +167,7 @@ private void finishCategories() {
 	for (int i=0; i < deferCategories.size(); i++) {
 		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
 	}
+	// @issue replace with Collection sort?
 	Sorter sorter = new Sorter() {
 		private Collator collator = Collator.getInstance();
 		

@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.ide.DialogUtil;
 
 /**
  * Standard workbench wizard that create a new file resource in the workspace.
@@ -97,8 +97,10 @@ public boolean performFinish() {
 	try {
 		if (dw != null) {
 			IWorkbenchPage page = dw.getActivePage();
-			if (page != null)
+			if (page != null) {
+				// @issue use of code snippet to open IFile editor
 				page.openEditor(file);
+			}
 		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(

@@ -37,7 +37,8 @@ MinimizedFileSystemElement(String name, org.eclipse.ui.dialogs.FileSystemElement
 public AdaptableList getFiles(IImportStructureProvider provider) {
 	if(!populated)
 		populate(provider);
-	
+
+	// @issue public API refers to AdaptableList - private class	
 	return super.getFiles();
 		
 }
@@ -50,6 +51,7 @@ public AdaptableList getFolders(IImportStructureProvider provider) {
 	if(!populated)
 		populate(provider);
 	
+	// @issue public API refers to AdaptableList - private class	
 	return super.getFolders();
 		
 }

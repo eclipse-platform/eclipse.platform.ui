@@ -20,6 +20,8 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 /**
  * This class is used to read marker help context ids and 
  * resolutions from the platform registry.
+ * 
+ * @issue need own copy of RegistryReader
  */
 public class MarkerHelpRegistryReader extends RegistryReader {
 	private ArrayList markerQueries;

@@ -20,6 +20,8 @@ import org.eclipse.ui.internal.model.AdaptableList;
 /**
  *  Instances access the registry that is provided at creation time
  *  in order to determine the contained Wizards
+ * 
+ * @issue need own copy of RegistryReader
  */
 public class WizardsRegistryReader extends RegistryReader {
 	protected AdaptableList wizards;

@@ -28,6 +28,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	private HashMap natureToCapability;
 	private ArrayList capabilities;
 	private ArrayList categories;
+	// @issue need own copy of Category
 	private Category miscCategory;
 	
 	/**

@@ -47,6 +47,7 @@ public class MarkerImageProviderRegistry {
  * Initialize this new MarkerImageProviderRegistry.
  */
 public MarkerImageProviderRegistry() {
+	// @issue need own copy of RegistryReader
 	class MarkerImageReader extends RegistryReader {
 		protected boolean readElement(IConfigurationElement element) {
 			if (element.getName().equals(TAG_PROVIDER)) {

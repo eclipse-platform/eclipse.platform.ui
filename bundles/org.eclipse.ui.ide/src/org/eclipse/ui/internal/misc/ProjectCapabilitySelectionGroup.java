@@ -37,6 +37,7 @@ public class ProjectCapabilitySelectionGroup {
 	private static final String EMPTY_DESCRIPTION = "\n\n\n"; //$NON-NLS-1$
 	
 	private CapabilityRegistry registry;
+	// @issue need own ICategory
 	private ICategory[] initialCategories;
 	private Capability[] initialCapabilities;
 	private Capability[] disabledCapabilities;
@@ -303,6 +304,7 @@ public class ProjectCapabilitySelectionGroup {
 	private ArrayList getAvailableCategories() {
 		ArrayList results = registry.getUsedCategories();
 		Collections.sort(results, categoryComparator);
+		// @issue new own default misc category
 		if (registry.getMiscCategory() != null)
 			results.add(registry.getMiscCategory());
 		return results;
