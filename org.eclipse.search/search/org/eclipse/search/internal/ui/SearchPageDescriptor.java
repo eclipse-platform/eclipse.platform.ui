@@ -50,6 +50,7 @@ class SearchPageDescriptor implements Comparable {
 	private final static String TAB_POSITION_ATTRIBUTE= "tabPosition"; //$NON-NLS-1$
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
+	private final static String CAN_SEARCH_ENCLOSING_PROJECTS= "canSearchEnclosingProjects"; //$NON-NLS-1$
 	private final static String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private final static String SEARCH_VIEW_HELP_CONTEXT_ID_ATTRIBUTE= "searchViewHelpContextId"; //$NON-NLS-1$
 	
@@ -151,6 +152,17 @@ class SearchPageDescriptor implements Comparable {
 	public boolean isInitiallyEnabled() {
 		String strVal= fElement.getAttribute(ENABLED_ATTRIBUTE);
 		return strVal == null || Boolean.valueOf(strVal).booleanValue();
+	}
+
+	/**
+	 * Returns <code>true</code> if the page can handle
+	 * searches in enclosing projects. The value should be ignored if <code>showScopeSection()</code>
+	 * returns <code>false</code>.
+	 * 
+	 * This attribute is optional and defaults to <code>false</code>.
+	 */
+	public boolean canSearchInProjects() {
+		return Boolean.valueOf(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS)).booleanValue();
 	}
 
 	/**

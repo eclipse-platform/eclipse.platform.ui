@@ -47,7 +47,7 @@ public class ScopePart {
 	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
 	private static IDialogSettings fgSettingsStore;
 
-	static  {
+	static {
 		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
 		if (fgSettingsStore == null)
 			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
@@ -61,29 +61,27 @@ public class ScopePart {
 	private Button fUseProject;
 	private Button fUseWorkingSet;
 
-
-	private int				fScope;
-	private Text			fWorkingSetText;
-	private IWorkingSet[]	fWorkingSets;
+	private int fScope;
+	private boolean fCanSearchEnclosingProjects;
+	private Text fWorkingSetText;
+	private IWorkingSet[] fWorkingSets;
 
 	// Reference to its search page container (can be null)
 	private ISearchPageContainer fSearchPageContainer;
-	
-	/**
-	 * Returns a new scope part with workspace as initial scope.
-	 * The part is not yet created.
-	 */
-	public ScopePart() {
-		this(ISearchPageContainer.WORKSPACE_SCOPE);
-	}
 
 	/**
 	 * Returns a new scope part with workspace as initial scope.
 	 * The part is not yet created.
 	 */
-	public ScopePart(ISearchPageContainer searchPageContainer) {
-		this(getStoredScope());
+	public ScopePart(ISearchPageContainer searchPageContainer, boolean searchEnclosingProjects) {
+		int initialScope= getStoredScope();
+		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
+		fScope= initialScope;
+		fCanSearchEnclosingProjects= searchEnclosingProjects;
+		if (!fCanSearchEnclosingProjects && fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE)
+			fScope= ISearchPageContainer.WORKSPACE_SCOPE;
 		fSearchPageContainer= searchPageContainer;
+		restoreState();
 	}
 
 	private static int getStoredScope() {
@@ -93,7 +91,10 @@ public class ScopePart {
 		} catch (NumberFormatException ex) {
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
-		if (scope != ISearchPageContainer.WORKING_SET_SCOPE && scope != ISearchPageContainer.SELECTION_SCOPE && scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE && scope != ISearchPageContainer.WORKSPACE_SCOPE)
+		if (scope != ISearchPageContainer.WORKING_SET_SCOPE
+			&& scope != ISearchPageContainer.SELECTION_SCOPE
+			&& scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE
+			&& scope != ISearchPageContainer.WORKSPACE_SCOPE)
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		return scope;
 	}
@@ -105,10 +106,7 @@ public class ScopePart {
 	 * @see #createPart(Composite)
 	 * @param initialScope the initial scope
 	 */
-	public ScopePart(int initialScope) {
-		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
-		fScope= initialScope;
-		restoreState();
+	public ScopePart(int initialScope, boolean searchEnclosingProjects) {
 	}
 
 	private void restoreState() {
@@ -122,9 +120,8 @@ public class ScopePart {
 					existingWorkingSets.add(workingSet);
 			}
 			if (!existingWorkingSets.isEmpty())
-				fWorkingSets= (IWorkingSet[])existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
-		} 
-		else {
+				fWorkingSets= (IWorkingSet[]) existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+		} else {
 			// Backward compatibility
 			String workingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
 			if (workingSetName != null) {
@@ -137,24 +134,12 @@ public class ScopePart {
 		}
 	}
 
-	/**
-	 * Returns a new scope part with an initial working set.
-	 * The part is not yet created.
-	 * 
-	 * @see #createPart(Composite)
-	 * @param workingSet the initial working set
-	 */
-	public ScopePart(IWorkingSet[] workingSets) {
-		Assert.isNotNull(workingSets);
-		fScope= ISearchPageContainer.WORKING_SET_SCOPE;
-		fWorkingSets= workingSets;
-	}
 
 	/**
 	 * Returns the scope selected in this part
 	 * 
 	 * @return the selected scope
-	 */	
+	 */
 	public int getSelectedScope() {
 		return fScope;
 	}
@@ -164,37 +149,51 @@ public class ScopePart {
 	 * This method must only be called on a created part.
 	 * 
 	 * @param scope the scope to be selected in this part
-	 */	
+	 */
 	public void setSelectedScope(int scope) {
 		Assert.isLegal(scope >= 0 && scope <= 3);
 		Assert.isNotNull(fUseWorkspace);
 		Assert.isNotNull(fUseSelection);
 		Assert.isNotNull(fUseWorkingSet);
+		if (fCanSearchEnclosingProjects)
+			Assert.isNotNull(fUseProject);
 		fScope= scope;
 		switch (fScope) {
-			case ISearchPageContainer.WORKSPACE_SCOPE:
+			case ISearchPageContainer.WORKSPACE_SCOPE :
 				fUseWorkspace.setSelection(true);
 				fUseSelection.setSelection(false);
-				fUseProject.setSelection(false);
+				if (fCanSearchEnclosingProjects)
+					fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
-			case ISearchPageContainer.SELECTION_SCOPE:
+			case ISearchPageContainer.SELECTION_SCOPE :
 				fUseWorkspace.setSelection(false);
-				fUseSelection.setSelection(true);				
-				fUseProject.setSelection(false);
+				fUseSelection.setSelection(true);
+				if (fCanSearchEnclosingProjects)
+					fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
-			case ISearchPageContainer.WORKING_SET_SCOPE:
+			case ISearchPageContainer.WORKING_SET_SCOPE :
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(false);
-				fUseProject.setSelection(false);
+				if (fCanSearchEnclosingProjects)
+					fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(true);
 				break;
-			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
-				fUseWorkspace.setSelection(false);
-				fUseSelection.setSelection(false);
-				fUseProject.setSelection(true);
-				fUseWorkingSet.setSelection(false);
+			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE :
+				if (fCanSearchEnclosingProjects) {
+					fUseWorkspace.setSelection(false);
+					fUseSelection.setSelection(false);
+					fUseProject.setSelection(true);
+					fUseWorkingSet.setSelection(false);
+				} else {
+					fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+					fUseWorkspace.setSelection(true);
+					fUseSelection.setSelection(false);
+					if (fCanSearchEnclosingProjects)
+						fUseProject.setSelection(false);
+					fUseWorkingSet.setSelection(false);
+				}
 				break;
 		}
 
@@ -205,7 +204,7 @@ public class ScopePart {
 	private void updateSearchPageContainerActionPerformedEnablement() {
 		boolean newState= fScope != ISearchPageContainer.WORKING_SET_SCOPE || fWorkingSets != null;
 		if (fSearchPageContainer instanceof SearchDialog)
-			((SearchDialog)fSearchPageContainer).setPerformActionEnabledFromScopePart(newState);
+			 ((SearchDialog) fSearchPageContainer).setPerformActionEnabledFromScopePart(newState);
 		else if (fSearchPageContainer != null)
 			fSearchPageContainer.setPerformActionEnabled(newState);
 	}
@@ -242,8 +241,8 @@ public class ScopePart {
 				existingWorkingSets.add(workingSet);
 		}
 		if (!existingWorkingSets.isEmpty())
-			fWorkingSets= (IWorkingSet[])existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
-		
+			fWorkingSets= (IWorkingSet[]) existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+
 		saveState();
 
 		if (fWorkingSetText != null)
@@ -273,10 +272,13 @@ public class ScopePart {
 		fPart.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
 
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 4;
+		if (fCanSearchEnclosingProjects)
+			layout.numColumns= 4;
+		else
+			layout.numColumns= 3;
 		fPart.setLayout(layout);
 		fPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fUseWorkspace= new Button(fPart, SWT.RADIO);
 		fUseWorkspace.setData(new Integer(ISearchPageContainer.WORKSPACE_SCOPE));
 		fUseWorkspace.setText(SearchMessages.getString("ScopePart.workspaceScope.text")); //$NON-NLS-1$
@@ -285,21 +287,27 @@ public class ScopePart {
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
 		ISelection selection= fSearchPageContainer.getSelection();
-		fUseSelection.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
-		
+		fUseSelection.setEnabled(
+			selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		if (!fCanSearchEnclosingProjects)
+			gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
 
-		fUseProject= new Button(fPart, SWT.RADIO);
-		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text"));  //$NON-NLS-1$
-		fUseProject.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
-		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan=2;
-		gd.horizontalIndent= 8;
-		fUseProject.setLayoutData(gd);
+		if (fCanSearchEnclosingProjects) {
+			fUseProject= new Button(fPart, SWT.RADIO);
+			fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
+			fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
+			fUseProject.setEnabled(
+				selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+
+			gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+			gd.horizontalSpan= 2;
+			gd.horizontalIndent= 8;
+			fUseProject.setLayoutData(gd);
+		}
 
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
@@ -318,7 +326,8 @@ public class ScopePart {
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= 8;
-		gd.horizontalSpan= 2;
+		if (fCanSearchEnclosingProjects)
+			gd.horizontalSpan= 2;
 		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
 		fWorkingSetText.setLayoutData(gd);
 
@@ -330,12 +339,13 @@ public class ScopePart {
 		};
 		fUseWorkspace.addSelectionListener(scopeChangedLister);
 		fUseSelection.addSelectionListener(scopeChangedLister);
-		fUseProject.addSelectionListener(scopeChangedLister);
+		if (fCanSearchEnclosingProjects)
+			fUseProject.addSelectionListener(scopeChangedLister);
 		fUseWorkingSet.addSelectionListener(scopeChangedLister);
 
 		// Set initial scope
 		setSelectedScope(fScope);
-		
+
 		// Set initial working set
 		if (fWorkingSets != null)
 			fWorkingSetText.setText(toString(fWorkingSets));
@@ -346,21 +356,24 @@ public class ScopePart {
 	private void handleScopeChanged(SelectionEvent e) {
 		Object source= e.getSource();
 		if (source instanceof Button) {
-			Button button= (Button)source;
+			Button button= (Button) source;
 			if (button.getSelection())
-				setSelectedScope(((Integer)button.getData()).intValue());
+				setSelectedScope(((Integer) button.getData()).intValue());
 		}
 	}
 
 	private boolean handleChooseWorkingSet() {
-		IWorkingSetSelectionDialog dialog=	PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(fUseSelection.getShell(), true);
-		
+		IWorkingSetSelectionDialog dialog=
+			PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
+				fUseSelection.getShell(),
+				true);
+
 		if (fWorkingSets != null)
 			dialog.setSelection(fWorkingSets);
 		if (dialog.open() == Window.OK) {
 			Object[] result= dialog.getSelection();
 			if (result.length > 0) {
-				setSelectedWorkingSets((IWorkingSet[])result);
+				setSelectedWorkingSets((IWorkingSet[]) result);
 				return true;
 			}
 			fWorkingSetText.setText(""); //$NON-NLS-1$
@@ -373,9 +386,10 @@ public class ScopePart {
 				// test if selected working set has been removed
 				int i= 0;
 				while (i < fWorkingSets.length) {
-					if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName()) == null)
+					if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName())
+						== null)
 						break;
-					i++;	
+					i++;
 				}
 				if (i < fWorkingSets.length) {
 					fWorkingSetText.setText(""); //$NON-NLS-1$
@@ -386,7 +400,7 @@ public class ScopePart {
 		}
 		return false;
 	}
-	
+
 	void setVisible(boolean state) {
 		fPart.setVisible(state);
 	}
@@ -399,7 +413,7 @@ public class ScopePart {
 			for (int i= 0; i < workingSets.length; i++) {
 				String workingSetName= workingSets[i].getName();
 				if (firstFound)
-					result= SearchMessages.getFormattedString("ScopePart.workingSetConcatenation", new String[] {result, workingSetName}); //$NON-NLS-1$
+					result= SearchMessages.getFormattedString("ScopePart.workingSetConcatenation", new String[] { result, workingSetName }); //$NON-NLS-1$
 				else {
 					result= workingSetName;
 					firstFound= true;

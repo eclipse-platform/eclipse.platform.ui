@@ -160,6 +160,14 @@ The page can be activated by the user via the &quot;Customize...&quot; button on
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="canSearchEnclosingProjects" type="boolean">
+            <annotation>
+               <documentation>
+                  If this attribute is missing or set to &quot;false&quot;, the &quot;Enclosing Projects&quot; search scope is not shown in the search dialog&apos;s scope part.
+If the attribute &quot;showScopeSection&quot; is missing or set to &quot;false&quot;, this attribute will be ignored.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
