@@ -17,6 +17,7 @@ import org.eclipse.help.internal.search.federated.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -33,13 +34,21 @@ public class EngineResultSection {
 
 	private FormText searchResults;
 
+	private ImageHyperlink prevLink;
+
+	private ImageHyperlink nextLink;
+
 	private boolean needsUpdating;
 
 	private FederatedSearchSorter sorter;
 
-	private int shortSize = 10;
+	private int HITS_PER_PAGE = 10;
 
-	private boolean shortMode = true;
+	private static final String HREF_PREV = "__prev__";
+
+	private static final String HREF_NEXT = "__next__";
+
+	private int resultOffset = 0;
 
 	private boolean showCategories = false;
 
@@ -61,8 +70,9 @@ public class EngineResultSection {
 	public Control createControl(Composite parent, final FormToolkit toolkit) {
 		section = toolkit.createSection(parent, Section.CLIENT_INDENT
 				| Section.COMPACT | Section.TWISTIE | Section.EXPANDED);
-		// section.marginHeight = 10;
-		createFormText(toolkit);
+		//section.marginHeight = 10;
+		createFormText(section, toolkit);
+		section.setClient(searchResults);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
 			public void expansionStateChanging(ExpansionEvent e) {
@@ -76,28 +86,40 @@ public class EngineResultSection {
 		return section;
 	}
 
-	private void createFormText(FormToolkit toolkit) {
-		searchResults = toolkit.createFormText(section, true);
+	private void createFormText(Composite parent, FormToolkit toolkit) {
+		searchResults = toolkit.createFormText(parent, true);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
 		searchResults.marginHeight = 5;
-		section.setClient(searchResults);
 		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		String nwKey = IHelpUIConstants.IMAGE_NW;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
+		searchResults.setImage(ISharedImages.IMG_TOOL_FORWARD, PlatformUI
+				.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_TOOL_FORWARD));
+		searchResults.setImage(ISharedImages.IMG_TOOL_BACK, PlatformUI
+				.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_TOOL_BACK));
+		searchResults.setImage(desc.getId(), desc.getIconImage());
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.equals("__more__")) { //$NON-NLS-1$
-					toggleMore();
+				if (HREF_NEXT.equals(href)) {
+					resultOffset += HITS_PER_PAGE;
+					asyncUpdateResults(false);
+				} else if (HREF_PREV.equals(href)) {
+					resultOffset -= HITS_PER_PAGE;
+					asyncUpdateResults(false);
 				} else
 					part.doOpenLink(e.getHref());
 			}
 		});
 		searchResults.setText("", false, false); //$NON-NLS-1$
+		// searchResults.setLayoutData(new
+		// TableWrapData(TableWrapData.FILL_GRAB));
 		needsUpdating = true;
 	}
 
@@ -145,12 +167,10 @@ public class EngineResultSection {
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
-		for (int i = 0; i < results.length; i++) {
-			if (shortMode && i == shortSize) {
-				buff.append("<p><a href=\"__more__\">"); //$NON-NLS-1$
-				buff.append(HelpUIResources
-						.getString("EngineResultSection.moreResults")); //$NON-NLS-1$
-				buff.append("</a></p>"); //$NON-NLS-1$
+		boolean earlyExit = false;
+
+		for (int i = resultOffset; i < hits.size(); i++) {
+			if (i - resultOffset == HITS_PER_PAGE) {
 				break;
 			}
 			ISearchEngineResult hit = results[i];
@@ -178,7 +198,7 @@ public class EngineResultSection {
 			int bindent = showCategories && cat != null ? 5 : 0;
 			buff
 					.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$
-			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
+			buff.append(desc.getId());
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
 			buff.append(escapeSpecialChars(hit.getHref()));
@@ -207,22 +227,38 @@ public class EngineResultSection {
 			 */
 			buff.append("</li>"); //$NON-NLS-1$
 		}
-		if (!shortMode && results.length > shortSize) {
-			buff.append("<p><a href=\"__more__\">"); //$NON-NLS-1$
-			buff.append(HelpUIResources
-					.getString("EngineResultSection.lessResults")); //$NON-NLS-1$
-			buff.append("</a></p>"); //$NON-NLS-1$
+		if (hits.size() > HITS_PER_PAGE) {
+			buff.append("<p>");
+			if (resultOffset > 0) {
+				// add prev
+				buff.append("<a href=\"");
+				buff.append(HREF_PREV);
+				buff.append("\">");
+				buff.append("<img href=\"");
+				buff.append(ISharedImages.IMG_TOOL_BACK);
+				buff.append("\"/>");
+				buff.append(" Prev");
+				buff.append("</a>   ");
+			}
+			if (hits.size() - resultOffset > HITS_PER_PAGE) {
+				// add next
+				buff.append("<a href=\"");
+				buff.append(HREF_NEXT);
+				buff.append("\">");
+				buff.append("Next ");
+				buff.append("<img href=\"");
+				buff.append(ISharedImages.IMG_TOOL_FORWARD);
+				buff.append("\"/>");				
+				buff.append("</a>");
+			}
+			buff.append("</p>");
 		}
+		//buff.append("<p/>");
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		section.layout();
 		if (reflow)
 			part.reflow();
-	}
-
-	private void toggleMore() {
-		shortMode = !shortMode;
-		asyncUpdateResults(false);
 	}
 
 	private String escapeSpecialChars(String value) {
@@ -260,8 +296,8 @@ public class EngineResultSection {
 							+ hits.size()));
 		else
 			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.hits", desc.getLabel(), ""
-							+ hits.size()));
+					"EngineResultSection.sectionTitle.hits", desc.getLabel(),
+					"" + hits.size()));
 	}
 
 	public void dispose() {

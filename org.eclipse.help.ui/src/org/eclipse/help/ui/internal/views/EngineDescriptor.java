@@ -56,8 +56,11 @@ public class EngineDescriptor {
 		if (image!=null)
 			return image;
 		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
-		if (icon!=null)
-			image = HelpUIResources.getImage(icon);
+		if (icon!=null) {
+			String bundleId = config.getNamespace();
+			HelpUIResources.getImageDescriptor(bundleId, icon);
+			return HelpUIResources.getImage(icon);
+		}
 		else
 			image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return image;

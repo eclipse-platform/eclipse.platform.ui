@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 /**
  * Uses a resource bundle to load images and strings from a property file. This
  * class needs to properly use the desired locale.
@@ -51,6 +52,19 @@ public class HelpUIResources {
 		ImageDescriptor desc = registry.getDescriptor(name);
 		if (desc==null) {
 			desc = ImageDescriptor.createFromURL(imagePath);
+			registry.put(name, desc);
+		}
+		return desc;
+	}
+	
+	public static ImageDescriptor getImageDescriptor(String bundleId, String name) {
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();		
+		ImageDescriptor desc = registry.getDescriptor(name);
+		if (desc==null) {
+			Bundle bundle = Platform.getBundle(bundleId);
+			if (bundle==null) return null;
+			URL url = Platform.find(bundle, new Path(name));			
+			desc = ImageDescriptor.createFromURL(url);
 			registry.put(name, desc);
 		}
 		return desc;
