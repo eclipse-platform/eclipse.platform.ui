@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -359,16 +360,16 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);
 		
+		Preferences resourcePrefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 		if (defaultEncodingButton.getSelection()) {
-			ResourcesPlugin.getPlugin().getPluginPreferences().setToDefault(ResourcesPlugin.PREF_ENCODING);
+			resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
 		}
 		else {
 			String enc = encodingCombo.getText();
-			ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, enc);
+			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
 		}
-		
-		WorkbenchPlugin.getDefault().savePluginPreferences();
 		ResourcesPlugin.getPlugin().savePluginPreferences();
+		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
 	}	
 }
