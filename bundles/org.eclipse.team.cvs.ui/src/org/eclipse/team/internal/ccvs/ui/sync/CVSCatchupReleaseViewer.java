@@ -429,7 +429,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		IResource local = syncTree.getLocal();
 		if (local != null) {
 			if (!local.exists()) {
-				config.setLeftLabel("No workspace file");
+				config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.No_workspace_file_1")); //$NON-NLS-1$
 			} else {
 				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
 				ResourceSyncInfo info = null;
