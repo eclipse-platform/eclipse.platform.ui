@@ -83,6 +83,9 @@ public class ContextHelpDialog {
 					}
 					e.doit = true;
 				}
+				// workaround for SWT bugs leading to 32717
+				e.doit = true;
+				//
 			}
 		});
 
