@@ -10,31 +10,27 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.util.*;
-
-import org.eclipse.help.IHelpResource;
+import org.eclipse.help.*;
 public class ContextsBuilder {
-	/**
-	 * Map of contexts indexed by short ID
-	 */
-	protected Map contexts;
+	protected PluginContexts contexts;
 	private String definingPluginID;
 	private String pluginID;
 	/**
 	 * Contexts Builder Constructor.
 	 */
-	public ContextsBuilder() {
-		this.contexts = new HashMap();
+	public ContextsBuilder(PluginContexts pluginContexts) {
+		this.contexts = pluginContexts;
 	}
 	public void build(RelatedTopic relatedTopic) {
-		// set the href on the related topic   
+		// set the href on the related topic
 		String href = relatedTopic.getHref();
 		if (href == null)
 			relatedTopic.setHref("");
 		else {
 			if (!href.equals("") // no empty link
-				&& !href.startsWith("/") // no help url
-				&& href.indexOf(':') == -1) // no other protocols
-				{
+					&& !href.startsWith("/") // no help url
+					&& href.indexOf(':') == -1) // no other protocols
+			{
 				relatedTopic.setHref("/" + definingPluginID + "/" + href);
 			}
 		}
@@ -56,26 +52,21 @@ public class ContextsBuilder {
 		parser.parse(contextsFile);
 	}
 	public void build(List pluginContextsFiles) {
-		for (Iterator contextFilesIt = pluginContextsFiles.iterator();
-			contextFilesIt.hasNext();
-			) {
+		for (Iterator contextFilesIt = pluginContextsFiles.iterator(); contextFilesIt
+				.hasNext();) {
 			ContextsFile contextsFile = (ContextsFile) contextFilesIt.next();
 			contextsFile.build(this);
 		}
 	}
-	public Map getBuiltContexts() {
-		return contexts;
-	}
 	/**
-	 * Merges Text and Links from new Context into
-	 * an existing Context
+	 * Merges Text and Links from new Context into an existing Context
 	 */
 	private void mergeContexts(Context existingContext, Context newContext) {
 		// Merge Text
 		if (newContext.getText() != null) {
 			if (existingContext.getText() != null) {
-				existingContext.setText(
-					existingContext.getText() + "\n" + newContext.getText());
+				existingContext.setText(existingContext.getText() + "\n"
+						+ newContext.getText());
 			} else {
 				existingContext.setText(newContext.getText());
 			}
@@ -115,18 +106,16 @@ public class ContextsBuilder {
 	 * Checks if topic labels and href are not null and not empty strings
 	 */
 	private boolean isValidTopic(IHelpResource topic) {
-		return topic != null
-			&& topic.getHref() != null
-			&& !"".equals(topic.getHref())
-			&& topic.getLabel() != null
-			&& !"".equals(topic.getLabel());
+		return topic != null && topic.getHref() != null
+				&& !"".equals(topic.getHref()) && topic.getLabel() != null
+				&& !"".equals(topic.getLabel());
 	}
 	/**
-	 * Check if two context topic are the same.
-	 * They are considered the same if both labels and href are equal
+	 * Check if two context topic are the same. They are considered the same if
+	 * both labels and href are equal
 	 */
 	private boolean equalTopics(IHelpResource topic1, IHelpResource topic2) {
 		return topic1.getHref().equals(topic2.getHref())
-			&& topic1.getLabel().equals(topic2.getLabel());
+				&& topic1.getLabel().equals(topic2.getLabel());
 	}
 }

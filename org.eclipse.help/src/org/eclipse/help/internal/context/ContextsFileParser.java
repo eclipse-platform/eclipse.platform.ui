@@ -11,9 +11,7 @@
 package org.eclipse.help.internal.context;
 import java.io.*;
 import java.text.*;
-
 import javax.xml.parsers.*;
-
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
@@ -27,30 +25,31 @@ public class ContextsFileParser extends DefaultHandler {
 	boolean seenDescription = false;
 	ContextsFile contextsFile;
 	private ContextsBuilder builder;
-	private final static SAXParserFactory factory =
-		SAXParserFactory.newInstance();
+	private final static SAXParserFactory factory = SAXParserFactory
+			.newInstance();
 	public ContextsFileParser(ContextsBuilder builder) {
 		super();
 		this.builder = builder;
 	}
 	/**
-	  * Receive notification of character data.
-	  */
+	 * Receive notification of character data.
+	 */
 	public void characters(char ch[], int start, int length)
-		throws SAXException {
+			throws SAXException {
 		if (seenDescription)
 			buffer.append(ch, start, length);
 		if (HelpPlugin.DEBUG_CONTEXT) {
-			System.out.println(
-				"ContextsFileParser.characters(): got char from parser= "
-					+ new StringBuffer().append(ch, start, length).toString());
+			System.out
+					.println("ContextsFileParser.characters(): got char from parser= "
+							+ new StringBuffer().append(ch, start, length)
+									.toString());
 		}
 	}
 	/**
-	  * Receive notification of the end of an element.
-	  */
+	 * Receive notification of the end of an element.
+	 */
 	public void endElement(String namespaceURI, String localName, String qName)
-		throws SAXException {
+			throws SAXException {
 		// make sure that no error has already occurred before adding to stack.
 		if (qName.equals(ContextsNode.DESC_ELEM)) {
 			seenDescription = false;
@@ -72,9 +71,8 @@ public class ContextsFileParser extends DefaultHandler {
 	public void error(SAXParseException ex) {
 		String message = getMessage("E001", ex);
 		HelpPlugin.logError(message, null);
-		RuntimeHelpStatus.getInstance().addParseError(
-			message,
-			ex.getSystemId());
+		RuntimeHelpStatus.getInstance()
+				.addParseError(message, ex.getSystemId());
 	}
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
@@ -82,30 +80,24 @@ public class ContextsFileParser extends DefaultHandler {
 	public void fatalError(SAXParseException ex) throws SAXException {
 		String message = getMessage("E002", ex);
 		HelpPlugin.logError(message, ex);
-		RuntimeHelpStatus.getInstance().addParseError(
-			message,
-			ex.getSystemId());
+		RuntimeHelpStatus.getInstance()
+				.addParseError(message, ex.getSystemId());
 	}
 	public String getMessage(String messageID, SAXParseException ex) {
 		String param0 = ex.getSystemId();
 		Integer param1 = new Integer(ex.getLineNumber());
 		Integer param2 = new Integer(ex.getColumnNumber());
 		String param3 = ex.getMessage();
-		String message =
-			MessageFormat.format(
-				HelpResources.getString(messageID),
-				new Object[] { param0, param1, param2, param3 });
+		String message = MessageFormat.format(HelpResources
+				.getString(messageID), new Object[]{param0, param1, param2,
+				param3});
 		return message;
 	}
 	/**
-	  * Receive notification of the beginning of an element.
-	  */
-	public void startElement(
-		String namespaceURI,
-		String localName,
-		String qName,
-		Attributes atts)
-		throws SAXException {
+	 * Receive notification of the beginning of an element.
+	 */
+	public void startElement(String namespaceURI, String localName,
+			String qName, Attributes atts) throws SAXException {
 		// We don't create a description element
 		if (qName.equals(ContextsNode.DESC_ELEM))
 			seenDescription = true;
@@ -115,7 +107,7 @@ public class ContextsFileParser extends DefaultHandler {
 			// the current StringBuffer of description.
 			// ie: there are many bold start tags in the stack, but we appended
 			// the tag only once to the description string.
-			// eg: (b) some text (b) more test (/b) more text (/b) will result 
+			// eg: (b) some text (b) more test (/b) more text (/b) will result
 			// in all of the sentence being bold.
 			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
 				buffer.append(ContextsNode.BOLD_TAG);
@@ -132,7 +124,7 @@ public class ContextsFileParser extends DefaultHandler {
 			} else
 				return;
 			if (!stack.empty())
-				 ((ContextsNode) stack.peek()).addChild(e);
+				((ContextsNode) stack.peek()).addChild(e);
 			stack.push(e);
 		}
 	}
@@ -146,20 +138,15 @@ public class ContextsFileParser extends DefaultHandler {
 		if (is == null)
 			return;
 		InputSource inputSource = new InputSource(is);
-		String file =
-			"/"
-				+ contextsFile.getDefiningPluginID()
-				+ "/"
+		String file = "/" + contextsFile.getDefiningPluginID() + "/"
 				+ contextsFile.getHref();
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(inputSource, this);
-			is.close();
 		} catch (ParserConfigurationException pce) {
-			HelpPlugin.logError(
-				HelpResources.getString("ContextsFileParser.PCE"),
-				pce);
+			HelpPlugin.logError(HelpResources
+					.getString("ContextsFileParser.PCE"), pce);
 		} catch (SAXException se) {
 			HelpPlugin.logError("", se);
 		} catch (IOException ioe) {
@@ -168,20 +155,25 @@ public class ContextsFileParser extends DefaultHandler {
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 	}
-
 	/**
 	 * @see EntityResolver This method implementation prevents loading external
 	 *      entities instead of calling
 	 *      org.apache.xerces.parsers.SaxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
 	 */
 	public InputSource resolveEntity(String publicId, String systemId) {
-		InputSource source =
-			new InputSource(new ByteArrayInputStream(new byte[0]));
+		InputSource source = new InputSource(new ByteArrayInputStream(
+				new byte[0]));
 		source.setPublicId(publicId);
 		source.setSystemId(systemId);
 		return source;
 	}
-
 }
