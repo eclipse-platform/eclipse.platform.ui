@@ -246,6 +246,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	protected void dispose() {
 		super.dispose();
 		
+		fColorProvider.disconnect();
+		
 		synchronized(streamListeners) {
 		    for(Iterator i = streamListeners.iterator(); i.hasNext(); ) {
 		        StreamListener listener = (StreamListener) i.next();
