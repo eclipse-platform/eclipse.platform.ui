@@ -24,6 +24,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -174,20 +175,20 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 				if (edi.group != null && edi.surroundingLines >= 0) {
 					TextEditChangeGroup editChange= edi.group;
 					TextChange textChange= editChange.getTextChange();
-					setInput(textChange, textChange.getCurrentContent(editChange.getRegion(), true, 2),
-						textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
+					setInput(textChange, textChange.getCurrentContent(editChange.getRegion(), true, 2, new NullProgressMonitor()),
+						textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2, new NullProgressMonitor()),
 						textChange.getTextType());
 					return;
 				} else if (edi.groups != null && edi.groups.length > 0 && edi.range != null) {
 					TextChange textChange= edi.groups[0].getTextChange();
-					setInput(textChange, textChange.getCurrentContent(edi.range, true, 0),
-						textChange.getPreviewContent(edi.groups, edi.range, true, 0),
+					setInput(textChange, textChange.getCurrentContent(edi.range, true, 0, new NullProgressMonitor()),
+						textChange.getPreviewContent(edi.groups, edi.range, true, 0, new NullProgressMonitor()),
 						textChange.getTextType());
 					return;
 				}
 			} else if (change instanceof TextChange) {
 				TextChange textChange= (TextChange)change;
-				setInput(textChange, textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
+				setInput(textChange, textChange.getCurrentContent(new NullProgressMonitor()), textChange.getPreviewContent(new NullProgressMonitor()), textChange.getTextType());
 				return;
 			} else {
 				fViewer.setInput(null);
