@@ -6,11 +6,16 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.ui.AbstractDebugView;
 
 public class SelectAllExpressionsAction extends SelectAllAction {
 
 	protected void update() {
 		getAction().setEnabled(
 			DebugPlugin.getDefault().getExpressionManager().hasExpressions());
+	}
+	
+	protected String getActionId() {
+		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables";
 	}
 }

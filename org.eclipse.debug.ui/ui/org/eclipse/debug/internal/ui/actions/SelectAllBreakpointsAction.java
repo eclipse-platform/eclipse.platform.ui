@@ -73,4 +73,8 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);	
 		super.dispose();
 	}
+	
+	protected String getActionId() {
+		return AbstractDebugView.SELECT_ALL_ACTION;
+	}
 }

@@ -18,4 +18,8 @@ import org.eclipse.jface.viewers.Viewer;
 		Viewer viewer= ((AbstractDebugView)getView()).getViewer();
 		getAction().setEnabled(((TreeViewer)viewer).getTree().getItemCount() != 0);
 	}
+	
+	protected String getActionId() {
+		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables";
+	}
 }

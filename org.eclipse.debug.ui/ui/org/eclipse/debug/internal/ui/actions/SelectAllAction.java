@@ -40,12 +40,14 @@ public abstract class SelectAllAction extends AbstractListenerActionDelegate {
 			IDebugView debugView =
 				(IDebugView) getView().getAdapter(IDebugView.class);
 			if (debugView != null) {
-				debugView.setAction(AbstractDebugView.SELECT_ALL_ACTION, action);
+				debugView.setAction(getActionId(), action);
 			}
 			return super.initialize(action, selection);
 		}
 		return false;
 	}
+
+	protected abstract String getActionId();
 	
 	/**
 	 * @see IActionDelegate#run(IAction)
