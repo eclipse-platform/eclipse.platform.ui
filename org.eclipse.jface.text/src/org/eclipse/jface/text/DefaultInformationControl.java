@@ -320,15 +320,15 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
 	public Rectangle computeTrim() {
 		return fShell.computeTrim(0, 0, 0, 0);
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return fShell.getBounds();
