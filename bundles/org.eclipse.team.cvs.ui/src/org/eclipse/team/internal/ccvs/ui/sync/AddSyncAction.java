@@ -132,7 +132,9 @@ public class AddSyncAction extends MergeAction {
 	 */
 	protected boolean isEnabled(ITeamNode node) {
 		try {
-			return new CVSSyncSet(new StructuredSelection(node)).hasNonAddedChanges();
+			CVSSyncSet set = new CVSSyncSet(new StructuredSelection(node));
+			set.removeConflictingNodes();
+			return set.hasNonAddedChanges();
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return false;
@@ -144,6 +146,7 @@ public class AddSyncAction extends MergeAction {
 	 */
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
 		set.removeIncomingNodes();
+		set.removeConflictingNodes();
 		((CVSSyncSet)set).removeAddedChanges();
 	}	
 }

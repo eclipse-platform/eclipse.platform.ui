@@ -265,7 +265,6 @@ public class ForceCommitSyncAction extends MergeAction {
 		if (syncMode != SyncView.SYNC_BOTH) {
 			set.removeIncomingNodes();
 		}
-		((CVSSyncSet)set).removeNonAddedChanges();
 	}
 	
 	/*
