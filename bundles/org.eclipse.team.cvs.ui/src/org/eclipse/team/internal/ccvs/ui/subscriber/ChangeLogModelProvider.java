@@ -387,6 +387,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		if(tag1 != null && tag2 != null) {
 			ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
 			if(logEntries == null || logEntries.length == 0) {
+				// If for some reason we don't have a log entry, just add the element
+				// without a commit set.
 				addNewElementFor(info, null, null);
 			}
 			for (int i = 0; i < logEntries.length; i++) {
@@ -395,8 +397,32 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			}
 		} else {
 			ILogEntry logEntry = logs.getLogEntry(remoteResource);
+			// For incoming deletions grab the comment for the latest on the same branch
+			// which is now in the attic.
+			try {
+				String remoteRevision = ((ICVSRemoteFile) remoteResource).getRevision();
+				if (isDeletedRemotely(info)) {
+					ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+					for (int i = 0; i < logEntries.length; i++) {
+						ILogEntry entry = logEntries[i];
+						String revision = entry.getRevision();
+						if (entry.isDeletion() && ResourceSyncInfo.isLaterRevision(revision, remoteRevision)) {
+							logEntry = entry;
+						}
+					}
+				}
+			} catch (TeamException e) {
+				// continue and skip deletion checks
+			}
 			addNewElementFor(info, remoteResource, logEntry);
 		}
+	}
+	
+	private boolean isDeletedRemotely(SyncInfo info) {
+		int kind = info.getKind();
+		if(kind == (SyncInfo.INCOMING | SyncInfo.DELETION)) return true;
+		if(SyncInfo.getDirection(kind) == SyncInfo.CONFLICTING && info.getRemote() == null) return true;
+		return false;
 	}
 	
 	private void addNewElementFor(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
@@ -410,7 +436,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				commentRoots.put(dateComment, changeRoot);
 				addToViewer(changeRoot);
 			}
-			if(info instanceof CVSSyncInfo) {
+			if(info instanceof CVSSyncInfo && ! logEntry.isDeletion()) {
 				info = new CVSUpdatableSyncInfo(info.getKind(), info.getLocal(), info.getBase(), (RemoteResource)logEntry.getRemoteFile(), ((CVSSyncInfo)info).getSubscriber());
 				try {
 					info.init();
@@ -426,9 +452,13 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}	
 		addToViewer(element);
 	}
-
+	
+	/*
+	 * Return if this sync info should be considered as part of a commit set.
+	 */
 	private boolean isInterestingChange(SyncInfo info) {
 		int kind = info.getKind();
+		if(info.getLocal().getType() != IResource.FILE) return false;
 		if(info.getComparator().isThreeWay()) {
 			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
 		}
@@ -473,7 +503,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 
 			String remoteRevision = getRevisionString(remote);
 			String localRevision = getRevisionString(local);
-
+			
 			boolean useRemote = true;
 			if (local != null && remote != null) {
 				useRemote = ResourceSyncInfo.isLaterRevision(remoteRevision, localRevision);
