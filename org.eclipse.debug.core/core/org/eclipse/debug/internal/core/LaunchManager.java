@@ -673,7 +673,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Notifies the launch manager that a launch configuration
 	 * has been deleted. The configuration is removed from the
-	 * cache of info's and from the index of configurations by
+	 * cache of infos and from the index of configurations by
 	 * project, and listeners are notified.
 	 * 
 	 * @param config the launch configuration that was deleted
