@@ -20,7 +20,6 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.instrumentation.WorkbenchInstrumentationManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -84,9 +83,6 @@ private static Point computePopUpLocation(Display display) {
  * @param point the location for the help popup
  */
 private static void displayHelp(String helpContext, Point point) {
-	
-	//let the listeners know help was called
-	WorkbenchInstrumentationManager.fireHelpActivated(helpContext);
 	  
 	IHelp helpSupport = getHelpSupport();
 	if (helpSupport == null)
@@ -101,9 +97,6 @@ private static void displayHelp(String helpContext, Point point) {
  * @param point the location for the help popup
  */
 private static void displayHelp(IContext helpContext, Point point) {
-	
-	//let the listeners know help was called
-	WorkbenchInstrumentationManager.fireHelpActivated(helpContext.toString());
 	  
 	IHelp helpSupport = getHelpSupport();
 	if (helpSupport == null)
