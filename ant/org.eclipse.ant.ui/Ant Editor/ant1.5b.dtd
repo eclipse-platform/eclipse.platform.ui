@@ -3628,15 +3628,17 @@
 <!ELEMENT fail EMPTY>
 <!ATTLIST fail
           id ID #IMPLIED
-          loops CDATA #IMPLIED
-          source CDATA #IMPLIED
-          duration CDATA #IMPLIED>
+          taskname CDATA #IMPLIED
+          description CDATA #IMPLIED
+          message CDATA #IMPLIED
+          if CDATA #IMPLIED
+          unless CDATA #IMPLIED>
 
 <!ELEMENT success EMPTY>
 <!ATTLIST success
           id ID #IMPLIED
           loops CDATA #IMPLIED
-          source CDATA #IMPLIED
+          source CDATA #REQUIRED
           duration CDATA #IMPLIED>
 
 <!ELEMENT mparse (jvmarg | classpath | sourcepath)*>
