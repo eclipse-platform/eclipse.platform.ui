@@ -162,19 +162,7 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 				delete(false, true, Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				return;
 			}
-			// remove each member from the resource tree. 
-			// DO NOT use resource.delete() as this will delete it from disk as well.
-			IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-			for (int i = 0; i < members.length; i++) {
-				Resource member = (Resource) members[i];
-				workspace.deleteResource(member);
-			}
-			// finally mark the project as closed.
-			info = getResourceInfo(false, true);
-			info.clear(M_OPEN);
-			info.setModificationStamp(IResource.NULL_STAMP);
-			info.clearSessionProperties();
-			info.setSyncInfo(null);
+			basicClose();
 			monitor.worked(Policy.opWork / 2);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -185,6 +173,22 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+}
+
+protected void basicClose() throws CoreException {
+	// remove each member from the resource tree. 
+	// DO NOT use resource.delete() as this will delete it from disk as well.
+	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	for (int i = 0; i < members.length; i++) {
+		Resource member = (Resource) members[i];
+		workspace.deleteResource(member);
+	}
+	// finally mark the project as closed.
+	ResourceInfo info = getResourceInfo(false, true);
+	info.clear(M_OPEN);
+	info.setModificationStamp(IResource.NULL_STAMP);
+	info.clearSessionProperties();
+	info.setSyncInfo(null);
 }
 /**
  * @see IProject#copy
