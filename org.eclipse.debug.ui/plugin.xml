@@ -108,11 +108,12 @@
             id="org.eclipse.debug.ui.RegisterView">
       </view>
       <view
-            name="%MemoryViewName"
-            icon="icons/full/eview16/memory_view.gif"
+            allowMultiple="true"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.memory.MemoryView"
-            id="org.eclipse.debug.ui.MemoryView">
+            icon="icons/full/eview16/memory_view.gif"
+            id="org.eclipse.debug.ui.MemoryView"
+            name="%MemoryViewName">
       </view>      
    </extension>
    <extension
@@ -838,6 +839,25 @@
       <viewContribution
             targetID="org.eclipse.debug.ui.MemoryView"
             id="org.eclipse.debug.ui.memoryView.toolbar">
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.PinMemoryBlockAction"
+               helpContextId="PinMemoryBlockAction_context"
+               icon="icons/full/elcl16/pin.gif"
+               id="org.eclipse.debug.ui.PinMemoryBlockAction"
+               label="%PinMemoryBlockAction.label "
+               state="true"
+               style="toggle"
+               toolbarPath="additions"
+               tooltip="%PinMemoryBlockAction.label "/>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.NewMemoryViewAction"
+               helpContextId="NewMemoryViewAction_context"
+               icon="icons/full/elcl16/new_con.gif"
+               id="org.eclipse.debug.ui.NewMemoryViewAction"
+               label="%NewMemoryViewAction.label"
+               style="push"
+               toolbarPath="additions"
+               tooltip="%NewMemoryViewAction.label"/>
          <action
                disabledIcon="icons/full/dlcl16/var_cntnt_prvdr.gif"
                hoverIcon="icons/full/elcl16/var_cntnt_prvdr.gif"

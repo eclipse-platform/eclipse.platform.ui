@@ -133,137 +133,139 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	 */
 	public void run() {
 
-		//	get current selection from Debug View
-		 ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		 Object elem = ((IStructuredSelection)selection).getFirstElement();
-	
-		 if (!(elem instanceof IDebugElement))
-			 return;
-	
-
-		// ask debug element about memeory retrieval
-		IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-		IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
-		
-		if (standardMemRetrieval == null)
-		{
-			// if getAdapter returns null, assume debug target as memory block retrieval
-			standardMemRetrieval = debugTarget;
-		}
-		
-		if (standardMemRetrieval == null)
-			return;
-		
-		Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
-		
-		// create dialog to ask for expression/address to block
-		MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, standardMemRetrieval);
-		dialog.open();
-		
-		int returnCode = dialog.getReturnCode();
-		
-		if (returnCode == Window.CANCEL)
-		{
-			return;
-		}
-		
-		// get expression entered in dialog
-		String input = dialog.getExpression();
-		ArrayList expressions = new ArrayList();
-
-		StringTokenizer tokenizer = new StringTokenizer(input, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens())
-		{
-			expressions.add(tokenizer.nextToken());
-		}
-		
-		String[] expressionsArray = (String[])expressions.toArray(new String[expressions.size()]);
-		
-		for (int i=0; i<expressionsArray.length; i++)
-		{
-			String expression = expressionsArray[i].trim();
-			try {
-				if (standardMemRetrieval instanceof IMemoryBlockRetrievalExtension)
-				{
-					// if the debug session supports IMemoryBlockExtensionRetrieval
-					IMemoryBlockRetrievalExtension memRetrieval = (IMemoryBlockRetrievalExtension)standardMemRetrieval;
-					
-					// get extended memory block with the expression entered
-					IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, elem);
-					
-					// add block to memory block manager
-					if (memBlock != null)
-					{
-						fLastMemoryBlock = memBlock;
-						
-						MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
-						if (fAddDefaultRenderings)
-							addDefaultRenderings(memBlock);
-					}
-					else
-					{
-						// open error if it failed to retrieve a memory block
-						MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);					
-					}
-				}
-				else
-				{
-					// if the debug session does not support IMemoryBlockExtensionRetrieval
-					expression = expression.toUpperCase();
-					String hexPrefix = "0X"; //$NON-NLS-1$
-					if (expression.startsWith(hexPrefix))
-					{
-						expression = expression.substring(hexPrefix.length());
-					}
-					
-					// convert the expression to an address
-					BigInteger address = new BigInteger(expression, 16);
-	
-					long longAddress = address.longValue();
-	
-					// get the length of memory to block
-					String strLength = dialog.getLength();
-					
-					long length = Long.parseLong(strLength);
-					
-					// must monitor at least one line
-					if (length == 0)
-					{
-						length = IInternalDebugUIConstants.ADD_UNIT_PER_LINE;
-					}
-					
-					// get standard memory block
-					IMemoryBlock memBlock = standardMemRetrieval.getMemoryBlock(longAddress, length);
-					
-					// make sure the memory block returned is not an instance of IMemoryBlockExtension
-					if (memBlock instanceof IMemoryBlockExtension)
-					{
-						Status status = new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(),	0, 
-							"IMemoryBlockRetrieval returns IMemoryBlockExtension.  This may result in unexpected behavior.", null); //$NON-NLS-1$
-						DebugUIPlugin.log(status);
-					}
-					
-					if (memBlock != null)
-					{
-						// add memory block to memory block manager
-						fLastMemoryBlock = memBlock;
-						MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
-						if (fAddDefaultRenderings)
-							addDefaultRenderings(memBlock);
-					}
-					else
-					{
-						// otherwise open up an error doalog
-						MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);
-					}
-				}
-			} catch (DebugException e1) {
-				MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(FAILED), e1);
-			}
-			catch(NumberFormatException e2)
+		boolean pin = true; 
+		try {
+			
+			if (getMemoryView() != null)
 			{
-				String message = DebugUIMessages.getString(FAILED) + "\n" + DebugUIMessages.getString(EXPR_EVAL_FAILED); //$NON-NLS-1$
-				MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), message + " " + expression, null); //$NON-NLS-1$
+				pin = getMemoryView().isPinMBDisplay();
+				getMemoryView().setPinMBDisplay(false);
+			}
+			
+			//	get current selection from Debug View
+			 ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			Object elem = ((IStructuredSelection)selection).getFirstElement();
+			if (!(elem instanceof IDebugElement))
+				 return;
+			// ask debug element about memeory retrieval
+			IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
+			IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
+			if (standardMemRetrieval == null)
+			{
+				// if getAdapter returns null, assume debug target as memory block retrieval
+				standardMemRetrieval = debugTarget;
+			}
+			if (standardMemRetrieval == null)
+				return;
+			Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+			// create dialog to ask for expression/address to block
+			MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, standardMemRetrieval);
+			dialog.open();
+			int returnCode = dialog.getReturnCode();
+			if (returnCode == Window.CANCEL)
+			{
+				return;
+			}
+			// get expression entered in dialog
+			String input = dialog.getExpression();
+			ArrayList expressions = new ArrayList();
+			StringTokenizer tokenizer = new StringTokenizer(input, ","); //$NON-NLS-1$
+			while (tokenizer.hasMoreTokens())
+			{
+				expressions.add(tokenizer.nextToken());
+			}
+			String[] expressionsArray = (String[])expressions.toArray(new String[expressions.size()]);
+			for (int i=0; i<expressionsArray.length; i++)
+			{
+				String expression = expressionsArray[i].trim();
+				try {
+					if (standardMemRetrieval instanceof IMemoryBlockRetrievalExtension)
+					{
+						// if the debug session supports IMemoryBlockExtensionRetrieval
+						IMemoryBlockRetrievalExtension memRetrieval = (IMemoryBlockRetrievalExtension)standardMemRetrieval;
+						
+						// get extended memory block with the expression entered
+						IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, elem);
+						
+						// add block to memory block manager
+						if (memBlock != null)
+						{
+							fLastMemoryBlock = memBlock;
+							
+							MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
+							if (fAddDefaultRenderings)
+								addDefaultRenderings(memBlock);
+						}
+						else
+						{
+							// open error if it failed to retrieve a memory block
+							MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);					
+						}
+					}
+					else
+					{
+						// if the debug session does not support IMemoryBlockExtensionRetrieval
+						expression = expression.toUpperCase();
+						String hexPrefix = "0X"; //$NON-NLS-1$
+						if (expression.startsWith(hexPrefix))
+						{
+							expression = expression.substring(hexPrefix.length());
+						}
+						
+						// convert the expression to an address
+						BigInteger address = new BigInteger(expression, 16);
+
+						long longAddress = address.longValue();
+
+						// get the length of memory to block
+						String strLength = dialog.getLength();
+						
+						long length = Long.parseLong(strLength);
+						
+						// must monitor at least one line
+						if (length == 0)
+						{
+							length = IInternalDebugUIConstants.ADD_UNIT_PER_LINE;
+						}
+						
+						// get standard memory block
+						IMemoryBlock memBlock = standardMemRetrieval.getMemoryBlock(longAddress, length);
+						
+						// make sure the memory block returned is not an instance of IMemoryBlockExtension
+						if (memBlock instanceof IMemoryBlockExtension)
+						{
+							Status status = new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(),	0, 
+								"IMemoryBlockRetrieval returns IMemoryBlockExtension.  This may result in unexpected behavior.", null); //$NON-NLS-1$
+							DebugUIPlugin.log(status);
+						}
+						
+						if (memBlock != null)
+						{
+							// add memory block to memory block manager
+							fLastMemoryBlock = memBlock;
+							MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
+							if (fAddDefaultRenderings)
+								addDefaultRenderings(memBlock);
+						}
+						else
+						{
+							// otherwise open up an error doalog
+							MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);
+						}
+					}
+				} catch (DebugException e1) {
+					MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(FAILED), e1);
+				}
+				catch(NumberFormatException e2)
+				{
+					String message = DebugUIMessages.getString(FAILED) + "\n" + DebugUIMessages.getString(EXPR_EVAL_FAILED); //$NON-NLS-1$
+					MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), message + " " + expression, null); //$NON-NLS-1$
+				}
+			}
+		} finally {
+			if (getMemoryView() != null)
+			{
+				getMemoryView().setPinMBDisplay(pin);
 			}
 		}
 	}
@@ -380,5 +382,12 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		IMemoryRenderingContainer container = fSite.getContainer(paneId);
 		rendering.init(container, memoryBlock);
 		container.addMemoryRendering(rendering);
+	}
+	
+	private MemoryView getMemoryView()
+	{
+		if (fSite instanceof MemoryView)
+			return (MemoryView)fSite;
+		return null;
 	}
 }

@@ -28,7 +28,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,7 +60,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	public ViewPaneRenderingMgr(IMemoryRenderingContainer viewPane)
 	{
 		fViewPane = viewPane;
-		loadPersistedRenderings();
+		loadPersistedRenderings(getPrefId());
 	}
 
 	public void removeMemoryBlockRendering(IMemoryBlock mem, String renderingId)
@@ -221,6 +224,15 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		// remove all renderings
 		fRenderings.clear();
 		
+		String secondaryId = getViewSiteSecondaryId();
+		if (secondaryId != null)
+		{
+			// do not save renderings if this is not the primary rendering view
+			String prefid = getPrefId();
+			Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
+			prefs.setToDefault(prefid);
+		}
+			
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 	
@@ -241,8 +253,35 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		} catch (TransformerException e) {
 			DebugUIPlugin.log(e);
 		}
-		prefs.setValue(fViewPane.getId(), renderingsStr);
-		DebugUIPlugin.getDefault().savePluginPreferences();
+		
+		String prefid = getPrefId();
+		
+		if (renderingsStr != null)
+			prefs.setValue(prefid, renderingsStr);
+		else
+			prefs.setToDefault(prefid);
+	}
+
+	private String getPrefId() {
+		// constructs id based on memory view's secondary id + the rendering view pane id
+		// format:  secondaryId:viewPaneId
+		StringBuffer id = new StringBuffer();
+		IMemoryRenderingSite renderingSite = fViewPane.getMemoryRenderingSite();
+		IWorkbenchPartSite ps = renderingSite.getSite();
+		if (ps instanceof IViewSite)
+		{
+			IViewSite vs = (IViewSite)ps;
+			String secondaryId = vs.getSecondaryId();
+			if (secondaryId != null)
+			{
+				id.append(secondaryId);
+				id.append(":"); //$NON-NLS-1$
+			}
+			
+		}
+		id.append(fViewPane.getId());
+		String prefId = id.toString();
+		return prefId;
 	}
 	
 	/**
@@ -254,6 +293,10 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	 */
 	private String getRenderingsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		IMemoryRendering[] renderings= (IMemoryRendering[])fRenderings.toArray(new IMemoryRendering[fRenderings.size()]);
+		
+		if (renderings.length == 0)
+			return null;
+		
 		Document document= LaunchManager.getDocument();
 		Element rootElement= document.createElement(RENDERINGS_TAG);
 		document.appendChild(rootElement);
@@ -270,8 +313,8 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	/**
 	 * Load renderings currently stored.
 	 */
-	private void loadPersistedRenderings() {
-		String renderingsStr= DebugUIPlugin.getDefault().getPluginPreferences().getString(fViewPane.getId());
+	private void loadPersistedRenderings(String prefId) {
+		String renderingsStr= DebugUIPlugin.getDefault().getPluginPreferences().getString(prefId);
 		if (renderingsStr.length() == 0) {
 			return;
 		}
@@ -344,4 +387,20 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 	}	
+	
+	/**
+	 * @return secondary id, or null if not available
+	 */
+	private String getViewSiteSecondaryId()
+	{
+		IMemoryRenderingSite renderingSite = fViewPane.getMemoryRenderingSite();
+		IWorkbenchPartSite ps = renderingSite.getSite();
+		if (ps instanceof IViewSite)
+		{
+			IViewSite vs = (IViewSite)ps;
+			String secondaryId = vs.getSecondaryId();
+			return secondaryId;
+		}
+		return null;
+	}
 }

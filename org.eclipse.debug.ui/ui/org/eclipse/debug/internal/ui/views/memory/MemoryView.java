@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -70,6 +71,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private MemoryBlocksTreeViewPane fMemBlkViewer;
 	
 	private MemoryViewSynchronizationService fSyncService;
+	
+	private boolean fPinMBDisplay = true;	// pin memory block display, on by default
+	private static int fViewCnt = 0;
 	
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -223,6 +227,33 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
+		
+		fViewCnt ++;
+		String secondaryId = site.getSecondaryId();
+		if (secondaryId != null)
+			MemoryViewIdRegistry.registerView(secondaryId);
+		
+		// only do this the first time
+		// not sure if there is a bug in the UI... if the view is
+		// not a primary view and if it's hidden, the view is not
+		// init and created until it becomes visible.
+		if (fViewCnt == 1)
+		{
+			// also try to find other views and register
+			if (DebugUIPlugin.getActiveWorkbenchWindow() != null &&
+				DebugUIPlugin.getActiveWorkbenchWindow().getActivePage() != null)
+			{
+				IViewReference references[] = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getViewReferences();
+				for (int i=0; i<references.length; i++)
+				{
+					if (references[i].getSecondaryId() != null)
+					{
+						MemoryViewIdRegistry.registerView(references[i].getSecondaryId());
+					}
+				}
+			}
+		}
+		
 		fSyncService = new MemoryViewSynchronizationService();
 	}
 	
@@ -347,6 +378,11 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fViewPaneControls.clear();
 		
+		IViewSite viewSite = getViewSite();
+		String secondaryId = viewSite.getSecondaryId();
+		if (secondaryId != null)
+			MemoryViewIdRegistry.deregisterView(secondaryId);
+		
 		super.dispose();
 	}
 	
@@ -440,7 +476,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	}
 	
 	private void storeViewPaneVisibility()
-	{
+	{		
 		fVisibleViewPanes.clear();
 		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
 		StringBuffer visibleViewPanes= new StringBuffer();
@@ -460,13 +496,13 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			}
 		}
 		
-		prefs.setValue(VISIBILITY_PREF, visibleViewPanes.toString());		
+		prefs.setValue(getVisibilityPrefId(), visibleViewPanes.toString());		 //$NON-NLS-1$
 	}
 	
 	private void loadViewPanesVisibility()
 	{
 		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		String visiblePanes = prefs.getString(VISIBILITY_PREF);
+		String visiblePanes = prefs.getString(getVisibilityPrefId());
 		
 		if (visiblePanes != null && visiblePanes.length() > 0)
 		{
@@ -535,5 +571,25 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			return (IMemoryRenderingContainer)viewPane;
 		
 		return null;
+	}
+
+	public boolean isPinMBDisplay() {
+		return fPinMBDisplay;
+	}
+	
+
+	public void setPinMBDisplay(boolean pinMBDisplay) {
+		fPinMBDisplay = pinMBDisplay;
+	}
+	
+	private String getVisibilityPrefId()
+	{
+		IViewSite vs = getViewSite();
+		String viewId = vs.getSecondaryId();
+		
+		if (viewId != null)
+			return VISIBILITY_PREF + "." + viewId; //$NON-NLS-1$
+
+		return VISIBILITY_PREF;
 	}
 }

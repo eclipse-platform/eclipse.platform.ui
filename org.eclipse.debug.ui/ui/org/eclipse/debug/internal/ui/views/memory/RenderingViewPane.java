@@ -103,7 +103,19 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			// create a tab folder when there is a new memory block
 			if (fTabFolderForMemoryBlock.containsKey(memory)) {
 				if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memory)) {
-					setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+					
+					if (fParent instanceof MemoryView)
+					{
+						MemoryView mv = (MemoryView)fParent;
+						if (!mv.isPinMBDisplay())
+						{
+							setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+						}
+					}
+					else
+					{
+						setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+					}
 					fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), fTabFolderForMemoryBlock.get(memory));
 					fViewPaneCanvas.layout();
 				}
@@ -123,8 +135,20 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				fMemoryBlockFromTabFolder.put(folder, memory);
 				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), folder);
 				
-				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
-				setRenderingSelection(createTab.getRendering());
+				if (fParent instanceof MemoryView)
+				{
+					MemoryView mv = (MemoryView)fParent;
+					if (!mv.isPinMBDisplay())
+					{
+						setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+						setRenderingSelection(createTab.getRendering());
+					}
+				}
+				else
+				{
+					setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+					setRenderingSelection(createTab.getRendering());
+				}
 				
 				fViewPaneCanvas.layout();
 			}	
@@ -435,12 +459,16 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		 
 		 if (viewTab == null)
 		 {
-			TabItem newItem = new TabItem(toDisplay, SWT.NULL);
-			CreateRendering rendering = new CreateRendering(getInstance());
-			rendering.init(getInstance(), memBlock);
-			MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, getInstance());
-
-			setRenderingSelection(createTab.getRendering());	
+			 // do not ever want to put it on the empty folder
+			if (toDisplay != fEmptyTabFolder)
+			{
+				TabItem newItem = new TabItem(toDisplay, SWT.NULL);
+				CreateRendering rendering = new CreateRendering(getInstance());
+				rendering.init(getInstance(), memBlock);
+				MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, getInstance());
+	
+				setRenderingSelection(createTab.getRendering());
+			}
 		 }
 		
 		//set toolbar actions enabled/disabled
@@ -877,11 +905,14 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			else
 			{
 				TabFolder folder = (TabFolder)fStackLayout.topControl;
-				TabItem newItem = new TabItem(folder, SWT.NULL);
-				CreateRendering rendering = new CreateRendering(this);
-				rendering.init(getInstance(), memoryBlock);
-				new MemoryViewTab(newItem, rendering, this);
-				folder.setSelection(0);						
+				if (folder != fEmptyTabFolder)
+				{
+					TabItem newItem = new TabItem(folder, SWT.NULL);
+					CreateRendering rendering = new CreateRendering(this);
+					rendering.init(getInstance(), memoryBlock);
+					new MemoryViewTab(newItem, rendering, this);
+					folder.setSelection(0);
+				}
 			}
 		}
 	}

@@ -235,8 +235,23 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			}
 			
 			fTreeViewer.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(memory));
-			fSelectionProvider.setSelection(new StructuredSelection(memory));
+			
+			if (fParent instanceof MemoryView)
+			{
+				MemoryView mv = (MemoryView)fParent;
+				// force a selection if there is currently only one memory block in the view
+				if (!mv.isPinMBDisplay() || fMemoryBlocks.size() == 1)
+				{
+					// switch to the memory block if there is only one memory block in the view
+					fTreeViewer.setSelection(new StructuredSelection(memory));
+					fSelectionProvider.setSelection(new StructuredSelection(memory));
+				}
+			}
+			else
+			{
+				fTreeViewer.setSelection(new StructuredSelection(memory));
+				fSelectionProvider.setSelection(new StructuredSelection(memory));
+			}
 			updateActionsEnablement();
 		}
 
