@@ -55,6 +55,7 @@ public class RepeatedSubItem implements ISubItemItem {
 	}
 
 	/**
+	 * Returns a list which will always only contain at most 1 entry.
 	 * @return Returns the subItems.
 	 */
 	public ArrayList getSubItems() {

@@ -557,7 +557,7 @@ public class CheatSheetParser {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 
-			if(node.getNodeName().equals(IParserTags.ACTION)) {
+			if(node.getNodeName().equals(IParserTags.SUBITEM)) {
 				handleSubItem(repeatedSubItem, node);
 			}
 		}

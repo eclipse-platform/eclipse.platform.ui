@@ -94,7 +94,6 @@ public class IntroItem extends ViewItem {
 				viewer.advanceIntroItem();
 			}
 		});
-		buttonCompositeList.add(buttonComposite);
 	}
 
 	/**

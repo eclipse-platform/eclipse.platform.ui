@@ -12,20 +12,25 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.internal.cheatsheets.data.SubItem;
 
 public class SubItemCompositeHolder {
 	private Label iconLabel;
 	private boolean skipped;
 	private boolean completed;
 	protected ImageHyperlink startButton;
+	private String thisValue;
+	private SubItem subItem;
 	
 	/**
 	 * 
 	 */
-	/*package*/ SubItemCompositeHolder(Label l, ImageHyperlink startb) {
+	/*package*/ SubItemCompositeHolder(Label l, ImageHyperlink startb, String thisValue, SubItem subItem) {
 		super();
 		iconLabel = l;
 		startButton = startb;
+		this.thisValue = thisValue;
+		this.subItem = subItem;
 	}
 
 	/**
@@ -70,4 +75,31 @@ public class SubItemCompositeHolder {
 		return startButton;
 	}
 
+	/**
+	 * @return Returns the thisValue.
+	 */
+	public String getThisValue() {
+		return thisValue;
+	}
+
+	/**
+	 * @param thisValue The thisValue to set.
+	 */
+	public void setThisValue(String thisValue) {
+		this.thisValue = thisValue;
+	}
+
+	/**
+	 * @return Returns the subItem.
+	 */
+	public SubItem getSubItem() {
+		return subItem;
+	}
+
+	/**
+	 * @param subItem The subItem to set.
+	 */
+	public void setSubItem(SubItem subItem) {
+		this.subItem = subItem;
+	}
 }

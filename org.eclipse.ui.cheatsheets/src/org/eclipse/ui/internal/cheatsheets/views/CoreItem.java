@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -48,7 +48,6 @@ public class CoreItem extends ViewItem {
 
 	private void createButtonComposite() {
 		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
-		buttonCompositeList.add(buttonComposite);
 		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;
 		buttonlayout.marginWidth = 2;
@@ -118,7 +117,7 @@ public class CoreItem extends ViewItem {
 	}
 
 	/**
-	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
+	 * @see org.eclipse.ui.internal.cheatsheets.ViewItem#handleButtons()
 	 */
 	/*package*/ void handleButtons() {
 		if(item.isDynamic()) {
@@ -148,6 +147,8 @@ public class CoreItem extends ViewItem {
 			handlePerformWhenButtons();
 		} else if( item.getConditionalSubItems() != null && item.getConditionalSubItems().size() > 0) {
 			
+		} else if( item.getRepeatedSubItems() != null && item.getRepeatedSubItems().size() > 0) {
+			handleRepeatedSubItemsButtons();
 		}
 	}
 
@@ -177,9 +178,116 @@ public class CoreItem extends ViewItem {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
-	 */
+	private void handleRepeatedSubItemsButtons() {
+
+		boolean refreshRequired = false;
+		if(buttonComposite != null) {
+			Control[] children = buttonComposite.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				Control control = children[i];
+				control.dispose();
+			}
+			
+			refreshRequired = true;
+		} else {
+			buttonComposite = toolkit.createComposite(bodyWrapperComposite);
+			GridLayout xbuttonlayout = new GridLayout(6, false);
+			xbuttonlayout.marginHeight = 2;
+			xbuttonlayout.marginWidth = 2;
+			xbuttonlayout.verticalSpacing = 2;
+	
+			TableWrapData xbuttonData = new TableWrapData(TableWrapData.FILL);
+	
+			buttonComposite.setLayout(xbuttonlayout);
+			buttonComposite.setLayoutData(xbuttonData);
+			buttonComposite.setBackground(itemColor);
+		}
+
+		//Instantiate the list to store the sub item composites.
+		listOfSubItemCompositeHolders = new ArrayList(20);
+
+		//loop throught the number of sub items, make a new composite for each sub item.
+		//Add the spacer, the label, then the buttons that are applicable for each sub item.
+		ArrayList sublist = item.getRepeatedSubItems();
+		for (int i = 0; i < sublist.size(); i++) {
+			//Get the sub item to add.
+			RepeatedSubItem repeatedSubItem = (RepeatedSubItem)sublist.get(i);
+			String values = repeatedSubItem.getValues();
+			values = viewer.getManager().getVariableData(values);
+			if(values == null || values.length() <= 0) {
+				//TODO: throw exception, show warning to user
+			}
+
+			SubItem sub = (SubItem)repeatedSubItem.getSubItems().get(0);
+			
+			StringTokenizer tokenizer = new StringTokenizer(values, ",");
+			int j = 0;
+			while(tokenizer.hasMoreTokens()) {
+				String value = tokenizer.nextToken();
+				int added = 0;
+				
+				//Spacer label added.
+				Label checkDoneLabel = toolkit.createLabel(buttonComposite, null);
+				checkDoneLabel.setBackground(itemColor);
+				GridData checkDoneData = new GridData();
+				checkDoneData.widthHint = 16;
+				checkDoneLabel.setLayoutData(checkDoneData);
+				added++;
+
+				//Now add the label.
+				String labelText = performLineSubstitution(sub.getLabel(), "${this}", value); //$NON-NLS-1$
+				Label label = toolkit.createLabel(buttonComposite, labelText);
+				label.setBackground(itemColor);
+				added++;
+
+				final int fi = j++;
+
+				if (sub.getAction() != null) {
+					added++;
+					startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+					toolkit.adapt(startButton, true, true);
+					startButton.addHyperlinkListener(new HyperlinkAdapter() {
+						public void linkActivated(HyperlinkEvent e) {
+							viewer.runSubItemPerformAction(startButton, fi);
+						}
+					});
+				}
+				if (sub.isSkip()) {
+					added++;
+					skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+					toolkit.adapt(skipButton, true, true);
+					skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+						public void linkActivated(HyperlinkEvent e) {
+							viewer.advanceSubItem(skipButton, false, fi);
+						}
+					});
+				}
+				if (sub.getAction() != null && sub.getAction().isConfirm()) {
+					added++;
+					completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+					toolkit.adapt(completeButton, true, true);
+					completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+						public void linkActivated(HyperlinkEvent e) {
+							viewer.advanceSubItem(completeButton, true, fi);
+						}
+					});
+				}
+
+				while (added < 6) {
+					// Add filler labels as needed to complete the row
+					Label filler = toolkit.createLabel(buttonComposite, null);
+					filler.setBackground(itemColor);
+					added++;
+				}
+				listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, value, sub));
+			}
+		}
+
+		if(refreshRequired) {
+			buttonComposite.layout();
+		}
+	}
+
 	private void handleSubButtons() throws Exception {
 		if (buttonsHandled)
 			return;
@@ -204,7 +312,6 @@ public class CoreItem extends ViewItem {
 		buttonComposite.setLayoutData(xbuttonData);
 		buttonComposite.setBackground(itemColor);
 
-		buttonCompositeList.add(buttonComposite);
 		//loop throught the number of sub items, make a new composite for each sub item.
 		//Add the spacer, the label, then the buttons that are applicable for each sub item.
 		for (int i = 0; i < sublist.size(); i++) {
@@ -264,7 +371,7 @@ public class CoreItem extends ViewItem {
 				filler.setBackground(itemColor);
 				added++;
 			}
-			listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton));
+			listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, null, sub));
 		}
 		buttonsHandled = true;
 	}
@@ -328,4 +435,23 @@ public class CoreItem extends ViewItem {
 		}
 	}
 
+	public String performLineSubstitution(String line, String variable, String value) {
+		StringBuffer buffer = new StringBuffer(line.length());
+
+		StringDelimitedTokenizer tokenizer = new StringDelimitedTokenizer(line, variable);
+		boolean addValue = false;
+
+		while (tokenizer.hasMoreTokens()) {
+			if (addValue) {
+				buffer.append(value);
+			}
+			buffer.append(tokenizer.nextToken());
+			addValue = true;
+		}
+		if (tokenizer.endsWithDelimiter()) {
+			buffer.append(value);
+		}
+
+		return buffer.toString();
+	}
 }

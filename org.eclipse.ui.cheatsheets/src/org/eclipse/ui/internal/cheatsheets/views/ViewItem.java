@@ -42,7 +42,6 @@ public abstract class ViewItem {
 	protected Composite bodyWrapperComposite;
 	protected Composite buttonComposite;
 
-	protected ArrayList buttonCompositeList;
 	private boolean buttonExpanded = true;
 	private Label checkDoneLabel;
 	private boolean completed = false;
@@ -85,7 +84,7 @@ public abstract class ViewItem {
 		this.viewer = viewer;
 		lightGrey = new Color(parent.getDisplay(), HIGHLIGHT_RGB);
 		darkGrey = new Color(parent.getDisplay(), darkGreyRGB);
-		buttonCompositeList = new ArrayList(10);
+
 		// Initialize the item...
 		init();
 
@@ -518,16 +517,13 @@ public abstract class ViewItem {
 			bodyChildren[i].setBackground(color);
 		}
 
-		if (buttonComposite != null)
-			for (int j = 0; j < buttonCompositeList.size(); j++) {
-				Composite c = (Composite) buttonCompositeList.get(j);
-				c.setBackground(color);
-				bodyChildren = c.getChildren();
-				for (int i = 0; i < bodyChildren.length; i++) {
-					bodyChildren[i].setBackground(color);
-				}
+		if (buttonComposite != null) {
+			buttonComposite.setBackground(color);
+			bodyChildren = buttonComposite.getChildren();
+			for (int i = 0; i < bodyChildren.length; i++) {
+				bodyChildren[i].setBackground(color);
 			}
-
+		}
 	}
 
 	//collapses the item

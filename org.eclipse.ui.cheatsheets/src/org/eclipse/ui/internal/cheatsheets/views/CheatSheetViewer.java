@@ -1,7 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
@@ -827,7 +838,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
-
 		} finally {
 			mylabel.setCursor(null);
 		}
@@ -860,9 +870,31 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 							saveCurrentSheet();
 						}
 					}
+				} else if (ciws.item.getRepeatedSubItems() != null && ciws.item.getRepeatedSubItems().size()>0) {
+					ArrayList l = ciws.getListOfSubItemCompositeHolders();
+					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
+					SubItem subItem = s.getSubItem();
+					if(subItem.getAction() != null) {
+						try {
+							getManager().setData("this", s.getThisValue()); //$NON-NLS-1$
+							String[] params = subItem.getAction().getParams();
+							if ((ciws.runAction(subItem.getAction().getPluginID(), subItem.getAction().getActionClass(), params, getManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
+								//set that item as complete.
+								s.getStartButton().setImage(ciws.restartImage);
+								s.getStartButton().redraw();
+								advanceSubItem(mylabel, true, subItemIndex);
+								saveCurrentSheet();
+							}
+						} finally {
+							getManager().setData("this", null); //$NON-NLS-1$
+						}
+					}
 				}
 			}
 		} catch (RuntimeException e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
 		} finally {
 			mylabel.setCursor(null);
 		}
