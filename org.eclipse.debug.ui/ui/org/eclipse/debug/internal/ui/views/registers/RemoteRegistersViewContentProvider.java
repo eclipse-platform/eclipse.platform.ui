@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 /**
  * Provides contents for the registers view
@@ -45,4 +46,11 @@ public class RemoteRegistersViewContentProvider extends RemoteVariablesContentPr
 		}
 		return super.hasChildren(element);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider#createContentManager(org.eclipse.debug.internal.ui.views.RemoteTreeViewer, org.eclipse.ui.IWorkbenchPartSite, org.eclipse.debug.internal.ui.views.variables.VariablesView)
+     */
+    protected DeferredTreeContentManager createContentManager(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
+        return new RemoteRegisterContentManager(this, viewer, site, view);
+    }
 }
