@@ -340,21 +340,21 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	protected void createToolItems(ToolBarManager toolbarManager) {
 		
-		fCopyLeftToRightAction= new Action() {
-			public void run() {
-				copySelected(true);
-			}
-		};
-		Utilities.initAction(fCopyLeftToRightAction, fBundle, "action.TakeLeft.");
-		toolbarManager.appendToGroup("merge", fCopyLeftToRightAction);
-
-		fCopyRightToLeftAction= new Action() {
-			public void run() {
-				copySelected(false);
-			}
-		};
-		Utilities.initAction(fCopyRightToLeftAction, fBundle, "action.TakeRight.");
-		toolbarManager.appendToGroup("merge", fCopyRightToLeftAction);
+//		fCopyLeftToRightAction= new Action() {
+//			public void run() {
+//				copySelected(true);
+//			}
+//		};
+//		Utilities.initAction(fCopyLeftToRightAction, fBundle, "action.TakeLeft.");
+//		toolbarManager.appendToGroup("merge", fCopyLeftToRightAction);
+//
+//		fCopyRightToLeftAction= new Action() {
+//			public void run() {
+//				copySelected(false);
+//			}
+//		};
+//		Utilities.initAction(fCopyRightToLeftAction, fBundle, "action.TakeRight.");
+//		toolbarManager.appendToGroup("merge", fCopyRightToLeftAction);
 		
 		fNextAction= new Action() {
 			public void run() {

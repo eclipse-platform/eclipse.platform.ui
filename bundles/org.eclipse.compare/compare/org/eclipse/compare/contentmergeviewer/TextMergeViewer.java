@@ -370,8 +370,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
 		
-		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
-		
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
 			fPreferenceChangeListener= new IPropertyChangeListener() {
@@ -382,6 +380,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			ps.addPropertyChangeListener(fPreferenceChangeListener);
 			
 			updateFont(ps, parent);
+			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
+			fSynchronizedScrolling= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -533,11 +533,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		};
 		
 		fLeft= createPart(composite);
-		fLeft.getTextWidget().getVerticalBar().setVisible(false);
+		fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fLeft.addAction(MergeSourceViewer.SAVE_ID, fLeftSaveAction);
 			
 		fRight= createPart(composite);
-		fRight.getTextWidget().getVerticalBar().setVisible(false);
+		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		
 		fRightCanvas= new BufferedCanvas(composite, SWT.V_SCROLL) {
