@@ -35,6 +35,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IDEContributionItemFactory;
+import org.eclipse.ui.internal.actions.ActivityEnablementAction;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
@@ -104,7 +105,10 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction upAction;
 	private IWorkbenchAction nextAction;
 	private IWorkbenchAction previousAction;
-
+	
+	// @issue roleManagerAction should be provided by ActionFactory
+	private ActivityEnablementAction roleManagerAction;
+	
 	// IDE-specific actions
 	private IWorkbenchAction projectPropertyDialogAction;
 	private IWorkbenchAction newWizardAction;
@@ -115,7 +119,6 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction rebuildAllAction; // Full build
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
-	private IWorkbenchAction roleManagerAction;
 	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
@@ -783,12 +786,12 @@ public final class WorkbenchActionBuilder {
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);
 
+		// @issue illegal internal ref to ActivityEnablementAction
 		//Only add the role manager action if we are using role support
-		// @issue RoleManager is internal
-		if(RoleManager.getInstance().isFiltering()){
-			roleManagerAction = ActionFactory.ROLE_CONFIGURATION.create(getWindow());
+		//if(RoleManager.getInstance().isFiltering()){
+			roleManagerAction = new ActivityEnablementAction();
 			registerGlobalAction(roleManagerAction);
-		}
+		//}
 	}
 
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)

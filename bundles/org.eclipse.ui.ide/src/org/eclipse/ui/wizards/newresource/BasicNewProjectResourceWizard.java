@@ -381,8 +381,8 @@ public static void updatePerspective(IConfigurationElement configElement) {
 		// @issue IWorkbenchConstants is internal 
 		//Enable the role if required.
 		IObjectActivityManager activityManager = 
-		PlatformUI.getWorkbench().
-		getActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+			PlatformUI.getWorkbench().
+				getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
 		if (activityManager != null) {
 			activityManager.setEnablementFor(finalPerspId, true);
 		}

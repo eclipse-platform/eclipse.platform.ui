@@ -42,6 +42,10 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,10 +54,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
@@ -77,17 +78,15 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
-import org.eclipse.ui.internal.ide.roles.IDERoleManager;
-
-//@issue illegal reference to RoleManager (internal to org.eclipse.ui plug-in)
-import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
+
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -157,6 +156,11 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private ArrayList welcomePerspectiveInfos = null;
 	
 	/**
+	 * Helper for managing activites in response to workspace changes.
+	 */
+	private IDEWorkbenchActivityHelper activityHelper = null;
+	
+	/**
 	 * Creates a new workbench adviser instance.
 	 */
 	protected IDEWorkbenchAdviser() {
@@ -190,10 +194,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		// remember for future reference
 		this.configurer = configurer;		
 
-		// setup the IDE specific role manager
-		// @issue RoleManager is internal
-		RoleManager.setManager(new IDERoleManager());
-
 		// setup the event loop exception handler
 		exceptionHandler = new IDEExceptionHandler(configurer);
 		
@@ -219,6 +219,9 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 
 		// register shared images
 		declareWorkbenchImages();
+		
+		// initialize the activity helper
+		activityHelper = IDEWorkbenchActivityHelper.getInstance();
 	}
 
 	/* (non-Javadoc)
@@ -229,7 +232,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		
 		// collect the welcome perspectives of the new installed features
 		initializeFeatureSets();
-		Set s = getNewlyAddedFeatures();;
+		Set s = getNewlyAddedFeatures();
 		welcomePerspectiveInfos = new ArrayList(s.size());
 		for (Iterator it = s.iterator(); it.hasNext(); ) {
 			String versionedId = (String) it.next();
@@ -259,6 +262,10 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#postShutdown
 	 */
 	public void postShutdown() {
+		if (activityHelper != null) {
+			activityHelper.shutdown();
+			activityHelper = null;
+		}
 		if (IDEWorkbenchPlugin.getPluginWorkspace() != null) {
 			disconnectFromWorkspace();
 		}
@@ -589,7 +596,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			IDEWorkbenchPlugin.log(msg, new Status(Status.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, msg, e.getTargetException()));
+			IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, msg, e.getTargetException()));
 		}
 	}
 
