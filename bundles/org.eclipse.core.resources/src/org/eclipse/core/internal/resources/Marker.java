@@ -196,8 +196,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 	try {
 		workspace.prepareOperation();
 		workspace.beginOperation(true);
-		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
-		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
 		
 		//only need to generate delta info if none already
@@ -205,7 +204,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
 		markerInfo.setAttribute(attributeName, value);
 		if (manager.isPersistent(markerInfo))
-			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+			((Resource)resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		if (needDelta) {
 			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
@@ -231,8 +230,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 	try {
 		workspace.prepareOperation();
 		workspace.beginOperation(true);
-		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
-		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
 		
 		//only need to generate delta info if none already
@@ -240,7 +238,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
 		markerInfo.setAttributes(attributeNames, values);
 		if (manager.isPersistent(markerInfo))
-			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+			((Resource)resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		if (needDelta) {
 			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
@@ -258,8 +256,7 @@ public void setAttributes(Map values) throws CoreException {
 	try {
 		workspace.prepareOperation();
 		workspace.beginOperation(true);
-		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
-		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
 		
 		//only need to generate delta info if none already
@@ -267,7 +264,7 @@ public void setAttributes(Map values) throws CoreException {
 		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
 		markerInfo.setAttributes(values);
 		if (manager.isPersistent(markerInfo))
-			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+			((Resource)resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		if (needDelta) {
 			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
