@@ -93,7 +93,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_ID = "id"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_PRIMARY = "primary"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_VERSION = "version"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
 	
@@ -501,14 +503,18 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private class FeatureEntry implements IPlatformConfiguration.IFeatureEntry {
 		private String id;
 		private String version;
+		private String pluginVersion;
 		private String application;
 		private URL[] root;
+		private boolean primary;
 		
-		private FeatureEntry(String id, String version, String application, URL[] root) {
+		private FeatureEntry(String id, String version, String pluginVersion, boolean primary, String application, URL[] root) {
 			if (id == null)
 				throw new IllegalArgumentException();
 			this.id = id;
 			this.version = version;
+			this.pluginVersion = pluginVersion;
+			this.primary = primary;
 			this.application = application;
 			this.root = (root==null ? new URL[0] : root);
 		}
@@ -528,6 +534,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		
 		/*
+		 * @see IFeatureEntry#getFeaturePluginVersion()
+		 */
+		public String getFeaturePluginVersion() {
+			return pluginVersion;
+		}
+		
+		/*
 		 * @see IFeatureEntry#getFeatureApplication()
 		 */
 		public String getFeatureApplication() {
@@ -539,6 +552,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		 */
 		public URL[] getFeatureRootURLs() {
 			return root;
+		}
+		
+		/*
+		 * @see IFeatureEntry#canBePrimary()
+		 */
+		public boolean canBePrimary() {
+			return primary;
 		}
 	}
 	
@@ -883,14 +903,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	/*
-	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String, URL)
+	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String, boolean, String, URL)
 	 */
 	public IFeatureEntry createFeatureEntry(
 		String id,
 		String version,
+		String pluginVersion,
+		boolean primary,
 		String application,
 		URL[] root) {
-		return new PlatformConfiguration.FeatureEntry(id, version, application, root);
+		return new PlatformConfiguration.FeatureEntry(id, version, pluginVersion, primary, application, root);
 	}
 
 	/*
@@ -2042,8 +2064,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (id == null)
 			return dflt;
 		String version = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_VERSION, null); //$NON-NLS-1$
+		String pluginVersion = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_PLUGIN_VERSION, null); //$NON-NLS-1$
+		if (pluginVersion == null)
+			pluginVersion = version;
 		String application = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_APPLICATION, null); //$NON-NLS-1$
 		ArrayList rootList = new ArrayList();
+		
+		// get install locations
 		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+".0", null); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i=1; rootString != null; i++) {
 			try {
@@ -2054,8 +2081,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 			rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+"."+i, null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		URL[] roots = (URL[])rootList.toArray(new URL[0]);
-		return createFeatureEntry(id, version, application, roots);
+		URL[] roots = (URL[])rootList.toArray(new URL[0]);	
+		
+		// get primary flag
+		boolean primary = false;
+		String flag = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_PRIMARY, null); //$NON-NLS-1$
+		if (flag != null) {
+			if (flag.equals("true")) //$NON-NLS-1$
+				primary = true;
+		}
+		return createFeatureEntry(id, version, pluginVersion, primary, application, roots);
 	}
 	
 	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
@@ -2129,7 +2164,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		defaultFeature = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
 		if (defaultFeature != null) {
 			String application = loadAttribute(initProps, INIT_DEFAULT_FEATURE_APPLICATION, null);
-			IFeatureEntry fe = createFeatureEntry(defaultFeature, null, application, null);
+			IFeatureEntry fe = createFeatureEntry(defaultFeature, null, null, true, application, null);
 			configureFeatureEntry(fe);
 			if (DEBUG) {
 				debug("    Default primary feature: "+defaultFeature); //$NON-NLS-1$
@@ -2478,7 +2513,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				
 		// write out feature entry settings
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier()); //$NON-NLS-1$
+		if (entry.canBePrimary())
+			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_PRIMARY, "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion()); //$NON-NLS-1$
+		if (entry.getFeatureVersion()!=null && !entry.getFeatureVersion().equals(entry.getFeaturePluginVersion()))
+			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_PLUGIN_VERSION, entry.getFeaturePluginVersion()); //$NON-NLS-1$
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication()); //$NON-NLS-1$
 		URL[] roots = entry.getFeatureRootURLs();
 		for (int i=0; i<roots.length; i++) {

@@ -199,8 +199,8 @@ public interface IPlatformConfiguration {
 	/**
 	 * Feature entry.
 	 * Represents runtime "hints" about configured features.
-	 * The information is used during startup to locate the
-	 * correct attribution information for a primary feature. Note,
+	 * The information is used during execution to locate the
+	 * correct attribution information for a feature. Note,
 	 * that a typical configuration can declare multiple feature
 	 * entries. At execution time, only one can be selected as
 	 * the active primary feature. This is determined based on 
@@ -225,6 +225,22 @@ public interface IPlatformConfiguration {
 		public String getFeatureVersion();
 		
 		/**
+		 * Returns the version of the feature plug-in for this feature
+		 * entry. Typically the feature version and its corresponding
+		 * plug-in version will be the same. Note, that there is no 
+		 * guarantee that a feature in fact supplies a corresponding
+		 * feature plugin, so the result can be <code>null</code>. Also,
+		 * if supplied, there is no guarantee that the plugin will in fact
+		 * be loaded into the plug-in registry at runtime (due to
+		 * rules and constraint checking performed by the registry loading
+		 * support). Consequently code making use of this method
+		 * must handle these conditions.
+		 * @return feature version (as string), or <code>null</code>
+		 * @since 2.0
+		 */
+		public String getFeaturePluginVersion();
+		
+		/**
 		 * Returns the application to run when this feature is the
 		 * primary feature.
 		 * @return application identifier, or <code>null</code> 
@@ -241,6 +257,15 @@ public interface IPlatformConfiguration {
 		 * @since 2.0
 		 */
 		public URL[] getFeatureRootURLs();
+		
+		/**
+		 * Returns an indication whether this feature has been defined
+		 * to act as a primary feature.
+		 * @return <code>true</code> if the feature can be primary,
+		 * <code>false</code> otherwise.
+		 * @since 2.0
+		 */
+		public boolean canBePrimary();
 	}
 	
 	/**
@@ -269,6 +294,10 @@ public interface IPlatformConfiguration {
 	 * Create a feature entry
 	 * @param id feature identifier. Must not be <code>null</code>.
 	 * @param version feature version (as String). Can be <code>null</code>.
+	 * @param pluginVersion version of the feature plugin (as String). Can be
+	 * <code>null</code>.
+	 * @param primary <code>true</code> if the feature is defined as a primary
+	 * feature, otherwise <code>false</code>.
 	 * @param application identifier of the application to run when 
 	 * this feature is the primary feature. Can be <code>null</code>.
 	 * If specified, the identifier must represent a valid extension 
@@ -280,7 +309,7 @@ public interface IPlatformConfiguration {
 	 * @return create feature entry
 	 * @since 2.0
 	 */	
-	public IFeatureEntry createFeatureEntry(String id, String version, String application, URL[] root);
+	public IFeatureEntry createFeatureEntry(String id, String version, String pluginVersion, boolean primary, String application, URL[] root);
 		
 	/**
 	 * Configures the specified site entry. If a site entry with the
