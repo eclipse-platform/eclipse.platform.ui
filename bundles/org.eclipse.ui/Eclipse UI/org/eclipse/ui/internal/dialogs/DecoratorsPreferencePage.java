@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.internal.win32.CREATESTRUCT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -38,34 +39,29 @@ public class DecoratorsPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 
-		Composite mainComposite = new Composite(parent, SWT.NULL);
+		Composite mainComposite = new Composite(parent, SWT.NONE);
+		mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		mainComposite.setLayout(new GridLayout());
 
-		GridData data =
-			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		mainComposite.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		mainComposite.setLayout(layout);
-
-		Label topLabel = new Label(mainComposite, SWT.NULL);
+		Label topLabel = new Label(mainComposite, SWT.NONE);
 		topLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation"));
 
+		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
+		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		decoratorsComposite.setLayout(new GridLayout());
 
-		Label decoratorsLabel = new Label(mainComposite, SWT.NULL);
+		Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
 		decoratorsLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel"));
-
+		
 		// Checkbox tree viewer of capabilities in selected categories
 		checkboxViewer =
 			CheckboxTableViewer.newCheckList(
-				mainComposite,
+				decoratorsComposite,
 				SWT.SINGLE | SWT.TOP | SWT.BORDER);
-		checkboxViewer.getTable().setLayoutData(
-			new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
+		checkboxViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		checkboxViewer.setLabelProvider(new LabelProvider() {
-			public Image getImage(Object element) {
-				return null;
-			}
 			public String getText(Object element) {
 				return ((DecoratorDefinition) element).getName();
 			}
@@ -77,10 +73,9 @@ public class DecoratorsPreferencePage
 			}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
-
 			public Object[] getElements(Object inputElement) {
 				//Make an entry for each decorator definition
-				return getDefinitions();
+				return (DecoratorDefinition[]) inputElement;
 			}
 
 		});
@@ -88,9 +83,9 @@ public class DecoratorsPreferencePage
 		checkboxViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
-					DecoratorDefinition definition =
-						(DecoratorDefinition) ((IStructuredSelection) event.getSelection())
-							.getFirstElement();
+					IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+					DecoratorDefinition definition = 
+						(DecoratorDefinition) sel.getFirstElement();
 					if (definition == null)
 						clearDescription();
 					else
@@ -99,29 +94,29 @@ public class DecoratorsPreferencePage
 			}
 		});
 
-		checkboxViewer.setInput(new ArrayList());
+		checkboxViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				checkboxViewer.setSelection(
+					new StructuredSelection(event.getElement()));
+			}
+		});
+		
 		DecoratorDefinition[] definitions = getDefinitions();
+		checkboxViewer.setInput(definitions);
 		for (int i = 0; i < definitions.length; i++) {
 			checkboxViewer.setChecked(definitions[i], definitions[i].isEnabled());
 		}
 
-		Composite textComposite = new Composite(mainComposite, SWT.NULL);
-
-		GridData textData =
-			new GridData(
-				GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-		textComposite.setLayoutData(textData);
+		Composite textComposite = new Composite(mainComposite, SWT.NONE);
+		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		textComposite.setLayout(new GridLayout());
 
-		Label descriptionLabel = new Label(textComposite, SWT.NULL);
+		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.description"));
 
 		descriptionText = new Text(textComposite, SWT.READ_ONLY | SWT.BORDER);
-		textData =
-			new GridData(
-				GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-		descriptionText.setLayoutData(textData);
+		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		return mainComposite;
 	}
@@ -131,11 +126,10 @@ public class DecoratorsPreferencePage
 	 */
 	private void showDescription(DecoratorDefinition definition) {
 		String text = definition.getDescription();
-		if (text.length() == 0)
+		if (text == null || text.length() == 0)
 			descriptionText.setText(
-				WorkbenchMessages.format(
-					"DecoratorsPreferencePage.noDescription",
-					new String[] { definition.getName()}));
+				WorkbenchMessages.getString(
+					"DecoratorsPreferencePage.noDescription"));
 		else
 			descriptionText.setText(text);
 	}
@@ -155,7 +149,7 @@ public class DecoratorsPreferencePage
 		checkboxViewer.setAllChecked(false);
 	}
 
-	/*
+	/**
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
@@ -171,7 +165,7 @@ public class DecoratorsPreferencePage
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
@@ -180,7 +174,6 @@ public class DecoratorsPreferencePage
 	/**
 	 * Get the decorator definitions for the workbench.
 	 */
-
 	private DecoratorDefinition[] getDefinitions() {
 		return WorkbenchPlugin
 			.getDefault()
