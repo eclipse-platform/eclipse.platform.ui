@@ -144,7 +144,11 @@ public class AntModel {
 		if (fgInstanceCount == 0) {
 			fgClassLoader= null;
 		}
-	}
+		if (getProjectNode() != null) {
+			//cleanup the introspection helpers that may have been
+			//generated
+			getProjectNode().getProject().fireBuildFinished(null);
+		}
 	
 	public void reconcile(DirtyRegion region) {
 		//TODO turn off incremental as it is deferred to post 3.0
@@ -161,8 +165,8 @@ public class AntModel {
 				fReplaceHasOccurred= false;
 				return;
 			}
-			fIsDirty= false;
-		}
+				fIsDirty= false;
+			}
 
 		synchronized (this) {
 			if (fCore == null) {
@@ -174,13 +178,11 @@ public class AntModel {
 			if (fDocument == null) {
 				fProjectNode= null;
 			} else {
-				//long start= System.currentTimeMillis();
 				reset(region);
 				parseDocument(fDocument, region);
 				fRemoveLengthOfReplace= 0;
 				fDirtyRegion= null;
 				reconcileTaskAndTypes();
-				//System.out.println(System.currentTimeMillis() - start);
 			} 
 	
 			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
@@ -207,8 +209,8 @@ public class AntModel {
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
 		} 
-		return new AntElementNode[] {fProjectNode};
-	}
+			return new AntElementNode[] {fProjectNode};
+		}
 
 	private void parseDocument(IDocument input, DirtyRegion region) {
 		boolean parsed= true;
@@ -262,7 +264,6 @@ public class AntModel {
     	    	}
     			resolveBuildfile();
     			endReporting();
-    			project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
     			fIncrementalTarget= null;
     		}
     	}
@@ -329,9 +330,9 @@ public class AntModel {
 				return null;
 			}
 			//nodes don't know their lengths due to parsing error --> full parse
-			textToParse = prepareForFullIncremental(input);
-			return textToParse;
-		}
+				textToParse = prepareForFullIncremental(input);
+				return textToParse;
+			}
 		
 		while (node != null && !(node instanceof AntTargetNode)) {
 			node= node.getParentNode();
@@ -519,18 +520,18 @@ public class AntModel {
 					}
 				} else {
 					if (node == null) {
-						originalOffset= getOffset(line, 1);
-						nonWhitespaceOffset= originalOffset;
-						try {
-							nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
-						} catch (BadLocationException be) {
-						}
+					originalOffset= getOffset(line, 1);
+					nonWhitespaceOffset= originalOffset;
+					try {
+						nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
+					} catch (BadLocationException be) {
+					}
 						length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
 					} else {
 						nonWhitespaceOffset= node.getOffset();
 						length= node.getLength();
-					}
 				}
+			}
 			}
 			notifyProblemRequestor(e, nonWhitespaceOffset, length, severity);
 		} catch (BadLocationException e1) {
