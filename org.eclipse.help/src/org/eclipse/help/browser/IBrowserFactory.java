@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.help.browser;
@@ -7,7 +7,7 @@ package org.eclipse.help.browser;
  * Implementators of org.eclipse.help.ui.browsers
  * extension points must provide implementation of this
  * interface.
- * @since 2.0
+ * @since 2.1
  */
 public interface IBrowserFactory {
 	/**

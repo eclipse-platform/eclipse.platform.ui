@@ -8,16 +8,15 @@
 </head>
 <body>
 Provides interfaces that need to be implemented by
-web browser adapters.&nbsp;.
+web browser adapters.
 <h2>
 Package Specification</h2>
-Help System UI, requires web browser to display help document.&nbsp; Since
+Help System, requires web browser to display help document.&nbsp; Since
 availability of web browsers differ from system to system, it is possible
-to configure browser adapters in addition to ones provided by Help System
-UI plugin.&nbsp; The browser (or browser adapter) can be configured by
-providing extension <tt>org.eclipse.help.browser</tt> extension point.&nbsp;
+to configure browser adapters in addition to ones provided by Help System.&nbsp; The browser (or browser adapter) can be configured by
+providing extension for <tt>org.eclipse.help.browser</tt> extension point.&nbsp;
 If more than one browser is available on a user system, the default browser
-can be designated in Web Help preference page.
+can be designated in Help preference page.
 <p>In general terms, implementing a web browser involves:
 <ul>
 <li>

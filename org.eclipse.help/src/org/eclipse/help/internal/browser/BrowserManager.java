@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.browser;

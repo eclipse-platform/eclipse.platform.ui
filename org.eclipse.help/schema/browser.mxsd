@@ -117,7 +117,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.help.ui.browser&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.help.browser&quot;&gt;
   &lt;browser 
    id=&quot;org.eclipse.myPlugin.myBrowserID&quot;
    factoryClass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
@@ -134,7 +134,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
+         The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.IBrowserFactory&lt;/samp&gt; interface.
 Methods in that interface determine whether the factory is available on the given system, i.e. is capable
 of supplying browser instances, and create browser instances that implement IBrowser interface.
       </documentation>
@@ -145,7 +145,7 @@ of supplying browser instances, and create browser instances that implement IBro
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-in contains implementation of a browser on common platforms.
+         The &lt;samp&gt;org.eclipse.help&lt;/samp&gt; and &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-ins contain implementation of browsers on common platforms.
 Other plug-ins can provide different implementations.  In the preferences, the user can select the default
 browser from among available browsers.
       </documentation>
