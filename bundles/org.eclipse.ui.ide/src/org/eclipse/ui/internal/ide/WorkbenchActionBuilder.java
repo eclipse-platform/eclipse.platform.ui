@@ -332,9 +332,14 @@ public final class WorkbenchActionBuilder {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
+			// create the New submenu, using the same id for it as the New action
+		    String newText = IDEWorkbenchMessages.getString("Workbench.new"); //$NON-NLS-1$
+		    String newId = ActionFactory.NEW.getId();
+			MenuManager newMenu = new MenuManager(newText, newId); //$NON-NLS-1$
+			newMenu.add(new Separator(newId));
 			this.newWizardMenu = new NewWizardMenu(getWindow());
-			MenuManager newMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
 			newMenu.add(this.newWizardMenu);
+			newMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(newMenu);
 		}
 
@@ -434,7 +439,7 @@ public final class WorkbenchActionBuilder {
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
-			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
+			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn"), "showIn"); //$NON-NLS-1$ //$NON-NLS-2$
 			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
 			menu.add(showInSubMenu);
 		}
@@ -511,14 +516,14 @@ public final class WorkbenchActionBuilder {
 	private void addPerspectiveActions(MenuManager menu) {
 		{
 			String openText = IDEWorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
-			MenuManager changePerspMenuMgr = new MenuManager(openText);
+			MenuManager changePerspMenuMgr = new MenuManager(openText, "openPerspective"); //$NON-NLS-1$
 			IContributionItem changePerspMenuItem = 
 				ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
 		}
 		{
-			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
+			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView"), "showView"); //$NON-NLS-1$ //$NON-NLS-2$
 			IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
@@ -537,7 +542,7 @@ public final class WorkbenchActionBuilder {
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
 	private void addKeyboardShortcuts(MenuManager menu) {
-		MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
+		MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.shortcuts"), "shortcuts"); //$NON-NLS-1$ //$NON-NLS-2$
 		menu.add(subMenu);
 		subMenu.add(showPartPaneMenuAction);
 		subMenu.add(showViewMenuAction);
