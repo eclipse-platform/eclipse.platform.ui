@@ -12,20 +12,41 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.internal.ccvs.core.CVSAnnotateBlock;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -94,9 +115,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * @param cvsResource
 	 * @param cvsAnnotateBlocks
 	 * @param contents
-	 * @throws InvocationTargetException
+	 * @throws PartInitException, CVSException
 	 */
-	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents) throws InvocationTargetException {
+	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents) throws PartInitException, CVSException {
 		showAnnotations(cvsResource, cvsAnnotateBlocks, contents, true);		
 	}
 	
@@ -106,9 +127,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * @param cvsAnnotateBlocks
 	 * @param contents
 	 * @param useHistoryView
-	 * @throws InvocationTargetException
+	 * @throws PartInitException, CVSException
 	 */
-	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents, boolean useHistoryView) throws InvocationTargetException {
+	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents, boolean useHistoryView) throws PartInitException, CVSException {
 
 		// Disconnect from old annotation editor
 		disconnect();
@@ -158,14 +179,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 		// Get hook to the HistoryView
 				
-		try {
-			historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
-			historyView.showHistory((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource), false /* don't refetch */);
-		} catch (PartInitException e) {
-			throw new InvocationTargetException(e);
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
+		historyView.showHistory((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource), false /* don't refetch */);
 	}
 	
 	protected void disconnect() {
@@ -248,8 +263,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			try {
 				contents.reset();
 				showAnnotations(cvsResource, cvsAnnotateBlocks, contents, false);
-			} catch (InvocationTargetException e) {
+			} catch (CVSException e) {
 				return;
+			} catch (PartInitException e) {
+			    return;
 			} catch (IOException e) {
 				return;
 			}
@@ -300,19 +317,15 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 	/**
 	 * Try and open the correct registered editor type for the file.
-	 * @throws InvocationTargetException
+	 * @throws CVSException, PartInitException
 	 */
-	private IEditorPart openEditor() throws InvocationTargetException {
+	private IEditorPart openEditor() throws CVSException, PartInitException {
 		// Open the editor
 		IEditorPart part;
 		ICVSRemoteFile file;		
 		IEditorRegistry registry;
 
-		try {
-			file = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource);
-		} catch (CVSException e1) {
-			throw new InvocationTargetException(e1);
-		}
+		file = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource);
 		
 		registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
@@ -339,27 +352,20 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 		
 		// Either reuse an existing editor or open a new editor of the correct type.
-		try {
-			try {
-				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
-					// We can reuse the editor
-					((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
-					part = editor;
-				} else {
-					// We can not reuse the editor so close the existing one and open a new one.
-					if (editor != null) {
-						page.closeEditor(editor, false);
-						editor = null;
-					}
-					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
-				}
-			} catch (PartInitException e) {
-				throw e;
-			}
-		} catch (PartInitException e) {
-			// Total failure.
-			throw new InvocationTargetException(e);
+
+		if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
+		    // We can reuse the editor
+		    ((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
+		    part = editor;
+		} else {
+		    // We can not reuse the editor so close the existing one and open a new one.
+		    if (editor != null) {
+		        page.closeEditor(editor, false);
+		        editor = null;
+		    }
+		    part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
 		}
+
 		
 		// Hook Editor post selection listener.
 		ITextEditor editor = (ITextEditor) part;

@@ -716,6 +716,14 @@
             id="org.eclipse.team.cvs.ui.PasswordManagementPreferencePage">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.team.internal.ccvs.ui.WorkInProgressPreferencePage"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            name="%WorkInProgressPreferencePage.name"
+            id="org.eclipse.team.cvs.ui.WorkInProgressPreferencePage"/>
+   </extension>
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">

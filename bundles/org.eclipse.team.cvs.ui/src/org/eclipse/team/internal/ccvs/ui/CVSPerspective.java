@@ -16,6 +16,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
 
 public class CVSPerspective implements IPerspectiveFactory {
+    
+	public final static String ID = "org.eclipse.team.cvs.ui.cvsPerspective"; //$NON-NLS-1$
 
 	/* (Non-javadoc)
 	 * Method declared on IPerpsectiveFactory
