@@ -6,6 +6,8 @@ package org.eclipse.jface.action;
  */
 import java.util.*;
 
+import org.eclipse.jface.util.Assert;
+
 /**
  * A <code>SubContributionManager</code> is used to define a set of contribution
  * items within a parent manager.  Once defined, the visibility of the entire set can 
@@ -282,9 +284,14 @@ protected SubContributionItem wrap(IContributionItem item) {
  * Unwrap a contribution item.
  */
 protected IContributionItem unwrap(IContributionItem item) {
-	while (item instanceof SubContributionItem) {
-		item = ((SubContributionItem)item).getInnerItem();
-	} 
-	return item;
+	if (item == null ||
+		item instanceof GroupMarker || 
+		item instanceof Separator) {
+			return item;
+	}
+
+	Assert.isTrue(item instanceof SubContributionItem);
+	
+	return ((SubContributionItem)item).getInnerItem();
 }
 }
