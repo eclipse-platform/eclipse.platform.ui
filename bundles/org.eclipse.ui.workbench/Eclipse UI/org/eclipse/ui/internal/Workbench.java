@@ -88,11 +88,13 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.misc.Assert;
@@ -1863,6 +1865,7 @@ public final class Workbench implements IWorkbench {
                 extensionEventHandler);
         Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
+        WorkbenchHelpSystem.disposeIfNecessary();
         // shutdown the rest of the workbench
         WorkbenchColors.shutdown();
         activityHelper.shutdown();
@@ -2252,5 +2255,12 @@ public final class Workbench implements IWorkbench {
 	private void addStartupRegistryListener() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(startupRegistryListener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
+	 */
+	public IWorkbenchHelpSystem getHelpSystem() {
+		return WorkbenchHelpSystem.getInstance();
 	}
 }

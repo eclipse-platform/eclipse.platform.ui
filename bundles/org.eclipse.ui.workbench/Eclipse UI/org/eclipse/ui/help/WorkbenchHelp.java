@@ -10,28 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.help;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelp;
-import org.eclipse.help.IHelpResource;
-import org.eclipse.help.IToc;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 
 /**
  * Provides methods for accessing the help UI.
@@ -58,137 +46,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * </p>
  *
  * @see org.eclipse.help.HelpSystem
+ * @see org.eclipse.ui.help.IWorkbenchHelpSystem
  */
 public class WorkbenchHelp {
-    /**
-     * Key used for stashing help-related data on SWT widgets.
-     *
-     * @see org.eclipse.swt.Widget.getData(java.lang.String)
-     */
-    private static final String HELP_KEY = "org.eclipse.ui.help";//$NON-NLS-1$
-
-    /**
-     * Id of extension point where the help UI is contributed.
-     */
-    private static final String HELP_SYSTEM_EXTENSION_ID = "org.eclipse.ui.helpSupport";//$NON-NLS-1$
-
-    /**
-     * Attribute id for class attribute of help UI extension point.
-     */
-    private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";//$NON-NLS-1$
-
-    /**
-     * Pluggable help UI, or <code>null</code> if none (or unknown).
-     */
-    private static AbstractHelpUI pluggableHelpUI = null;
-
-    /**
-     * Compatibility implementation of old IHelp interface.
-     * WorkbenchHelp.getHelpSupport and IHelp were deprecated in 3.0.
-     */
-    private static class CompatibilityIHelpImplementation implements IHelp {
-
-        /** @deprecated */
-        public void displayHelp() {
-            // real method - forward to help UI if available
-            AbstractHelpUI helpUI = getHelpUI();
-            if (helpUI != null) {
-                helpUI.displayHelp();
-            }
-        }
-
-        /** @deprecated */
-        public void displayContext(IContext context, int x, int y) {
-            // real method - forward to help UI if available
-            AbstractHelpUI helpUI = getHelpUI();
-            if (helpUI != null) {
-                helpUI.displayContext(context, x, y);
-            }
-        }
-
-        /** @deprecated */
-        public void displayContext(String contextId, int x, int y) {
-            // convenience method - funnel through the real method
-            IContext context = HelpSystem.getContext(contextId);
-            if (context != null) {
-                displayContext(context, x, y);
-            }
-        }
-
-        /** @deprecated */
-        public void displayHelpResource(String href) {
-            // real method - forward to help UI if available
-            AbstractHelpUI helpUI = getHelpUI();
-            if (helpUI != null) {
-                helpUI.displayHelpResource(href);
-            }
-        }
-
-        /** @deprecated */
-        public void displayHelpResource(IHelpResource helpResource) {
-            // convenience method - funnel through the real method
-            displayHelpResource(helpResource.getHref());
-        }
-
-        /** @deprecated */
-        public void displayHelp(String toc) {
-            // deprecated method - funnel through the real method
-            displayHelpResource(toc);
-        }
-
-        /** @deprecated */
-        public void displayHelp(String toc, String selectedTopic) {
-            // deprecated method - funnel through the real method
-            displayHelpResource(selectedTopic);
-        }
-
-        /** @deprecated */
-        public void displayHelp(String contextId, int x, int y) {
-            // deprecated method - funnel through the real method
-            displayContext(contextId, x, y);
-        }
-
-        /** @deprecated */
-        public void displayHelp(IContext context, int x, int y) {
-            // deprecated method - funnel through the real method
-            displayContext(context, x, y);
-        }
-
-        /** @deprecated */
-        public IContext getContext(String contextId) {
-            // non-UI method - forward to HelpSystem
-            return HelpSystem.getContext(contextId);
-        }
-
-        /** @deprecated */
-        public IToc[] getTocs() {
-            // non-UI method - forward to HelpSystem
-            return HelpSystem.getTocs();
-        }
-
-        /** @deprecated */
-        public boolean isContextHelpDisplayed() {
-            // real method - forward to pluggedhelp UI
-            return WorkbenchHelp.isContextHelpDisplayed();
-        }
-    }
-
-    /**
-     * Compatibility wrapper, or <code>null</code> if none.
-     * Do not access directly; see getHelpSupport().
-     */
-    private static IHelp helpCompatibilityWrapper = null;
-
-    /**
-     * Indicates whether the pluggable help UI has been discovered and
-     * initialized.
-     */
-    private static boolean isInitialized = false;
-
-    /**
-     * Internal help listener; lazily initialized.
-     */
-    private static HelpListener helpListener = null;
 
     /**
      * This class is not intented to be instantiated
@@ -205,10 +65,7 @@ public class WorkbenchHelp {
      * @since 3.0
      */
     public static void displayHelp() {
-        AbstractHelpUI helpUI = getHelpUI();
-        if (helpUI != null) {
-            helpUI.displayHelp();
-        }
+    	PlatformUI.getWorkbench().getHelpSystem().displayHelp();
     }
 
     /**
@@ -230,13 +87,7 @@ public class WorkbenchHelp {
      * @since 3.0
      */
     public static void displayContext(IContext context, int x, int y) {
-        if (context == null) {
-            throw new IllegalArgumentException();
-        }
-        AbstractHelpUI helpUI = getHelpUI();
-        if (helpUI != null) {
-            helpUI.displayContext(context, x, y);
-        }
+    	PlatformUI.getWorkbench().getHelpSystem().displayContext(context, x, y);
     }
 
     /**
@@ -259,24 +110,7 @@ public class WorkbenchHelp {
      * @since 3.0
      */
     public static void displayHelpResource(String href) {
-        if (href == null) {
-            throw new IllegalArgumentException();
-        }
-        AbstractHelpUI helpUI = getHelpUI();
-        if (helpUI != null) {
-            helpUI.displayHelpResource(href);
-        }
-    }
-
-    /**
-     * Determines the location for the help popup shell given
-     * the widget which orginated the request for help.
-     *
-     * @param display the display where the help will appear
-     */
-    private static Point computePopUpLocation(Display display) {
-        Point point = display.getCursorLocation();
-        return new Point(point.x + 15, point.y);
+    	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
     }
 
     /**
@@ -290,21 +124,7 @@ public class WorkbenchHelp {
      * @return A help listener; never <code>null</code>.
      */
     public static HelpListener createHelpListener(ICommand command) {
-        // TODO Need a help ID from the context
-        //final String contextId = command.getHelpId();
-        final String contextId = ""; //$NON-NLS-1$
-        return new HelpListener() {
-            public void helpRequested(HelpEvent event) {
-                if (getHelpUI() != null) {
-                    IContext context = HelpSystem.getContext(contextId);
-                    if (context != null) {
-                        Point point = computePopUpLocation(event.widget
-                                .getDisplay());
-                        displayContext(context, point.x, point.y);
-                    }
-                }
-            }
-        };
+    	return PlatformUI.getWorkbench().getHelpSystem().createHelpListener(command);
     }
 
     /**
@@ -317,11 +137,7 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void displayHelp(String contextId) {
-        IContext context = HelpSystem.getContext(contextId);
-        if (context != null) {
-            Point point = computePopUpLocation(Display.getCurrent());
-            displayContext(context, point.x, point.y);
-        }
+    	PlatformUI.getWorkbench().getHelpSystem().displayHelp(contextId);    	
     }
 
     /**
@@ -334,11 +150,7 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void displayHelp(IContext context) {
-        Point point = computePopUpLocation(Display.getCurrent());
-        AbstractHelpUI helpUI = getHelpUI();
-        if (helpUI != null) {
-            helpUI.displayContext(context, point.x, point.y);
-        }
+    	PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
     }
 
     /**
@@ -356,7 +168,7 @@ public class WorkbenchHelp {
      * @deprecated as context computers are no longer supported
      */
     public static Object getHelp(Control control) {
-        return control.getData(HELP_KEY);
+        return control.getData(WorkbenchHelpSystem.HELP_KEY);
     }
 
     /**
@@ -374,7 +186,7 @@ public class WorkbenchHelp {
      * @deprecated as context computers are no longer supported
      */
     public static Object getHelp(Menu menu) {
-        return menu.getData(HELP_KEY);
+        return menu.getData(WorkbenchHelpSystem.HELP_KEY);
     }
 
     /**
@@ -392,80 +204,7 @@ public class WorkbenchHelp {
      * @deprecated as context computers are no longer supported
      */
     public static Object getHelp(MenuItem menuItem) {
-        return menuItem.getData(HELP_KEY);
-    }
-
-    /**
-     * Returns the help listener which activates the help support system.
-     *
-     * @return the help listener
-     */
-    private static HelpListener getHelpListener() {
-        if (helpListener == null) {
-            initializeHelpListener();
-        }
-        return helpListener;
-    }
-
-    /**
-     * Initializes the help listener.
-     */
-    private static void initializeHelpListener() {
-        helpListener = new HelpListener() {
-            public void helpRequested(HelpEvent event) {
-                if (getHelpUI() == null) {
-                    return;
-                }
-
-                // get the help context from the widget
-                Object object = event.widget.getData(HELP_KEY);
-
-                // Since 2.0 we can expect that object is a String, however
-                // for backward compatability we handle context computers and arrays.
-                IContext context = null;
-                if (object instanceof String) {
-                    // context id - this is the norm
-                    context = HelpSystem.getContext((String) object);
-                } else if (object instanceof IContext) {
-                    // already resolved context (pre 2.0)
-                    context = (IContext) object;
-                } else if (object instanceof IContextComputer) {
-                    // a computed context (pre 2.0) - compute it now
-                    Object[] helpContexts = ((IContextComputer) object)
-                            .computeContexts(event);
-                    // extract the first entry
-                    if (helpContexts != null && helpContexts.length > 0) {
-                        Object primaryEntry = helpContexts[0];
-                        if (primaryEntry instanceof String) {
-                            context = HelpSystem
-                                    .getContext((String) primaryEntry);
-                        } else if (primaryEntry instanceof IContext) {
-                            context = (IContext) primaryEntry;
-                        }
-                    }
-                } else if (object instanceof Object[]) {
-                    // mixed array of String or IContext (pre 2.0) - extract the first entry
-                    Object[] helpContexts = (Object[]) object;
-                    // extract the first entry
-                    if (helpContexts.length > 0) {
-                        Object primaryEntry = helpContexts[0];
-                        if (primaryEntry instanceof String) {
-                            context = HelpSystem
-                                    .getContext((String) primaryEntry);
-                        } else if (primaryEntry instanceof IContext) {
-                            context = (IContext) primaryEntry;
-                        }
-                    }
-                }
-                if (context != null) {
-                    // determine a location in the upper right corner of the widget
-                    Point point = computePopUpLocation(event.widget
-                            .getDisplay());
-                    // display the help
-                    displayContext(context, point.x, point.y);
-                }
-            }
-        };
+        return menuItem.getData(WorkbenchHelpSystem.HELP_KEY);
     }
 
     /**
@@ -477,67 +216,10 @@ public class WorkbenchHelp {
      * on the object returned by this method.
      */
     public static IHelp getHelpSupport() {
-        AbstractHelpUI helpUI = getHelpUI();
-        if (helpUI != null && helpCompatibilityWrapper == null) {
-            // create instance only once, and only if needed
-            helpCompatibilityWrapper = new CompatibilityIHelpImplementation();
-        }
-        return helpCompatibilityWrapper;
+    	return WorkbenchHelpSystem.getInstance().getHelpSupport();
     }
 
-    /**
-     * Returns the help UI for the platform, if available. This method will
-     * initialize the help UI if necessary. 
-     *
-     * @return the help UI, or <code>null</code> if none
-     */
-    private static AbstractHelpUI getHelpUI() {
-        if (!isInitialized) {
-            initializePluggableHelpUI();
-            isInitialized = true;
-        }
-        return pluggableHelpUI;
-    }
-
-    /**
-     * Initializes the pluggable help UI by getting an instance via the
-     * extension point.
-     */
-    private static void initializePluggableHelpUI() {
-        BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-            public void run() {
-                // get the help UI extension from the registry
-                IExtensionPoint point = Platform.getExtensionRegistry()
-                        .getExtensionPoint(HELP_SYSTEM_EXTENSION_ID);
-                if (point == null) {
-                    // our extension point is missing (!) - act like there was no help UI
-                    return;
-                }
-                IExtension[] extensions = point.getExtensions();
-                if (extensions.length == 0) {
-                    // no help UI present
-                    return;
-                }
-                // There should only be one extension/config element so we just take the first
-                IConfigurationElement[] elements = extensions[0]
-                        .getConfigurationElements();
-                if (elements.length == 0) {
-                    // help UI present but mangled - act like there was no help UI
-                    return;
-                }
-                // Instantiate the help UI
-                try {
-                    pluggableHelpUI = (AbstractHelpUI) WorkbenchPlugin
-                            .createExtension(elements[0],
-                                    HELP_SYSTEM_CLASS_ATTRIBUTE);
-                } catch (CoreException e) {
-                    WorkbenchPlugin
-                            .log("Unable to instantiate help UI" + e.getStatus(), e);//$NON-NLS-1$
-                }
-            }
-        });
-    }
-
+    
     /**
      * Returns whether the context-sensitive help window is currently being
      * displayed. Returns <code>false</code> if the help UI has not been
@@ -547,11 +229,7 @@ public class WorkbenchHelp {
      * window is currently being displayed, <code>false</code> otherwise
      */
     public static boolean isContextHelpDisplayed() {
-        if (!isInitialized) {
-            return false;
-        }
-        AbstractHelpUI helpUI = getHelpUI();
-        return helpUI != null && helpUI.isContextHelpDisplayed();
+    	return PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed();
     }
 
     /**
@@ -569,29 +247,7 @@ public class WorkbenchHelp {
      * @deprecated use setHelp with a single context id parameter
      */
     public static void setHelp(IAction action, final Object[] contexts) {
-        for (int i = 0; i < contexts.length; i++) {
-            Assert.isTrue(contexts[i] instanceof String
-                    || contexts[i] instanceof IContext);
-        }
-        action.setHelpListener(new HelpListener() {
-            public void helpRequested(HelpEvent event) {
-                if (contexts != null && contexts.length > 0
-                        && getHelpUI() != null) {
-                    // determine the context
-                    IContext context = null;
-                    if (contexts[0] instanceof String) {
-                        context = HelpSystem.getContext((String) contexts[0]);
-                    } else if (contexts[0] instanceof IContext) {
-                        context = (IContext) contexts[0];
-                    }
-                    if (context != null) {
-                        Point point = computePopUpLocation(event.widget
-                                .getDisplay());
-                        displayContext(context, point.x, point.y);
-                    }
-                }
-            }
-        });
+    	WorkbenchHelpSystem.getInstance().setHelp(action, contexts);
     }
 
     /**
@@ -609,27 +265,7 @@ public class WorkbenchHelp {
      *  their own help listener
      */
     public static void setHelp(IAction action, final IContextComputer computer) {
-        action.setHelpListener(new HelpListener() {
-            public void helpRequested(HelpEvent event) {
-                Object[] helpContexts = computer.computeContexts(event);
-                if (helpContexts != null && helpContexts.length > 0
-                        && getHelpUI() != null) {
-                    // determine the context
-                    IContext context = null;
-                    if (helpContexts[0] instanceof String) {
-                        context = HelpSystem
-                                .getContext((String) helpContexts[0]);
-                    } else if (helpContexts[0] instanceof IContext) {
-                        context = (IContext) helpContexts[0];
-                    }
-                    if (context != null) {
-                        Point point = computePopUpLocation(event.widget
-                                .getDisplay());
-                        displayContext(context, point.x, point.y);
-                    }
-                }
-            }
-        });
+    	WorkbenchHelpSystem.getInstance().setHelp(action, computer);
     }
 
     /**
@@ -647,15 +283,7 @@ public class WorkbenchHelp {
      * @deprecated use setHelp with single context id parameter
      */
     public static void setHelp(Control control, Object[] contexts) {
-        for (int i = 0; i < contexts.length; i++) {
-            Assert.isTrue(contexts[i] instanceof String
-                    || contexts[i] instanceof IContext);
-        }
-
-        control.setData(HELP_KEY, contexts);
-        // ensure that the listener is only registered once
-        control.removeHelpListener(getHelpListener());
-        control.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(control, contexts);
     }
 
     /**
@@ -673,10 +301,7 @@ public class WorkbenchHelp {
      *  their own help listener
      */
     public static void setHelp(Control control, IContextComputer computer) {
-        control.setData(HELP_KEY, computer);
-        // ensure that the listener is only registered once
-        control.removeHelpListener(getHelpListener());
-        control.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(control, computer);
     }
 
     /**
@@ -694,14 +319,7 @@ public class WorkbenchHelp {
      * @deprecated use setHelp with single context id parameter
      */
     public static void setHelp(Menu menu, Object[] contexts) {
-        for (int i = 0; i < contexts.length; i++) {
-            Assert.isTrue(contexts[i] instanceof String
-                    || contexts[i] instanceof IContext);
-        }
-        menu.setData(HELP_KEY, contexts);
-        // ensure that the listener is only registered once
-        menu.removeHelpListener(getHelpListener());
-        menu.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(menu, contexts);
     }
 
     /**
@@ -719,10 +337,7 @@ public class WorkbenchHelp {
      *  their own help listener
      */
     public static void setHelp(Menu menu, IContextComputer computer) {
-        menu.setData(HELP_KEY, computer);
-        // ensure that the listener is only registered once
-        menu.removeHelpListener(getHelpListener());
-        menu.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(menu, computer);
     }
 
     /**
@@ -740,14 +355,7 @@ public class WorkbenchHelp {
      * @deprecated use setHelp with single context id parameter
      */
     public static void setHelp(MenuItem item, Object[] contexts) {
-        for (int i = 0; i < contexts.length; i++) {
-            Assert.isTrue(contexts[i] instanceof String
-                    || contexts[i] instanceof IContext);
-        }
-        item.setData(HELP_KEY, contexts);
-        // ensure that the listener is only registered once
-        item.removeHelpListener(getHelpListener());
-        item.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(item, contexts);
     }
 
     /**
@@ -765,10 +373,7 @@ public class WorkbenchHelp {
      *  their own help listener
      */
     public static void setHelp(MenuItem item, IContextComputer computer) {
-        item.setData(HELP_KEY, computer);
-        // ensure that the listener is only registered once
-        item.removeHelpListener(getHelpListener());
-        item.addHelpListener(getHelpListener());
+    	WorkbenchHelpSystem.getInstance().setHelp(item, computer);
     }
 
     /**
@@ -779,18 +384,7 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void setHelp(IAction action, final String contextId) {
-        action.setHelpListener(new HelpListener() {
-            public void helpRequested(HelpEvent event) {
-                if (getHelpUI() != null) {
-                    IContext context = HelpSystem.getContext(contextId);
-                    if (context != null) {
-                        Point point = computePopUpLocation(event.widget
-                                .getDisplay());
-                        displayContext(context, point.x, point.y);
-                    }
-                }
-            }
-        });
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(action, contextId);
     }
 
     /**
@@ -801,10 +395,7 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void setHelp(Control control, String contextId) {
-        control.setData(HELP_KEY, contextId);
-        // ensure that the listener is only registered once
-        control.removeHelpListener(getHelpListener());
-        control.addHelpListener(getHelpListener());
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(control, contextId);    	
     }
 
     /**
@@ -815,10 +406,7 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void setHelp(Menu menu, String contextId) {
-        menu.setData(HELP_KEY, contextId);
-        // ensure that the listener is only registered once
-        menu.removeHelpListener(getHelpListener());
-        menu.addHelpListener(getHelpListener());
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(menu, contextId);
     }
 
     /**
@@ -829,9 +417,6 @@ public class WorkbenchHelp {
      * @since 2.0
      */
     public static void setHelp(MenuItem item, String contextId) {
-        item.setData(HELP_KEY, contextId);
-        // ensure that the listener is only registered once
-        item.removeHelpListener(getHelpListener());
-        item.addHelpListener(getHelpListener());
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(item, contextId);
     }
 }

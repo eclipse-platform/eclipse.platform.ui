@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -441,4 +442,12 @@ public interface IWorkbench {
      * @since 3.0
      */
     public IIntroManager getIntroManager();
+    
+    /**
+     * Return the help system for this workbench.
+     * 
+     * @return the help system
+     * @since 3.1
+     */
+    public IWorkbenchHelpSystem getHelpSystem();
 }

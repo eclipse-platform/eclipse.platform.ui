@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newHelpSupport1"
+   name="newHelpSupport1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+      <library name="help.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+   <extension
+         id="testDynamicHelpSupportAddition"
+         point="org.eclipse.ui.helpSupport">
+      <config class="org.eclipse.ui.dynamic.DynamicHelpSupport"/>
+   </extension>
+ 
+
+</plugin>

@@ -29,6 +29,8 @@ public interface IWorkbenchConstants {
 
     public static final String PL_PERSPECTIVE_EXTENSIONS = "perspectiveExtensions"; //$NON-NLS-1$
 
+	public static final String PL_HELPSUPPORT = "helpSupport"; //$NON-NLS-1$
+
     public static final String PL_ACTION_SET_PART_ASSOCIATIONS = "actionSetPartAssociations"; //$NON-NLS-1$
 
     public static final String PL_PREFERENCES = "preferencePages"; //$NON-NLS-1$
