@@ -5,24 +5,45 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IUpdate;
 
 public class ConsoleView extends ViewPart implements IDocumentListener {
 	
@@ -124,7 +145,18 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, new ConsoleViewerAction(bundle, "select_all_action.", fConsoleViewer, fConsoleViewer.SELECT_ALL));
 		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, new ConsoleGotoLineAction(bundle, "goto_line_action.", fConsoleViewer));				
-	
+		actionBars.updateActionBars();
+		
+		fConsoleViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+			public void verifyKey(VerifyEvent event) {
+				IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
+				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C && event.keyCode == 0 && gotoLine.isEnabled()) {
+					gotoLine.run();
+					event.doit= false;
+				}
+			}
+		});
+		
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
