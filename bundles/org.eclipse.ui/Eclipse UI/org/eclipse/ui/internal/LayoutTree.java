@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.ArrayList;
@@ -75,6 +83,16 @@ public LayoutTreeNode findSash(LayoutPartSash sash) {
  */
 public Rectangle getBounds() {
 	return part.getBounds();
+}
+
+// getMinimumWidth() added by cagatayk@acm.org 
+public int getMinimumWidth() {
+	return part.getMinimumWidth();
+}
+
+// getMinimumHeight() added by cagatayk@acm.org 
+public int getMinimumHeight() {
+	return part.getMinimumHeight();
 }
 /**
  * Returns the parent of this tree or null if it is the root.

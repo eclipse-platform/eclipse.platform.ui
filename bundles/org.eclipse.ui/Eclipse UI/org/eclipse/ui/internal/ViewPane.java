@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -343,6 +351,17 @@ public MenuManager getMenuManager() {
 	if (isvMenuMgr == null)
 		isvMenuMgr = new PaneMenuManager();
 	return isvMenuMgr;
+}
+
+// getMinimumHeight() added by cagatayk@acm.org 
+/**
+ * @see LayoutPart#getMinimumHeight()
+ */
+public int getMinimumHeight() {
+	if (titleLabel != null)
+		return titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+	else
+		return super.getMinimumHeight();
 }
 
 /**

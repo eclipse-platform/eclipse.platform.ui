@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -37,29 +45,34 @@ LayoutPartSash(PartSashContainer rootContainer,int style) {
 		}
 	};
 }
+
+// checkDragLimit contains changes by cagatayk@acm.org
 private void checkDragLimit(SelectionEvent event) {
 	LayoutTree root = rootContainer.getLayoutTree();
 	LayoutTreeNode node = root.findSash(this);
 	Rectangle bounds = node.getBounds();
-	float newRatio = 0.0f;
+	
+	float minRatio = node.getMinimumRatioFor(bounds);
+	float maxRatio = node.getMaximumRatioFor(bounds);
+
 	if(style == SWT.VERTICAL) {
 		if (event.x < bounds.x)
 			event.x = bounds.x;
 		if ((event.x + event.width) > (bounds.x + bounds.width))
 			event.x = bounds.x + bounds.width - event.width;
-		if (event.x - bounds.x < ((float)bounds.width * IPageLayout.RATIO_MIN))
-			event.x = bounds.x + (int)((float)bounds.width * IPageLayout.RATIO_MIN);
-		if (event.x - bounds.x > ((float)bounds.width * IPageLayout.RATIO_MAX))
-			event.x = bounds.x + (int)((float)bounds.width * IPageLayout.RATIO_MAX);		
+		if (event.x - bounds.x < ((float)bounds.width * minRatio))
+			event.x = bounds.x + (int)((float)bounds.width * minRatio);
+		if (event.x - bounds.x > ((float)bounds.width * maxRatio))
+			event.x = bounds.x + (int)((float)bounds.width * maxRatio);		
 	} else {
 		if (event.y < bounds.y)
 			event.y = bounds.y;
 		if ((event.y + event.height) > (bounds.y + bounds.height))
 			event.y = bounds.y + bounds.height - event.height;
-		if (event.y - bounds.y < ((float)bounds.height * IPageLayout.RATIO_MIN))
-			event.y = bounds.y + (int)((float)bounds.height * IPageLayout.RATIO_MIN);
-		if (event.y - bounds.y > ((float)bounds.height * IPageLayout.RATIO_MAX))
-			event.y = bounds.y + (int)((float)bounds.height * IPageLayout.RATIO_MAX);		
+		if (event.y - bounds.y < ((float)bounds.height * minRatio))
+			event.y = bounds.y + (int)((float)bounds.height * minRatio);
+		if (event.y - bounds.y > ((float)bounds.height * maxRatio))
+			event.y = bounds.y + (int)((float)bounds.height * maxRatio);		
 	}
 }
 /**

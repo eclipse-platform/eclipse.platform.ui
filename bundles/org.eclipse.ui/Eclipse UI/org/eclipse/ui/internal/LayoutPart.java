@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -93,6 +101,25 @@ public Point getSize() {
 	Point ptSize = new Point(r.width, r.height);
 	return ptSize;
 }
+
+// getMinimumWidth() added by cagatayk@acm.org 
+/**
+ * Returns the minimum width a part can have. Subclasses may
+ * override as necessary.
+ */
+public int getMinimumWidth() {
+	return 0;
+}
+
+// getMinimumHeight() added by cagatayk@acm.org 
+/**
+ * Returns the minimum height a part can have. Subclasses may 
+ * override as necessary.
+ */
+public int getMinimumHeight() {
+	return 0;
+}
+
 /**
  * Returns the top level window for a part.
  */

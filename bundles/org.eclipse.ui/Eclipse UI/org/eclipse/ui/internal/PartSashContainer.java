@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
@@ -83,11 +91,6 @@ public void add(LayoutPart child, int relationship, float ratio, LayoutPart rela
 		return;
 	if (relationship < IPageLayout.LEFT || relationship > IPageLayout.BOTTOM)
 		relationship = IPageLayout.LEFT;
-	// Ratios less than 5% or greater than 95% are hard to grab.
-	if (ratio < IPageLayout.RATIO_MIN)
-		ratio = IPageLayout.RATIO_MIN;
-	else if (ratio > IPageLayout.RATIO_MAX)
-		ratio = IPageLayout.RATIO_MAX;
 
 	// store info about relative positions
 	RelationshipInfo info = new RelationshipInfo();
@@ -124,7 +127,7 @@ private void addChild(RelationshipInfo info) {
 
 }
 /**
- * See ILayoutContainer::allowBorder
+ * See ILayoutContainer#allowBorder
  */
 public boolean allowsBorder() {
 	return true;
@@ -159,7 +162,7 @@ public RelationshipInfo[] computeRelation() {
 	return result;
 }
 /**
- * @see LayoutPart::getControl
+ * @see LayoutPart#getControl
  */
 public void createControl(Composite parentWidget) {
 	if (active)
@@ -185,7 +188,7 @@ public void createControl(Composite parentWidget) {
  */
 protected abstract Composite createParent(Composite parentWidget);
 /**
- * @see LayoutPart::dispose
+ * @see LayoutPart#dispose
  */
 public void dispose() {
 	if (!active)
@@ -246,25 +249,46 @@ private void findPosition(RelationshipInfo info) {
 	}
 }
 /**
- * @see LayoutPart::getBounds
+ * @see LayoutPart#getBounds
  */
 public Rectangle getBounds() {
 	return this.parent.getBounds();
 }
+
+
+// getMinimumHeight() added by cagatayk@acm.org 
 /**
- * @see ILayoutContainer::getChildren
+ * @see LayoutPart#getMinimumHeight()
+ */
+public int getMinimumHeight() {
+	return getLayoutTree().getMinimumHeight();
+}
+
+// getMinimumHeight() added by cagatayk@acm.org 
+/**
+ * @see LayoutPart#getMinimumWidth()
+ */
+public int getMinimumWidth() {
+	return getLayoutTree().getMinimumWidth();
+}
+
+
+/**
+ * @see ILayoutContainer#getChildren
  */
 public LayoutPart[] getChildren() {
 	LayoutPart[] result = new LayoutPart[children.size()];
 	children.toArray(result);
 	return result;
 }
+
 /**
- * @see LayoutPart::getControl
+ * @see LayoutPart#getControl
  */
 public Control getControl() {
 	return this.parent;
 }
+
 public LayoutTree getLayoutTree() {
 	return root;
 }
@@ -291,7 +315,7 @@ private boolean isRelationshipCompatible(int relationship,boolean isVertical) {
 		return (relationship == IPageLayout.TOP || relationship == IPageLayout.BOTTOM);
 }
 /**
- * @see LayoutPart::isVisible
+ * @see LayoutPart#isVisible
  */
 public boolean isVisible() {
 	return (this.parent != null);
@@ -386,7 +410,7 @@ private void resizeSashes(Rectangle parentSize) {
 	root.setBounds(parentSize);
 }
 /**
- * @see LayoutPart::setBounds
+ * @see LayoutPart#setBounds
  */
 public void setBounds(Rectangle r) {
 	this.parent.setBounds(r);

@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
@@ -266,6 +274,7 @@ public void setBounds(Rectangle bounds) {
 		sashBounds.width = SASH_WIDTH;
 		rightBounds.x = sashBounds.x + sashBounds.width;
 		rightBounds.width = bounds.width - leftBounds.width - sashBounds.width;
+		adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
 	} else {
 		//Work on y and height
 		int h = bounds.height - SASH_WIDTH;
@@ -274,11 +283,160 @@ public void setBounds(Rectangle bounds) {
 		sashBounds.height = SASH_WIDTH;
 		rightBounds.y = sashBounds.y + sashBounds.height;
 		rightBounds.height = bounds.height - leftBounds.height - sashBounds.height;
+		adjustHeights(bounds, leftBounds, rightBounds, sashBounds);
 	}
 	getSash().setBounds(sashBounds);
 	children[0].setBounds(leftBounds);
 	children[1].setBounds(rightBounds);
 }
+
+// adjustHeights added by cagatayk@acm.org 
+private boolean adjustHeights(Rectangle node, Rectangle left, Rectangle right, Rectangle sash) {
+	int leftAdjustment = 0;
+	int rightAdjustment = 0;
+
+	leftAdjustment = adjustChildHeight(left, node, true);
+	if (leftAdjustment > 0) {
+		right.height -= leftAdjustment;
+	}
+	
+	rightAdjustment = adjustChildHeight(right, node, false);
+	if (rightAdjustment > 0) {
+		left.height -= rightAdjustment;
+	}
+	
+	boolean adjusted = leftAdjustment > 0 || rightAdjustment > 0;
+	if (adjusted) {
+		sash.y = left.y + left.height;
+		right.y = sash.y + sash.height;
+	}
+
+	return adjusted;
+}
+
+// adjustChildHeight added by cagatayk@acm.org 
+private int adjustChildHeight(Rectangle childBounds, Rectangle nodeBounds, boolean left) {
+	int adjustment = 0;
+	int minimum = 0;
+
+	minimum = left ? 
+		(int)(getMinimumRatioFor(nodeBounds) * nodeBounds.height) :
+		(int)((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.height);
+	
+	if (minimum > childBounds.height) {
+		adjustment = minimum - childBounds.height;
+		childBounds.height = minimum;
+	}
+
+	return adjustment;
+}
+
+// adjustWidths added by cagatayk@acm.org 
+private boolean adjustWidths(Rectangle node, Rectangle left, Rectangle right, Rectangle sash) {
+	int leftAdjustment = 0;
+	int rightAdjustment = 0;
+
+	leftAdjustment = adjustChildWidth(left, node, true);
+	if (leftAdjustment > 0) {
+		right.width -= leftAdjustment;
+	}
+	
+	rightAdjustment = adjustChildWidth(right, node, false);
+	if (rightAdjustment > 0) {
+		left.width -= rightAdjustment;
+	}
+	
+	boolean adjusted = leftAdjustment > 0 || rightAdjustment > 0;
+	if (adjusted) {
+		sash.x = left.x + left.width;
+		right.x = sash.x + sash.width;
+	}
+
+	return adjusted;
+}
+
+// adjustChildWidth added by cagatayk@acm.org 
+private int adjustChildWidth(Rectangle childBounds, Rectangle nodeBounds, boolean left) {
+	int adjustment = 0;
+	int minimum = 0;
+
+	minimum = left ? 
+		(int)(getMinimumRatioFor(nodeBounds) * nodeBounds.width) :
+		(int)((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.width);
+	
+	if (minimum > childBounds.width) {
+		adjustment = minimum - childBounds.width;
+		childBounds.width = minimum;
+	}
+
+	return adjustment;
+}
+
+// getMinimumRatioFor added by cagatayk@acm.org 
+public float getMinimumRatioFor(Rectangle bounds) {
+	float part = 0, whole = 0;
+
+	if (getSash().isVertical()) {
+		part = children[0].getMinimumWidth();
+		whole = bounds.width;
+	}
+	else {
+		part = children[0].getMinimumHeight();
+		whole = bounds.height;
+	}
+	
+	return (part != 0 ) ? (part + SASH_WIDTH ) / whole : IPageLayout.RATIO_MIN;
+}
+
+// getMaximumRatioFor added by cagatayk@acm.org 
+public float getMaximumRatioFor(Rectangle bounds) {
+	float part = 0, whole = 0;
+
+	if (getSash().isVertical()) {
+		part = bounds.width - children[1].getMinimumWidth();
+		whole = bounds.width;
+	}
+	else {
+		part = bounds.height - children[1].getMinimumHeight();
+		whole = bounds.height;
+	}
+	
+	return (part != whole) ? (part - SASH_WIDTH) / whole : IPageLayout.RATIO_MAX;
+	
+}
+
+// getMinimumHeight added by cagatayk@acm.org 
+public int getMinimumHeight() {
+	int left = children[0].getMinimumHeight();
+	int right = children[1].getMinimumHeight();
+
+	int minimum = 0;
+	if (getSash().isVertical())
+		minimum = Math.max(left, right);
+	else if (left > 0 || right > 0) {
+		//consider the top and bottom borders?
+		minimum = left + right + SASH_WIDTH * 2;
+	}
+	
+	return minimum;
+}
+
+// getMinimumWidth added by cagatayk@acm.org 
+public int getMinimumWidth() {
+	int left = children[0].getMinimumWidth();
+	int right = children[1].getMinimumWidth();
+
+	int minimum = 0;
+	if (getSash().isVertical() && (left > 0 || right > 0))
+		//consider the left and right borders?
+		minimum = left + right + SASH_WIDTH * 2;
+	else
+		minimum = Math.max(left, right);
+	
+	return minimum;
+}
+
+
 /**
  * Sets a child in this node
  */

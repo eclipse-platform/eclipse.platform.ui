@@ -1,9 +1,17 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> 
+    - Fix for bug 10025 - Resizing views should not use height ratios
+**********************************************************************/
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -351,6 +359,20 @@ public void openTracker(LayoutPart part) {
 public Rectangle getBounds() {
 	return tabFolder.getBounds();
 }
+
+// getMinimumHeight() added by cagatayk@acm.org 
+/**
+ * @see LayoutPart#getMinimumHeight()
+ */
+public int getMinimumHeight() {
+	if (tabFolder == null || current == null)
+		return super.getMinimumHeight();
+	else if (getItemCount() > 1)
+		return current.getMinimumHeight() + tabFolder.computeTrim(0, 0, 0, 0).height;
+	else
+		return current.getMinimumHeight();
+}
+
 /**
  * See IVisualContainer#getChildren
  */
