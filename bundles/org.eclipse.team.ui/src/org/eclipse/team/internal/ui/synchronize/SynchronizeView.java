@@ -162,7 +162,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	protected void initPage(ISynchronizePageConfiguration configuration, IPageBookViewPage page) {
 		// A page site does not provide everything the page may need
 		// Also provide the synchronize page site if the page is a synchronize view page
-		((SynchronizePageConfiguration)configuration).setSite(new WorkbenchPartSynchronizePageSite(this, getDialogSettings(configuration.getParticipant())));
+		((SynchronizePageConfiguration)configuration).setSite(new WorkbenchPartSynchronizePageSite(this, page.getSite(), getDialogSettings(configuration.getParticipant())));
 		if (page instanceof ISynchronizePage) {
 			try {
 				((ISynchronizePage)page).init(configuration.getSite());

@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.IPageSite;
 
 /**
  * Maps a workbench part to a synchronize page site.
@@ -22,9 +23,11 @@ import org.eclipse.ui.*;
 public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	private IWorkbenchPart part;
 	private IDialogSettings settings;
+	private IPageSite site;
 
-	public WorkbenchPartSynchronizePageSite(IWorkbenchPart part, IDialogSettings settings) {
+	public WorkbenchPartSynchronizePageSite(IWorkbenchPart part, IPageSite site, IDialogSettings settings) {
 		this.part = part;
+		this.site = site;
 		this.settings = settings;
 	}
 
@@ -46,14 +49,14 @@ public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
-		return part.getSite().getSelectionProvider();
+		return site.getSelectionProvider();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
-		part.getSite().setSelectionProvider(provider);
+		site.setSelectionProvider(provider);
 	}
 
 	/* (non-Javadoc)
