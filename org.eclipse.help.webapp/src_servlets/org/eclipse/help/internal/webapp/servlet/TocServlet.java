@@ -157,13 +157,7 @@ public class TocServlet extends HttpServlet {
 		public TocWriter(Writer writer) {
 			super(writer);
 		}
-		/**
-		 * @param toc Toc
-		 * @param outputFile java.io.File
-		 */
-		public TocWriter(File outputFile) {
-			super(outputFile);
-		}
+
 		/**
 		 * Writes out xml data for a toc
 		 */
