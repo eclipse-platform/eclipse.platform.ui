@@ -356,7 +356,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				}
 			}	
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
+			// open dialog if there is an exception
 		}
 		return super.open();
 	}
@@ -469,7 +469,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		for (int i = 0; i < tabs.length; i++) {
 	 			tabs[i].setDefaults(workingCopy);
 	 			tabs[i].dispose();
-	 		}	
+	 		}
+	 		if (workingCopy.getName().trim().length() == 0) {
+	 			// assign a name if not done yet
+	 			IResource res = getResourceContext();
+	 			String name = "";
+	 			if (res != null) {
+	 				name = res.getName();
+	 			}
+	 			name = generateName(name);
+	 			workingCopy.rename(name);
+	 		}
 	 		config = workingCopy.doSave();
 		} catch (CoreException e) {
 			return null;
@@ -610,7 +620,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	protected void updateConfigFromName() {
 		if (getLaunchConfiguration() != null) {
-			getLaunchConfiguration().rename(getNameTextWidget().getText());
+			getLaunchConfiguration().rename(getNameTextWidget().getText().trim());
 			refreshStatus();
 		}
 	}
@@ -2036,7 +2046,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			if (name == null) {
 				name = "";
 			}
-			fNameText.setText(name);
+			fNameText.setText(name.trim());
 			refreshStatus();
 		}
 	}
