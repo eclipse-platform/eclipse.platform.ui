@@ -231,7 +231,10 @@ public abstract class AbstractHyperlink extends Canvas {
 		GC gc = e.gc;
 		Rectangle clientArea = getClientArea();
 		Image buffer = new Image(getDisplay(), clientArea.width, clientArea.height);
+		buffer.setBackground(getBackground());
 		GC bufferGC = new GC(buffer, gc.getStyle());
+		bufferGC.setBackground(getBackground());
+		bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
 		paintHyperlink(bufferGC);
 		if (hasFocus) {
 			Rectangle carea = getClientArea();
