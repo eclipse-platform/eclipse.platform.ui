@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.antsupport.logger.debug;
+package org.eclipse.ant.internal.ui.antsupport.logger.util;
 
 import org.eclipse.ant.internal.ui.antsupport.logger.MessageIds;
 

@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.antsupport.logger.debug;
 
 import java.io.File;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.DebugMessageIds;
 
 public class RemoteAntBreakpoint {
 	

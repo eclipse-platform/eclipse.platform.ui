@@ -30,6 +30,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.DebugMessageIds;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner

@@ -21,7 +21,6 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
-import org.eclipse.ant.internal.ui.antsupport.logger.debug.DebugMessageIds;
 
 /**
  * Ant Debug utility class that provides support to the various Ant debug build loggers.
