@@ -414,7 +414,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	}	
 		
 	/**
-	 * Resumes the given thread, and waits the associated debug
+	 * Resumes the given thread, and waits for the associated debug
 	 * target to terminate.
 	 * 
 	 * @param thread thread to resume
@@ -451,6 +451,16 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 */
 	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, IFile file) throws Exception {
 		return new AntLineBreakpoint(file, lineNumber);
+	}
+	
+	/**
+	 * Creates and returns a line breakpoint at the given line number in the given buildfile
+	 * 
+	 * @param lineNumber line number
+	 * @param file the buildfile
+	 */
+	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, String buildFileName) throws Exception {
+		return new AntLineBreakpoint(getIFile(buildFileName), lineNumber);
 	}
 		
 	/**

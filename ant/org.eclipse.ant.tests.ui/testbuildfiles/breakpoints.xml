@@ -5,7 +5,7 @@
 		<echo>1</echo>
 		<echo>2</echo>
 		<property name="ZZZ" value="ZZZ" />
-		<sleep milliseconds="500" />
+		<sleep milliseconds="5" />
 		<echo>3</echo>
 		<echo>4</echo>
 		<echo>5</echo>
@@ -26,4 +26,3 @@
 		<echo>2</echo>
 	</target>
 </project>
-
