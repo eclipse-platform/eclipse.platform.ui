@@ -15,9 +15,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
  
 /**
  * Displays expressions and their values with a detail
@@ -95,11 +95,10 @@ public class ExpressionView extends VariablesView {
 	 *
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IStackFrame frame= null;
-		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel= (IStructuredSelection)sel;
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel= (IStructuredSelection)selection;
 			if (ssel.size() == 1) {
 				Object input= ssel.getFirstElement();
 				if (input instanceof IStackFrame) {
@@ -119,5 +118,4 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void setViewerInput(IStructuredSelection ssel) {
 	}
-
 }
