@@ -167,7 +167,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(false);
 
 		createVerticalSpacer(comp);
-		createVerticalSpacer(comp);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
 		getSwitchToLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Switch_to/Open_perspective_when_launched_in__7")); //$NON-NLS-1$
@@ -198,7 +197,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fillWithPerspectives(getDebugPerspectiveCombo());				
 		
 		createVerticalSpacer(comp);
-		createVerticalSpacer(comp);
 		
 		Composite favComp = new Composite(comp, SWT.NONE);
 		GridLayout favLayout = new GridLayout();
@@ -213,8 +211,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 						
 		setDebugFavoriteButton(new Button(favComp, SWT.CHECK));
 		getDebugFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.Debu&g_12")); //$NON-NLS-1$
-		
-
 	}
 
 	/**
