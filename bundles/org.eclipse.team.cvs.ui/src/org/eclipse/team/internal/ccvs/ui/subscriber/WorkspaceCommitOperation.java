@@ -267,14 +267,18 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	}
 
     private String getProposedComment(IResource[] resourcesToCommit) {
+    	StringBuffer comment = new StringBuffer();
         CommitSet[] sets = CommitSetManager.getInstance().getSets();
+        int numMatchedSets = 0;
         for (int i = 0; i < sets.length; i++) {
             CommitSet set = sets[i];
-            if (containsAll(set, resourcesToCommit)) {
-                return set.getComment();
+            if (containsOne(set, resourcesToCommit)) {
+            	if(numMatchedSets > 0) comment.append(System.getProperty("line.separator")); //$NON-NLS-1$
+                comment.append(set.getComment());
+                numMatchedSets++;
             }
         }
-        return null;
+        return comment.toString();
     }
 
     private boolean containsAll(CommitSet set, IResource[] resourcesToCommit) {
@@ -285,6 +289,16 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
             }
         }
         return true;
+    }
+    
+    private boolean containsOne(CommitSet set, IResource[] resourcesToCommit) {
+    	 for (int j = 0; j < resourcesToCommit.length; j++) {
+            IResource resource = resourcesToCommit[j];
+            if (set.contains(resource)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
