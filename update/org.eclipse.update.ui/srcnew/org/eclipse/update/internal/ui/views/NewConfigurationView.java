@@ -66,7 +66,7 @@ public class NewConfigurationView
 	private RevertConfigurationAction revertAction;
 	private SaveConfigurationAction preserveAction;
 	private Action propertiesAction;
-	private SiteStateAction siteStateAction;
+	private SiteStateAction2 siteStateAction;
 
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
@@ -401,7 +401,7 @@ public class NewConfigurationView
 
 		featureStateAction = new FeatureStateAction();
 
-		siteStateAction = new SiteStateAction();
+		siteStateAction = new SiteStateAction2();
 
 		preserveAction =
 			new SaveConfigurationAction(UpdateUI.getString(KEY_PRESERVE));
