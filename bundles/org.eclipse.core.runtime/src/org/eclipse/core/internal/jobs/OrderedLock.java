@@ -58,7 +58,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * on the lock.
 	 */
 	private final Queue operations = new Queue();
-	
+
 	/**
 	 * Creates a new workspace lock.
 	 */
@@ -84,23 +84,23 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	public boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
-		
+
 		boolean success = false;
-		if(delay <= 0)
+		if (delay <= 0)
 			return attempt();
 		else {
 			Semaphore semaphore = createSemaphore();
-			if(semaphore == null)
+			if (semaphore == null)
 				return true;
 			else {
-				if(DEBUG)
+				if (DEBUG)
 					System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				success = doAcquire(semaphore, delay);
 				manager.resumeSuspendedLocks(Thread.currentThread());
-				if(DEBUG&&success)
+				if (DEBUG && success)
 					System.out.println("[" + Thread.currentThread() + "] Operation started... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-				else if(DEBUG)
+				else if (DEBUG)
 					System.out.println("[" + Thread.currentThread() + "] Operation timed out... " + this); //$NON-NLS-1$ //$NON-NLS-2$	
 			}
 		}
@@ -113,8 +113,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	private synchronized boolean attempt() {
 		//return true if we already own the lock
 		//also, if nobody is waiting, grant the lock immediately
-		if((currentOperationThread == Thread.currentThread()) ||			
-		(currentOperationThread == null && operations.isEmpty())) {
+		if ((currentOperationThread == Thread.currentThread()) || (currentOperationThread == null && operations.isEmpty())) {
 			depth++;
 			setCurrentOperationThread(Thread.currentThread());
 			return true;
@@ -157,11 +156,10 @@ public class OrderedLock implements ILock, ISchedulingRule {
 				System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
 			throw e;
 		}
-		if(success) {
+		if (success) {
 			depth++;
 			updateCurrentOperation();
-		}
-		else {
+		} else {
 			//operation timed out
 			//remove request semaphore from queue and update graph
 			operations.remove(semaphore);
@@ -233,7 +231,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * If newThread is not null, grant this lock to newThread.
 	 */
 	private void setCurrentOperationThread(Thread newThread) {
-		if((currentOperationThread != null) && (newThread == null))
+		if ((currentOperationThread != null) && (newThread == null))
 			manager.removeLockThread(currentOperationThread, this);
 		this.currentOperationThread = newThread;
 		if (currentOperationThread != null)
@@ -244,7 +242,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * Used when re-acquiring a suspended lock.
 	 */
 	protected void setDepth(int newDepth) {
-		for(int i = depth; i < newDepth; i++) {
+		for (int i = depth; i < newDepth; i++) {
 			manager.addLockThread(currentOperationThread, this);
 		}
 		this.depth = newDepth;
