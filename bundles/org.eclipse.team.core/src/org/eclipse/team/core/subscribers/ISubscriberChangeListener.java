@@ -14,30 +14,23 @@ package org.eclipse.team.core.subscribers;
 import java.util.EventListener;
 
 /**
- * A resource state change listener is notified of changes to resources
- * regarding their team state. 
+ * A subscriber change listener is notified of changes to resources
+ * regarding their subscriber synchronization state. 
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see ITeamManager#addResourceStateChangeListener(IResourceStateChangeListener)
+ * @see Subscriber#addListener(ISubscriberChangeListener)
+ * @since 3.0
  */
 public interface ISubscriberChangeListener extends EventListener{
 	
 	/**
-	 * Notifies this listener that some resources' team properties have
+	 * Notifies this listener that some resources' subscriber properties have
 	 * changed. The changes have already happened. For example, a resource's 
-	 * base revision may have changed. The resource tree is open for modification 
-	 * when this method is invoked, so markers can be created, etc.
-	 * <p>
-	 * Note: This method is called by Team core; it is not intended to be
-	 * called directly by clients.
-	 * </p>
+	 * base revision may have changed. The resource tree may or may not be open for modification 
+	 * when this method is invoked.
 	 *
-	 * @param deltas detailing the kinds of team changes
-	 * 
-	 * [Note: The changed state event is purposely vague. For now it is only
-	 * a hint to listeners that they should query the provider to determine the
-	 * resources new sync info.]
+	 * @param deltas detailing the kinds of changes
 	 */
 	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas);
 }

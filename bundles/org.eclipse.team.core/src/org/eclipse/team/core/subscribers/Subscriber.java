@@ -63,6 +63,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * or incoming additions). When queried for the members of a local resource, the subscriber should include any children
  * for which a remote exists even if the local does not.
  * 
+ * @since 3.0
  */
 abstract public class Subscriber {
 
