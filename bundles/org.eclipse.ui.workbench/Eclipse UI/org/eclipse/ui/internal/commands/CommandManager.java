@@ -22,12 +22,14 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.commands.ICategoryHandle;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandDelegate;
 import org.eclipse.ui.commands.ICommandHandle;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.IKeyConfigurationHandle;
 import org.eclipse.ui.commands.registry.ICommandDefinition;
 import org.eclipse.ui.commands.registry.ICommandRegistry;
 import org.eclipse.ui.commands.registry.ICommandRegistryEvent;
@@ -120,6 +122,16 @@ public final class CommandManager implements ICommandManager {
 		return Collections.unmodifiableSortedMap(commandDelegatesById);
 	}
 
+	public SortedMap getCategoriesById() {
+		// TODO 
+		return null;
+	}
+	
+	public ICategoryHandle getCategoryHandle(String categoryId) {
+		// TODO
+		return null;
+	}
+
 	public ICommandHandle getCommandHandle(String commandId) {
 		if (commandId == null)
 			throw new NullPointerException();
@@ -136,6 +148,16 @@ public final class CommandManager implements ICommandManager {
 
 	public SortedMap getCommandsById() {
 		return Collections.unmodifiableSortedMap(commandsById);
+	}
+
+	public IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId) {
+		// TODO
+		return null;
+	}
+
+	public SortedMap getKeyConfigurationsById() {
+		// TODO
+		return null;
 	}
 	
 	public ICommandRegistry getPluginCommandRegistry() {

@@ -77,6 +77,22 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
+	 * @return
+	 */
+	SortedMap getCategoriesById();
+	
+	/**
+	 * JAVADOC
+	 *
+	 * @param categoryId
+	 * @return
+	 * @throws NullPointerException
+	 */	
+	ICategoryHandle getCategoryHandle(String categoryId);
+
+	/**
+	 * JAVADOC
+	 *
 	 * @param commandId
 	 * @return
 	 * @throws NullPointerException
@@ -89,6 +105,22 @@ public interface ICommandManager {
 	 * @return
 	 */
 	SortedMap getCommandsById();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param keyConfigurationId
+	 * @return
+	 * @throws NullPointerException
+	 */	
+	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedMap getKeyConfigurationsById();
 	
 	/**
 	 * JAVADOC
