@@ -18,7 +18,7 @@ the filter's pattern.
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST filter</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pattern&nbsp;&nbsp;&nbsp; CDATA
 #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; selected&nbsp;&nbsp; CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; selected&nbsp;&nbsp; (true|false) &quot;false&quot;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
@@ -26,7 +26,7 @@ the filter's pattern.
 <b>pattern</b> - the pattern to match.  May contain * and ? wildcards.</li>
 
 <li>
-<b>selected</b> - "true" if the pattern should be selected by default, "false" or undefined if not.</li>
+<b>selected</b> - &quot;true&quot; if the pattern should be selected by default, &quot;false&quot; or undefined if not.</li>
 </ul>
 <b><i>Examples:</i></b>
 <p>The following is an example of a resource filter extension, which filters out class files, 
