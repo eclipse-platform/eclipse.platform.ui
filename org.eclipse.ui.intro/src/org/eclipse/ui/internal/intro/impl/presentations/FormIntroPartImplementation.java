@@ -21,7 +21,6 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.swt.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.config.*;
@@ -336,13 +335,8 @@ public class FormIntroPartImplementation extends
     protected void handleRegistryChanged(IRegistryChangeEvent event) {
         if (getModel().isDynamic()) {
             IntroPlugin.closeIntro();
-            String currentPageId = model.getCurrentPageId();
-            IntroModelRoot model = ExtensionPointManager.getInst()
-                    .getCurrentModel();
-            model.setCurrentPageId(currentPageId, false);
             IntroPlugin.showIntro(false);
         }
-
     }
 
 
