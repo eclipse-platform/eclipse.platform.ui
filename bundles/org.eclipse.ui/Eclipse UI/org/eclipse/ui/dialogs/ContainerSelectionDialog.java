@@ -4,21 +4,18 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
-import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
 
 /**
  * A standard selection dialog which solicits a container resource from the user.
@@ -106,7 +103,9 @@ protected Control createDialogArea(Composite parent) {
 					statusMessage.setText("");//$NON-NLS-1$
 					getOkButton().setEnabled(true);
 				} else {
-					statusMessage.setForeground(statusMessage.getDisplay().getSystemColor(SWT.COLOR_RED));
+					statusMessage.setForeground(
+						JFaceColors.getErrorText(
+							statusMessage.getDisplay()));
 					statusMessage.setText(errorMsg);
 					getOkButton().setEnabled(false);
 				}

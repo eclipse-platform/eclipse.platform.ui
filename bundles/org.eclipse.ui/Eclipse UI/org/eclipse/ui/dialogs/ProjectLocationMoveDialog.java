@@ -5,6 +5,7 @@ package org.eclipse.ui.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -73,7 +74,8 @@ private void applyValidationResult(String errorMsg) {
 		getOkButton().setEnabled(true);
 	} else {
 		statusMessageLabel.setForeground(
-			statusMessageLabel.getDisplay().getSystemColor(SWT.COLOR_RED));
+			JFaceColors.getErrorText(
+				statusMessageLabel.getDisplay()));
 		statusMessageLabel.setText(errorMsg);
 		statusMessageLabel.setToolTipText(errorMsg);
 		getOkButton().setEnabled(false);

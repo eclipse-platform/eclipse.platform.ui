@@ -7,11 +7,10 @@ package org.eclipse.jface.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -461,7 +460,7 @@ protected void updateMessageLabel() {
 	if (fMessageLabel != null && !fMessageLabel.isDisposed()) {
 		Display display = fMessageLabel.getDisplay();
 		if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
-			fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
+			fMessageLabel.setForeground(JFaceColors.getErrorText(display));
 			fMessageLabel.setText(fErrorText);
 			fMessageLabel.setImage(fErrorImage);
 		}
