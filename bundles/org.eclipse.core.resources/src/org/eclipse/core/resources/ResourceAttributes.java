@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API 
- *     Red Hat Incorporated - inital implementation
+ *     Red Hat Incorporated - initial implementation
  *******************************************************************************/
 
 package org.eclipse.core.resources;
