@@ -545,7 +545,14 @@ public int open() {
  * @param shell the shell
  */
 private void runEventLoop(Shell shell) {
-	Display display = Display.getCurrent();
+	
+	//Use the display provided by the shell if possible
+	Display display;
+	if(shell == null)
+		 display = Display.getCurrent();
+	else
+		display = shell.getDisplay();
+		
 	while (shell != null && ! shell.isDisposed()) {
 		try {
 			if (!display.readAndDispatch())
