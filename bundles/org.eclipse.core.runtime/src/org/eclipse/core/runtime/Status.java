@@ -33,8 +33,8 @@ public class Status implements IStatus {
 	/**
 	 * The severity. One of
 	 * <ul>
-	 * <li><code>ERROR</code></li>
 	 * <li><code>CANCEL</code></li>
+	 * <li><code>ERROR</code></li>
 	 * <li><code>WARNING</code></li>
 	 * <li><code>INFO</code></li>
 	 * <li>or <code>OK</code> (0)</li>
@@ -65,8 +65,8 @@ public class Status implements IStatus {
 	/**
 	 * Creates a new status object.  The created status has no children.
 	 *
-	 * @param severity the severity; one of <code>OK</code>,
-	 *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
+	 * @param severity the severity; one of <code>OK</code>, <code>ERROR</code>, 
+	 * <code>INFO</code>, <code>WARNING</code>,  or <code>CANCEL</code>
 	 * @param pluginId the unique identifier of the relevant plug-in
 	 * @param code the plug-in-specific status code, or <code>OK</code>
 	 * @param message a human-readable message, localized to the
@@ -188,8 +188,8 @@ public class Status implements IStatus {
 	/**
 	 * Sets the severity.
 	 *
-	 * @param severity the severity; one of <code>OK</code>,
-	 *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
+	 * @param severity the severity; one of <code>OK</code>, <code>ERROR</code>, 
+	 * <code>INFO</code>, <code>WARNING</code>,  or <code>CANCEL</code>
 	 */
 	protected void setSeverity(int severity) {
 		Assert.isLegal(severity == OK || severity == ERROR || severity == WARNING || severity == INFO || severity == CANCEL);
@@ -211,6 +211,8 @@ public class Status implements IStatus {
 			buf.append("WARNING"); //$NON-NLS-1$
 		} else if (severity == INFO) {
 			buf.append("INFO"); //$NON-NLS-1$
+		} else if (severity == CANCEL) {
+			buf.append("CANCEL"); //$NON-NLS-1$
 		} else {
 			buf.append("severity="); //$NON-NLS-1$
 			buf.append(severity);

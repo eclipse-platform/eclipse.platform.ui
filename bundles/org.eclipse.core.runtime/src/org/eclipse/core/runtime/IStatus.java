@@ -67,6 +67,7 @@ public interface IStatus {
 	 * cancelation
 	 * @see #getSeverity()
 	 * @see #matches(int)
+	 * @since 3.0
 	 */
 	public static final int CANCEL = 0x08;
 
@@ -116,6 +117,7 @@ public interface IStatus {
 	 * Returns the severity. The severities are as follows (in
 	 * descending order):
 	 * <ul>
+	 * <li><code>CANCEL</code> - cancelation occurred</li>
 	 * <li><code>ERROR</code> - a serious error (most severe)</li>
 	 * <li><code>WARNING</code> - a warning (less severe)</li>
 	 * <li><code>INFO</code> - an informational ("fyi") message (least severe)</li>
@@ -127,8 +129,8 @@ public interface IStatus {
 	 * no children.
 	 * </p>
 	 *
-	 * @return the severity: one of <code>OK</code>,
-	 *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
+	 * @return the severity: one of <code>OK</code>, <code>ERROR</code>, 
+	 * <code>INFO</code>, <code>WARNING</code>,  or <code>CANCEL</code>
 	 * @see #matches(int)
 	 */
 	public int getSeverity();
@@ -171,6 +173,7 @@ public interface IStatus {
 	 * @return <code>true</code> if there is at least one match, 
 	 *    <code>false</code> if there are no matches
 	 * @see #getSeverity()
+	 * @see #CANCEL
 	 * @see #ERROR
 	 * @see #WARNING
 	 * @see #INFO
