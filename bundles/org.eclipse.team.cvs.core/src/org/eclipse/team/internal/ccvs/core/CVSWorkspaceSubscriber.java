@@ -13,33 +13,29 @@ package org.eclipse.team.internal.ccvs.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.RemoteSynchronizer;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.OptimizedRemoteSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
+import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * CVSWorkspaceSubscriber
  */
 public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IResourceStateChangeListener {
 	
-	private OptimizedRemoteSynchronizer remoteSynchronizer;
+	private ResourceVariantTree remoteSynchronizer;
+	private ResourceVariantTree baseSynchronizer;
 	
 	// qualified name for remote sync info
 	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key"; //$NON-NLS-1$
@@ -48,7 +44,10 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		super(id, name, description);
 		
 		// install sync info participant
-		remoteSynchronizer = new OptimizedRemoteSynchronizer(REMOTE_RESOURCE_KEY);
+		baseSynchronizer = new CVSBaseSynchronizationCache();
+		remoteSynchronizer = new CVSDescendantSynchronizationCache(
+				baseSynchronizer, 
+				new PersistantResourceVariantTree(new QualifiedName(SYNC_KEY_QUALIFIER, REMOTE_RESOURCE_KEY)));
 		
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
@@ -90,24 +89,25 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			try {
 				if (resource.getType() == IResource.FILE
 						&& (resource.exists() || resource.isPhantom())) {
-					byte[] remoteBytes = remoteSynchronizer.getSyncBytes(resource);
+					byte[] remoteBytes = remoteSynchronizer.getBytes(resource);
 					if (remoteBytes == null) {
-						if (remoteSynchronizer.isRemoteKnown(resource)) {
+						if (remoteSynchronizer.isVariantKnown(resource)) {
 							// The remote is known not to exist. If the local resource is
 							// managed then this information is stale
-							if (getBaseSynchronizer().hasRemote(resource)) {
+							if (getBaseSynchronizationCache().getBytes(resource) != null) {
 								if (canModifyWorkspace) {
-									remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+									remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
 								} else {
 									// The revision  comparison will handle the stale sync bytes
+									// TODO: Unless the remote is known not to exist (see bug 52936)
 								}
 							}
 						}
 					} else {
-						byte[] localBytes = remoteSynchronizer.getBaseSynchronizer().getSyncBytes(resource);
+						byte[] localBytes = baseSynchronizer.getBytes(resource);
 						if (localBytes == null || !isLaterRevision(remoteBytes, localBytes)) {
 							if (canModifyWorkspace) {
-								remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+								remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
 							} else {
 								// The getRemoteResource method handles the stale sync bytes
 							}
@@ -115,8 +115,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 					}
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
-					if (getBaseSynchronizer().hasRemote(resource) && canModifyWorkspace) {
-						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+					if (getBaseSynchronizationCache().getBytes(resource) != null && canModifyWorkspace) {
+						remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
 					}
 				}
 			} catch (TeamException e) {
@@ -124,7 +124,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			}
 		}		
 		
-		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources));
+		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
 	}
 
 	private boolean isLaterRevision(byte[] remoteBytes, byte[] localBytes) {
@@ -159,8 +159,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectConfigured(IProject project) {
-		TeamDelta delta = new TeamDelta(this, TeamDelta.PROVIDER_CONFIGURED, project);
-		fireTeamResourceChange(new TeamDelta[] {delta});
+		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_ADDED, project);
+		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
 	}
 
 	/* (non-Javadoc)
@@ -168,48 +168,82 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void projectDeconfigured(IProject project) {
 		try {
-			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE);
+			remoteSynchronizer.removeBytes(project, IResource.DEPTH_INFINITE);
 		} catch (TeamException e) {
 			CVSProviderPlugin.log(e);
 		}
-		TeamDelta delta = new TeamDelta(this, TeamDelta.PROVIDER_DECONFIGURED, project);
-		fireTeamResourceChange(new TeamDelta[] {delta});
+		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);
+		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
+	}
+
+	public void setRemote(IProject project, IResourceVariant remote, IProgressMonitor monitor) throws TeamException {
+		// TODO: This exposes internal behavior to much
+		IResource[] changedResources = 
+			new CVSRefreshOperation(remoteSynchronizer, baseSynchronizer, null, false).collectChanges(project, remote, IResource.DEPTH_INFINITE, monitor);
+		if (changedResources.length != 0) {
+			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
+		}
+	}
+	
+	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		// TODO Ensure that file contents are cached for modified local files
+		try {
+			monitor.beginTask(null, 100);
+			return new IResource[0];
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizer()
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteTag()
 	 */
-	protected RemoteSynchronizer getRemoteSynchronizer() {
+	protected CVSTag getRemoteTag() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseTag()
+	 */
+	protected CVSTag getBaseTag() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
+	 */
+	protected ResourceVariantTree getBaseSynchronizationCache() {
+		return baseSynchronizer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
+	 */
+	protected ResourceVariantTree getRemoteSynchronizationCache() {
 		return remoteSynchronizer;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizer()
-	 */
-	protected RemoteSynchronizer getBaseSynchronizer() {
-		return remoteSynchronizer.getBaseSynchronizer();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#getAllOutOfSync(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public SyncInfo[] getAllOutOfSync(IResource[] resources, final int depth, IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(null, resources.length * 100);
+	public SyncInfo[] getAllOutOfSync(IResource[] resources, final int depth, final IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		final List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			final IProgressMonitor infinite = Policy.infiniteSubMonitorFor(monitor, 100);
 			try {
 				// We need to do a scheduling rule on the project to
 				// avoid overly desctructive operations from occuring 
 				// while we gather sync info
-				infinite.beginTask(null, 512);
-				Platform.getJobManager().beginRule(resource, Policy.subMonitorFor(infinite, 1));
+				Platform.getJobManager().beginRule(resource, monitor);
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {
-							if (isOutOfSync(innerResource, infinite)) {
-								SyncInfo info = getSyncInfo(innerResource, infinite);
+							if (innerResource.getType() != IResource.FILE) {
+								monitor.subTask(Policy.bind("CVSWorkspaceSubscriber.1", innerResource.getFullPath().toString())); //$NON-NLS-1$
+							}
+							if (isOutOfSync(innerResource, monitor)) {
+								SyncInfo info = getSyncInfo(innerResource);
 								if (info != null && info.getKind() != 0) {
 									result.add(info);
 								}
@@ -225,7 +259,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				throw CVSException.wrapException(e);
 			} finally {
 				Platform.getJobManager().endRule(resource);
-				infinite.done();
+				monitor.done();
 			}
 		}
 		monitor.done();
@@ -233,59 +267,32 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 	
 	/* internal use only */ boolean isOutOfSync(IResource resource, IProgressMonitor monitor) throws TeamException {
-		return (hasIncomingChange(resource) || hasOutgoingChange(CVSWorkspaceRoot.getCVSResourceFor(resource), monitor));
-	}
-	
-	private boolean hasOutgoingChange(ICVSResource resource, IProgressMonitor monitor) throws CVSException {
-		if (resource.isFolder()) {
-			// A folder is an outgoing change if it is not a CVS folder and not ignored
-			ICVSFolder folder = (ICVSFolder)resource;
-			// OPTIMIZE: The following checks load the CVS folder information
-			if (folder.getParent().isModified(monitor)) {
-				return !folder.isCVSFolder() && !folder.isIgnored();
-			}
-		} else {
-			// A file is an outgoing change if it is modified
-			ICVSFile file = (ICVSFile)resource;
-			// The parent caches the dirty state so we only need to check
-			// the file if the parent is dirty
-			// OPTIMIZE: Unfortunately, the modified check on the parent still loads
-			// the CVS folder information so not much is gained
-			if (file.getParent().isModified(monitor)) {
-				return file.isModified(monitor);
-			}
-		}
-		return false;
+		return (hasIncomingChange(resource) || hasOutgoingChange(resource, monitor));
 	}
 	
 	private boolean hasIncomingChange(IResource resource) throws TeamException {
-		return remoteSynchronizer.isRemoteKnown(resource);
+		return remoteSynchronizer.isVariantKnown(resource);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.TeamSubscriber#getRemoteResource(org.eclipse.core.resources.IResource)
-	 */
-	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
-		IRemoteResource remote =  super.getRemoteResource(resource);
-		if (resource.getType() == IResource.FILE && remote instanceof ICVSRemoteFile) {
-			byte[] remoteBytes = ((ICVSRemoteFile)remote).getSyncBytes();
-			byte[] localBytes = CVSWorkspaceRoot.getCVSFileFor((IFile)resource).getSyncBytes();
-			if (localBytes != null && remoteBytes != null) {
-				if (!ResourceSyncInfo.isLaterRevisionOnSameBranch(remoteBytes, localBytes)) {
-					// The remote bytes are stale so ignore the remote and use the base
-					return getBaseResource(resource);
-				}
-			}
+	
+	private boolean hasOutgoingChange(IResource resource, IProgressMonitor monitor) throws CVSException {
+		if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT) {
+			// a project (or the workspace root) cannot have outgoing changes
+			return false;
 		}
-		return remote;
-	}
-
-	public void setRemote(IProject project, IRemoteResource remote, IProgressMonitor monitor) throws TeamException {
-		List changedResources = new ArrayList();
-		((RemoteTagSynchronizer)getRemoteSynchronizer()).collectChanges(project, remote, changedResources, IResource.DEPTH_INFINITE, monitor);
-		if (!changedResources.isEmpty()) {
-			IResource[] changes = (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
-			fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changes));
+		int state = EclipseSynchronizer.getInstance().getModificationState(resource.getParent());
+		if (state == ICVSFile.CLEAN) {
+			// if the parent is known to be clean then the resource must also be clean
+			return false;
+		}
+		if (resource.getType() == IResource.FILE) {
+			// A file is an outgoing change if it is modified
+			ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+			return file.isModified(monitor);
+		} else {
+			// A folder is an outgoing change if it is not a CVS folder and not ignored
+			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
+			return !folder.isCVSFolder() && !folder.isIgnored();
 		}
 	}
+
 }

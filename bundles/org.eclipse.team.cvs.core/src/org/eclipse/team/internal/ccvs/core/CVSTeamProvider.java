@@ -19,14 +19,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
@@ -673,19 +673,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 		} finally {
 			monitor.done();
-		}
-	}
-	
-	/**
-	 * Update the sync info of the local resource associated with the sync element such that
-	 * the revision of the local resource matches that of the remote resource.
-	 * This will allow commits on the local resource to succeed.
-	 * 
-	 * Only file resources can be merged.
-	 */
-	public void merged(IRemoteSyncElement[] elements) throws TeamException {	
-		for (int i=0;i<elements.length;i++) {
-			((CVSRemoteSyncElement)elements[i]).makeOutgoing(Policy.monitorFor(null));
 		}
 	}
 	

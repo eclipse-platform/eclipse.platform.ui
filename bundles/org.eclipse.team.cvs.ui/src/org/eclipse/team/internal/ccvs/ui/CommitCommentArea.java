@@ -39,7 +39,7 @@ import org.eclipse.team.internal.ui.dialogs.DialogArea;
 public class CommitCommentArea extends DialogArea {
 
 	private static final int WIDTH_HINT = 350;
-	private static final int HEIGHT_HINT = 150;
+	private static final int HEIGHT_HINT = 50;
 	
 	private Text text;
 	private Combo previousCommentsCombo;

@@ -22,6 +22,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -31,7 +32,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
 public class EclipseTest extends EclipseWorkspaceTest {
@@ -766,8 +766,27 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		waitForJobCompletion(SyncFileChangeListener.getDeferredHandler().getEventHandlerJob());
 	}
 	
-	public static void waitForSubscriberInputHandling(SubscriberInput input) {
-		waitForJobCompletion(input.getEventHandler().getEventHandlerJob());
+	public static void waitForSubscriberInputHandling(SubscriberSyncInfoCollector input) {
+		input.waitForCollector(new IProgressMonitor() {
+			public void beginTask(String name, int totalWork) {
+			}
+			public void done() {
+			}
+			public void internalWorked(double work) {
+			}
+			public boolean isCanceled() {
+				return false;
+			}
+			public void setCanceled(boolean value) {
+			}
+			public void setTaskName(String name) {
+			}
+			public void subTask(String name) {
+			}
+			public void worked(int work) {
+				while (Display.getCurrent().readAndDispatch()) {}
+			}
+		});
 	}
 
 	protected static void executeHeadless(CVSOperation op) throws CVSException {

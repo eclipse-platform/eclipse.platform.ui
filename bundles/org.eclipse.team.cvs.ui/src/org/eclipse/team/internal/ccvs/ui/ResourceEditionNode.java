@@ -15,16 +15,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IStreamContentAccessor;
-import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 
 /**
@@ -65,10 +63,10 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 					CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
-								IRemoteResource[] members = resource.members(monitor);
+								ICVSRemoteResource[] members = resource.members(monitor);
 								children = new ResourceEditionNode[members.length];
 								for (int i = 0; i < members.length; i++) {
-									children[i] = new ResourceEditionNode((ICVSRemoteResource)members[i]);
+									children[i] = new ResourceEditionNode(members[i]);
 								}
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
@@ -100,8 +98,10 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						holder[0] = resource.getContents(monitor);
+						holder[0] = ((IResourceVariant)resource).getStorage(monitor).getContents();
 					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
 				}

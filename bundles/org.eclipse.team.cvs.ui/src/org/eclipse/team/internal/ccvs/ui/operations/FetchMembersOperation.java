@@ -18,12 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderMemberFetcher;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -120,7 +115,7 @@ public class FetchMembersOperation extends RemoteOperation {
 			monitor = Policy.monitorFor(monitor);
 			try {
 				monitor.beginTask(null, 100);
-				IRemoteResource[] children = remote.members(Policy.subMonitorFor(monitor, 95));
+				ICVSRemoteResource[] children = remote.members(Policy.subMonitorFor(monitor, 95));
 				collector.add(children, Policy.subMonitorFor(monitor, 5));
 			} catch (TeamException e) {
 				throw CVSException.wrapException(e);

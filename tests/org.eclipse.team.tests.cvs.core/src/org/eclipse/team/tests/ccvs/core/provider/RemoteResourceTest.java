@@ -15,28 +15,13 @@ import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutToRemoteFolderOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -60,7 +45,7 @@ public class RemoteResourceTest extends EclipseTest {
 	}
 	
 	protected void getMembers(ICVSRemoteFolder folder, boolean deep) throws TeamException {
-		IRemoteResource[] children = folder.members(DEFAULT_MONITOR);
+		ICVSRemoteResource[] children = folder.members(DEFAULT_MONITOR);
 		if (deep) {
 			for (int i=0;i<children.length;i++) {
 				if (children[i].isContainer())
@@ -192,13 +177,13 @@ public class RemoteResourceTest extends EclipseTest {
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		
 		// Fetch the remote tree for the version
-		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, v1Tag, DEFAULT_MONITOR);
+		ICVSRemoteResource tree = CVSWorkspaceRoot.getRemoteTree(project, v1Tag, DEFAULT_MONITOR);
 
 		// Check out the project version
 		project = checkoutCopy(project, v1Tag);
 		
 		// Compare the two
-		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), (ICVSResource)CVSWorkspaceRoot.getCVSResourceFor(project), false, false);
+		assertEquals(Path.EMPTY, tree, (ICVSResource)CVSWorkspaceRoot.getCVSResourceFor(project), false, false);
 	}
 	
 	/*
@@ -212,8 +197,8 @@ public class RemoteResourceTest extends EclipseTest {
 		setContentsAndEnsureModified(file, "");
 		commitResources(project, new String[] {"file.txt"});
 		
-		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(file);
-		InputStream in = remote.getContents(DEFAULT_MONITOR);
+		IResourceVariant remote = (IResourceVariant)CVSWorkspaceRoot.getRemoteResourceFor(file);
+		InputStream in = remote.getStorage(DEFAULT_MONITOR).getContents();
 		int count = 0;
 		while(in.read() != -1) {
 			count++;
@@ -353,8 +338,8 @@ public class RemoteResourceTest extends EclipseTest {
 		setContentsAndEnsureModified(project.getFile("file1.txt"), contents);
 		commitProject(project);
 		project.getFile("file1.txt").delete(false, null);
-		ICVSRemoteFile remote = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
-		String fetchedContents = asString(remote.getBufferedStorage(DEFAULT_MONITOR).getContents());
+		IResourceVariant remote = (IResourceVariant)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
+		String fetchedContents = asString(remote.getStorage(DEFAULT_MONITOR).getContents());
 		assertEquals("Contents do not match", contents, fetchedContents);
 	}
 

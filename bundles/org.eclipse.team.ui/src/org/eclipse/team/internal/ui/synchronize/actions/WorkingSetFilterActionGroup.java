@@ -14,7 +14,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -43,7 +43,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @param workingSetUpdater property change listener notified when a 
 	 * 	working set is set
 	 */
-	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, TeamSubscriberParticipant participant) {
+	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, SubscriberParticipant participant) {
 		Assert.isNotNull(shell);
 		this.id = participant.toString();
 		this.workingSetUpdater = workingSetUpdater;

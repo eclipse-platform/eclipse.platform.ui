@@ -10,32 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.synchronize.compare.SyncInfoCompareInput;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipantPage;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.ui.*;
 
 /**
  * Action to open a compare editor from a SyncInfo object.
@@ -45,24 +32,30 @@ import org.eclipse.ui.IWorkbenchPartSite;
  */
 public class OpenInCompareAction extends Action {
 	
-	private TeamSubscriberParticipantPage part;
+	private ISynchronizeView view;
+	private ISynchronizeParticipant participant;
 	
-	public OpenInCompareAction(TeamSubscriberParticipantPage part) {
-		this.part = part;
+	public OpenInCompareAction(ISynchronizeView view, ISynchronizeParticipant participant) {
+		this.participant = participant;
+		this.view = view;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
 
 	public void run() {
-		ISelection selection = part.getSite().getPage().getSelection();
-		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		SyncInfo info = getSyncInfo(obj);
-		if(info != null) {
-			openCompareEditor(part, info, true /* keep focus */);
+		ISelection selection = view.getSite().getPage().getSelection();
+		if(selection instanceof IStructuredSelection) {
+		Object obj = ((IStructuredSelection) selection).getFirstElement();
+			if (obj instanceof SyncInfoModelElement) {
+				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
+				if (info != null) {
+					openCompareEditor(view, participant, info, true);
+				}
+			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(TeamSubscriberParticipantPage page, SyncInfo info, boolean keepFocus) {		
-		SyncInfoCompareInput input = getCompareInput(page.getParticipant(), info);
+	public static SyncInfoCompareInput openCompareEditor(IWorkbenchPart page, ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus) {		
+		SyncInfoCompareInput input = getCompareInput(participant, info);
 		if(input != null) {
 			IWorkbenchPage wpage = page.getSite().getPage();
 			IEditorPart editor = findReusableCompareEditor(wpage);			
@@ -74,7 +67,6 @@ public class OpenInCompareAction extends Action {
 					wpage.activate(editor);
 				} else {
 					// if editor is currently not open on that input either re-use existing
-					if (!prefetchFileContents(info)) return null;
 					if(editor != null && editor instanceof IReusableEditor) {
 						CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
 						wpage.activate(editor);
@@ -85,45 +77,11 @@ public class OpenInCompareAction extends Action {
 			}
 			
 			if(keepFocus) {
-				wpage.activate(page.getSynchronizeView());
+				wpage.activate(page);
 			}
 			return input;
 		}			
 		return null;
-	}
-
-	/**
-	 * Prefetching the file contents will cache them for use by the compare editor
-	 * so that the compare editor doesn't have to perform file transfers. This will
-	 * make the transfer cancellable.
-	 */
-	private static boolean prefetchFileContents(SyncInfo info) {
-		final IRemoteResource remote = info.getRemote();
-		final IRemoteResource base = info.getBase();
-		if (remote != null || base != null) {
-			final boolean[] ok = new boolean[] { true };
-			TeamUIPlugin.run(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(null, (remote == null ? 0 : 100) + (base == null ? 0 : 100));
-						if (remote != null)
-							remote.getContents(Policy.subMonitorFor(monitor, 100));
-						if (base != null)
-							base.getContents(Policy.subMonitorFor(monitor, 100));
-					} catch (TeamException e) {
-						ok[0] = false;
-						// The sync viewer will show the error to the user so we need only abort the action
-						throw new InvocationTargetException(e);
-					} finally {
-						// return false if the operation was cancelled
-						ok[0] = ! monitor.isCanceled();
-						monitor.done();
-					}
-				}
-			});
-			return ok[0];
-		}
-		return true;
 	}
 	
 	/**
@@ -131,7 +89,7 @@ public class OpenInCompareAction extends Action {
 	 */
 	private static SyncInfoCompareInput getCompareInput(ISynchronizeParticipant participant, SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
-			return SyncInfoCompareInput.createInput(participant, info);								
+			return new SyncInfoCompareInput(info);
 		}
 		return null;
 	}				
@@ -195,9 +153,5 @@ public class OpenInCompareAction extends Action {
 			}
 		}
 		return null;
-	}
-	
-	public static SyncInfo getSyncInfo(Object obj) {
-		return (SyncInfo)TeamAction.getAdapter(obj, SyncInfo.class);
 	}
 }

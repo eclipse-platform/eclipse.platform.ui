@@ -12,9 +12,9 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 class TestCommitAction extends SubscriberCommitAction {
 

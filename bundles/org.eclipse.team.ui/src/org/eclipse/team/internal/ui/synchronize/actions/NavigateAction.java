@@ -12,13 +12,16 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ICompareNavigator;
+import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipantPage;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -29,20 +32,28 @@ import org.eclipse.ui.actions.ActionFactory;
  * @since 3.0
  */
 public class NavigateAction extends Action {
-	private final int direction;
-	private TeamSubscriberParticipantPage page;
+	private final boolean next;
+	private ISynchronizeView view;
+	private INavigatable navigator;
 	
-	public NavigateAction(IViewPart part, TeamSubscriberParticipantPage page, int direction) {
-		this.page = page;
-		this.direction = direction;
+	/**
+	 * Direction to navigate
+	 */
+	final public static int NEXT = 1;
+	final public static int PREVIOUS = 2;
+	
+	public NavigateAction(ISynchronizeView view, INavigatable navigator, boolean next) {
+		this.navigator = navigator;
+		this.view = view;
+		this.next = next;
 
-		IKeyBindingService kbs = part.getSite().getKeyBindingService();		
-		if(direction == INavigableControl.NEXT) {
+		IKeyBindingService kbs = view.getSite().getKeyBindingService();		
+		if(next) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
-			page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.NEXT.getId(), this);			
+			view.getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.NEXT.getId(), this);			
 		} else {
 			Utils.initAction(this, "action.navigatePrevious."); //$NON-NLS-1$
-			page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);			
+			view.getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);			
 		}
 	}
 	
@@ -52,9 +63,8 @@ public class NavigateAction extends Action {
 	
 	private void navigate() {
 		SyncInfo info = getSyncInfoFromSelection();
-		INavigableControl navigable = (INavigableControl)page.getViewer();
 		if(info == null) {
-			if(navigable.gotoDifference(direction)) {
+			if(navigator.gotoDifference(next)) {
 				return;
 			} else {
 				info = getSyncInfoFromSelection();
@@ -63,14 +73,14 @@ public class NavigateAction extends Action {
 		}
 		
 		if(info.getLocal().getType() != IResource.FILE) {
-			if(! navigable.gotoDifference(direction)) {
+			if(! navigator.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(page, info, true /* keep focus */);
+				OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
 			}
 			return;
 		}
 		
-		IEditorPart editor = OpenInCompareAction.findOpenCompareEditor(page.getSynchronizeView().getSite(), info.getLocal());			
+		IEditorPart editor = OpenInCompareAction.findOpenCompareEditor(view.getSite(), info.getLocal());			
 		boolean atEnd = false;
 		CompareEditorInput input;
 		ICompareNavigator navigator;
@@ -80,25 +90,28 @@ public class NavigateAction extends Action {
 			input = (CompareEditorInput)editor.getEditorInput();
 			navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
 			if(navigator != null) {
-				if(navigator.selectChange(direction == INavigableControl.NEXT)) {
-					if(! navigable.gotoDifference(direction)) {
+				if(navigator.selectChange(next)) {
+					if(! this.navigator.gotoDifference(next)) {
 						info = getSyncInfoFromSelection();
-						OpenInCompareAction.openCompareEditor(page, info, true /* keep focus */);
+						OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
 					}
 				}				
 			}
 		} else {
 			// otherwise, select the next change and open a compare editor which will automatically
 			// show the first change.
-			OpenInCompareAction.openCompareEditor(page, info, true /* keep focus */);
+			OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
 		}
 	}
 
 	private SyncInfo getSyncInfoFromSelection() {
-		IStructuredSelection selection = (IStructuredSelection)page.getSynchronizeView().getSite().getPage().getSelection();
+		IStructuredSelection selection = (IStructuredSelection)view.getSite().getPage().getSelection();
 		if(selection == null) return null;
 		Object obj = selection.getFirstElement();
-		SyncInfo info = OpenInCompareAction.getSyncInfo(obj);
-		return info;
+		if (obj instanceof SyncInfoModelElement) {
+			return ((SyncInfoModelElement) obj).getSyncInfo();
+		} else {
+			return null;
+		}
 	}
 }

@@ -11,21 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,30 +24,22 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.team.internal.ui.synchronize.views.SynchronizeViewNode;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 /**
  * CVSAction is the common superclass for all CVS actions. It provides
  * facilities for enablement handling, standard error handling, selection
  * retrieval and prompting.
  */
-abstract public class CVSAction extends TeamAction {
+abstract public class CVSAction extends TeamAction implements IEditorActionDelegate {
 	
 	private List accumulatedStatus = new ArrayList();
 	
@@ -481,20 +464,9 @@ abstract public class CVSAction extends TeamAction {
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
 	protected IResource[] getSelectedResources() {
-		if(selection.isEmpty()) return new IResource[0];
-		Iterator it = selection.iterator();
-		List resources = new ArrayList();
-		while(it.hasNext()) {
-			Object element = it.next();
-			if(element instanceof SynchronizeViewNode) {
-				resources.add(((SynchronizeViewNode)element).getResource());
-			} else {
-				Object adapter = getAdapter(element, IResource.class);
-				if (adapter instanceof IResource) {
-					resources.add(adapter);
-}
-			}
-		}
-		return (IResource[]) resources.toArray(new IResource[resources.size()]);
-	}	
+		return Utils.getResources(selection.toArray());
+	}
+	
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+	}
 }

@@ -181,11 +181,11 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	 */
 	private void createReadWriteAccessComposite(Composite composite) {
 		Composite radioGroup = createRadioGroupComposite(composite);
-		useDefaultReadWriteLocations = createRadioButton(radioGroup, "Use this location's connection information for all connections", 3);
-		useCustomReadWriteLocations = createRadioButton(radioGroup, "Use the following locations for read and write access", 3);
-		createLabel(composite, "Read:", 1);
+		useDefaultReadWriteLocations = createRadioButton(radioGroup, Policy.bind("CVSRepositoryPropertiesPage.21"), 3); //$NON-NLS-1$
+		useCustomReadWriteLocations = createRadioButton(radioGroup, Policy.bind("CVSRepositoryPropertiesPage.22"), 3); //$NON-NLS-1$
+		createLabel(composite, Policy.bind("CVSRepositoryPropertiesPage.23"), 1); //$NON-NLS-1$
 		readLocation = createCombo(composite);
-		createLabel(composite, "Write:", 1);
+		createLabel(composite, Policy.bind("CVSRepositoryPropertiesPage.24"), 1); //$NON-NLS-1$
 		writeLocation = createCombo(composite);
 	}
 	/**

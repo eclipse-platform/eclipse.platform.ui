@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
-import org.eclipse.team.examples.filesystem.Policy;
 
 /**
  * SimpleAccessOperations is not part of the Team API. We use it here because it provides
@@ -95,7 +85,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 				}
 			} else if (depth > 0) { //Assume that resources are either files or containers.
 				//If the resource is a container, copy its children over.
-				IRemoteResource[] estranged = remote.members(progress);
+				FileSystemRemoteResource[] estranged = remote.members(progress);
 				IResource[] children = new IResource[estranged.length];
 
 				if (resources[i].getType() == IResource.PROJECT) {

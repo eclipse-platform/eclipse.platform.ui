@@ -39,7 +39,7 @@ public class TimeoutProgressMonitorDialog extends ProgressMonitorDialog {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on IRunnableContext.
+	 * Method declared on ITeamRunnableContext.
 	 * Runs the given <code>IRunnableWithProgress</code> with the progress monitor for this
 	 * progress dialog.  The dialog is opened before it is run, and closed after it completes.
 	 */

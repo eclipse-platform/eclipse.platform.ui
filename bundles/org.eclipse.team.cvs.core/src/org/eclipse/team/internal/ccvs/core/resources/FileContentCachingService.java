@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -67,10 +68,13 @@ public class FileContentCachingService {
 		try {
 			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, file.getParent(), tag);
 			RemoteFile remote =  builder.buildTree(file, monitor);
-			if (builder.getFileDiffs().length > 0 && !remote.isContentsCached()) {
-				remote.fetchContents(Policy.subMonitorFor(monitor, 50));
+			if (builder.getFileDiffs().length > 0) {
+				// Getting the storage of the file will cache the contents
+				remote.getStorage(Policy.subMonitorFor(monitor, 50));
 			}
 			return remote;
+		} catch (TeamException e) {
+			throw CVSException.wrapException(e);
 		} finally {
 			monitor.done();
 		}

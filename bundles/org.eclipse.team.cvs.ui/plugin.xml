@@ -47,6 +47,13 @@
             type="dynamic"
             id="org.eclipse.team.cvs.ui.cvsmerge-participant">
       </participant>
+      <participant
+            name="%CVSCompareParticipant"
+            icon="icons/full/cview16/compare_view.gif"
+            class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareSynchronizeParticipant"
+            type="dynamic"
+            id="org.eclipse.team.cvs.ui.compare-participant">
+      </participant>
 </extension>
 
 <!-- *************** Authenticator **************** -->
@@ -262,14 +269,6 @@
                menubarPath="compareWithMenu/compareWithGroup"
                helpContextId="org.eclipse.team.cvs.ui.compare_with_tag_action_context"
                id="org.eclipse.team.ccvs.ui.compareWithTag">
-         </action>      
-        <action
-               label="%CompareWithRemoteAction.label"
-               tooltip="%CompareWithRemoteAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               helpContextId="org.eclipse.team.cvs.ui.compare_with_latest_action_context"
-               id="org.eclipse.team.ccvs.ui.compareWithRemote">
          </action>
          <action
                label="%ReplaceWithTagAction.label"
@@ -721,6 +720,37 @@
                id="org.eclipse.team.ccvs.ui.showAnnotation">
          </action>			  						
 		</viewerContribution>
+		
+		<viewerContribution
+            id="org.eclipse.team.ccvs.ui.CVSCompareSubscriberContributions"
+            targetID="org.eclipse.team.cvs.ui.compare-participant">		
+            <action
+				label="%CVSCompareSubscriber.revert.label"
+				menubarPath="SubscriberActionsGroup1"
+				tooltip="%CVSCompareSubscriber.revert.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareRevertAction"
+				helpContextId="org.eclipse.team.cvs.ui.compare_revert_action"
+				id="org.eclipse.team.ccvs.ui.CVSCompareSubscriber.revert">
+			</action>	
+		    <action
+               label="%ShowHistoryAction.label"
+               tooltip="%ShowHistoryAction.tooltip"
+               icon="icons/full/ctool16/history.gif"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
+               id="org.eclipse.team.ccvs.ui.showHistory">
+             </action>
+             <action
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"
+               icon="icons/full/ctool16/annotate.gif"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               id="org.eclipse.team.ccvs.ui.showAnnotation">
+             </action>			  						
+		</viewerContribution>
 	</extension>
    
 <!-- ************** Views ********************** -->
@@ -890,26 +920,6 @@
 	<!-- ************** Project Sets **************** -->
 	<extension point="org.eclipse.team.core.projectSets">
 		<projectSet id="org.eclipse.team.cvs.core.cvsnature" class="org.eclipse.team.internal.ccvs.ui.CVSProjectSetSerializer"/>
-	</extension>
-	
-	
-	<!-- ************ Editor Actions ************** -->
-	<extension point="org.eclipse.ui.editorActions">
-		<editorContribution
-			id="org.eclipse.team.cvs.ui.contentCompare"
-			targetID="org.eclipse.compare.CompareEditor">
-			<action
-				id="org.eclipse.team.cvs.ui.ContentAction"
-				state="false"
-				toolbarPath="Normal/additions"
-				icon="icons/full/etool16/contents.gif"
-				disabledIcon="icons/full/dtool16/contents.gif"
-				hoverIcon="icons/full/ctool16/contents.gif"
-				label="%ContentAction.label"
- 	            tooltip="%ContentAction.tooltip"
- 				class="org.eclipse.team.internal.ccvs.ui.actions.ContentAction">
-			</action>
-		</editorContribution>
 	</extension>
 	
 	<!-- ********** Action Sets ************** -->

@@ -52,10 +52,11 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkingSet;
 
 /**
  * This wizard helps the user to import a new project in their workspace
@@ -89,6 +90,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Policy.bind("SharingWizard.title")); //$NON-NLS-1$
+		//set
 	}	
 		
 	public void addPages() {
@@ -120,6 +122,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 				modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
 				addPage(modulePage);
+				WorkspaceSynchronizeParticipant p = (WorkspaceSynchronizeParticipant)TeamUI.getSynchronizeManager().find(WorkspaceSynchronizeParticipant.ID)[0];
 				finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 				finishPage.setDescription(Policy.bind("SharingWizard.readyToFinishDescription")); //$NON-NLS-1$
 				addPage(finishPage);
@@ -304,8 +307,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						throw new InvocationTargetException(e);
 					}
 				}
-				IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(new IResource[] {project}, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
-				CVSUIPlugin.showInSyncView(getContainer().getShell(), null, workingSet, TeamSubscriberParticipant.OUTGOING_MODE);
+				CVSUIPlugin.showInSyncView(getContainer().getShell(), null, SubscriberParticipant.OUTGOING_MODE);
 			}
 		} catch (InterruptedException e) {
 			return true;

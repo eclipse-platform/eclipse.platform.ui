@@ -10,32 +10,35 @@
  *******************************************************************************/
 package org.eclipse.team.tests.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 
 public class TeamTest extends EclipseWorkspaceTest {
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final IProgressMonitor DEFAULT_PROGRESS_MONITOR = new NullProgressMonitor();
 
+	public static Test suite(Class c) {
+		String testName = System.getProperty("eclipse.team.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(c);
+			return suite;
+		} else {
+			try {
+				return (Test)c.getConstructor(new Class[] { String.class }).newInstance(new Object[] {testName});
+			} catch (Exception e) {
+				fail(e.getMessage());
+				// Above will throw so below is never actually reached
+				return null;
+			}
+		}
+	}
 
 	public TeamTest() {
 		super();
@@ -142,22 +145,6 @@ public class TeamTest extends EclipseWorkspaceTest {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {
 			System.err.println("Testing was rudely interrupted.");
-		}
-	}
-
-	// Assert that the two containers have equal contents
-	protected void assertEquals(IRemoteResource container1, IResource container2) throws CoreException, TeamException {
-		if (container2.getType() == IResource.FILE) {
-			// Ignore .project file
-			if (container2.getName().equals(".project"))
-				return;
-			assertTrue(compareContent(container1.getContents(DEFAULT_MONITOR), ((IFile) container2).getContents()));
-		} else {
-			IRemoteResource[] remoteResources = container1.members(DEFAULT_MONITOR);
-			IResource[] localResources = ((IFolder) container2).members();
-			for (int i = 0; i < localResources.length; i++) {
-				assertEquals(remoteResources[i], localResources[i]);
-			}
 		}
 	}
 

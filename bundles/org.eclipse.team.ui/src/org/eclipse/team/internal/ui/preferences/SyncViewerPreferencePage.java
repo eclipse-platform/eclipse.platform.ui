@@ -12,44 +12,29 @@ package org.eclipse.team.internal.ui.preferences;
 
 import java.text.Collator;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.ui.*;
 
 /**
  * This area provides the widgets for providing the CVS commit comment
  */
 public class SyncViewerPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IPreferenceIds {
 	
-	private BooleanFieldEditor bkgRefresh = null;
-	private BooleanFieldEditor bkgScheduledRefresh = null;
-	private IntegerFieldEditor2 scheduledDelay = null;
 	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
-	
-	private Group refreshGroup;
+	private BooleanFieldEditor promptWithChanges = null;
+	private BooleanFieldEditor promptWhenNoChanges = null;
+	private BooleanFieldEditor promptWithChangesBkg = null;
+	private BooleanFieldEditor promptWhenNoChangesBkg = null;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
 		/*
@@ -62,73 +47,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 				return Collator.getInstance().compare(id1, id2);
 			}
 			return 0;
-		}
-	}
-	
-	class IntegerFieldEditor2 extends IntegerFieldEditor {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.preference.FieldEditor#createControl(org.eclipse.swt.widgets.Composite)
-			 */
-			protected void createControl(Composite parent) {
-				super.createControl(parent);
-			}
-
-			public IntegerFieldEditor2(String name, String labelText, Composite parent, int size) {
-				super(name, labelText, parent, size);
-			}
-
-			protected boolean checkState() {
-				Text control= getTextControl();
-				if (!control.isEnabled()) {
-					clearErrorMessage();
-					return true;
-				}
-				return super.checkState();
-			}
-		
-			/**
-			 * Overrode here to be package visible.
-			 */
-			protected void refreshValidState() {
-				super.refreshValidState();
-			}
-		
-			/**
-			 * Only store if the text control is enabled
-			 * @see FieldEditor#doStore()
-			 */
-			protected void doStore() {
-				Text text = getTextControl();
-				if (text.isEnabled()) {
-					super.doStore();
-				}
-			}
-			/**
-			 * Clears the error message from the message line if the error
-			 * message is the error message from this field editor.
-			 */
-			protected void clearErrorMessage() {
-				if (getPreferencePage() != null) {
-					String message= getPreferencePage().getErrorMessage();
-					if (message != null) {
-						if(getErrorMessage().equals(message)) {
-							super.clearErrorMessage();
-						}
-					
-					} else {
-						super.clearErrorMessage();
-					}
-				}
-			}
-		}
-	
-	class BooleanFieldEditor2 extends BooleanFieldEditor {
-		public BooleanFieldEditor2(String name, String labelText, int style, Composite parent) {
-			super(name, labelText, style, parent);
-		}
-
-		protected void refreshValidState() {
-			updateEnablements();
 		}
 	}
 	
@@ -151,8 +69,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		
-		GridData data;
 		Group displayGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.8")); 		 //$NON-NLS-1$
 
 		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, displayGroup); //$NON-NLS-1$
@@ -160,19 +76,18 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, displayGroup); //$NON-NLS-1$
 		addField(showSyncInLabels);
 		
-		refreshGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.11")); //$NON-NLS-1$
+		Group promptGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.30")); //$NON-NLS-1$
 		
-		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, Policy.bind("SyncViewerPreferencePage.12"), SWT.NONE, refreshGroup); //$NON-NLS-1$
-		addField(bkgRefresh);
+		promptWhenNoChanges = new BooleanFieldEditor(SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES, Policy.bind("SyncViewerPreferencePage.16"), SWT.NONE, promptGroup); //$NON-NLS-1$
+		addField(promptWhenNoChanges);
+		promptWithChanges = new BooleanFieldEditor(SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, Policy.bind("SyncViewerPreferencePage.17"), SWT.NONE, promptGroup); //$NON-NLS-1$
+		addField(promptWithChanges);
 		
-		bkgScheduledRefresh = new BooleanFieldEditor2(SYNCVIEW_SCHEDULED_SYNC, Policy.bind("SyncViewerPreferencePage.13"), SWT.NONE, refreshGroup); //$NON-NLS-1$
-		addField(bkgScheduledRefresh);
-		
-		scheduledDelay = new IntegerFieldEditor2(SYNCVIEW_DELAY, Policy.bind("SyncViewerPreferencePage.14"), refreshGroup, 2); //$NON-NLS-1$
-		addField(scheduledDelay);
+		promptWhenNoChangesBkg = new BooleanFieldEditor(SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES, Policy.bind("SyncViewerPreferencePage.31"), SWT.NONE, promptGroup); //$NON-NLS-1$
+		addField(promptWhenNoChangesBkg);
+		promptWithChangesBkg = new BooleanFieldEditor(SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, Policy.bind("SyncViewerPreferencePage.32"), SWT.NONE, promptGroup); //$NON-NLS-1$
+		addField(promptWithChangesBkg);
 				
-		updateLastRunTime(createLabel(refreshGroup, null, 0));
-									
 		Group perspectiveGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.15")); //$NON-NLS-1$
 		
 		createLabel(perspectiveGroup, Policy.bind("SynchronizationViewPreference.defaultPerspectiveDescription"), 1); //$NON-NLS-1$
@@ -187,9 +102,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		addField(comboEditor);
 
 		Dialog.applyDialogFont(getFieldEditorParent());
-		updateLayout(displayGroup);
 		updateLayout(perspectiveGroup);
-		updateLayout(refreshGroup);
 		getFieldEditorParent().layout(true);	
 	}
 	
@@ -233,12 +146,12 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 
 	private void updateLastRunTime(Label label) {
 		String text;
-		long mills = TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun();
+		long mills = 0;
 		if(mills == 0) {
 			String never = Policy.bind("SyncViewPreferencePage.lastRefreshRunNever"); //$NON-NLS-1$
 			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", never); //$NON-NLS-1$
 		} else {
-			Date lastTimeRun = new Date(TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun());
+			Date lastTimeRun = new Date(mills);
 			String sLastTimeRun = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun);
 			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", sLastTimeRun); //$NON-NLS-1$
 		}
@@ -255,9 +168,9 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if(event.getSource() == bkgScheduledRefresh || event.getSource() == scheduledDelay) {			
-			updateEnablements();	
-		}
+		//if(event.getSource() == bkgScheduledRefresh || event.getSource() == scheduledDelay) {			
+	//		updateEnablements();	
+	//	}
 		super.propertyChange(event);
 	}
 			
@@ -278,9 +191,9 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	}
 
 	protected void updateEnablements() {
-		boolean enabled = bkgScheduledRefresh.getBooleanValue();
-		scheduledDelay.setEnabled(enabled, refreshGroup);
-		scheduledDelay.refreshValidState();
+		//boolean enabled = bkgScheduledRefresh.getBooleanValue();
+		//scheduledDelay.setEnabled(enabled, refreshGroup);
+		//scheduledDelay.refreshValidState();
 	}
 	
 	/**

@@ -17,13 +17,11 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.OverrideAndUpdateOperation;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * Runs an update command that will prompt the user for overwritting local
@@ -34,15 +32,15 @@ public class OverrideAndUpdateAction extends CVSSubscriberAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
-	protected SyncInfoFilter getSyncInfoFilter() {
+	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
 	
-	private SyncInfoFilter getConflictingAdditionFilter() {
-		return new SyncInfoFilter.AndSyncInfoFilter(
-			new SyncInfoFilter[] {
-				new SyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}), 
-				new SyncInfoFilter.SyncInfoChangeTypeFilter(new int[] {SyncInfo.ADDITION})
+	private FastSyncInfoFilter getConflictingAdditionFilter() {
+		return new FastSyncInfoFilter.AndSyncInfoFilter(
+			new FastSyncInfoFilter[] {
+				new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}), 
+				new FastSyncInfoFilter.SyncInfoChangeTypeFilter(new int[] {SyncInfo.ADDITION})
 			});
 	}
 	

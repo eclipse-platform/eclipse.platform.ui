@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.core;
 
  
+import java.io.InputStream;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
@@ -25,6 +27,14 @@ import org.eclipse.team.core.TeamException;
   */
 public interface ICVSRemoteFile extends ICVSRemoteResource, ICVSFile {
 
+	/**
+	 * Returns a stream over the contents of this remote element.
+	 * 
+	 * @param progress a progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
+	 */
+	public InputStream getContents(IProgressMonitor progress) throws TeamException;
+	
 	/**
 	 * Get the log entry for the revision the remote file represents.
 	 * This method will return null until after the getContents(IProgressMonitor)

@@ -1,0 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.ui.synchronize.viewers;
+
+
+/**
+ * Listener that gets informed when the <code>DiffNode</code> model created
+ * by the configurator is created or updated.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * @since 3.0
+ */
+public interface ISynchronizeModelChangeListener {
+	/**
+	 * Called whenever the input model shown in a diff node viewer is updated.
+	 *
+	 * @param input the root <code>DiffNode</code> of the model.
+	 */
+	public void modelChanged(SynchronizeModelElement root);
+}

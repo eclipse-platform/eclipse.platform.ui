@@ -19,11 +19,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -31,9 +29,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 public class SubscriberCommitAction extends CVSSubscriberAction {
 
@@ -42,15 +37,15 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
-	protected SyncInfoFilter getSyncInfoFilter() {
+	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING});
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncInfoSet(org.eclipse.team.internal.ui.sync.views.SyncInfo[])
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberAction#makeSyncInfoSetFromSelection(org.eclipse.team.core.synchronize.SyncInfo[])
 	 */
-	protected SyncInfoSet getFilteredSyncInfoSet(SyncInfo[] selectedResources) {
-		SyncInfoSet syncSet = super.getFilteredSyncInfoSet(selectedResources);
+	protected SyncInfoSet makeSyncInfoSetFromSelection(SyncInfo[] infos) {
+		SyncInfoSet syncSet = new SyncInfoSet(infos);
 		if (!promptForConflictHandling(syncSet)) return null;
 		try {
 			if (!promptForUnaddedHandling(syncSet)) return null;
@@ -98,7 +93,7 @@ public class SubscriberCommitAction extends CVSSubscriberAction {
 				if (!included)
 					resourcesToRemove.add(unaddedResource);
 			}
-			syncSet.removeResources((IResource[]) resourcesToRemove.toArray(new IResource[resourcesToRemove.size()]));
+			syncSet.removeAll((IResource[]) resourcesToRemove.toArray(new IResource[resourcesToRemove.size()]));
 		}
 		return true;
 	}

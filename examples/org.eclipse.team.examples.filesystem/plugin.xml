@@ -35,6 +35,62 @@
             id="org.eclipse.team.examples.filesystem.FileSystemProvider">
       </repository>
    </extension>
+   
+<!-- *************** Deployment Provider **************** -->
+   <extension
+         point="org.eclipse.team.core.deployment">
+      <deployment
+            class="org.eclipse.team.examples.filesystem.deployment.FileSystemDeploymentProvider"
+            id="org.eclipse.team.examples.filesystem.FileSystemDeploymentProvider"
+            name="%nonVersioningProvider">
+      </deployment>
+   </extension>
+
+<!-- *************** Deployment ObjectContributions **************** -->   
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IContainer"
+            adaptable="true"
+            id="org.eclipse.team.examples.filesystem.ResourceContributions">
+         <menu
+               label="Deployment Example"
+               path="additions"
+               id="example.deployment">
+            <separator name="group1"/>
+            <separator name="group2"/>
+    	 </menu>        
+         <action
+               label="Connect..."
+               tooltip="Deployment Actions"
+               menubarPath="example.deployment/group2"
+               class="org.eclipse.team.examples.filesystem.deployment.DeployAction"
+               id="org.eclipse.team.examples.filesystem.deploy">
+         </action>
+         <action
+               label="Disconnect..."
+               tooltip="Deployment Actions"
+               menubarPath="example.deployment/group2"
+               class="org.eclipse.team.examples.filesystem.deployment.UnDeployAction"
+               id="org.eclipse.team.examples.filesystem.undeploy">
+         </action>        
+         <action
+               label="Upload"
+               tooltip="Deployment Actions"
+               menubarPath="example.deployment/group1"
+               class="org.eclipse.team.examples.filesystem.deployment.NullAction"
+               id="org.eclipse.team.examples.filesystem.undeploy">
+         </action> 
+         <action
+               label="Download"
+               tooltip="Deployment Actions"
+               menubarPath="example.deployment/group1"
+               class="org.eclipse.team.examples.filesystem.deployment.NullAction"
+               id="org.eclipse.team.examples.filesystem.undeploy">
+         </action> 
+      </objectContribution>
+   </extension>
+  
 <!-- *************** POPUP MENUS **************** -->
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -82,7 +138,7 @@
                class="org.eclipse.team.examples.filesystem.ui.DisconnectAction"
                menubarPath="team.main/group2"
                id="org.eclipse.team.examples.filesystem.unmanage">
-         </action>
+         </action>         
       </objectContribution>
    </extension>
 <!-- *************** CONFIGURATION WIZARD **************** -->
@@ -114,5 +170,4 @@
          </filter>
       </page>
    </extension>
-
 </plugin>

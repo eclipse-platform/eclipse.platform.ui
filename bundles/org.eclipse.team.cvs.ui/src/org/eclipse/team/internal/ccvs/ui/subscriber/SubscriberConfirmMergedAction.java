@@ -13,16 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This action marks the local resource as merged by updating the base
@@ -33,7 +29,7 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
-	protected SyncInfoFilter getSyncInfoFilter() {
+	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING});
 	}
 
@@ -69,8 +65,8 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 			ICVSFolder parent = CVSWorkspaceRoot.getCVSFolderFor(cvsInfo.getLocal().getParent());
 			if (!parent.isCVSFolder()) {
 				// the parents must be made outgoing before the child can
-				SyncInfo parentInfo = cvsInfo.getSubscriber().getSyncInfo(parent.getIResource(), Policy.subMonitorFor(monitor, 10));
-				if (!makeOutgoing(parentInfo, Policy.subMonitorFor(monitor, 10))) {
+				SyncInfo parentInfo = cvsInfo.getSubscriber().getSyncInfo(parent.getIResource());
+				if (!makeOutgoing(parentInfo, Policy.subMonitorFor(monitor, 20))) {
 					return false;
 				}
 			}

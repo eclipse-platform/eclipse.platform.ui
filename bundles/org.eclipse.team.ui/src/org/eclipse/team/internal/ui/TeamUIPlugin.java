@@ -14,17 +14,10 @@ package org.eclipse.team.internal.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -33,24 +26,19 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
-import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
-import org.eclipse.team.internal.ui.synchronize.views.SyncViewerTableSorter;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * TeamUIPlugin is the plugin for generic, non-provider specific,
  * team UI functionality in the workbench.
  */
-public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeListener {
+public class TeamUIPlugin extends AbstractUIPlugin {
 
 	private static TeamUIPlugin instance;
 	
@@ -58,7 +46,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	public static final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
-	public static final String PT_SUBSCRIBER_MENUS = "subscriberMenus"; //$NON-NLS-1$
 	
 	// plugin id
 	public static final String PLUGIN_ID = "org.eclipse.team.ui"; //$NON-NLS-1$
@@ -66,17 +53,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	private static List propertyChangeListeners = new ArrayList(5);
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
-	private static List disposeOnShutdownImages= new ArrayList();
 	
-	private RefreshSubscriberInputJob refreshJob;
-
-	/**
-	 * Returns the job that refreshes the active subscribers in the background.
-	 */
-	public RefreshSubscriberInputJob getRefreshJob() {
-		return refreshJob;
-	}
-
 	/**
 	 * Creates a new TeamUIPlugin.
 	 * 
@@ -160,15 +137,15 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setDefault(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
-		store.setDefault(IPreferenceIds.SYNCVIEW_DELAY, 60 /* minutes */);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, SyncViewerTableSorter.COL_NAME);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
-		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, TeamSubscriberParticipant.BOTH_MODE);
+		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, SubscriberParticipant.BOTH_MODE);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES, true);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, true);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, true);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SMART_MODE_SWITCH, false);
 	}
 	
 	/**
@@ -202,18 +179,9 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
-		initializePreferences();
-		
-		getPreferenceStore().addPropertyChangeListener(this);
-		
-		// startup auto-refresh job if necessary
-		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$
-		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
-		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
-			refreshJob.setRestartOnCancel(true);
-			refreshJob.setReschedule(true);
-			refreshJob.schedule(refreshJob.getScheduleDelay());
-		}
+		initializePreferences();		
+		IAdapterFactory factory = new TeamAdapterFactory();
+		Platform.getAdapterManager().registerAdapters(factory, DiffNode.class);
 		((SynchronizeManager)TeamUI.getSynchronizeManager()).init();
 	}
 	
@@ -222,7 +190,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		disposeImages();
 		((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
 	}
 
@@ -249,16 +216,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			listener.propertyChange(event);
 		}
 	}
-
-	/**
-	 * Registers the given image for being disposed when this plug-in is shutdown.
-	 *
-	 * @param image the image to register for disposal
-	 */
-	public static void disposeOnShutdown(Image image) {
-		if (image != null)
-			disposeOnShutdownImages.add(image);
-	}
 	
 	/**
 	 * Creates an image and places it in the image registry.
@@ -279,6 +236,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		imageDescriptors.put(id, desc);
 	}
+	
 	/**
 	 * Returns the image descriptor for the given image ID.
 	 * Returns null if there is no such image.
@@ -297,6 +255,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		}
 		return (ImageDescriptor)imageDescriptors.get(id);
 	}	
+
 	/**
 	 * Convenience method to get an image descriptor for an extension
 	 * 
@@ -382,26 +341,8 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		createImageDescriptor(plugin, ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
 		
 		// Live Sync View icons
-		createImageDescriptor(plugin, ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);	
-	}
-
-	/**
-	 * Dispose of images
-	 */
-	public static void disposeImages() {
-		// Delegate to the plugin instance to avoid concurrent class loading problems
-		getPlugin().privateDisposeImages();
-	}
-	private void privateDisposeImages() {
-		if (disposeOnShutdownImages != null) {
-			Iterator i= disposeOnShutdownImages.iterator();
-			while (i.hasNext()) {
-				Image img= (Image) i.next();
-				if (!img.isDisposed())
-					img.dispose();
-			}
-			imageDescriptors= null;
-		}
+		createImageDescriptor(plugin, ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_WARNING, baseURL);		
 	}
 
 	/**
@@ -417,6 +358,16 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		return display;		
 	}
 	
+	public Image getImage(String key) {
+		Image image = getImageRegistry().get(key);
+		if(image == null) {
+			ImageDescriptor d = getImageDescriptor(key);
+			image = d.createImage();
+			getImageRegistry().put(key, image);
+		}
+		return image;
+	}
+	
 	public static void run(IRunnableWithProgress runnable) {
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
@@ -425,29 +376,5 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		} catch (InterruptedException e2) {
 			// Nothing to be done
 		}
-	}
-	
-	public void propertyChange(PropertyChangeEvent event) {		
-		// update the background sync delay
-		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_DELAY)) {
-			RefreshSubscriberJob refreshJob = getRefreshJob();
-			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
-		}
-		
-		// enable / disable the background sync job
-		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
-			RefreshSubscriberJob refreshJob = getRefreshJob();
-			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
-			boolean value = getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC);
-			if(value) {
-				refreshJob.setRestartOnCancel(true);
-				refreshJob.setReschedule(true);
-				refreshJob.schedule(refreshJob.getRefreshInterval() * 1000);				
-			} else {				
-				refreshJob.setRestartOnCancel(false /* don't restart the job */);
-				refreshJob.setReschedule(false);
-				refreshJob.cancel();				
-			}
-		}
-	}
+	}	
 }

@@ -12,15 +12,10 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
  
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.synchronize.CachedResourceVariant;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -32,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource {
+public abstract class RemoteResource extends CachedResourceVariant implements ICVSRemoteResource {
 
 	protected RemoteFolder parent;
 	protected String name;
@@ -211,5 +206,24 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 
 	public String toString() {
 		return "Remote " + (isContainer() ? "Folder: " : "File: ") + getName(); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.ResourceVariant#getUniquePath()
+	 */
+	public String getCachePath() {
+		ICVSRepositoryLocation location = getRepository();
+		IPath path = new Path(location.getHost());
+		path = path.append(location.getRootDirectory());
+		path = path.append(parent.getRepositoryRelativePath());
+		path = path.append(getName() + ' ' + getContentIdentifier());
+		return path.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.ResourceVariant#getCacheId()
+	 */
+	protected String getCacheId() {
+		return CVSProviderPlugin.ID;
 	}
 }

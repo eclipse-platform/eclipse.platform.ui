@@ -31,15 +31,13 @@ public class DiffListener extends CommandOutputListener {
 			ICVSRepositoryLocation location, 
 			ICVSFolder commandRoot,
 			IProgressMonitor monitor) {
-		// ignore any server messages	
-		if (getServerMessage(line, location) == null) {
-			// Ensure that the line doesn't end with a CR.
-			// This can happen if the remote file has CR/LF in it.
-			if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
-				line = line.substring(0, line.length() - 1);
-			}
-			patchStream.println(line);
+		
+		// Ensure that the line doesn't end with a CR.
+		// This can happen if the remote file has CR/LF in it.
+		if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
+			line = line.substring(0, line.length() - 1);
 		}
+		patchStream.println(line);
 		return OK;
 	}
 

@@ -15,14 +15,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber;
 
 /**
  * CVSSyncInfo
@@ -37,20 +37,26 @@ public class CVSSyncInfo extends SyncInfo {
 	private static final int PARENT_NOT_MANAGED = 3;
 	private static final int REMOTE_DOES_NOT_EXIST = 4;
 	private static final int SYNC_INFO_CONFLICTS = 5;
+	private Subscriber subscriber;
 
-	public CVSSyncInfo(IResource local, IRemoteResource base, IRemoteResource remote, TeamSubscriber subscriber, IProgressMonitor monitor) throws TeamException {
-		super(local, base, remote, subscriber, monitor);
+	public CVSSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote, Subscriber subscriber) {
+		super(local, base, remote, ((SyncTreeSubscriber)subscriber).getResourceComparator());
+		this.subscriber = subscriber;
 	}
 
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.SyncInfo#computeSyncKind(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected int calculateKind(IProgressMonitor progress) throws TeamException {
+	protected int calculateKind() throws TeamException {
 		// special handling for folders, the generic sync algorithm doesn't work well
 		// with CVS because folders are not in namespaces (e.g. they exist in all versions
 		// and branches).
 		IResource local = getLocal();
-		if(local.getType() != IResource.FILE && getSubscriber().isThreeWay()) {
+		if(local.getType() != IResource.FILE) {
 			int folderKind = SyncInfo.IN_SYNC;
 			ICVSRemoteFolder remote = (ICVSRemoteFolder)getRemote();
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
@@ -93,11 +99,11 @@ public class CVSSyncInfo extends SyncInfo {
 	
 		// 1. Run the generic sync calculation algorithm, then handle CVS specific
 		// sync cases.
-		int kind = super.calculateKind(progress);
+		int kind = super.calculateKind();
 	
 		// 2. Set the CVS specific sync type based on the workspace sync state provided
 		// by the CVS server.
-		IRemoteResource remote = getRemote();
+		IResourceVariant remote = getRemote();
 		if(remote!=null && (kind & SyncInfo.PSEUDO_CONFLICT) == 0) {
 			RemoteResource cvsRemote = (RemoteResource)remote;
 			int type = cvsRemote.getWorkspaceSyncState();
@@ -191,11 +197,15 @@ public class CVSSyncInfo extends SyncInfo {
 					// We have a conflicting change, Update the local revision
 					info.setRevision(remote.getSyncInfo().getRevision());
 				} else {
-					// We have conflictin additions.
-					// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
-					// The most important thing we get is the keyword substitution mode which must be right to perform the commit
-					remote.getContents(Policy.monitorFor(monitor));
-					info = remote.getSyncInfo().cloneMutable();
+					try {
+						// We have conflictin additions.
+						// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
+						// The most important thing we get is the keyword substitution mode which must be right to perform the commit
+						remote.getStorage(Policy.monitorFor(monitor)).getContents();
+						info = remote.getSyncInfo().cloneMutable();
+					} catch (CoreException e) {
+						TeamException.asTeamException(e);
+					}
 				}
 			} else if (getBase() != null) {
 				// We have a remote deletion. Make the local an addition
@@ -317,8 +327,8 @@ public class CVSSyncInfo extends SyncInfo {
 	}
 	
 	public String toString() {
-		IRemoteResource base = getBase();
-		IRemoteResource remote = getRemote();
+		IResourceVariant base = getBase();
+		IResourceVariant remote = getRemote();
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append("Local: "); //$NON-NLS-1$
 		result.append(getLocal().toString());

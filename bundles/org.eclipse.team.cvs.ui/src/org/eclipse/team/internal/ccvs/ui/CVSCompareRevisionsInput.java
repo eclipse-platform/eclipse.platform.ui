@@ -15,44 +15,20 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
-import org.eclipse.compare.structuremergeviewer.DiffContainer;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -280,12 +256,12 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 							if (selection.size() != 1) return;
 							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
 							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
-							ICVSRemoteResource edition = right.getRemoteResource();
+							IResourceVariant edition = (IResourceVariant)right.getRemoteResource();
 							// Do the load. This just consists of setting the local contents. We don't
 							// actually want to change the base.
 							try {
 								monitor.beginTask(null, 100);
-								InputStream in = edition.getContents(new SubProgressMonitor(monitor, 50));
+								InputStream in = edition.getStorage(new SubProgressMonitor(monitor, 50)).getContents();
 								resource.setContents(in, false, true, new SubProgressMonitor(monitor, 50));
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);

@@ -408,6 +408,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_EDITED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NO_REMOTEDIR, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_DATE, baseURL);
 		
 		// special
 		createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$
@@ -731,12 +732,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @param workingSet the working set to be assigned to the participant (can be <code>null</code>)
 	 * @param mode the mode to place the participant in (can be 0)
 	 */
-	public static void showInSyncView(Shell shell, IResource[] resources, IWorkingSet workingSet, int mode) {
+	public static void showInSyncView(Shell shell, IResource[] resources, int mode) {
 		ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage(null);
 		if(view != null) {
 			WorkspaceSynchronizeParticipant cvsPage = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
 			view.display(cvsPage);
-			cvsPage.setWorkingSet(workingSet);
 			if (resources != null) {
 				cvsPage.refreshWithRemote(resources);
 			}

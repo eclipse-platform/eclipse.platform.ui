@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -31,7 +32,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 /**
  * This class tests the CVSWorkspaceSubscriber
@@ -153,7 +153,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		
 		registerSubscriberListener();
 		super.addResources(resources);
-		TeamDelta[] changes = deregisterSubscriberListener();
+		ISubscriberChangeEvent[] changes = deregisterSubscriberListener();
 		assertSyncChangesMatch(changes, (IResource[]) affected.toArray(new IResource[affected.size()]));
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -178,7 +178,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IResource[] affected = collect(resources, new ResourceCondition(), IResource.DEPTH_INFINITE);
 		registerSubscriberListener();
 		super.deleteResources(resources);
-		TeamDelta[] changes = deregisterSubscriberListener();
+		ISubscriberChangeEvent[] changes = deregisterSubscriberListener();
 		assertSyncChangesMatch(changes, affected);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -191,7 +191,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
-	private TeamDelta[] deregisterSubscriberListener() throws TeamException {
+	private ISubscriberChangeEvent[] deregisterSubscriberListener() throws TeamException {
 		return deregisterSubscriberListener(getSubscriber());
 	}
 
@@ -207,7 +207,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 			}, IResource.DEPTH_INFINITE);
 		registerSubscriberListener();
 		super.commitResources(resources, depth);
-		TeamDelta[] changes = deregisterSubscriberListener();
+		ISubscriberChangeEvent[] changes = deregisterSubscriberListener();
 		assertSyncChangesMatch(changes, affected);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -228,7 +228,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 			}, IResource.DEPTH_INFINITE);
 		registerSubscriberListener();
 		super.unmanageResources(resources);
-		TeamDelta[] changes = deregisterSubscriberListener();
+		ISubscriberChangeEvent[] changes = deregisterSubscriberListener();
 		assertSyncChangesMatch(changes, affected);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -915,48 +915,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC,
 				SyncInfo.IN_SYNC});
 	}
-	
-	/* 
-	 * Test changes using a granularity of contents
-	 */
-	 public void testGranularityContents() throws TeamException, CoreException, IOException {
-		// Create a test project (which commits it as well)
-		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-		
-		// Checkout a copy and make some modifications
-		IProject copy = checkoutCopy(project, "-copy");
-		appendText(copy.getFile("file1.txt"), "same text", false);
-		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), " unique text"); // whitespace difference
-		commitProject(copy);
-
-		// Make the same modifications to the original
-		appendText(project.getFile("file1.txt"), "same text", false);
-		setContentsAndEnsureModified(project.getFile("folder1/a.txt"), "unique text"); // whitespace difference
-		
-		// Get the sync tree for the project
-		String oldId = getSubscriber().getCurrentComparisonCriteria().getId();
-		try {
-			getSubscriber().setCurrentComparisonCriteria(ContentComparisonCriteria.ID_DONTIGNORE_WS);
-			assertSyncEquals("testGranularityContents", project, 
-				new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
-				true, new int[] {
-					SyncInfo.IN_SYNC,
-					SyncInfo.IN_SYNC,
-					SyncInfo.CONFLICTING | SyncInfo.CHANGE });
-			getSubscriber().setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
-			// TODO: Should not need to reset after a comparison criteria change (bug 46678)
-			getSyncInfoSource().reset(getSubscriber());
-			assertSyncEquals("testGranularityContents", project, 
-					new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
-					true, new int[] {
-						SyncInfo.IN_SYNC,
-						SyncInfo.IN_SYNC,
-						SyncInfo.IN_SYNC });
-		} finally {
-			getSubscriber().setCurrentComparisonCriteria(oldId);
-		}
-
-	 }
 	 
 	 public void testSyncOnBranch() throws TeamException, CoreException, IOException {
 	 	

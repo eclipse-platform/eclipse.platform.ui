@@ -63,7 +63,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
+				public boolean visit(IResourceDelta delta) {
 					IResource resource = delta.getResource();
 					
 					if (resource.getType()==IResource.PROJECT) {
@@ -162,10 +162,8 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 				IFile file = (IFile)mFile.getIResource();
 				file.setSessionProperty(UPDATE_TIMESTAMP, new Long(file.getModificationStamp()));
 			}
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(CVSException.wrapException(e));
+			CVSProviderPlugin.log(e);
 		}
 	}
 	
@@ -173,7 +171,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 * Handle added and changed resources by signaling the change to the corresponding
 	 * CVS resource and recording the change for broadcast to interested listeners.
 	 */
-	/* private */void resourceChanged(IResource resource, boolean addition) throws CoreException {
+	/* private */void resourceChanged(IResource resource, boolean addition) {
 		if (isCleanUpdate(resource)) return;
 		try {
 			EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
@@ -182,7 +180,8 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 				modifiedResources.add(resource);
 			}
 		} catch (CVSException e) {
-			throw e.toCoreException();
+			// Log the exception and continue
+			CVSProviderPlugin.log(e);
 		}
 	}
 

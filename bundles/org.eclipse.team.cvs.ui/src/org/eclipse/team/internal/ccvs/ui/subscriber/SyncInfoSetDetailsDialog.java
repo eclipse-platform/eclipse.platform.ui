@@ -12,24 +12,16 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -189,7 +181,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	protected void filterSyncSet() {
 		// Keep only the checked resources
 		if (selectedResources != null) {
-			getSyncSet().selectNodes(new SyncInfoFilter() {
+			getSyncSet().selectNodes(new FastSyncInfoFilter() {
 				public boolean select(SyncInfo info) {
 					IResource local = info.getLocal();
 					for (int i = 0; i < selectedResources.length; i++) {

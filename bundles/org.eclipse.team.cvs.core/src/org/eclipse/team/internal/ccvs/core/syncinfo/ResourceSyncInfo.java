@@ -41,7 +41,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * D/src////
  *  
  * @see MutableResourceSyncInfo
- * @see ICVSResource#getSyncInfo()
+ * @see ICVSResource#getSyncInfos()
  */
 public class ResourceSyncInfo {
 		

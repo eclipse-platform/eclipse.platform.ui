@@ -172,7 +172,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return "Downloading folder {0}" + getRemoteFolders()[0].getName();
+		return Policy.bind("CheckoutToRemoteFolderOperation.0", getRemoteFolders()[0].getName()); //$NON-NLS-1$
 	}
 	
 	protected IStatus checkout(final ICVSRemoteFolder resource, final ICVSFolder sandbox, IProgressMonitor pm) throws CVSException {

@@ -11,43 +11,14 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Request;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -437,80 +408,11 @@ public class CVSWorkspaceRoot {
 		}
 		return remote;
 	}
-	
-	public static IRemoteSyncElement getRemoteSyncTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
-		ICVSRemoteResource baseTree = null;
-		
-		// The resource doesn't have a remote base. 
-		// However, we still need to check to see if its been created remotely by a third party.
-		if(resource.getType() == IResource.FILE) {
-			baseTree = remote;
-			ICVSRepositoryLocation location;
-			if (remote == null) {
-				// If there's no base for the file, get the repository location from the parent
-				ICVSRemoteResource parent = CVSWorkspaceRoot.getRemoteResourceFor(resource.getParent());
-				if (parent == null) {
-					throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
-				}
-				location = parent.getRepository();
-			} else {
-				location = remote.getRepository();
-			}
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
-		} else {
-			if (remote == null) {
-				remote = getRemoteTreeFromParent(resource, managed, tag, progress);
-			} else {
-				ICVSRepositoryLocation location = remote.getRepository();
-				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
-				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
-			}
-		}
-		return new CVSRemoteSyncElement(true /*three way*/, resource, baseTree, remote);
-	}
-	
-	/**
-	 * Sync the given unshared project with the given repository and module.
-	 */
-	public static IRemoteSyncElement getRemoteSyncTree(IProject project, ICVSRepositoryLocation location, String moduleName, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		if (CVSWorkspaceRoot.getCVSFolderFor(project).isCVSFolder()) {
-			return getRemoteSyncTree(project, tag, progress);
-		} else {
-			progress.beginTask(null, 100);
-			RemoteFolder folder = new RemoteFolder(null, location, moduleName, tag);
-			RemoteFolderTree remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, folder.getTag(), Policy.subMonitorFor(progress, 80));
-			CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
-			tree.makeFoldersInSync(Policy.subMonitorFor(progress, 10));
 
-			RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
-
-			progress.done();
-			return tree;
-		}
-	}
-	
-	public static IRemoteSyncElement getRemoteSyncTree(IProject project, IResource[] resources, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(project);
-		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(project);
-		if (remote == null) {
-			return new CVSRemoteSyncElement(true /*three way*/, project, null, null);
-		}
-		ArrayList cvsResources = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			cvsResources.add(CVSWorkspaceRoot.getCVSResourceFor(resources[i]));
-		}
-		CVSRepositoryLocation location = (CVSRepositoryLocation)remote.getRepository();
-		ICVSRemoteResource base = RemoteFolderTreeBuilder.buildBaseTree(location, (ICVSFolder)managed, tag, progress);
-		remote = RemoteFolderTreeBuilder.buildRemoteTree(location, (ICVSFolder)managed, (ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]), tag, progress);
-		return new CVSRemoteSyncElement(true /*three way*/, project, base, remote);
-	}
-	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		return getRemoteTree(resource, tag, false /* cache file contents hint */, progress);
 	}
-
+	
 	/**
 	 * Return the remote tree that corresponds to the given local resource. Return
 	 * <code>null</code> if the remote tree doesn't exist remotely or if the local
@@ -531,9 +433,8 @@ public class CVSWorkspaceRoot {
 			remote = getRemoteTreeFromParent(resource, managed, tag, Policy.subMonitorFor(progress, 50));
 			if (cacheFileContentsHint && remote != null && remote instanceof RemoteFile) {
 				RemoteFile file = (RemoteFile)remote;
-				if (!file.isContentsCached()) {
-					file.fetchContents(Policy.subMonitorFor(progress, 50));
-				}
+				// get the storage for the file to ensure that the contents are cached
+				file.getStorage(Policy.subMonitorFor(progress, 50));
 			}
 			progress.done();
 		} else if(resource.getType() == IResource.FILE) {

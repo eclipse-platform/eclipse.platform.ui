@@ -10,35 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.RemoteContentsCache;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -47,10 +24,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.BuildCleanupListener;
-import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
-import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.util.*;
 
 public class CVSProviderPlugin extends Plugin {
 	
@@ -79,7 +53,7 @@ public class CVSProviderPlugin extends Plugin {
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
 	
-	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName("org.eclipse.team.cvs.ui.cvsworkspace-participant", "syncparticipant"); //$NON-NLS-1$
+	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName("org.eclipse.team.cvs.ui.cvsworkspace-participant", "syncparticipant"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
@@ -321,8 +295,6 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
 		
-		RemoteContentsCache.enableCaching(ID);
-		
 		getCVSWorkspaceSubscriber();
 	}
 	
@@ -345,8 +317,6 @@ public class CVSProviderPlugin extends Plugin {
 		// remove all of this plugin's save participants. This is easier than having
 		// each class that added itself as a participant to have to listen to shutdown.
 		workspace.removeSaveParticipant(this);
-		
-		RemoteContentsCache.disableCache(ID);
 		
 		deleteCrashFile();
 	}
@@ -761,7 +731,4 @@ public class CVSProviderPlugin extends Plugin {
 		return crash;
 	}
 	
-	public RemoteContentsCache getRemoteContentsCache() {
-		return RemoteContentsCache.getCache(CVSProviderPlugin.ID);
-	}
 }

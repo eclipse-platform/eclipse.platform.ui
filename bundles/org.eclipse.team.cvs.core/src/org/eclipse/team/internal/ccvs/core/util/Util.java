@@ -409,6 +409,7 @@ public class Util {
 	 * @return boolean
 	 */
 	public static boolean equals(byte[] syncBytes, byte[] oldBytes) {
+		if (syncBytes == null || oldBytes == null) return syncBytes == oldBytes;
 		if (syncBytes.length != oldBytes.length) return false;
 		for (int i = 0; i < oldBytes.length; i++) {
 			if (oldBytes[i] != syncBytes[i]) return false;

@@ -10,27 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.jobs;
 
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.*;
 
 /**
- * This class will show a busy cursor over a control when jobs of a particular type
- * are running.
+ * This is temporary until the UI adds support for this directly into views.
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=51991
  */
-public class JobBusyCursor implements IJobListener {
+public class JobBusyCursor {
 
 	private Composite composite;
 	private Cursor waitCursor;
-	private QualifiedName jobType;
 
-	public JobBusyCursor(Composite composite, QualifiedName jobType) {
+	public JobBusyCursor(Composite composite) {
 		this.composite = composite;
-		this.jobType = jobType;
-		synchronized (this) {
-			JobStatusHandler.addJobListener(this, jobType);
-		}
 	}
 	
 	private Cursor getWaitCursor() {
@@ -73,30 +67,16 @@ public class JobBusyCursor implements IJobListener {
 		if (waitCursor != null) {
 			waitCursor.dispose();
 		}
-		JobStatusHandler.removeJobListener(this, jobType);
-	}
-
-	private void showBusyCursor() {
-		showCursor(getWaitCursor());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.jobs.IJobListener#started(org.eclipse.core.runtime.QualifiedName)
-	 */
-	public void started(QualifiedName jobType) {
-		showBusyCursor();
+	public void started() {
+		showCursor(getWaitCursor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.jobs.IJobListener#finished(org.eclipse.core.runtime.QualifiedName)
-	 */
-	public void finished(QualifiedName jobType) {
+	public void finished() {
 		showCursor(null);
 	}
 
-	/**
-	 * @return Returns the control.
-	 */
 	public Composite getComposite() {
 		return composite;
 	}

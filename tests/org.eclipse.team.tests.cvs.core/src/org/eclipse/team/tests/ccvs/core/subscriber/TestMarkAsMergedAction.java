@@ -11,8 +11,8 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 
 class TestMarkAsMergedAction extends SubscriberConfirmMergedAction {

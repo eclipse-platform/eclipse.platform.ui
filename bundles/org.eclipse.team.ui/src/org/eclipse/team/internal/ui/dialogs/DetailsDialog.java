@@ -18,11 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A simple superclass for detail button dialogs.
@@ -117,10 +113,20 @@ abstract public class DetailsDialog extends Dialog {
 		if (includeCancelButton()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		}
-		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
+		if(includeDetailsButton()) {
+			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, getDetailsButtonLabelShow(), false);
+		}
 		updateEnablements();
 	}
 
+	protected String getDetailsButtonLabelShow() {
+		return IDialogConstants.SHOW_DETAILS_LABEL;
+	}
+	
+	protected String getDetailsButtonLabelHide() {
+		return IDialogConstants.HIDE_DETAILS_LABEL;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 * Creates and returns the contents of the upper part 
@@ -150,7 +156,7 @@ abstract public class DetailsDialog extends Dialog {
 			label.setImage(image);
 			label.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_CENTER |
-				GridData.VERTICAL_ALIGN_CENTER));
+				GridData.VERTICAL_ALIGN_BEGINNING));
 				
 			// add a composite to the right to contain the custom components
 			Composite right = new Composite(top, SWT.NONE);
@@ -166,11 +172,13 @@ abstract public class DetailsDialog extends Dialog {
 			createMainDialogArea(composite);
 		}
 		
-		errorMessageLabel = new Label(composite, SWT.NONE);
-		errorMessageLabel.setLayoutData(new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.HORIZONTAL_ALIGN_FILL));
-		errorMessageLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+		if(includeErrorMessage()) {
+			errorMessageLabel = new Label(composite, SWT.NONE);
+			errorMessageLabel.setLayoutData(new GridData(
+				GridData.GRAB_HORIZONTAL |
+				GridData.HORIZONTAL_ALIGN_FILL));
+			errorMessageLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+		}
 		
         Dialog.applyDialogFont(parent);
 		return composite;
@@ -202,11 +210,11 @@ abstract public class DetailsDialog extends Dialog {
 		if (detailsCreated) {
 			detailsComposite.dispose();
 			detailsCreated = false;
-			detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
+			detailsButton.setText(getDetailsButtonLabelShow());
 		} else {
 			detailsComposite = createDropDownDialogArea((Composite)getContents());
 			detailsCreated = true;
-			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
+			detailsButton.setText(getDetailsButtonLabelHide());
 		}
         Dialog.applyDialogFont(getContents());
 		Point newSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -286,5 +294,13 @@ abstract public class DetailsDialog extends Dialog {
 	
 	protected boolean isDetailsVisible() {
 		return detailsCreated;
+	}
+	
+	protected boolean includeErrorMessage() {
+		return true;
+	}
+	
+	protected boolean includeDetailsButton() {
+		return true;
 	}
 }

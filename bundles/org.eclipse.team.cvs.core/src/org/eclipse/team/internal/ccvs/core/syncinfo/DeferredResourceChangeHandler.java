@@ -15,9 +15,9 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.BackgroundEventHandler;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.core.BackgroundEventHandler;
 
 /**
  * This class handles resources changes that are reported in deltas
@@ -25,23 +25,13 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
  */
 public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 
+	public DeferredResourceChangeHandler() {
+		super(Policy.bind("DeferredResourceChangeHandler.0"), Policy.bind("DeferredResourceChangeHandler.1")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	private static final int IGNORE_FILE_CHANGED = 1;
 	
 	private Set changedIgnoreFiles = new HashSet();
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#getName()
-	 */
-	public String getName() {
-		return Policy.bind("DeferredResourceChangeHandler.0"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#getErrorsTitle()
-	 */
-	public String getErrorsTitle() {
-		return Policy.bind("DeferredResourceChangeHandler.1"); //$NON-NLS-1$
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#processEvent(org.eclipse.team.core.subscribers.BackgroundEventHandler.Event, org.eclipse.core.runtime.IProgressMonitor)
@@ -64,13 +54,13 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void ignoreFileChanged(IFile file) {
-		queueEvent(new Event(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO));
+		queueEvent(new Event(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
 	 */
-	protected void dispatchEvents() throws TeamException {
+	protected void dispatchEvents(IProgressMonitor monitor) throws TeamException {
 		EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
 		changedIgnoreFiles.clear();
 	}

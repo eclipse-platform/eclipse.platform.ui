@@ -250,7 +250,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		gd = new GridData(); 
 		gd.horizontalAlignment = GridData.END;
 		fTitleImage.setLayoutData(gd);
-	
+		updateMessage();
 		return fTitleArea;
 	}
 

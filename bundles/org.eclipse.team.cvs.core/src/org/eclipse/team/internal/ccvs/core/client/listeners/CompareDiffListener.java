@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class interprets the output of "cvs diff --brief ..." in order to get the revisions
@@ -34,11 +35,11 @@ public class CompareDiffListener extends CommandOutputListener {
 	static {
 		try {
 			LOCAL_FILE_MATCHER = new ServerMessageLineMatcher(
-				"Index: (localFile:.*:localFile)", new String[] {"localFile"});
+				"Index: (localFile:.*:localFile)", new String[] {"localFile"}); //$NON-NLS-1$ //$NON-NLS-2$
 			REMOTE_FILE_MATCHER = new ServerMessageLineMatcher(
-				"RCS file: (remoteFile:.*:remoteFile),v", new String[] {"remoteFile"});
+				"RCS file: (remoteFile:.*:remoteFile),v", new String[] {"remoteFile"}); //$NON-NLS-1$ //$NON-NLS-2$
 			REVISION_LINE_MATCHER = new ServerMessageLineMatcher(
-				"diff .* -r(leftRevision:.*:leftRevision) -r(rightRevision:.*:rightRevision)", new String[] {"leftRevision", "rightRevision"});
+				"diff .* -r(leftRevision:.*:leftRevision) -r(rightRevision:.*:rightRevision)", new String[] {"leftRevision", "rightRevision"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (CVSException e) {
 			// This is serious as the listener will not function properly
 			CVSProviderPlugin.log(e);
@@ -75,20 +76,20 @@ public class CompareDiffListener extends CommandOutputListener {
 		}
 		Map map = LOCAL_FILE_MATCHER.processServerMessage(line);
 		if (map != null) {
-			localFilePath = (String)map.get("localFile");
+			localFilePath = (String)map.get("localFile"); //$NON-NLS-1$
 			return OK;
 		}
 		map = REMOTE_FILE_MATCHER.processServerMessage(line);
 		if (map != null) {
-			remoteFilePath = (String)map.get("remoteFile");
+			remoteFilePath = (String)map.get("remoteFile"); //$NON-NLS-1$
 			return OK;
 		}
 		map = REVISION_LINE_MATCHER.processServerMessage(line);
 		if (map != null) {
-			leftRevision = (String)map.get("leftRevision");
-			rightRevision = (String)map.get("rightRevision");
+			leftRevision = (String)map.get("leftRevision"); //$NON-NLS-1$
+			rightRevision = (String)map.get("rightRevision"); //$NON-NLS-1$
 			if (localFilePath == null || remoteFilePath == null) {
-				return new CVSStatus(IStatus.ERROR, "Unsupported message sequence received while comparing using CVS diff command");
+				return new CVSStatus(IStatus.ERROR, Policy.bind("CompareDiffListener.11")); //$NON-NLS-1$
 			}
 			listener.fileDiff(localFilePath, remoteFilePath, leftRevision, rightRevision);
 			localFilePath = remoteFilePath = leftRevision = rightRevision  = null;
@@ -99,7 +100,7 @@ public class CompareDiffListener extends CommandOutputListener {
 	}
 
 	private IStatus handleUnknownDiffFormat(String line) {
-		return new CVSStatus(IStatus.ERROR, "Unknown message format received while comparing using CVS diff command: {0}" + line);
+		return new CVSStatus(IStatus.ERROR, Policy.bind("CompareDiffListener.12", line)); //$NON-NLS-1$
 	}
 
 	public IStatus errorLine(

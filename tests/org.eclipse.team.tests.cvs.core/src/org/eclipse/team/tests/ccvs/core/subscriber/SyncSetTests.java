@@ -13,16 +13,13 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoSet;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 
@@ -47,11 +44,11 @@ public class SyncSetTests extends CVSSyncSubscriberTest {
 	}
 
 	class TestSyncInfo extends SyncInfo {
-		protected int calculateKind(IProgressMonitor progress) throws TeamException {
+		protected int calculateKind() throws TeamException {
 				return 0;
 		}
 		public TestSyncInfo() throws TeamException {
-			super(ResourcesPlugin.getWorkspace().getRoot(), null, null, null, null);
+			super(ResourcesPlugin.getWorkspace().getRoot(), null, null, null);
 		}
 	}
 
@@ -60,7 +57,7 @@ public class SyncSetTests extends CVSSyncSubscriberTest {
 	 * that doesn't validate the actual contents of the sync set.
 	 */
 	public void testConcurrentAccessToSyncSet() throws Throwable {
-		final SyncSet set = new SyncSet();
+		final SubscriberSyncInfoSet set = new SubscriberSyncInfoSet(null);
 		final boolean[] done = {false};
 		final IStatus[] error = {null};
 		
@@ -70,9 +67,9 @@ public class SyncSetTests extends CVSSyncSubscriberTest {
 					while(! done[0]) {
 						try {
 							set.add(new TestSyncInfo());
-							set.getOutOfSyncDescendants(ResourcesPlugin.getWorkspace().getRoot());
+							set.getSyncInfos(ResourcesPlugin.getWorkspace().getRoot(), IResource.DEPTH_INFINITE);
 							set.getSyncInfo(ResourcesPlugin.getWorkspace().getRoot());
-							set.allMembers();
+							set.getSyncInfos();
 						} catch (Exception e) {
 							error[0] = new Status(IStatus.ERROR, "this", 1, "", e);
 							return error[0];						
@@ -95,11 +92,11 @@ public class SyncSetTests extends CVSSyncSubscriberTest {
 		
 		for(int i = 0; i < 10000; i++) {
 			set.add(new TestSyncInfo());
-			set.getOutOfSyncDescendants(ResourcesPlugin.getWorkspace().getRoot());
+			set.getSyncInfos(ResourcesPlugin.getWorkspace().getRoot(), IResource.DEPTH_INFINITE);
 			set.getSyncInfo(ResourcesPlugin.getWorkspace().getRoot());
-			set.allMembers();
+			set.getSyncInfos();
 			set.members(ResourcesPlugin.getWorkspace().getRoot());
-			set.reset();		
+			set.clear();		
 		}
 		done[0] = true;
 		if(error[0] != null) {

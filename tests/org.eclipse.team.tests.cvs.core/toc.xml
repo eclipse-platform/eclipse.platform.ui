@@ -60,5 +60,17 @@
                 <topic label="General use" href="html/00032.html">
                 </topic>
             </topic>
+            <topic label="Annotate" href="html/00033.html">
+                <topic label="Show Annotation Action" href="html/00034.html">
+                </topic>
+            </topic>
+            <topic label="Label Decorations" href="html/00035.html">
+                <topic label="Enablement at startup" href="html/00036.html">
+                </topic>
+                <topic label="Customizations" href="html/00037.html">
+                </topic>
+                <topic label="Decorations in the Synchronize pages" href="html/00038.html">
+                </topic>
+            </topic>
         </topic>
 </toc>

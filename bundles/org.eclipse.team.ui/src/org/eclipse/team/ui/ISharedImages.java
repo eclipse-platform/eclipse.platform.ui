@@ -73,9 +73,9 @@ public interface ISharedImages {
 	
 	 //objects
 	 public final String IMG_SITE_ELEMENT = "clcl16/site_element.gif"; //$NON-NLS-1$
-	 public final String IMG_CHANGE_FILTER = "clcl16/change_filter.gif"; //$NON-NLS-1$
-	 
-	 // TODO: I just picked an image. We should get a custom image
+	 public final String IMG_CHANGE_FILTER = "clcl16/change_filter.gif"; //$NON-NLS-1$	 
 	 public final String IMG_COMPRESSED_FOLDER = "obj/compressed_folder_obj.gif"; //$NON-NLS-1$
+	 public final String IMG_WARNING = "ovr/warning_co.gif"; //$NON-NLS-1$
+	 
 }
 

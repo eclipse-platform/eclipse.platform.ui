@@ -16,15 +16,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -50,11 +44,11 @@ public class ReconcileProjectOperation extends CVSOperation {
 			monitor.beginTask(null, 300);
 			ICVSRemoteFolder remote = CheckoutToRemoteFolderOperation.checkoutRemoteFolder(getShell(), folder, Policy.subMonitorFor(monitor, 100));
 			// TODO: make -in-sync should also be done by the subscriber
-			makeFoldersInSync(project, remote, Policy.subMonitorFor(monitor, 100));
-			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().setRemote(project, remote,Policy.subMonitorFor(monitor, 100));
+//			makeFoldersInSync(project, remote, Policy.subMonitorFor(monitor, 100));
+			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().setRemote(project, (IResourceVariant)remote, Policy.subMonitorFor(monitor, 100));
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					CVSUIPlugin.showInSyncView(getShell(), null, null, 0 /* no mode in particular */);
+					CVSUIPlugin.showInSyncView(getShell(), null, 0 /* no mode in particular */);
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -67,31 +61,30 @@ public class ReconcileProjectOperation extends CVSOperation {
 
 	}
 
-	/**
-	 * Sync the given unshared project with the given repository and module.
-	 */
-	public IRemoteSyncElement makeFoldersInSync(final IProject project, ICVSRemoteFolder remote, IProgressMonitor progress) throws TeamException {
-		final CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
-		CVSWorkspaceRoot.getCVSFolderFor(project).run(new ICVSRunnable() {
-			public void run(IProgressMonitor monitor) throws CVSException {
-				monitor.beginTask(null, 100);
-				try {
-					tree.makeFoldersInSync(Policy.subMonitorFor(monitor, 100));
-					RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
-				} catch (TeamException e) {
-					throw CVSException.wrapException(e);
-				}
-				monitor.done();
-			}
-		}, progress);
-		return tree;
-	}
+//	/**
+//	 * Sync the given unshared project with the given repository and module.
+//	 */
+//	public void makeFoldersInSync(final IProject project, ICVSRemoteFolder remote, IProgressMonitor progress) throws TeamException {
+//		final CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
+//		CVSWorkspaceRoot.getCVSFolderFor(project).run(new ICVSRunnable() {
+//			public void run(IProgressMonitor monitor) throws CVSException {
+//				monitor.beginTask(null, 100);
+//				try {
+//					tree.makeFoldersInSync(Policy.subMonitorFor(monitor, 100));
+//					RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+//				} catch (TeamException e) {
+//					throw CVSException.wrapException(e);
+//				}
+//				monitor.done();
+//			}
+//		}, progress);
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return "Reconciling project {0} with remote folder {1}" + project.getName() + folder.getRepositoryRelativePath();
+		return Policy.bind("ReconcileProjectOperation.0", project.getName(), folder.getRepositoryRelativePath()); //$NON-NLS-1$
 	}
 
 }

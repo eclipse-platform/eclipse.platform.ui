@@ -46,7 +46,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 
 	/**
 	 * Returns the runnableContext.
-	 * @return IRunnableContext
+	 * @return ITeamRunnableContext
 	 */
 	public IRunnableContext getRunnableContext() {
 		if (runnableContext == null) {

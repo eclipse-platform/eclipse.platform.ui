@@ -11,11 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -23,22 +19,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.AndSyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -59,7 +48,7 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 		try {
 			if(! promptIfNeeded(syncSet)) return;
 			// First, remove any known failure cases
-			SyncInfoFilter failFilter = getKnownFailureCases();
+			FastSyncInfoFilter failFilter = getKnownFailureCases();
 			SyncInfo[] willFail = syncSet.getNodes(failFilter);
 			syncSet.rejectNodes(failFilter);
 			skippedFiles.clear();
@@ -75,9 +64,9 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 			final SyncInfoSet failedSet = createFailedSet(syncSet, willFail, (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]));
 			
 			// Remove all these from the original sync set
-			syncSet.rejectNodes(new SyncInfoFilter() {
+			syncSet.rejectNodes(new FastSyncInfoFilter() {
 				public boolean select(SyncInfo info) {
-					return failedSet.getNodeFor(info.getLocal()) != null;
+					return failedSet.getSyncInfo(info.getLocal()) != null;
 				}
 			});
 						
@@ -87,7 +76,9 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 					// Ask the user if a replace should be performed on the remaining nodes
 					if(promptForOverwrite(failedSet)) {
 						overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
-						syncSet.addAll(failedSet);
+						if (!failedSet.isEmpty()) {
+							syncSet.addAll(failedSet);
+						}
 					}
 				} else {
 					// Warn the user that some nodes could not be updated. This can happen if there are
@@ -211,24 +202,24 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	 * Return a filter which selects the cases that we know ahead of time
 	 * will fail on an update
 	 */
-	protected SyncInfoFilter getKnownFailureCases() {
-		return new OrSyncInfoFilter(new SyncInfoFilter[] {
+	protected FastSyncInfoFilter getKnownFailureCases() {
+		return new OrSyncInfoFilter(new FastSyncInfoFilter[] {
 			// Conflicting additions of files will fail
-			new AndSyncInfoFilter(new SyncInfoFilter[] {
-				SyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.ADDITION),
-				new SyncInfoFilter() {
+			new AndSyncInfoFilter(new FastSyncInfoFilter[] {
+				FastSyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.ADDITION),
+				new FastSyncInfoFilter() {
 					public boolean select(SyncInfo info) {
 						return info.getLocal().getType() == IResource.FILE;
 					}
 				}
 			}),
 			// Conflicting changes involving a deletion on one side will aways fail
-			new AndSyncInfoFilter(new SyncInfoFilter[] {
-				SyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
-				new SyncInfoFilter() {
+			new AndSyncInfoFilter(new FastSyncInfoFilter[] {
+				FastSyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
+				new FastSyncInfoFilter() {
 					public boolean select(SyncInfo info) {
-						IRemoteResource remote = info.getRemote();
-						IRemoteResource base = info.getBase();
+						IResourceVariant remote = info.getRemote();
+						IResourceVariant base = info.getBase();
 						if (info.getLocal().exists()) {
 							// local != base and no remote will fail
 							return (base != null && remote == null);
@@ -241,9 +232,9 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 			}),
 			// Conflicts where the file type is binary will work but are not merged
 			// so they should be skipped
-			new AndSyncInfoFilter(new SyncInfoFilter[] {
-				SyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
-				new SyncInfoFilter() {
+			new AndSyncInfoFilter(new FastSyncInfoFilter[] {
+				FastSyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
+				new FastSyncInfoFilter() {
 					public boolean select(SyncInfo info) {
 						IResource local = info.getLocal();
 						if (local.getType() == IResource.FILE) {
@@ -276,7 +267,7 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 		List result = new ArrayList();
 		for (int i = 0; i < files.length; i++) {
 			IFile file = files[i];
-			SyncInfo resource = syncSet.getNodeFor(file);
+			SyncInfo resource = syncSet.getSyncInfo(file);
 			if (resource != null) result.add(resource);
 		}
 		for (int i = 0; i < willFail.length; i++) {
@@ -293,7 +284,7 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 		final int[] result = new int[] {Dialog.CANCEL};
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(shell, 
+				MessageDialog.openInformation(getShell(), 
 								Policy.bind("SafeUpdateAction.warnFilesWithConflictsTitle"), //$NON-NLS-1$
 								Policy.bind("SafeUpdateAction.warnFilesWithConflictsDescription")); //$NON-NLS-1$
 			}
@@ -366,8 +357,8 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 			TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
 					String sizeString = Integer.toString(set.size());
-					String message = set.size() > 1 ? Policy.bind("UpdateAction.promptForUpdateSeveral", sizeString) : Policy.bind("UpdateAction.promptForUpdateOne", sizeString);
-					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("UpdateAction.promptForUpdateTitle", sizeString), message); 					
+					String message = set.size() > 1 ? Policy.bind("UpdateAction.promptForUpdateSeveral", sizeString) : Policy.bind("UpdateAction.promptForUpdateOne", sizeString); //$NON-NLS-1$ //$NON-NLS-2$
+					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("UpdateAction.promptForUpdateTitle", sizeString), message); 					 //$NON-NLS-1$
 				}
 			});
 		}

@@ -59,7 +59,7 @@ public class KeyboardInteractiveDialog extends Dialog {
     this.instruction=instruction;
     this.prompt=prompt;
     this.echo=echo;
-    this.message=Policy.bind("KeyboradInteractiveDialog.message", destination+(name!=null && name.length()>0 ? ": "+name : "")); //NON-NLS-1$
+    this.message=Policy.bind("KeyboradInteractiveDialog.message", destination+(name!=null && name.length()>0 ? ": "+name : "")); //NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
   /**
    * @see Window#configureShell
@@ -96,7 +96,7 @@ public class KeyboardInteractiveDialog extends Dialog {
     }
     if(domain!=null){
       Label label = new Label(main, SWT.WRAP);
-      label.setText(Policy.bind("KeyboardInteractiveDialog.labelRepository", domain));
+      label.setText(Policy.bind("KeyboardInteractiveDialog.labelRepository", domain)); //$NON-NLS-1$
       GridData data=new GridData(GridData.FILL_HORIZONTAL);
       data.horizontalSpan=3;
       label.setLayoutData(data);

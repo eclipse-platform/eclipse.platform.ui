@@ -927,10 +927,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// remove the program name and the space
 			message = message.substring(firstSpace + 1);
 			// Quick fix to handle changes in server message format (see Bug 45138)
-			if (prefix.startsWith("[")) {
+			if (prefix.startsWith("[")) { //$NON-NLS-1$
 				// This is the server aborted message
 				// Remove the pattern "[command_name aborted]: "
-				int closingBracket = message.indexOf("]: ");
+				int closingBracket = message.indexOf("]: "); //$NON-NLS-1$
 				if (closingBracket == -1) return null;
 				// get what is inside the brackets
 				String realPrefix = message.substring(1, closingBracket);
@@ -938,7 +938,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				int space = realPrefix.indexOf(' ');
 				if (space == -1) return null;
 				if (realPrefix.indexOf(' ', space +1) != -1) return null;
-				if (!realPrefix.substring(space +1).equals("aborted")) return null;
+				if (!realPrefix.substring(space +1).equals("aborted")) return null; //$NON-NLS-1$
 				// It's a match, return the rest of the line
 				message = message.substring(closingBracket + 2);
 				if (message.charAt(0) == ' ') {
@@ -948,7 +948,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			} else {
 				// This is the server command message
 				// Remove the pattern "command_name: "
-				int colon = message.indexOf(": ");
+				int colon = message.indexOf(": "); //$NON-NLS-1$
 				if (colon == -1) return null;
 				// get what is before the colon
 				String realPrefix = message.substring(0, colon);

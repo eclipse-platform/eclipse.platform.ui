@@ -78,8 +78,8 @@ public class ReentrantLock {
 			if (rule != NULL_SCHEDULING_RULE) {
 				try {
 					Platform.getJobManager().beginRule(rule, monitor);
-				} catch (OperationCanceledException e) {
-					// The begin was cancelled.
+				} catch (RuntimeException e) {
+					// The begin was cancelled (or some other problem occurred).
 					// Free the scheduling rule and throw the cancel
 					// so the clients of ReentrantLock don't need to
 					// do an endRule when the operation is cancelled.

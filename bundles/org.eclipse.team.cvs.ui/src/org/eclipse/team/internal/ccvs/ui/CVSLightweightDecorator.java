@@ -59,7 +59,7 @@ import org.eclipse.team.ui.TeamUI;
 public class CVSLightweightDecorator extends LabelProvider implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
 
 	// Decorator id as defined in the decorator extension point
-	public final static String ID = "org.eclipse.team.cvs.ui.decorator";
+	public final static String ID = "org.eclipse.team.cvs.ui.decorator"; //$NON-NLS-1$
 	
 	// Images cached for better performance
 	private static ImageDescriptor dirty;

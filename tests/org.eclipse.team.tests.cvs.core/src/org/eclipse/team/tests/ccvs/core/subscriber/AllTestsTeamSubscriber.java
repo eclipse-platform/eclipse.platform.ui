@@ -30,6 +30,7 @@ public class AllTestsTeamSubscriber extends EclipseTest {
 		TestSuite suite = new TestSuite();
 		suite.addTest(CVSMergeSubscriberTest.suite());
 		suite.addTest(CVSWorkspaceSubscriberTest.suite());
+		suite.addTest(CVSCompareSubscriberTest.suite());
 		suite.addTest(SyncSetTests.suite());
 		CVSSyncSubscriberTest.setSyncSource(new SynchronizeViewTestAdapter());
 		return new CVSTestSetup(suite);

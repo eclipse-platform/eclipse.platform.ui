@@ -265,8 +265,10 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * Method declared on IObjectActionDelegate.
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.shell = targetPart.getSite().getShell();
-		this.targetPart = targetPart;
+		if(targetPart != null) {
+			this.shell = targetPart.getSite().getShell();
+			this.targetPart = targetPart;
+		}
 	}
 	/**
 	 * Shows the given errors to the user.

@@ -197,6 +197,8 @@ public abstract class DialogArea {
 		// GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		composite.setLayout(layout);
 
 		// GridData

@@ -18,11 +18,7 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -31,23 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.ui.actions.AddAction;
-import org.eclipse.team.internal.ccvs.ui.actions.BranchAction;
-import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
-import org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction;
-import org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction;
-import org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction;
-import org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction;
-import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.actions.MergeAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction;
-import org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
-import org.eclipse.team.internal.ccvs.ui.actions.SyncAction;
-import org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction;
-import org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction;
-import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
+import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.ui.IActionDelegate;
@@ -321,22 +301,6 @@ public class MenuEnablementTest extends EclipseTest {
 		assertEnablement(action, project, UNMANAGED, true /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED | MANAGED | IGNORED, false /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED_PARENT, true /* expected enablement */);
-	}
-	
-	public void testCompareWithRemoteAction() throws CoreException, TeamException {
-		IActionDelegate action = new CompareWithRemoteAction();
-		IProject project = createTestProject(action);
-		assertDisabledForCommonReasons(action, project);
-		assertEnabledForFolderOnlyOverlap(action, project);
-		assertEnablement(action, project, MANAGED, true /* expected enablement */);
-		assertEnablement(action, project, MANAGED | ADDED, true /* expected enablement */);
-		assertEnablement(action, project, MANAGED | ADDED | UNMANAGED, true /* expected enablement */);
-		// true is expected for ignored resources whose parent is not ignored
-		assertEnablement(action, project, IGNORED, true /* expected enablement */);
-		assertEnablement(action, project, UNMANAGED, true /* expected enablement */);
-		assertEnablement(action, project, UNMANAGED_PARENT, false /* expected enablement */);
-		// true is expected for ignored resources whose parent is not ignored
-		assertEnablement(action, project, UNMANAGED | MANAGED | IGNORED, true /* expected enablement */);
 	}
 	
 	public void testCompareWithRevison() throws CoreException, TeamException {

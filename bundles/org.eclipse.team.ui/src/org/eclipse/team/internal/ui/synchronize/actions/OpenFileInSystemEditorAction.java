@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.synchronize.views.SyncSetContentProvider;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.OpenFileAction;
 
@@ -31,18 +28,10 @@ public class OpenFileInSystemEditorAction extends OpenFileAction {
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
 	 */
 	protected List getSelectedResources() {
-		List resources = new ArrayList();
 		IStructuredSelection selection = getStructuredSelection();
-		for (Iterator e = selection.iterator(); e.hasNext();) {
-			Object next = e.next();
-			IResource resource = SyncSetContentProvider.getResource(next);
-			if(resource != null) {
-				resources.add(resource);
-			}
-		}
-		return resources;
+		IResource[] resources = Utils.getResources(selection.toArray());
+		return Arrays.asList(resources);
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedNonResources()

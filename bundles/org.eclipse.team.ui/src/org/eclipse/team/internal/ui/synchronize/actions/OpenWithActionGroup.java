@@ -15,9 +15,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.synchronize.views.SyncSetContentProvider;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipantPage;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.subscriber.*;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
@@ -30,22 +30,23 @@ public class OpenWithActionGroup extends ActionGroup {
 
 	private OpenFileInSystemEditorAction openFileAction;
 	private OpenInCompareAction openInCompareAction;
-	private TeamSubscriberParticipantPage page;
-	private IViewPart part;
+	private SubscriberParticipantPage page;
+	private ISynchronizeView view;
+	private ISynchronizeParticipant participant;
 
-	public OpenWithActionGroup(TeamSubscriberParticipantPage page) {
-		this.page = page;
-		this.part = page.getSynchronizeView();
+	public OpenWithActionGroup(ISynchronizeView part, ISynchronizeParticipant participant) {
+		this.participant = participant;
+		this.view = part;
 		makeActions();
 	}
 
 	protected void makeActions() {
-		openFileAction = new OpenFileInSystemEditorAction(part.getSite().getPage());
-		openInCompareAction = new OpenInCompareAction(page);		
+		openFileAction = new OpenFileInSystemEditorAction(view.getSite().getPage());
+		openInCompareAction = new OpenInCompareAction(view, participant);		
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		fillOpenWithMenu(menu, (IStructuredSelection)part.getSite().getPage().getSelection());
+		fillOpenWithMenu(menu, (IStructuredSelection)view.getSite().getPage().getSelection());
 	}
 
 	/**
@@ -60,11 +61,15 @@ public class OpenWithActionGroup extends ActionGroup {
 		if (selection == null || selection.size() != 1)
 			return;
 		Object element = selection.getFirstElement();
-		IResource resource = getResource(element);
-		if (!(resource instanceof IFile)) {
+		IResource resources[] = Utils.getResources(new Object[] {element});
+		IResource resource = null;		
+		if(resources.length == 0) {
 			return;
 		}
-				
+		resource = resources[0];
+		
+		if(resource.getType() != IResource.FILE) return;
+		
 		menu.add(openInCompareAction);
 		
 		if(!((resource.exists()))) {
@@ -76,7 +81,7 @@ public class OpenWithActionGroup extends ActionGroup {
 		
 		MenuManager submenu =
 			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openWith")); //$NON-NLS-1$
-		submenu.add(new OpenWithMenu(part.getSite().getPage(), (IFile) resource));
+		submenu.add(new OpenWithMenu(view.getSite().getPage(), (IFile) resource));
 		menu.add(submenu);
 	}
 
@@ -89,10 +94,6 @@ public class OpenWithActionGroup extends ActionGroup {
 			openFileAction.selectionChanged(selection);
 			openFileAction.run();
 		}
-	}
-	
-	private IResource getResource(Object obj) {
-		return SyncSetContentProvider.getResource(obj);
 	}
 
 	public void openInCompareEditor() {

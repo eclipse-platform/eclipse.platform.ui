@@ -89,6 +89,10 @@ public class SyncFileWriter {
 	public static byte[][] readAllResourceSync(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
 		if (! cvsSubDir.exists()) return null;
+		
+		if (Policy.DEBUG_METAFILE_CHANGES) {
+			System.out.println("Reading Entries file for " + parent.getFullPath()); //$NON-NLS-1$
+		}
 
 		// process Entries file contents
 		String[] entries = readLines(cvsSubDir.getFile(ENTRIES));
@@ -131,6 +135,9 @@ public class SyncFileWriter {
 	
 	public static void writeAllResourceSync(IContainer parent, byte[][] infos) throws CVSException {
 		try {
+			if (Policy.DEBUG_METAFILE_CHANGES) {
+				System.out.println("Writing Entries file for folder " + parent.getFullPath()); //$NON-NLS-1$
+			}
 			IFolder cvsSubDir = createCVSSubdirectory(parent);
 
 			// format file contents
@@ -158,6 +165,10 @@ public class SyncFileWriter {
 		IFolder cvsSubDir = getCVSSubdirectory(folder);
 		if (! cvsSubDir.exists()) return null;
 
+		if (Policy.DEBUG_METAFILE_CHANGES) {
+			System.out.println("Reading Root/Repository files for " + folder.getFullPath()); //$NON-NLS-1$
+		}
+		
 		// check to make sure the the cvs folder is hidden
 		if (!cvsSubDir.isTeamPrivateMember()) {
 			try {
@@ -177,10 +188,16 @@ public class SyncFileWriter {
 		
 		// read CVS/Tag
 		String tag = readFirstLine(cvsSubDir.getFile(TAG));
+		if (Policy.DEBUG_METAFILE_CHANGES && tag != null) {
+			System.out.println("Reading Tag file for " + folder.getFullPath()); //$NON-NLS-1$
+		}
 		CVSTag cvsTag = (tag != null) ? new CVSEntryLineTag(tag) : null;
 
 		// read Entries.Static
 		String staticDir = readFirstLine(cvsSubDir.getFile(STATIC));
+		if (Policy.DEBUG_METAFILE_CHANGES && staticDir != null) {
+			System.out.println("Reading Static file for " + folder.getFullPath()); //$NON-NLS-1$
+		}
 		boolean isStatic = (staticDir != null);
 		
 		// return folder sync
@@ -193,6 +210,9 @@ public class SyncFileWriter {
 	 */
 	public static void writeFolderSync(IContainer folder, FolderSyncInfo info) throws CVSException {
 		try {
+			if (Policy.DEBUG_METAFILE_CHANGES) {
+				System.out.println("Writing Root/Respository files for " + folder.getFullPath()); //$NON-NLS-1$
+			}
 			IFolder cvsSubDir = createCVSSubdirectory(folder);
 	
 			// write CVS/Root
@@ -204,9 +224,15 @@ public class SyncFileWriter {
 			// write CVS/Tag
 			IFile tagFile = cvsSubDir.getFile(TAG);
 			if (info.getTag() != null) {
+				if (Policy.DEBUG_METAFILE_CHANGES) {
+					System.out.println("Writing Tag file for " + folder.getFullPath()); //$NON-NLS-1$
+				}
 				writeLines(tagFile, new String[] {info.getTag().toEntryLineFormat(false)});
 			} else {
 				if(tagFile.exists()) {
+					if (Policy.DEBUG_METAFILE_CHANGES) {
+						System.out.println("Deleting Tag file for " + folder.getFullPath()); //$NON-NLS-1$
+					}
 					tagFile.delete(IResource.NONE, null);
 				}
 			}
@@ -215,9 +241,15 @@ public class SyncFileWriter {
 			IFile staticFile = cvsSubDir.getFile(STATIC);
 			if(info.getIsStatic()) {
 				// the existance of the file is all that matters
+				if (Policy.DEBUG_METAFILE_CHANGES) {
+					System.out.println("Writing Static file for " + folder.getFullPath()); //$NON-NLS-1$
+				}
 				writeLines(staticFile, new String[] {""}); //$NON-NLS-1$
 			} else {
 				if(staticFile.exists()) {
+					if (Policy.DEBUG_METAFILE_CHANGES) {
+						System.out.println("Deleting Static file for " + folder.getFullPath()); //$NON-NLS-1$
+					}
 					staticFile.delete(IResource.NONE, null);
 				}
 			}
@@ -251,6 +283,9 @@ public class SyncFileWriter {
 	 */
 	public static void deleteFolderSync(IContainer folder) throws CVSException {		
 		try {
+			if (Policy.DEBUG_METAFILE_CHANGES) {
+				System.out.println("Deleting CVS directory from " + folder.getFullPath()); //$NON-NLS-1$
+			}
 			getCVSSubdirectory(folder).delete(IResource.NONE, null);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);

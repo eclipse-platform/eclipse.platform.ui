@@ -102,7 +102,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 
 		// Sanity check.
 		if ((label == null) || (className == null) || (identifier == null)) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + identifier, //$NON-NLS-1$
 					null));
 		}
 		

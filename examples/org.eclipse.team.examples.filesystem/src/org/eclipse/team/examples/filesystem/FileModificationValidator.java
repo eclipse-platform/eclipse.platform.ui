@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 
 /**
  * This class models a sentry that verifies whether resources are available for editing or overwriting.
@@ -32,15 +31,13 @@ public final class FileModificationValidator implements IFileModificationValidat
 	//Used to avoid creating multiple copies of the OK status:
 	private static final IStatus OK_STATUS = new Status(Status.OK, FileSystemPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 
-	private RepositoryProvider provider;
 	private SimpleAccessOperations operations;
 
 	/**
 	 * Constructor for FileModificationValidator.
 	 */
 	public FileModificationValidator(RepositoryProvider provider) {
-		this.provider = provider;
-		operations = provider.getSimpleAccess();
+		operations = ((FileSystemProvider)provider).getSimpleAccess();
 	}
 
 	/**

@@ -11,27 +11,23 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
+import org.eclipse.team.internal.ui.actions.SubscriberAction;
 
 public abstract class CVSSubscriberAction extends SubscriberAction {
 	
@@ -126,7 +122,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 * Sync actions seem to need to be sync-execed to work
 	 * @param t
 	 */
-	protected void handle(Throwable t) {
+	protected void handle(Exception t) {
 		CVSUIPlugin.openError(getShell(), getErrorTitle(), null, t, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 	}
 
@@ -136,25 +132,6 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 */
 	protected String getErrorTitle() {
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-//		TODO: Saving can change the sync state! How should this be handled?
-//			 boolean result = saveIfNecessary();
-//			 if (!result) return null;
-
-		SyncInfoSet syncSet = getFilteredSyncInfoSet(getFilteredSyncInfos());
-		if (syncSet == null || syncSet.isEmpty()) return;
-		try {
-			getCVSRunnableContext().run(getJobName(syncSet), getSchedulingRule(syncSet), true, getRunnable(syncSet));
-		} catch (InvocationTargetException e) {
-			handle(e);
-		} catch (InterruptedException e) {
-			// nothing to do;
-		}
 	}
 
 	/**
@@ -189,64 +166,8 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		};
 	}
 
-	protected abstract void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException;
-
-	/*
-	 * Return the ICVSRunnableContext which will be used to run the operation.
-	 */
-	private ICVSRunnableContext getCVSRunnableContext() {
-		if (canRunAsJob() && areJobsEnabled()) {
-			return new CVSSubscriberNonblockingContext();
-		} else {
-			return new CVSBlockingRunnableContext(shell);
-		}
-	}
-	
-	protected boolean areJobsEnabled() {
-		return true;
-	}
-	
-	/**
-	 * Return the job name to be used if the action can run as a job.
-	 * 
-	 * @param syncSet
-	 * @return
-	 */
-	protected abstract String getJobName(SyncInfoSet syncSet);
-
-	/**
-	 * Return a scheduling rule that includes all resources that will be operated 
-	 * on by the subscriber action. The default behavior is to include all projects
-	 * effected by the operation. Subclasses may override.
-	 * 
-	 * @param syncSet
-	 * @return
-	 */
-	protected ISchedulingRule getSchedulingRule(SyncInfoSet syncSet) {
-		IResource[] resources = syncSet.getResources();
-		Set set = new HashSet();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			set.add(resource.getProject());
-		}
-		IProject[] projects = (IProject[]) set.toArray(new IProject[set.size()]);
-		if (projects.length == 1) {
-			return projects[0];
-		} else {
-			return new MultiRule(projects);
-		}
-	}
-
 	protected boolean canRunAsJob() {
 		return true;
-	}
-
-	/**
-	 * Filter the sync resource set using action specific criteria or input from the user.
-	 */
-	protected SyncInfoSet getFilteredSyncInfoSet(SyncInfo[] selectedResources) {
-		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
-		return new SyncInfoSet(selectedResources);
 	}
 	
 	protected void pruneEmptyParents(SyncInfo[] nodes) throws CVSException {
@@ -270,7 +191,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	}
 	
 	protected SyncInfo getParent(SyncInfo info) throws TeamException {
-		return info.getSubscriber().getSyncInfo(info.getLocal().getParent(), new NullProgressMonitor());
+		return ((CVSSyncInfo)info).getSubscriber().getSyncInfo(info.getLocal().getParent());
 	}
 
 	protected IResource[] getIResourcesFrom(SyncInfo[] nodes) {
@@ -296,5 +217,68 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 			}
 		});
 		return (result[0] == UpdateDialog.YES);
+	}
+	
+	/**
+	 * Make the contents of the local resource match that of the remote
+	 * without modifying the sync info of the local resource.
+	 * If called on a new folder, the sync info will be copied.
+	 */
+	protected void makeRemoteLocal(SyncInfo info, IProgressMonitor monitor) throws TeamException {
+		IResourceVariant remote = info.getRemote();
+		IResource local = info.getLocal();
+		try {
+			if(remote==null) {
+				if (local.exists()) {
+					local.delete(IResource.KEEP_HISTORY, monitor);
+				}
+			} else {
+				if(remote.isContainer()) {
+					ensureContainerExists(info);
+				} else {
+					monitor.beginTask(null, 200);
+					try {
+						IFile localFile = (IFile)local;
+						if(local.exists()) {
+							localFile.setContents(remote.getStorage(Policy.subMonitorFor(monitor, 100)).getContents(), false /*don't force*/, true /*keep history*/, Policy.subMonitorFor(monitor, 100));
+						} else {
+							ensureContainerExists(getParent(info));
+							localFile.create(remote.getStorage(Policy.subMonitorFor(monitor, 100)).getContents(), false /*don't force*/, Policy.subMonitorFor(monitor, 100));
+						}
+					} finally {
+						monitor.done();
+					}
+				}
+			}
+		} catch(CoreException e) {
+			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_1"), e); //$NON-NLS-1$
+		}
+	}
+	
+	private boolean ensureContainerExists(SyncInfo info) throws TeamException {
+		IResource local = info.getLocal();
+		// make sure that the parent exists
+		if (!local.exists()) {
+			if (!ensureContainerExists(getParent(info))) {
+				return false;
+			}
+		}
+		// make sure that the folder sync info is set;
+		if (isOutOfSync(info)) {
+			if (info instanceof CVSSyncInfo) {
+				CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
+				IStatus status = cvsInfo.makeInSync();
+				if (status.getSeverity() == IStatus.ERROR) {
+					logError(status);
+					return false;
+				}
+			}
+		}
+		// create the folder if it doesn't exist
+		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
+		if (!cvsFolder.exists()) {
+			cvsFolder.mkdir();
+		}
+		return true;
 	}
 }

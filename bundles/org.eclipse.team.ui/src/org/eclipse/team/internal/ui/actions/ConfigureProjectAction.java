@@ -17,7 +17,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
@@ -28,6 +31,13 @@ import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
  * configuration that is necessary.
  */
 public class ConfigureProjectAction extends TeamAction {
+	private static class ResizeWizardDialog extends WizardDialog {
+		public ResizeWizardDialog(Shell parentShell, IWizard newWizard) {
+			super(parentShell, newWizard);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}		
+	}
+	
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -38,7 +48,8 @@ public class ConfigureProjectAction extends TeamAction {
 					IProject project = getSelectedProjects()[0];
 					ConfigureProjectWizard wizard = new ConfigureProjectWizard();
 					wizard.init(null, project);
-					WizardDialog dialog = new WizardDialog(getShell(), wizard);
+					WizardDialog dialog = new ResizeWizardDialog(getShell(), wizard);
+					//dialog.
 					dialog.open();
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);

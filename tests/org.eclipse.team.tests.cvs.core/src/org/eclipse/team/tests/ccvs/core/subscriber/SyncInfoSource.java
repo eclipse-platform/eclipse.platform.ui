@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.AssertionFailedError;
 
@@ -21,10 +19,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.*;
 
 /**
  * This class acts as the source for the sync info used by the subscriber tests.
@@ -35,6 +32,7 @@ public class SyncInfoSource {
 
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected List mergeSubscribers = new ArrayList();
+	protected List compareSubscribers = new ArrayList();
 	
 	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
 		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
@@ -42,21 +40,27 @@ public class SyncInfoSource {
 		return subscriber;
 	}
 	
+	public CVSCompareSubscriber createCompareSubscriber(IProject project, CVSTag tag) {
+		CVSCompareSubscriber subscriber = new CVSCompareSubscriber(new IResource[] { project }, tag);
+		compareSubscribers.add(subscriber);
+		return subscriber;
+	}
+	
 	/**
 	 * Return the sync info for the given subscriber for the given resource.
 	 */
-	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
-		return subscriber.getSyncInfo(resource, DEFAULT_MONITOR = new NullProgressMonitor());
+	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
+		return subscriber.getSyncInfo(resource);
 	}
 	
 	/**
 	 * Refresh the subscriber for the given resource
 	 */
-	public void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {
+	public void refresh(Subscriber subscriber, IResource resource) throws TeamException {
 		subscriber.refresh(new IResource[] { resource}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 	}
 	
-	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException {
+	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {
 		IResource[] roots = subscriber.roots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource resource = roots[i];
@@ -76,7 +80,7 @@ public class SyncInfoSource {
 	/**
 	 * Recalculate a sync info from scratch
 	 */
-	public void reset(TeamSubscriber subscriber) throws TeamException {
+	public void reset(Subscriber subscriber) throws TeamException {
 		// Do nothing
 		
 	}

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class AnnotateListener extends CommandOutputListener {
 
@@ -89,8 +90,8 @@ public class AnnotateListener extends CommandOutputListener {
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener#errorLine(java.lang.String, org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSFolder, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
-		if(line.startsWith("Skipping binary file")) {
-			error = "Cannot annotate a binary file.";
+		if(line.startsWith(Policy.bind("AnnotateListener.3"))) { //$NON-NLS-1$
+			error = Policy.bind("AnnotateListener.4"); //$NON-NLS-1$
 			return new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, commandRoot, error);
 		}
 		return super.errorLine(line, location, commandRoot, monitor);

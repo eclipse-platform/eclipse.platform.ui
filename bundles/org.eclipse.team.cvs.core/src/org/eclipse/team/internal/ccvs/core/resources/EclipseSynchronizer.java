@@ -801,20 +801,27 @@ public class EclipseSynchronizer implements IFlushOperation {
 			} else {
 				infos = SyncFileWriter.readAllResourceSync(container);
 			}
-			if (infos != null) {
-				for (int i = 0; i < infos.length; i++) {
-					byte[] syncBytes = infos[i];
-					IPath name = new Path(getName(syncBytes));
-					IResource resource;
-					if (isFolder(syncBytes)) {
-						resource = container.getFolder(name);
-					} else {
-						resource = container.getFile(name);
+			try {
+				if (infos != null) {
+					for (int i = 0; i < infos.length; i++) {
+						byte[] syncBytes = infos[i];
+						IPath name = new Path(getName(syncBytes));
+						IResource resource;
+						if (isFolder(syncBytes)) {
+							resource = container.getFolder(name);
+						} else {
+							resource = container.getFile(name);
+						}
+						getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, canModifyWorkspace);
 					}
-					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, canModifyWorkspace);
 				}
+				getSyncInfoCacheFor(container).setResourceSyncInfoCached(container);
+			} catch (CVSException e) {
+				if (Policy.DEBUG_METAFILE_CHANGES) {
+					System.err.println("Failed to cache Entries for folder " + container.getFullPath()); //$NON-NLS-1$
+				}
+				throw e;
 			}
-			getSyncInfoCacheFor(container).setResourceSyncInfoCached(container);
 		}
 	}
 	

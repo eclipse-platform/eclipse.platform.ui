@@ -16,29 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
@@ -429,7 +410,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+	public ICVSRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		return getMembers(progress);
 	}
 
@@ -605,8 +586,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getContentIdentifier()
 	 */
-	public String getContentIdentifier() throws TeamException {
-		return null;
+	public String getContentIdentifier() {
+		return getTag().getName();
 	}
 
 	/* (non-Javadoc)
@@ -615,19 +596,19 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public String getCreatorDisplayName() throws TeamException {
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.IRemoteResource#getBufferedStorage(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
-		return null;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#isManaged()
 	 */
 	public boolean isManaged() {
 		return super.isManaged() && isCVSFolder();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.ResourceVariant#fetchContents(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
+		// This should not get called for folders
 	}
 
 }

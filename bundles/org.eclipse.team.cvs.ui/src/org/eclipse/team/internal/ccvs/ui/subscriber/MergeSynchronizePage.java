@@ -13,11 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.jface.action.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
-import org.eclipse.team.ui.synchronize.actions.DirectionFilterActionGroup;
-import org.eclipse.team.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
+import org.eclipse.team.ui.synchronize.subscriber.DirectionFilterActionGroup;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.IActionBars;
 
 
@@ -27,16 +26,16 @@ public class MergeSynchronizePage extends CVSSynchronizeViewPage {
 	private DirectionFilterActionGroup modes;
 	private Action updateAdapter;
 	
-	public MergeSynchronizePage(TeamSubscriberParticipant participant, ISynchronizeView view, SubscriberInput input) {
-		super(participant, view, input);		
+	public MergeSynchronizePage(SubscriberParticipant participant, ISynchronizeView view) {
+		super(participant, view);		
 		removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
-		modes = new DirectionFilterActionGroup(getParticipant(), TeamSubscriberParticipant.INCOMING_MODE | TeamSubscriberParticipant.CONFLICTING_MODE);
+		modes = new DirectionFilterActionGroup(getParticipant(), SubscriberParticipant.INCOMING_MODE | SubscriberParticipant.CONFLICTING_MODE);
 		MergeUpdateAction action = new MergeUpdateAction();
 		action.setPromptBeforeUpdate(true);
 		updateAdapter = new CVSActionDelegate(action);
 		
 		Utils.initAction(updateAdapter, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
-		getParticipant().setMode(TeamSubscriberParticipant.INCOMING_MODE);
+		getParticipant().setMode(SubscriberParticipant.INCOMING_MODE);
 	}
 	
 	/* (non-Javadoc)

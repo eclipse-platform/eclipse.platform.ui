@@ -11,10 +11,8 @@
 package org.eclipse.team.internal.ccvs.core;
 
  
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 /**
@@ -24,7 +22,15 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ICVSRemoteResource extends IRemoteResource, ICVSResource {
+public interface ICVSRemoteResource extends ICVSResource, IAdaptable {
+	
+	/**
+	 * Answers if the remote element may have children.
+	 * 
+	 * @return <code>true</code> if the remote element may have children and 
+	 * <code>false</code> otherwise.
+	 */
+	public boolean isContainer();
 	
 	/**
 	 * Return the repository
@@ -71,5 +77,12 @@ public interface ICVSRemoteResource extends IRemoteResource, ICVSResource {
 	 * Tag the remote resources referenced by the receiver (using rtag)
 	 */
 	public IStatus tag(CVSTag tag, LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException;
+	
+	/**
+	 * TODO: Temporary 
+	 * @param progress
+	 * @return
+	 */
+	public ICVSRemoteResource[] members(IProgressMonitor progress) throws TeamException;
 
 }

@@ -10,29 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ISynchronizer;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSDecoratorEnablementListener;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -44,8 +27,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * state for all cvs managed folders are persisted using the resource's plugin
  * synchronizer.
  */
-/*package*/ class SessionPropertySyncInfoCache extends SyncInfoCache 
-																		  implements ISaveParticipant, ICVSDecoratorEnablementListener {
+/*package*/ class SessionPropertySyncInfoCache extends SyncInfoCache implements ISaveParticipant {
 	
 	// key used on a folder to indicate that the resource sync has been cahced for it's children
 	private static final QualifiedName RESOURCE_SYNC_CACHED_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync-cached"); //$NON-NLS-1$
@@ -55,7 +37,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private QualifiedName FOLDER_DIRTY_STATE_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-dirty-state-cached"); //$NON-NLS-1$
-	private boolean isDecoratorEnabled = true;
 	private boolean hasBeenSaved = false;
 	
 	// defer to the sychronizer if there is no sync info
@@ -67,9 +48,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		try {
 			// this save participant is removed when the plugin is shutdown.			
 			ResourcesPlugin.getWorkspace().addSaveParticipant(CVSProviderPlugin.getPlugin(), this);
-			CVSProviderPlugin.getPlugin().addDecoratorEnablementListener(this);
-
-			final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
+			ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
 			synchronizer.add(FOLDER_DIRTY_STATE_KEY);
 		} catch (CoreException e) {
 			CVSProviderPlugin.log(e);
@@ -422,7 +401,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		boolean fullSave = (context.getKind() == ISaveContext.FULL_SAVE);
 		boolean projectSave = (context.getKind() == ISaveContext.PROJECT_SAVE);
 		
-		if(isDecoratorEnabled && (projectSave || fullSave)) {
+		if((projectSave || fullSave)) {
 			// persist all session properties for folders into sync info.
 			final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
 		
@@ -464,40 +443,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				}
 			}
 			hasBeenSaved = true;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see ICVSDecoratorEnablementListener#decoratorEnablementChanged(boolean)
-	 */
-	public void decoratorEnablementChanged(boolean enabled) {
-		isDecoratorEnabled = enabled;
-		if(!enabled && !hasBeenSaved) {
-			// flush the dirty state cache for all managed resources
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				IProject project = projects[i];
-				RepositoryProvider provider = RepositoryProvider.getProvider(
-														project,
-														CVSProviderPlugin.getTypeId());
-														
-				if (provider != null) {
-					try {
-						project.accept(new IResourceVisitor() {
-							public boolean visit(IResource resource) throws CoreException {
-								try {
-									flushDirtyCache(resource);
-								} catch(CVSException e) {
-									throw new CoreException(e.getStatus());
-								}
-								return true;
-							}
-						});
-					} catch (CoreException e) {
-						CVSProviderPlugin.log(e);
-					}
-				}
-			}		
 		}
 	}
 		

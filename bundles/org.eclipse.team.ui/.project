@@ -15,6 +15,7 @@
 		<project>org.eclipse.ui.ide</project>
 		<project>org.eclipse.ui.views</project>
 		<project>org.eclipse.ui.workbench.texteditor</project>
+		<project>org.eclipse.update.ui.forms</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

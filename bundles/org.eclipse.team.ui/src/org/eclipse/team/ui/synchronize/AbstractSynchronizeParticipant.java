@@ -110,7 +110,14 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	public String getId() {
 		return fId;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return true;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

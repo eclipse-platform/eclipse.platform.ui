@@ -18,12 +18,30 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A synchronize participant provides a logical connection between local
- * resources and a remote location that is used to share those resources. The
- * Synchronize View displays synchronize participants.
+ * A synchronize participant is shown in the <code>Synchronize View</code>. Typically
+ * a participant will show changes between local resources and variant states of
+ * those resources. For example, a participant could show the relative synchronization
+ * between local resources and those on an FTP server, or alternatively, between local
+ * resources and local history.
  * <p>
- * A participant must create a page that will be displayed in the 
- * ISynchronizeView page book view. Clients may implement this interface.
+ * A participant is added to the Synchronize View in three steps:
+ * <ol>
+ * 	<li>A <code>synchronizeParticipant</code> extension is contributed to 
+ *      the team registry. This extension defines the participant id,
+ *      name, icon, type, and participant class.</li>
+ *  <li>The participant is included in the Synchronize View when the view is
+ *      created if its type is <code>static</code>.</li>
+ *  <li>If a participant is not static, plug-in developers can add the
+ *      participant to the view by adding the participant via 
+ *      {@link ISynchronizeManager#addSynchronizeParticipants(ISynchronizeParticipant[]) and
+ *      remove it using {@link ISynchronizeManager#removeSynchronizeParticipants(ISynchronizeParticipant[]).
+ * </ol>
+ * </p>
+ * <p>
+ * A participant must create a page that will be displayed in the ISynchronizeView page 
+ * book view. 
+ * </p><p>
+ * Clients may implement this interface.
  * </p>
  * @see ISynchronizeView
  * @see ISynchronizeManager
@@ -48,6 +66,15 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public String getName();
 	
 	/**
+	 * Returns <code>true</code> if this participant should be persisted between
+	 * workbench sessions and <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this participant should be persisted between
+	 * workbench sessions and <code>false</code> otherwise.
+	 */
+	public boolean isPersistent();
+	
+	/**
 	 * Returns an image descriptor for this synchronize participant, or <code>null</code>
 	 * if none.
 	 * 
@@ -66,7 +93,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * participant
 	 */
 	public IPageBookViewPage createPage(ISynchronizeView view);
-	
+		
 	/**
 	 * Initializes this participant with the given participant state.  
 	 * A memento is passed to the participant which contains a snapshot 

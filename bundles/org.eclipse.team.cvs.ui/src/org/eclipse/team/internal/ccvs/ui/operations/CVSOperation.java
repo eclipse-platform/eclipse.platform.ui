@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.actions.*;
 
 
 /**
@@ -46,7 +47,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	// instance variable used to indicate behavior while prompting for overwrite
 	private boolean confirmOverwrite = true;
 	
-	ICVSRunnableContext cvsRunnableContext;
+	ITeamRunnableContext cvsRunnableContext;
 	
 	public CVSOperation(Shell shell) {
 		this.shell = shell;
@@ -146,14 +147,14 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	protected abstract void execute(IProgressMonitor monitor) throws CVSException, InterruptedException;
 
 	/*
-	 * Return the ICVSRunnableContext which will be used to run the operation.
+	 * Return the ITeamRunnableContext which will be used to run the operation.
 	 */
-	private ICVSRunnableContext getCVSRunnableContext() {
+	private ITeamRunnableContext getCVSRunnableContext() {
 		if (cvsRunnableContext == null) {
 			if (canRunAsJob() && areJobsEnabled()) {
-				return new CVSNonblockingRunnableContext();
+				return new JobRunnableContext();
 			} else {
-				return new CVSBlockingRunnableContext(shell);
+				return new ProgressDialogRunnableContext(shell);
 			}
 		}
 		return cvsRunnableContext;
@@ -166,7 +167,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * for testing purposes.
 	 * @param cvsRunnableContext
 	 */
-	public void setCVSRunnableContext(ICVSRunnableContext cvsRunnableContext) {
+	public void setCVSRunnableContext(ITeamRunnableContext cvsRunnableContext) {
 		this.cvsRunnableContext = cvsRunnableContext;
 	}
 	

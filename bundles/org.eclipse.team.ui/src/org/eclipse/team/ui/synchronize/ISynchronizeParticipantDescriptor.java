@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * for a registered participant type in the declaring plug-in's 
  * manifest (<code>plugin.xml</code>) file.
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Clients are not intended to implement this interface.
  * </p>
  * @see ISynchronizeManager#getParticipantDescriptor(String)
  * @since 3.0

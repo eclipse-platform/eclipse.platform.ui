@@ -1,0 +1,64 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.internal.ui.synchronize;
+
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
+public class DiffNodeWorkbenchAdapter implements IWorkbenchAdapter {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object o) {
+		DiffNode node = getDiffNode(o);
+		return node != null ? node.getChildren() : new Object[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object o) {
+		DiffNode node = getDiffNode(o);
+		if(node instanceof SynchronizeModelElement) {
+			return ((SynchronizeModelElement)node).getImageDescriptor(o);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	public String getLabel(Object o) {
+		DiffNode node = getDiffNode(o);
+		return node != null ? node.getName() : ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object o) {
+		DiffNode node = getDiffNode(o);
+		return node != null ? node.getParent() : null;
+	}
+	
+	/*
+	 * Return a diff node if the input object is a diff node or null otherwise.
+	 */
+	private DiffNode getDiffNode(Object element) {
+		if(element instanceof DiffNode) {
+			return (DiffNode)element;
+		}
+		return null;
+	}
+}

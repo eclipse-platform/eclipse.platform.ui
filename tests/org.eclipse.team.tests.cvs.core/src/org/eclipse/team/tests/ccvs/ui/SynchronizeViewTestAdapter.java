@@ -16,17 +16,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
-import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 
 /**
  * SyncInfoSource that obtains SyncInfo from the SynchronizeView's SyncSet.
@@ -37,12 +37,11 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage(null);
 	}
 	
-	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
-		SubscriberInput input = getInput(subscriber);
-		SyncSet set = input.getWorkingSetSyncSet();
+	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
+		SyncInfoSet set = getCollector(subscriber).getSubscriberSyncInfoSet();
 		SyncInfo info = set.getSyncInfo(resource);
 		if (info == null) {
-			info = subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
+			info = subscriber.getSyncInfo(resource);
 			if ((info != null && info.getKind() != SyncInfo.IN_SYNC)) {
 				throw new AssertionFailedError();
 			}
@@ -50,31 +49,35 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		return info;
 	}
 	
-	private SubscriberInput getInput(TeamSubscriber subscriber) {
+	private SubscriberParticipant getParticipant(Subscriber subscriber) {
 		// show the sync view
 		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
 			ISynchronizeParticipant participant = participants[i];
-			if(participant instanceof TeamSubscriberParticipant) {
-				SubscriberInput input = ((TeamSubscriberParticipant)participant).getInput();
-				TeamSubscriber s = input.getSubscriber();
-				if(s == subscriber) {
-					EclipseTest.waitForSubscriberInputHandling(input);
-					return input;
+			if(participant instanceof SubscriberParticipant) {
+				if(((SubscriberParticipant)participant).getSubscriber() == subscriber) {
+					return (SubscriberParticipant)participant;
 				}
 			}
 		}
 		return null;
 	}
+	
+	private SubscriberSyncInfoCollector getCollector(Subscriber subscriber) {
+		SubscriberParticipant participant = getParticipant(subscriber);
+		if (participant == null) return null;
+		SubscriberSyncInfoCollector syncInfoCollector = participant.getSubscriberSyncInfoCollector();
+		EclipseTest.waitForSubscriberInputHandling(syncInfoCollector);
+		return syncInfoCollector;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#assertProjectRemoved(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IProject)
 	 */
-	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException {		
+	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {		
 		super.assertProjectRemoved(subscriber, project);
-		SubscriberInput input = getInput(subscriber);
-		SyncSet set = input.getFilteredSyncSet();
-		if (set.getOutOfSyncDescendants(project).length != 0) {
+		SyncInfoTree set = getCollector(subscriber).getSyncInfoTree();
+		if (set.hasMembers(project)) {
 			throw new AssertionFailedError("The sync set still contains resources from the deleted project " + project.getName());	
 		}
 	}
@@ -95,6 +98,20 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#createCompareSubscriber(org.eclipse.core.resources.IProject, org.eclipse.team.internal.ccvs.core.CVSTag)
+	 */
+	public CVSCompareSubscriber createCompareSubscriber(IProject project, CVSTag tag) {
+		CVSCompareSubscriber s = super.createCompareSubscriber(project, tag);
+		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
+		ISynchronizeParticipant participant = new CompareParticipant(s);
+		synchronizeManager.addSynchronizeParticipants(
+				new ISynchronizeParticipant[] {participant});		
+		ISynchronizeView view = synchronizeManager.showSynchronizeViewInActivePage(null);
+		view.display(participant);
+		return s;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#tearDown()
 	 */
 	public void tearDown() {
@@ -112,16 +129,17 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IResource)
 	 */
-	public void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {
+	public void refresh(Subscriber subscriber, IResource resource) throws TeamException {
 		super.refresh(subscriber, resource);
-		EclipseTest.waitForSubscriberInputHandling(getInput(subscriber));
+		// Getting the collector waits for the subscriber input handlers
+		getCollector(subscriber);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#reset()
 	 */
-	public void reset(TeamSubscriber subscriber) throws TeamException {
+	public void reset(Subscriber subscriber) throws TeamException {
 		super.reset(subscriber);
-		getInput(subscriber).reset();
+		getCollector(subscriber).reset();
 	}
 }

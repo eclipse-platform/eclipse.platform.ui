@@ -13,21 +13,19 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.OrSyncInfoFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This action performs a "cvs update -j start -j end ..." to merge changes
@@ -35,7 +33,7 @@ import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionF
  */
 public class MergeUpdateAction extends SafeUpdateAction {
 	
-	TeamSubscriber currentSubcriber = null;
+	Subscriber currentSubcriber = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
@@ -47,9 +45,9 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
-	protected SyncInfoFilter getSyncInfoFilter() {
+	protected FastSyncInfoFilter getSyncInfoFilter() {
 		// Update works for all incoming and conflicting nodes
-		return new OrSyncInfoFilter(new SyncInfoFilter[] {
+		return new OrSyncInfoFilter(new FastSyncInfoFilter[] {
 			new SyncInfoDirectionFilter(SyncInfo.INCOMING),
 			new SyncInfoDirectionFilter(SyncInfo.CONFLICTING)
 		});
@@ -90,7 +88,7 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
 		if(nodes.length > 0) {
 			// Assumption that all nodes are from the same subscriber.
-			currentSubcriber = nodes[0].getSubscriber();
+			currentSubcriber = ((CVSSyncInfo)nodes[0]).getSubscriber();
 			if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
 				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.toString())); //$NON-NLS-1$
 			}
@@ -152,65 +150,6 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		} finally {
 			monitor.done();
 		}
-	}
-	
-	/*
-	 * If called on a new folder, the folder will become an outgoing addition.
-	 */
-	private void makeRemoteLocal(SyncInfo info, IProgressMonitor monitor) throws TeamException {
-		IRemoteResource remote = info.getRemote();
-		IResource local = info.getLocal();
-		try {
-			if(remote==null) {
-				local.delete(false, monitor);
-			} else {
-				if(remote.isContainer()) {
-					ensureContainerExists(info);
-				} else {
-					monitor.beginTask(null, 200);
-					try {
-						IFile localFile = (IFile)local;
-						if(local.exists()) {
-							localFile.setContents(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, true /*keep history*/, Policy.subMonitorFor(monitor, 100));
-						} else {
-							ensureContainerExists(getParent(info));
-							localFile.create(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, Policy.subMonitorFor(monitor, 100));
-						}
-					} finally {
-						monitor.done();
-					}
-				}
-			}
-		} catch(CoreException e) {
-			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_1"), e); //$NON-NLS-1$
-		}
-	}
-	
-	private boolean ensureContainerExists(SyncInfo info) throws TeamException {
-		IResource local = info.getLocal();
-		// make sure that the parent exists
-		if (!local.exists()) {
-			if (!ensureContainerExists(getParent(info))) {
-				return false;
-			}
-		}
-		// make sure that the folder sync info is set;
-		if (isOutOfSync(info)) {
-			if (info instanceof CVSSyncInfo) {
-				CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
-				IStatus status = cvsInfo.makeInSync();
-				if (status.getSeverity() == IStatus.ERROR) {
-					logError(status);
-					return false;
-				}
-			}
-		}
-		// create the folder if it doesn't exist
-		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
-		if (!cvsFolder.exists()) {
-			cvsFolder.mkdir();
-		}
-		return true;
 	}
 	
 	/* (non-Javadoc)

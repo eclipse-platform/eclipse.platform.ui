@@ -11,61 +11,25 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSListener;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.AddToVersionControlDialog;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
-import org.eclipse.team.internal.ccvs.ui.XMLWriter;
 import org.eclipse.ui.IWorkingSet;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -615,27 +579,11 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Mark the files as merged.
-	 */
-	public void merged(IRemoteSyncElement[] elements) throws TeamException {
-		Map table = getProviderMapping(elements);
-		Set keySet = table.keySet();
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(getCurrentComment());
-			List list = (List)table.get(provider);
-			IRemoteSyncElement[] providerElements = (IRemoteSyncElement[])list.toArray(new IRemoteSyncElement[list.size()]);
-			provider.merged(providerElements);
-		}		
-	}
-	
-	/**
 	 * Return the entered comment or null if canceled.
 	 */
 	public String promptForComment(final Shell shell, IResource[] resourcesToCommit) {
 		final int[] result = new int[1];
-		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit); 
+		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, IResource.DEPTH_INFINITE); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				result[0] = dialog.open();
@@ -709,23 +657,6 @@ public class RepositoryManager {
 				result.put(provider, list);
 			}
 			list.add(resources[i]);
-		}
-		return result;
-	}
-	/**
-	 * Helper method. Return a Map mapping provider to a list of IRemoteSyncElements
-	 * shared with that provider.
-	 */
-	private Map getProviderMapping(IRemoteSyncElement[] elements) {
-		Map result = new HashMap();
-		for (int i = 0; i < elements.length; i++) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(elements[i].getLocal().getProject(), CVSProviderPlugin.getTypeId());
-			List list = (List)result.get(provider);
-			if (list == null) {
-				list = new ArrayList();
-				result.put(provider, list);
-			}
-			list.add(elements[i]);
 		}
 		return result;
 	}

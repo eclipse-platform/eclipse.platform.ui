@@ -14,10 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -118,13 +118,13 @@ public class RemoveRootAction extends SelectionListenerAction {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								ISchedulingRule rule = new RepositoryLocationSchedulingRule(root);
 								try {
-									JobManager.getInstance().beginRule(rule, monitor);
+									Platform.getJobManager().beginRule(rule, monitor);
 									view.getContentProvider().cancelJobs(root);
 									provider.disposeRepository(root);
 								} catch (CVSException e) {
 									throw new InvocationTargetException(e);
 								} finally {
-									JobManager.getInstance().endRule(rule);
+									Platform.getJobManager().endRule(rule);
 								}
 
 							}

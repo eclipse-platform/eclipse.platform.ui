@@ -416,12 +416,25 @@ public class SynchronizeManager implements ISynchronizeManager {
 			List participants = (List) synchronizeParticipants.get(id);
 			for (Iterator it2 = participants.iterator(); it2.hasNext(); ) {
 				ParticipantInstance instance = (ParticipantInstance) it2.next();
+
+				// Participants can opt out of being saved between sessions
+				if(instance.isParticipantInitialized()) {
+					ISynchronizeParticipant participant;
+					try {
+						participant = instance.getParticipant();
+					} catch (TeamException e1) {
+						continue;
+					}
+					if(! participant.isPersistent()) continue;
+				}
 				
-				// create the state placeholder for a participant 
+				// Create the state placeholder for a participant 
 				IMemento participantNode = xmlMemento.createChild(CTX_PARTICIPANT);
 				participantNode.putString(CTX_ID, instance.getId());				
 				IMemento participantData = participantNode.createChild(CTX_PARTICIPANT_DATA);
 				
+				// Allow the participant to save it's state. If the participant exists
+				// but isn't instantiated any loaded state will be re-saved.
 				if(instance.isParticipantInitialized()) {
 					ISynchronizeParticipant participant;
 					try {

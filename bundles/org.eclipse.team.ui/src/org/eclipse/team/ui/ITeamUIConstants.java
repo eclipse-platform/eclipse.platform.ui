@@ -16,4 +16,5 @@ public interface ITeamUIConstants {
 	public static final String PT_SYNCPARTICIPANTS = "synchronizeParticipants"; //$NON-NLS-1$
 	public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
 	public static final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
+	public static final String PT_LOGICAL_VIEWS = "logicalViews"; //$NON-NLS-1$
 }

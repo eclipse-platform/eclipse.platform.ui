@@ -10,37 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.io.BufferedReader;
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IElementStateListener;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
 
 /**
@@ -95,15 +81,15 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 	/**
 	 * Updates the document if a sync changes occurs to the associated CVS file.
 	 */
-	private ITeamResourceChangeListener teamChangeListener = new ITeamResourceChangeListener() {
-		public void teamResourceChanged(TeamDelta[] deltas) {
+	private ISubscriberChangeListener teamChangeListener = new ISubscriberChangeListener() {
+		public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
 			if(initialized()) {
 				for (int i = 0; i < deltas.length; i++) {
-					TeamDelta delta = deltas[i];
+					ISubscriberChangeEvent delta = deltas[i];
 					IResource resource = delta.getResource();
 					if(resource.getType() == IResource.FILE && 
 					   fLastSyncState != null && resource.equals(fLastSyncState.getLocal())) {
-						if(delta.getFlags() == TeamDelta.SYNC_CHANGED) {
+						if(delta.getFlags() == ISubscriberChangeEvent.SYNC_CHANGED) {
 							fetchContentsInJob();
 						}
 					} 
@@ -218,7 +204,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 	private boolean computeChange(IProgressMonitor monitor) throws TeamException {
 		boolean needToUpdateReferenceDocument = false;
 		if(initialized()) {
-			SyncInfo info = getSyncState(getFileFromEditor(), monitor);
+			SyncInfo info = getSyncState(getFileFromEditor());
 			// check if 
 			if(info == null && fLastSyncState != null) {
 				return true;
@@ -236,16 +222,16 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 	}
 	
 	private void debug(SyncInfo lastSyncState, SyncInfo info) {
-		String last = "[none]";
+		String last = "[none]"; //$NON-NLS-1$
 		if(lastSyncState != null) {
 			last = lastSyncState.toString();
 		}
-		System.out.println("+ CVSQuickDiff: was " + last + " is " + info.toString());
+		System.out.println("+ CVSQuickDiff: was " + last + " is " + info.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private SyncInfo getSyncState(IResource resource, IProgressMonitor monitor) throws TeamException {
+	private SyncInfo getSyncState(IResource resource) throws TeamException {
 		ICVSFile cvsFile = getManagedCVSFile();
-		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getSyncInfo(resource, monitor);
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getSyncInfo(resource);
 	}
 	
 	/**
@@ -292,7 +278,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 			} else {
 				// the remote is null, so ensure that the document is null
 				fReference = new Document();
-				fReference.set("");
+				fReference.set(""); //$NON-NLS-1$
 			}
 		}
 		
@@ -327,13 +313,13 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 			}
 			document.set(caw.toString());
 		} catch (IOException x) {
-			throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.readingFile"), x);
+			throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.readingFile"), x); //$NON-NLS-1$
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException x) {
-					throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.closingFile"), x);
+					throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.closingFile"), x); //$NON-NLS-1$
 				}
 			}
 		}
@@ -380,7 +366,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 			} catch (InterruptedException e) {				
 			}
 		}
-		Job updateJob = new Job(Policy.bind("RemoteRevisionQuickDiffProvider.fetchingFile")) {
+		Job updateJob = new Job(Policy.bind("RemoteRevisionQuickDiffProvider.fetchingFile")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					readDocument(monitor);
