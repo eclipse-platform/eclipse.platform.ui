@@ -101,7 +101,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
-		projectNameField.setFocus();
+		this.locationPathField.setFocus();
 		validatePage();
 		// Show description on opening
 		setErrorMessage(null);
@@ -155,7 +155,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		projectLabel.setText(DataTransferMessages.getString("WizardExternalProjectImportPage.nameLabel")); //$NON-NLS-1$
 
 		// new project name entry field
-		projectNameField = new Text(projectGroup, SWT.BORDER);
+		projectNameField = new Text(projectGroup, SWT.BORDER | SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
@@ -401,11 +401,10 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		}
 
 		if (newDescription == null) {
-			File parent = projectFile.getParentFile();
-			if (parent != null)
-				this.projectNameField.setText(parent.getName());
+			this.description = null;
+			this.projectNameField.setText("");
 		}
-		else{
+		else{			
 			this.description = newDescription;
 			this.projectNameField.setText(this.description.getName());
 		}
