@@ -491,6 +491,8 @@ public IStatus validateNatureSet(String[] natureIds) {
 	int count = natureIds.length;
 	if (count == 0)
 		return ResourceStatus.OK_STATUS;
+	String msg = Policy.bind("natures.invalidSet");
+	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 		
 	//set of the nature ids being validated (String (id))
 	HashSet natures = new HashSet(count * 2);
@@ -499,27 +501,32 @@ public IStatus validateNatureSet(String[] natureIds) {
 	for (int i = 0; i < count; i++) {
 		String id = natureIds[i];
 		ProjectNatureDescriptor desc = (ProjectNatureDescriptor)getNatureDescriptor(id);
-		if (desc == null)
-			return failure(Policy.bind("natures.missingNature", id));
+		if (desc == null) {
+			result.add(failure(Policy.bind("natures.missingNature", id)));
+			continue;
+		}
 		if (desc.hasCycle) 
-			return failure(Policy.bind("natures.hasCycle", id));
+			result.add(failure(Policy.bind("natures.hasCycle", id)));
 		if (!natures.add(id))
-			return failure(Policy.bind("natures.duplicateNature", id));
+			result.add(failure(Policy.bind("natures.duplicateNature", id)));
 		//validate nature set one-of constraint
 		String[] setIds = desc.getNatureSetIds();
 		for (int j = 0; j < setIds.length; j++) {
 			if (!sets.add(setIds[j]))
-				return failure(Policy.bind("natures.multipleSetMembers", setIds[j]));
+				result.add(failure(Policy.bind("natures.multipleSetMembers", setIds[j])));
 		}
 	}
 	//now walk over the set and ensure all pre-requisite natures are present
 	for (int i = 0; i < count; i++) {
 		IProjectNatureDescriptor desc = getNatureDescriptor(natureIds[i]);
+		if (desc == null)
+			continue;
 		String[] required = desc.getRequiredNatureIds();
 		for (int j = 0; j < required.length; j++)
 			if (!natures.contains(required[j]))
-				return failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j]));
+				result.add(failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j])));
 	}
-	return ResourceStatus.OK_STATUS;
+	//multistatus will be OK if no child statuses have been added
+	return result;
 }
 }
