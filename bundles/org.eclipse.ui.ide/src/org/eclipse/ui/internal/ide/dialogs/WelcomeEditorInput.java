@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  */	
 public class WelcomeEditorInput implements IEditorInput {
 	private AboutInfo aboutInfo;
-	private final static String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
+	private final static String FACTORY_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
 	public final static String FEATURE_ID = "featureId"; //$NON-NLS-1$
 /**
  * WelcomeEditorInput constructor comment.
