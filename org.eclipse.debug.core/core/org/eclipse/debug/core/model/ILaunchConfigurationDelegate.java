@@ -65,11 +65,11 @@ public interface ILaunchConfigurationDelegate {
 	
 	/**
 	 * Initializes the given configuration's attributes to default settings
-	 * based on the specified object.
+	 * based on the specified (possibly <code>null</code>) object.
 	 * 
 	 * @param configuration a working copy configuration in which to
 	 *  set default attributes for launching
-	 * @param object a context from which to initialize settings
+	 * @param object a context from which to initialize settings.  This object may be <code>null</code>
 	 */
 	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object);	
 }

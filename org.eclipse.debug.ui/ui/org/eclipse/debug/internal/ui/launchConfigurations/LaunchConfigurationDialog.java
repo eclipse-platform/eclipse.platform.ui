@@ -1493,9 +1493,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setChangesAreUserChanges(false);
 			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			Object workbenchSelection = getContext();
-			if (workbenchSelection != null) {
-				wc.initializeDefaults(workbenchSelection);
-			}
+			wc.initializeDefaults(workbenchSelection);
 			setLastSavedName(null);
 			setLaunchConfiguration(wc);
 		} catch (CoreException ce) {
