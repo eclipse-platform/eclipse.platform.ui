@@ -438,38 +438,59 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 
 	protected void calculateProperties(ISynchronizeModelElement element, boolean clear) {
 		element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, isConflicting(element));
+		propagateProblemMarkers(element, clear);
+		updateParentLabels(element);
+	}
+	
+	/**
+	 * Calculate and propagate problem markers in the element model
+	 * @param element
+	 * @param clear
+	 */
+	private void propagateProblemMarkers(ISynchronizeModelElement element, boolean clear) {
 		IResource resource = element.getResource();
 		if(resource != null) {
 			try {
-				boolean error = false;
-				boolean warning = false;
+				String property = null;
 				if(! clear) {
-					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth());
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
 						Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
 						if(severity.intValue() == IMarker.SEVERITY_ERROR) {
-							error = true; 
+							property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
 							break;
 						} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
-							warning = true;
+							property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+							// Keep going because there may be errors on other resources
 						}
 					}
 				}
-				element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY, error);
-				if(! error) {
-					element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY, warning);
+				
+				if(property != null) {
+					element.setPropertyToRoot(property, true);				
+				} else {					
+					String hadProperty = hadProblemProperty(element);
+					if(hadProperty != null) {
+						element.setPropertyToRoot(hadProperty, false);
+						ISynchronizeModelElement parent = (ISynchronizeModelElement)element.getParent();
+						if(parent != null) {
+							propagateProblemMarkers(parent, false);
+						}
+					}
 				}
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
 		}
-		updateParentLabels(element);
 	}
-	
-	protected void setPropertyToRoot(ISynchronizeModelElement diffNode, String propertyName, boolean value) {
-		diffNode.setPropertyToRoot(propertyName, value);
-		updateParentLabels(diffNode);
+
+	private String hadProblemProperty(ISynchronizeModelElement element) {
+		if(element.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY))
+			return ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+		else if(element.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY))
+				return ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+		return null;
 	}
 
 	private void updateParentLabels(ISynchronizeModelElement diffNode) {
@@ -500,10 +521,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 									for (int i = 0; idx < markerDeltas.length; idx++) {
 										IMarkerDelta delta = markerDeltas[i];
 										int kind = delta.getKind();
-											ISynchronizeModelElement element = getModelObject(delta.getResource());
-											if(element != null) {
-												calculateProperties(element, false);
-											}
+										ISynchronizeModelElement element = getClosestExistingParent(delta.getResource());
+										if(element != null) {
+											calculateProperties(element, false);
+										}
 									}
 								}
 								firePendingLabelUpdates();
@@ -513,6 +534,21 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				}
 			});
 		}
+	}
+	
+	protected ISynchronizeModelElement getClosestExistingParent(IResource resource) {
+		ISynchronizeModelElement element = getModelObject(resource);
+		if(element == null) {
+			do {
+				resource = resource.getParent();
+				element = getModelObject(resource);
+			} while(element == null && resource != null);
+		}
+		return element;
+	}
+	
+	protected int getLogicalModelDepth() {
+		return IResource.DEPTH_INFINITE;
 	}
 	
 	protected String[] getMarkerTypes() {

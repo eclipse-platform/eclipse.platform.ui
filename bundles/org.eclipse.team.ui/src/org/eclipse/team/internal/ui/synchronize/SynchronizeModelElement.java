@@ -179,14 +179,17 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 	}
 	
 	private void removeToRoot(String flag) {
-		setProperty(flag, false);
-		SynchronizeModelElement parent = (SynchronizeModelElement)getParent();
-		if (parent != null) {
-			// If the parent doesn't have the tag, no recalculation is required
-			// Also, if the parent still has a child with the tag, no recalculation is needed
-			if (parent.getProperty(flag) && !parent.hasChildWithFlag(flag)) {
-				// The parent no longer has the flag so propogate the reclaculation
-				parent.removeToRoot(flag);
+		boolean hasProperty = getProperty(flag);
+		if(hasProperty) {
+			setProperty(flag, false);
+			SynchronizeModelElement parent = (SynchronizeModelElement)getParent();
+			if (parent != null) {
+				// If the parent doesn't have the tag, no recalculation is required
+				// Also, if the parent still has a child with the tag, no recalculation is needed
+				if (parent.getProperty(flag) && !parent.hasChildWithFlag(flag)) {
+					// The parent no longer has the flag so propogate the reclaculation
+					parent.removeToRoot(flag);
+				}
 			}
 		}
 	}
