@@ -47,8 +47,10 @@ public class NonPluginEntryContentConsumer extends ContentConsumer {
 	 * @see IFeatureContentConsumer#close()
 	 */
 	public void close() throws CoreException  {
-		closed = true;
-		contentConsumer.close();
+		if (!closed){
+			closed = true;
+			contentConsumer.close();
+		}
 	}
 
 }

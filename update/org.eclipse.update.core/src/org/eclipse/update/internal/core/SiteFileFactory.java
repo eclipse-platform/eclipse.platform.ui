@@ -270,14 +270,13 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 						pluginFileString = (pluginFile==null) ? null : pluginFile.getAbsolutePath();
 
-						if (pluginFile != null && pluginFile.exists()) {
+						if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
 							IPluginEntry entry =
 								new DefaultPluginParser().parse(new FileInputStream(pluginFile));
 							VersionedIdentifier identifier = entry.getVersionedIdentifier();
 							plugin = new PluginIdentifier(identifier, files[i]);
 
 							addParsedPlugin(plugin);
-
 						}
 					} // files[i] is a directory
 				}

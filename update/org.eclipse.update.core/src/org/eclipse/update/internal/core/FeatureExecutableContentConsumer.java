@@ -6,6 +6,7 @@ package org.eclipse.update.internal.core;
  */
  
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +23,7 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	private boolean closed= false;
 	private boolean aborted= false;	
 	private ISiteContentConsumer contentConsumer;
+	private List /* of ContentConsumer */ contentConsumers;
 	private IFeatureContentConsumer parent = null;
 	private List /* of IFeatureContentCOnsumer */ children;
 
@@ -30,15 +32,19 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 */
 	public IContentConsumer open(INonPluginEntry nonPluginEntry)
 		throws CoreException {
-		return new NonPluginEntryContentConsumer(
+		ContentConsumer cons = new NonPluginEntryContentConsumer(
 			getContentConsumer().open(nonPluginEntry));
+		addContentConsumers(cons);
+		return cons;
 	}
 
 	/*
 	 * @see IContentConsumer#open(IPluginEntry)
 	 */
 	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException {
-		return new PluginEntryContentConsumer(getContentConsumer().open(pluginEntry));
+		ContentConsumer cons = new PluginEntryContentConsumer(getContentConsumer().open(pluginEntry));
+		addContentConsumers(cons);
+		return cons;		
 	}
 
 	/*
@@ -71,11 +77,22 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			return null;
 		}
 		
+		// close nested feature
 		IFeatureContentConsumer[] children = getChildren();
 		for (int i = 0; i < children.length; i++) {
 			children[i].close();
 		}
-				
+
+		// close plugin and non plugin content consumer
+		if (contentConsumers!=null){
+			Iterator iter = contentConsumers.iterator();
+			while (iter.hasNext()) {
+				ContentConsumer element = (ContentConsumer) iter.next();
+				element.close();
+			}
+		}
+		contentConsumers = null;
+		
 		if (contentConsumer != null)
 			return contentConsumer.close();
 		return null;
@@ -113,6 +130,16 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	}
 
 	/*
+	 * returns the list of Content Consumer for the plugins
+	 * and non-plugins entry installed
+	 */
+	private void addContentConsumers(ContentConsumer cons){
+		if (contentConsumers == null)
+			contentConsumers = new ArrayList();
+		contentConsumers.add(cons);
+	}
+
+	/*
 	 * @see IFeatureContentConsumer#abort()
 	 */
 	public void abort() throws CoreException {
@@ -128,12 +155,22 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			}
 		}
 
+		// close plugin and non plugin content consumer
+		if (contentConsumers!=null){
+			Iterator iter = contentConsumers.iterator();
+			while (iter.hasNext()) {
+				ContentConsumer element = (ContentConsumer) iter.next();
+				element.close();
+			}
+		}
+		contentConsumers = null;
+
 		//FIXME implement the cleanup
-		getContentConsumer().abort();
+		if (contentConsumer!=null)
+			contentConsumer.abort();
 		
 		aborted = true;
 		throw Utilities.newCoreException("",null);
-
 	}
 
 	/*

@@ -102,7 +102,7 @@ public class UpdateManagerUtils {
 
 					File relativePath = urlFile.getParentFile();
 					while (relativePath != null
-						&& !relativePath.getParentFile().equals(rootFile)) {
+						&& !rootFile.equals(relativePath.getParentFile())) {
 						relativePath = relativePath.getParentFile();
 					}
 

@@ -388,7 +388,7 @@ public class Feature extends FeatureModel implements IFeature {
 						monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
-				pluginConsumer.close();
+
 				if (monitor != null) {
 					monitor.worked(1);
 					if (monitor.isCanceled())
@@ -421,13 +421,6 @@ public class Feature extends FeatureModel implements IFeature {
 			// indicate install success
 			success = true;
 
-			// close the log
-			// do not close in finally block
-			// as it is caled when an error occured
-			recoveryLog.append(recoveryLog.END_INSTALL_LOG);
-			recoveryLog.close();
-			recoveryLog.delete();
-
 		} catch (Exception e) {
 			originalException = e;
 		} finally {
@@ -439,6 +432,10 @@ public class Feature extends FeatureModel implements IFeature {
 				if (consumer != null) {
 					if (success) {
 						result = consumer.close();
+						// close the log
+						recoveryLog.append(recoveryLog.END_INSTALL_LOG);
+						recoveryLog.close();
+						recoveryLog.delete();						
 					} else {
 						consumer.abort();
 					}

@@ -49,8 +49,10 @@ public class PluginEntryContentConsumer extends ContentConsumer {
 	 * @see IFeatureContentConsumer#close()
 	 */
 	public void close() throws CoreException {
-		closed = true;
-		contentConsumer.close();
+		if (!closed){
+			closed = true;
+			contentConsumer.close();
+		}
 	}
 
 }

@@ -65,12 +65,10 @@ public class ErrorRecoveryLog {
 	 */
 	public static String getLocalRandomIdentifier(String path) {
 		
-		// FIXME for now always return the same
-		return path;
 		
 		// verify if it will be a directory without creating the file
 		// as it doesn't exist yet
-		/*if (path.endsWith(File.separator) || path.endsWith("/"))
+		if (path.endsWith(File.separator) || path.endsWith("/"))
 			return path;
 		File file = new File(path);
 		String newName =
@@ -79,8 +77,8 @@ public class ErrorRecoveryLog {
 			newName =
 				UpdateManagerUtils.getLocalRandomIdentifier(file.getName(), new Date());
 		}
-		File newFile = new File(file,newName);
-		return newFile.getAbsolutePath();*/
+		File newFile = new File(file.getParentFile(),newName);
+		return newFile.getAbsolutePath();
 	}
 
 	/**
@@ -160,9 +158,8 @@ public class ErrorRecoveryLog {
 	 */
 	public void delete() {
 		File logFile = getRecoveryLogFile();
-		if (logFile.exists())
-			//logFile.delete();
-System.out.println("DELETE FILE");			
+		//if (logFile.exists())
+			//logFile.delete();	
 	}
 
 	/**

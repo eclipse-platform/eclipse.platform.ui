@@ -19,6 +19,11 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 	private IPluginEntry pluginEntry;
 	private ISite site;
+	
+	// recovery
+	private String oldPath;
+	private String newPath;
+	
 
 	/*
 	 * Constructor
@@ -51,7 +56,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 			// error recovery
 			if (pluginPath.endsWith("plugin.xml") || pluginPath.endsWith("fragment.xml")) {
+				oldPath=pluginPath.replace(File.separatorChar,'/');
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
+				newPath=pluginPath;
 				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.PLUGIN_ENTRY, pluginPath);
 			}
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
@@ -72,7 +79,21 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	/*
 	 * @see ISiteContentConsumer#close() 
 	 */
-	public void close() {
+	public void close() throws CoreException {
+	
+		// rename file 
+		ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);		
+		File fileToRename = new File(newPath);
+		boolean sucess = false;
+		if (fileToRename.exists()){
+			File renamedFile = new File(oldPath);
+			sucess = fileToRename.renameTo(renamedFile);
+		}
+		if(!sucess){
+			String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
+			throw Utilities.newCoreException(msg,new Exception(msg));
+		}
+		
 		if (site instanceof SiteFile)
 			 ((SiteFile) site).addPluginEntry(pluginEntry);
 	}

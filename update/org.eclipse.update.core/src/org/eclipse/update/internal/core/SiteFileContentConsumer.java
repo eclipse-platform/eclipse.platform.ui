@@ -7,7 +7,10 @@ import java.io.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -22,6 +25,10 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 
 	private String path;
 	private IFeature feature;
+	
+	// recovery
+	private String oldPath;
+	private String newPath;
 
 	/**
 	 * Constructor for FileSite
@@ -59,7 +66,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public IContentConsumer open(INonPluginEntry nonPluginEntry)
 		throws CoreException {
-		return new SiteFileNonPluginContentConsumer(getFeaturePath());
+		return  new SiteFileNonPluginContentConsumer(getFeaturePath());
 	}
 
 	/*
@@ -84,9 +91,10 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 
 		// error recovery
 		if (featurePath.endsWith(Feature.FEATURE_XML)) {
+			oldPath=featurePath.replace(File.separatorChar,'/');
 			featurePath =
 				ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
-
+			newPath = featurePath;
 			ErrorRecoveryLog.getLog().appendPath(
 				ErrorRecoveryLog.FEATURE_ENTRY,
 				featurePath);
@@ -130,6 +138,19 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				e);
 			//$NON-NLS-1$
 		}
+
+		//rename file back 
+		ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);
+		boolean sucess = false;
+		File fileToRename = new File(newPath);
+		if (fileToRename.exists()){
+			File renamedFile = new File(oldPath);
+			sucess = fileToRename.renameTo(renamedFile);
+		}	
+		if(!sucess){
+			String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
+			throw Utilities.newCoreException(msg,new Exception(msg));
+		}			
 
 		if (ref != null) {
 			// FIXME make sure we rename the XML files before
