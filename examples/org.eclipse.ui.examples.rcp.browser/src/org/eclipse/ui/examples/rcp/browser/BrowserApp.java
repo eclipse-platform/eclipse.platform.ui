@@ -53,6 +53,7 @@ public class BrowserApp implements IPlatformRunnable {
 		try {
 			int code = PlatformUI.createAndRunWorkbench(display,
 					new BrowserAdvisor());
+			// TODO: map return code to what the runtime expects.
 			return new Integer(code);
 		} finally {
 			if (display != null)
