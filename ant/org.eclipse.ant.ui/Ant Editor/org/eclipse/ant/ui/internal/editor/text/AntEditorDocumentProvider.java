@@ -234,11 +234,12 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 	 */
 	protected class XMLFileInfo extends FileInfo {
 		
-		public AntModel fModel;
-		
 		public XMLFileInfo(IDocument document, IAnnotationModel annotationModel, FileSynchronizer fileSynchronizer, AntModel model) {
 			super(document, annotationModel, fileSynchronizer);
-			fModel= model;
+		}
+		
+		public AntModel getAntModel() {
+			return (AntModel)fModel;
 		}
 	};
 	
@@ -363,7 +364,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 	    ElementInfo info= getElementInfo(element);
 	    if (info instanceof XMLFileInfo) {
 		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
-		    return xmlInfo.fModel;
+		    return xmlInfo.getAntModel();
 	    }
 	    return null;
     }
@@ -429,10 +430,9 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
      * @see org.eclipse.ui.editors.text.FileDocumentProvider#disposeElementInfo(java.lang.Object, org.eclipse.ui.texteditor.AbstractDocumentProvider.ElementInfo)
      */
     protected void disposeElementInfo(Object element, ElementInfo info) {
-	    if (info instanceof XMLFileInfo) {
+	    if (info.fModel != null &&  info instanceof XMLFileInfo) {
 		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
-		    if (xmlInfo.fModel != null)
-			    xmlInfo.fModel.dispose();
+		    xmlInfo.getAntModel().dispose();
 	    }
 	    super.disposeElementInfo(element, info);	
     }
