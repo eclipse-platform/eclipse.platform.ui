@@ -366,7 +366,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// this breakpoint has actually been moved - remove from the Breakpoint manager and delete
-				final IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {
 							IBreakpoint breakpoint= getBreakpoint(marker);
