@@ -104,7 +104,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an Ant tasks extension point: 
+         The following is an example of an Ant properties extension point: 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ant.core.antProperties&quot;&gt;
