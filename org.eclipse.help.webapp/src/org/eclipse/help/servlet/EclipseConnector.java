@@ -139,10 +139,11 @@ public class EclipseConnector {
 		URLConnection con = null;
 		if (eclipse != null) {
 			// it is an infocentre, add client locale to url
+			String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
 			if (url.indexOf('?') >= 0) {
-				url = url + "&lang=" + request.getLocale().toString();
+				url = url + "&lang=" + locale;
 			} else {
-				url = url + "?lang=" + request.getLocale().toString();
+				url = url + "?lang=" + locale;
 			}
 			con = eclipse.openConnection(url);
 		} else {

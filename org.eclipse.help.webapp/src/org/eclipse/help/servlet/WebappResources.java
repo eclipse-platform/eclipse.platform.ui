@@ -32,6 +32,7 @@ public class WebappResources {
 	/**
 	 * Returns a string from a property file.
 	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
+	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, HttpServletRequest request) {
 
@@ -56,7 +57,7 @@ public class WebappResources {
 
 	/**
 	 * Loads properties file for a locale and adds to cache
-	 * @param locale the input locale
+	 * @param locale the input locale or null; default locale will be used if null passed
 	 * @return property file or null if not exists
 	 */
 	private static Properties loadProperties(HttpServletRequest request) {
@@ -65,8 +66,8 @@ public class WebappResources {
 			InputStream propertiesStream = connector.openStream(propURL, request);
 			Properties localProp = new Properties();
 			localProp.load(propertiesStream);
-
-			propertiesTable.put(request.getLocale().toString(), localProp);
+			String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
+			propertiesTable.put(locale, localProp);
 			return localProp;
 		} catch (Throwable ex) {
 		}

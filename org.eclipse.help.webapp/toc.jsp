@@ -122,7 +122,7 @@ A.active:hover{
 <%
 		if("yes".equalsIgnoreCase(request.getParameter("synch"))){
 %>
-alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
+alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", request))%>');
 // when we don't find the specified toc, we just restore navigation
 parent.parent.restoreNavigation();
 <%

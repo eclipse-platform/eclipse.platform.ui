@@ -125,7 +125,7 @@ if (document.layers){
 <%
 		if("yes".equalsIgnoreCase(request.getParameter("synch"))){
 %>
-alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
+alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", request))%>');
 <%
 		}
 %>
