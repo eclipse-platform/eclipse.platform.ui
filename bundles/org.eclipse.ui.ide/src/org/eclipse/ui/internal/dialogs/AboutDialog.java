@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
@@ -40,7 +39,6 @@ public class AboutDialog extends ProductInfoDialog {
 	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
 	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
-	private IWorkbenchWindow window;
 	private AboutInfo primaryInfo;
 	private AboutInfo[] featureInfos;
 	private Image image; //image to display on dialog
@@ -52,7 +50,6 @@ public class AboutDialog extends ProductInfoDialog {
 	 */
 	public AboutDialog(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
 		super(window.getShell());
-		this.window = window;
 		this.primaryInfo = primaryInfo;
 		this.featureInfos = featureInfos;
 	}
@@ -69,13 +66,7 @@ public class AboutDialog extends ProductInfoDialog {
 				new AboutPluginsDialog(getShell(), primaryInfo).open();
 				return;
 			case INFO_ID :
-				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-					public void run() {
-						// @issue replace system editor with dialog with text widget (can't depend on text editor plugins) 
-						workbench.getConfigurationInfo().openSystemSummaryEditor(window);
-					}
-				});
-				close();
+				new SystemSummaryDialog(getShell()).open();
 				return;
 		}
 		

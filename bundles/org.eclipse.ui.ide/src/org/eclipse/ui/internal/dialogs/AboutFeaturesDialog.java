@@ -27,6 +27,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -158,6 +159,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					AboutPluginsDialog d = 
 						new AboutPluginsDialog(
 							getShell(), 
+							primaryInfo,
 							descriptors,
 							WorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
 							WorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()}), //$NON-NLS-1$
@@ -371,7 +373,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			for (int j = 0; j < featureReferences.length; j++) {
 				IFeature feature;
 				try {
-					feature = featureReferences[j].getFeature();
+					feature = featureReferences[j].getFeature(new NullProgressMonitor());
 				} catch (CoreException e) {
 					// just skip it
 					break;
