@@ -408,7 +408,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		File file = new File(site.getSite().getURL().getFile());
 		long available = LocalSystemInfo.getFreeSpace(file);
 		long required = computeRequiredSizeFor(site);
-		if (required == -1)
+		if (required <= 0)
 			requiredSpaceLabel.setText(UpdateUI.getString("InstallWizard.TargetPage.unknownSize")); //$NON-NLS-1$
 		else
 			requiredSpaceLabel.setText(
