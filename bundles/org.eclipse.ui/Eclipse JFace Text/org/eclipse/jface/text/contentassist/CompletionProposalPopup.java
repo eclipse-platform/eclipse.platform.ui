@@ -241,8 +241,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void displayProposals() {
 		fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
 		fProposalShell.setVisible(true);
-		fAdditionalInfoController.install(fProposalTable);		
-		fAdditionalInfoController.handleTableSelectionChanged();
+		if (fAdditionalInfoController != null) {
+			fAdditionalInfoController.install(fProposalTable);		
+			fAdditionalInfoController.handleTableSelectionChanged();
+		}
 	}
 	
 	public boolean verifyKey(VerifyEvent e) {
@@ -317,7 +319,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void selectProposal(int index) {
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
-		fAdditionalInfoController.handleTableSelectionChanged();
+		if (fAdditionalInfoController != null)
+			fAdditionalInfoController.handleTableSelectionChanged();
 	}
 	
 	public void processEvent(VerifyEvent event) {

@@ -848,8 +848,12 @@ public class ContentAssistant implements IContentAssistant {
 		fLayoutManager= new LayoutManager();
 		fInternalListener= new InternalListener();
 		
+		AdditionalInfoController controller= null;
+		if (fInformationControlCreator != null)
+			controller= new AdditionalInfoController(fInformationControlCreator, Math.round(fAutoActivationDelay * 1.5f));
+		
 		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
-		fProposalPopup= new CompletionProposalPopup(this, fViewer, new AdditionalInfoController(fInformationControlCreator, Math.round(fAutoActivationDelay * 1.5f)));
+		fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
 		
 		if (fIsAutoActivated) {
 			fAutoAssistListener= new AutoAssistListener();
