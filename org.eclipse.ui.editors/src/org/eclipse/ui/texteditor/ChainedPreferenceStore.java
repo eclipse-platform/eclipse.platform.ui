@@ -424,9 +424,6 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 				firePropertyChangeEvent(event);
 		} else if (visibleStore == childPreferenceStore) {
 			// event from visible store
-			if (newValue == null)
-				// fall back to string property
-				newValue= visibleStore.getString(property);
 			if (oldValue != null) {
 				// change in child, visible store -> change in this chained preference store
 				firePropertyChangeEvent(event);
@@ -495,26 +492,23 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * @param store the preference store
 	 * @param thisValue the given value
 	 * @return the other value
-	 * @throws java.lang.IllegalArgumentException if <code>thisValue</code> has a different type than
-	 * 		<code>Boolean</code>, <code>Double</code>, <code>Float</code>, <code>Integer</code>,
-	 * 		<code>Long</code> or <code>String</code>
 	 */
 	private Object getOtherValue(String property, IPreferenceStore store, Object thisValue) {
-		Object otherValue;
+
 		if (thisValue instanceof Boolean)
-			otherValue= new Boolean(store.getBoolean(property));
+			return new Boolean(store.getBoolean(property));
 		else if (thisValue instanceof Double)
-			otherValue= new Double(store.getDouble(property));
+			return new Double(store.getDouble(property));
 		else if (thisValue instanceof Float)
-			otherValue= new Float(store.getFloat(property));
+			return new Float(store.getFloat(property));
 		else if (thisValue instanceof Integer)
-			otherValue= new Integer(store.getInt(property));
+			return new Integer(store.getInt(property));
 		else if (thisValue instanceof Long)
-			otherValue= new Long(store.getLong(property));
-		else
-			// String case and fallback
-			otherValue= store.getString(property);
-		return otherValue;
+			return new Long(store.getLong(property));
+		else if (thisValue instanceof String)
+			return store.getString(property);
+
+		return store.getString(property);
 	}
 
 	/**
