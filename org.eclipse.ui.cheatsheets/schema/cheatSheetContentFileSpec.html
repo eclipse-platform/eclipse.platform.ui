@@ -244,7 +244,11 @@ then the item expands to something equivalent to:
     If this action also implements <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
     it will be invoked via its run(String[],ICheatSheetManager) method and be
     passed the cheat sheet manager and action parameters. The pluginId attribute
-    must be present whenever this attribute is present</li>
+    must be present whenever this attribute is present. It is strongly
+    recommended that actions intended to be invoked from cheat sheets should
+    report success/fail outcome if running the action might fail (perhaps
+    because the user cancels the action from its dialog). (See
+    org.eclipse.jface.action.Action.notifyResult(boolean) for details.)</li>
   <li><b>pluginId </b>- The id of the plug-in which contains the Java class of
     the action class. This attribute must be present whenever the class
     attribute is present.</li>

@@ -13,9 +13,17 @@ package org.eclipse.ui.cheatsheets;
 /**
  * Cheat sheet-aware action.
  * <p>
- * This interface should be implemented by actions that provide extra support
- * for use in cheat sheets. These actions can be given parameters and the
- * invoking cheat sheet manager.
+ * This interface should be implemented by actions 
+ * (subclasses of {@link org.eclipse.jface.action.Action}) that provide extra
+ * support for use in cheat sheets. These actions get passed additional
+ * parameters and the invoking cheat sheet manager.
+ * </p>
+ * <p>
+ * It is strongly recommended that actions intended to be invoked from cheat
+ * sheets should report success/fail outcome if running the action might fail
+ * (perhaps because the user cancels the action from its dialog). 
+ * See {@link org.eclipse.jface.action.Action#notifyResult(boolean)} for
+ * details.
  * </p>
  *
  * @since 3.0
