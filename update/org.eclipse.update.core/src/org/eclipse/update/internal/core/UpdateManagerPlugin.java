@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.help.AppServer;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.Utilities;
 
@@ -95,21 +94,6 @@ public class UpdateManagerPlugin extends Plugin {
 		
 		JarContentReference.shutdown(); // make sure we are not leaving jars open
 		Utilities.shutdown(); // cleanup temp area
-	}
-
-	private void startupWebInstallHandler() throws CoreException {
-		
-		// configure web install handler
-		if (!AppServer.add("org.eclipse.update", "org.eclipse.update.webapp", "")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (DEBUG_SHOW_WEB)
-				debug("Unable to configure web install handler"); //$NON-NLS-1$
-			return;
-		}
-
-		appServerHost = AppServer.getHost();
-		appServerPort = AppServer.getPort();
-		if (DEBUG_SHOW_WEB)
-			debug("Web install handler configured on " + appServerHost + ":" + appServerPort); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean getBooleanDebugOption(String flag, boolean dflt) {
