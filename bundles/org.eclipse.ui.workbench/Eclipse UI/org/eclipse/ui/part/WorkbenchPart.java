@@ -246,8 +246,13 @@ protected void setSite(IWorkbenchPartSite site) {
  *
  * @param title the title, or <code>null</code> to clear
  */
-protected void setTitle(String title) {
-	this.title = title;
+protected void setTitle(String newTitle) {
+	
+	//Do not send changes if they are the same
+	if(newTitle.equals(title))
+		return;
+	
+	this.title = newTitle;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**
