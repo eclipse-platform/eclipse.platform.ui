@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class ContainerContentProvider implements ITreeContentProvider {
 	private Viewer viewer;
+	private boolean showClosedProjects = true;
 /**
  * Creates a new ResourceContentProvider.
  */
@@ -28,7 +29,18 @@ public void dispose() {}
  */
 public Object[] getChildren(Object element) {
 	if (element instanceof IWorkspace) {
-		return ((IWorkspace) element).getRoot().getProjects();
+		// check if closed projects should be shown
+		IProject[] allProjects = ((IWorkspace) element).getRoot().getProjects();
+		if (showClosedProjects)
+			return allProjects;
+		
+		ArrayList accessibleProjects = new ArrayList();
+		for (int i = 0; i < allProjects.length; i++){
+			if (allProjects[i].isOpen()){
+				accessibleProjects.add(allProjects[i]);
+			}
+		}
+		return accessibleProjects.toArray();
 	} else if (element instanceof IContainer) {
 		IContainer container = (IContainer)element;
 		if (container.isAccessible()) {
@@ -80,4 +92,14 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 public boolean isDeleted(Object element) {
 	return ((element instanceof IResource) && !((IResource) element).exists());
 }
+/**
+ * Specify whether or not to show closed projects in the tree 
+ * viewer.  Default is to show closed projects.
+ * 
+ * @param show boolean if false, do not show closed projects in the tree
+ */
+public void showClosedProjects(boolean show){
+	showClosedProjects = show;
+}
+
 }

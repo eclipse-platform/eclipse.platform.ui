@@ -85,7 +85,7 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(topLevel, new DialogPageContextComputer(this, IHelpContextIds.NEW_FILE_WIZARD_PAGE));
 
 	// resource and container group
-	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file")); //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file"), false); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initialPopulateContainerNameField();
 	if (initialFileName != null)
