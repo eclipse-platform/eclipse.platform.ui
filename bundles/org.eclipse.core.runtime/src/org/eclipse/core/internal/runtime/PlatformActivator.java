@@ -72,6 +72,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void installPlatformURLSupport() {
 		PlatformURLPluginConnection.startup();
 		PlatformURLFragmentConnection.startup();
+		PlatformURLMetaConnection.startup();
+		PlatformURLConfigConnection.startup();
 
 		PlatformURLBaseConnection.startup(InternalPlatform.getDefault().getInstallURL());
 
