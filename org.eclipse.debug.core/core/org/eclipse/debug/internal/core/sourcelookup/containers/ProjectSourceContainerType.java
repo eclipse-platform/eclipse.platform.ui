@@ -63,9 +63,8 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject project = workspace.getRoot().getProject(string);
 				return new ProjectSourceContainer(project, ref);
-			} else {
-				abort(SourceLookupMessages.getString("ProjectSourceContainerType.11"), null); //$NON-NLS-1$
-			}
+			} 
+			abort(SourceLookupMessages.getString("ProjectSourceContainerType.11"), null); //$NON-NLS-1$
 		}
 		abort(SourceLookupMessages.getString("ProjectSourceContainerType.12"), null); //$NON-NLS-1$
 		return null;

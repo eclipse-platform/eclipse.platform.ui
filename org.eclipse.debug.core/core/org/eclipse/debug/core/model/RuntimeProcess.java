@@ -328,9 +328,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public int getExitValue() throws DebugException {
 		if (isTerminated()) {
 			return fExitValue;
-		} else {
-			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.Exit_value_not_available_until_process_terminates._1"), null)); //$NON-NLS-1$
-		}
+		} 
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.Exit_value_not_available_until_process_terminates._1"), null)); //$NON-NLS-1$
 	}
 	
 	/**

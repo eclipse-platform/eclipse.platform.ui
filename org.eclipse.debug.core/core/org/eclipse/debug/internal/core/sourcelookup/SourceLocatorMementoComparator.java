@@ -37,9 +37,8 @@ public class SourceLocatorMementoComparator implements Comparator {
 			} else {
 				if (i2 < m2.length()) {
 					return -1;
-				} else {
-					return 0;
-				}
+				} 
+				return 0;
 			}
 		}
 		return 0;

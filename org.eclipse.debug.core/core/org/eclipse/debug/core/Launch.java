@@ -262,9 +262,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		IStatus[] children= status.getChildren();
 		if (children.length == 1) {
 			throw new DebugException(children[0]);
-		} else {
-			throw new DebugException(status);
-		}
+		} 
+		throw new DebugException(status);
 	}
 
 	/**

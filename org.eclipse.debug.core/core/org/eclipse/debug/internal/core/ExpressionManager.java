@@ -130,9 +130,8 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			IConfigurationElement element= (IConfigurationElement) fWatchExpressionDelegates.get(debugModel);
 			if (element != null) {
 				return (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
-			} else {
-				return null;
-			}
+			} 
+			return null;
 		} catch (CoreException e) {
 			DebugPlugin.log(e);
 			return null;

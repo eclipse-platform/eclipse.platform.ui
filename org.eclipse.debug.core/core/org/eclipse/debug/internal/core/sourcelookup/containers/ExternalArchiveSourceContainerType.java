@@ -41,9 +41,8 @@ public class ExternalArchiveSourceContainerType extends AbstractSourceContainerT
 				String detect = element.getAttribute("detectRoot"); //$NON-NLS-1$
 				boolean auto = "true".equals(detect); //$NON-NLS-1$
 				return new ExternalArchiveSourceContainer(string, auto);
-			} else {
-				abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.11"), null); //$NON-NLS-1$
-			}
+			} 
+			abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.11"), null); //$NON-NLS-1$
 		}
 		abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.12"), null); //$NON-NLS-1$
 		return null;

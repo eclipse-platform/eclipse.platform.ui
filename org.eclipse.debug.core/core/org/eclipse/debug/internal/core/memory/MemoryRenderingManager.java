@@ -727,12 +727,10 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	{
 		MemoryRenderingInfo info = (MemoryRenderingInfo)fMemoryRenderingInfo.get(renderingId);
 		
-		if (info != null)
+		if (info != null) {
 			return info;
-		else
-		{
-			return null;
 		}
+		return null;
 	}
 
 	/* (non-Javadoc)

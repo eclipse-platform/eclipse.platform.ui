@@ -113,14 +113,13 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof String) {
 				return (String)attr;
-			} else {
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.lang.String._1"), new String[] {key}), null //$NON-NLS-1$
-					)
-				);
-			}
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.lang.String._1"), new String[] {key}), null //$NON-NLS-1$
+				)
+			);
 		}
 		return defaultValue;
 	}
@@ -139,14 +138,13 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof Integer) {
 				return ((Integer)attr).intValue();
-			} else {
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_int._2"), new String[] {key}), null //$NON-NLS-1$
-					)
-				);
-			}
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_int._2"), new String[] {key}), null //$NON-NLS-1$
+				)
+			);
 		}
 		return defaultValue;
 	}
@@ -165,14 +163,13 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof Boolean) {
 				return ((Boolean)attr).booleanValue();
-			} else {
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_boolean._3"), new String[] {key}), null //$NON-NLS-1$
-					)
-				);
-			}
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_boolean._3"), new String[] {key}), null //$NON-NLS-1$
+				)
+			);
 		}
 		return defaultValue;
 	}
@@ -191,14 +188,13 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof List) {
 				return (List)attr;
-			} else {
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.List._1"), new String[] {key}), null //$NON-NLS-1$
-					)
-				);
-			}
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.List._1"), new String[] {key}), null //$NON-NLS-1$
+				)
+			);
 		}
 		return defaultValue;
 	}
@@ -217,14 +213,13 @@ public class LaunchConfigurationInfo {
 		if (attr != null) {
 			if (attr instanceof Map) {
 				return (Map)attr;
-			} else {
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.Map._1"), new String[] {key}), null //$NON-NLS-1$
-					)
-				);
-			}
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.Map._1"), new String[] {key}), null //$NON-NLS-1$
+				)
+			);
 		}
 		return defaultValue;
 	}
@@ -386,25 +381,25 @@ public class LaunchConfigurationInfo {
 		String id = root.getAttribute("type"); //$NON-NLS-1$
 		if (id == null) {
 			throw getInvalidFormatDebugException();
-		} else {
-			ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
-			if (type == null) {
-				String message= MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.missing_type"), new Object[]{id}); //$NON-NLS-1$
-				throw new DebugException(
-						new Status(
-						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE, message, null)
-					);
-			}
-			setType(type);
+		} 
+		
+		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
+		if (type == null) {
+			String message= MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.missing_type"), new Object[]{id}); //$NON-NLS-1$
+			throw new DebugException(
+					new Status(
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE, message, null)
+				);
 		}
+		setType(type);
 		
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
+			short nodeType = node.getNodeType();
+			if (nodeType == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				String nodeName = element.getNodeName();
 				

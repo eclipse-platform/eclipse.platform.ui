@@ -79,10 +79,9 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		IProject[] projects = getBuildOrder(configuration, mode);
 		if (projects == null) {
 			return true;
-		} else {
-			buildProjects(projects, monitor);
-			return false;
-		}
+		} 
+		buildProjects(projects, monitor);
+		return false;
 	}
 	
 	/**
@@ -117,23 +116,22 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		IProject[] projects = getProjectsForProblemSearch(configuration, mode);
 		if (projects == null) {
 			return true; //continue launch
-		} else {
-			boolean continueLaunch = true;
-			
-			monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.6")); //$NON-NLS-1$
-			for (int i = 0; i < projects.length; i++) {
-				monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.7") + projects[i].getName()); //$NON-NLS-1$
-				if (existsProblems(projects[i])) {
-					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-					if (prompter != null) {
-						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, configuration)).booleanValue();
-						break;
-					}
-				}	
-			}	
-			
-			return continueLaunch;
 		}
+		boolean continueLaunch = true;
+			
+		monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.6")); //$NON-NLS-1$
+		for (int i = 0; i < projects.length; i++) {
+			monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.7") + projects[i].getName()); //$NON-NLS-1$
+			if (existsProblems(projects[i])) {
+				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+				if (prompter != null) {
+					continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, configuration)).booleanValue();
+					break;
+				}
+			}	
+		}	
+			
+		return continueLaunch;
 	}
 	
 	/* (non-Javadoc)

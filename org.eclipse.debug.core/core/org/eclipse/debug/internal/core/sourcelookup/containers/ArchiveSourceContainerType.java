@@ -45,9 +45,8 @@ public class ArchiveSourceContainerType extends AbstractSourceContainerTypeDeleg
 				boolean auto = "true".equals(detect); //$NON-NLS-1$
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(string));
 				return new ArchiveSourceContainer(file, auto);
-			} else {
-				abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.11"), null); //$NON-NLS-1$
-			}
+			} 
+			abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.11"), null); //$NON-NLS-1$
 		}
 		abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.12"), null); //$NON-NLS-1$
 		return null;

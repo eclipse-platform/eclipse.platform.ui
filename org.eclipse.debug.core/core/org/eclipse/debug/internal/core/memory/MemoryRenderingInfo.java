@@ -84,13 +84,11 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 				String ret = element.getAttribute(VALUE);
 				return ret;
 			}
-			else
-				return null;
-		}
-		else
-		{
+			
 			return null;
 		}
+		
+		return null;
 	}
 	
 
@@ -109,10 +107,7 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 			IConfigurationElement element = (IConfigurationElement)fProperties.get(propertyId);
 			return element;
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryRenderingInfo#getAllProperties()

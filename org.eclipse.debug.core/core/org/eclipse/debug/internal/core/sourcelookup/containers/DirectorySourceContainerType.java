@@ -42,9 +42,8 @@ public class DirectorySourceContainerType extends AbstractSourceContainerTypeDel
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
 				return new DirectorySourceContainer(new Path(string), nested);
-			} else {
-				abort(SourceLookupMessages.getString("DirectorySourceContainerType.11"), null); //$NON-NLS-1$
 			}
+			abort(SourceLookupMessages.getString("DirectorySourceContainerType.11"), null); //$NON-NLS-1$
 		}
 		abort(SourceLookupMessages.getString("DirectorySourceContainerType.12"), null); //$NON-NLS-1$
 		return null;

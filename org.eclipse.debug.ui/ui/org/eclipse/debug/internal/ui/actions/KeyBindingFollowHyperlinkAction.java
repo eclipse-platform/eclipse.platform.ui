@@ -87,9 +87,8 @@ public class KeyBindingFollowHyperlinkAction extends FollowHyperlinkAction {
 	protected boolean isEmptySelection(ISelection selection) {
 		if (selection instanceof ITextSelection) {
 			return ((ITextSelection)selection).getLength() < 1;
-		} else {
-			return selection.isEmpty();
-		}
+		} 
+		return selection.isEmpty();
 	}
 	
 	/**

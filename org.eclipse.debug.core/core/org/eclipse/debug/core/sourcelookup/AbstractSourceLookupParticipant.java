@@ -66,9 +66,8 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 						} else {
 							if (objects.length == 1) {
 								return objects;
-							} else {
-								return new Object[]{objects[0]};
-							}
+							} 
+							return new Object[]{objects[0]};
 						}
 					}
 				}

@@ -402,9 +402,8 @@ public class DebugPlugin extends Plugin {
 				Object handler = config.createExecutableExtension("class"); //$NON-NLS-1$
 				if (handler instanceof IStatusHandler) {
 					return (IStatusHandler)handler;
-				} else {
-					invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.Registered_status_handler_{0}_does_not_implement_required_interface_IStatusHandler._1"), new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
 				}
+				invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.Registered_status_handler_{0}_does_not_implement_required_interface_IStatusHandler._1"), new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -530,9 +529,8 @@ public class DebugPlugin extends Plugin {
 				return null;
 			}
 			return processFactory.newProcess(launch, process, label, attributes);
-		} else {
-			return new RuntimeProcess(launch, process, label, attributes);
-		}
+		} 
+		return new RuntimeProcess(launch, process, label, attributes);
 	}	
 	
 	/**

@@ -1150,14 +1150,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		if (config == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
 				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Source_locator_does_not_exist__{0}_13"), new String[] {identifier} ), null)); //$NON-NLS-1$
-		} else {
-			IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
-			if (sourceLocator instanceof AbstractSourceLookupDirector) {
-				((AbstractSourceLookupDirector)sourceLocator).setId(identifier);
-			}
-			return sourceLocator;
+		} 
+		IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
+		if (sourceLocator instanceof AbstractSourceLookupDirector) {
+			((AbstractSourceLookupDirector)sourceLocator).setId(identifier);
 		}
-		
+		return sourceLocator;
 	}
 
 	/**

@@ -489,9 +489,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			}
 			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION); //$NON-NLS-1$
 			return path;
-		} else {
-			return getOriginal().getLocation();
-		}
+		} 
+		return getOriginal().getLocation();
 	}
 	
 	/**
@@ -523,9 +522,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		if (newContainer == null) {
 			return !originalContainer.equals(newContainer);
-		} else {
-			return !newContainer.equals(originalContainer);
-		}
+		} 
+		return !newContainer.equals(originalContainer);
 	}		
 	
 	/**

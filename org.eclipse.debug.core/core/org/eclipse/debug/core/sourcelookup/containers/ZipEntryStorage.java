@@ -86,9 +86,8 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		}
 		if (index == -1) {
 			return getZipEntry().getName();
-		} else {
-			return getZipEntry().getName().substring(index + 1);
-		}
+		} 
+		return getZipEntry().getName().substring(index + 1);
 	}
 
 	/* (non-Javadoc)

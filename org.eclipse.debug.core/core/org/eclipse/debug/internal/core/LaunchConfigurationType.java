@@ -235,25 +235,23 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 						fDelegates.put(iter.next(), object);
 					}
 					return (ILaunchConfigurationDelegate)object;
-				} else {
-					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationType.Launch_delegate_for_{0}_does_not_implement_required_interface_ILaunchConfigurationDelegate._1"), new String[]{getName()}), null)); //$NON-NLS-1$
-				}
-			} else {
-				// contributed modes
-				List contributed = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
-				Iterator iterator = contributed.iterator();
-				while (iterator.hasNext()) {
-					ContributedDelegate contributedDelegate = (ContributedDelegate)iterator.next();
-					if (getIdentifier().equals(contributedDelegate.getLaunchConfigurationType())) {
-						modes = contributedDelegate.getModes();
-						if (modes.contains(mode)) {
-							delegate = contributedDelegate.getDelegate();
-							Iterator modesIterator = modes.iterator();
-							while (modesIterator.hasNext()) {
-								fDelegates.put(modesIterator.next(), delegate); 
-							}
-							return delegate;
+				} 
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationType.Launch_delegate_for_{0}_does_not_implement_required_interface_ILaunchConfigurationDelegate._1"), new String[]{getName()}), null)); //$NON-NLS-1$
+			} 
+			// contributed modes
+			List contributed = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
+			Iterator iterator = contributed.iterator();
+			while (iterator.hasNext()) {
+				ContributedDelegate contributedDelegate = (ContributedDelegate)iterator.next();
+				if (getIdentifier().equals(contributedDelegate.getLaunchConfigurationType())) {
+					modes = contributedDelegate.getModes();
+					if (modes.contains(mode)) {
+						delegate = contributedDelegate.getDelegate();
+						Iterator modesIterator = modes.iterator();
+						while (modesIterator.hasNext()) {
+							fDelegates.put(modesIterator.next(), delegate); 
 						}
+						return delegate;
 					}
 				}
 			}

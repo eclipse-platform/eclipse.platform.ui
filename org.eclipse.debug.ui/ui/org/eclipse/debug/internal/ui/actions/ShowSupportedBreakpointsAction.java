@@ -67,15 +67,14 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			IBreakpoint breakpoint= (IBreakpoint)element;
 			if (fDebugTargets.isEmpty()) {
 				return true;
-			} else {
-				Iterator iterator= fDebugTargets.iterator();
-				while (iterator.hasNext()) {
-					IDebugTarget target = (IDebugTarget) iterator.next();
-					if (target.supportsBreakpoint(breakpoint)) {
-						return true;
-					}
-					
+			}
+			Iterator iterator= fDebugTargets.iterator();
+			while (iterator.hasNext()) {
+				IDebugTarget target = (IDebugTarget) iterator.next();
+				if (target.supportsBreakpoint(breakpoint)) {
+					return true;
 				}
+				
 			}
 			return false;
 		}
@@ -121,10 +120,9 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			if (debugTargets.isEmpty()) {
 				 if(fDebugTargets.isEmpty()) {
 					return;
-				 } else {
-				 	reapplyFilters(debugTargets);
-				 	return;
-				 }
+				 } 
+				 reapplyFilters(debugTargets);
+				 return;
 			}
 			if (fDebugTargets.isEmpty()) {
 				reapplyFilters(debugTargets);
