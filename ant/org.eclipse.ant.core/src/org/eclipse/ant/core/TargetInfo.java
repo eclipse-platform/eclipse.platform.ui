@@ -13,9 +13,9 @@ http://www.eclipse.org/legal/cpl-v10.html
  */
 public class TargetInfo {
 
-	private String fName = null;
-	private String fDescription = null;
-	private boolean fIsDefault = false;
+	private String name = null;
+	private String description = null;
+	private boolean isDefault = false;
 
 	/**
 	 * Create a target information
@@ -27,9 +27,9 @@ public class TargetInfo {
 	 */
 	/*package*/
 	TargetInfo(String name, String description, boolean isDefault) {
-		fName = name == null ? "" : name; //$NON-NLS-1$
-		fDescription = description;
-		fIsDefault = isDefault;
+		this.name = name == null ? "" : name; //$NON-NLS-1$
+		this.description = description;
+		this.isDefault = isDefault;
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class TargetInfo {
 	 * @return the target name
 	 */
 	public String getName() {
-		return fName;
+		return name;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class TargetInfo {
 	 * @return the target description or <code>null</code> if none
 	 */
 	public String getDescription() {
-		return fDescription;
+		return description;
 	}
 
 	/**
@@ -57,6 +57,6 @@ public class TargetInfo {
 	 * @return whether this is the build file default target
 	 */
 	public boolean isDefault() {
-		return fIsDefault;
+		return isDefault;
 	}
 }
