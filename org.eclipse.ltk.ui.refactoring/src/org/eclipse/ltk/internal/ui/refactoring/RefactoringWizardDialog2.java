@@ -420,6 +420,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		fCurrentPage= current;
 	}
 	
+	protected void handleShellCloseEvent() {
+		if (fActiveRunningOperations == 0)	{
+			if (fWizard.performCancel())	
+				super.handleShellCloseEvent();
+		}
+	}
+	
 	private boolean isPreviewPageActive() {
 		return IPreviewWizardPage.PAGE_NAME.equals(fCurrentPage.getName());
 	}

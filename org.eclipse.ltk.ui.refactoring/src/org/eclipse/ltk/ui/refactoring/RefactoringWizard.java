@@ -605,6 +605,12 @@ public abstract class RefactoringWizard extends Wizard {
 		return page.performFinish();
 	}
 	
+	public boolean performCancel() {
+		if (fChange != null)
+			fChange.dispose();
+		return super.performCancel();
+	}
+	
 	//---- Internal API, but public due to Java constraints ------------------------------
 	
 	/**

@@ -16,16 +16,18 @@ import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.IUndoManagerListener;
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
@@ -157,8 +159,9 @@ public class UndoManager implements IUndoManager {
 		fUndoNames.push(refactoringName);
 		fUndoChanges.push(change);
 		if (fUndoChanges.size() > MAX_UNDO_REDOS) {
-			fUndoChanges.remove(0);
+			Change removedChange= (Change)fUndoChanges.remove(0);
 			fUndoNames.remove(0);
+			removedChange.dispose();
 		}
 		flushRedo();
 		fireUndoStackChanged();
@@ -243,6 +246,7 @@ public class UndoManager implements IUndoManager {
 					status.merge(change.isValid(new SubProgressMonitor(monitor, 2)));
 					if (status.hasFatalError()) {
 						query.stopped(status);
+						change.dispose();
 						return;
 					}
 					if (!status.isOK() && !query.proceed(status)) {
@@ -344,8 +348,16 @@ public class UndoManager implements IUndoManager {
 	
 	private void sendDispose(Collection collection) {
 		for (Iterator iter= collection.iterator(); iter.hasNext();) {
-			Change change= (Change)iter.next();
-			change.dispose();
+			final Change change= (Change)iter.next();
+			ISafeRunnable r= new ISafeRunnable() {
+				public void run() {
+					change.dispose();
+				}
+				public void handleException(Throwable exception) {
+					RefactoringCorePlugin.log(exception);
+				}
+			};
+			Platform.run(r);
 		}
 	}
 	
