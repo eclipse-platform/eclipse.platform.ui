@@ -847,6 +847,13 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		}
 	}
 
+	public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
+	}
 
 	}
 	

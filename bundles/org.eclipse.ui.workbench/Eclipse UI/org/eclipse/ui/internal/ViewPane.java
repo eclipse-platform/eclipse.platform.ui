@@ -759,14 +759,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			result.right = fastViewSash;
 			return result;
 		}
-		RootLayoutContainer container = getRootContainer();
-		if (container == null)
+		
+		ILayoutContainer container = getContainer();
+		
+		if (container == null) {
 			return result;
-
-		if (this.getContainer() instanceof PartTabFolder)
-			container.findSashes((PartTabFolder) this.getContainer(), result);
-		else
-			container.findSashes(this, result);
+		} 
+		
+		container.findSashes(this, result);
 		return result;
 	}
 	/**

@@ -120,4 +120,12 @@ public class DetachedPlaceHolder extends PartPlaceholder implements ILayoutConta
 		addDropTargets(result,this);
 		
 	}
+	
+	public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
+	}
 }

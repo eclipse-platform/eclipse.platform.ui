@@ -311,39 +311,40 @@ public class EditorPresentation {
 		// invalid case - do not allow a drop to happen
 		e.relativePosition = DragCursors.INVALID;
 	}
-	/**
-	 * Notification sent when drop happens. Only editors
-	 * and editor workbooks were allowed to participate.
-	 * Only an editor workbook in the same editor area as
-	 * the drag started can accept the drop.
-	 */
-	private void onPartDrop(PartDropEvent e) {
-		switch (e.relativePosition) {
-			case DragCursors.OFFSCREEN :
-				// This case is not supported and should never
-				// happen. See onPartDragOver
-				//detach(e.dragSource, e.x, e.y);
-				break;
-			case DragCursors.CENTER :
-				if (e.dragSource instanceof EditorPane) {
-					EditorWorkbook sourceWorkbook = ((EditorPane) e.dragSource).getWorkbook();
-					if (sourceWorkbook == e.dropTarget) {
-						sourceWorkbook.reorderTab((EditorPane) e.dragSource, e.cursorX, e.cursorY);
-						break;
-					}
+
+/**
+ * Notification sent when drop happens. Only editors
+ * and editor workbooks were allowed to participate.
+ * Only an editor workbook in the same editor area as
+ * the drag started can accept the drop.
+ */
+private void onPartDrop(PartDropEvent e) {
+	switch (e.relativePosition) {
+		case DragCursors.OFFSCREEN:
+			// This case is not supported and should never
+			// happen. See onPartDragOver
+			//detach(e.dragSource, e.x, e.y);
+			break;
+		case DragCursors.CENTER:
+			if (e.dragSource instanceof EditorPane) {
+				EditorWorkbook sourceWorkbook = ((EditorPane)e.dragSource).getWorkbook();
+				if (sourceWorkbook == e.dropTarget) {
+					sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY);
+					break;
 				}
-				stack(e.dragSource, e.dropTarget);
-				break;
-			case DragCursors.LEFT :
-			case DragCursors.RIGHT :
-			case DragCursors.TOP :
-			case DragCursors.BOTTOM :
-				if (page.isZoomed())
-					page.zoomOut();
-				movePart(e.dragSource, e.relativePosition, e.dropTarget);
-				break;
-		}
+			}
+			stack((LayoutPart)e.dragSource, (EditorWorkbook)e.dropTarget);
+			break;
+		case DragCursors.LEFT:
+		case DragCursors.RIGHT:
+		case DragCursors.TOP:
+		case DragCursors.BOTTOM:
+			if (page.isZoomed())
+				page.zoomOut();
+			movePart(e.dragSource, e.relativePosition, (EditorWorkbook)e.dropTarget);
+			break;
 	}
+}
 	/**
 	 * Opens an editor within the presentation.  
 	 * </p>
@@ -451,46 +452,41 @@ public class EditorPresentation {
 		}
 		return false;
 	}
-	private void stack(IWorkbenchDragSource source, IWorkbenchDropTarget dropTarget) {
-		
-		LayoutPart newPart = source.getPart();
-		LayoutPart refPart = dropTarget.getPart();
-		
-		editorArea.getControl().setRedraw(false);
-		if (newPart instanceof EditorWorkbook) {
-			EditorPane visibleEditor = ((EditorWorkbook) newPart).getVisibleEditor();
-			LayoutPart[] children = ((EditorWorkbook) newPart).getChildren();
-			for (int i = 0; i < children.length; i++)
-				stackEditor(children[i], dropTarget.getContainer());
-			if (visibleEditor != null) {
-				visibleEditor.setFocus();
-				((EditorWorkbook) refPart).becomeActiveWorkbook(true);
-				((EditorWorkbook) refPart).setVisibleEditor(visibleEditor);
-			}
-		} else {
-			if (dropTarget instanceof ILayoutContainer) {
-				stackEditor(newPart, (ILayoutContainer)dropTarget);
-				newPart.setFocus();
-				((EditorWorkbook) refPart).becomeActiveWorkbook(true);
-				((EditorWorkbook) refPart).setVisibleEditor((EditorPane) newPart);
-			}
+
+private void stack(LayoutPart newPart, EditorWorkbook refPart) {
+	editorArea.getControl().setRedraw(false);
+	if (newPart instanceof EditorWorkbook) {
+		EditorPane visibleEditor = ((EditorWorkbook)newPart).getVisibleEditor();
+		LayoutPart[] children = ((EditorWorkbook)newPart).getChildren();
+		for (int i = 0; i < children.length; i++)
+			stackEditor((EditorPane)children[i], refPart);
+		if (visibleEditor != null) {
+			visibleEditor.setFocus();
+			refPart.becomeActiveWorkbook(true);
+			refPart.setVisibleEditor(visibleEditor);
 		}
-		editorArea.getControl().setRedraw(true);
 	}
-	private void stackEditor(LayoutPart newPart, ILayoutContainer ref) {
-		
-		// Remove the part from old container.
-		derefPart(newPart);
-		// Reparent part and add it to the workbook
-		newPart.reparent(ref.getControl().getParent());
-		ref.add(newPart);
+	else {
+		stackEditor((EditorPane)newPart, refPart);
+		newPart.setFocus();
+		refPart.becomeActiveWorkbook(true);
+		refPart.setVisibleEditor((EditorPane)newPart);
 	}
-	/**
-	 * Method getWorkbooks.
-	 * @return ArrayList
-	 */
-	public ArrayList getWorkbooks() {
-		return editorArea.getEditorWorkbooks();
-	}
+	editorArea.getControl().setRedraw(true);
+}
+private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
+	// Remove the part from old container.
+	derefPart(newPart);
+	// Reparent part and add it to the workbook
+	newPart.reparent(refPart.getParent());
+	refPart.add(newPart);
+}
+/**
+ * Method getWorkbooks.
+ * @return ArrayList
+ */
+public ArrayList getWorkbooks() {
+	return editorArea.getEditorWorkbooks();
+}
 
 }

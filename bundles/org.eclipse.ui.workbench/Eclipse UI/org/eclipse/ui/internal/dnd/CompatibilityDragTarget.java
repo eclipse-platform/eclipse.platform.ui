@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.PartDropEvent;
 public class CompatibilityDragTarget implements IDragOverListener {
 
 	// Define width of part's "hot" border	
-	private final static int MARGIN = 20;
+	private final static int MARGIN = 15;
 	
 	private IPartDropListener listener;
 	private int type;

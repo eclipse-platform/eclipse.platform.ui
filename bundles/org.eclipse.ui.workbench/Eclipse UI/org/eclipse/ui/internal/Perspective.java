@@ -1461,24 +1461,23 @@ public void setOldPartID(String oldPartID) {
  * @param useDestination
  */
 
-/*package*/ void moveFastView(IViewReference draggedView, IViewReference destinationView, boolean placeAtEnd) {
+/*package*/ void moveFastView(IViewReference draggedView, IViewReference destinationView) {
 	//PR 6988
 	
 	//do nothing if views are the same
 	if (draggedView == destinationView)
 		return;
 		
+	int insertIdx = fastViews.indexOf(destinationView);
+	
 	//move the view
 	fastViews.remove(draggedView);
-	//determine where to place the view
-	if (placeAtEnd) {//add it to the end
+	
+	if (insertIdx < 0 || insertIdx >= fastViews.size()) {
 		fastViews.add(draggedView);
-	} else { 
-		if (destinationView == null) //add it to the beginning
-			fastViews.add(0, draggedView);
-		else
-			fastViews.add(fastViews.indexOf(destinationView), draggedView);
-	}
+	} else {
+		fastViews.add(insertIdx, draggedView);
+	}	
 }
 
 //for dynamic UI

@@ -123,9 +123,9 @@ class FastViewBar implements IWindowTrim {
 				
 				ViewPane pane = (ViewPane)draggedItem;
 				
-				Perspective persp = getPerspective(pane);
-				return Geometry.toDisplay(pane.getPage().getClientComposite().getParent(), 
-						persp.getFastViewBounds(pane.getViewReference()));
+				ToolItem item = itemFor(pane.getViewReference());
+				
+				return Geometry.toDisplay(getToolBar(), item.getBounds()); 
 			}
 
 			public void dragFinished(Object draggedItem, boolean success) {
@@ -154,17 +154,22 @@ class FastViewBar implements IWindowTrim {
 
 			class ViewDropTarget extends AbstractDropTarget {
 				ViewPane pane;
-				IViewReference position;
+				ToolItem position;
 				
-				public ViewDropTarget(ViewPane toDrop, IViewReference position) {
+				public ViewDropTarget(ViewPane toDrop, ToolItem position) {
 					pane = toDrop;
+					this.position = position;
 				}
 				
 				/* (non-Javadoc)
 				 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
 				 */
 				public void drop() {
+					IViewReference view = getViewFor(position);
+					
 					pane.getPage().addFastView(pane.getViewReference());
+					pane.getPage().getActivePerspective().moveFastView(pane.getViewReference(), view);
+					update(true);
 				}
 				
 				/* (non-Javadoc)
@@ -175,13 +180,25 @@ class FastViewBar implements IWindowTrim {
 				}
 				
 				public Rectangle getSnapRectangle() {
-					return DragUtil.getDisplayBounds(getControl());
+					if (position == null) {
+						return DragUtil.getDisplayBounds(getControl());
+					} else {
+						return Geometry.toDisplay(getToolBar(), position.getBounds());
+					}
 				}
 			}
 			
 			public IDropTarget drag(Control currentControl, Object draggedObject, Point position, Rectangle dragRectangle) {
 				if (draggedObject instanceof ViewPane) {
-					return new ViewDropTarget((ViewPane)draggedObject, getViewAt(position));
+					ViewPane pane = (ViewPane) draggedObject;
+					ToolItem targetItem = getToolItem(position);
+					ToolItem sourceItem = itemFor(pane.getViewReference());
+					
+					if (sourceItem != null && (sourceItem == targetItem || targetItem == null)) {
+						return null;
+					}
+					
+					return new ViewDropTarget((ViewPane)draggedObject, targetItem);
 				}
 				
 				return null;
@@ -214,22 +231,33 @@ class FastViewBar implements IWindowTrim {
 		return fastViewBar.getControl();
 	}
 	
+	private IViewReference getViewFor(ToolItem item) {
+		if (item == null) {
+			return null;
+		}
+		
+		return (IViewReference)item.getData(ShowFastViewContribution.FAST_VIEW);		
+	}
+	
 	/**
 	 * Returns the view at the given position, or null if none
 	 * 
 	 * @param position to test, in display coordinates 
 	 * @return the view at the given position or null if none
 	 */
-	private IViewReference getViewAt(Point position) {
+	private IViewReference getViewAt(Point position) {	
+		return getViewFor(getToolItem(position));
+	}
+	
+	/**
+	 * Returns the toolbar item at the given position, in display coordinates
+	 * @param position
+	 * @return
+	 */
+	private ToolItem getToolItem(Point position) {
 		ToolBar toolbar = getToolBar();
 		Point local = toolbar.toControl(position);
-		ToolItem item = toolbar.getItem(local);
-		
-		if (item == null) {
-			return null;
-		}
-		
-		return (IViewReference)item.getData(ShowFastViewContribution.FAST_VIEW);
+		return toolbar.getItem(local);		
 	}
 
 	/**
@@ -363,7 +391,7 @@ class FastViewBar implements IWindowTrim {
 		ToolItem[] items = fastViewBar.getControl().getItems();
 		for(int i=0; i<items.length; i++) {
 			ToolItem item = items[i];
-			item.setSelection(viewFor(item) == selected);
+			item.setSelection(getView(item) == selected);
 		}
 		
 		selection = selected;
@@ -375,8 +403,28 @@ class FastViewBar implements IWindowTrim {
 	 * @param item
 	 * @return
 	 */
-	private IViewReference viewFor(ToolItem item) {
+	private IViewReference getView(ToolItem item) {
 		return (IViewReference)item.getData(ShowFastViewContribution.FAST_VIEW);
+	}
+	
+	private int getIndex(IViewReference toFind) {
+		ToolItem[] items = fastViewBar.getControl().getItems();
+		for(int i=0; i<items.length; i++) {
+			if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == toFind) {
+				return i;
+			}
+		}	
+
+		return items.length;
+	}
+
+	private ToolItem getItem(int idx) {
+		ToolItem[] items = fastViewBar.getControl().getItems();
+		if (idx >= items.length) {
+			return null;
+		}
+		
+		return items[idx];		
 	}
 	
 	/**
@@ -386,14 +434,7 @@ class FastViewBar implements IWindowTrim {
 	 * @return
 	 */
 	private ToolItem itemFor(IViewReference toFind) {
-		ToolItem[] items = fastViewBar.getControl().getItems();
-		for(int i=0; i<items.length; i++) {
-			if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == toFind) {
-				return items[i];
-			}
-		}	
-
-		return null;
+		return getItem(getIndex(toFind));
 	}
 
 	/* (non-Javadoc)

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Listener;
  */
 /*package */ class DragListener {
 	// Move this many pixels before dragging starts	
-	private final static int HYSTERESIS = 20;
+	private final static int HYSTERESIS = 10;
 	private static final String SOURCE_ID = "org.eclipse.ui.internal.dnd.dragSource"; //$NON-NLS-1$
 	
 	private Point anchor = new Point(0,0);

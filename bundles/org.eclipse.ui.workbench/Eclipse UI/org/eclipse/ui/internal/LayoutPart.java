@@ -79,14 +79,14 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	public Rectangle getBounds() {
 		return new Rectangle(0, 0, 0, 0);
 	}
-	/**
-	 * Gets root container for this part.
-	 */
-	public RootLayoutContainer getRootContainer() {
-		if (container != null)
-			return container.getRootContainer();
-		return null;
-	}
+//	/**
+//	 * Gets root container for this part.
+//	 */
+//	public RootLayoutContainer getRootContainer() {
+//		if (container != null)
+//			return container.getRootContainer();
+//		return null;
+//	}
 	/**
 	 * Gets the parent for this part.
 	 */
@@ -247,6 +247,10 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	 * Sets the parent for this part.
 	 */
 	public void setContainer(ILayoutContainer container) {
+//		if (this.container != null) {
+//			this.container.wasRemoved(this);
+//		}
+		
 		this.container = container;
 	}
 	/**

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.Collection;
 
 public class ContainerPlaceholder extends PartPlaceholder implements ILayoutContainer {
 	private static int nextId = 0;
@@ -112,11 +111,11 @@ public class ContainerPlaceholder extends PartPlaceholder implements ILayoutCont
 		this.realContainer = container;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
-	 */
-	public void addDropTargets(Collection result) {
-		addDropTargets(result,this);
+	public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
 		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
 	}
 }

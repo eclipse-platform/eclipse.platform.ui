@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ColorSchemeService;
@@ -39,6 +40,7 @@ import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -54,6 +56,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -424,6 +428,57 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 			public Rectangle getDragRectangle(Object draggedItem) {
 				return DragUtil.getDisplayBounds(tabFolder);
+			}
+			
+		});
+		
+		DragUtil.addDragTarget(tabFolder, new IDragOverListener() {
+
+			public IDropTarget drag(Control currentControl, final Object draggedObject, 
+					Point position, Rectangle dragRectangle) {
+				
+				if (!(draggedObject instanceof ViewPane)) {
+					return null;
+				}
+				
+				final ViewPane pane = (ViewPane)draggedObject;
+				
+				Point localPos = tabFolder.toControl(position);
+				final CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				if (tabUnderPointer == null || mapTabToPart.get(tabUnderPointer) == draggedObject) {
+					return null;
+				}
+				
+				return new IDropTarget() {
+
+					public void drop() {
+						if (pane.getContainer() != PartTabFolder.this) { 
+							page.removeFastView(pane.getViewReference());
+							page.getActivePerspective().getPresentation().derefPart(pane);
+							pane.reparent(getParent());
+							add(pane);
+							setSelection(pane);	
+							pane.setFocus();
+						}
+						
+						reorderTab(pane, getTab(pane), tabFolder.indexOf(tabUnderPointer));
+
+						getParent().setRedraw(true);
+					}
+
+					public Cursor getCursor() {
+						return DragCursors.getCursor(DragCursors.CENTER);
+					}
+
+					public Rectangle getSnapRectangle() {
+						if (tabUnderPointer == null) {
+							return Geometry.toDisplay(tabFolder.getParent(), tabFolder.getBounds());
+						}
+						
+						return Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds());
+					}
+				};
 			}
 			
 		});
@@ -822,15 +877,21 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * Reorder the tab representing the specified pane.
 	 */
 	private void reorderTab(ViewPane pane, CTabItem2 sourceTab, int newIndex) {
+		
 		// remember if the source tab was the visible one
 		boolean wasVisible = (tabFolder.getSelection() == sourceTab);
 
 		// create the new tab at the specified index
 		CTabItem2 newTab;
-		if (newIndex < 0)
+		if (newIndex < 0) {
 			newTab = new CTabItem2(tabFolder, SWT.NONE);
-		else
+		} else {
+			int sourceIdx = indexOf(pane);
+			if (sourceIdx < newIndex) {
+				newIndex += 1;
+			}
 			newTab = new CTabItem2(tabFolder, SWT.NONE, newIndex);
+		}
 
 		// map it now before events start coming in...	
 		mapTabToPart.put(newTab, pane);
@@ -838,6 +899,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		// dispose of the old tab and remove it
 		String sourceLabel = sourceTab.getText();
 		Image partImage = sourceTab.getImage();
+		newTab.setImage(partImage);
 
 		mapTabToPart.remove(sourceTab);
 		assignFocusOnSelection = false;
@@ -1503,5 +1565,13 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			updateControlBounds();
 		}
 	}
+
+	public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.findSashes(this, sashes);
+		}
+	}	
 }
 

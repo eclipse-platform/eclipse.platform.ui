@@ -437,7 +437,7 @@ public class PerspectivePresentation {
 	 * Deref a given part. Deconstruct its container as required. Do not remove
 	 * drag listeners.
 	 */
-	private void derefPart(LayoutPart part) {
+	/* package */ void derefPart(LayoutPart part) {
 		// Get vital part stats before reparenting.
 		Window oldWindow = part.getWindow();
 		ILayoutContainer oldContainer = part.getContainer();
@@ -448,7 +448,7 @@ public class PerspectivePresentation {
 		// Update container.
 		if (oldContainer == null)
 			return;
-
+		
 		oldContainer.remove(part);
 		updateContainerVisibleTab(oldContainer);
 
@@ -869,7 +869,7 @@ public class PerspectivePresentation {
 		} else if (newContainer instanceof PartTabFolder) {
 			// move this part relative to the folder
 			// rather than relative to the part in the folder
-			movePart(part, position, newContainer);
+			movePart(part, position, (PartTabFolder)newContainer);
 		}
 	}
 	/**
@@ -994,7 +994,8 @@ public class PerspectivePresentation {
 			// If drag source's folder same as target
 			if (e.dragSource.getContainer() == e.dropTarget) {
 				// Reject stack/detach/attach to ourself
-				if (((PartTabFolder) e.dropTarget).getItemCount() == 1) {
+				if (e.relativePosition == DragCursors.CENTER 
+						|| (((PartTabFolder) e.dragSource.getContainer()).getItemCount() == 1)) {
 					e.dropTarget = null;
 					e.relativePosition = DragCursors.INVALID;
 					return;
@@ -1080,16 +1081,16 @@ public class PerspectivePresentation {
 				// If layout is modified always zoom out.
 				if (isZoomed())
 					zoomOut();
-				if (e.dragSource instanceof ViewPane
-					&& e.dropTarget instanceof PartTabFolder) {
-					if (e.dragSource.getContainer() == e.dropTarget) {
-						((PartTabFolder) e.dropTarget).reorderTab(
-							(ViewPane) e.dragSource,
-							e.cursorX,
-							e.cursorY);
-						break;
-					}
-				}
+//				if (e.dragSource instanceof ViewPane
+//					&& e.dropTarget instanceof PartTabFolder) {
+//					if (e.dragSource.getContainer() == e.dropTarget) {
+//						((PartTabFolder) e.dropTarget).reorderTab(
+//							(ViewPane) e.dragSource,
+//							e.cursorX,
+//							e.cursorY);
+//						break;
+//					}
+//				}
 				stack(e.dragSource, e.dropTarget);
 				break;
 			case DragCursors.LEFT :

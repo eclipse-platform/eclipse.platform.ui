@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-public interface ILayoutContainer extends IWorkbenchDropTarget {
+public interface ILayoutContainer {
 /**
  * Add a child to the container.
  */
@@ -34,12 +34,15 @@ public void remove(LayoutPart part);
  * Replace one child with another
  */
 public void replace(LayoutPart oldPart, LayoutPart newPart);
+
+public void findSashes(LayoutPart toFind, PartPane.Sashes result);
+
 /**
  * Gets the parent for this container.
  */
-public ILayoutContainer getContainer();
+//public ILayoutContainer getContainer();
 /**
  * Gets root container for this part.
  */
-public RootLayoutContainer getRootContainer();
+//public RootLayoutContainer getRootContainer();
 }
