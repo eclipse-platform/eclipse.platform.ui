@@ -468,7 +468,7 @@ public class InternalAntRunner {
 		scriptExecuted= true;
 		processAntHome(false);
 		try {
-			if (argList.remove("-projecthelp")) { //$NON-NLS-1$
+			if (argList != null && argList.remove("-projecthelp")) { //$NON-NLS-1$
 				projectHelp = true;
 			}
 			getCurrentProject().init();
