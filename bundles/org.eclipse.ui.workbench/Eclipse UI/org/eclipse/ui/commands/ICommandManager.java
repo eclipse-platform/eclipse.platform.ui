@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.eclipse.ui.handles.IHandle;
@@ -77,13 +76,6 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
-	 * @return
-	 */
-	SortedMap getCategoriesById();
-	
-	/**
-	 * JAVADOC
-	 *
 	 * @param categoryId
 	 * @return
 	 * @throws NullPointerException
@@ -104,7 +96,21 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
-	SortedMap getCommandsById();
+	SortedSet getDefinedCategoryIds();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedSet getDefinedCommandIds();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedSet getDefinedKeyConfigurationIds();
 
 	/**
 	 * JAVADOC
@@ -115,13 +121,6 @@ public interface ICommandManager {
 	 */	
 	IHandle getKeyConfigurationHandle(String keyConfigurationId);
 
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedMap getKeyConfigurationsById();
-	
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.
 	 *

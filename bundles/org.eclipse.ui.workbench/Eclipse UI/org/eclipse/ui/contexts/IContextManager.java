@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.contexts;
 
-import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.eclipse.ui.handles.IHandle;
@@ -60,7 +59,7 @@ public interface IContextManager {
 	 *
 	 * @return
 	 */
-	SortedMap getContextsById();
+	SortedSet getDefinedContextIds();
 	
 	/**
 	 * Unregisters an IContextManagerListener instance with this context manager.

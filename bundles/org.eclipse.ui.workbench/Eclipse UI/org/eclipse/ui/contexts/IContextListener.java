@@ -9,16 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
-
-import org.eclipse.ui.contexts.IContext;
+package org.eclipse.ui.contexts;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -26,12 +24,12 @@ import org.eclipse.ui.contexts.IContext;
  * 
  * @since 3.0
  */
-public interface IContextEvent {
+public interface IContextListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 */	
-	IContext getContext();
+	 * @param contextEvent
+	 */
+	void contextChanged(IContextEvent contextEvent);
 }

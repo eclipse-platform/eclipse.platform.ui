@@ -111,16 +111,8 @@ public final class ContextManager implements IContextManager {
 		return handle;
 	}
 
-	public SortedMap getContextsById() {
-		return Collections.unmodifiableSortedMap(contextsById);
-	}
-
-	public IContextRegistry getPluginContextRegistry() {
-		return pluginContextRegistry;
-	}
-
-	public IContextRegistry getPreferenceContextRegistry() {
-		return preferenceContextRegistry;
+	public SortedSet getDefinedContextIds() {
+		return Collections.unmodifiableSortedSet(new TreeSet(contextsById.keySet()));
 	}
 
 	public void removeContextManagerListener(IContextManagerListener contextManagerListener) {
@@ -143,7 +135,31 @@ public final class ContextManager implements IContextManager {
 			update();
 		}
 	}
+
+	IContextRegistry getPluginContextRegistry() {
+		return pluginContextRegistry;
+	}
+
+	IContextRegistry getPreferenceContextRegistry() {
+		return preferenceContextRegistry;
+	}
+
+	void loadPluginContextRegistry() {
+		try {
+			pluginContextRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
 	
+	void loadPreferenceContextRegistry() {
+		try {
+			preferenceContextRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}		
+	}
+
 	private void fireContextManagerChanged() {
 		if (contextManagerListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException
@@ -157,22 +173,6 @@ public final class ContextManager implements IContextManager {
 					((IContextManagerListener) iterator.next()).contextManagerChanged(contextManagerEvent);
 			}							
 		}			
-	}
-
-	private void loadPluginContextRegistry() {
-		try {
-			pluginContextRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}
-	}
-	
-	private void loadPreferenceContextRegistry() {
-		try {
-			preferenceContextRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}		
 	}
 	
 	private void update() {

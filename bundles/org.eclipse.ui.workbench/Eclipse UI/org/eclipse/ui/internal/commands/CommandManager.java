@@ -123,11 +123,6 @@ public final class CommandManager implements ICommandManager {
 		return activePlatform;
 	}
 
-	public SortedMap getCategoriesById() {
-		// TODO 
-		return null;
-	}
-	
 	public IHandle getCategoryHandle(String categoryId) {
 		// TODO
 		return null;
@@ -147,26 +142,23 @@ public final class CommandManager implements ICommandManager {
 		return handle;
 	}
 
-	public SortedMap getCommandsById() {
-		return Collections.unmodifiableSortedMap(commandsById);
+	public SortedSet getDefinedCategoryIds() {
+		// TODO
+		return Util.EMPTY_SORTED_SET;
+	}
+	
+	public SortedSet getDefinedCommandIds() {
+		return Collections.unmodifiableSortedSet(new TreeSet(commandsById.keySet()));
+	}
+	
+	public SortedSet getDefinedKeyConfigurationIds() {
+		// TODO
+		return Util.EMPTY_SORTED_SET;
 	}
 
 	public IHandle getKeyConfigurationHandle(String keyConfigurationId) {
 		// TODO
 		return null;
-	}
-
-	public SortedMap getKeyConfigurationsById() {
-		// TODO
-		return null;
-	}
-	
-	public ICommandRegistry getPluginCommandRegistry() {
-		return pluginCommandRegistry;
-	}
-
-	public ICommandRegistry getPreferenceCommandRegistry() {
-		return preferenceCommandRegistry;
 	}
 	
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
@@ -209,6 +201,30 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
+	ICommandRegistry getPluginCommandRegistry() {
+		return pluginCommandRegistry;
+	}
+
+	ICommandRegistry getPreferenceCommandRegistry() {
+		return preferenceCommandRegistry;
+	}
+
+	void loadPluginCommandRegistry() {
+		try {
+			pluginCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
+	
+	void loadPreferenceCommandRegistry() {
+		try {
+			preferenceCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}		
+	}
+
 	private void fireCommandManagerChanged() {
 		if (commandManagerListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException
@@ -222,22 +238,6 @@ public final class CommandManager implements ICommandManager {
 					((ICommandManagerListener) iterator.next()).commandManagerChanged(commandManagerEvent);
 			}							
 		}			
-	}
-
-	private void loadPluginCommandRegistry() {
-		try {
-			pluginCommandRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}
-	}
-	
-	private void loadPreferenceCommandRegistry() {
-		try {
-			preferenceCommandRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}		
 	}
 
 	private void update() {
