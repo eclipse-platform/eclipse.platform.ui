@@ -19,6 +19,7 @@ import junit.framework.Assert;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.w3c.dom.Element;
 
@@ -33,6 +34,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public TestTextCompletionProcessor() {
 		super(null);
 	}
+	
     public ICompletionProposal[] getAttributeProposals(String aTaskName, String aPrefix) {
     	cursorPosition= aTaskName.length();
         return super.getAttributeProposals(aTaskName, aPrefix);
@@ -47,7 +49,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getTaskProposals(new Document(text), parentName, aPrefix);
     }
     
-    public ICompletionProposal[] getTaskProposals(Document document, String parentName, String aPrefix) {
+    public ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
     	cursorPosition= Math.max(0, document.getLength() - 1);
     	return super.getTaskProposals(document, parentName, aPrefix);
     }
@@ -60,7 +62,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getParentName(new Document(text), aLineNumber, aColumnNumber);
     }
     
-    public String getParentName(Document doc, int aLineNumber, int aColumnNumber) {
+    public String getParentName(IDocument doc, int aLineNumber, int aColumnNumber) {
     	return super.getParentName(doc, aLineNumber, aColumnNumber);
     }
 
@@ -68,8 +70,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getPrefixFromDocument(aDocumentText, anOffset);
     }
 
-    public ICompletionProposal[] getPropertyProposals(String text, String aPrefix, int aCursorPosition) {
-        return super.getPropertyProposals(new Document(text), aPrefix, aCursorPosition);
+    public ICompletionProposal[] getPropertyProposals(IDocument document, String aPrefix, int cursorPos) {
+        return super.getPropertyProposals(document, aPrefix, cursorPos);
     }
 
     /**
@@ -109,7 +111,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getTargetAttributeValueProposals(org.eclipse.jface.text.IDocument, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public ICompletionProposal[] getTargetAttributeValueProposals(String documentText, String textToSearch, String prefix, String attributeName) {
-		return super.getTargetAttributeValueProposals(new Document(documentText), textToSearch, prefix, attributeName);
+	public ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
+		return super.getTargetAttributeValueProposals(document, textToSearch, prefix, attributeName);
 	}
 }

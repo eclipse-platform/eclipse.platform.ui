@@ -30,6 +30,7 @@ import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.tests.ui.editor.support.TestTextCompletionProcessor;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
@@ -105,141 +106,97 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
-     * Test the code completion for properties.
+     * Test the code completion for properties, including unquoted (bug 40871)
      */
-    public void testPropertyProposals() {
-		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+    public void testPropertyProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-        String documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
-        documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-        documentText += "<property name=\"alf\" value=\"horst\" />\n";
-        documentText += "<test name=\"$";
-		processor.setLineNumber(4);
-		processor.setColumnNumber(14);
-        int cursorPos = documentText.length();
-        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPos);
-        assertTrue(proposals.length >= 3);
-        assertContains("alf", proposals);
-        documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
-        documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-        documentText += "<property name=\"alf\" value=\"horst\" />\n";
-        documentText += "<test name=\"$a}";
-		processor.setLineNumber(4);
-		processor.setColumnNumber(15);
-        cursorPos = documentText.length()-1;
-        proposals = processor.getPropertyProposals(documentText, "a", cursorPos);
-        assertTrue(proposals.length >= 1);
-        assertContains("alf", proposals);
+    	int lineNumber= 8;
+    	int columnNumber= 17;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber);
+    	assertTrue(proposals.length >= 1);
+    	assertContains("prop1", proposals);
+    	
+    	lineNumber= 19;
+    	columnNumber= 25;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber);
+    	assertTrue(proposals.length >= 1);
+    	assertContains("prop2", proposals);
     }
     
     /**
      * Test the code completion for the depend attribute of a target.
      */
-    public void testTargetDependProposals() {
-    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+    public void testTargetDependProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
     	//simple depends
-    	String documentText = "<project default=\"test\">\n";
-    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
-    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
-    	documentText += "<target name=\"pretest\"></target>\n";
-    	documentText += "<target name=\"test\" depends=\"\">\n";
-    	documentText +="<echo>depends</echo>\n";
-    	documentText +="</target>\n";
-    	documentText += "<target name=\"test2\"></target>\n";
-    	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(5);
-    	processor.setColumnNumber(31);
-    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 202), "", "depends");
-    	assertTrue(proposals.length == 3);
+    	int lineNumber= 11;
+    	int columnNumber= 34;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "if");
+    	assertTrue(proposals.length == 7);
     	assertContains("pretest", proposals);
-    	
+    	assertContains("testMoreDepends", proposals);
     	//comma separated depends
-    	documentText = "<project default=\"test\">\n";
-    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
-    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
-    	documentText += "<target name=\"pretest\"></target>\n";
-    	documentText += "<target name=\"test\" depends=\"pretest ,\"></target>\n";
-    	documentText += "<target name=\"test2\"></target>\n";
-    	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(5);
-    	processor.setColumnNumber(41);
-    	proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 210), "te", "depends");
-    	assertTrue(proposals.length == 2);
-    	assertContains("test2", proposals);
+    	lineNumber= 18;
+    	columnNumber= 54;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "if");
+    	assertTrue(proposals.length == 6);
+    	assertContains("main", proposals);
+    	assertDoesNotContain("pretest", proposals);
+    	
     }
     
     /**
      * Test the code completion for the if attribute of a target.
      */
-    public void testTargetIfProposals() {
-    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+    public void testTargetIfProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-    	String documentText = "<project default=\"test\">\n";
-    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
-    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-    	
-    	documentText += "<target name=\"pretest\"></target>\n";
-    	documentText += "<target name=\"test\" if=\"\">\n";
-    	documentText +="<echo>depends</echo>\n";
-    	documentText +="</target>\n";
-    	documentText += "<target name=\"test2\"></target>\n";
-    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
-    	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(6);
-    	processor.setColumnNumber(26);
-    	processor.setCursorPosition(160);
-    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 160), "a", "if");
+    	int lineNumber= 16;
+    	int columnNumber= 31;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "if");
     	assertTrue(proposals.length >= 1);
-    	assertContains("alf", proposals);
+    	assertContains("prop1", proposals);
     }
     
     /**
      * Test the code completion for the unless attribute of a target.
      */
-    public void testTargetUnlessProposals() {
-    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+    public void testTargetUnlessProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-    	String documentText = "<project default=\"test\">\n";
-    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
-    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-    	
-    	documentText += "<target name=\"pretest\"></target>\n";
-    	documentText += "<target name=\"test\" if=\"\">\n";
-    	documentText +="<echo>depends</echo>\n";
-    	documentText +="</target>\n";
-    	documentText += "<target name=\"test2\"></target>\n";
-    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
-    	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(6);
-    	processor.setColumnNumber(26);
-    	processor.setCursorPosition(164);
-    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 164), "prop", "unless");
-    	assertTrue(proposals.length >= 2);
-    	assertContains("prop2", proposals);
+    	int lineNumber= 17;
+    	int columnNumber= 43;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "prop", "unless");
+    	assertTrue(proposals.length >= 1);
+    	assertContains("prop1", proposals);
 
     }
     
-	/**
-	* Test the code completion for "unquoted" properties.
-	* See bug 40871
-	*/
-   public void testUnquotedPropertyProposals() {
-	   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-
-	   String documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
-	   documentText += "<property name=\"prop2\" value=\"val2\" />\n";
-	   documentText += "<property name=\"alf\" value=\"horst\" />\n";
-	   documentText += "<echo>${</echo>";
-	   processor.setLineNumber(4);
-	   processor.setColumnNumber(8);
-	   int cursorPos = documentText.length() - 7;
-	   ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPos);
-	   assertTrue(proposals.length >= 3);
-	   assertContains("alf", proposals);
-	  }
- 
  	/**
  	 * Asserts that <code>displayString</code> is in one of the 
  	 * completion proposals.
@@ -257,29 +214,22 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(true, found);
     }        
     
-	/**
-	 * Tests the property proposals including properties defined in 
-	 * a seperate property file.
-	 */
-    public void testProperties() {
-        Project antProject = new Project();
-		antProject.init();
-        
-        File file = getBuildFile("buildtest1.xml");
-      
-		antProject.setUserProperty("ant.file", file.getAbsolutePath());
-
-        // File will be parsed here
-		org.apache.tools.ant.ProjectHelper helper = org.apache.tools.ant.ProjectHelper.getProjectHelper();
-        antProject.addReference("ant.projectHelper", helper); //$NON-NLS-1$
-        helper.parse(antProject, file);
-        Map map = antProject.getProperties();
-        assertEquals("valD", map.get("propD"));
-        assertEquals("val1", map.get("prop1"));
-        assertEquals("val2", map.get("prop2"));
-        assertEquals("valV", map.get("propV"));
-       // assertEquals("val", map.get("property_in_target"));
-    }
+    /**
+ 	 * Asserts that <code>displayString</code> is not in one of the 
+ 	 * completion proposals.
+ 	 */
+    private void assertDoesNotContain(String displayString, ICompletionProposal[] proposalArray) {
+        boolean found = false;
+        for (int i = 0; i < proposalArray.length; i++) {
+            ICompletionProposal proposal = proposalArray[i];
+            String proposalDisplayString = proposal.getDisplayString();
+            if(displayString.equals(proposalDisplayString)) {
+                found = true;
+                break;
+            }
+        }
+        assertEquals(false, found);
+    }        
 
 	/**
 	 * Tests the property proposals for the case that they are defined in
@@ -296,7 +246,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		processor.setColumnNumber(41);
 		int cursorPosition = documentText.lastIndexOf("${");
 		assertTrue(cursorPosition != -1);
-        ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPosition+2);
+        ICompletionProposal[] proposals = processor.getPropertyProposals(new org.eclipse.jface.text.Document(documentText), "", cursorPosition+2);
 		assertContains("init_prop", proposals);
 		assertContains("main_prop", proposals);
 		assertContains("prop_prop", proposals);
@@ -308,12 +258,10 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests the code completion for tasks having parent tasks.
      */
-    public void testTaskProposals() throws ParserConfigurationException {
+    public void testTaskProposals() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = docBuilder.newDocument();
-
+       
         ICompletionProposal[] proposals = processor.getTaskProposals("         <", "rename", "");
         assertEquals(0, proposals.length);
 
@@ -364,8 +312,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(0, proposals.length);
 
         // "<project><target><mk"
-        String string = "<project><target><mk";
-        proposals = processor.getTaskProposals("             <mk", processor.getParentName(string, 0, 20), "mk");
+        proposals = processor.getTaskProposals("<project><target><mk", "target", "mk");
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("mkdir", proposal.getDisplayString());
@@ -382,19 +329,19 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
 	 * Test for bug 40951
 	 */
-//	public void testMixedElements() {
-//		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("mixed.xml"));
-//		//String string = "<project><target><sql driver=\"\" password=\"\" url=\"\" userid=\"\"><T</sql><concat></concat>";
-//		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 64), "t");
-//		assertEquals(1, proposals.length);
-//		ICompletionProposal proposal = proposals[0];
-//		assertEquals("transaction", proposal.getDisplayString());
-//		
-//		proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 78), "");
-//		assertEquals(2, proposals.length);
-//		proposal = proposals[0];
-//		assertEquals("filelist", proposal.getDisplayString());
-//	}
+	public void testMixedElements() {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("mixed.xml"));
+		//String string = "<project><target><sql driver=\"\" password=\"\" url=\"\" userid=\"\"></sql><concat></concat>";
+		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 62), "t");
+		assertEquals(1, proposals.length);
+		ICompletionProposal proposal = proposals[0];
+		assertEquals("transaction", proposal.getDisplayString());
+		
+		proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 76), "");
+		assertEquals(2, proposals.length);
+		proposal = proposals[0];
+		assertEquals("filelist", proposal.getDisplayString());
+	}
 	
     /**
      * Tests the algorithm for finding a child as used by the processor.
@@ -423,24 +370,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
         childElement = processor.findChildElementNamedOf(parentElement, "secondchild");
         assertNotNull(childElement);
         assertEquals("secondchild", childElement.getTagName());
-    }
-    
-    private Element createTestProjectElement(Document aDocument) {
-        Element parentElement = aDocument.createElement("project");
-        Element childElement = aDocument.createElement("property");
-        parentElement.appendChild(childElement);
-        Element classpathElement = aDocument.createElement("classpath");
-        childElement.appendChild(classpathElement);
-        
-        return parentElement;
-    }
-
-    private Element createTestPropertyElement(Document aDocument) {
-        Element childElement = aDocument.createElement("property");
-        Element classpathElement = aDocument.createElement("classpath");
-        childElement.appendChild(classpathElement);
-
-        return childElement;
     }
     
     /**
