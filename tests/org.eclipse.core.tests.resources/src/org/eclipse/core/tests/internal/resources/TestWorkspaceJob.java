@@ -52,6 +52,7 @@ public class TestWorkspaceJob extends WorkspaceJob {
 				try {
 					Thread.sleep(tickLength);
 				} catch (InterruptedException e) {
+					//ignore
 				}
 				monitor.worked(1);
 			}
