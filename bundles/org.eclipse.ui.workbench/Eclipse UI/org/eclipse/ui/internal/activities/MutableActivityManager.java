@@ -577,9 +577,9 @@ public final class MutableActivityManager
 				activityActivityBindingsChanged,
 				activityPatternBindingsChanged,
 				definedChanged,
+				descriptionChanged,
 				enabledChanged,
-				nameChanged,
-				descriptionChanged);
+				nameChanged);
 		else
 			return null;
 	}
@@ -631,8 +631,8 @@ public final class MutableActivityManager
 				category,
 				categoryActivityBindingsChanged,
 				definedChanged,
-				nameChanged,
-				descriptionChanged);
+				descriptionChanged,
+				nameChanged);
 		else
 			return null;
 	}
