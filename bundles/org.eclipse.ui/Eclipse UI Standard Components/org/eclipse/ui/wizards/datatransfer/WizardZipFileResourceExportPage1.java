@@ -78,6 +78,7 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 	// compress... checkbox
 	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
+	compressContentsCheckbox.setFont(optionsGroup.getFont());
 	
 	super.createOptionsGroupButtons(optionsGroup);
 	

@@ -132,6 +132,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 
 	button.setData(new Integer(id));
 	button.setText(label);
+	button.setFont(parent.getFont());
 	
 	if (defaultButton) {
 		Shell shell = parent.getShell();
