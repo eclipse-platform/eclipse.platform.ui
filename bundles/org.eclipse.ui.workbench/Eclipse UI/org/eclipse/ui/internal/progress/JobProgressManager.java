@@ -48,12 +48,22 @@ public class JobProgressManager
 	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_80 = "progress80.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_100 = "progress100.gif"; //$NON-NLS-1$
+	
+	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
+	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
+	private static final String RUNNING_JOB = "runstate.gif"; //$NON-NLS-1$
+	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
 
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
 	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
 	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
+	
+	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
+	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
+	private static final String RUNNING_JOB_KEY = "RUNNING_JOB"; //$NON-NLS-1$
+	private static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
 	static String[] keys =
@@ -195,6 +205,12 @@ public class JobProgressManager
 			setUpImage(iconsRoot,PROGRESS_60,PROGRESS_60_KEY);
 			setUpImage(iconsRoot,PROGRESS_80,PROGRESS_80_KEY);
 			setUpImage(iconsRoot,PROGRESS_100,PROGRESS_100_KEY);
+			
+			setUpImage(iconsRoot,RUNNING_JOB,RUNNING_JOB_KEY);
+			setUpImage(iconsRoot,SLEEPING_JOB,SLEEPING_JOB_KEY);
+			setUpImage(iconsRoot,WAITING_JOB,WAITING_JOB_KEY);
+			setUpImage(iconsRoot,ERROR_JOB,ERROR_JOB_KEY);
+			
 		} catch (MalformedURLException e) {
 			ProgressUtil.logException(e);
 		}
@@ -541,6 +557,16 @@ public class JobProgressManager
 			if(done > 0){
 				int index = Math.min(4,(done / 20));
 				return JFaceResources.getImage(keys[index]);
+			}
+			else{
+				if(info.getErrorStatus() != null)
+					return JFaceResources.getImage(ERROR_JOB_KEY);
+				int state = info.getJob().getState();
+				if(state == Job.SLEEPING)
+					return JFaceResources.getImage(SLEEPING_JOB_KEY);
+				if(state == Job.WAITING)
+					return JFaceResources.getImage(WAITING_JOB_KEY);
+				return JFaceResources.getImage(RUNNING_JOB_KEY);
 			}				
 		}
 		return null;		
