@@ -320,7 +320,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			} else {
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable);
 			}
-			ErrorDialog.openError(shell, problemMessage, null, error);
+			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
 			TeamUIPlugin.log(error);
 		}
 	}

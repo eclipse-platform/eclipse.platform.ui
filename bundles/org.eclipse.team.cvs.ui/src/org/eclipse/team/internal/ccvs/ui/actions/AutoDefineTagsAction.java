@@ -71,7 +71,11 @@ public class AutoDefineTagsAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				manager.autoDefineTags(files, monitor);
+				try {
+					manager.autoDefineTags(files, monitor);
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
 		}, Policy.bind("AutoDefineTagsAction.defineTags"), this.PROGRESS_DIALOG);
 	}

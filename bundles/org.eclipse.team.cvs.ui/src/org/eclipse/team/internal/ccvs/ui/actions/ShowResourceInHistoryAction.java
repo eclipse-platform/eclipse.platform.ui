@@ -63,6 +63,7 @@ public class ShowResourceInHistoryAction extends TeamAction {
 					action.setEnabled(isEnabled());
 				} catch (TeamException e) {
 					action.setEnabled(false);
+					handle(e, null, null);
 				}
 			}
 		}

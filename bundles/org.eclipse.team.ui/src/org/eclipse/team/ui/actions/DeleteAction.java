@@ -35,7 +35,6 @@ public class DeleteAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {		
-					
 					final boolean[] okToContinue = {false};
 					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -43,7 +42,7 @@ public class DeleteAction extends TeamAction {
 						}
 					});
 								
-					if(okToContinue[0]) {
+					if (okToContinue[0]) {
 						Hashtable table = getProviderMapping();
 						Set keySet = table.keySet();
 						monitor.beginTask("", keySet.size() * 1000);
@@ -64,6 +63,8 @@ public class DeleteAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("DeleteAction.delete"), this.PROGRESS_BUSYCURSOR);
@@ -71,7 +72,7 @@ public class DeleteAction extends TeamAction {
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
 		ITeamManager manager = TeamPlugin.getManager();

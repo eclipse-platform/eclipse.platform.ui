@@ -58,12 +58,16 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			// This is inefficient; need API to get remote resource for a given tag
 			public void run() {
-				CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder, new NullProgressMonitor());
-				Object[] versions = new Object[tags.length];
-				for (int i = 0; i < versions.length; i++) {
-					versions[i] = folder.getRepository().getRemoteFolder(folder.getRelativePath(), tags[i]);
+				try {
+					CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder, new NullProgressMonitor());
+					Object[] versions = new Object[tags.length];
+					for (int i = 0; i < versions.length; i++) {
+						versions[i] = folder.getRepository().getRemoteFolder(folder.getRelativePath(), tags[i]);
+					}
+					result[0] = versions;
+				} catch (TeamException e) {
+					handle(e);
 				}
-				result[0] = versions;
 			}
 		});
 		return result[0];

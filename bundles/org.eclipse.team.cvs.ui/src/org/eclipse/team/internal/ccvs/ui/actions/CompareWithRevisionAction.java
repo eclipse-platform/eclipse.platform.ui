@@ -44,7 +44,7 @@ public class CompareWithRevisionAction extends TeamAction {
 		try {
 			return (ICVSRemoteFile)provider.getRemoteResource(file);
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			handle(e, null, null);
 			return null;
 		}
 	}
@@ -64,8 +64,7 @@ public class CompareWithRevisionAction extends TeamAction {
 				try {
 					entries = file.getLogEntries(new NullProgressMonitor());
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
-					return;
+					throw new InvocationTargetException(e);
 				}
 				CompareUI.openCompareEditor(new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries));
 			}
@@ -77,18 +76,5 @@ public class CompareWithRevisionAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		return resources.length == 1;
-	}
-	/** (Non-javadoc)
-	 * Method declared on IActionDelegate.
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			this.selection = (IStructuredSelection) selection;
-			try {
-				action.setEnabled(isEnabled());
-			} catch (TeamException e) {
-				action.setEnabled(false);
-			}
-		}
 	}
 }

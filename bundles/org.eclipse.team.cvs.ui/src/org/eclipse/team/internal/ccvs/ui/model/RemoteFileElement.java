@@ -35,7 +35,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 		try {
 			return file.getName() + " " + file.getRevision();
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			handle(e);
 			return null;
 		}
 	}

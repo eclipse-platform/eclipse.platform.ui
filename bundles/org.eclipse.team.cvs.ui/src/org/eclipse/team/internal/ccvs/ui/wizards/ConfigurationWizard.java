@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
@@ -193,7 +194,7 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 						IRemoteSyncElement tree = provider.getRemoteSyncTree(project, syncTag[0], new NullProgressMonitor());
 						view.showSync(new CVSSyncCompareInput(new IRemoteSyncElement[] {tree}));
 					} catch (TeamException e) {
-						CVSUIPlugin.log(e.getStatus());
+						ErrorDialog.openError(getContainer().getShell(), null, null, e.getStatus());
 					}
 				}
 			}
@@ -207,7 +208,7 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 			if (target instanceof Error) {
 				throw (Error)target;
 			} else if (target instanceof TeamException) {
-				CVSUIPlugin.log(((TeamException)target).getStatus());
+				ErrorDialog.openError(getContainer().getShell(), null, null, ((TeamException)target).getStatus());
 			}
 		}
 		return true;
@@ -244,7 +245,7 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 			}
 			setProperties(properties);
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			ErrorDialog.openError(getContainer().getShell(), null, null, e.getStatus());
 		}
 	}
 }

@@ -42,7 +42,7 @@ public class CommitAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CommitAction.commit"), this.PROGRESS_DIALOG);
+		}, Policy.bind("CommitAction.commit"), PROGRESS_DIALOG);
 	}
 	
 	/*
@@ -50,19 +50,15 @@ public class CommitAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		try {
-			if (resources.length == 0) return false;
-			ITeamManager manager = TeamPlugin.getManager();
-			for (int i = 0; i < resources.length; i++) {
-				ITeamProvider provider = manager.getProvider(resources[i].getProject());
-				if (provider == null) return false;
-				CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-				if (!cvsProvider.isManaged(resources[i])) return false;
-				if (!cvsProvider.isCheckedOut(resources[i])) return false;
-			}
-			return true;
-		} catch (TeamException e) {
-			return false;
+		if (resources.length == 0) return false;
+		ITeamManager manager = TeamPlugin.getManager();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			if (provider == null) return false;
+			CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+			if (!cvsProvider.isManaged(resources[i])) return false;
+			if (!cvsProvider.isCheckedOut(resources[i])) return false;
 		}
+		return true;
 	}
 }

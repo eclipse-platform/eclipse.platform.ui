@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -336,7 +337,7 @@ public class TagSelectionDialog extends Dialog {
 							return manager.getKnownVersionTags(remoteResource, new NullProgressMonitor());
 					}
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
 					return null;
 				}
 			}

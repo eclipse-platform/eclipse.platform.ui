@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.sync;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -69,7 +70,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				String revision = ((ICVSRemoteFile)remote).getRevision();
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision}));
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name));
 			}
 		} else {
@@ -82,7 +83,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				String revision = ((ICVSRemoteFile)base).getRevision();
 				config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", new Object[] {name, revision} ));
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name));
 			}
 		} else {

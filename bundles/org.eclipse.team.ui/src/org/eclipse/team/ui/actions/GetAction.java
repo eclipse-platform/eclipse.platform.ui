@@ -47,6 +47,8 @@ public class GetAction extends TeamAction {
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("UpdateAction.title"), PROGRESS_DIALOG);

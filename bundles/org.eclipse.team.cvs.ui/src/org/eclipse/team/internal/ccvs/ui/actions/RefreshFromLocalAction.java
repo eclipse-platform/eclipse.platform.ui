@@ -67,18 +67,14 @@ public class RefreshFromLocalAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		try {
-			if (resources.length == 0) return false;
-			ITeamManager manager = TeamPlugin.getManager();
-			for (int i = 0; i < resources.length; i++) {
-				ITeamProvider provider = manager.getProvider(resources[i].getProject());
-				if (provider == null) return false;
-				CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-				if (!cvsProvider.isManaged(resources[i])) return false;
-			}
-			return true;
-		} catch (TeamException e) {
-			return false;
+		if (resources.length == 0) return false;
+		ITeamManager manager = TeamPlugin.getManager();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			if (provider == null) return false;
+			CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+			if (!cvsProvider.isManaged(resources[i])) return false;
 		}
+		return true;
 	}
 }

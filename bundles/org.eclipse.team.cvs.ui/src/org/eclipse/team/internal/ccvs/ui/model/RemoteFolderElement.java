@@ -25,7 +25,7 @@ public class RemoteFolderElement extends RemoteResourceElement {
 				try {
 					result[0] = ((ICVSRemoteFolder)o).members(new NullProgressMonitor());
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 				}
 			}
 		});

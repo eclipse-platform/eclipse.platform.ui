@@ -58,7 +58,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 					}
 					result[0] = modules;
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 				}
 			}
 		});

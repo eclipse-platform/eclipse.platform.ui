@@ -11,6 +11,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -108,8 +109,7 @@ public class CommitMergeAction extends MergeAction {
 				manager.commit(changedResources, comment, getShell(), monitor);
 			}
 		} catch (TeamException e) {
-			// remove the change from the set, add an error
-			CVSUIPlugin.getPlugin().log(e.getStatus());
+			ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			return null;
 		}
 		return syncSet;

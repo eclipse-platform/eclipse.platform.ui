@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -137,18 +137,6 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		}
 	}
 	/**
-	 * Returns a status object for the given exception.
-	 * 
-	 * @param t  the throwable to get a status for
-	 * @return a status for the given throwable
-	 */
-	protected IStatus getStatus(Throwable t) {
-		if (t instanceof CoreException) {
-			return ((CoreException) t).getStatus();
-		}
-		return new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), t);
-	}
-	/**
 	 * Convenience method for running an operation with progress and
 	 * error feedback.
 	 * 
@@ -157,7 +145,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param progressKind  one of PROGRESS_BUSYCURSOR or PROGRESS_DIALOG
 	 */
 	final protected void run(final IRunnableWithProgress runnable, final String problemMessage, int progressKind) {
-		final IStatus[] errors = new IStatus[] {null};
+		final Exception[] exceptions = new Exception[] {null};
 		switch (progressKind) {
 			case PROGRESS_BUSYCURSOR :
 				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
@@ -165,9 +153,9 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 						try {
 							runnable.run(new NullProgressMonitor());
 						} catch (InvocationTargetException e) {
-							errors[0] = getStatusFromException(e, problemMessage);
+							exceptions[0] = e;
 						} catch (InterruptedException e) {
-							errors[0] = null;
+							exceptions[0] = null;
 						}
 					}
 				});
@@ -177,34 +165,15 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 				try {
 					new ProgressMonitorDialog(getShell()).run(true, true, runnable);
 				} catch (InvocationTargetException e) {
-					errors[0] = getStatusFromException(e, problemMessage);
+					exceptions[0] = e;
 				} catch (InterruptedException e) {
-					errors[0] = null;
+					exceptions[0] = null;
 				}
 				break;
 		}
-		if (errors[0] != null) {
-			String msg = problemMessage;
-			ErrorDialog.openError(getShell(), msg, null, errors[0]);
-			TeamUIPlugin.log(errors[0]);
+		if (exceptions[0] != null) {
+			handle(exceptions[0], null, problemMessage);
 		}
-	}
-	/**
-	 * Convenience method for converting an exception into the appropriate status object.
-	 * 
-	 * @param e  the exception to get a status for
-	 * @param msg  the message to include in the status
-	 * @return a status for the given exception
-	 */
-	private IStatus getStatusFromException(InvocationTargetException e, String msg) {
-		Throwable t = e.getTargetException();
-		IStatus errors = null;
-		if (t instanceof TeamException) {
-			errors = ((TeamException) t).getStatus();
-		} else {
-			errors = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, msg, t);
-		}
-		return errors;
 	}
 	/*
 	 * Method declared on IActionDelegate.
@@ -217,6 +186,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 					action.setEnabled(isEnabled());
 				} catch (TeamException e) {
 					action.setEnabled(false);
+					handle(e, null, null);
 				}
 			}
 		}
@@ -235,7 +205,33 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param message  the message for the error dialog
 	 * @param shell  the shell to open the error dialog in
 	 */
-	protected void showError(IStatus status, String title, String message, Shell shell) {
+	protected void handle(Exception exception, String title, String message) {
+		IStatus status = null;
+		boolean log = false;
+		boolean dialog = false;
+		if (exception instanceof TeamException) {
+			status = ((TeamException)exception).getStatus();
+			log = false;
+			dialog = true;
+		} else if (exception instanceof InvocationTargetException) {
+			Throwable t = ((InvocationTargetException)exception).getTargetException();
+			if (t instanceof TeamException) {
+				status = ((TeamException)t).getStatus();
+				log = false;
+				dialog = true;
+			} else if (t instanceof CoreException) {
+				status = ((CoreException)t).getStatus();
+				log = true;
+				dialog = true;
+			} else if (t instanceof InterruptedException) {
+				return;
+			} else {
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, message, t);
+				log = true;
+				dialog = true;
+			}
+		}
+		if (status == null) return;
 		if (!status.isOK()) {
 			IStatus toShow = status;
 			if (status.isMultiStatus()) {
@@ -244,19 +240,16 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 					toShow = children[0];
 				}
 			}
-			if (title == null)
+			if (title == null) {
 				title = status.getMessage();
-			ErrorDialog.openError(shell, title, message, toShow);
-			TeamUIPlugin.log(toShow);
+			}
+			if (dialog) {
+				ErrorDialog.openError(getShell(), title, message, toShow);
+			}
+			if (log) {
+				TeamUIPlugin.log(toShow);
+			}
 		}
-	}
-	/**
-	 * Shows the given errors to the user.
-	 * 
-	 * @param status  the status containing the error to show
-	 */
-	protected void showError(IStatus status) {
-		showError(status, null, null, getShell());
 	}
 	/**
 	 * Concrete action enablement code.

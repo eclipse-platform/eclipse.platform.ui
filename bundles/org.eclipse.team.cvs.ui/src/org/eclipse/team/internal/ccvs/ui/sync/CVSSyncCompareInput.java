@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.ITeamProvider;
@@ -73,7 +74,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			try {
 				CVSUIPlugin.getPlugin().getRepositoryManager().merged(new IRemoteSyncElement[] {element});
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			}
 		}
 	}

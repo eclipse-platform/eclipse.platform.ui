@@ -7,12 +7,15 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +30,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
@@ -89,7 +93,7 @@ public class RepositoriesView extends ViewPart {
 	/**
 	 * Add a new repository based on the given properties to the viewer.
 	 */
-	private void addRepository(Properties properties) {
+	private void addRepository(Properties properties) throws TeamException {
 		ICVSRepositoryLocation root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
 		viewer.refresh();
 	}
@@ -116,7 +120,16 @@ public class RepositoriesView extends ViewPart {
 				if (result == WizardDialog.OK) {
 					ConfigurationWizardMainPage page = (ConfigurationWizardMainPage)dialog.getCurrentPage();
 					Properties properties = page.getProperties();
-					addRepository(properties);
+					try {
+						addRepository(properties);
+					} catch (TeamException e) {
+						IStatus error = e.getStatus();
+						if (error.getSeverity() == IStatus.INFO) {
+							MessageDialog.openInformation(getViewSite().getShell(), Policy.bind("information"), error.getMessage());
+						} else {
+							ErrorDialog.openError(getViewSite().getShell(), Policy.bind("exception"), null, error);
+						}
+					}
 				}
 			}
 		};

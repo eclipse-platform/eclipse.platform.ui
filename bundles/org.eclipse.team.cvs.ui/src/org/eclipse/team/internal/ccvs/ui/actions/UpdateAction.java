@@ -54,6 +54,8 @@ public class UpdateAction extends TeamAction {
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("UpdateAction.update"), this.PROGRESS_DIALOG);
@@ -64,17 +66,13 @@ public class UpdateAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		try {
-			if (resources.length == 0) return false;
-			ITeamManager manager = TeamPlugin.getManager();
-			for (int i = 0; i < resources.length; i++) {
-				ITeamProvider provider = manager.getProvider(resources[i].getProject());
-				if (provider == null) return false;
-				if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
-			}
-			return true;
-		} catch (TeamException e) {
-			return false;
+		if (resources.length == 0) return false;
+		ITeamManager manager = TeamPlugin.getManager();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			if (provider == null) return false;
+			if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
 		}
+		return true;
 	}
 }

@@ -68,7 +68,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					try {
 						page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor");
 					} catch (PartInitException e) {
-						CVSUIPlugin.log(e.getStatus());
+						throw new InvocationTargetException(e);
 					}
 				}
 			}

@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -134,7 +135,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 							return "*" + revision;
 						}
 					} catch (TeamException e) {
-						CVSUIPlugin.log(e.getStatus());
+						ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 					}
 					return revision;
 				case COL_TAGS:
@@ -203,9 +204,10 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					InputStream in = remoteFile.getContents(new NullProgressMonitor());
 					file.setContents(in, false, true, new NullProgressMonitor());				
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 					return;
 				} catch (CoreException e) {
+					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 					CVSUIPlugin.log(e.getStatus());
 					return;
 				}
@@ -356,7 +358,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				try {
 					return remoteFile.getLogEntries(new NullProgressMonitor());
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 					// Set a default title
 					setTitle(Policy.bind("HistoryView.title"));
 				}
@@ -542,7 +544,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		try {
 			tableViewer.setInput(provider.getRemoteResource(file));
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 		}
 	}
 	

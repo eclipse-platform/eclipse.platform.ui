@@ -83,18 +83,10 @@ public class RepositoryManager {
 	 * If it is not in the list of known roots, it is created and
 	 * added.
 	 */
-	public ICVSRepositoryLocation getRoot(Properties properties) {
-		ICVSRepositoryLocation result;
-		try {
-			// We use createRepository instead of getRepository since create will return 
-			// an existing location or create it if it doesn't exist
-			result = getCVSProvider().createRepository(properties);
-		} catch (TeamException e) {
-			// XXX This may result in silent failure in the UI
-			CVSUIPlugin.log(e.getStatus());
-			return null;
-		}
-		return result;
+	public ICVSRepositoryLocation getRoot(Properties properties) throws TeamException {
+		// We use createRepository instead of getRepository since create will return 
+		// an existing location or create it if it doesn't exist
+		return getCVSProvider().createRepository(properties);
 	}
 	/**
 	 * Get the list of known branch tags for a given remote root.
@@ -113,7 +105,7 @@ public class RepositoryManager {
 	 * 
 	 * A server hit is incurred on each call to ensure up-to-date results.
 	 */
-	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource, IProgressMonitor monitor) {
+	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource, IProgressMonitor monitor) throws TeamException {
 		// Find tags in .vcm_meta file, optimization for Eclipse users
 		Set result = new HashSet();
 		ICVSRemoteFile vcmMeta = getVCMMeta(resource);
@@ -137,17 +129,13 @@ public class RepositoryManager {
 		result.addAll(set);
 		return (CVSTag[])result.toArray(new CVSTag[0]);
 	}
-	private ICVSRemoteFile getVCMMeta(ICVSRemoteResource resource) {
+	private ICVSRemoteFile getVCMMeta(ICVSRemoteResource resource) throws TeamException {
 		// There should be a better way of doing this.
-		try {
-			IRemoteResource[] resources = resource.members(new NullProgressMonitor());
-			for (int i = 0; i < resources.length; i++) {
-				if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(".vcm_meta")) {
-					return (ICVSRemoteFile)resources[i];
-				}
+		IRemoteResource[] resources = resource.members(new NullProgressMonitor());
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(".vcm_meta")) {
+				return (ICVSRemoteFile)resources[i];
 			}
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
 		}
 		return null;
 	}
@@ -270,20 +258,12 @@ public class RepositoryManager {
 	public void startup() throws TeamException {
 		loadState();
 		CVSProviderPlugin.getProvider().addRepositoryListener(new ICVSListener() {
-			/*
-			 * @see ICVSListener#repositoryAdded(ICVSRepositoryLocation)
-			 */
 			public void repositoryAdded(ICVSRepositoryLocation root) {
 				rootAdded(root);
 			}
-
-			/*
-			 * @see ICVSListener#repositoryRemoved(ICVSRepositoryLocation)
-			 */
 			public void repositoryRemoved(ICVSRepositoryLocation root) {
 				rootRemoved(root);
 			}
-
 		});
 	}
 	
@@ -513,7 +493,7 @@ public class RepositoryManager {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("CommitAction.committing"));
+		monitor.setTaskName(Policy.bind("RepositoryManager.committing"));
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -535,7 +515,7 @@ public class RepositoryManager {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("GetAction.getting"));
+		monitor.setTaskName(Policy.bind("RepositoryManager.getting"));
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -585,16 +565,10 @@ public class RepositoryManager {
 	/**
 	 * Returns Branch and Version tags for the given files
 	 */	
-	public CVSTag[] getTags(ICVSRemoteFile file, IProgressMonitor monitor) {
+	public CVSTag[] getTags(ICVSRemoteFile file, IProgressMonitor monitor) throws TeamException {
 		ICVSRepositoryLocation root = file.getRepository();
 		Set tagSet = new HashSet();
-		ILogEntry[] entries = null;
-		try {
-			entries = file.getLogEntries(monitor);
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-			return null;
-		}
+		ILogEntry[] entries = file.getLogEntries(monitor);
 		for (int j = 0; j < entries.length; j++) {
 			CVSTag[] tags = entries[j].getTags();
 			for (int k = 0; k < tags.length; k++) {
@@ -607,7 +581,7 @@ public class RepositoryManager {
 	/**
 	 * Auto-define version and branch tags for the given files.
 	 */	
-	public void autoDefineTags(ICVSRemoteFile[] files, IProgressMonitor monitor) {
+	public void autoDefineTags(ICVSRemoteFile[] files, IProgressMonitor monitor) throws TeamException {
 		for (int i = 0; i < files.length; i++) {
 			ICVSRemoteFile file = files[i];
 			ICVSRepositoryLocation root = file.getRepository();

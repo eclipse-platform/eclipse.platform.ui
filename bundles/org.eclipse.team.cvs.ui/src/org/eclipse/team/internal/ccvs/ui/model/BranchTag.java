@@ -58,7 +58,7 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 				try {
 					result[0] = root.members(tag, new NullProgressMonitor());
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 				}
 			}
 		});

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
@@ -129,7 +130,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
 			CVSUIPlugin.log(e.getStatus());
-			throw new CVSException(e.getStatus());
+			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("WorkbenchUserAuthenticator.errorFlushing", location.getLocation()), e);
 		}
 	}
 	/**
@@ -154,7 +155,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
 			CVSUIPlugin.log(e.getStatus());
-			throw new CVSException(e.getStatus());
+			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("WorkbenchUserAuthenticator.errorSaving", location.getLocation()), e);
 		}
 		if (userinfo.isUsernameMutable()) {
 			userinfo.setUsername(username);

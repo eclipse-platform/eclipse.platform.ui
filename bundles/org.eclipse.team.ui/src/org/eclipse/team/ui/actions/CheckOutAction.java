@@ -47,6 +47,8 @@ public class CheckOutAction extends TeamAction {
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("CheckOutAction.checkout"), this.PROGRESS_BUSYCURSOR);

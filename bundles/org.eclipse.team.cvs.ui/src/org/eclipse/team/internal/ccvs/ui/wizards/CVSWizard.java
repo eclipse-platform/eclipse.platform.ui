@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -26,27 +27,24 @@ public abstract class CVSWizard extends Wizard {
 	 * @param problemMessage an optional message to display in case of errors
 	 */
 	protected void run(IRunnableWithProgress runnable, String problemMessage) {
-		IStatus errors = null;
-		boolean internalError = false;
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
+			IStatus status = null;
 			if (t instanceof CoreException) {
-				errors = ((CoreException)t).getStatus();
+				status = ((CoreException)t).getStatus();
+				CVSUIPlugin.log(status);
+			} else if (t instanceof TeamException) {
+				status = ((TeamException)t).getStatus();
 			} else {
-				errors = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, problemMessage, t);
-				internalError = true;
+				status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, problemMessage, t);
+				problemMessage = Policy.bind("simpleInternal");
+				CVSUIPlugin.log(status);
 			}
+			ErrorDialog.openError(getShell(), problemMessage, null, status);
 		} catch (InterruptedException e) {
-			errors = null;
-		}
-		if (errors != null) {
-			String msg = internalError ? Policy.bind("simpleInternal") : problemMessage;
-			ErrorDialog.openError(getShell(), msg, null, errors);
-			CVSUIPlugin.log(errors);
 		}
 	}
-
 }
 

@@ -5,8 +5,10 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,6 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for compare with tag.
@@ -34,32 +37,37 @@ public class CompareWithTagAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		String title = Policy.bind("CompareWithTagAction.compare");
-		try {
-			IResource[] resources = getSelectedResources();
-			if (resources.length != 1) return;
-			IResource resource = resources[0];
-
-			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
-			LocalResource cvsResource = null;
-			if (resources[0].getType()==IResource.FILE) {
-				cvsResource = new LocalFile(resource.getLocation().toFile());
-			} else {
-				cvsResource = new LocalFolder(resource.getLocation().toFile());
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				String title = Policy.bind("CompareWithTagAction.compare");
+				try {
+					IResource[] resources = getSelectedResources();
+					if (resources.length != 1) return;
+					IResource resource = resources[0];
+		
+					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
+					LocalResource cvsResource = null;
+					if (resources[0].getType()==IResource.FILE) {
+						cvsResource = new LocalFile(resource.getLocation().toFile());
+					} else {
+						cvsResource = new LocalFolder(resource.getLocation().toFile());
+					}
+		
+					TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
+					dialog.setBlockOnOpen(true);
+					int result = dialog.open();
+					if (result == Dialog.CANCEL || dialog.getResult() == null) {
+						return;
+					}
+					CVSTag tag = dialog.getResult();
+					ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
+					CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
-
-			TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
-			dialog.setBlockOnOpen(true);
-			int result = dialog.open();
-			if (result == Dialog.CANCEL || dialog.getResult() == null) {
-				return;
-			}
-			CVSTag tag = dialog.getResult();
-			ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
-			CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), title, null, e.getStatus());
-		}
+		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR);
+			
 	}
 	
 	protected boolean isEnabled() {

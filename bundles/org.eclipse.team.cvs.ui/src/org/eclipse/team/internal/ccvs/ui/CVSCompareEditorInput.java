@@ -91,7 +91,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()});
 				}
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				handle(e);
 				// Fall through and get the default label
 			}
 		}
@@ -123,7 +123,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 					return tag.getName();
 				}
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				handle(e);
 				// Fall through and get the default label
 			}
 		}
@@ -154,18 +154,22 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private void handle(Exception e) {
 		// create a status
 		Throwable t = e;
-		// unwrap any invoc-target-exception
+		// unwrap the invocation target exception
 		if (t instanceof InvocationTargetException) {
 			t = ((InvocationTargetException)t).getTargetException();
 		}
 		IStatus error;
 		if (t instanceof CoreException) {
 			error = ((CoreException)t).getStatus();
+		} else if (t instanceof TeamException) {
+			error = ((TeamException)t).getStatus();
 		} else {
 			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t);
 		}
 		setMessage(error.getMessage());
-		CVSUIPlugin.log(error);
+		if (!(t instanceof TeamException)) {
+			CVSUIPlugin.log(error);
+		}
 	}
 	
 	/**
@@ -319,7 +323,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				return NODE_NOT_EQUAL;
 			}
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			handle(e);
 			return NODE_UNKNOWN;
 		}
 	}

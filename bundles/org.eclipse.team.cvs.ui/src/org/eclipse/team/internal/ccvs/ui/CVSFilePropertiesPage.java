@@ -103,7 +103,6 @@ public class CVSFilePropertiesPage extends PropertyPage {
 				createLabel(composite, syncInfo.getPermissions());
 			}
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
 			// Display error text
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error"));
 			createLabel(composite, "");

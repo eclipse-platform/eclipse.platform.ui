@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -91,7 +92,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 						return revisionName;
 					}
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 				}
 			}
 			return super.getName();
@@ -167,7 +168,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 						revisionName.append(entry.getRevision());
 						return revisionName.toString();
 					} catch (TeamException e) {
-						CVSUIPlugin.log(e.getStatus());
+						handle(e);
 					}
 					return entry.getRevision();
 				case COL_TAGS:
@@ -343,33 +344,21 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
 				ResourceEditionNode right = (ResourceEditionNode)node.getRight();
 				ICVSRemoteResource edition = right.getRemoteResource();
-				MultiStatus errors = new MultiStatus(CVSUIPlugin.ID, 1, Policy.bind("details"), null);
 				// Do the load. This just consists of setting the local contents. We don't
 				// actually want to change the base.
 				try {
 					InputStream in = edition.getContents(new NullProgressMonitor());
 					resource.setContents(in, false, true, new NullProgressMonitor());
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 					return;
 				} catch (CoreException e) {
-					CVSUIPlugin.log(e.getStatus());
+					handle(e);
 					return;
 				}
 				// recompute the labels on the viewer
 				updateCurrentEdition();
 				viewer.refresh();
-				if (!errors.isOK()) {
-					IStatus toShow = errors;
-					IStatus[] children = errors.getChildren();
-					if (children.length == 1) {
-						toShow = children[0];
-					}
-					String title = Policy.bind("CVSCompareRevisionsInput.errorReplacingTitle");
-					String message = Policy.bind("CVSCompareRevisionsInput.errorReplacingMessage");
-					ErrorDialog.openError(shell, message, message, toShow);
-					CVSUIPlugin.log(toShow);
-				}
 			}
 		};
 		// set F1 help
@@ -397,7 +386,27 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		try {
 			this.currentEdition = ((ICVSRemoteFile)provider.getRemoteResource(resource));
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			handle(e);
+		}
+	}
+	private void handle(Exception e) {
+		// create a status
+		Throwable t = e;
+		// unwrap the invocation target exception
+		if (t instanceof InvocationTargetException) {
+			t = ((InvocationTargetException)t).getTargetException();
+		}
+		IStatus error;
+		if (t instanceof CoreException) {
+			error = ((CoreException)t).getStatus();
+		} else if (t instanceof TeamException) {
+			error = ((TeamException)t).getStatus();
+		} else {
+			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t);
+		}
+		setMessage(error.getMessage());
+		if (!(t instanceof TeamException)) {
+			CVSUIPlugin.log(error);
 		}
 	}
 }

@@ -51,14 +51,13 @@ public class TagAction extends TeamAction {
 							IInputValidator validator = new IInputValidator() {
 								public String isValid(String tagName) {
 									IStatus status = CVSTag.validateTagName(tagName);
-									if(status.isOK()) {
+									if (status.isOK()) {
 										return null;
 									} else {
 										return status.getMessage();
 									}
 								}
 							};
-							
 							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator);
 							if (dialog.open() != InputDialog.OK) return;
 							result[0] = dialog.getValue();
@@ -89,18 +88,14 @@ public class TagAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		try {
-			if (resources.length == 0) return false;
-			ITeamManager manager = TeamPlugin.getManager();
-			for (int i = 0; i < resources.length; i++) {
-				ITeamProvider provider = manager.getProvider(resources[i].getProject());
-				if (provider == null) return false;
-				if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
-			}
-			return true;
-		} catch (TeamException e) {
-			return false;
+		if (resources.length == 0) return false;
+		ITeamManager manager = TeamPlugin.getManager();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = manager.getProvider(resources[i].getProject());
+			if (provider == null) return false;
+			if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
 		}
+		return true;
 	}
 }
 

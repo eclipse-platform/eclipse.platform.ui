@@ -172,7 +172,7 @@ abstract class MergeAction extends Action {
 			} else {
 				error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable);
 			}
-			ErrorDialog.openError(shell, problemMessage, null, error);
+			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
 			CVSUIPlugin.log(error);
 		}
 	}

@@ -97,7 +97,7 @@ public class SyncAction implements IObjectActionDelegate {
 				view.showSync(new CVSSyncCompareInput(trees));
 			}
 		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), title, null, e.getStatus());
+			ErrorDialog.openError(getShell(), title, e.getMessage(), e.getStatus());
 		}
 	}
 	

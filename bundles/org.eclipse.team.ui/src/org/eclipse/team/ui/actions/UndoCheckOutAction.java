@@ -47,6 +47,8 @@ public class UndoCheckOutAction extends TeamAction {
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("UndoCheckOutAction.undoCheckout"), this.PROGRESS_BUSYCURSOR);

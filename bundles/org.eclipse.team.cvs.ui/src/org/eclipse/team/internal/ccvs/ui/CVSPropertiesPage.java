@@ -170,7 +170,7 @@ public class CVSPropertiesPage extends PropertyPage {
 			info = provider.getUserInfo(project);
 			userText.setText(info.getUsername());
 		} catch (TeamException e) {
-			showError(e.getStatus());
+			handle(e);
 		}
 		passwordText.setText("*********");
 		
@@ -187,7 +187,7 @@ public class CVSPropertiesPage extends PropertyPage {
 			pathLabel.setText(location.getRootDirectory());
 			moduleLabel.setText(resource.getRelativePath());
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			handle(e);
 		}
 	}
 	/*
@@ -201,17 +201,15 @@ public class CVSPropertiesPage extends PropertyPage {
 		try {
 			provider.setConnectionInfo(project, methodType.getText(), info);
 		} catch (TeamException e) {
-			showError(e.getStatus());
+			handle(e);
 		}
 		return true;
 	}
 	/**
 	 * Shows the given errors to the user.
 	 */
-	protected void showError(IStatus status) {
-		showError(status, null, null, getShell());
-	}
-	protected void showError(IStatus status, String title, String message, Shell shell) {
+	protected void handle(TeamException e) {
+		IStatus status = e.getStatus();
 		if (!status.isOK()) {
 			IStatus toShow = status;
 			if (status.isMultiStatus()) {
@@ -220,10 +218,7 @@ public class CVSPropertiesPage extends PropertyPage {
 					toShow = children[0];
 				}
 			}
-			if (title == null)
-				title = status.getMessage();
-			ErrorDialog.openError(shell, title, message, toShow);
-			CVSUIPlugin.log(toShow);
+			ErrorDialog.openError(getShell(), status.getMessage(), null, toShow);
 		}
 	}
 }

@@ -47,6 +47,8 @@ public class CheckInAction extends TeamAction {
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("CheckInAction.checkin"), this.PROGRESS_DIALOG);
