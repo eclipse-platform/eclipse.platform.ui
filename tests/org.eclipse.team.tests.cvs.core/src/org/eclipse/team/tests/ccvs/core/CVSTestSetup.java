@@ -56,7 +56,8 @@ public class CVSTestSetup extends TestSetup {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			try {
-				for (String line; (line = reader.readLine()) != null; ) {						
+				for (String line; (line = reader.readLine()) != null; ) {
+					if (line.startsWith("#")) continue;					
 					int sep = line.indexOf("=");
 					String property = line.substring(0, sep).trim();
 					String value = line.substring(sep + 1).trim();
