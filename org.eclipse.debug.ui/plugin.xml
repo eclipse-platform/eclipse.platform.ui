@@ -426,6 +426,13 @@
 		</action>
 <!-- Launch Group -->
 		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAll"
+			menubarPath = "launchGroup"
+			helpContextId = "terminate_all_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.TerminateAllAction"
+			label="%TerminateAllAction.label">
+		</action>
+		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.relaunch"
 			menubarPath = "launchGroup"
 			helpContextId = "relaunch_action_context"
@@ -511,28 +518,28 @@
 		id = "org.eclipse.debug.ui.breakpointview.popupMenu"
 		targetID = "org.eclipse.debug.ui.BreakpointView">
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.RemoveAllBreakpoints"
+			id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
 			icon = "icons/full/clcl16/rem_all_co.gif"
 			label="%RemoveAllAction.label"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction">
 		</action>
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.RemoveBreakpoint"
+			id="org.eclipse.debug.ui.actions.RemoveBreakpoint"
 			label="%RemoveAction.label"
 			icon = "icons/full/clcl16/rem_co.gif"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction">
 		</action>
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointEnablement"
+			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
 			label="%DisableBreakpointsAction.label"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
 			enablesFor="2+">
 		</action>
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointEnablement"
+			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
 			label="%EnableBreakpointsAction.label"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
