@@ -77,7 +77,7 @@ public class RepositoryManager {
 	List listeners = new ArrayList();
 
 	// The previously remembered comment
-	private static String previousComment = ""; //$NON-NLS-1$
+	private static String[] previousComments = new String[0];
 	
 	public static boolean notifyRepoView = true;
 	
@@ -490,13 +490,23 @@ public class RepositoryManager {
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
+			provider.setComment(getCurrentComment());
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			provider.add(providerResources, IResource.DEPTH_ZERO, subMonitor);
 		}		
 	}
 	
+	/**
+	 * Method getCurrentComment.
+	 * @return String
+	 */
+	private String getCurrentComment() {
+		if (previousComments.length == 0)
+			return "";
+		return (String)previousComments[0];
+	}
+
 	/**
 	 * Delete the given resources from their associated providers.
 	 * This schedules the resources for deletion; they still need to be committed.
@@ -510,7 +520,7 @@ public class RepositoryManager {
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
+			provider.setComment(getCurrentComment());
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			provider.delete(providerResources, subMonitor);
@@ -541,7 +551,7 @@ public class RepositoryManager {
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
+			provider.setComment(getCurrentComment());
 			List list = (List)table.get(provider);
 			IRemoteSyncElement[] providerElements = (IRemoteSyncElement[])list.toArray(new IRemoteSyncElement[list.size()]);
 			provider.merged(providerElements);
@@ -558,10 +568,10 @@ public class RepositoryManager {
 		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, unadded); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				dialog.setComment(previousComment);
+				dialog.setComments(previousComments);
 				result[0] = dialog.open();
 				if (result[0] != ReleaseCommentDialog.OK) return;
-				previousComment = dialog.getComment();
+				previousComments = dialog.getComments();
 			}
 		});
 		if (result[0] != ReleaseCommentDialog.OK) return null;

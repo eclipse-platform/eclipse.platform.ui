@@ -22,6 +22,7 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -43,7 +44,8 @@ public class ReleaseCommentDialog extends Dialog {
 	private static final int HEIGHT_HINT = 50;
 	private final static int SELECTION_HEIGHT_HINT = 100;
 	
-	private String comment = ""; //$NON-NLS-1$
+	private String[] comments = new String[0];
+	private String comment = "";
 	
 	private Text text;
 	
@@ -55,6 +57,9 @@ public class ReleaseCommentDialog extends Dialog {
 	
 	private IProject mainProject;
 	
+	private Combo previousCommentsCombo;
+	
+	private static final int MAX_COMMENTS = 20;
 	/**
 	 * ReleaseCommentDialog constructor.
 	 * 
@@ -89,7 +94,6 @@ public class ReleaseCommentDialog extends Dialog {
 		data.heightHint = HEIGHT_HINT;
 		
 		text.setLayoutData(data);
-		text.setText(comment);
 		text.selectAll();
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
@@ -100,6 +104,17 @@ public class ReleaseCommentDialog extends Dialog {
 			}
 		});
 		
+		previousCommentsCombo = new Combo(composite, SWT.READ_ONLY);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		previousCommentsCombo.setLayoutData(data);
+		previousCommentsCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int index = previousCommentsCombo.getSelectionIndex();
+				if (index != -1)
+					text.setText(previousCommentsCombo.getItem(index));
+			}
+		});
 		
 		Button clear = new Button(composite, SWT.PUSH);
 		clear.setText(Policy.bind("ReleaseCommentDialog.clearTextArea")); //$NON-NLS-1$
@@ -123,7 +138,20 @@ public class ReleaseCommentDialog extends Dialog {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.RELEASE_COMMENT_DIALOG);	
 		
+		initializeValues();
 		return composite;
+	}
+
+	/**
+	 * Method initializeValues.
+	 */
+	private void initializeValues() {
+		for (int i = comments.length - 1; i >= 0; --i) {
+			previousCommentsCombo.add(comments[i]);
+		}
+		if (comments.length > 0)
+			previousCommentsCombo.select(0);
+		text.setText(getSelectedComment());
 	}
 
 	private boolean hasUnaddedResources() {
@@ -194,38 +222,69 @@ public class ReleaseCommentDialog extends Dialog {
 		};
 		deselectButton.addSelectionListener(listener);
 	}
+
+	/**
+	 * Method getSelectedComment.
+	 * @return String
+	 */
+	private String getSelectedComment() {
+		if (comments.length == 0) {
+			// There are no previous comments so use the template
+			try {
+				return getCommitTemplate();
+			} catch (CVSException e) {
+				// log the exception for now. 
+				// The user can surface the problem by trying to reset the comment
+				CVSUIPlugin.log(e);
+			}
+		} else {
+			int index = previousCommentsCombo.getSelectionIndex();
+			if (index != -1)
+				return previousCommentsCombo.getItem(index);
+		}
+		return "";
+	}
+
 	/**
 	 * Return the entered comment
 	 * 
 	 * @return the comment
 	 */
-	public String getComment() {
-		return comment;
+	public String[] getComments() {
+		return comments;
 	}
 	/**
 	 * Set the initial comment
 	 * 
 	 * @param comment  the initial comment
 	 */
-	public void setComment(String comment) {
-		if (comment == null || comment.length() == 0) {
-			try {
-				this.comment = getCommitTemplate();
-			} catch (CVSException e) {
-				// log the exception for now. 
-				// The user can surface the problem by trying to reset the comment
-				CVSUIPlugin.log(e);
-				this.comment = comment;
-			}
-		} else {
-			this.comment = comment;
+	public void setComments(String[] comments) {
+		if (comments == null) comments = new String[0];
+		this.comments = comments;
+		if (previousCommentsCombo != null) {
+			previousCommentsCombo.removeAll();
+			initializeValues();
 		}
 	}
+	
+	private void addComment(String comment) {
+		// Only add the comment if the first entry isn't the same already
+		this.comment = comment;
+		if (comments.length > 0 && comments[0].equals(comment)) return;
+		// Insert the comment as the first element
+		String[] newComments = new String[Math.min(comments.length + 1, MAX_COMMENTS)];
+		newComments[0] = comment;
+		for (int i = 1; i < newComments.length; i++) {
+			newComments[i] = comments[i-1];
+		}
+		comments = newComments;
+	}
+	
 	/*
 	 * @see Dialog#okPressed
 	 */
 	protected void okPressed() {
-		comment = text.getText();
+		addComment(text.getText());
 		if (hasUnaddedResources()) {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
@@ -266,6 +325,7 @@ public class ReleaseCommentDialog extends Dialog {
 	private void clearCommitText() {
 		try {
 			text.setText(getCommitTemplate());
+			previousCommentsCombo.deselectAll();
 		} catch (CVSException e) {
 			CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
 		}
@@ -286,4 +346,12 @@ public class ReleaseCommentDialog extends Dialog {
 		if (mainProject == null) return null;
 		return (CVSTeamProvider) RepositoryProvider.getProvider(mainProject, CVSProviderPlugin.getTypeId());
 	}
+	/**
+	 * Returns the comment.
+	 * @return String
+	 */
+	public String getComment() {
+		return comment;
+	}
+
 }
