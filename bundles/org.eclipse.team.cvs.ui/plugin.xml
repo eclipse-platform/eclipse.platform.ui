@@ -254,6 +254,13 @@
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.eclipse.team.ccvs.ui.compareWithTag">
          </action>
+         <action
+               label="%CompareWithBaseAction.label"
+               tooltip="%CompareWithBaseAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithBaseAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithBase">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder"
