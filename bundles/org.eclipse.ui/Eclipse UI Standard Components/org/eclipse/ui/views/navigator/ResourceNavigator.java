@@ -146,7 +146,9 @@ public class ResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(
-			new DecoratingLabelProvider(new WorkbenchLabelProvider(), null));
+			new DecoratingLabelProvider(
+				new WorkbenchLabelProvider(), 
+				getViewSite().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
@@ -678,7 +680,10 @@ public class ResourceNavigator
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		DecoratingLabelProvider provider =
 			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
-		provider.setLabelDecorator(decorator);
+		if(decorator == null)
+			provider.setLabelDecorator(getViewSite().getDecoratorManager());
+		else
+			provider.setLabelDecorator(decorator);
 	}
 	/**
 	 * Set the current sorter.

@@ -1,5 +1,7 @@
 package org.eclipse.ui;
 
+import org.eclipse.ui.internal.DecoratorManager;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -20,4 +22,10 @@ public interface IViewSite extends IWorkbenchPartSite {
  * @return the action bars
  */
 public IActionBars getActionBars();
+
+/**
+ * Get the decorator manager the receiver is using.
+ * @return DecoratorManager
+ */
+public DecoratorManager getDecoratorManager();
 }
