@@ -144,9 +144,13 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 
 	private ISchedulingRule getSchedulingRule(IProject[] projects) {
 		if (projects.length == 1) {
-			return projects[0];
+			return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[0]);
 		} else {
-			return new MultiRule(projects);
+			Set rules = new HashSet();
+			for (int i = 0; i < projects.length; i++) {
+				rules.add(ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(projects[i]));
+			}
+			return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
 		}
 	}
 
