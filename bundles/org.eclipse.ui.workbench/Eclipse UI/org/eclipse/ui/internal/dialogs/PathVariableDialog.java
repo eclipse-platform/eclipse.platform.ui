@@ -407,9 +407,9 @@ public class PathVariableDialog extends TitleAreaDialog {
 				newValidationStatus = IMessageProvider.ERROR;
 				message = status.getMessage();
 			} else if (namesInUse.contains(variableName) && !variableName.equals(originalName)) {
-				// the variable name is already in use (warning)
+				// the variable name is already in use
 				message = WorkbenchMessages.getString("PathVariableDialog.variableAlreadyExistsMessage"); //$NON-NLS-1$
-				newValidationStatus = IMessageProvider.WARNING;
+				newValidationStatus = IMessageProvider.ERROR;
 			}
 		}
 
