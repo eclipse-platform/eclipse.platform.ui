@@ -577,10 +577,20 @@ public IPartService getPartService() {
  * @since 2.0
  */
 public WWinKeyBindingService getKeyBindingService() {
-	if (keyBindingService == null)
+	if (keyBindingService == null) {
 		keyBindingService = new WWinKeyBindingService(this);
+		updateActiveActions();
+	}
 	return keyBindingService;	
 }
+/**
+ * Re-register the action sets actions in the keybinding service.
+ */
+private void updateActiveActions() {
+	IActionSet sets[] = actionPresentation.getActionSets();
+	keyBindingService.registerActionSets(sets);
+}
+
 /**
  * @see IWorkbenchWindow
  */
@@ -1058,6 +1068,7 @@ public void updateActionSets() {
 	String path = IWorkbenchActionConstants.M_WINDOW + IWorkbenchActionConstants.SEP + IWorkbenchActionConstants.M_LAUNCH;
 	IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
 	IContributionItem item = getMenuBarManager().findUsingPath(path);
+	updateActiveActions();
 	if (manager == null || item == null)
 		return;
 	item.setVisible(manager.getItems().length >= 2);  // there is a separator for the additions group thus >= 2

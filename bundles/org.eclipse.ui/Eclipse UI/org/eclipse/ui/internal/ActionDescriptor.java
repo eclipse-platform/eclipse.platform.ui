@@ -24,6 +24,7 @@ public class ActionDescriptor {
 	private String toolbarPath;
 	private String menuPath;
 	private String id;
+	private String definitionId;
 	private String menuGroup;
 	private String toolbarGroup;
 	
@@ -34,6 +35,7 @@ public class ActionDescriptor {
 	public static final int T_WORKBENCH_PULLDOWN=0x5;
 	
 	public static final String ATT_ID = "id";//$NON-NLS-1$
+	public static final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
 	public static final String ATT_HELP_CONTEXT_ID = "helpContextId";//$NON-NLS-1$
 	public static final String ATT_LABEL = "label";//$NON-NLS-1$
 	public static final String ATT_STATE = "state";//$NON-NLS-1$
@@ -60,6 +62,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	// Load attributes.
 	id = actionElement.getAttribute(ATT_ID);
 	String label = actionElement.getAttribute(ATT_LABEL);
+	String defId = actionElement.getAttribute(ATT_DEFINITION_ID);
 	String tooltip = actionElement.getAttribute(ATT_TOOLTIP);
 	String helpContextId = actionElement.getAttribute(ATT_HELP_CONTEXT_ID);
 	String mpath = actionElement.getAttribute(ATT_MENUBAR_PATH);
@@ -76,7 +79,10 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 		WorkbenchPlugin.log("Invalid action declaration (label == null): " + id); //$NON-NLS-1$
 		label = WorkbenchMessages.getString("ActionDescriptor.invalidLabel"); //$NON-NLS-1$
 	}
-
+	definitionId = defId;
+//	if(defId == null)
+//		WorkbenchPlugin.log("Invalid action declaration (definitionId == null): " + id);
+//  }
 	// Calculate menu and toolbar paths.
 	String mgroup = null;
 	String tgroup = null;
@@ -149,7 +155,7 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 		case T_EDITOR:
 			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target);
 		case T_WORKBENCH:
-			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target,definitionId);
 		case T_WORKBENCH_PULLDOWN:
 			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
 		case T_POPUP:

@@ -5,10 +5,13 @@
 package org.eclipse.ui.internal;
 
 import java.util.*;
+
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
  * @version 	1.0
@@ -41,9 +44,20 @@ public class WWinKeyBindingService {
 		updateNumber++;
 		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
 	}
-	public void registerActionSet(IAction action) {
+	public void registerActionSets(IActionSet sets[]) {
 		updateNumber++;
-		actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
+		actionSetDefIdToAction.clear();
+		for(int i=0; i<sets.length; i++) {
+			if(sets[i] instanceof PluginActionSet) {
+				PluginActionSet set = (PluginActionSet)sets[i];
+				IAction actions[] = set.getPluginActions();
+				for (int j = 0; j < actions.length; j++) {
+					Action action = (Action)actions[j];
+					if(action.getActionDefinitionId() != null)
+						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
+				}
+			}
+		}
 	}
 	public long getUpdateNumber() {
 		return updateNumber;

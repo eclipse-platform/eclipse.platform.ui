@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.internal.registry.*;
 import java.util.*;
 
@@ -29,6 +30,14 @@ public PluginActionSet(ActionSetDescriptor desc) {
  */
 public void addPluginAction(WWinPluginAction action) {
 	pluginActions.add(action);
+}
+/**
+ * Returns the list of plugin actions for the set.
+ */
+public IAction[] getPluginActions() {
+	IAction result[] = new IAction[pluginActions.size()];
+	pluginActions.toArray(result);
+	return result;
 }
 /**
  * Disposes of this action set.

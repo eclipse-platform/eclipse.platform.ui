@@ -30,9 +30,10 @@ public class WWinPluginAction extends PluginAction
 	 * Constructs a new WWinPluginAction object..
 	 */
 	public WWinPluginAction(IConfigurationElement actionElement,
-		String runAttribute, IWorkbenchWindow window) 
+		String runAttribute, IWorkbenchWindow window,String definitionId) 
 	{
 		super(actionElement, runAttribute);
+		setActionDefinitionId(definitionId);
 		this.window = window;
 		window.getSelectionService().addSelectionListener(this);
 		refreshSelection();

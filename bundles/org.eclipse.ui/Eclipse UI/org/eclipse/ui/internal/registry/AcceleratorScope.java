@@ -131,7 +131,7 @@ public class AcceleratorScope {
 		}
 		public void run(KeyBindingService service,Event e) {
 			IAction a = service.getAction(id);
-			if(a != null)
+			if((a != null) && (a.isEnabled()))
 				a.runWithEvent(e);
 			currentMode = defaultMode;
 		}

@@ -64,7 +64,7 @@ public void clearActionSets() {
 /**
  * Returns a copy of the visible action set.
  */
-protected List copyActionSets() {
+private List copyActionSets() {
 	Set keys = mapDescToRec.keySet();
 	ArrayList list = new ArrayList(keys.size());
 	Iterator iter = keys.iterator();
@@ -111,5 +111,15 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 			addActionSet(desc);
 		}
 	}
+}
+/**
+ */
+public IActionSet[] getActionSets() {
+	Collection setRecCollection = mapDescToRec.values();
+	IActionSet result[] = new IActionSet[setRecCollection.size()];
+	int i = 0;
+	for (Iterator iterator = setRecCollection.iterator(); iterator.hasNext();i++)
+		result[i] = ((SetRec)iterator.next()).set;
+	return result;	
 }
 }

@@ -39,7 +39,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
  */
 public WWinPluginPulldown(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window) 
 {
-	super(actionElement, runAttribute, window);
+	super(actionElement, runAttribute, window,null);
 	menuProxy = new MenuProxy();
 	setMenuCreator(menuProxy);
 }
