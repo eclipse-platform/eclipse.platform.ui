@@ -12,7 +12,6 @@ package org.eclipse.ui.externaltools.internal.ant.dtd.schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,8 +61,7 @@ public class NfmParser {
 		// Detect accept conflicts
 		
 		HashMap duplicates = new HashMap();
-		ArrayList conflicts = new ArrayList();
-		detect(dfms, conflicts, duplicates);
+		detect(dfms, duplicates);
 		
 		// Replace duplicate dfms in graph
 		
@@ -75,12 +73,6 @@ public class NfmParser {
 		NfmNode.freeAll();
 		
 		return dfm;
-	}
-
-	private void reportErrors(HashSet errors) throws ParseError {
-		Iterator it = errors.iterator();
-		while (it.hasNext())
-			reportError((String) it.next());
 	}
 	
 	private void reportError(String name) throws ParseError {
@@ -145,7 +137,7 @@ public class NfmParser {
 	 * can be removed until all have been checked; this might disguise the
 	 * ambiguity in, e.g., ((a|a),b,(a|a))*.
 	 */
-	private void detect(ArrayList dfms, ArrayList conflicts, HashMap duplicates) throws ParseError {
+	private void detect(ArrayList dfms, HashMap duplicates) throws ParseError {
 		for (Iterator iter = dfms.iterator(); iter.hasNext();) {
 			Dfm dfm = (Dfm) iter.next();
 			
@@ -196,10 +188,11 @@ public class NfmParser {
 								dfmlo = tmp;
 							}
 							Dfm dup = (Dfm) duplicates.get(dfmhi);
-							if (dup == null || dfmlo.id < dup.id)
+							if (dup == null || dfmlo.id < dup.id) {
 								duplicates.put(dfmhi, dfmlo);
-							else
+							} else {
 								duplicates.put(dfmlo, dup);
+							}
 						}
 					}
 					else {
