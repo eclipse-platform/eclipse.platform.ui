@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 
 /**
@@ -19,9 +20,21 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	
 	private Session session;
 	
-	public PruneFolderVisitor(Session s) {
-		session = s;
+	public PruneFolderVisitor() {
 	}
+	
+	/**
+	 * This method is used to visit a set of ICVSResources.
+	 */
+	public void visit(Session s, ICVSResource[] resources) throws CVSException {
+		session = s;
+		
+		// Visit the resources
+		for (int i = 0; i < resources.length; i++) {
+			resources[i].accept(this);
+		}
+	}
+	
 	/**
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */

@@ -102,12 +102,10 @@ public class Update extends Command {
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
 			findOption(localOptions, "-D") != null) { //$NON-NLS-1$
 			// Delete empty directories
-			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
-			for (int i = 0; i < resources.length; i++) {
-				resources[i].accept(visitor);
-			}
+			new PruneFolderVisitor().visit(session, resources);
 			
-		}	
+		}
+		session.handleCaseCollisions();
 	}
 	
 	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {

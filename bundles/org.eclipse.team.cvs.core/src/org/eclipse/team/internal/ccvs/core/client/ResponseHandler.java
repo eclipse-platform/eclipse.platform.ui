@@ -5,7 +5,10 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -59,7 +62,46 @@ public abstract class ResponseHandler {
 	protected static ICVSFolder createFolder(Session session,
 		String localDir, String repositoryDir) throws CVSException {
 		ICVSFolder folder = session.getLocalRoot().getFolder(localDir);
-		if (! folder.exists()) folder.mkdir();
+		if (! folder.exists()) {
+			try {
+				folder.mkdir();
+			} catch (CVSException original) {
+				boolean caseInvariant = false;
+				if (original.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+					// We will try to create the mapped child below.
+					caseInvariant = true;
+				} else if (original.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+					// The parent of the folder doesn't exist. It could be due to case invariance.
+					// Check if there is a case invariant mapping for the folder
+					String actualLocalDir = session.getUniquePathForCaseSensitivePath(localDir, false);
+					folder = session.getLocalRoot().getFolder(actualLocalDir);
+					try {
+						if (! folder.exists()) folder.mkdir();
+						// We succeed in creating the child of a mapped parent
+						// Since caseInvariant is false, we will fall through
+					} catch (CVSException ex) {
+						if (ex.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+							// We will try to create he mapped child below.
+							caseInvariant = true;
+						} else {
+							// The atempt to get the mapped parent failed.
+							// Throw the original exception
+							throw original;
+						}
+					}
+				} else {
+					throw original;
+				}
+				if (caseInvariant) {
+					// Change the name (last segment) of the localDir to a unique name for the case invariant one
+					String newlocalDir = session.getUniquePathForCaseSensitivePath(localDir, true);
+					folder = session.getLocalRoot().getFolder(newlocalDir);
+					if (! folder.exists()) folder.mkdir();
+					// Signal to the session that there is a renamed folder.
+					session.addCaseCollision(localDir, newlocalDir);
+				}
+			}
+		}
 		if (! folder.isCVSFolder()) {
 			folder.setFolderSyncInfo(new FolderSyncInfo(
 				Util.getRelativePath(session.getRepositoryRoot(), repositoryDir),

@@ -116,11 +116,10 @@ public class Checkout extends Command {
 			(findOption(localOptions, "-r") != null)) { //$NON-NLS-1$			
 
 			// Prune empty directories
-			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
-			for (int i=0; i<resources.length; i++) {
-				resources[i].accept(visitor);
-			}
+			new PruneFolderVisitor().visit(session, resources);
 		}
+		
+		session.handleCaseCollisions();
 	}
 	
 	/**

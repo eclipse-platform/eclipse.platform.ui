@@ -7,15 +7,15 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Date;
 
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 /**
  * Handles any "Updated" and "Merged" responses
@@ -80,10 +80,14 @@ class UpdatedHandler extends ResponseHandler {
 		session.setModTime(null);
 		
 		// Get the local file
-		String fileName =
-			repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
+		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
-		Assert.isTrue(mParent.exists());
+		if (! mParent.exists()) {
+			// It is possible that we have a case invarient problem.
+			localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
+			mParent = session.getLocalRoot().getFolder(localDir);
+			Assert.isTrue(mParent.exists());
+		}
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		boolean binary = info.getKeywordMode().isBinary();
@@ -91,7 +95,17 @@ class UpdatedHandler extends ResponseHandler {
 		
 		// The file may have been set as read-only by a previous checkout/update
 		if (mFile.isReadOnly()) mFile.setReadOnly(false);
-		session.receiveFile(mFile, binary, handlerType, monitor);
+		try {
+			session.receiveFile(mFile, binary, handlerType, monitor);
+		} catch (CVSException e) {
+			if (e.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+				// Record that we have a case collision and continue;
+				session.addCaseCollision(new Path(localDir).append(fileName).toString(), Path.EMPTY.toString());
+				return;
+			} else {
+				throw e;
+			}
+		}
 		if (readOnly) mFile.setReadOnly(true);
 		
 		// Set the timestamp in the file and get it again so that we use the *real* timestamp
