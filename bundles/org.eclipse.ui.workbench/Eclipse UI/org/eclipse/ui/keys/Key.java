@@ -28,9 +28,7 @@ public abstract class Key implements Comparable {
 
 	protected String name;
 
-	Key(String name) {
-		super();
-		
+	Key(String name) {	
 		if (name == null)
 			throw new NullPointerException();
 		

@@ -30,7 +30,6 @@ public class NotDefinedException extends Exception {
 	 * JAVADOC
 	 */	
 	public NotDefinedException() {
-		super();
 	}
 
 	/**

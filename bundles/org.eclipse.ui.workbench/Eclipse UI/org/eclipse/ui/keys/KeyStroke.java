@@ -14,6 +14,7 @@ package org.eclipse.ui.keys;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -74,6 +75,8 @@ public final class KeyStroke implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
+	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeySequence.class.getName());	
 	
 	private static SortedMap escapeKeyLookup = new TreeMap();
 	private static SortedMap modifierKeyLookup = new TreeMap();
@@ -214,8 +217,6 @@ public final class KeyStroke implements Comparable {
 	private transient ModifierKey[] modifierKeysAsArray;
 	
 	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
-		super();
-
 		if (naturalKey == null)
 			throw new NullPointerException();
 
@@ -247,6 +248,15 @@ public final class KeyStroke implements Comparable {
 	 * 
 	 * @return
 	 */
+	public String format() {
+		return format(true);
+	}
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */
 	public Set getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
@@ -268,37 +278,47 @@ public final class KeyStroke implements Comparable {
 	}
 
 	public String toString() {
+		return format(false);
+	}
+
+	private String format(boolean localize) {
 		Iterator iterator = modifierKeys.iterator();
 		StringBuffer stringBuffer = new StringBuffer();
 	
 		while (iterator.hasNext()) {
 			stringBuffer.append(iterator.next().toString());
-			stringBuffer.append(KEY_DELIMITER);
+			
+			if (localize)
+				stringBuffer.append(Util.getString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY));
+			else
+				stringBuffer.append(KEY_DELIMITER);
 		}
 
 		String name = naturalKey.toString();
+		String value;
 
 		if ("\b".equals(name)) //$NON-NLS-1$
-			stringBuffer.append(BS);
+			value = BS;
 		else if ("\t".equals(name)) //$NON-NLS-1$
-			stringBuffer.append(TAB);
+			value = TAB;
 		else if ("\n".equals(name)) //$NON-NLS-1$
-			stringBuffer.append(LF);
+			value = LF;
 		else if ("\f".equals(name)) //$NON-NLS-1$
-			stringBuffer.append(FF);
+			value = FF;
 		else if ("\r".equals(name)) //$NON-NLS-1$	
-			stringBuffer.append(CR);
+			value = CR;
 		else if ("\u001b".equals(name)) //$NON-NLS-1$	
-			stringBuffer.append(ESC);
+			value = ESC;
 		else if (" ".equals(name)) //$NON-NLS-1$	
-			stringBuffer.append(SPACE);
+			value = SPACE;
 		else if ("+".equals(name)) //$NON-NLS-1$	
-			stringBuffer.append(PLUS);
+			value = PLUS;
 		else if ("\u007F".equals(name)) //$NON-NLS-1$	
-			stringBuffer.append(DEL);
+			value = DEL;
 		else
-			stringBuffer.append(name);
+			value = name;
 		
+		stringBuffer.append(localize ? Util.getString(RESOURCE_BUNDLE, value) : value);		
 		return stringBuffer.toString();
 	}
 }

@@ -30,7 +30,6 @@ public class ParseException extends Exception {
 	 * JAVADOC
 	 */	
 	public ParseException() {
-		super();
 	}
 
 	/**
