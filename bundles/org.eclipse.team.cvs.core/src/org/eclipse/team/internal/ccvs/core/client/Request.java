@@ -37,34 +37,42 @@ public abstract class Request {
 	/*** Response handler map ***/
 	private static final Map responseHandlers = new HashMap();
 	static {
-		registerResponseHandler(new CheckedInHandler());
-		registerResponseHandler(new CopyHandler());
-		registerResponseHandler(new ModTimeHandler());
-		registerResponseHandler(new NewEntryHandler());
-		registerResponseHandler(new RemovedHandler());
-		registerResponseHandler(new RemoveEntryHandler());
-		registerResponseHandler(new StaticHandler(true));
-		registerResponseHandler(new StaticHandler(false));
-		registerResponseHandler(new StickyHandler(true));
-		registerResponseHandler(new StickyHandler(false));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATED));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATE_EXISTING));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_CREATED));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_MERGED));
-		registerResponseHandler(new ValidRequestsHandler());
-		registerResponseHandler(new ModuleExpansionHandler());
-		registerResponseHandler(new MTHandler());
-		registerResponseHandler(new NotifiedHandler());
-		registerResponseHandler(new TemplateHandler());
+		synchronized(responseHandlers) {
+			registerResponseHandler(new CheckedInHandler());
+			registerResponseHandler(new CopyHandler());
+			registerResponseHandler(new ModTimeHandler());
+			registerResponseHandler(new NewEntryHandler());
+			registerResponseHandler(new RemovedHandler());
+			registerResponseHandler(new RemoveEntryHandler());
+			registerResponseHandler(new StaticHandler(true));
+			registerResponseHandler(new StaticHandler(false));
+			registerResponseHandler(new StickyHandler(true));
+			registerResponseHandler(new StickyHandler(false));
+			registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATED));
+			registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATE_EXISTING));
+			registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_CREATED));
+			registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_MERGED));
+			registerResponseHandler(new ValidRequestsHandler());
+			registerResponseHandler(new ModuleExpansionHandler());
+			registerResponseHandler(new MTHandler());
+			registerResponseHandler(new NotifiedHandler());
+			registerResponseHandler(new TemplateHandler());
+		}
 	}
 	protected static void registerResponseHandler(ResponseHandler handler) {
-		responseHandlers.put(handler.getResponseID(), handler);
+		synchronized(responseHandlers) {
+			responseHandlers.put(handler.getResponseID(), handler);
+		}
 	}
 	protected static void removeResponseHandler(String responseID) {
-		responseHandlers.remove(responseID);
+		synchronized(responseHandlers) {
+			responseHandlers.remove(responseID);
+		}
 	}
 	protected static ResponseHandler getResponseHandler(String responseID) {
-		return (ResponseHandler)responseHandlers.get(responseID);
+		synchronized(responseHandlers) {
+			return (ResponseHandler)responseHandlers.get(responseID);
+		}
 	}
 
 	/**

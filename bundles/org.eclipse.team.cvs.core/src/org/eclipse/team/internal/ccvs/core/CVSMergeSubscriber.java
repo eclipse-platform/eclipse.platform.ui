@@ -107,13 +107,14 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		baseSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + start.getName(), start);
 		mergedSynchronizer = new RemoteSynchronizer(syncKeyPrefix + "0merged");
 		
-		try {
-			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
-		} catch (TeamException e) {
-			// use the default but log an exception because the content comparison should
-			// always be available.
-			CVSProviderPlugin.log(e);
-		}
+		// TODO: must use revision comparison until bugs 40035 and 40129 are addressed
+//		try {
+//			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
+//		} catch (TeamException e) {
+//			// use the default but log an exception because the content comparison should
+//			// always be available.
+//			CVSProviderPlugin.log(e);
+//		}
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
