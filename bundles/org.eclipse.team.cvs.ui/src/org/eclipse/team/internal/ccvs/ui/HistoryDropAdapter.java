@@ -1,10 +1,11 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -13,6 +14,12 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.ui.part.ResourceTransfer;
 
 public class HistoryDropAdapter extends ViewerDropAdapter {
@@ -42,40 +49,23 @@ public class HistoryDropAdapter extends ViewerDropAdapter {
 		super.drop(event);
 		event.detail = DND.DROP_LINK;
 	}
-	/**
-	 * Returns a resource history for the given resource, or null
-	 * if none available.
-	 */
-	/*private IVersionHistory getHistory(IResource resource) throws CoreException {
-		ISharingManager manager = VCMPlugin.getProvider().getSharingManager();
-		if (resource.getType() == IResource.PROJECT) {
-	        ITeamStream stream = manager.getSharing(resource);
-	        if (stream != null) {
-		        return stream.getRepository().fetchProjectHistory(resource.getName(), null);
-	        }
-		} else {
-			IResourceEdition base = manager.getBaseVersion(resource);
-			if (base != null) {
-				return base.fetchVersionHistory(null);
-			}
-			IResourceEdition remote = manager.getRemoteResource(resource);
-			if (remote != null) {
-				try {
-					return remote.fetchVersionHistory(null);
-				} catch (CoreException e) {
-					//this exception means there is no remote resource
-					//so return null for the version history.
-					return null;
-				}
-			}
-		}
-		return null;
-	}*/
 	public boolean performDrop(Object data) {
 		if (data == null) return false;
 		IResource[] sources = (IResource[])data;
 		if (sources.length == 0) return false;
 		IResource resource = sources[0];
+		if (!(resource instanceof IFile)) return false;
+		try {
+			ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(resource);
+			if (teamProvider == null) return false;
+			if (!(teamProvider instanceof CVSTeamProvider)) return false;
+			CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
+			ICVSRemoteFile file = (ICVSRemoteFile)cvsProvider.getRemoteResource(resource);
+			if (file == null) return false;
+			view.showHistory(file);
+		} catch (TeamException e) {
+			return false;
+		}
 /*		try {
 			IVersionHistory history = getHistory(resource);
 			if (history == null) {
