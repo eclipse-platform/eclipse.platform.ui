@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 	public PropertyCache(final int cacheSize) {
 		// start with 100 elements but be able to grow until cacheSize
 		fCache= new LinkedHashMap(100, 0.75f, true) {
+			private static final long serialVersionUID= 1L;
 			protected boolean removeEldestEntry(Entry eldest) {
 				return size() > cacheSize;
 			}
