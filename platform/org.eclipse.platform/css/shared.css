@@ -92,17 +92,17 @@ a img {
 	background-repeat : no-repeat;
 }
 
-
+base { width : 0px; height : 0px; margin : 0px; padding : 0px; }
 /*
  * Set up the body, decorative background, and navigation for the content 
  * pages. 
  * Note: the root page handles its own background and navigation; these
  * settins apply to the content pages
  */
-body, .page, .intro-header, .page-content {
-	min-width : 775px;
+body, .page{
+	min-width : 770px;
 	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 775? "775px": "auto" );	
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );	
 }
 
 .intro-header {

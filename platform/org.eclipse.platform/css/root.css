@@ -1,10 +1,10 @@
 /*
  * Set up the content for the root page.
  */
-body, #intro-header, #root-background {
-	min-width : 775px;
+body {
+	min-width : 770px;
 	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 775? "775px": "auto" );
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );
 }
 
 body {
