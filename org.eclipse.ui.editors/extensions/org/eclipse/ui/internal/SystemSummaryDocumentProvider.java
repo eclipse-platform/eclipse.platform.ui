@@ -35,6 +35,7 @@ import org.eclipse.core.internal.runtime.PreferenceExporter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -168,9 +169,21 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			}
 			}));
 
+		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		for (int i = 0; i < featuresArray.length; i++) {
 			IFeatureEntry info = featuresArray[i];
-			String[] args= new String[] {info.getFeatureIdentifier(), info.getFeatureVersion(), info.getFeaturePluginIdentifier()};
+			String pluginID = info.getFeaturePluginIdentifier();
+			if (pluginID != null) {
+				IPluginDescriptor descriptor= pluginRegistry.getPluginDescriptor(pluginID);
+				pluginID = descriptor.getLabel();
+				if ("".equals(pluginID)) {
+					pluginID = SystemSummaryMessages.getString("SystemSummary.notSpecified"); //$NON-NLS-1$
+				}
+			} else {
+				pluginID = SystemSummaryMessages.getString("SystemSummary.notSpecified"); //$NON-NLS-1$
+			}
+
+			String[] args= new String[] {info.getFeatureIdentifier(), info.getFeatureVersion(), pluginID};
 			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.featureVersion", args)); //$NON-NLS-1$
 		}
 	}	
