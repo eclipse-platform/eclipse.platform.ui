@@ -154,7 +154,7 @@ public void testRunnable() {
 			exceptions.addElement(exception);
 		}
 		public void run() throws Exception {
-			throw new Exception();
+			throw new Exception("PlatformTest.testRunnable: this exception is thrown on purpose as part of the test.");
 		}
 	};
 	
