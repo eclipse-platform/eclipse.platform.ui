@@ -23,6 +23,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSClientException;
 import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
@@ -129,7 +130,9 @@ public final class SameResultEnv extends JUnitTestCase {
 			referenceClientException = true;
 		} finally {
 			try {
+				// temporary flush
 				referenceProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+				EclipseSynchronizer.getInstance().flush(referenceProject, true, true,null);
 			} catch (CoreException e) {
 				fail("CoreException during refreshLocal: " + e.getMessage());
 			}
@@ -389,7 +392,7 @@ public final class SameResultEnv extends JUnitTestCase {
 		assertEquals(info1.isMerged(), info2.isMerged());
 		
 		// Ensure that timestamps are written using same timezone.
-		//assertTimestampEquals(info1.getTimeStamp(), info2.getTimeStamp());
+		assertTimestampEquals(info1.getTimeStamp(), info2.getTimeStamp());
 		
 		// We are not able to check for the permissions, as the reference-client doesn't save them
 	}
