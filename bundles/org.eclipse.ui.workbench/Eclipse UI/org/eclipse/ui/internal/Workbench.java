@@ -1007,10 +1007,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		String pluginId = "org.eclipse.ui"; //$NON-NLS-1$
-		String extensionPoint = "startup"; //$NON-NLS-1$
-
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+		IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
 		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
 		for (int i = 0; i < extensions.length; i++) {
