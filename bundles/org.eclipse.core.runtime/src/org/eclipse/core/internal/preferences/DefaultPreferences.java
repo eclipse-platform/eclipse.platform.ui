@@ -28,9 +28,9 @@ public class DefaultPreferences extends EclipsePreferences {
 	private static Set loadedNodes = new HashSet();
 	private static final String ELEMENT_CUSTOMIZATION = "customization"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_QUALIFIER = "qualifier"; //$NON-NLS-1$
 
 	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.customization"; //$NON-NLS-1$
+	private static final String LEGACY_PRODUCT_CUSTOMIZATION_FILENAME = "plugin_customization.ini"; //$NON-NLS-1$
 	private EclipsePreferences loadLevel;
 
 	// cached values
@@ -184,34 +184,29 @@ public class DefaultPreferences extends EclipsePreferences {
 			return;
 		}
 		String id = product.getId();
-		if (id == null)
+		if (id == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Product ID not available to apply product-level preference defaults."); //$NON-NLS-1$
 			return;
+		}
 		Bundle bundle = Platform.getBundle(id);
-		if (bundle == null)
+		if (bundle == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
 			return;
-		URL url = Platform.find(bundle, new Path("plugin_customization.ini"));
-		/*
-		 String urlPath = product.getProperty(PRODUCT_KEY);
-		 if (urlPath == null) {
-		 if (InternalPlatform.DEBUG_PREFERENCES)
-		 Policy.debug("Preference customization file not specified for product: " + product.getId()); //$NON-NLS-1$
-		 return;
-		 }
-		 URL url = null;
-		 try {
-		 url = new URL(urlPath);
-		 } catch (MalformedURLException e) {
-		 // TODO
-		 return;
-		 }
-		 try {
-		 url = Platform.resolve(url);
-		 } catch (IOException e) {
-		 // TODO
-		 }
-		 if (InternalPlatform.DEBUG_PREFERENCES)
-		 Policy.debug("Using product preference customization file: " + urlPath); //$NON-NLS-1$
-		 */
+		}
+		String filename = product.getProperty(PRODUCT_KEY);
+		if (filename == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Product : " + id + " does not define preference customization file. Using legacy file: plugin_customization.ini"); //$NON-NLS-1$//$NON-NLS-2$
+			filename = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
+		}
+		URL url = Platform.find(bundle, new Path(filename));
+		if (url == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Product preference customization file: " + filename + " not found in bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
+			return;
+		}
 		applyDefaults(null, loadProperties(url));
 	}
 
