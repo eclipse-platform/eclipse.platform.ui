@@ -13,8 +13,6 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.osgi.util"/>
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
