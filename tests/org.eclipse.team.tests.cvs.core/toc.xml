@@ -11,6 +11,10 @@
             <topic label="Comparing" href="html/00008.html">
                 <topic label="Remote resources" href="html/00009.html">
                 </topic>
+                <topic label="Local resources with a repository" href="html/00039.html">
+                </topic>
+                <topic label="Reverting deleted resources" href="html/00040.html">
+                </topic>
             </topic>
             <topic label="Synchronizing" href="html/00010.html">
                 <topic label="Sync View operations and selection" href="html/00011.html">
