@@ -55,6 +55,7 @@ public class HistoryStoreConversionTest extends ResourceTest {
 
 	public void testConversion() {
 		IPath baseLocation = getRandomLocation();
+		HistoryStore original = null;
 		try {
 			IProject project1 = getWorkspace().getRoot().getProject("proj1");
 			IFile file11 = project1.getFile("file11.txt");
@@ -69,7 +70,7 @@ public class HistoryStoreConversionTest extends ResourceTest {
 			ensureExistsInWorkspace(files, true);
 
 			assertTrue("0.1", baseLocation.toFile().mkdirs());
-			HistoryStore original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
+			original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
 
 			for (int i = 0; i < files.length; i++)
 				for (int j = 0; j < 10; j++)
@@ -83,8 +84,9 @@ public class HistoryStoreConversionTest extends ResourceTest {
 			// reopen history store for comparison
 			original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
 			compare("1", original, destination);
-			original.shutdown(getMonitor());
 		} finally {
+			if (original != null)
+				original.shutdown(getMonitor());
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
 		}
 	}
