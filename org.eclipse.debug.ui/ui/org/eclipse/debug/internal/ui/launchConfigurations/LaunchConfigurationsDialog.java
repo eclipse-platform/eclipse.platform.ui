@@ -24,7 +24,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -148,13 +147,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Flag indicating if the progress monitor part's Cancel button has been pressed.
 	 */
 	private boolean fCancelButtonPressed;
-			
-	/**
-	 * Clients of this dialog may set an 'initial configuration type', which means that when
-	 * the dialog is opened, a configuration of that type will be created, initialized, and
-	 * saved.  Note that the initial config type is ignored if single-click launching is enabled.
-	 */
-	private ILaunchConfigurationType fInitialConfigType;
 	
 	/**
 	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
@@ -1569,13 +1561,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			name = ""; //$NON-NLS-1$
 		}
 		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
-	}
-		
-	/**
-	 * Sets the initial launch configuration type to be used when this dialog is opened.
-	 */
-	public void setInitialConfigType(ILaunchConfigurationType configType) {
-		fInitialConfigType = configType;
 	}
 	
 	/**
