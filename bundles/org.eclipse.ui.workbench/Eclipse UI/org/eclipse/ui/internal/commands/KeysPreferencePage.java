@@ -556,44 +556,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		super.setVisible(visible);
 	}
 
-	private void setCommandsForCategory() {
-		String categoryId = getCategoryId();
-		String commandId = getCommandId();
-		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
-		Map commandIdsByUniqueName = new HashMap(this.commandIdsByUniqueName);
-		commandIdsByUniqueName.values().retainAll(commandIds);
-		List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
-		Collections.sort(commandNames, Collator.getInstance());						
-		comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
-		setCommandId(commandId);
-		
-		if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
-			comboCommand.select(0);		
-	}
-	
-	private void setContextsForCommand() {
-		String commandId = getCommandId();
-		String contextId = getContextId();
-		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
-		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);			
-		
-		// TODO for context bound commands, this code retains only those context explictly bound. what about assigning key bindings to implicit descendant contexts? 
-		if (contextIds != null)
-			contextIdsByUniqueName.values().retainAll(contextIds);
-
-		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
-		Collections.sort(contextNames, Collator.getInstance());						
-		
-		if (contextIds == null)
-			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
-		
-		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));				
-		setContextId(contextId);
-
-		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
-			comboContext.select(0);
-	}
-
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout gridLayout = new GridLayout();
@@ -992,6 +954,21 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		}
 	}
 
+	private void setCommandsForCategory() {
+		String categoryId = getCategoryId();
+		String commandId = getCommandId();
+		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+		Map commandIdsByUniqueName = new HashMap(this.commandIdsByUniqueName);
+		commandIdsByUniqueName.values().retainAll(commandIds);
+		List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
+		Collections.sort(commandNames, Collator.getInstance());						
+		comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
+		setCommandId(commandId);
+		
+		if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
+			comboCommand.select(0);		
+	}	
+
 	private void setContextId(String contextId) {				
 		comboContext.clearSelection();
 		comboContext.deselectAll();
@@ -1006,6 +983,29 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					break;		
 				}
 		} else 
+			comboContext.select(0);
+	}
+
+	private void setContextsForCommand() {
+		String commandId = getCommandId();
+		String contextId = getContextId();
+		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);			
+		
+		// TODO for context bound commands, this code retains only those context explictly bound. what about assigning key bindings to implicit descendant contexts? 
+		if (contextIds != null)
+			contextIdsByUniqueName.values().retainAll(contextIds);
+
+		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
+		Collections.sort(contextNames, Collator.getInstance());						
+		
+		if (contextIds == null)
+			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
+		
+		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));				
+		setContextId(contextId);
+
+		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
 			comboContext.select(0);
 	}
 
