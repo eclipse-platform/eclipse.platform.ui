@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -174,25 +174,22 @@ public class ConsoleManager implements IConsoleManager {
 	}
 	
 	/**
-	 * Opens the console view. If the view is already open, it is brought to the front.
+	 * @see IConsoleManager#showConsoleView(IConsole)
 	 */
 	public void showConsoleView(final IConsole console) {
 		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				IWorkbenchWindow window= ConsolePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+				IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (window != null) {
 					IWorkbenchPage page= window.getActivePage();
 					if (page != null) {
 						IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
 						if (consoleView == null) {
-							IWorkbenchPart activePart= page.getActivePart();
 							try {
-								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
+								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
 							} catch (PartInitException pie) {
 								ConsolePlugin.log(pie);
 							}
-							//restore focus stolen by the creation of the console
-							page.activate(activePart);
 						} else {
 							boolean bringToTop = shouldBringToTop(console, consoleView);
 							if (bringToTop) {
@@ -208,6 +205,11 @@ public class ConsoleManager implements IConsoleManager {
 		});
 	}	
 	
+	/**
+	 * Returns whether the given console view should be brought to the top.
+	 * The view should not be brought to the top if the view is pinned on
+	 * a console other than the given console.
+	 */
 	private boolean shouldBringToTop(IConsole console, IViewPart consoleView) {
 		boolean bringToTop= true;
 		if (consoleView instanceof IConsoleView) {

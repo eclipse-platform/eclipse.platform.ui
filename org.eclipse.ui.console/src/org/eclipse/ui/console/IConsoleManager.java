@@ -60,10 +60,11 @@ public interface IConsoleManager {
 	public IConsole[] getConsoles();
 	
 	/**
-	 * Opens the console view and displays the console. If the view is already open, 
-	 * it is brought to the front.
+	 * Opens the console view and displays given the console.
+	 * If the view is already open, it is brought to the front unless
+	 * the view is pinned on a console other than the given console.
 	 * 
-	 * @param console Attempts to display this IConsole
+	 * @param console console to display
 	 */
-	public void showConsoleView(final IConsole console);
+	public void showConsoleView(IConsole console);
 }
