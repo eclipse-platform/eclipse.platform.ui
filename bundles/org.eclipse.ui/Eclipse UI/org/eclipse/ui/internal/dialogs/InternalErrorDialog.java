@@ -24,6 +24,10 @@ public class InternalErrorDialog extends MessageDialog {
 	private int detailButtonID = -1;
 	private Text text;
 	
+	//Workaround. SWT does not seem to set rigth the default button if 
+	//there is not control with focus. Bug: 14668
+	private int defaultButtonIndex = 0;
+	
 	/**
 	 * Size of the text in lines.
 	 */
@@ -46,7 +50,25 @@ public InternalErrorDialog(
 		dialogImageType,
 		dialogButtonLabels,
 		defaultIndex);
+	defaultButtonIndex = defaultIndex;
 	this.detail = detail;
+}
+
+//Workaround. SWT does not seem to set rigth the default button if 
+//there is not control with focus. Bug: 14668
+public int open() {
+	create();
+	Button b = getButton(defaultButtonIndex);
+	b.setFocus();
+	b.getShell().setDefaultButton(b);
+	return super.open();
+}
+	
+/**
+ * Set the detail button;
+ */
+public void setDetailButton(int index) {
+	detailButtonID = index;
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -167,7 +189,7 @@ public static boolean openQuestion(Shell parent, String title, String message, T
 		labels, 
 		defaultIndex);
 	if(detail != null)
-	    dialog.detailButtonID = 2;
+	    dialog.setDetailButton(2);
 	return dialog.open() == 0;
 }
 
