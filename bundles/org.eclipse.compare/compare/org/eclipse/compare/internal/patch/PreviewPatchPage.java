@@ -380,20 +380,27 @@ import org.eclipse.compare.structuremergeviewer.*;
 		IResource target= fPatchWizard.getTarget();
 		if (target instanceof IFile) {
 			IFile file= (IFile) target;
-			IPath path2= file.getFullPath().removeFirstSegments(1);
-			//System.out.println("target: " + path2.toOSString());
-			//System.out.println("  path: " + path.toOSString());
-			if (path.equals(path2))
+			if (matches(file.getFullPath(), path))
 				return file;
-//			String name= file.getName();
-//			if (path.lastSegment().equals(name))
-//				return file;
 		} else if (target instanceof IContainer) {
 			IContainer c= (IContainer) target;
 			if (c.exists(path))
 				return c.getFile(path);
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns true if path completely matches the end of fullpath
+	 */
+	private boolean matches(IPath fullpath, IPath path) {
+		
+		for (IPath p= fullpath; path.segmentCount() <= p.segmentCount();
+												p= p.removeFirstSegments(1)) {
+			if (p.equals(path))
+				return true;
+		}
+		return false;
 	}
 	
 	/**
