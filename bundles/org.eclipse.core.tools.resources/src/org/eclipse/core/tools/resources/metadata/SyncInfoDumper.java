@@ -20,7 +20,7 @@ import org.eclipse.core.tools.metadata.*;
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_2
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_3
  */
-public class SyncInfoDumper extends AbstractDumper {
+public class SyncInfoDumper extends MultiStrategyDumper {
 
 	// type constants
 	static final byte INDEX = 1;

@@ -12,8 +12,8 @@ package org.eclipse.core.tools.resources.metadata;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
-import org.eclipse.core.tools.metadata.AbstractDumper;
 import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
+import org.eclipse.core.tools.metadata.MultiStrategyDumper;
 
 /**
  * A dumper for .location files.
@@ -21,7 +21,7 @@ import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
  * @see org.eclipse.core.tools.resources.metadata.AbstractDumper
  * @see org.eclipse.core.tools.resources.metadata.LocationStrategy  
  */
-public class LocationDumper extends AbstractDumper {
+public class LocationDumper extends MultiStrategyDumper {
 
 	/**
 	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)

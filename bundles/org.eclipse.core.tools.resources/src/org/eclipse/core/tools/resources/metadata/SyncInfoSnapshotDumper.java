@@ -19,7 +19,7 @@ import org.eclipse.core.tools.metadata.*;
  * 
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumpingStrategy_3
  */
-public class SyncInfoSnapshotDumper extends AbstractDumper {
+public class SyncInfoSnapshotDumper extends MultiStrategyDumper {
 
 	static final byte INDEX = 1;
 	static final byte QNAME = 2;

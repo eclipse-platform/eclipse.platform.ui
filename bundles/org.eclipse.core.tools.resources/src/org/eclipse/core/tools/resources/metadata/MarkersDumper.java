@@ -21,7 +21,7 @@ import org.eclipse.core.tools.metadata.*;
  * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_2
  * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_3  
  */
-public class MarkersDumper extends AbstractDumper {
+public class MarkersDumper extends MultiStrategyDumper {
 
 	// type constants
 	static final byte INDEX = 1;
