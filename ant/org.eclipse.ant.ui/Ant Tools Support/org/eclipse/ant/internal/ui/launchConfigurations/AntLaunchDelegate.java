@@ -65,6 +65,7 @@ import org.osgi.framework.Bundle;
 public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.AntProcessBuildLogger"; //$NON-NLS-1$
+	private static final String ANT_DEBUG_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.AntProcessDebugBuildLogger"; //$NON-NLS-1$
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
 	private static final String REMOTE_ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger"; //$NON-NLS-1$
 	private static final String REMOTE_ANT_DEBUG_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.debug.RemoteAntDebugBuildLogger"; //$NON-NLS-1$
@@ -406,7 +407,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			}
 		
 			commandLine.append(" -logger "); //$NON-NLS-1$
-			if (captureOutput) {
+			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+				commandLine.append(ANT_DEBUG_LOGGER_CLASS);
+			} else if (captureOutput) {
 				commandLine.append(ANT_LOGGER_CLASS);
 			} else {
 				commandLine.append(NULL_LOGGER_CLASS);

@@ -74,11 +74,11 @@ public class AntThread extends AntDebugElement implements IThread {
 	/**
 	 * Returns the current stack frames in the thread
 	 * 
-	 * @return the current stack frames in the target
+	 * @return the current stack frames in the thread
 	 * @throws DebugException if unable to perform the request
 	 */
 	private void getStackFrames0() throws DebugException {
-		sendRequest(DebugMessageIds.STACK);		
+		fTarget.getStackFrames();
 		try {
 		    wait();
 		} catch (InterruptedException e) {
@@ -263,7 +263,7 @@ public class AntThread extends AntDebugElement implements IThread {
 		fStepping = stepping;
 	}
 
-    protected synchronized void buildStack(String data) {
+    public synchronized void buildStack(String data) {
 		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
 		//0 STACK message
 		//1 targetName
@@ -288,7 +288,7 @@ public class AntThread extends AntDebugElement implements IThread {
 		notifyAll();
     }
     
-    protected synchronized void newProperties(String data) {
+    public synchronized void newProperties(String data) {
 	    try {
 	    	String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
 	    	if (fProperties == null) {
@@ -331,7 +331,7 @@ public class AntThread extends AntDebugElement implements IThread {
     protected synchronized IVariable[] getVariables() throws DebugException {
         if (fRefreshProperties) {
             fRefreshProperties= false;
-            sendRequest(DebugMessageIds.PROPERTIES);
+            fTarget.getProperties();
             try {
                 wait();
             } catch (InterruptedException ie) {

@@ -19,13 +19,17 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntBuildListener;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 
-public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
+public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implements IAntDebugController {
 	
 	// sockets to communicate with the remote Ant debug build logger
 	private Socket fRequestSocket;
@@ -188,5 +192,80 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		} catch(IOException e) {
 		}
 		super.shutDown();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
+	 */
+	public void resume() {
+		sendRequest(DebugMessageIds.RESUME);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#suspend()
+	 */
+	public void suspend() {
+		sendRequest(DebugMessageIds.SUSPEND);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepInto()
+	 */
+	public void stepInto() {
+		sendRequest(DebugMessageIds.STEP_INTO);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
+	 */
+	public void stepOver() {
+		sendRequest(DebugMessageIds.STEP_OVER);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(IBreakpoint, boolean)
+	 */
+	public void handleBreakpoint(IBreakpoint breakpoint, boolean add) {
+		if (!fTarget.supportsBreakpoint(breakpoint)) {
+			return;
+		}
+		StringBuffer message= new StringBuffer();
+		if (add) {
+			try {
+				if (!breakpoint.isEnabled()) {
+					return;
+				}
+			} catch (CoreException e) {
+				AntUIPlugin.log(e);
+				return;
+			}
+			message.append(DebugMessageIds.ADD_BREAKPOINT);
+		} else {
+			message.append(DebugMessageIds.REMOVE_BREAKPOINT);
+		}
+		message.append(DebugMessageIds.MESSAGE_DELIMITER);
+		message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
+		message.append(DebugMessageIds.MESSAGE_DELIMITER);
+		try {
+			message.append(((ILineBreakpoint)breakpoint).getLineNumber());
+			sendRequest(message.toString());
+		} catch (CoreException ce) {
+			AntUIPlugin.log(ce);
+			return;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
+	 */
+	public void getProperties() {
+		sendRequest(DebugMessageIds.PROPERTIES);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getStackFrames()
+	 */
+	public void getStackFrames() {
+		sendRequest(DebugMessageIds.STACK);
 	}
 }

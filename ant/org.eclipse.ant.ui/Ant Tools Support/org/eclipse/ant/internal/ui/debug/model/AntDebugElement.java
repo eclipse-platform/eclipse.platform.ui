@@ -124,8 +124,4 @@ public abstract class AntDebugElement extends PlatformObject implements IDebugEl
 	protected void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}	
-	
-	protected void sendRequest(String message) throws DebugException {
-	   fTarget.sendRequest(message);
-	}
 }

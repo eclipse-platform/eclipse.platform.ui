@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
+import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -52,7 +52,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	private AntThread fThread;
 	private IThread[] fThreads;
 	
-	private RemoteAntDebugBuildListener fBuildListener;
+	private IAntDebugController fController;
 
 	/**
 	 * Constructs a new debug target in the given launch for the 
@@ -60,15 +60,15 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * 
 	 * @param launch containing launch
 	 * @param process Ant build process
-	 * @param listener the listener to communicate to the remote Ant build logger
+	 * @param controller the controller to communicate to the Ant build
 	 */
-	public AntDebugTarget(ILaunch launch, IProcess process, RemoteAntDebugBuildListener listener) {
+	public AntDebugTarget(ILaunch launch, IProcess process, IAntDebugController controller) {
 		super(null);
 		fLaunch = launch;
 		fTarget = this;
 		fProcess = process;
 		
-		fBuildListener= listener;
+		fController= controller;
 		
 		fThread = new AntThread(this);
 		fThreads = new IThread[] {fThread};
@@ -195,7 +195,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	public void resume() throws DebugException {
 	    fSuspended= false;
-		sendRequest(DebugMessageIds.RESUME);
+	    fController.resume();
 	}
 	
 	/**
@@ -213,51 +213,21 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		sendRequest(DebugMessageIds.SUSPEND);
+		fController.suspend();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		sendBreakpointRequest(breakpoint, true);
+		fController.handleBreakpoint(breakpoint, true);
 	}
-	
-	private void sendBreakpointRequest(IBreakpoint breakpoint, boolean add) {
-	    if (!supportsBreakpoint(breakpoint)) {
-	        return;
-	    }
-        StringBuffer message= new StringBuffer();
-        if (add) {
-            try {
-                if (!breakpoint.isEnabled()) {
-                    return;
-                }
-            } catch (CoreException e) {
-                AntUIPlugin.log(e);
-               return;
-            }
-            message.append(DebugMessageIds.ADD_BREAKPOINT);
-        } else {
-            message.append(DebugMessageIds.REMOVE_BREAKPOINT);
-        }
-        message.append(DebugMessageIds.MESSAGE_DELIMITER);
-        message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
-        message.append(DebugMessageIds.MESSAGE_DELIMITER);
-        try {
-            message.append(((ILineBreakpoint)breakpoint).getLineNumber());
-            sendRequest(message.toString());
-        } catch (CoreException ce) {
-            AntUIPlugin.log(ce);
-            return;
-        }
-    }
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		sendBreakpointRequest(breakpoint, false);
+		fController.handleBreakpoint(breakpoint, false);
 	}
 	
 	/* (non-Javadoc)
@@ -314,7 +284,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * Notification we have connected to the Ant build logger and it has started.
 	 * Resume the build.
 	 */
-	protected void buildStarted() {
+	public void buildStarted() {
 		fireCreationEvent();
 		installDeferredBreakpoints();
 		try {
@@ -358,7 +328,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	protected void stepOver() throws DebugException {
 	    fSuspended= false;
-		sendRequest(DebugMessageIds.STEP_OVER);
+		fController.stepOver();
 	}
 	
 	/**
@@ -368,17 +338,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	protected void stepInto() throws DebugException {
 	    fSuspended= false;
-		sendRequest(DebugMessageIds.STEP_INTO);
-	}
-	
-	/**
-	 * Sends a request to the Ant Build
-	 * 
-	 * @param request debug command
-	 * @throws DebugException if the request fails
-	 */
-	protected void sendRequest(String request) throws DebugException {
-		fBuildListener.sendRequest(request);
+	    fController.stepInto();
 	}
 	
 	/**
@@ -411,4 +371,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		}
 		suspended(DebugEvent.BREAKPOINT);
 	}	
+	
+	protected void getStackFrames() {
+		fController.getStackFrames();
+	}
+	
+	protected void getProperties() {
+		fController.getProperties();
+	}
 }
