@@ -183,7 +183,7 @@ public class StringMatcher {
 		}
 
 		/* process middle segments */	
-		for ( ; i < segCount && tCurPos <= bound; ++i) {
+		while ( i < segCount) {
 			current = fSegments[i];
 			int currentMatch;
 			int k = current.indexOf(fSingleWildCard);
@@ -197,6 +197,7 @@ public class StringMatcher {
 					return false;
 			}
 			tCurPos = currentMatch + current.length();
+			i++;
 		}
 
 		/* process final segment */
@@ -378,7 +379,7 @@ public class StringMatcher {
 			return i;
 		}
 		
-		for (int i = 0; i <= max; ++i) {
+		for (int i = start; i <= max; ++i) {
 			if (text.regionMatches(true, i, p, 0, plen))
 				return i;
 		}
