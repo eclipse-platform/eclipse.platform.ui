@@ -69,7 +69,7 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	}
 
 	/*
-	 * @see org.eclipse.text.reconcilerpipe.IReconcilerResultCollector#getProgressMonitor()
+	 * @see org.eclipse.jface.text.reconciler.IReconcileStep#getProgressMonitor()
 	 */
 	public IProgressMonitor getProgressMonitor() {
 		return fProgressMonitor;
