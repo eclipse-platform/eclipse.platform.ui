@@ -715,6 +715,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	}
 	
 	private void updateForInitialReconcile() {
+		if (getAntModel() == null) {
+			return;
+		}
 		fInitialReconcile= false;
 		updateEditorImage();
 		getAntModel().updateForInitialReconcile();
