@@ -519,10 +519,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Get the decorator manager for the receiver
 	 */
 
-	public DecoratorManager getDecoratorManager() {
-		if (decoratorManager == null) {
-			decoratorManager = new DecoratorManager();
-			decoratorManager.restoreListeners();
+	public IDecoratorManager getDecoratorManager() {
+		if (this.decoratorManager == null) {
+			this.decoratorManager = new DecoratorManager();
+			this.decoratorManager.restoreListeners();
 		}
 		return decoratorManager;
 	}
@@ -532,7 +532,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
  	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		getDecoratorManager().shutdown();
+		this.decoratorManager.shutdown();
 	}
 
 }
