@@ -28,9 +28,9 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	}
 	
 	/**
-	 * Sets the event handler for this view
+	 * Returns the event handler for this view
 	 * 
-	 * @param eventHandler event handler
+	 * @return The event handler for this view
 	 */
 	protected AbstractDebugEventHandler getEventHandler() {
 		return fEventHandler;
@@ -42,7 +42,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	public void dispose() {
 		super.dispose();
 		if (getEventHandler() != null) {
-				getEventHandler().dispose();
+			getEventHandler().dispose();
 		}	
 	}
 }
