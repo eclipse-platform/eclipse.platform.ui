@@ -311,7 +311,7 @@ public class ScopePart {
 	}
 
 	private boolean handleChooseWorkingSet() {
-		IWorkingSetSelectionDialog dialog=	PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(fUseSelection.getShell());
+		IWorkingSetSelectionDialog dialog=	PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(fUseSelection.getShell(), true);
 		
 		if (fWorkingSets != null)
 			dialog.setSelection(fWorkingSets);
