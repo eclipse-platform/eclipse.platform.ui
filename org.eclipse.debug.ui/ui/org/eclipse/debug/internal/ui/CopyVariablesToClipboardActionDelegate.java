@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * Used to copy the values of variables to the clipboard from
- * the Variables and Inspector views.
+ * the Variables and Expression views.
  */
 public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActionDelegate {
 
@@ -43,7 +43,7 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
-		return element instanceof IDebugElement || element instanceof InspectItem;
+		return element instanceof IDebugElement;
 	}
 	
 	/**

@@ -79,16 +79,20 @@ package org.eclipse.debug.ui;
  *   <li>Empty render group</li>
  *   <li>Render group</li>
  *   <li>Show qualified names action</li>
+ * 	 <li>Show breakpoints for model action</li>
  *   <li>Additions group</li>
  * </ul>
- * <h3>Inspector View Popup Menu</h3>
+ * <h3>Expression View Popup Menu</h3>
  * <ul>
  *   <li>Empty Expression group</li>
  *   <li>Expression group</li>
+ *	 <li>Change variable value action</li>
+ * 	 <li>Copy to clipboard action</li>	 
  *   <li>Remove action</li>
  *   <li>Remove all action</li>
  *   <li>Empty Render group</li>
  *   <li>Render group</li>
+ * 	 <li>Show type names action</li>
  *   <li>Show qualified names action</li>
  *   <li>Additions group</li>
  * </ul>
@@ -250,7 +254,7 @@ public interface IDebugUIConstants {
 	/** Remove all action image identifier. */
 	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$
 
-	/** Inspector action image identifier. */
+	/** Inspect action image identifier. */
 	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT"; //$NON-NLS-1$
 	
 	/** Re-launch action image identifier.*/
