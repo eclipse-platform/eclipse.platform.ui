@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.TestCase;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -76,6 +77,10 @@ public abstract class RuntimeTest extends TestCase {
 			path = parent.append(Long.toString(segment));
 		}
 		return path;
+	}
+
+	public String getUniqueString() {
+		return new UniversalUniqueIdentifier().toString();
 	}
 
 }

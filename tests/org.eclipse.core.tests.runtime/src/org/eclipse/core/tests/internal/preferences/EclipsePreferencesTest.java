@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -96,10 +95,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		//		TestSuite suite = new TestSuite();
 		//		suite.addTest(new EclipsePreferencesTest("testFileFormat"));
 		//		return suite;
-	}
-
-	private String getUniqueString() {
-		return new UniversalUniqueIdentifier().toString();
 	}
 
 	private IEclipsePreferences getScopeRoot() {

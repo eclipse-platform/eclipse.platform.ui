@@ -15,7 +15,6 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.PreferenceForwarder;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.Preferences;
 
 /**
@@ -189,10 +188,6 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		ps.setDefault(k1, false);
 		assertEquals("1.5", false, ps.getDefaultBoolean(k1));
 
-	}
-
-	private String getUniqueString() {
-		return new UniversalUniqueIdentifier().toString();
 	}
 
 	public void testInteger() {
