@@ -77,6 +77,12 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * The main status object.
 	 */
 	private IStatus status;
+	
+	/**
+	 * The current clipboard. To be disposed when closing
+	 * the dialog.
+	 */
+	private Clipboard clipboard;
 
 	/**
 	 * List of the main error object's detailed errors
@@ -457,12 +463,24 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * Copy the contents of the statuses to the clipboard.
 	 */
 	private void copyToClipboard(){
+		if(clipboard != null)
+			clipboard.dispose();
+			
 		StringBuffer statusBuffer = new StringBuffer();
 		populateCopyBuffer(status,statusBuffer,0);
-		Clipboard clipboard = new Clipboard(list.getDisplay());
+		clipboard = new Clipboard(list.getDisplay());
 		clipboard.setContents(
 			new Object[] {statusBuffer.toString()},
 			new Transfer[] {TextTransfer.getInstance()}
 		);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		if(clipboard != null)
+			clipboard.dispose();
+		return super.close();
+	}
+
 }
