@@ -17,12 +17,12 @@ import org.eclipse.update.core.*;
 
 /**
  * Configure a feature.
- * FeatureConfigOperation
+ * ConfigOperation
  */
-public class FeatureConfigOperation extends PendingOperation {
+public class ConfigOperation extends PendingOperation {
 	private IConfiguredSite site;
 	
-	public FeatureConfigOperation(IConfiguredSite site, IFeature feature) {
+	public ConfigOperation(IConfiguredSite site, IFeature feature) {
 		super(feature, CONFIGURE);
 		this.site = site;
 	}

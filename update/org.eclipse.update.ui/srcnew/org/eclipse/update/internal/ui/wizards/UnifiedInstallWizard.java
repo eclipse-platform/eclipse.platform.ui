@@ -21,7 +21,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.security.*;
 
 public class UnifiedInstallWizard extends Wizard {
@@ -238,38 +237,36 @@ public class UnifiedInstallWizard extends Wizard {
 		IConfiguredSite targetSite = null;
 		Object[] optionalElements = null;
 		IFeatureReference[] optionalFeatures = null;
-		if (job.getJobType() == PendingChange.INSTALL) {
-			if (optionalFeaturesPage != null) {
-				optionalElements =
-					optionalFeaturesPage.getOptionalElements(job);
-				optionalFeatures =
-					optionalFeaturesPage.getCheckedOptionalFeatures(job);
-			}
-			if (targetPage != null) {
-				targetSite = targetPage.getTargetSite(job);
-			}
-		}
-		UpdateManager.getOperationsManager().executeOneJob(
-			job,
-			config,
-			targetSite,
-			optionalFeatures,
-			getVerificationListener(),
-			monitor);
 
-		if (job.getJobType() == PendingChange.INSTALL) {
-			IFeature oldFeature = job.getOldFeature();
-			if (oldFeature != null
-				&& !job.isOptionalDelta()
-				&& optionalElements != null) {
-				preserveOptionalState(
-					config,
-					targetSite,
-					UpdateManager.isPatch(job.getFeature()),
-					optionalElements);
-			} else if (oldFeature == null && optionalFeatures != null) {
-				preserveOriginatingURLs(job.getFeature(), optionalFeatures);
-			}
+		if (optionalFeaturesPage != null) {
+			optionalElements = optionalFeaturesPage.getOptionalElements(job);
+			optionalFeatures =
+				optionalFeaturesPage.getCheckedOptionalFeatures(job);
+		}
+		if (targetPage != null) {
+			targetSite = targetPage.getTargetSite(job);
+		}
+
+		if (job instanceof InstallOperation) {
+			InstallOperation installJob = (InstallOperation) job;
+			installJob.setInstallConfiguration(config);
+			installJob.setTargetSite(targetSite);
+			installJob.setOptionalFeatures(optionalFeatures);
+			installJob.setVerificationListener(getVerificationListener());
+			installJob.execute(monitor);
+		}
+
+		IFeature oldFeature = job.getOldFeature();
+		if (oldFeature != null
+			&& !job.isOptionalDelta()
+			&& optionalElements != null) {
+			preserveOptionalState(
+				config,
+				targetSite,
+				UpdateManager.isPatch(job.getFeature()),
+				optionalElements);
+		} else if (oldFeature == null && optionalFeatures != null) {
+			preserveOriginatingURLs(job.getFeature(), optionalFeatures);
 		}
 	}
 

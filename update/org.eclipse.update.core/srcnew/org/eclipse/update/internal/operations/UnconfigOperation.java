@@ -16,12 +16,12 @@ import org.eclipse.update.core.*;
 
 /**
  * Unconfigure a feature.
- * FeatureUnconfigOperation
+ * UnconfigOperation
  */
-public class FeatureUnconfigOperation extends PendingOperation {
+public class UnconfigOperation extends PendingOperation {
 	private IConfiguredSite site;
 	
-	public FeatureUnconfigOperation(IConfiguredSite site, IFeature feature) {
+	public UnconfigOperation(IConfiguredSite site, IFeature feature) {
 		super(feature, UNCONFIGURE);
 		this.site = site;
 	}

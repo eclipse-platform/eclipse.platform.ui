@@ -86,12 +86,4 @@ public class PendingOperation {
 	
 	public void undo()  throws CoreException{
 	}
-	
-	public void commit() {
-		markProcessed();
-	}
-	
-	public boolean isCommitted() {
-		return isProcessed();
-	}
 }

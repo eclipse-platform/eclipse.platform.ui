@@ -240,89 +240,89 @@ public class OperationsManager implements IAdaptable {
 			new PendingOperation[list.size()]);
 	}
 
-	public void executeOneJob(
-		PendingOperation job,
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeatureReference[] optionalFeatures,
-		IVerificationListener verifier,
-		IProgressMonitor monitor)
-		throws CoreException {
-
-		IFeature feature = job.getFeature();
-		if (job.getJobType() == PendingOperation.UNINSTALL) {
-			//find the  config site of this feature
-			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
-			if (site != null) {
-				site.remove(feature, monitor);
-			} else {
-				// we should do something here
-				String message =
-					UpdateManager.getFormattedMessage(
-						KEY_UNABLE,
-						feature.getLabel());
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						UpdateManager.getPluginId(),
-						IStatus.OK,
-						message,
-						null);
-				throw new CoreException(status);
-			}
-		} else if (job instanceof FeatureInstallOperation) {
-			FeatureInstallOperation installJob = (FeatureInstallOperation)job;
-			installJob.setInstallConfiguration(config);
-			installJob.setTargetSite(targetSite);
-			installJob.setOptionalFeatures(optionalFeatures);
-			installJob.setVerificationListener(verifier);
-			installJob.execute(monitor);
-		} else if (job.getJobType() == PendingOperation.INSTALL) {
-			if (optionalFeatures == null)
-				targetSite.install(feature, verifier, monitor);
-			else
-				targetSite.install(
-					feature,
-					optionalFeatures,
-					verifier,
-					monitor);
-			IFeature oldFeature = job.getOldFeature();
-			if (oldFeature != null && !job.isOptionalDelta()) {
-				boolean oldSuccess = unconfigure(config, oldFeature);
-				if (!oldSuccess) {
-					if (!UpdateManager.isNestedChild(config, oldFeature)) {
-						// "eat" the error if nested child
-						String message =
-							UpdateManager.getFormattedMessage(
-								KEY_OLD,
-								oldFeature.getLabel());
-						IStatus status =
-							new Status(
-								IStatus.ERROR,
-								UpdateManager.getPluginId(),
-								IStatus.OK,
-								message,
-								null);
-						throw new CoreException(status);
-					}
-				}
-			}
-			if (oldFeature == null) {
-				ensureUnique(config, feature, targetSite);
-			}
-		} else if (job.getJobType() == PendingOperation.CONFIGURE) {
-			configure(config, feature);
-			ensureUnique(config, feature, targetSite);
-		} else if (job.getJobType() == PendingOperation.UNCONFIGURE) {
-			unconfigure(config, job.getFeature());
-		} else {
-			// should not be here
-			return;
-		}
-
-		job.markProcessed();
-		fireObjectChanged(job, null);
-	}
+//	public void executeOneJob(
+//		PendingOperation job,
+//		IInstallConfiguration config,
+//		IConfiguredSite targetSite,
+//		IFeatureReference[] optionalFeatures,
+//		IVerificationListener verifier,
+//		IProgressMonitor monitor)
+//		throws CoreException {
+//
+//		IFeature feature = job.getFeature();
+//		if (job.getJobType() == PendingOperation.UNINSTALL) {
+//			//find the  config site of this feature
+//			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
+//			if (site != null) {
+//				site.remove(feature, monitor);
+//			} else {
+//				// we should do something here
+//				String message =
+//					UpdateManager.getFormattedMessage(
+//						KEY_UNABLE,
+//						feature.getLabel());
+//				IStatus status =
+//					new Status(
+//						IStatus.ERROR,
+//						UpdateManager.getPluginId(),
+//						IStatus.OK,
+//						message,
+//						null);
+//				throw new CoreException(status);
+//			}
+//		} else if (job instanceof InstallOperation) {
+//			InstallOperation installJob = (InstallOperation)job;
+//			installJob.setInstallConfiguration(config);
+//			installJob.setTargetSite(targetSite);
+//			installJob.setOptionalFeatures(optionalFeatures);
+//			installJob.setVerificationListener(verifier);
+//			installJob.execute(monitor);
+//		} else if (job.getJobType() == PendingOperation.INSTALL) {
+//			if (optionalFeatures == null)
+//				targetSite.install(feature, verifier, monitor);
+//			else
+//				targetSite.install(
+//					feature,
+//					optionalFeatures,
+//					verifier,
+//					monitor);
+//			IFeature oldFeature = job.getOldFeature();
+//			if (oldFeature != null && !job.isOptionalDelta()) {
+//				boolean oldSuccess = unconfigure(config, oldFeature);
+//				if (!oldSuccess) {
+//					if (!UpdateManager.isNestedChild(config, oldFeature)) {
+//						// "eat" the error if nested child
+//						String message =
+//							UpdateManager.getFormattedMessage(
+//								KEY_OLD,
+//								oldFeature.getLabel());
+//						IStatus status =
+//							new Status(
+//								IStatus.ERROR,
+//								UpdateManager.getPluginId(),
+//								IStatus.OK,
+//								message,
+//								null);
+//						throw new CoreException(status);
+//					}
+//				}
+//			}
+//			if (oldFeature == null) {
+//				ensureUnique(config, feature, targetSite);
+//			}
+//		} else if (job.getJobType() == PendingOperation.CONFIGURE) {
+//			configure(config, feature);
+//			ensureUnique(config, feature, targetSite);
+//		} else if (job.getJobType() == PendingOperation.UNCONFIGURE) {
+//			unconfigure(config, job.getFeature());
+//		} else {
+//			// should not be here
+//			return;
+//		}
+//
+//		job.markProcessed();
+//		fireObjectChanged(job, null);
+//	}
 
 	private void ensureUnique(
 		IInstallConfiguration config,
@@ -393,9 +393,9 @@ public class OperationsManager implements IAdaptable {
 
 		PendingOperation toggleOperation = null;
 		if (isConfigured)
-			toggleOperation = new FeatureUnconfigOperation(site, feature);
+			toggleOperation = new UnconfigOperation(site, feature);
 		else
-			toggleOperation = new FeatureConfigOperation(site, feature);
+			toggleOperation = new ConfigOperation(site, feature);
 
 		toggleOperation.execute(null); // no progress monitor needed
 	
@@ -412,9 +412,9 @@ public class OperationsManager implements IAdaptable {
 				PendingOperation oldOperation = findPendingChange(feature);
 
 				if ((isConfigured
-					&& oldOperation instanceof FeatureUnconfigOperation)
+					&& oldOperation instanceof UnconfigOperation)
 					|| (!isConfigured
-						&& oldOperation instanceof FeatureConfigOperation)) {
+						&& oldOperation instanceof ConfigOperation)) {
 					// no need to do either pending change
 					removePendingChange(oldOperation);
 				} else {

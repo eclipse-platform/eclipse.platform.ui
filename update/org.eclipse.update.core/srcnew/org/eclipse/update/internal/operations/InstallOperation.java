@@ -18,9 +18,9 @@ import org.eclipse.update.core.*;
 
 /**
  * Configure a feature.
- * FeatureConfigOperation
+ * ConfigOperation
  */
-public class FeatureInstallOperation extends PendingOperation {
+public class InstallOperation extends PendingOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private IInstallConfiguration config;
@@ -28,7 +28,7 @@ public class FeatureInstallOperation extends PendingOperation {
 	private IFeatureReference[] optionalFeatures;
 	private IVerificationListener verifier;
 
-	public FeatureInstallOperation(IFeature feature) {
+	public InstallOperation(IFeature feature) {
 		super(feature, INSTALL);
 
 		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
@@ -83,6 +83,8 @@ public class FeatureInstallOperation extends PendingOperation {
 			ensureUnique();
 		}
 
+		markProcessed();
+		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
 	}
 
 	public void undo() throws CoreException {
