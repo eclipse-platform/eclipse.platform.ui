@@ -270,18 +270,6 @@ public abstract class PartPane extends LayoutPart implements Listener {
         return control;
     }
 
-//    /*
-//     * @see LayoutPart#getMinimumHeight()
-//     */
-//    public int computeMinimumSize(boolean width, int knownHeight) {
-//        if (control == null || control.isDisposed())
-//            return super.computeMinimumSize(width, knownHeight);
-//
-//        // account for the borders
-//        int result = Geometry.getDimension(control.computeTrim(0, 0, 0, 0), width);
-//        return result;
-//    }
-
     /**
      * Answer the part child.
      */
