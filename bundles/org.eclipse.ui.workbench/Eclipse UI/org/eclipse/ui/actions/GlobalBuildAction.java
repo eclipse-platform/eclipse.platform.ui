@@ -11,12 +11,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Standard action for full and incremental builds of all projects
