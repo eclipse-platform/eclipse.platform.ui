@@ -145,13 +145,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
-	    // override the defaults for some of the workbench preferences
-	    IPreferenceStore uiStore = PlatformUI.getPreferenceStore();
-        uiStore.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
-                IWorkbenchPreferenceConstants.TOP_RIGHT);
-        uiStore.setDefault(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
-        		false);
-        
+
 	    // make sure we always save and restore workspace state
 	    configurer.setSaveAndRestore(true);
 
