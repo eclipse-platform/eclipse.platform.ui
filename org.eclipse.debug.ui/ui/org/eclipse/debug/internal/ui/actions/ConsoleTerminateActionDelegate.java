@@ -1,13 +1,17 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.console.ConsoleView;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
@@ -58,12 +62,23 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate impl
 		}
 		super.dispose();
 	}
+	
 	/**
 	 * @see IUpdate#update()
 	 */
 	public void update() {
 		if (getAction() != null) {
-			update(getAction(), getSelection());
+			update(getAction(), null);
 		}
+	}
+	
+	/**
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(IAction, ISelection)
+	 */
+	protected void update(IAction action, ISelection s) {
+		//only update on the current process associated with the
+		//console view
+		s= getSelection();
+		super.update(action, s);
 	}
 }
