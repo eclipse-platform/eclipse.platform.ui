@@ -234,6 +234,8 @@ public class EngineResultSection {
 				});
 			}
 		};
+		if (section.isDisposed())
+			return;
 		if (now)
 			section.getDisplay().syncExec(runnable);
 		else
