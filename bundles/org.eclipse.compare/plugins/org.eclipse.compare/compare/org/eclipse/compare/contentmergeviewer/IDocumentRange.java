@@ -24,6 +24,8 @@ import org.eclipse.jface.text.IDocument;
  */
 public interface IDocumentRange {
 	
+	public static final String RANGE_CATEGORY= "DocumentRangeCategory";
+
 	/**
 	 * Returns the underlying document.
 	 * 
