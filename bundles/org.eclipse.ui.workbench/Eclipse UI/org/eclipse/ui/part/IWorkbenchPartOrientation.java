@@ -22,7 +22,7 @@ import org.eclipse.swt.SWT;
  * @see org.eclipse.swt.SWT#LEFT_TO_RIGHT 
  * @see org.eclipse.swt.SWT#NONE
  * @see Window#getDefaultOrientation()
- * 
+ * @since 3.1
  */
 public interface IWorkbenchPartOrientation {
 	/**
@@ -33,7 +33,6 @@ public interface IWorkbenchPartOrientation {
 	 * @see SWT#RIGHT_TO_LEFT
 	 * @see SWT#LEFT_TO_RIGHT
 	 * @see Window#getDefaultOrientation()
-	 * @since 3.1
 	 */
 	public int getOrientation();
 }
