@@ -1,12 +1,11 @@
 package org.eclipse.help.internal.util;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
 import java.net.*;
 import java.util.Properties;
-
 import org.eclipse.help.internal.HelpPlugin;
 /**
  * Properties stored in HelpPlugin work area.
@@ -20,7 +19,7 @@ public class HelpPreferences extends HelpProperties {
 	public static final String INSTALL_OPTION_KEY = "install";
 	public static final String SERVER_PATH_KEY = "server_path";
 	public static final String BROWSER_PATH_KEY = "browser_path";
-
+	public static final String INFOCENTER_URL_KEY = "infocenter_url";
 	protected URL defaultsUrl = null;
 	protected Properties defaults;
 	/**
@@ -34,46 +33,46 @@ public class HelpPreferences extends HelpProperties {
 			defaultsUrl = new URL(installUrl, "preferences.ini");
 		} catch (MalformedURLException mue) {
 		}
-		defaults=new Properties();
+		defaults = new Properties();
 		initialize();
 	}
-public int getDefaultInt(String name) {
-	String value = defaults.getProperty(name);
-	if (value == null)
-		return 0;
-	int ival = 0;
-	try {
-		ival = Integer.parseInt(value);
-	} catch (NumberFormatException e) {
+	public int getDefaultInt(String name) {
+		String value = defaults.getProperty(name);
+		if (value == null)
+			return 0;
+		int ival = 0;
+		try {
+			ival = Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+		}
+		return ival;
 	}
-	return ival;
-}
-public String getDefaultString(String name) {
-	String value = defaults.getProperty(name);
-	if (value == null)
-		return "";
-	return value;
-}
-/**
- * Helper function: gets int for a given name.
- */
-public int getInt(String name) {
-	String value = getProperty(name);
-	if (value == null)
-		return getDefaultInt(name);
-	int ival = 0;
-	try {
-		ival = Integer.parseInt(value);
-	} catch (NumberFormatException e) {
+	public String getDefaultString(String name) {
+		String value = defaults.getProperty(name);
+		if (value == null)
+			return "";
+		return value;
 	}
-	return ival;
-}
-public String getString(String name) {
-	String value = getProperty(name);
-	if (value == null)
-		return getDefaultString(name);
-	return value;
-}
+	/**
+	 * Helper function: gets int for a given name.
+	 */
+	public int getInt(String name) {
+		String value = getProperty(name);
+		if (value == null)
+			return getDefaultInt(name);
+		int ival = 0;
+		try {
+			ival = Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+		}
+		return ival;
+	}
+	public String getString(String name) {
+		String value = getProperty(name);
+		if (value == null)
+			return getDefaultString(name);
+		return value;
+	}
 	/**
 	 * Restores contents of the Properties from a file.
 	 * @return true if persistant data was read in
@@ -89,7 +88,9 @@ public String getString(String name) {
 				defaults.load(in);
 				loaded = true;
 			} catch (IOException ioe00) {
-				Logger.logError(Resources.getString("File4", defaultsUrl.toExternalForm()), null);
+				Logger.logError(
+					Resources.getString("File4", defaultsUrl.toExternalForm()),
+					null);
 			} finally {
 				if (in != null)
 					try {
@@ -105,7 +106,6 @@ public String getString(String name) {
 		put(name, Integer.toString(value));
 	}
 	public void setValue(String name, String value) {
-		put(name,value);
+		put(name, value);
 	}
-
 }
