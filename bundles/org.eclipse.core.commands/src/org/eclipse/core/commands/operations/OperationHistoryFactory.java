@@ -45,7 +45,7 @@ public class OperationHistoryFactory {
 	 *            the operation history to be used for executing, undoing, and
 	 *            redoing operations.
 	 */
-	public static final void setOperationHistory(IOperationHistory history) {
+	public static void setOperationHistory(IOperationHistory history) {
 		fOperationHistory = history;
 	}
 

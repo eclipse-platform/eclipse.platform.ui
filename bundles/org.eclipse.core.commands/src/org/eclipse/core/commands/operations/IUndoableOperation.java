@@ -49,7 +49,14 @@ public interface IUndoableOperation {
 	void addContext(UndoContext context);
 
 	/**
+	 * <p>
 	 * Returns whether the operation can be executed in its current state.
+	 * 
+	 * <p>
+	 * Note:  This method may be used to enable UI commands, so the 
+	 * computation must be fast.  If necessary, this method can be optimistic 
+	 * in its computation and return an error status during actual execution
+	 * if it is determined later that the operation cannot actually execute.
 	 * 
 	 * @return <code>true</code> if the operation can be executed;
 	 *         <code>false</code> otherwise.
@@ -57,16 +64,30 @@ public interface IUndoableOperation {
 	boolean canExecute();
 
 	/**
+	 * <p>
 	 * Returns whether the operation can be redone in its current state.
 	 * 
+	 * <p>
+	 * Note:  This method may be used to enable UI commands, so the 
+	 * computation must be fast.  If necessary, this method can be optimistic 
+	 * in its computation and return an error status during the actual redo
+	 * if it is determined later that the operation cannot actually redo.
+
 	 * @return <code>true</code> if the operation can be redone;
 	 *         <code>false</code> otherwise.
 	 */
 	boolean canRedo();
 
 	/**
+	 * <p>
 	 * Returns whether the operation can be undone in its current state.
 	 * 
+	 * <p>
+	 * Note:  This method may be used to enable UI commands, so the 
+	 * computation must be fast.  If necessary, this method can be optimistic 
+	 * in its computation and return an error status during the actual undo
+	 * if it is determined later that the operation cannot actually undo.
+
 	 * @return <code>true</code> if the operation can be undone;
 	 *         <code>false</code> otherwise.
 	 */

@@ -101,6 +101,23 @@ public interface IOperationHistory {
 	void addOperationHistoryListener(IOperationHistoryListener listener);
 
 	/**
+	 * <p>
+	 * Close the current composite operation. Send listeners a <code>done</code>
+	 * and <code>operationAdded</code> for the composite.
+	 * <p>
+	 * Any operations that are executed and added will no longer be considered
+	 * children of this operation.
+	 * <p>
+	 * This method has no effect if the caller has not previously called
+	 * {@link #openCompositeOperation}.
+	 * 
+	 * <p>
+	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
+	 * or be removed before the final release.
+	 */
+	void closeCompositeOperation();
+
+	/**
 	 * Return whether there is a redoable operation available in the given
 	 * context.
 	 * 
@@ -109,6 +126,7 @@ public interface IOperationHistory {
 	 * @return <code>true</code> if there is a redoable operation,
 	 *         <code>false</code> otherwise.
 	 */
+
 	boolean canRedo(UndoContext context);
 
 	/**
@@ -228,6 +246,33 @@ public interface IOperationHistory {
 	 * @return the array of operations in the history
 	 */
 	IUndoableOperation[] getUndoHistory(UndoContext context);
+
+	/**
+	 * <p>
+	 * Use the specified composite operation as the parent for all subsequent
+	 * operations that are executed (or added) until the composite operation is
+	 * closed. Listeners will immediately receive an <code>aboutToExecute</code>)
+	 * notification for the composite. Notifications for execution or adding of
+	 * the child operations will not be sent as long as the composite is open.
+	 * 
+	 * <p>
+	 * When the composite is open, operations that are added to the history,
+	 * will be added to the composite instead. Operations that are executed will
+	 * first be executed and then added to the composite.
+	 * 
+	 * <p>
+	 * Composite operations cannot be nested. If this method is called when
+	 * another composite is open, that composite will be closed first.
+	 * 
+	 * @param composite -
+	 *            the composite to be used as the parent for all subsequent
+	 *            operations.
+	 * 
+	 * <p>
+	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
+	 * or be removed before the final release.
+	 */
+	void openCompositeOperation(CompositeOperation composite);
 
 	/**
 	 * Get the operation that will next be undone in the given context. This

@@ -39,9 +39,8 @@ public class TestOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor) {
 		fExecutionCount++;
 		return Status.OK_STATUS;
-
 	}
-
+	
 	public String getDescription() {
 		return fDescription;
 	}
@@ -57,7 +56,10 @@ public class TestOperation extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor) {
 		fExecutionCount--;
 		return Status.OK_STATUS;
-
+	}
+	
+	public void dispose() {
+		fExecutionCount = 0;
 	}
 
 }

@@ -39,7 +39,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/**
 	 * Construct an operation that has the specified label.
 	 * 
-	 * @param label - the label to be used for the operation.
+	 * @param label -
+	 *            the label to be used for the operation.
 	 */
 	public AbstractOperation(String label) {
 		fLabel = label;
@@ -95,8 +96,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	public abstract IStatus execute(IProgressMonitor monitor);
 
 	public UndoContext[] getContexts() {
-		return (UndoContext[]) fContexts
-				.toArray(new UndoContext[fContexts.size()]);
+		return (UndoContext[]) fContexts.toArray(new UndoContext[fContexts
+				.size()]);
 	}
 
 	/*
@@ -112,10 +113,20 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		return fLabel;
 	}
 
+	/**
+	 * Set the label of the operation to the specified name.
+	 * 
+	 * @param name -
+	 *            the string to be used for the label.
+	 */
+	public void setLabel(String name) {
+		fLabel = name;
+	}
+
 	public boolean hasContext(UndoContext context) {
 		return fContexts.contains(context);
 	}
-	
+
 	public boolean isComposite() {
 		return false;
 	}

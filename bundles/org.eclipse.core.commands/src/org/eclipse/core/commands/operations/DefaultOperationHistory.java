@@ -39,15 +39,28 @@ public class DefaultOperationHistory implements IOperationHistory {
 	
 	protected static final int DEFAULT_LIMIT = 20;
 	
-	protected static IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
+	/**
+	 * An operation info status describing the condition that there is no available
+	 * operation for redo.
+	 */
+	public static final IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
 			IStatus.INFO, OperationStatus.NOTHING_TO_REDO,
 			"No operation to redo"); //$NON-NLS-1$
 
-	protected static IStatus NOTHING_TO_UNDO_STATUS = new OperationStatus(
+	/**
+	 * An operation info status describing the condition that there is no available
+	 * operation for undo.
+	 */
+	public static final IStatus NOTHING_TO_UNDO_STATUS = new OperationStatus(
 			IStatus.INFO, OperationStatus.NOTHING_TO_UNDO,
 			"No operation to undo"); //$NON-NLS-1$
 
-	protected static IStatus OPERATION_INVALID_STATUS = new OperationStatus(
+	/**
+	 * An operation error status describing the condition that the operation available
+	 * for execution, undo or redo is not in a valid state for the action to be
+	 * performed.
+	 */
+	public static final IStatus OPERATION_INVALID_STATUS = new OperationStatus(
 			IStatus.ERROR, OperationStatus.OPERATION_INVALID,
 			"Operation is not valid"); //$NON-NLS-1$
 
@@ -64,6 +77,9 @@ public class DefaultOperationHistory implements IOperationHistory {
 
 	private List fUndo = new ArrayList();
 	
+	private CompositeOperation fMergingComposite = null;
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,6 +87,17 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public void add(IUndoableOperation operation) {
 		Assert.isNotNull(operation);
+		
+		/*
+		 * If we are in the middle of executing an open composite operation, and this is not that
+		 * composite, then we need only add the new operation to the composite.  Listeners  will be 
+		 * notified when the execution and adding of the parent operation is
+		 * complete.
+		 */
+		if (fMergingComposite != null && fMergingComposite != operation) {
+			fMergingComposite.add(operation);
+			return;
+		}
 		
 		// flush redo stack for related contexts
 		UndoContext[] contexts = operation.getContexts();
@@ -148,9 +175,8 @@ public class DefaultOperationHistory implements IOperationHistory {
 			flushUndo(context);
 		if (flushRedo)
 			flushRedo(context);
-		/* we currently do not dispose of any limit that was set for the
-		 * context since it may be used again. 
-		 */
+		// we currently do not dispose of any limit that was set for the
+		// context since it may be used again. 
 		
 	}
 
@@ -223,23 +249,40 @@ public class DefaultOperationHistory implements IOperationHistory {
 	public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor) {
 		Assert.isNotNull(operation);
 		
-		/*
-		 * Execute the operation
-		 */
 		// error if operation is invalid
 		if (!operation.canExecute()) {
 			return OPERATION_INVALID_STATUS;
 		}
-		notifyAboutToExecute(operation);
+		
+		/*
+		 * If we are in the middle of an open composite, then we should add this operation to the
+		 * composite first.  We still want to execute it, but we do not want to notify listeners.
+		 */
+		boolean merging = false;
+		if (fMergingComposite != null) {
+			// the composite shouldn't be executed explicitly while it is still open
+			if (fMergingComposite == operation) {
+				return OPERATION_INVALID_STATUS;
+			}
+			fMergingComposite.add(operation);
+			merging = true;
+		}
+
+		/*
+		 * Execute the operation
+		 */
+		if (!merging) notifyAboutToExecute(operation);
 		IStatus status = operation.execute(monitor);
 
 		// if successful, the notify listeners are notified and the operation is
 		// added to the history
-		if (status.isOK()) {
-			notifyDone(operation);
-			add(operation);
-		} else {
-			notifyNotOK(operation);
+		if (!merging) {
+			if (status.isOK()) {
+				notifyDone(operation);
+				add(operation);
+			} else {
+				notifyNotOK(operation);
+			}
 		}		
 		// all other severities are not interpreted. Simply return the status.
 		return status;
@@ -299,6 +342,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 			} else {
 				// remove the reference to the context
 				operation.removeContext(context);
+			}
+		}
+		// there may be an open composite.  Notify listeners that it did not complete.
+		// Since we did not add it, there's no need to notify of its removal.
+		if (fMergingComposite != null) {
+			if (context == null || fMergingComposite.getContexts().length == 1) {
+				notifyNotOK(fMergingComposite);
+				fMergingComposite = null;
+			} else {
+				fMergingComposite.removeContext(context);
 			}
 		}
 	}
@@ -619,6 +672,9 @@ public class DefaultOperationHistory implements IOperationHistory {
 		return doUndo(monitor, operation, true);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public IStatus undoOperation(IUndoableOperation operation, IProgressMonitor monitor) {
 		Assert.isNotNull(operation);
 		IStatus status;
@@ -632,4 +688,27 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 		return status;
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public void openCompositeOperation(CompositeOperation composite) {
+		if (fMergingComposite == null) {
+			fMergingComposite = composite;
+		} else {
+			closeCompositeOperation();
+			fMergingComposite = composite;
+		}
+		notifyAboutToExecute(composite);	
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public void closeCompositeOperation() {
+		if (fMergingComposite != null) {
+			notifyDone(fMergingComposite);
+			add(fMergingComposite);
+			fMergingComposite = null;
+		}
+	}
+
 }

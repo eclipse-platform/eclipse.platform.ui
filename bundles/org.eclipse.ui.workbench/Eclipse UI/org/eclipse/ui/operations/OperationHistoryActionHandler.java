@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.jface.action.Action;
@@ -85,10 +87,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	public void update() {
 		boolean enabled = shouldBeEnabled();
-		StringBuffer text = new StringBuffer(getCommandString());
+		String text = getCommandString();
 		if (enabled) {
-			text.append(" "); //$NON-NLS-1$
-			text.append(getOperationLabel());
+			text = MessageFormat.format("{0} {1}", new Object[] {text, getOperationLabel()}); //$NON-NLS-1$
 		} else {
 			/*
 			 * if there is nothing to do, ensure the history is flushed of this
