@@ -851,6 +851,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 		assertEquals("2.1", 0, matching.length);
 
+		// shouldn't match since there are no key/value pairs in the node
+		try {
+			matching = service.matches(service.getRootNode(), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("3.00", e);
+		}
+		assertEquals("3.0", 0, matching.length);
+		
 		// add some values so it does match
 		new InstanceScope().getNode(QUALIFIER).put("key", "value");
 		try {

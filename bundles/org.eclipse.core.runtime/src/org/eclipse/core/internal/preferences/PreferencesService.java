@@ -917,12 +917,13 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				childPath = EclipsePreferences.makeRelative(childPath);
 				if (tree.nodeExists(childPath)) {
 					String[] keys = (String[]) mapping.get(nodePath);
-					// if there are no defined keys then we only have to match
+					// if there are no defined keys then we return false even if we
+					// are supposed to match on the node as a whole (bug 88820)
 					// on the existance of the node as a whole
-					if (keys == null)
-						return true;
-					// otherwise check to see if we have any applicable keys
 					Preferences child = tree.node(childPath);
+					if (keys == null)
+						return child.keys().length != 0;
+					// otherwise check to see if we have any applicable keys
 					for (int j = 0; j < keys.length; j++) {
 						if (child.get(keys[j], null) != null)
 							return true;
