@@ -345,7 +345,6 @@ public class DebugActionGroupsManager implements IMenuListener {
 			for (Iterator iterator = removed.iterator(); iterator.hasNext();) {
 				String actionId= (String)iterator.next();
 				fDebugActionGroupActions.remove(actionId);
-				fDebugActionGroupActionIds.remove(actionId);
 			}
 		}
 	}
