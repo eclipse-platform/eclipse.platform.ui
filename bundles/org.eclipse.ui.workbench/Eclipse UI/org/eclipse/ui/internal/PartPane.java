@@ -449,4 +449,11 @@ protected void doDock() {
 	// do nothing
 }
 
+/**
+ * Set the busy state of the pane.
+ */
+public void setBusy(boolean isBusy) {
+	//Do nothing by default
+}
+
 }

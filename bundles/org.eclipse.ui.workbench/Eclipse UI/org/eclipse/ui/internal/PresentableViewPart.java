@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -23,18 +21,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class PresentableViewPart implements IPresentablePart {
 
     private final List listeners = new ArrayList();
  
     private ViewPane pane;
-    
-    private boolean busy = false;
     
     private IPartMenu viewMenu = new IPartMenu() {
 		public void showMenu(Point location) {
@@ -53,21 +47,6 @@ public class PresentableViewPart implements IPresentablePart {
 
     public PresentableViewPart(ViewPane pane) {
         this.pane = pane;
-        IWorkbenchPartSite site =
-        	pane.getViewReference().getPart(true).getSite();
-        Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
-        if(service != null)
-        	((IWorkbenchSiteProgressService) service).addPropertyChangeListener(
-        			new IPropertyChangeListener(){
-        				/* (non-Javadoc)
-						 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-						 */
-						public void propertyChange(PropertyChangeEvent event) {							
-							Boolean state = (Boolean) event.getNewValue();
-							PresentableViewPart.this.busy = state.booleanValue();
-							firePropertyChange(IPresentablePart.PROP_BUSY);
-						}
-        			});
     }
 
     public void firePropertyChange(int propertyId) {
@@ -133,7 +112,7 @@ public class PresentableViewPart implements IPresentablePart {
 	 * @see org.eclipse.ui.presentations.IPresentablePart#isBusy()
 	 */
 	public boolean isBusy() {
-		return busy;
+		return pane.isBusy();
 	}
 
 	/* (non-Javadoc)

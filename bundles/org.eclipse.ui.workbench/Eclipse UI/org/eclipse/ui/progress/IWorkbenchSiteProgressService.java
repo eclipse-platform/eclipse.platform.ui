@@ -10,7 +10,6 @@
 package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for 
@@ -69,20 +68,5 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * @see Job.schedule()
 	 */
 	public void schedule(Job job);
-
-	
-	/**
-	 * Add an IPropertyChangeListener to the list of listeners
-	 * on the receiver.
-	 * @param listener IPropertyChangeListener
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener);
-	
-	/**
-	 * Remove an IPropertyChangeListener to the list of listeners
-	 * on the receiver.
-	 * @param listener IPropertyChangeListener
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener);
 	
 }

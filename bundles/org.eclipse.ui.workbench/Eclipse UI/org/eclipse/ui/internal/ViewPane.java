@@ -63,6 +63,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	
 	private CLabel titleLabel;
 	private CLabel status;
+	private boolean busy = false;
 
 	private boolean fast = false;
 	private boolean showFocus = false;
@@ -727,6 +728,25 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		}
 		
 		return control.getItemCount() > 0;
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#setBusy(boolean)
+	 */
+	public void setBusy(boolean isBusy) {
+		if (isBusy != busy) {			
+			busy = isBusy;
+			presentableAdapter.firePropertyChange(IPresentablePart.PROP_BUSY);
+		}
+	}
+
+	/**
+	 * Return the busy state of the receiver.
+	 * @return boolean
+	 */
+	public boolean isBusy() {
+		return busy;
 	}
 	
 }
