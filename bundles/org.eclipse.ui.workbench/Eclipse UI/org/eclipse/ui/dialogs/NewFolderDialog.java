@@ -162,6 +162,8 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
 				monitor.beginTask(WorkbenchMessages.getString("NewFolderDialog.progress"), 2000); //$NON-NLS-1$
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
 				if (linkTargetName == null)
 					folderHandle.create(false, true, monitor);
 				else
@@ -209,7 +211,9 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 protected void okPressed() {
 	String linkTarget = linkedResourceGroup.getLinkTarget();
 	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
-	
+	if(folder == null)
+		return;
+			
 	setSelectionResult(new IFolder[] {folder});
 	super.okPressed();
 }
