@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
- * Berlin, Duesseldorf, Frankfurt (Germany).
+ * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -987,7 +987,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         } catch (SAXException e) {
             ExternalToolsPlugin.getDefault().log(e);
         } catch (IOException e) {
-            ExternalToolsPlugin.getDefault().log(e);
+            //ignore since can happen when user has incorrect paths / protocols for external entities
         }
         
         lastDefaultHandler = tempHandler; // bf
