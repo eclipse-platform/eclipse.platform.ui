@@ -1644,8 +1644,13 @@ public class TextViewer extends Viewer implements
 	protected void validateSelectionRange(int[] selectionRange) {
 		
 		IDocument document= getVisibleDocument();
-		int documentLength= document.getLength();
+		if (document == null) {
+			selectionRange[0]= -1;
+			selectionRange[1]= -1;
+			return;
+		}
 		
+		int documentLength= document.getLength();
 		int offset= selectionRange[0];
 		int length= selectionRange[1];
 		
