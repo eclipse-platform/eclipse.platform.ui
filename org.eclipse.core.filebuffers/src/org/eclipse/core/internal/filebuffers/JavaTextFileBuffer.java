@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -66,10 +65,6 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * Buffer size.
 	 */
 	static final private int BUFFER_SIZE= 8 * READER_CHUNK_SIZE;
-	/**
-	 * Qualified name for the encoding key.
-	 */
-	static final private QualifiedName ENCODING_KEY= new QualifiedName(FileBuffersPlugin.PLUGIN_ID, "encoding");  //$NON-NLS-1$
 	/**
 	 * Constant for representing the ok status. This is considered a value object.
 	 */

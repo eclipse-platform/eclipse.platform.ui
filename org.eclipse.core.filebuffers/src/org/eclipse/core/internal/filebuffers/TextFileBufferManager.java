@@ -92,9 +92,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	private AbstractFileBuffer createFileBuffer(IPath location) {
 		if (!isTextFile(location))
 			return null;
-//		
-//		if (isWorkspaceResource(location))
-//			return new ResourceTextFileBuffer(this);
+		
+		if (isWorkspaceResource(location))
+			return new ResourceTextFileBuffer(this);
 		
 		return new JavaTextFileBuffer(this);
 	}

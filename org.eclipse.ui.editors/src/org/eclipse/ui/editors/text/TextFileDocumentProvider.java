@@ -302,9 +302,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 * @return the workspace file at the location or <code>null</code>
 	 */
 	protected IFile getWorkspaceFileAtLocation(IPath location) {
-//		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-//		return workspace.getRoot().getFileForLocation(location);
-		return null;
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		return workspace.getRoot().getFileForLocation(location);
 	}
 	
 	protected FileInfo createFileInfo(Object element) throws CoreException {
