@@ -51,8 +51,11 @@ class WorkerPool {
 		this.manager = manager;
 		running = true;
 	}
+	private synchronized void decrementBusyThreads() {
+		busyThreads--;
+	}
 	protected void endJob(Job job, IStatus result) {
-		setBusyThreads(busyThreads-1);
+		decrementBusyThreads();
 		manager.endJob(job, result, true);
 		//remove any locks this thread may be owning
 		manager.getLockManager().removeAllLocks(Thread.currentThread());
@@ -60,6 +63,9 @@ class WorkerPool {
 	protected synchronized void endWorker(Worker worker) {
 		if (threads.remove(worker) && JobManager.DEBUG)
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
+	}
+	private synchronized void incrementBusyThreads() {
+		busyThreads++;
 	}
 	/**
 	 * Notfication that a job has been added to the queue. Wake a worker,
@@ -87,9 +93,6 @@ class WorkerPool {
 			String msg = Policy.bind("jobs.poolFull");//$NON-NLS-1$
 			InternalPlatform.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
-	}
-	private synchronized void setBusyThreads(int value) {
-		this.busyThreads=value;
 	}
 	protected synchronized void shutdown() {
 		running = false;
@@ -142,7 +145,7 @@ class WorkerPool {
 			}
 		}
 		if (job != null) {
-			setBusyThreads(busyThreads+1);
+			incrementBusyThreads();
 			//if this job has a rule, then we are essentially acquiring a lock
 			if (job.getRule() != null)
 				manager.getLockManager().addLockThread(Thread.currentThread());
