@@ -365,12 +365,18 @@ public class Main {
 		String[] locations = getArrayFromList(devClassPath);
 		for (int i = 0; i < locations.length; i++) {
 			String location = locations[i];
-			char lastChar = location.charAt(location.length() - 1);
+			File path = new File(location);
 			URL url;
-			if ((location.endsWith(".jar") || (lastChar == '/' || lastChar == '\\'))) //$NON-NLS-1$
-				url = new URL(base, location);
-			else
-				url = new URL(base, location + "/"); //$NON-NLS-1$
+			if (path.isAbsolute())
+				url = path.toURL();
+			else {
+				// dev path is relative, combine with base location
+				char lastChar = location.charAt(location.length() - 1);
+				if ((location.endsWith(".jar") || (lastChar == '/' || lastChar == '\\'))) //$NON-NLS-1$
+					url = new URL(base, location);
+				else
+					url = new URL(base, location + "/"); //$NON-NLS-1$
+			}
 			addEntry(url, result);
 		}
 	}
