@@ -17,7 +17,7 @@
       <import plugin="org.apache.lucene"/>
       <import plugin="org.eclipse.help" export="true"/>
       <import plugin="org.eclipse.help.appserver"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 

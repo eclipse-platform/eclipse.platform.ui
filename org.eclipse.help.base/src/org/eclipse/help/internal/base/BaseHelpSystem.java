@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.base;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
@@ -270,18 +269,16 @@ public final class BaseHelpSystem {
 
 	/**
 	 * Obtains name of the Eclipse product
+	 * 
 	 * @return String
 	 */
 	public static String getProductName() {
-		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
-		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
-		if (primaryFeatureId == null)
-			return ""; // no primary feature installed
-		IPluginDescriptor pfd =
-			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
-		if (pfd == null)
-			return ""; // no primary feature installed
-		return pfd.getLabel();
+		IProduct product = Platform.getProduct();
+		if (product == null) {
+			return "";
+		}
+		String name = product.getName();
+		return name == null ? "" : name;
 	}
 
 }

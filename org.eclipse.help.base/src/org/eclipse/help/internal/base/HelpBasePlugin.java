@@ -14,6 +14,7 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.*;
+import org.osgi.framework.*;
 /**
  * Help Base plug-in.
  * 
@@ -27,8 +28,7 @@ public class HelpBasePlugin extends Plugin {
 	public static boolean DEBUG_SEARCH = false;
 
 	protected static HelpBasePlugin plugin;
-	
-	private boolean running = false;
+	private static BundleContext bundleContext;
 	
 	private File configurationDirectory;
 
@@ -76,82 +76,27 @@ public class HelpBasePlugin extends Plugin {
 	}
 
 	/**
-	 * Plugin constructor. It is called as part of plugin activation.
-	 */
-	public HelpBasePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
-	/**
 	 * @return the singleton instance of the Help Base plugin
 	 */
 	public static HelpBasePlugin getDefault() {
 		return plugin;
 	}
-	/**
-	 * Shuts down this plug-in and discards all plug-in state.
-	 * <p>
-	 * This method should be re-implemented in subclasses that need to do
-	 * something when the plug-in is shut down. Implementors should call the
-	 * inherited method to ensure that any system requirements can be met.
-	 * </p>
-	 * <p>
-	 * Plug-in shutdown code should be robust. In particular, this method
-	 * should always make an effort to shut down the plug-in. Furthermore, the
-	 * code should not assume that the plug-in was started successfully, as
-	 * this method will be invoked in the event of a failure during startup.
-	 * </p>
-	 * <p>
-	 * Note 1: If a plug-in has been started, this method will be automatically
-	 * invoked by the platform when the platform is shut down.
-	 * </p>
-	 * <p>
-	 * Note 2: This method is intended to perform simple termination of the
-	 * plug-in environment. The platform may terminate invocations that do not
-	 * complete in a timely fashion.
-	 * </p>
-	 * <b>Cliens must never explicitly call this method.</b>
-	 * 
-	 * @exception CoreException
-	 *                if this method fails to shut down this plug-in
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		running = false;
+	public void stop(BundleContext context) throws Exception {
 		BaseHelpSystem.shutdown();
+		plugin = null;
+		bundleContext = null;
+		super.stop(context);
 	}
-	/**
-	 * Starts up this plug-in.
-	 * <p>
-	 * This method should be overridden in subclasses that need to do something
-	 * when this plug-in is started. Implementors should call the inherited
-	 * method to ensure that any system requirements can be met.
-	 * </p>
-	 * <p>
-	 * If this method throws an exception, it is taken as an indication that
-	 * plug-in initialization has failed; as a result, the plug-in will not be
-	 * activated; moreover, the plug-in will be marked as disabled and
-	 * ineligible for activation for the duration.
-	 * </p>
-	 * <p>
-	 * Plug-in startup code should be robust. In the event of a startup
-	 * failure, the plug-in's <code>shutdown</code> method will be invoked
-	 * automatically, in an attempt to close open files, etc.
-	 * </p>
-	 * <p>
-	 * Note 1: This method is automatically invoked by the platform the first
-	 * time any code in the plug-in is executed.
-	 * </p>
-	 * <p>
-	 * Note 2: This method is intended to perform simple initialization of the
-	 * plug-in environment. The platform may terminate initializers that do not
-	 * complete in a timely fashion.
-	 * </p>
-	 * <b>Cliens must never explicitly call this method.</b>
-	 * 
-	 * @exception CoreException
-	 *                if this plug-in did not start up properly
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		bundleContext = context;
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
@@ -171,7 +116,6 @@ public class HelpBasePlugin extends Plugin {
 		}
 		//
 		BaseHelpSystem.startup();
-		running = true;
 	}
 
 	/**
@@ -216,8 +160,4 @@ public class HelpBasePlugin extends Plugin {
 	public static void setActivitySupport(IHelpActivitySupport activitySupport) {
 		getDefault().helpActivitySupport = activitySupport;
 	}
-	public static boolean isRunning(){
-		return getDefault().running;
-	}
-
 }

@@ -149,12 +149,11 @@ public class SearchProgressMonitor implements IProgressMonitor {
 					progressMonitors.remove(locale);
 				} catch (Exception e) {
 					progressMonitors.remove(locale);
-					if (HelpBasePlugin.isRunning()) {
-						HelpBasePlugin.logError(
-							HelpBaseResources.getString("search_index_update_error"),
-							e);
-					}else{
-						// Platform has shut down
+					if (HelpBasePlugin.getDefault() != null) {
+						HelpBasePlugin.logError(HelpBaseResources
+								.getString("search_index_update_error"), e);
+					} else {
+						// Plugin has been shut down
 					}
 				}
 			}
