@@ -456,7 +456,8 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
 		
 		if (fDamagers == null || fDamagers.isEmpty()) {
-			int length= Math.max(e.getLength(), e.getText().length());
+			int length= e.getText() == null ? 0 : e.getText().length();
+			length= Math.max(e.getLength(), length);
 			length= Math.min(e.getDocument().getLength() - e.getOffset(), length);
 			return new Region(e.getOffset(), length);
 		}
