@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 import java.io.*;
+import java.nio.channels.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -26,10 +27,13 @@ import org.eclipse.help.internal.appserver.*;
  */
 public class HelpApplication
 	implements IPlatformRunnable, IExecutableExtension {
+	private static final String APPLICATION_LOCK_FILE = ".applicationlock";
 	private static final int STATUS_EXITTING = 0;
 	private static final int STATUS_RESTARTING = 2;
 	private static final int STATUS_RUNNING = 1;
 	private static int status = STATUS_RUNNING;
+	private File metadata;
+	private FileLock lock;
 	/**
 	 * Causes help service to stop and exit
 	 */
@@ -48,21 +52,33 @@ public class HelpApplication
 	 * Runs help service application.
 	 */
 	public Object run(Object args) throws Exception {
+		if (status == STATUS_RESTARTING) {
+			return EXIT_RESTART;
+		}
+
+		metadata = new File(Platform.getLocation().toFile(), ".metadata/");
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out.println(
 				"Help web application could not start.  Check log file for details.");
 			return EXIT_OK;
 		}
+
+		if (status == STATUS_RESTARTING) {
+			return EXIT_RESTART;
+
+		}
 		writeHostAndPort();
+		obtainLock();
+
 		// main program loop
 		while (status == STATUS_RUNNING) {
 			try {
-				Thread.sleep(250);
+				Thread.sleep(100);
 			} catch (InterruptedException ie) {
 				break;
 			}
 		}
-
+		releaseLock();
 		if (status == STATUS_RESTARTING) {
 			return EXIT_RESTART;
 		} else {
@@ -88,8 +104,7 @@ public class HelpApplication
 		p.put("host", WebappManager.getHost());
 		p.put("port", "" + WebappManager.getPort());
 
-		File workspace = Platform.getLocation().toFile();
-		File hostPortFile = new File(workspace, ".metadata/.connection");
+		File hostPortFile = new File(metadata, ".connection");
 		hostPortFile.deleteOnExit();
 		FileOutputStream out = null;
 		try {
@@ -104,5 +119,22 @@ public class HelpApplication
 			}
 		}
 
+	}
+	private void obtainLock() {
+		File lockFile = new File(metadata, APPLICATION_LOCK_FILE);
+		try {
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			lock = raf.getChannel().lock();
+		} catch (IOException ioe) {
+			lock = null;
+		}
+	}
+	private void releaseLock() {
+		if (lock != null) {
+			try {
+				lock.channel().close();
+			} catch (IOException ioe) {
+			}
+		}
 	}
 }
