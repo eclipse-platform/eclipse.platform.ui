@@ -292,7 +292,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell());
 		dialog.create();
 		dialog.getShell().setText(UpdateUI.getString("SitePage.new")); //$NON-NLS-1$
-		dialog.open();
+		if (dialog.open() == NewUpdateSiteDialog.OK)
+			updateSearchRequest();
 	}
 
 	private void handleAddLocal() {
@@ -333,6 +334,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			model.addBookmark((SiteBookmark) dialog.getFirstResult());
 			model.saveBookmarks();
+			updateSearchRequest();
 		}
 	}
 
@@ -345,6 +347,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
 				if (!bookmark.isReadOnly()) {
 					updateModel.removeBookmark(bookmark);
+					updateSearchRequest();
 				}
 			}
 		});
