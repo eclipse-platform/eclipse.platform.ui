@@ -316,7 +316,15 @@ public interface IDebugUIConstants {
 	 * Content assist action image identifier.
 	 */
 	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
+	
+	/**
+	 * Content assist action image identifier (enabled).
+	 */
 	public static final String IMG_ELCL_CONTENT_ASSIST= "IMG_ELCL_CONTENT_ASSIST"; //$NON-NLS-1$
+	
+	/**
+	 * Content assist action image identifier (disabled).
+	 */
 	public static final String IMG_DLCL_CONTENT_ASSIST= "IMG_DLCL_CONTENT_ASSIST"; //$NON-NLS-1$
 	
 	// Debug element images
