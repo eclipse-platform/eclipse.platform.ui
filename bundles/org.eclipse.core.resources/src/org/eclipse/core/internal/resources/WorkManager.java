@@ -130,10 +130,14 @@ class WorkManager implements IManager {
 		//clear checkInFailed flag before releasing lock
 		boolean shouldEndRule = !checkInFailed;
 		checkInFailed = false;
-		lock.release();
-		//don't release rule if check in failed
-		if (shouldEndRule) 
-			jobManager.endRule(rule);
+		try {
+			lock.release();
+		} finally {
+			//end rule in finally in case lock.release throws an exception
+			//don't release rule if check in failed
+			if (shouldEndRule)
+				jobManager.endRule(rule);
+		}
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
