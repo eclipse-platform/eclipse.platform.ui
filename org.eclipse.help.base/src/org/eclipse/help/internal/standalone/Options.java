@@ -160,7 +160,11 @@ public class Options {
 		// read -data option
 		List workspaces = getOption(eclipseArgs, "-data"); //$NON-NLS-1$
 		if (workspaces != null && !workspaces.isEmpty()) {
-			workspace = new File((String) workspaces.get(0));
+			String workspacePath = (String) workspaces.get(0);
+			workspace = new File(workspacePath);
+			if (!workspace.isAbsolute()) {
+				workspace = new File(eclipseHome, workspacePath);
+			}
 		} else {
 			workspace = new File(eclipseHome, "workspace"); //$NON-NLS-1$
 		}
