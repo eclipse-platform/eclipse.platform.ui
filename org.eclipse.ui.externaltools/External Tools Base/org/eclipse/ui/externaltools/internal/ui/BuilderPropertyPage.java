@@ -381,7 +381,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType types[]= manager.getLaunchConfigurationTypes();
 		List toolTypes= new ArrayList();
-		String category= LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
+		String category= LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP).getCategory();
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType type = types[i];
 			if (category.equals(type.getCategory())) {
