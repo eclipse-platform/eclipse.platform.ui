@@ -70,20 +70,38 @@ class JobInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
+		String name =  getDisplayStringWithStatus();
 		if (job.isSystem())
+		//Append with a system tag if system
 			return ProgressMessages.format("JobInfo.System", //$NON-NLS-1$
-			new Object[] { getJob().getName()});
+				new Object[] { getJob().getName()});
+		else
+			return name;
+	}
+	
+	/**
+	 * Get the display string based on the current status and the name of the job.
+	 * @return String
+	 */
+
+	private String getDisplayStringWithStatus() {
+		
 		if (errorStatus != null)
 			return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
-			new Object[] { job.getName(), errorStatus.getMessage()});
+			new Object[] { getJob().getName(), errorStatus.getMessage()});
+
 		if (getJob().getState() == Job.RUNNING) {
 			if (taskInfo == null)
 				return getJob().getName();
 			else
 				return taskInfo.getDisplayString();
 		} else {
-			return ProgressMessages.format("JobInfo.Pending", //$NON-NLS-1$
-				new Object[] { getJob().getName()});
+			if (getJob().getState() == Job.SLEEPING)
+				return ProgressMessages.format("JobInfo.Sleeping", //$NON-NLS-1$
+					new Object[] { getJob().getName() });
+			else
+				return ProgressMessages.format("JobInfo.Waiting", //$NON-NLS-1$
+					new Object[] { getJob().getName() });
 		}
 	}
 
@@ -153,7 +171,7 @@ class JobInfo extends JobTreeElement {
 	boolean isJobInfo() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
@@ -168,11 +186,11 @@ class JobInfo extends JobTreeElement {
 		JobInfo element = (JobInfo) arg0;
 		if (element.getJob().getState() == getJob().getState())
 			return getJob().getName().compareTo(getJob().getName());
-		else{ //If the receiver is running and the other isn't show it higer
-			if(getJob().getState() == Job.RUNNING)
+		else { //If the receiver is running and the other isn't show it higer
+			if (getJob().getState() == Job.RUNNING)
 				return -1;
 			else
 				return 1;
-		}	
+		}
 	}
 }
