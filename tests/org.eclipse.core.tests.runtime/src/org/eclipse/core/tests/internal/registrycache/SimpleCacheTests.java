@@ -128,7 +128,7 @@ public void extensionTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -218,7 +218,7 @@ public void extExtPtLinkTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -341,7 +341,7 @@ public void fragmentExtensionTest() {
 	// write to a cache file and read it back in
 	// Don't resolve this registry as we haven't put in all the extension
 	// points that are needed
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -465,7 +465,7 @@ public void fragmentExtExtPtLinkTest() {
 	// IStatus resolveStatus = registry.resolve(true, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -524,7 +524,7 @@ public void fragmentLibraryTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -617,7 +617,7 @@ public void fragmentReadOnlyTest() {
 	registry.markReadOnly();
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -673,7 +673,7 @@ public void fragmentTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "fragmentTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -816,7 +816,7 @@ public void fragmentPluginTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -943,7 +943,7 @@ public void fragmentRegistryTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1054,7 +1054,7 @@ public void fragmentRequiresTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1103,7 +1103,7 @@ public void libraryTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1142,7 +1142,7 @@ public void pluginTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1226,7 +1226,7 @@ public void readOnlyTest() {
 	registry.markReadOnly();
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1244,7 +1244,7 @@ public void realRegistryTest() {
 	PluginRegistryModel registry = (PluginRegistryModel) Platform.getPluginRegistry();
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1252,6 +1252,33 @@ public void realRegistryTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
+/*  realRegistryTest
+ *  Tests to ensure we correctly cache the real plugin registry we are using.
+ */
+public void testRegistryEOF() {
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
+	InternalFactory factory = new InternalFactory(problems);
+
+	PluginRegistryModel registry = (PluginRegistryModel) Platform.getPluginRegistry();
+
+	// write to a cache file and read it back in
+	ByteArrayOutputStream b = new ByteArrayOutputStream();
+	DataOutputStream output = new DataOutputStream(b);
+	doCacheWrite(registry, output, factory);
+
+	byte[] source = b.toByteArray();
+	byte[] dest = new byte[source.length-1];
+	System.arraycopy(source, 0, dest, 0, source.length - 1);
+	
+	DataInputStream input = new DataInputStream(new ByteArrayInputStream(dest));
+	PluginRegistryModel cachedRegistry = doCacheRead(registry, input, factory);
+
+	assertNull("1.0", cachedRegistry);
+
+	registry = cachedRegistry = null;
+	factory = null;
+}
+
 public String[] registrySetup() {
 	PluginDescriptor[] pluginList = new PluginDescriptor[5];
 
@@ -1316,7 +1343,7 @@ public void registryTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1376,7 +1403,7 @@ public void requiresTest() {
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
 
 	// write to a cache file and read it back in
-	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, "pluginTestCache", factory);
+	PluginRegistryModel cachedRegistry = doCacheWriteAndRead(registry, factory);
 
 	// Now compare the registries.  They should be the same
 	compareRegistries(registry, cachedRegistry);
@@ -1402,6 +1429,7 @@ public static Test suite() {
 	suite.addTest(new SimpleCacheTests("fragmentReadOnlyTest"));
 	suite.addTest(new SimpleCacheTests("fragmentRequiresTest"));
 	suite.addTest(new SimpleCacheTests("fragmentRegistryTest"));
+	suite.addTest(new SimpleCacheTests("testRegistryEOF"));
 	return suite;
 }
 }
