@@ -88,8 +88,6 @@ public void openWithUserDefinedProgram() throws CoreException {
 	// ShellCommand was removed in response to PR 23888.  If an exception was 
 	// thrown, it was not caught in time, and no feedback was given to user
 	
-	int nRetCode = 0;
-	Exception ex = null;
 	try {
 		Process p = Runtime.getRuntime().exec(new String[]{programFileName, path});
 	} catch (Exception e) {
@@ -97,7 +95,7 @@ public void openWithUserDefinedProgram() throws CoreException {
 			Status.ERROR, 
 			WorkbenchPlugin.PI_WORKBENCH, 
 			0, 
-			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {path}), //$NON-NLS-1$
+			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {programFileName}), //$NON-NLS-1$
 			e));
 	}
 }
