@@ -119,7 +119,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		else
 			document= new Document();
 			
-		IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants((IFile) file);
+		IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(file);
 		if (participants != null) {
 			for (int i= 0; i < participants.length; i++)
 				participants[i].setup(document);
