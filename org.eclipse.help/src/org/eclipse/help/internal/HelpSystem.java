@@ -16,10 +16,10 @@ import org.eclipse.help.internal.search.SearchManager;
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
 
-	// TocManager
+	public final static String LOG_LEVEL_KEY = "log_level";
+	
 	protected TocManager tocManager;
 	protected ContextManager contextManager;
-	protected HelpPreferences preferences = null;
 	protected SearchManager searchManager;
 	/**
 	 * HelpSystem constructor comment.
@@ -37,9 +37,6 @@ public final class HelpSystem {
 		return getInstance().contextManager;
 	}
 
-	public static HelpPreferences getPreferences() {
-		return getInstance().preferences;
-	}
 	public static HelpSystem getInstance() {
 		return instance;
 	}
@@ -68,17 +65,13 @@ public final class HelpSystem {
 	public HelpSystem newInstance() {
 		return null;
 	}
-	public static void setPreferences(HelpPreferences newPreferences) {
-		getInstance().preferences = newPreferences;
-		Logger.setDebugLevel(newPreferences.getInt(HelpPreferences.LOG_LEVEL_KEY));
-	}
+
 	/**
 	 * Shuts down the Help System.
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		getPreferences().save();
 		Logger.logInfo(Resources.getString("I003"));
 		Logger.shutdown();
 	}
@@ -87,7 +80,8 @@ public final class HelpSystem {
 	 */
 	public static void startup() {
 		try {
-			setPreferences(new HelpPreferences());
+			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+			Logger.setDebugLevel(prefs.getInt(LOG_LEVEL_KEY));
 		} catch (Exception e) {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(

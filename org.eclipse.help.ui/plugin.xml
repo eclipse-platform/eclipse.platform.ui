@@ -37,18 +37,10 @@
 	<!-- Preference pages -->
 	<extension
 		point = "org.eclipse.ui.preferencePages">
-		<page id="org.eclipse.help.workbench.preferencePages.Page1"
-			class="org.eclipse.help.internal.ui.util.HelpPreferencePage"
-			name="%help_preferences_page_name">
-		</page>
-	</extension>
-	<extension
-		point = "org.eclipse.ui.preferencePages">
 		<page id="org.eclipse.help.ui.browsersPreferancePage"
-			name="%browsers_preferences_page_name"
+			name="%help_preferences_page_name"
 			class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
-			category="org.eclipse.help.workbench.preferencePages.Page1">
-		</page>
+		/>
 	</extension>
 
 	<!-- Context Help contribution --> 
@@ -70,21 +62,6 @@
 				icon="icons/view.gif"
 				tooltip="%openhelpcontents"/>
 				
-		</actionSet>
-	</extension>
-	<extension point="org.eclipse.ui.actionSets">
-		<actionSet
-			id="org.eclipse.help.internal.ui.HelpActionInfocenter"
-			label="%helpinfocenter"
-			visible="false">
-
-			<action id="org.eclipse.help.internal.ui.InfocenterAction"
-				menubarPath="help/helpEnd"
-				label="%infocenter"
-				class="org.eclipse.help.internal.ui.InfocenterAction"
-				icon="icons/infocenter.gif"
-				tooltip="%openinfocenter"/>
-
 		</actionSet>
 	</extension>
 

@@ -87,4 +87,14 @@ public class HelpPlugin extends Plugin {
 	public void startup() throws CoreException {
 		HelpSystem.startup();
 	}
+
+	/**
+	* Initializes the default preferences settings for this plug-in.
+	* 
+	* @since 2.0
+	*/
+	protected void initializeDefaultPluginPreferences() {
+		Preferences prefs = getPluginPreferences();
+		prefs.setDefault(HelpSystem.LOG_LEVEL_KEY,0);
+	}
 }

@@ -4,10 +4,12 @@
  */
 package org.eclipse.help.ui.internal.browser;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.ui.browser.*;
+
 /**
  * Creates browser by delegating
  * to appropriate browser adapter
@@ -26,7 +28,7 @@ public class BrowserManager {
 		browsersDescriptors = createBrowserDescriptors();
 		// 1. set default browser from preferences
 		String defBrowserID =
-			HelpSystem.getPreferences().getString(DEFAULT_BROWSER_ID_KEY);
+			WorkbenchHelpPlugin.getDefault().getPluginPreferences().getString(DEFAULT_BROWSER_ID_KEY);
 		if (defBrowserID != null && (!"".equals(defBrowserID)))
 			setDefaultBrowserID(defBrowserID);
 		if (defaultBrowserDesc == null) {

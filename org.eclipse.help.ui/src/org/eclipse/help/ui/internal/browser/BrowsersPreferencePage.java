@@ -3,10 +3,9 @@ package org.eclipse.help.ui.internal.browser;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.IHelpUIConstants;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.internal.util.HelpPreferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -14,6 +13,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 /**
  * Preference page for selecting default web browser.
  */
@@ -104,9 +104,10 @@ public class BrowsersPreferencePage
 				String browserID =
 					BrowserManager.getInstance().getBrowserDescriptors()[i].getID();
 				BrowserManager.getInstance().setDefaultBrowserID(browserID);
-				// save id in help preferences
-				HelpPreferences pref = HelpSystem.getPreferences();
-				pref.put(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
+				// save id in help ui preferences
+				Preferences pref = WorkbenchHelpPlugin.getDefault().getPluginPreferences();
+				pref.setValue(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
+				WorkbenchHelpPlugin.getDefault().savePluginPreferences();
 				return true;
 			}
 		}
