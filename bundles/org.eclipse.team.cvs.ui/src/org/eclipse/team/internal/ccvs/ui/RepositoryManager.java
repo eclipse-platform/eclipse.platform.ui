@@ -641,14 +641,15 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Return the entered comment or null.
+	 * Return the ReleaseCommentDialog or null if canceled. 
+	 * The comment and unadded resources to add  can be retrieved from the dialog.
 	 * Persist the entered release comment for the next caller.
 	 */
-	public String promptForComment(final Shell shell) {
+	public ReleaseCommentDialog promptForComment(final Shell shell, final IResource[] unadded) {
 		final int[] result = new int[1];
+		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, unadded); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell);
 				dialog.setComment(previousComment);
 				result[0] = dialog.open();
 				if (result[0] != ReleaseCommentDialog.OK) return;
@@ -656,7 +657,7 @@ public class RepositoryManager {
 			}
 		});
 		if (result[0] != ReleaseCommentDialog.OK) return null;
-		return previousComment;
+		return dialog;
 	}
 	
 	/**

@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -43,31 +44,40 @@ public class CommitAction extends WorkspaceAction {
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		final IResource[] resources = getSelectedResources();
+		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		final String[] comment = new String[] {null};
+		final IResource[][] resourcesToBeAdded = new IResource[][] { null };
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				try {
+					// search for any non-added, non-ignored resources in the selection
+					IResource[] unadded = getUnaddedResources(resources, monitor);
+					ReleaseCommentDialog dialog = promptForComment(manager, unadded);
+					if (dialog == null) return;
+					comment[0] = dialog.getComment();
+					resourcesToBeAdded[0] = dialog.getResourcesToAdd();
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		}, true /* cancelable */, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		
+		if (comment[0] == null) return;
+		
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				int ticks=100;
 				monitor.beginTask(null, ticks);
 				try {
-					final IResource[] resources = getSelectedResources();
-					final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-					
-					// search for any non-added, non-ignored resources in the selection
-					IResource[] unadded = getUnaddedResources(resources, Policy.subMonitorFor(monitor,10));
-					ticks-=10;
-					if (unadded.length > 0) {
-						// ask the user what files they want to add
-						unadded = promptToAddResources(unadded);
-						if (unadded.length > 0) {
-							manager.add(unadded, Policy.subMonitorFor(monitor, 10));
-							ticks-=10;
-						}
+					if (resourcesToBeAdded[0].length > 0) {
+						int addTicks = 20;
+						manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
+						ticks-=addTicks;
 					}
 					IResource[] shared = getSharedResources(resources);
 					if (shared.length == 0) return;
-					String comment = promptForComment(manager);
-					if (comment != null) {
-						manager.commit(resources, comment, Policy.subMonitorFor(monitor,ticks));
-					}
+					manager.commit(shared, comment[0], Policy.subMonitorFor(monitor,ticks));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -76,35 +86,6 @@ public class CommitAction extends WorkspaceAction {
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG); //$NON-NLS-1$
 	}
-
-	/**
-	 * Method promptToAddResources.
-	 * @param unadded
-	 * @return IResource[]
-	 */
-	private IResource[] promptToAddResources(IResource[] unadded) throws InterruptedException {
-		final int[] r = new int[1];
-		getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog dialog = new MessageDialog(
-					getShell(),
-					Policy.bind("CommitAction.UnaddedTitle"),  //$NON-NLS-1$
-					null,
-					Policy.bind("CommitAction.UnaddedMessage"),  //$NON-NLS-1$
-					MessageDialog.QUESTION, 
-					new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
-					0);
-				r[0] = dialog.open();
-			}
-		});
-		if (r[0] == 0)
-			return unadded;
-		if (r[0] == 2)
-			throw new InterruptedException();
-		return new IResource[0];
-		
-	}
-
 
 	/**
 	 * Method getUnaddedResources.
@@ -134,7 +115,10 @@ public class CommitAction extends WorkspaceAction {
 						} catch (CVSException e) {
 							exception[0] = e;
 						}
-						// resource is unshared so record it
+						// don't add folders to avoid comitting empty folders
+						if (resource.getType() == IResource.FOLDER)
+							return true;
+						// file is unshared so record it
 						unadded.add(resource);
 						// no need to go into children because add is deep
 						return false;
@@ -189,8 +173,8 @@ public class CommitAction extends WorkspaceAction {
 	 * Prompts the user for a release comment.
 	 * @return the comment, or null to cancel
 	 */
-	protected String promptForComment(RepositoryManager manager) {
-		return manager.promptForComment(getShell());
+	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
+		return manager.promptForComment(getShell(), unadded);
 	}
 	
 	/**

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -90,6 +91,24 @@ public class CVSSyncSet extends SyncSet {
 				// Log it and continue
 				CVSUIPlugin.log(e.getStatus());
 			}
+		}
+		return false;
+	}
+	
+	public boolean removeNonAddedResources(IResource[] remove) {
+		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			IResource resource = node.getResource();
+			boolean included = false;
+			for (int j = 0; j < remove.length; j++) {
+				IResource resourceToRemove = remove[j];
+				if (resource.equals(resourceToRemove)) {
+					included = true;
+					break;
+				}
+			}
+			if (included)
+				it.remove();
 		}
 		return false;
 	}

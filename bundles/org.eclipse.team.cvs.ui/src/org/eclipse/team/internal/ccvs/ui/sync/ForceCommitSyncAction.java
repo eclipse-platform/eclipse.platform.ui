@@ -40,6 +40,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
@@ -78,29 +79,57 @@ public class ForceCommitSyncAction extends MergeAction {
 			return syncSet;
 		}
 		
+		// accumulate any resources that are not under version control
+		IResource[] unadded = null;
 		if (syncSet instanceof CVSSyncSet) {
 			CVSSyncSet cvsSyncSet = (CVSSyncSet)syncSet;
 			try {
 				if (cvsSyncSet.hasNonAddedChanges()) {
-					int r = promptForAdditions(cvsSyncSet);
-			 		switch (r) {
-			 			case 0: // yes
-			 				break;
-			 			case 1: // no
-			 				cvsSyncSet.removeNonAddedChanges();
-			 				changed = syncSet.getChangedNodes();
-							if (changed.length == 0) {
-								return syncSet;
-							}
-			 				break;
-			 			case 2: // cancel
-			 				return null;
-			 		}
+					ITeamNode[] nodes = cvsSyncSet.getNonAddedNodes();
+					unadded = new IResource[nodes.length];
+					for (int i = 0; i < nodes.length; i++) {
+						unadded[i] = nodes[i].getResource();
+					}
 				}
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e.getStatus());
 			}
 		}
+		
+		// prompt to get comment and any resources to be added to version control
+		RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		ReleaseCommentDialog dialog = promptForComment(manager, unadded);
+		if (dialog == null) {
+			// User cancelled.
+			return null;
+		}
+		String comment = dialog.getComment();
+		
+		// remove unshared resources that were not selected by the user
+		IResource[] toBeAdded = dialog.getResourcesToAdd();
+		if (unadded != null && unadded.length > 0) {
+			List resourcesToRemove = new ArrayList(unadded.length);
+			for (int i = 0; i < unadded.length; i++) {
+				IResource unaddedResource = unadded[i];
+				boolean included = false;
+				for (int j = 0; j < toBeAdded.length; j++) {
+					IResource resourceToAdd = toBeAdded[j];
+					if (unaddedResource.equals(resourceToAdd)) {
+						included = true;
+						break;
+					}
+				}
+				if (!included)
+					resourcesToRemove.add(unaddedResource);
+			}
+			CVSSyncSet cvsSyncSet = (CVSSyncSet)syncSet;
+			cvsSyncSet.removeNonAddedResources((IResource[]) resourcesToRemove.toArray(new IResource[resourcesToRemove.size()]));
+		 	changed = syncSet.getChangedNodes();
+			if (changed.length == 0) {
+				return syncSet;
+			}
+		}
+		
 		List commits = new ArrayList();
 		List additions = new ArrayList();
 		List deletions = new ArrayList();
@@ -156,12 +185,6 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 		}
 		try {
-			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-			String comment = promptForComment(manager);
-			if (comment == null) {
-				// User cancelled. Remove the nodes from the sync set.
-				return null;
-			}
 			if (parentCreationElements.size() > 0) {
 				// If a node has a parent that is an incoming folder creation, we have to 
 				// create that folder locally and set its sync info before we can get the
@@ -305,8 +328,8 @@ public class ForceCommitSyncAction extends MergeAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return the comment, or null to cancel
 	 */
-	protected String promptForComment(RepositoryManager manager) {
-		return manager.promptForComment(getShell());
+	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
+		return manager.promptForComment(getShell(), unadded);
 	}
 
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
