@@ -163,9 +163,12 @@ public class NewConfigurationView
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				if (!showNestedFeaturesAction.isChecked())
 					return false;
-				
 				IFeatureAdapter[] features =
 					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+
+				if (showUnconfFeaturesAction.isChecked())
+					return features.length > 0;
+
 				for (int i = 0; i < features.length; i++) {
 					if (((ConfiguredFeatureAdapter)features[i]).isConfigured())
 						return true;	
