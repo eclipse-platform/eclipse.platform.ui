@@ -46,7 +46,6 @@ public final class AboutInfo {
 	private String tipsAndTricksHref;
 
 
-
 	/*
 	 * Create a new about info for a feature with the given id.
 	 */
@@ -71,7 +70,8 @@ public final class AboutInfo {
 		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
 		IStatus status = reader.load();
 		if (!status.isOK()) {
-			return null;
+			//return null;
+			return new AboutInfo(featureId); // dummy about info
 		}
 		
 		AboutInfo info = new AboutInfo(featureId);
