@@ -543,11 +543,12 @@ public class SyncFileWriter {
 	}
 	
 	private static void writeLinesToStreamAndClose(OutputStream os, String[] contents) throws CVSException {
+		byte[] lineEnd = getLineDelimiter();
 		try {
 			try {
 				for (int i = 0; i < contents.length; i++) {
 					os.write(contents[i].getBytes());
-					os.write(0x0A); // newline byte
+					os.write(lineEnd);
 				}
 			} finally {
 				os.close();
@@ -665,6 +666,14 @@ public class SyncFileWriter {
 		IFolder baseFolder = getBaseDirectory(file);
 		IFile baseFile = baseFolder.getFile(file.getName());
 		return baseFile.exists();
+	}
+	
+	private static byte[] getLineDelimiter() {
+		if (CVSProviderPlugin.getPlugin().isUsePlatformLineend()) {
+			String property = System.getProperty("line.separator"); //$NON-NLS-1$
+			if (property != null) return property.getBytes();
+		}
+		return new byte[] { 0x0A }; //$NON-NLS-1$
 	}
 
 }
