@@ -36,9 +36,10 @@ import org.eclipse.debug.core.IBreakpointListener;
  * @see ISuspendResume
  * @see IBreakpointListener
  * @see IDisconnect
+ * @see IStorageRetrieval
  * @see org.eclipse.debug.core.ILaunch
  */
-public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect {
+public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IStorageRetrieval {
 	/**
 	 * Returns the system process associated with this debug target
 	 * or <code>null</code> if no system process is associated with
@@ -52,7 +53,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * 
 	 * @return a collection of threads
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
@@ -63,7 +64,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 *
 	 * @return this target's name
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */

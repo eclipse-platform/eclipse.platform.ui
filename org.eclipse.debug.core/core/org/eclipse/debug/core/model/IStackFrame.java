@@ -58,9 +58,10 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * 
 	 * @return collection of visible variables
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 */
 	public IVariable[] getVariables() throws DebugException;
 	/**
@@ -72,9 +73,10 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @return line number of instruction pointer in this stack frame, or 
 	 * <code>-1</code> if line number information is unavailable
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 */
 	public int getLineNumber() throws DebugException;
 	/**
@@ -83,9 +85,26 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 *
 	 * @return this frame's name
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 */
 	public String getName() throws DebugException;
+	
+	/**
+	 * Returns the register groups assigned to this stack frame,
+	 * or an empty collection if no register groups are assigned
+	 * to this stack frame.
+	 * 
+	 * @return the register groups assigned to this stack frame
+	 *  or an empty collection if no register groups are assigned
+	 *  to this stack frame
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	public IRegisterGroup[] getRegisterGroups() throws DebugException;
 }
