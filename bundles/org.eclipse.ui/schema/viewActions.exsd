@@ -11,7 +11,7 @@ by clicking on the top right triangle button. Other plug-ins can contribute subm
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonAction.mxsd"/>
+   <include schemaLocation="commonAction.exsd"/>
 
    <include schemaLocation="commonExpression.exsd"/>
 

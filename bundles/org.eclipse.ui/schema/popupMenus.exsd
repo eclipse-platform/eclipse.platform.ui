@@ -18,11 +18,11 @@ If these filtering mechanisms are inadequate an action contribution may use the 
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonAction.mxsd"/>
+   <include schemaLocation="commonAction.exsd"/>
 
    <include schemaLocation="commonExpression.exsd"/>
 
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>

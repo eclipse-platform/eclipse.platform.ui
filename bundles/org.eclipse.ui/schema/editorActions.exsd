@@ -24,7 +24,7 @@ The active editor is passed to the delegate by invoking
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonAction.mxsd"/>
+   <include schemaLocation="commonAction.exsd"/>
 
    <include schemaLocation="commonExpression.exsd"/>
 
