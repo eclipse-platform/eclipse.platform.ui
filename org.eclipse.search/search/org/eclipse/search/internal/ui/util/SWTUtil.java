@@ -38,6 +38,7 @@ public class SWTUtil {
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated disaply. If so, this
 	 * display is returned. Otherwise the method returns the default display.
+	 * @return Returns the standard display to be used.
 	 */
 	public static Display getStandardDisplay() {
 		Display display;
@@ -50,7 +51,8 @@ public class SWTUtil {
 	/**
 	 * Returns the shell for the given widget. If the widget doesn't represent
 	 * a SWT object that manage a shell, <code>null</code> is returned.
-	 * 
+	 *
+	 * @param widget The widget to get the shell for
 	 * @return the shell for the given widget
 	 */
 	public static Shell getShell(Widget widget) {
@@ -73,10 +75,11 @@ public class SWTUtil {
 
 	/**
 	 * Returns a width hint for a button control.
+	 * @param button The button to calculate the width for
+	 * @return The width of the button
 	 */
 	public static int getButtonWidthHint(Button button) {
-		if (button.getFont().equals(JFaceResources.getDefaultFont()))
-			button.setFont(JFaceResources.getDialogFont());
+		button.setFont(JFaceResources.getDialogFont());
 		PixelConverter converter= new PixelConverter(button);
 		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -84,28 +87,29 @@ public class SWTUtil {
 
 	/**
 	 * Returns a height hint for a button control.
+	 * @param button The button to calculate the height for
+	 * @return The height of the button
 	 */		
 	public static int getButtonHeightHint(Button button) {
-		if (button.getFont().equals(JFaceResources.getDefaultFont()))
-			button.setFont(JFaceResources.getDialogFont());
+		button.setFont(JFaceResources.getDialogFont());
 		PixelConverter converter= new PixelConverter(button);
 		return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	}	
-
+	}
 	
 	/**
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
 	 * 
-	 * @param	the button for which to set the dimension hint
+	 * @param button	the button for which to set the dimension hint
 	 */		
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
 			((GridData)gd).heightHint= getButtonHeightHint(button);
-			((GridData)gd).widthHint= getButtonWidthHint(button);		 
+			((GridData)gd).widthHint= getButtonWidthHint(button);	
+			((GridData)gd).horizontalAlignment = GridData.FILL;	 
 		}
 	}
 	
