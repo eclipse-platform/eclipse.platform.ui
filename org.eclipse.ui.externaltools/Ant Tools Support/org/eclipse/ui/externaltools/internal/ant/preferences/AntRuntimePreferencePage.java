@@ -19,7 +19,6 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -61,6 +60,8 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		initializeDialogUnits(parent);
+		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_PREFERENCE_PAGE);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
@@ -146,19 +147,10 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	}
 	
 	/**
-	 * Sets the <code>GridData</code> on the specified button to
-	 * be one that is spaced for the current dialog page units.
-	 * 
-	 * @param button the button to set the <code>GridData</code>
-	 * @return the <code>GridData</code> set on the specified button
+	 * @see org.eclipse.jface.dialogs.DialogPage#setButtonLayoutData(org.eclipse.swt.widgets.Button)
 	 */
-	/*package*/ GridData setButtonGridData(Button button, int style) {
-		GridData data = new GridData(style);
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(data);
-		return data;
+	protected GridData setButtonLayoutData(Button button) {
+		return super.setButtonLayoutData(button);
 	}
 	
 	protected List getLibraryURLs() {
