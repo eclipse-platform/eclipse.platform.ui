@@ -536,7 +536,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Creates launch configuration types for each defined extension.
 	 * 
-	 * @exception CoreException if an exception occurrs processing
+	 * @exception CoreException if an exception occurs processing
 	 *  the extensions
 	 */
 	public void startup() throws CoreException {
@@ -762,7 +762,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * If the configuration exists, but is not yet in the cache,
 	 * an info object is built and added to the cache.
 	 * 
-	 * @exception CoreException if an exception occurrs building
+	 * @exception CoreException if an exception occurs building
 	 *  the info object
 	 * @exception DebugException if the config does not exist
 	 */
@@ -1061,7 +1061,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param project the project for which to persist the launch
 	 *  configuration index.
-	 * @exception CoreException if an exception occurrs writing the
+	 * @exception CoreException if an exception occurs writing the
 	 * 	index
 	 */
 	protected void persistIndex(IProject project) throws CoreException {
@@ -1077,7 +1077,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param configs the configurations to persist
 	 * @param location an absolute local file system path
-	 * @exception CoreException if an exception occurrs writing the
+	 * @exception CoreException if an exception occurs writing the
 	 * 	index
 	 */
 	protected void persistIndex(List configs, IPath path) throws CoreException {
@@ -1114,7 +1114,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Persists the index for local launch configurations
 	 * 
-	 * @exception CoreException if an exception occurrs writing
+	 * @exception CoreException if an exception occurs writing
 	 *  the index file
 	 */
 	protected void persistLocalLaunchConfigIndex() throws CoreException {
@@ -1129,7 +1129,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param project the project for which to restore launch
 	 *  configurations from.
-	 * @exception CoreException if an exception occurrs reading the
+	 * @exception CoreException if an exception occurs reading the
 	 * 	index
 	 */
 	protected void restoreIndex(IProject project) throws CoreException {
@@ -1143,7 +1143,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * specified location.
 	 * 
 	 * @param path absolute path to an index file in the local file system
-	 * @exception CoreException if an exception occurrs reading the
+	 * @exception CoreException if an exception occurs reading the
 	 * 	index
 	 */
 	protected void restoreIndex(IPath path) throws CoreException {
@@ -1200,7 +1200,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * the workspace for .launch files. This is only required when
 	 * no saved state is available from the workspace.
 	 * 
-	 * @exception CoreException if an exception occurrs building the
+	 * @exception CoreException if an exception occurs building the
 	 *  index
 	 * @see DebugPlugin#startup()
 	 */
@@ -1254,7 +1254,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Rebuilds the index of non-local launch configurations by
 	 * traversing the workspace searching for .launch files.
 	 * 
-	 * @exception CoreException an exception occurrs traversing
+	 * @exception CoreException an exception occurs traversing
 	 *  the workspace.
 	 */
 	protected void rebuildNonLocalIndex() throws CoreException {
@@ -1276,7 +1276,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @param container the container to search in
 	 * @param extension the file extension being searched for
 	 * @param list the list to add the matching files to
-	 * @exception CoreException if an exception occurrs traversing
+	 * @exception CoreException if an exception occurs traversing
 	 *  the container
 	 */
 	protected void searchForFiles(IContainer container, String extension, List list) throws CoreException {
@@ -1300,7 +1300,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Restore launch configuration index for non-local
 	 * launch configurations.
 	 * 
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  an index file
 	 */
 	protected void restoreNonLocalIndex() throws CoreException {
@@ -1316,7 +1316,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Restore launch configuration index for local
 	 * launch configurations.
 	 * 
-	 * @exception CoreExcetpion if an exception occurrs reading
+	 * @exception CoreExcetpion if an exception occurs reading
 	 *  the index file
 	 */
 	protected void restoreLocalIndex() throws CoreException {
@@ -1350,7 +1350,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param configs list of configurations
 	 * @return XML
-	 * @exception IOException if an exception occurrs creating the XML
+	 * @exception IOException if an exception occurs creating the XML
 	 */
 	protected String getConfigsAsXML(List configs) throws IOException {
 
@@ -1385,7 +1385,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param root XML document
 	 * @return list of launch configurations
-	 * @exception IOException if an exception occurrs reading the XML
+	 * @exception IOException if an exception occurs reading the XML
 	 */	
 	protected List getConfigsFromXML(Element root) throws CoreException {
 		DebugException invalidFormat = 

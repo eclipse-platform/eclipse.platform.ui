@@ -178,7 +178,7 @@ public interface ILaunchManager {
 	 * @param type a launch configuration type
 	 * @return all launch configurations defined in the workspace
 	 *  of the specified type
-	 * @exception CoreException if an error occurrs while retreiving
+	 * @exception CoreException if an error occurs while retreiving
 	 *  a launch configuration
 	 * @since 2.0
 	 */

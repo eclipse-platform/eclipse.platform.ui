@@ -249,7 +249,7 @@ public class LaunchConfigurationInfo {
 	 * Returns the content of this info as XML
 	 * 
 	 * @return the content of this info as XML
-	 * @exception IOException if an exception occurrs creating the XML
+	 * @exception IOException if an exception occurs creating the XML
 	 */
 	protected String getAsXML() throws IOException {
 

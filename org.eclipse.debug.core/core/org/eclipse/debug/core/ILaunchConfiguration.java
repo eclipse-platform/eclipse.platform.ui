@@ -149,7 +149,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the value or the default value if no value was found.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while retrieving the attribute from
+	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
 	 *  have an integer value</li>
@@ -165,7 +165,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the value or the default value if no value was found.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while retrieving the attribute from
+	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
 	 *  have an integer value</li>
@@ -197,7 +197,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the value or the default value if no value was found.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while retrieving the attribute from
+	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
 	 *  have a List value</li>
@@ -213,7 +213,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the value or the default value if no value was found.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurrs while retrieving the attribute from
+	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
 	 *  have a Map value</li>
