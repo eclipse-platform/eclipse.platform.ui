@@ -90,7 +90,7 @@ public final class Team {
 	 * This method answers true if the file matches one of the global ignore
 	 * patterns, or if the file is marked as derived.
 	 * 
-	 * @param file  the file
+	 * @param resource  the file
 	 * @return whether the file should be ignored
 	 */
 	public static boolean isIgnoredHint(IResource resource) {

@@ -38,7 +38,7 @@ import org.eclipse.core.resources.IStorage;
  * If the user-defined mapping is deleted, the plugin-contributed mapping is valid again.
  * This interface is not intented to be implemented by clients.
  * 
- * @see org.eclipse.team.core.Team.getFileContentManager()
+ * @see org.eclipse.team.core.Team#getFileContentManager()
  * 
  * @since 3.1
  */
@@ -87,7 +87,7 @@ public interface IFileContentManager {
 
     /**
      * Get the content type for a given file extension.
-     * @param filename The extension
+     * @param extension The extension
      * @return one of <code>Team.UNKNOWN</code>, <code>Team.TEXT</code> or <code>Team.BINARY</code>.
      * 
      * @since 3.1
@@ -113,7 +113,7 @@ public interface IFileContentManager {
      * the preferences. Already existing mappings for these extensions are updated
      * with the new ones, other mappings will be preserved.
      * 
-     * @param names The extensions
+     * @param extensions The extensions
      * @param types The corresponding types, each one being one of
      *            <code>Team.UNKNOWN</code>,<code>Team.TEXT</code> or
      *            <code>Team.BINARY</code>.
@@ -141,7 +141,7 @@ public interface IFileContentManager {
      * mapping in the preferences. All existing user-defined mappings for <b>any
      * </b> file extensions are deleted and replaced by the new ones.
      * 
-     * @param names The extensions
+     * @param extensions The extensions
      * @param types The corresponding types, each one being one of
      *            <code>Team.UNKNOWN</code>,<code>Team.TEXT</code> or
      *            <code>Team.BINARY</code>.

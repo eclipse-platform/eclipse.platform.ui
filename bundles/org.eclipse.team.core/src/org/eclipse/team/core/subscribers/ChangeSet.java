@@ -11,7 +11,6 @@
 package org.eclipse.team.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 
@@ -80,8 +79,7 @@ public abstract class ChangeSet {
     /**
      * Add the resource to this set if it is modified
      * w.r.t. the subscriber.
-     * @param resource
-     * @throws TeamException
+     * @param info
      */
     public void add(SyncInfo info) {
         if (isValidChange(info)) {
@@ -103,8 +101,7 @@ public abstract class ChangeSet {
     /**
      * Add the resources to this set if they are modified
      * w.r.t. the subscriber.
-     * @param resources the resources to be added.
-     * @throws TeamException
+     * @param infos the resources to be added.
      */
     public void add(SyncInfo[] infos) {
        try {

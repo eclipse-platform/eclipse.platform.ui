@@ -291,9 +291,8 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
      * so no events are fired. The set can be added using the
      * <code>add</code> method.
      * @param title the title of the commit set
-     * @param files the files contained in the set
+     * @param infos the files contained in the set
      * @return the created set
-     * @throws CVSException
      */
     public ActiveChangeSet createSet(String title, SyncInfo[] infos) {
         ActiveChangeSet commitSet = new ActiveChangeSet(this, title);
@@ -341,7 +340,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
     /**
      * Retrn the set which is currently the default or
      * <code>null</code> if there is no default set.
-     * @return
+     * @return the default change set
      */
     public ActiveChangeSet getDefaultSet() {
         return defaultSet;
@@ -465,9 +464,9 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
 	}
 	
     /**
-     * Return the id that will uniquely identify the subscriber accross
+     * Return the id that will uniquely identify the subscriber across
      * restarts.
-     * @return
+     * @return the id that will uniquely identify the subscriber across
      */
     protected String getSubscriberIdentifier() {
         return getSubscriber().getName();

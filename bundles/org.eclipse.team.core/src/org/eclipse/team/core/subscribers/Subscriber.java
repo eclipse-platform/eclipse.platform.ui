@@ -182,9 +182,6 @@ abstract public class Subscriber {
 	 * <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
 	 * @param monitor progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
-	 * @return status with code <code>OK</code> if there were no problems;
-	 * otherwise a description (possibly a multi-status) consisting of
-	 * low-severity warnings or informational messages.
 	 * @exception TeamException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The server could not be contacted.</li>

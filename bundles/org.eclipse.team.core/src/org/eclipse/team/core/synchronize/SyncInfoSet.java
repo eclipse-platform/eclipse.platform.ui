@@ -614,7 +614,6 @@ public class SyncInfoSet {
 	 * resource contains all relevent information.
 	 * The error will remain in the set until the set is reset.
 	 * </p>
-	 * @param resource the resource associated with the error or the workspace root
 	 * @param status the status that describes the error that occurred.
 	 */
 	public void addError(ITeamStatus status) {

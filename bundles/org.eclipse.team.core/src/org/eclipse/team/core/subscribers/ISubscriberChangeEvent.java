@@ -26,7 +26,7 @@ public interface ISubscriberChangeEvent {
 	 *====================================================================*/
 	/**
 	 * Delta kind constant indicating that the resource has not been changed in any way
-	 * @see IResourceDelta#getKind
+	 * @see org.eclipse.core.resources.IResourceDelta#getKind()
 	 */
 	public static final int NO_CHANGE = 0;
 	/**

@@ -62,7 +62,6 @@ public interface IResourceVariant {
 	 * or revisions of the same resource.
 	 * 
 	 * @return a String that identifies the version of the subscriber resource
-	 * @throws TeamException
 	 */
 	public String getContentIdentifier();
 	

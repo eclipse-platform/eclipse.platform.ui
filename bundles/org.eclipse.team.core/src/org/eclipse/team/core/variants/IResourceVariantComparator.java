@@ -31,7 +31,7 @@ public interface IResourceVariantComparator {
 	 * matches the remote resource based on this criteria and <code>false</code>
 	 * otherwise. Comparing should be fast and based on cached information.
 	 *  
-	 * @param resource the local resource to be compared
+	 * @param local the local resource to be compared
 	 * @param remote the remote resources to be compared
 	 * @return <code>true</code> if local and remote are equal based on this criteria and <code>false</code>
 	 * otherwise.

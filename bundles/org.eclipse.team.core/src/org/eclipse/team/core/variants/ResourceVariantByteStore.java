@@ -120,9 +120,9 @@ public abstract class ResourceVariantByteStore {
 	 * may override to obtain scheduling rules or batch deltas (if
 	 * the byte store modifies workspace resources).
 	 * @param root the root resource for all modifications
-	 * @param action the action to perform
+	 * @param runnable the action to perform
 	 * @param monitor a progress monitor.
-	 * @exception CoreException if the operation failed.
+	 * @exception TeamException if the operation failed.
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 */
 	public void run(IResource root, IWorkspaceRunnable runnable, IProgressMonitor monitor) throws TeamException {
