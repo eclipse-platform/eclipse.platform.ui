@@ -683,7 +683,7 @@ public class InternalAntRunner {
 
 	protected boolean preprocessCommandLine(List commands) {
 		
-		String[] args = getArguments(commands, "-listener"); //$NON-NLS-1$
+		String[] args = getArgument(commands, "-listener"); //$NON-NLS-1$
 		if (args != null) {
 			if (args.length == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
@@ -694,7 +694,7 @@ public class InternalAntRunner {
 			buildListeners.add(args[0]);
 		}
 
-		args = getArguments(commands, "-logger"); //$NON-NLS-1$
+		args = getArgument(commands, "-logger"); //$NON-NLS-1$
 		if (args != null) {
 			if (args.length == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-logger_argument_2")); //$NON-NLS-1$
@@ -748,9 +748,9 @@ public class InternalAntRunner {
 			return false;
 		}
 		
-		String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
+		String[] args = getArgument(commands, "-logfile"); //$NON-NLS-1$
 		if (args == null) {
-			args = getArguments(commands, "-l"); //$NON-NLS-1$
+			args = getArgument(commands, "-l"); //$NON-NLS-1$
 		}
 		if (args != null) {
 			if (args.length == 0) {
@@ -768,11 +768,11 @@ public class InternalAntRunner {
 		
 		}
 		
-		args = getArguments(commands, "-buildfile"); //$NON-NLS-1$
+		args = getArgument(commands, "-buildfile"); //$NON-NLS-1$
 		if (args == null) {
-			args = getArguments(commands, "-file"); //$NON-NLS-1$
+			args = getArgument(commands, "-file"); //$NON-NLS-1$
 			if (args == null) {
-				args = getArguments(commands, "-f"); //$NON-NLS-1$
+				args = getArgument(commands, "-f"); //$NON-NLS-1$
 			}
 		}
 		
@@ -785,19 +785,19 @@ public class InternalAntRunner {
 			setBuildFileLocation(args[0]);
 		}
 		
-		args= getArguments(commands, "-propertyfile"); //$NON-NLS-1$
+		args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-propertyfile_option_not_yet_implemented_6"), Project.MSG_INFO); //$NON-NLS-1$
 			return false;
 		}
 		
-		args= getArguments(commands, "-inputhandler"); //$NON-NLS-1$
+		args= getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-inputhandler_option_not_yet_implemented_8"), Project.MSG_INFO); //$NON-NLS-1$
 			return false;
 		}
 		
-		args= getArguments(commands, "-find"); //$NON-NLS-1$
+		args= getArgument(commands, "-find"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_option_not_yet_implemented_10"), Project.MSG_INFO); //$NON-NLS-1$
 			return false;
@@ -1009,12 +1009,12 @@ public class InternalAntRunner {
 
 	/**
 	 * From a command line list, get the array of arguments of a given parameter.
-	 * The parameter and its arguments are removed from the list.
+	 * The parameter and its argument are removed from the list.
 	 * 
-	 * @return null if the parameter is not found 
+	 * @return <code>null</code> if the parameter is not found 
 	 * 			or an empty array if no arguments are found
 	 */
-	protected String[] getArguments(List commands, String param) {
+	protected String[] getArgument(List commands, String param) {
 		int index = commands.indexOf(param);
 		if (index == -1) {
 			return null;
@@ -1023,19 +1023,16 @@ public class InternalAntRunner {
 		if (index == commands.size()) {// if this is the last command
 			return new String[]{};
 		}
-		List args = new ArrayList(commands.size());
-		while (index < commands.size()) { // while not the last command
-			String command = (String) commands.get(index);
-			if (command.startsWith("-")) { // is it a new parameter? //$NON-NLS-1$
-				break;
-			}
-			args.add(command);
-			commands.remove(index);
-		}
-		if (args.isEmpty()) {
+		String[] args= new String[1];
+		
+		String command = (String) commands.get(index);
+		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
 			return new String[]{};
 		}
-		return (String[]) args.toArray(new String[args.size()]);
+		args[0]= command;
+		commands.remove(index);
+		
+		return args;
 	}
 
 	/**
