@@ -307,10 +307,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				if (extension == null)
 					extension= resource.getName();
 				else
-					extension= "*." + extension;
+					extension= "*." + extension; //$NON-NLS-1$
 			}
 			else
-				extension= "*";
+				extension= "*"; //$NON-NLS-1$
 		}		
 		fPattern.setText(insertEscapeChars(text));
 		if (extension == null)
