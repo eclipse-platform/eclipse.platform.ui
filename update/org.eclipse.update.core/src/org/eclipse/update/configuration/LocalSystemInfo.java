@@ -256,6 +256,19 @@ public class LocalSystemInfo {
 				vol[i] = new Volume(root,label,type,size);
 				vol[i].markReadOnly();
 			}
+		} else {
+			// fallback
+			File [] roots = File.listRoots();
+			if (roots.length == 1) {
+				// just one root - skip it
+				File root = roots[0];
+				roots = root.listFiles();
+			}
+			vol = new Volume[roots.length];			
+			for (int i = 0; i < roots.length; i++) {
+				vol[i] = new Volume(roots[i],null,LocalSystemInfo.VOLUME_UNKNOWN,LocalSystemInfo.SIZE_UNKNOWN);
+				vol[i].markReadOnly();
+			}			
 		}
 		return vol;
 	}

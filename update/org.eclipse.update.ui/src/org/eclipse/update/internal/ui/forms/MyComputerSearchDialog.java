@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Vector;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.configuration.LocalSystemInfo;
 
 /**
@@ -117,14 +118,14 @@ public class MyComputerSearchDialog extends Dialog {
 	}
 	
 	private void initializeDrives() {
-		File [] drives = MyComputer.getRoots();
-		for (int i=0; i<drives.length; i++) {
+		IVolume[] volumes = LocalSystemInfo.getVolumes();
+		for (int i=0; i<volumes.length; i++) {
 			// Ensure settings exists
-			String label = LocalSystemInfo.getLabel(drives[i]);
+			String label = volumes[i].getLabel();
 			if (label==null || "".equals(label))
-				label = drives[i].getPath();
+				label = volumes[i].getFile().getPath();
 			else
-				label = label+" ("+drives[i].getPath()+")";
+				label = label+" ("+volumes[i].getFile().getPath()+")";
 			settings.getDriveSettings(label);
 		}
 	}

@@ -17,6 +17,7 @@ import org.eclipse.update.internal.ui.search.*;
 import java.io.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.configuration.LocalSystemInfo;
 
 public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
@@ -46,11 +47,11 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	public Object[] getChildren(Object parent) {
 		BusyIndicator.showWhile(UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 			public void run() {
-				File [] roots = getRoots();
-				if (roots.length > 0) {
-					children = new MyComputerDirectory[roots.length];
+				IVolume [] volumes = LocalSystemInfo.getVolumes();
+				if (volumes!=null && volumes.length > 0) {
+					children = new MyComputerDirectory[volumes.length];
 					for (int i = 0; i < children.length; i++) {
-						children[i] = new MyComputerDirectory(MyComputer.this, roots[i], true);
+						children[i] = new MyComputerDirectory(MyComputer.this, volumes[i].getFile(), true);
 					}
 				} else
 					children = new Object[0];
@@ -59,27 +60,6 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 		return children;
 	}
 	
-	public static File [] getRoots() {
-		File [] roots;
-		String [] rootPaths = LocalSystemInfo.listMountPoints();
-		if (rootPaths!=null) {
-			roots = new File[rootPaths.length];
-			for (int i=0; i<roots.length; i++) {
-				roots[i] = new File(rootPaths[i]);
-			}
-		}
-		else {
-			// fallback
-			roots = File.listRoots();
-			if (roots.length == 1) {
-				// just one root - skip it
-				File root = roots[0];
-				roots = root.listFiles();
-			}
-		}
-		return roots;
-	}
-
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
@@ -102,9 +82,9 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	}
 	
 	public void collectSites(Vector sites, MyComputerSearchSettings settings, IProgressMonitor monitor) {
-		File [] drives = MyComputer.getRoots();
-		for (int i=0; i<drives.length; i++) {
-			File drive = drives[i];
+		IVolume [] volumes = LocalSystemInfo.getVolumes();
+		for (int i=0; i<volumes.length; i++) {
+			File drive = volumes[i].getFile();
 			if (monitor.isCanceled()) return;
 			DriveSearchSettings ds = settings.getDriveSettings(drive.getPath());
 			if (ds.isChecked()) {

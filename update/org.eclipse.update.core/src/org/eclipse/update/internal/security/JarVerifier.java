@@ -11,6 +11,7 @@ import java.security.cert.CertificateException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -111,6 +112,9 @@ public class JarVerifier extends Verifier {
 			JarContentReference jarReference = (JarContentReference) contentRef;
 			try {
 				jarFile = jarReference.asFile();
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+					UpdateManagerPlugin.getPlugin().debug("Attempting to read JAR file:"+jarFile);
+				
 				// # of entries
 				JarFile jar = new JarFile(jarFile);
 				entries = jar.size();

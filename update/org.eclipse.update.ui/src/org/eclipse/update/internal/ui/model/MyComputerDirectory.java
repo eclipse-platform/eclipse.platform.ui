@@ -4,19 +4,18 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.*;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
-import org.eclipse.update.internal.ui.*;
-import java.io.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.configuration.LocalSystemInfo;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class MyComputerDirectory
 	extends UIModelObject
@@ -46,18 +45,26 @@ public class MyComputerDirectory
 	public String getName() {
 		String fileName = root ? file.getPath() : file.getName();
 		if (root) {
-			String nativeLabel = LocalSystemInfo.getLabel(file);
-			if (nativeLabel!=null && !"".equals(nativeLabel)) {
-				StringBuffer buffer = new StringBuffer(nativeLabel);
-				buffer.append(" (");
-				buffer.append(fileName);
-				buffer.append(")");
-				return buffer.toString();
+			IVolume [] volumes = LocalSystemInfo.getVolumes();
+			for (int i = 0; i < volumes.length; i++) {
+				File rootFile = volumes[i].getFile();
+				if (file.equals(rootFile)) {
+					String nativeLabel = volumes[i].getLabel();
+					if (nativeLabel != null && !"".equals(nativeLabel)) {
+						StringBuffer buffer = new StringBuffer(nativeLabel);
+						buffer.append(" (");
+						buffer.append(fileName);
+						buffer.append(")");
+						return buffer.toString();
+					} else {
+						return fileName;
+					}
+				}
 			}
 		}
 		return fileName;
 	}
-	
+
 	public File getFile() {
 		return file;
 	}
@@ -68,8 +75,11 @@ public class MyComputerDirectory
 
 	public boolean hasChildren(Object parent) {
 		if (file.isDirectory()) {
-			final boolean [] result = new boolean[1];
-			BusyIndicator.showWhile(UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
+			final boolean[] result = new boolean[1];
+			BusyIndicator
+				.showWhile(
+					UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(),
+					new Runnable() {
 				public void run() {
 					File[] children = file.listFiles();
 					result[0] = children != null && children.length > 0;
@@ -114,7 +124,8 @@ public class MyComputerDirectory
 	static SiteBookmark createSite(File file) {
 		try {
 			File siteXML = new File(file, "site.xml");
-			if (siteXML.exists()==false) return null;
+			if (siteXML.exists() == false)
+				return null;
 			URL url = new URL("file:" + file.getAbsolutePath() + File.separator);
 			SiteBookmark site = new SiteBookmark(file.getName(), url);
 			site.setType(SiteBookmark.LOCAL);
