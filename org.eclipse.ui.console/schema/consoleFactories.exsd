@@ -43,9 +43,6 @@
 
    <element name="consoleFactory">
       <complexType>
-         <sequence>
-            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
