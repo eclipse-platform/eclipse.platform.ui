@@ -582,4 +582,11 @@ public abstract class PreferencePage
 		return defaultsButton;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#performHelp()
+	 */
+	public void performHelp() {
+		getControl().notifyListeners(SWT.Help,new Event());
+	}
+
 }

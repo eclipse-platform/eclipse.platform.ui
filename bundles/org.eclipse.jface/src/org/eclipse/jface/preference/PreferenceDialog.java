@@ -274,16 +274,6 @@ public class PreferenceDialog
 		super.configureShell(newShell);
 		newShell.setText(JFaceResources.getString("PreferenceDialog.title")); //$NON-NLS-1$
 
-		// Register help listener on the shell
-		newShell.addHelpListener(new HelpListener() {
-			public void helpRequested(HelpEvent event) {
-				// call perform help on the current page
-				if (currentPage != null) {
-					currentPage.performHelp();
-				}
-			}
-		});
-
 		newShell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent e) {
 				if (lastShellSize == null)
@@ -531,6 +521,16 @@ public class PreferenceDialog
 				if (selection.length > 0)
 					selection[0].setExpanded(!selection[0].getExpanded());
 			}
+		});
+		
+		//Register help listener on the tree to use context sensitive help
+		tree.addHelpListener(new HelpListener() {
+			 public void helpRequested(HelpEvent event) {
+				 // call perform help on the current page
+				 if (currentPage != null) {
+					 currentPage.performHelp();
+				 }
+			 }
 		});
 
 		IPreferenceNode node = preferenceManager.getRoot();
