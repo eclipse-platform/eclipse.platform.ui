@@ -35,7 +35,9 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	/**
 	 * Returns the dynamic property values for Ant properties.
 	 * 
-	 * @see org.eclipse.ant.core.IAntPropertyProvider#getPropertyValue(java.lang.String)
+	 * @param propertyName The name of the property to resovle the value for
+	 * @return The resolved value for the property
+	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(String)
 	 */
 	public String getAntPropertyValue(String propertyName) {
 		String value = null;
