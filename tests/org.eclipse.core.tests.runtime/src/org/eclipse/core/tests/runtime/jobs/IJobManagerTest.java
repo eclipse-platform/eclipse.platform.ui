@@ -13,7 +13,6 @@ import java.util.*;
 
 import junit.framework.*;
 import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
@@ -173,8 +172,8 @@ public class IJobManagerTest extends TestCase {
 		//ensure jobs are run in order from lowest to highest sleep time.
 		final List done = Collections.synchronizedList(new ArrayList());
 		IJobChangeListener listener = new JobChangeAdapter() {
-			public void done(Job job, IStatus result) {
-				done.add(job);
+			public void done(IJobChangeEvent event) {
+				done.add(event.getJob());
 			}
 		};
 		int[] sleepTimes = new int[] { 50, 250, 500, 800, 1000, 1500 };
@@ -205,12 +204,12 @@ public class IJobManagerTest extends TestCase {
 	public void testSimple() {
 		final int JOB_COUNT = 10;
 		for (int i = 0; i < JOB_COUNT; i++) {
-			new TestJob(null).schedule();
+			new TestJob("testSimple").schedule();
 		}
 		waitForCompletion();
 		//
 		for (int i = 0; i < JOB_COUNT; i++) {
-			new TestJob(null).schedule(50);
+			new TestJob("testSimple").schedule(50);
 		}
 		waitForCompletion();
 	}
