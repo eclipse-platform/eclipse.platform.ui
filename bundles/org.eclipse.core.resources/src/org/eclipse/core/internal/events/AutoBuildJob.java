@@ -9,15 +9,14 @@
  **********************************************************************/
 package org.eclipse.core.internal.events;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 
 /**
  * The job for performing workspace auto-builds, and pre- and post- autobuild
@@ -37,6 +36,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean interrupted = false;
 	private long lastBuild = 0L;
 	private Workspace workspace;
+	private final IJobManager jobManager = Platform.getJobManager();
 
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
@@ -86,6 +86,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		buildNeeded |= needsBuild;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		int state = getState();
+		if (Policy.DEBUG_NEEDS_BUILD)
+			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + JobManager.printState(state) + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		switch (state) {
 			case Job.SLEEPING :
 				wakeUp(delay);
@@ -130,7 +132,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				break;
 			case RUNNING :
 				//make sure autobuild doesn't interrupt itself
-				interrupted = InternalPlatform.getDefault().getJobManager().currentJob() != this;
+				interrupted = jobManager.currentJob() != this;
 				break;
 		}
 		//clear the autobuild avoidance flag if we were interrupted
