@@ -19,19 +19,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Stack;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.util.FileUtils;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
 import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.xml.XmlAttribute;
 import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -482,32 +479,20 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 				//remove file:
 				systemId= systemId.substring(index + 1, systemId.length());
 			}
-			File resolvedFile= null;
-			IPath filePath= new Path(systemId);
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-			if (file == null || !file.exists()) {
-				//relative path
-				try {
-					//this call is ok if mainFileContainer is null
-					resolvedFile= FileUtils.newFileUtils().resolveFile(mainFile.getParentFile(), systemId);
-				} catch (BuildException be) {
-					return null;
-				}
-			} else {
-				resolvedFile= file.getLocation().toFile();
+
+			IFile file = AntUtil.getFileForLocation(systemId, mainFile.getParentFile());
+			if (file == null) {
+				return null;
 			}
-		
-			if (resolvedFile != null && resolvedFile.exists()) {
-				try {
-					InputSource inputSource= new InputSource(new FileReader(resolvedFile));
-					inputSource.setSystemId(resolvedFile.getAbsolutePath());
-					return inputSource;
-				} catch (FileNotFoundException e) {
-					return null;
-				}
+			
+			File resolvedFile= file.getLocation().toFile();
+			try {
+				InputSource inputSource= new InputSource(new FileReader(resolvedFile));
+				inputSource.setSystemId(resolvedFile.getAbsolutePath());
+				return inputSource;
+			} catch (FileNotFoundException e) {
+				return null;
 			}
-					
-		return super.resolveEntity(publicId, systemId);
 	}
 	
 	/* (non-Javadoc)

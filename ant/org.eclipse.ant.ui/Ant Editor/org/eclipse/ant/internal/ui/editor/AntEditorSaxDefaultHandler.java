@@ -24,13 +24,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -40,12 +36,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * The <code>DefaultHandler</code> for the parsing of the currently edited file.
- * 
- * @version 19.09.2002
- * @author Alf Schiefelbein
  */
 public class AntEditorSaxDefaultHandler extends DefaultHandler {
 
@@ -55,14 +47,12 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     protected Locator locator;
 
-
     /**
      * Stack of still open elements.
      * <P>
      * On top of the stack is the innermost element.
      */
     protected Stack stillOpenElements = new Stack();
-
 
     /**
      * The parent element that we search for.
@@ -72,7 +62,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     protected Element parentElement;
 
-
     /**
      * Flag that determines whether we are finished with parsing.
      * <P>
@@ -80,12 +69,10 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     protected boolean parsingFinished;
 
-
     /**
      * Document that is used to create the elements.
      */
     protected Document document;
-
 
     /**
      * The startingRow where the cursor is located in the document.
@@ -93,7 +80,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * The first startingRow is refered to with an index of '0'.
      */
     protected int rowOfCursorPosition = -1;
-    
     
     /**
      * The startingColumn where the cursor is located in the document.
@@ -111,7 +97,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
 	 * Used as a helper for resolving external relative entries.
 	 */
 	private File mainFileContainer;
-
 
     /**
      * Creates an AntEditorSaxDefaultHandler, with the specified parameters.
@@ -315,28 +300,19 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
 			systemId= systemId.substring(index+1, systemId.length());
 		}
 		File resolvedFile= null;
-		IPath filePath= new Path(systemId);
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-		if (file == null || !file.exists()) {
-			//relative path
-			try {
-				//this call is ok if mainFileContainer is null
-				resolvedFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
-			} catch (BuildException be) {
-				return null;
-			}
-		} else {
-			resolvedFile= file.getLocation().toFile();
-		}
+		IFile file= AntUtil.getFileForLocation(systemId, mainFileContainer);
+		if (file == null) {
+			return null;
+		} 
 		
-		if (resolvedFile != null && resolvedFile.exists()) {
-			try {
-				return new InputSource(new FileReader(resolvedFile));
-			} catch (FileNotFoundException e) {
-				return null;
-			}
+		resolvedFile= file.getLocation().toFile();
+		
+		try {
+			InputSource inputSource= new InputSource(new FileReader(resolvedFile));
+			inputSource.setSystemId(resolvedFile.getAbsolutePath());
+			return inputSource;
+		} catch (FileNotFoundException e) {
+			return null;
 		}
-			
-		return super.resolveEntity(publicId, systemId);
 	}
 }
