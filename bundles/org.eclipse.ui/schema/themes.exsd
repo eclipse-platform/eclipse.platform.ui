@@ -50,6 +50,8 @@
             <element ref="tabTheme" minOccurs="0" maxOccurs="1"/>
             <element ref="viewTheme" minOccurs="0" maxOccurs="1"/>
             <element ref="colorOverride" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="gradientOverride" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="fontOverride" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -428,7 +430,6 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
       <complexType>
          <sequence>
             <element ref="gradientPart" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
