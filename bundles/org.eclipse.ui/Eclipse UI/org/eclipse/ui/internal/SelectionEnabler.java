@@ -99,6 +99,7 @@ private boolean isEnabledFor(ISelection sel) {
 		return enablementExpression.isEnabledFor(obj);
 
 	// Compare selection to class requirements.
+	if (classes.isEmpty()) return true;
 	if (obj instanceof IAdaptable) {
 		IAdaptable element = (IAdaptable)obj;
 		if (verifyElement(element)==false) return false;
@@ -247,6 +248,7 @@ private boolean verifyClass(Object element, String className) {
  * ITextSelection.
  */
 private boolean verifyElement(ITextSelection element) {
+	if (classes.isEmpty()) return true;
 	for (int i = 0; i < classes.size(); i++) {
 		SelectionClass sc = (SelectionClass) classes.get(i);
 		if (verifyClass(element, sc.className))
@@ -260,6 +262,7 @@ private boolean verifyElement(ITextSelection element) {
  * the type test, and optionally wildcard name match.
  */
 private boolean verifyElement(IAdaptable element) {
+	if (classes.isEmpty()) return true;
 	for (int i = 0; i < classes.size(); i++) {
 		SelectionClass sc = (SelectionClass) classes.get(i);
 		if (verifyClass(element, sc.className) == false)
