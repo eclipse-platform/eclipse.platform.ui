@@ -108,8 +108,7 @@ class IndexNode extends IndexedStoreObject {
 	private int compareEntryToKey(int entryNumber, byte[] key) throws IndexedStoreException {
 		Field keyField = new Field(key);
 		Field entryKeyField = getKeyField(entryNumber);
-		int result = entryKeyField.compareTo(keyField);
-		return result;
+		return entryKeyField.compareTo(keyField);
 	}
 
 	/**
@@ -296,9 +295,10 @@ class IndexNode extends IndexedStoreObject {
 	private int findLastEntryLT(byte[] key) throws IndexedStoreException {
 		int lo = 0;
 		int hi = numberOfEntries - 1;
+		Field keyField = new Field(key);
 		while (lo <= hi) {
 			int i = (lo + hi) / 2;
-			int c = compareEntryToKey(i, key);
+			int c = getKeyField(i).compareTo(keyField);
 			if (c < 0) {
 				lo = i + 1;
 			} else {
@@ -341,10 +341,17 @@ class IndexNode extends IndexedStoreObject {
 	 * Returns a Field covering the key for an entry at a given index.
 	 */
 	private Field getKeyField(int i) {
-		Field descriptor = getDescriptor(i);
-		int keyOffset = descriptor.subfield(0, 2).getUInt();
-		int keyLength = descriptor.subfield(2, 2).getUInt();
-		return entriesField.subfield(keyOffset, keyLength);
+//		Field descriptor = getDescriptor(i);
+//		int keyOffset = descriptor.subfield(0, 2).getUInt();
+//		int keyLength = descriptor.subfield(2, 2).getUInt();
+//		return entriesField.subfield(keyOffset, keyLength);
+		//above is the original code that created three garbage field objects
+		//below is the optimized code that only creates one field object
+		int descriptorOff = i * DescriptorLength;
+		Buffer buffer = entriesField.buffer;
+		return entriesField.subfield(
+			buffer.getUInt(descriptorOff, 2),//these bytes hold the key offset
+			buffer.getUInt(descriptorOff+2, 2));//these bytes hold the key length
 	}
 
 	/**
