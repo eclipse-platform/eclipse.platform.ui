@@ -85,7 +85,7 @@ public final class InternalPlatform {
 	// command line options
 	private static final String LOG = "-consolelog"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
-	private static final String PASSWORD = "-password"; //$NON-NLS-1$
+	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 	

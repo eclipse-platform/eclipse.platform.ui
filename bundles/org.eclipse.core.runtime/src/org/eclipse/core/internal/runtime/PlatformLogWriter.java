@@ -146,7 +146,11 @@ protected void writeHeader() throws IOException {
 	if (args != null && args.length > 0) {
 		write("Command-line arguments:");//$NON-NLS-1$
 		for (int i=0; i<args.length; i++) {
-			write(" " + args[i]);//$NON-NLS-1$
+			//mask out the password argument for security
+			if (i > 0 && InternalPlatform.PASSWORD.equals(args[i-1]))
+				write(" (omitted)");//$NON-NLS-1$
+			else
+				write(" " + args[i]);//$NON-NLS-1$
 		}
 		writeln();
 	}
