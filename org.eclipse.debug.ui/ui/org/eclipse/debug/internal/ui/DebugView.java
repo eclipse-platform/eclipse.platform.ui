@@ -115,7 +115,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 * Returns the configured instruction pointer.
 	 * Selection is based on the line number OR char start and char end.
 	 */
-	protected IMarker getInstructionPointer(final int lineNumber, final int charStart, final int charEnd, final boolean isTopStackFrame) {
+	protected IMarker getInstructionPointer(final int lineNumber, final int charStart, final int charEnd) {
 		
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -248,17 +248,13 @@ public class DebugView extends LaunchesView implements IPartListener {
 				}
 				
 				if (editorInput != null) {
-					boolean isTopStackFrame= false;
 					int lineNumber= 0;
-					try {
-						isTopStackFrame= stackFrame.getThread().getTopStackFrame() == stackFrame;
-					} catch (DebugException de) {
-					}
 					try {
 						lineNumber= stackFrame.getLineNumber();
 					} catch (DebugException de) {
+						DebugUIPlugin.logError(de);
 					}
-					openEditorAndSetMarker(editorInput, editorId, lineNumber, -1, -1, isTopStackFrame);
+					openEditorAndSetMarker(editorInput, editorId, lineNumber, -1, -1);
 				}
 			} finally {
 				fShowingMarker= false;
@@ -270,7 +266,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 * Get the active window and open/bring to the front an editor on the source element.
 	 * Selection is based on the line number OR the char start and end.
 	 */
-	protected void openEditorAndSetMarker(IEditorInput input, String editorId, int lineNumber, int charStart, int charEnd, boolean isTopStackFrame) {
+	protected void openEditorAndSetMarker(IEditorInput input, String editorId, int lineNumber, int charStart, int charEnd) {
 		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
 		if (dwindow == null) {
 			return;
@@ -318,7 +314,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
 			//have an editor and either a lineNumber or a starting character
-			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd, isTopStackFrame);
+			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 			editor.gotoMarker(marker);
 		}
 	}
