@@ -21,6 +21,9 @@ import org.eclipse.ui.internal.util.ImageSupport;
 
 final class ImageFactory {
 
+	private static ImageRegistry imageRegistry = new ImageRegistry();
+	private static Map map = new HashMap();
+
 	static {
 		put("blank", "icons/full/commands/blank.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "icons/full/commands/change.gif"); //$NON-NLS-1$//$NON-NLS-2$
@@ -29,9 +32,6 @@ final class ImageFactory {
 		put("minus", "icons/full/commands/minus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "icons/full/commands/plus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}
-
-	private static ImageRegistry imageRegistry = new ImageRegistry();
-	private static Map map = new HashMap();
 
 	static Image getImage(String key) {
 		Image image = (Image) imageRegistry.get(key);
