@@ -48,7 +48,7 @@ public class NotifiedHandler extends ResponseHandler {
 
 		// clear the notify info for the file
 		ICVSFolder folder = session.getLocalRoot().getFolder(localDir);
-		ICVSFile file = folder.getFile(new Path(repositoryFilePath).lastSegment());
+		ICVSFile file = folder.getFile(new Path(null, repositoryFilePath).lastSegment());
 		file.notificationCompleted();
 	}
 

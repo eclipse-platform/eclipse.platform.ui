@@ -192,7 +192,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				if (RepositoryRoot.isDefinedModuleName(currentRemotePath)) {
 					path = null;
 				} else {
-					path = new Path(currentRemotePath).append(path).toString();
+					path = new Path(null, currentRemotePath).append(path).toString();
 				}
 			}
 			if (path != null) autoRefreshFiles.add(path);

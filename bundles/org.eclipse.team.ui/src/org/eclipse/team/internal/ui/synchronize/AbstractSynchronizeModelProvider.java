@@ -535,9 +535,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
             // but may still appear in the view so try to deduce the type
             // from the path
             if (path.endsWith(Character.toString(Path.SEPARATOR))) {
-                resource = container.getFolder(new Path(path));
+                resource = container.getFolder(new Path(null, path));
             } else {
-                resource = container.getFile(new Path(path));
+                resource = container.getFile(new Path(null, path));
             }
         }
         return resource;

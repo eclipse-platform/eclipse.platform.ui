@@ -49,7 +49,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 					ICVSRemoteFolder folder = (ICVSRemoteFolder)next;
 					if (folder.isDefinedModule()) {
 						resources.add(next);
-					} else if(new Path(((ICVSRemoteFolder)next).getRepositoryRelativePath()).segmentCount()==1) {
+					} else if(new Path(null, ((ICVSRemoteFolder)next).getRepositoryRelativePath()).segmentCount()==1) {
 						resources.add(next);
 					}
 				}

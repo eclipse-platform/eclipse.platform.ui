@@ -84,7 +84,7 @@ public class ShareProjectOperation extends CVSOperation {
 			moduleName = projectName;
 
 		RemoteFolderTree root = new RemoteFolderTree(null, location, Path.EMPTY.toString(), null);
-		Path path = new Path(moduleName);
+		Path path = new Path(null, moduleName);
 		
 		try {
 			monitor.beginTask(getTaskName(), 100 * path.segmentCount());
@@ -120,7 +120,7 @@ public class ShareProjectOperation extends CVSOperation {
 	 * Create handles for all the children in the moduleName path
 	 */
 	private RemoteFolderTree createChild(RemoteFolderTree parent, String name, IProgressMonitor monitor) throws CVSException, TeamException {
-		RemoteFolderTree child = new RemoteFolderTree(parent, name, location, new Path(parent.getRepositoryRelativePath()).append(name).toString(), null);
+		RemoteFolderTree child = new RemoteFolderTree(parent, name, location, new Path(null, parent.getRepositoryRelativePath()).append(name).toString(), null);
 		parent.setChildren(new ICVSRemoteResource[] { child });
 		if (child.exists(Policy.subMonitorFor(monitor, 50))) {
 			// The child exists so get the handle that was received from the server

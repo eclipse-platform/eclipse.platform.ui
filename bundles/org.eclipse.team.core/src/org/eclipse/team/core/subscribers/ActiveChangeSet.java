@@ -175,7 +175,7 @@ public class ActiveChangeSet extends ChangeSet {
         IResource resource = root.findMember(next);
         if (resource == null) {
             // May be an outgoing deletion
-            Path path = new Path(next);
+            Path path = new Path(null, next);
             if (next.charAt(next.length()-1) == Path.SEPARATOR) {
                 if (path.segmentCount() == 1) {
                     // resource is a project

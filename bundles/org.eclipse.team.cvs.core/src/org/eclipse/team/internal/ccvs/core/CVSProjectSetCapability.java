@@ -366,7 +366,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 									// Convert the module expansions to local projects
 									String[] expansions = session.getModuleExpansions();
 									for (int j = 0; j < expansions.length; j++) {
-										targetProjects.add(ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(expansions[j]).segment(0)));
+										targetProjects.add(ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(null, expansions[j]).segment(0)));
 									}
 									
 								} else {

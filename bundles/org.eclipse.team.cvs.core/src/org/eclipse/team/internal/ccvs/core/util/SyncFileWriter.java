@@ -581,7 +581,7 @@ public class SyncFileWriter {
 			if (!baseFolder.exists()) {
 				baseFolder.create(false /* force */, true /* local */, Policy.subMonitorFor(monitor, 10));
 			}
-			IFile target = baseFolder.getFile(new Path(file.getName()));
+			IFile target = baseFolder.getFile(new Path(null, file.getName()));
 			if (target.exists()) {
 				// XXX Should ensure that we haven't already copied it
 				// XXX write the revision to the CVS/Baserev file
@@ -609,7 +609,7 @@ public class SyncFileWriter {
 		monitor.beginTask(null, 100);
 		try {
 			IFolder baseFolder = getBaseDirectory(file);
-			IFile source = baseFolder.getFile(new Path(file.getName()));
+			IFile source = baseFolder.getFile(new Path(null, file.getName()));
 			if (!source.exists()) {
 				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
 			}
@@ -635,7 +635,7 @@ public class SyncFileWriter {
 		monitor.beginTask(null, 100);
 		try {
 			IFolder baseFolder = getBaseDirectory(file);
-			IFile source = baseFolder.getFile(new Path(file.getName()));
+			IFile source = baseFolder.getFile(new Path(null, file.getName()));
 			if (source.exists()) {
 				if (source.isReadOnly()) {
 					source.setReadOnly(false);

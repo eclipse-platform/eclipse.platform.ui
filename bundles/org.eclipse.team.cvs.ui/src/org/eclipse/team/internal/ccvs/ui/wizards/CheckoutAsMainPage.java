@@ -88,7 +88,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	private String getFolderName() {
 		String name = folders[0].getName();
 		if (name .equals(".")) { //$NON-NLS-1$
-			name = new Path(folders[0].getRepository().getRootDirectory()).lastSegment();
+			name = new Path(null, folders[0].getRepository().getRootDirectory()).lastSegment();
 		}
 		return name;
 	}

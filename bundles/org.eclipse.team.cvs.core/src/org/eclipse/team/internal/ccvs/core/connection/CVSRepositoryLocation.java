@@ -694,7 +694,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see ICVSRepositoryLocation#getRemoteFile(String, CVSTag)
 	 */
 	public ICVSRemoteFile getRemoteFile(String remotePath, CVSTag tag) {
-		IPath path = new Path(remotePath);
+		IPath path = new Path(null, remotePath);
 		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, this, path.removeLastSegments(1).toString(), tag);
 		RemoteFile remoteFile = new RemoteFile(remoteFolder, Update.STATE_ADDED_LOCAL, path.lastSegment(), null, null, tag);
 		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });

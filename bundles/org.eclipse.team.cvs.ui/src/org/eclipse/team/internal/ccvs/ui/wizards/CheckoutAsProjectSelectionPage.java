@@ -246,7 +246,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	
 	public IContainer getLocalFolder() {
 		if (Path.EMPTY.isValidSegment(folderName)) {
-			return ((IContainer)getSelection()).getFolder(new Path(folderName));
+			return ((IContainer)getSelection()).getFolder(new Path(null, folderName));
 		} else {
 			return null;
 		}

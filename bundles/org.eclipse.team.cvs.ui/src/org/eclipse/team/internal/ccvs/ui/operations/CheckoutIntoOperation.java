@@ -147,7 +147,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			// Convert the module expansions to target folders
 			String[] expansions = session.getModuleExpansions();
 			for (int j = 0; j < expansions.length; j++) {
-				String childPath = new Path(expansions[j]).segment(0);
+				String childPath = new Path(null, expansions[j]).segment(0);
 				ICVSResource resource = parentFolder.getChild(childPath);
 				if (resource != null && !resource.isFolder()) {
 					// The target folder conflicts with an existing file
@@ -221,8 +221,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		if (localInfo == null) return false;
 		FolderSyncInfo parentInfo = targetFolder.getParent().getFolderSyncInfo();
 		if (parentInfo == null) return false;
-		IPath childPath = new Path(localInfo.getRepository());
-		IPath parentPath = new Path(parentInfo.getRepository());
+		IPath childPath = new Path(null, localInfo.getRepository());
+		IPath parentPath = new Path(null, parentInfo.getRepository());
 		return parentPath.isPrefixOf(childPath);
 	}
 
@@ -329,7 +329,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			// Determine which local folders will be affected
 			String localName = localFolderName;
 			if (localName == null) {
-				IPath path = new Path(remoteFolder.getRepositoryRelativePath());
+				IPath path = new Path(null, remoteFolder.getRepositoryRelativePath());
 				if (path.segmentCount() > 1) {
 					localName = path.lastSegment();
 				}

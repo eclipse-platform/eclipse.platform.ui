@@ -398,7 +398,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 				ICVSFolder parent = CVSWorkspaceRoot.getCVSFolderFor(file.getParent());
 				FolderSyncInfo info = parent.getFolderSyncInfo();
 				ICVSRepositoryLocation location = KnownRepositories.getInstance().getRepository(info.getRoot());
-				final ICVSRemoteFile remoteFile = location.getRemoteFile(new Path(info.getRepository()).append(file.getName()).toString(), CVSTag.DEFAULT);
+				final ICVSRemoteFile remoteFile = location.getRemoteFile(new Path(null, info.getRepository()).append(file.getName()).toString(), CVSTag.DEFAULT);
 				
 				// Then we need to fetch the log entries
 				getContainer().run(true, true, new IRunnableWithProgress() {

@@ -135,7 +135,7 @@ public class RepositoryRoot extends PlatformObject {
 			FolderSyncInfo info = resource.getParent().getFolderSyncInfo();
 			if (info == null)
 				throw new CVSException(Policy.bind("RepositoryRoot.folderInfoMissing", resource.getParent().getName())); //$NON-NLS-1$
-			String path = new Path(info.getRepository()).append(resource.getName()).toString();
+			String path = new Path(null, info.getRepository()).append(resource.getName()).toString();
 			return path;
 		}
 	}
@@ -266,7 +266,7 @@ public class RepositoryRoot extends PlatformObject {
 			List result = new ArrayList();
 			for (int i = 0; i < DEFAULT_AUTO_REFRESH_FILES.length; i++) {
 				String relativePath = DEFAULT_AUTO_REFRESH_FILES[i];
-				result.add(new Path(remotePath).append(relativePath).toString());
+				result.add(new Path(null, remotePath).append(relativePath).toString());
 			}
 			return (String[]) result.toArray(new String[result.size()]);
 		} else {
@@ -287,7 +287,7 @@ public class RepositoryRoot extends PlatformObject {
 			boolean isDefault = true;
 			for (int i = 0; i < DEFAULT_AUTO_REFRESH_FILES.length; i++) {
 				String filePath = DEFAULT_AUTO_REFRESH_FILES[i];
-				if (!newFiles.contains(new Path(remotePath).append(filePath).toString())) {
+				if (!newFiles.contains(new Path(null, remotePath).append(filePath).toString())) {
 					isDefault = false;
 					break;
 				}
@@ -347,7 +347,7 @@ public class RepositoryRoot extends PlatformObject {
 	}
 	
 	private String getCachePathFor(String remotePath) {
-		String root = new Path(remotePath).segment(0);
+		String root = new Path(null, remotePath).segment(0);
 		if (isDefinedModuleName(remotePath)) {
 			return asDefinedModulePath(root);
 		}

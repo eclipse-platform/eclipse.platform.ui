@@ -72,11 +72,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public ICVSFolder getFolder(String name) throws CVSException {
 		if ((CURRENT_LOCAL_FOLDER.equals(name)) || ((CURRENT_LOCAL_FOLDER + SEPARATOR).equals(name)))
 			return this;
-		IPath path = new Path(name);
+		IPath path = new Path(null, name);
 		if(resource.getType()==IResource.ROOT && path.segmentCount()==1) {
 			return new EclipseFolder(((IWorkspaceRoot)resource).getProject(name));
 		} else {
-			return new EclipseFolder(((IContainer)resource).getFolder(new Path(name)));
+			return new EclipseFolder(((IContainer)resource).getFolder(path));
 		}
 	}
 
@@ -84,7 +84,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#createFile(String)
 	 */
 	public ICVSFile getFile(String name) throws CVSException {
-		return new EclipseFile(((IContainer)resource).getFile(new Path(name)));
+		return new EclipseFile(((IContainer)resource).getFile(new Path(null, name)));
 	}
 
 	/**
@@ -264,7 +264,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	    if (namedPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
 	        return this;
 	    }
-		IPath path = new Path(namedPath);
+		IPath path = new Path(null, namedPath);
 		if(path.segmentCount()==0) {
 			 return this;
 		}

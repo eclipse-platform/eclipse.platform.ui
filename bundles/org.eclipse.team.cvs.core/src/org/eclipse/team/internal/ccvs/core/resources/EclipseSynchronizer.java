@@ -784,7 +784,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				if (infos != null) {
 					for (int i = 0; i < infos.length; i++) {
 						byte[] syncBytes = infos[i];
-						IPath name = new Path(getName(syncBytes));
+						IPath name = new Path(null, getName(syncBytes));
 						IResource resource;
 						if (isFolder(syncBytes)) {
 							resource = container.getFolder(name);

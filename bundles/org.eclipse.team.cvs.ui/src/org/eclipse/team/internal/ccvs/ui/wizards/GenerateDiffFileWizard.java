@@ -223,7 +223,7 @@ public class GenerateDiffFileWizard extends Wizard {
         public IResource getResource() {
             if (pageValid && selectedLocation == WORKSPACE) {
                 final String filename= wsFilenameText.getText().trim();
-                return wsSelectedContainer.getFile(new Path(filename));
+                return wsSelectedContainer.getFile(new Path(null, filename));
             }
             return null;
         }

@@ -104,7 +104,7 @@ public class RemoteCompareOperation extends RemoteOperation {
         public void addToTrees(ICVSRemoteFile predecessor, ICVSRemoteFile remote) {
             if (remote != null) {
 				try {
-					Path filePath = new Path(remote.getRepositoryRelativePath());
+					Path filePath = new Path(null, remote.getRepositoryRelativePath());
                     addFile(rightTree, right, filePath, remote.getRevision());
 					getFolder(leftTree, left, filePath.removeLastSegments(1), Path.EMPTY);
 				} catch (TeamException e) {
@@ -113,7 +113,7 @@ public class RemoteCompareOperation extends RemoteOperation {
             }
             if (predecessor != null) {
 				try {
-					Path filePath = new Path(predecessor.getRepositoryRelativePath());
+					Path filePath = new Path(null, predecessor.getRepositoryRelativePath());
                     addFile(leftTree, left, filePath, predecessor.getRevision());
 					getFolder(rightTree, right, filePath.removeLastSegments(1), Path.EMPTY);
 				} catch (TeamException e) {
@@ -172,12 +172,12 @@ public class RemoteCompareOperation extends RemoteOperation {
 		 */
 		public void fileDiff(String remoteFilePath, String leftRevision, String rightRevision) {
 			try {
-				addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
+				addFile(rightTree, right, new Path(null, remoteFilePath), rightRevision);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}
 			try {
-				addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
+				addFile(leftTree, left, new Path(null, remoteFilePath), leftRevision);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -188,7 +188,7 @@ public class RemoteCompareOperation extends RemoteOperation {
 		 */
 		public void newFile(String remoteFilePath, String rightRevision) {
 			try {
-				addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
+				addFile(rightTree, right, new Path(null, remoteFilePath), rightRevision);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -200,7 +200,7 @@ public class RemoteCompareOperation extends RemoteOperation {
 		public void deletedFile(String remoteFilePath, String leftRevision) {
 			// The leftRevision may be null in which case the tag is used
 			try {
-				addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
+				addFile(leftTree, left, new Path(null, remoteFilePath), leftRevision);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -211,12 +211,12 @@ public class RemoteCompareOperation extends RemoteOperation {
 		 */
 		public void directory(String remoteFolderPath) {
 			try {
-				getFolder(leftTree, left, new Path(remoteFolderPath), Path.EMPTY);
+				getFolder(leftTree, left, new Path(null, remoteFolderPath), Path.EMPTY);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}
 			try {
-				getFolder(rightTree, right, new Path(remoteFolderPath), Path.EMPTY);
+				getFolder(rightTree, right, new Path(null, remoteFolderPath), Path.EMPTY);
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);
 			}

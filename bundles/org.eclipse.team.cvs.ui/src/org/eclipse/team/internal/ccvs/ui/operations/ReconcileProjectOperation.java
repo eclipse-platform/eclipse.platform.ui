@@ -148,9 +148,9 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 		IResource resource = parent.findMember(member.getName());
 		if (resource == null) {
 			if (member.isContainer()) {
-				resource = parent.getFolder(new Path(member.getName()));
+				resource = parent.getFolder(new Path(null, member.getName()));
 			} else {
-				resource = parent.getFile(new Path(member.getName()));
+				resource = parent.getFile(new Path(null, member.getName()));
 			}
 		}
 		return resource;

@@ -276,7 +276,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * @since 3.1
 	 */
 	public IPath getDisplayPath() {
-		return new Path(getCachePath());
+		return new Path(null, getCachePath());
 	}
 	
 }

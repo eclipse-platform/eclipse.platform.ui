@@ -170,7 +170,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	 */
 	public void directoryInformation(ICVSFolder commandRoot, String stringPath, boolean newDirectory) {
 		try {
-			IPath path = this.parentFolder.getRelativePathFromRootRelativePath(commandRoot, new Path(stringPath));
+			IPath path = this.parentFolder.getRelativePathFromRootRelativePath(commandRoot, new Path(null, stringPath));
 			if (path.segmentCount() == 1) {
 			    String pathName = path.lastSegment();
 			    if (!pathName.equals(".")) { //$NON-NLS-1$
@@ -187,7 +187,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	 */
 	public void directoryDoesNotExist(ICVSFolder parent, String stringPath) {
 		try {
-			IPath path = this.parentFolder.getRelativePathFromRootRelativePath(parent, new Path(stringPath));
+			IPath path = this.parentFolder.getRelativePathFromRootRelativePath(parent, new Path(null, stringPath));
 			if (path.isEmpty()) {
 				parentDoesNotExist();
 			}
@@ -201,7 +201,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	 */
 	public void fileInformation(int type, ICVSFolder parent, String filename) {
 		try {
-			IPath filePath = new Path(filename);
+			IPath filePath = new Path(null, filename);
 			filePath = this.parentFolder.getRelativePathFromRootRelativePath(parent, filePath);	
 			if( filePath.segmentCount() == 1 ) {
 				String properFilename = filePath.lastSegment();

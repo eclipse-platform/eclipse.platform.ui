@@ -45,7 +45,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 				return new CVSStatus(CVSStatus.ERROR,
 					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile)); //$NON-NLS-1$
 			}
-			IPath rcsFilePath = new Path(rcsFile.substring(0, rcsFile.length() - 2));
+			IPath rcsFilePath = new Path(null, rcsFile.substring(0, rcsFile.length() - 2));
 			try {
 				ICVSFile file = findLocalFileFor(commandRoot, rcsFilePath);
 				//ResourceSyncInfo info = file.getSyncInfo();
@@ -70,7 +70,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR,
 				Policy.bind("AdminKSubstListener.commandRootNotManaged"))); //$NON-NLS-1$
 		}
-		IPath remoteRootPath = new Path(remoteRootLocation);
+		IPath remoteRootPath = new Path(null, remoteRootLocation);
 		if (remoteRootPath.isPrefixOf(rcsFilePath)) {
 			IPath relativeFilePath = rcsFilePath.removeFirstSegments(remoteRootPath.segmentCount());
 			ICVSFile file = commandRoot.getFile(relativeFilePath.toString());

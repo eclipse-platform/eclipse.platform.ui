@@ -339,7 +339,7 @@ public class SyncInfoTree extends SyncInfoSet {
 					modelObject = element;
 	
 				} else if (childPath.segmentCount() > path.segmentCount()) {
-					IContainer childFolder = parent.getFolder(new Path(childPath.segment(path.segmentCount())));
+					IContainer childFolder = parent.getFolder(new Path(null, childPath.segment(path.segmentCount())));
 					modelObject = childFolder;
 				}
 				if (modelObject != null) {

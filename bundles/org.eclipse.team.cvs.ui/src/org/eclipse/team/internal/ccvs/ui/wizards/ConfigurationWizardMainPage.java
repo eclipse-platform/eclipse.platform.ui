@@ -591,7 +591,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (pathString.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.4"), null); //$NON-NLS-1$
 		}
-		IPath path = new Path(pathString);
+		IPath path = new Path(null, pathString);
 		String[] segments = path.segments();
 		for (int i = 0; i < segments.length; i++) {
 			String string = segments[i];

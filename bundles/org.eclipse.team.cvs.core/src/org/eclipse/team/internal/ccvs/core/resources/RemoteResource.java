@@ -215,7 +215,7 @@ public abstract class RemoteResource extends CachedResourceVariant implements IC
 	 */
 	public String getCachePath() {
 		ICVSRepositoryLocation location = getRepository();
-		IPath path = new Path(location.getHost());
+		IPath path = new Path(null, location.getHost());
 		path = path.append(location.getRootDirectory());
 		path = path.append(parent.getRepositoryRelativePath());
 		path = path.append(getName() + ' ' + getContentIdentifier());

@@ -185,7 +185,7 @@ public class RemoteModule extends RemoteFolder {
 					// XXX Unsupported for now
 					expandable = false;
 				} else {
-					IPath path = new Path(expansion[i]);
+					IPath path = new Path(null, expansion[i]);
 					if (path.segmentCount() > 1) {
 						// XXX Unsupported for now
 						expandable = false;

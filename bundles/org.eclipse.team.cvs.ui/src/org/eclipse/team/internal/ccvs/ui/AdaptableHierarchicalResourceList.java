@@ -57,7 +57,7 @@ public class AdaptableHierarchicalResourceList extends AdaptableResourceList {
 				if (parentRelativePath.segmentCount() == 1) {
 					children.add(resource);
 				} else if (parentRelativePath.segmentCount() > 1) {
-					children.add(parent.getFolder(new Path(parentRelativePath.segment(0))));
+					children.add(parent.getFolder(new Path(null, parentRelativePath.segment(0))));
 				}
 			}
 		}

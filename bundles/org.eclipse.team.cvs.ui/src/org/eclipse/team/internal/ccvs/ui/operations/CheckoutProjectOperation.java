@@ -119,7 +119,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			// Check to see if the entire repo is being checked out.
 			if (project == null && resource.getName().equals(".")) { //$NON-NLS-1$
 				// No project was specified but we need on for this to work
-				String name = new Path(resource.getRepository().getRootDirectory()).lastSegment();
+				String name = new Path(null, resource.getRepository().getRootDirectory()).lastSegment();
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			}
 			
@@ -217,7 +217,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					// we will want to flatten the directory structure
 					String path = resource.getRepositoryRelativePath();
 					if (!path.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)
-							&& new Path(path).segmentCount() > 1) {
+							&& new Path(null, path).segmentCount() > 1) {
 						project = targetProjects[0];
 					}
 				}
@@ -284,11 +284,11 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			String[] expansions = session.getModuleExpansions();
 			if (expansions.length == 1 && expansions[0].equals(moduleName)) {
 				// For a remote folder, use the last segment as the project to be created
-				String lastSegment = new Path(expansions[0]).lastSegment();
+				String lastSegment = new Path(null, expansions[0]).lastSegment();
 				targetProjectSet.add(ResourcesPlugin.getWorkspace().getRoot().getProject(lastSegment));
 			} else {
 				for (int j = 0; j < expansions.length; j++) {
-					targetProjectSet.add(ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(expansions[j]).segment(0)));
+					targetProjectSet.add(ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(null, expansions[j]).segment(0)));
 				}
 			}
 			

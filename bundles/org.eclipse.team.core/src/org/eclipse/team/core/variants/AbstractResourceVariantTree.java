@@ -263,9 +263,9 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 			return null;
 		}
 		if (isContainer) {
-			return ((IContainer) parent).getFolder(new Path(childName));
+			return ((IContainer) parent).getFolder(new Path(null, childName));
 		} else {
-			return ((IContainer) parent).getFile(new Path(childName));
+			return ((IContainer) parent).getFile(new Path(null, childName));
 		}
 	}
 

@@ -526,7 +526,7 @@ public class TagConfigurationDialog extends Dialog {
 					try {
 						ICVSFile file = ((CVSFileElement)it.next()).getCVSFile();
 						ICVSFolder fileParent = file.getParent();
-						String filePath = new Path(fileParent.getFolderSyncInfo().getRepository())
+						String filePath = new Path(null, fileParent.getFolderSyncInfo().getRepository())
 							.append(file.getRelativePath(fileParent)).toString();
 						if(autoRefreshFileList.indexOf(filePath)==-1) {
 							autoRefreshFileList.add(filePath);					
