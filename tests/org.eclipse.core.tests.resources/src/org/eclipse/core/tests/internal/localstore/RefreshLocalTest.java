@@ -217,8 +217,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		assertTrue("4.1", file.exists());
 		assertTrue("4.2", file.isLocal(IResource.DEPTH_ZERO));
 		assertEquals("4.3", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
-		Thread.sleep(sleepTime);
-		ensureExistsInFileSystem(file);
+		ensureOutOfSync(file);
 		assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() != CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()));
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		assertEquals("4.5", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
