@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import java.util.*;
+import java.util.List;
+
+import org.eclipse.jface.instrumentation.JFaceInstrumentationManager;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List;  // disambiguate from SWT List
 
 /**
  * A menu manager is a contribution manager which realizes itself and its items
@@ -252,6 +255,12 @@ public IContributionItem findUsingPath(String path) {
  * @see IMenuListener#menuAboutToShow
  */
 private void fireAboutToShow(IMenuManager manager) {
+	
+	if (menu.getParentItem() != null)
+		JFaceInstrumentationManager.menuShown(menu.getParentItem().getText());	
+	else
+		JFaceInstrumentationManager.menuShown("ContextMenu");
+			
 	Object[] listeners = this.listeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((IMenuListener) listeners[i]).menuAboutToShow(manager);

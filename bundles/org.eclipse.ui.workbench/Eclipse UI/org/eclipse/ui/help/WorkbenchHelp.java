@@ -11,15 +11,17 @@
 package org.eclipse.ui.help;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IHelp;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.instrumentation.WorkbenchInstrumentationManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Provides methods for accessing the help support system and for hooking
@@ -82,6 +84,10 @@ private static Point computePopUpLocation(Display display) {
  * @param point the location for the help popup
  */
 private static void displayHelp(String helpContext, Point point) {
+	
+	//let the listeners know help was called
+	WorkbenchInstrumentationManager.fireHelpActivated(helpContext);
+	  
 	IHelp helpSupport = getHelpSupport();
 	if (helpSupport == null)
 		return;
@@ -95,6 +101,10 @@ private static void displayHelp(String helpContext, Point point) {
  * @param point the location for the help popup
  */
 private static void displayHelp(IContext helpContext, Point point) {
+	
+	//let the listeners know help was called
+	WorkbenchInstrumentationManager.fireHelpActivated(helpContext.toString());
+	  
 	IHelp helpSupport = getHelpSupport();
 	if (helpSupport == null)
 		return;
