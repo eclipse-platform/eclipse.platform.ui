@@ -95,5 +95,12 @@ public interface IAntUIConstants {
 	public static final String DIALOGSTORE_LASTEXTJAR= PLUGIN_ID + ".lastextjar"; //$NON-NLS-1$
 	public static final String DIALOGSTORE_LASTEXTFILE= PLUGIN_ID + ".lastextfile"; //$NON-NLS-1$
 	public static final String DIALOGSTORE_LASTFOLDER= PLUGIN_ID + ".lastfolder"; //$NON-NLS-1$
-	public static final String DIALOGSTORE_LASTANTHOME= PLUGIN_ID + ".lastanthome"; //$NON-NLS-1$						
+	public static final String DIALOGSTORE_LASTANTHOME= PLUGIN_ID + ".lastanthome"; //$NON-NLS-1$
+	
+	/**
+	 * Size of left-hand column for right-justified task name.
+	 * Used for Ant Build logging.
+	 * @see org.eclipse.ant.ui,internal.antsupport.logger.AntProcessBuildLogger#logMessage(String, BuildEvent, -1)
+	  */
+	public static final int LEFT_COLUMN_SIZE = 15;			
 }
