@@ -384,7 +384,16 @@ public class ProjectionDocument extends AbstractDocument {
 		}
 	}
 	
-	private IRegion[] computeUnprojectedMasterRegions(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+	/**
+	 * Returns the sequence of all master document regions with are contained in the given master document
+	 * range and which are not yet part of this projection document.
+	 * 
+	 * @param offsetInMaster the range offset in the master document
+	 * @param lengthInMaster the range length in the master document
+	 * @return the sequence of regions which are not yet part of the projection document
+	 * @throws BadLocationException in case the given range is invalid in the master document
+	 */
+	public final IRegion[] computeUnprojectedMasterRegions(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		
 		IRegion[] fragments= null;
 		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
@@ -462,12 +471,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @throws BadLocationException in case the master event is not valid
 	 */
 	public void removeMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
-		
-		IRegion[] fragments= null;
-		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
-		if (imageRegion != null)
-			fragments= fMapping.toExactOriginRegions(imageRegion);
-		
+		IRegion[] fragments= computeProjectedMasterRegions(offsetInMaster, lengthInMaster);
 		if (fragments == null || fragments.length == 0)
 			return;
 		
@@ -475,6 +479,23 @@ public class ProjectionDocument extends AbstractDocument {
 			IRegion fragment= fragments[i];
 			internalRemoveMasterDocumentRange(fragment.getOffset(), fragment.getLength());
 		}
+	}
+	
+	/**
+	 * Returns the sequence of all master document regions with are contained in the given master document
+	 * range and which are part of this projection document. May return <code>null</code> if no such
+	 * regions exist.
+	 * 
+	 * @param offsetInMaster the range offset in the master document
+	 * @param lengthInMaster the range length in the master document
+	 * @return the sequence of regions which are part of the projection document or <code>null</code>
+	 * @throws BadLocationException in case the given range is invalid in the master document
+	 */
+	final public IRegion[] computeProjectedMasterRegions(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
+		if (imageRegion != null)
+			return fMapping.toExactOriginRegions(imageRegion);
+		return null;
 	}
 	
 	/**

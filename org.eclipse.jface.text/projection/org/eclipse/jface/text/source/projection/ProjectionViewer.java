@@ -69,13 +69,7 @@ import org.eclipse.jface.text.source.SourceViewer;
  * @since 3.0
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
-	
-	
-	/**
-	 * Threshold determining whether individual repaints should be sent out.
-	 */
-	private static final int REDRAW_THRESHOLD= 15;
-	
+		
 	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
 	
 	/** Operation constant for the expand operation. */
@@ -153,26 +147,111 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Internal listener to find the document onto which to hook the replace-visible-document command.
+	 * A command reifying a change of the projection document. This can be either
+	 * adding a master document range, removing a master document change, or invalidating
+	 * the viewer text presentation.
 	 */
-	private class DocumentListener implements IDocumentListener {
-
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
-		public void documentAboutToBeChanged(DocumentEvent event) {
-			fRememberedTopIndex= getTopIndex();
+	private static class ProjectionCommand {
+		
+		final static int ADD= 0;
+		final static int REMOVE= 1;
+		final static int INVALIDATE_PRESENTATION= 2;
+		
+		ProjectionDocument fProjection;
+		int fType;
+		int fOffset;
+		int fLength;
+		
+		ProjectionCommand(ProjectionDocument projection, int type, int offset, int length) {
+			fProjection= projection;
+			fType= type;
+			fOffset= offset;
+			fLength= length;
 		}
-
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
-		public void documentChanged(DocumentEvent event) {
-			fRememberedTopIndex= -1;
+		
+		ProjectionCommand(int offset, int length) {
+			fType= INVALIDATE_PRESENTATION;
+			fOffset= offset;
+			fLength= length;
+		}
+				
+		int computeExpectedCosts() {
+			
+			switch(fType) {
+				case ADD: {
+					try {
+						IRegion[] gaps= fProjection.computeUnprojectedMasterRegions(fOffset, fLength);
+						return gaps == null ? 0 : gaps.length;
+					} catch (BadLocationException x) {
+					}
+					break;
+				}
+				case REMOVE: {
+					try {
+						IRegion[] fragments= fProjection.computeProjectedMasterRegions(fOffset, fLength);
+						return fragments == null ? 0 : fragments.length;
+					} catch (BadLocationException x) {
+					}
+					break;
+				}
+			}
+			return 0;
 		}
 	}
 	
-	
+	/**
+	 * The queue of projection command objects.
+	 */
+	private static class ProjectionCommandQueue {
+		
+		final static int REDRAW_COSTS= 15;
+		final static int INVALIDATION_COSTS= 10;
+		
+		List fList= new ArrayList(15);
+		int fExpectedExecutionCosts= -1;
+		
+		
+		void add(ProjectionCommand command) {
+			fList.add(command);
+		}
+		
+		Iterator iterator() {
+			return fList.iterator();
+		}
+		
+		void clear() {
+			fList.clear();
+			fExpectedExecutionCosts= -1;
+		}
+		
+		boolean passedRedrawCostsThreshold() {
+			if (fExpectedExecutionCosts == -1)
+				computeExpectedExecutionCosts();
+			return fExpectedExecutionCosts > REDRAW_COSTS;
+		}
+		
+		boolean passedInvalidationCostsThreshold() {
+			if (fExpectedExecutionCosts == -1)
+				computeExpectedExecutionCosts();
+			return fExpectedExecutionCosts > INVALIDATION_COSTS;
+		}
+
+		private void computeExpectedExecutionCosts() {
+			int max_costs= Math.max(REDRAW_COSTS, INVALIDATION_COSTS);
+			fExpectedExecutionCosts= fList.size();
+			if (fExpectedExecutionCosts <= max_costs) {
+				ProjectionCommand command;
+				Iterator e= fList.iterator();
+				while (e.hasNext()) {
+					command= (ProjectionCommand) e.next();
+					fExpectedExecutionCosts += command.computeExpectedCosts();
+					if (fExpectedExecutionCosts > max_costs)
+						break;
+				}
+			}			
+		}
+	}
+
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The annotation model listener */
@@ -191,12 +270,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private List fPendingRequests= new ArrayList();
 	/** The replace-visible-document execution trigger */
 	private IDocument fReplaceVisibleDocumentExecutionTrigger;
-	/** Internal document listener */
-	private IDocumentListener fDocumentListener= new DocumentListener();
-	/** Remembered top index when the master document changes*/
-	private int fRememberedTopIndex= -1;
 	/** <code>true</code> if projection was on the last time we switched to segmented mode. */
 	private boolean fWasProjectionEnabled;
+	/** The queue of projection commands used to assess the costs of projection changes. */
+	private ProjectionCommandQueue fCommandQueue;
+	
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -476,11 +554,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see ProjectionDocument#addMasterDocumentRange(int, int)
 	 */
 	private void addMasterDocumentRange(ProjectionDocument projection, int offset, int length) throws BadLocationException {
-		try {
-			fHandleProjectionChanges= false;
-			projection.addMasterDocumentRange(offset, length);
-		} finally {
-			fHandleProjectionChanges= true;
+		
+		if (fCommandQueue != null) {
+			fCommandQueue.add(new ProjectionCommand(projection, ProjectionCommand.ADD, offset, length));
+		} else {
+			try {
+				fHandleProjectionChanges= false;
+				projection.addMasterDocumentRange(offset, length);
+			} finally {
+				fHandleProjectionChanges= true;
+			}
 		}
 	}
 	
@@ -491,11 +574,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see ProjectionDocument#removeMasterDocumentRange(int, int)
 	 */
 	private void removeMasterDocumentRange(ProjectionDocument projection, int offset, int length) throws BadLocationException {
-		try {
-			fHandleProjectionChanges= false;
-			projection.removeMasterDocumentRange(offset, length);
-		} finally {
-			fHandleProjectionChanges= true;
+		if (fCommandQueue != null) {
+			fCommandQueue.add(new ProjectionCommand(projection, ProjectionCommand.REMOVE, offset, length));
+		} else {
+			try {
+				fHandleProjectionChanges= false;
+				projection.removeMasterDocumentRange(offset, length);
+			} finally {
+				fHandleProjectionChanges= true;
+			}
 		}
 	}
 
@@ -508,7 +595,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		disableProjection();
 		super.setVisibleRegion(start, length);
 	}
-	
 	
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleDocument(org.eclipse.jface.text.IDocument)
@@ -597,43 +683,29 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void collapse(int offset, int length, boolean fireRedraw) throws BadLocationException {
 		ProjectionDocument projection= null;
 		
-		StyledText textWidget= getTextWidget();
-		try {
-			
-			if (textWidget != null && !textWidget.isDisposed())
-				textWidget.setRedraw(false);
-			
-			IDocument visibleDocument= getVisibleDocument();
-			if (visibleDocument instanceof ProjectionDocument)
-				projection= (ProjectionDocument) visibleDocument;
-			else {
-				IDocument master= getDocument();
-				IDocument slave= createSlaveDocument(getDocument());
-				if (slave instanceof ProjectionDocument) {
-					projection= (ProjectionDocument) slave;
-					addMasterDocumentRange(projection, 0, master.getLength());
-					replaceVisibleDocument(projection);
-				}
-			}
-			
-			if (projection != null)
-				removeMasterDocumentRange(projection, offset, length);
-				
-		} finally {
-			if (textWidget != null && !textWidget.isDisposed()) {
-				if (fRememberedTopIndex != -1)
-					setTopIndex(fRememberedTopIndex);
-				textWidget.setRedraw(true);
+		IDocument visibleDocument= getVisibleDocument();
+		if (visibleDocument instanceof ProjectionDocument)
+			projection= (ProjectionDocument) visibleDocument;
+		else {
+			IDocument master= getDocument();
+			IDocument slave= createSlaveDocument(getDocument());
+			if (slave instanceof ProjectionDocument) {
+				projection= (ProjectionDocument) slave;
+				addMasterDocumentRange(projection, 0, master.getLength());
+				replaceVisibleDocument(projection);
 			}
 		}
 		
+		if (projection != null)
+			removeMasterDocumentRange(projection, offset, length);
+						
 		if (projection != null && fireRedraw) {
 			// repaint line above
 			IDocument document= getDocument();
 			int line= document.getLineOfOffset(offset);
 			if (line > 0) {
 				IRegion info= document.getLineInformation(line - 1);
-				invalidateTextPresentation(info.getOffset(), info.getLength());
+				internalInvalidateTextPresentation(info.getOffset(), info.getLength());
 			}
 		}
 	}
@@ -654,36 +726,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (slave instanceof ProjectionDocument) {
 			ProjectionDocument projection= (ProjectionDocument) slave;
 			
-			StyledText textWidget= getTextWidget();
-			try {
-				
-				if (textWidget != null && !textWidget.isDisposed())
-					textWidget.setRedraw(false);
-				
-				// expand
-				addMasterDocumentRange(projection, expanded.getOffset(), expanded.getLength());
-				
-				// collapse contained regions
-				if (collapsed != null) {
-					for (int i= 0; i < collapsed.length; i++) {
-						IRegion p= computeCollapsedRegion(collapsed[i]);
-						removeMasterDocumentRange(projection, p.getOffset(), p.getLength());
-					}
-				}
+			// expand
+			addMasterDocumentRange(projection, expanded.getOffset(), expanded.getLength());
 			
-			} finally {
-				if (textWidget != null && !textWidget.isDisposed()) {
-					if (fRememberedTopIndex != -1)
-						setTopIndex(fRememberedTopIndex);
-					textWidget.setRedraw(true);
+			// collapse contained regions
+			if (collapsed != null) {
+				for (int i= 0; i < collapsed.length; i++) {
+					IRegion p= computeCollapsedRegion(collapsed[i]);
+					removeMasterDocumentRange(projection, p.getOffset(), p.getLength());
 				}
-			}
-			
-			IDocument master= getDocument();
-			if (slave.getLength() == master.getLength()) {
-				replaceVisibleDocument(master);
-			} else if (fireRedraw){
-				invalidateTextPresentation(expanded.getOffset(), expanded.getLength());
 			}
 		}
 	}
@@ -794,21 +845,92 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				Annotation[] changedAnnotation= event.getChangedAnnotations();
 				Annotation[] removedAnnotations= event.getRemovedAnnotations();
 				
-				boolean fireRedraw= (addedAnnotations.length + changedAnnotation.length  + removedAnnotations.length) < REDRAW_THRESHOLD;
-				processDeletions(event, removedAnnotations, fireRedraw);
-				List coverage= new ArrayList();
-				processChanges(addedAnnotations, fireRedraw, coverage);
-				processChanges(changedAnnotation, fireRedraw, coverage);
+				fCommandQueue= new ProjectionCommandQueue();
 				
-				if (!fireRedraw) {
-					//TODO compute minimal scope for invalidation
-					invalidateTextPresentation();
+				int topIndex= getTopIndex();
+								
+				processDeletions(event, removedAnnotations, true);
+				List coverage= new ArrayList();
+				processChanges(addedAnnotations, true, coverage);
+				processChanges(changedAnnotation, true, coverage);
+				
+				ProjectionCommandQueue commandQueue= fCommandQueue;
+				fCommandQueue= null;
+
+				if (commandQueue.passedRedrawCostsThreshold()) {
+					
+					setRedraw(false);
+					try {
+						
+						executeProjectionCommands(commandQueue, false);
+						
+					} finally {
+						setRedraw(true, topIndex);
+					}
+									
+				} else {
+					
+					Point selection= getSelectedRange();
+					StyledText textWidget= getTextWidget();
+					
+					try {
+						if (textWidget != null && !textWidget.isDisposed())
+							textWidget.setRedraw(false);
+						
+						boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
+						boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
+						if (!visibleDocumentReplaced && !fireRedraw)
+							invalidateTextPresentation();
+						
+					} finally {
+						
+						if (selection.x != -1 && selection.y != -1)
+							setSelectedRange(selection.x, selection.y);
+						
+						if (textWidget != null && !textWidget.isDisposed()) {
+							if (topIndex != -1)
+								setTopIndex(topIndex);
+							textWidget.setRedraw(true);
+						}
+					}
 				}
+				
 			}
 			
 		}
 	}
 	
+	private boolean executeProjectionCommands(ProjectionCommandQueue commandQueue, boolean fireRedraw) throws BadLocationException {
+		
+		ProjectionCommand command;
+		Iterator e= commandQueue.iterator();
+		while (e.hasNext()) {
+			command= (ProjectionCommand) e.next();
+			switch (command.fType) {
+				case ProjectionCommand.ADD:
+					addMasterDocumentRange(command.fProjection, command.fOffset, command.fLength);
+					break;
+				case ProjectionCommand.REMOVE:
+					removeMasterDocumentRange(command.fProjection, command.fOffset, command.fLength);
+					break;
+				case ProjectionCommand.INVALIDATE_PRESENTATION:
+					if (fireRedraw)
+						invalidateTextPresentation(command.fOffset, command.fLength);
+					break;
+			}
+		}
+		
+		commandQueue.clear();
+		
+		IDocument master= getDocument();
+		IDocument slave= getVisibleDocument();
+		if (slave instanceof ProjectionDocument && slave.getLength() == master.getLength()) {
+			replaceVisibleDocument(master);
+			return true;
+		}
+		return false;
+	}
+
 	private boolean covers(Position expanded, Position position) {
 		if (!expanded.equals(position) && !position.isDeleted())
 			return expanded.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= expanded.getOffset() + expanded.getLength();
@@ -840,6 +962,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 	
+	private void internalInvalidateTextPresentation(int offset, int length) {
+		if (fCommandQueue != null) {
+			fCommandQueue.add(new ProjectionCommand(offset, length));
+		} else {
+			invalidateTextPresentation(offset, length);
+		}
+	}
+	
 	/*
 	 * We pass the removed annotation into this method for performance reasons only. Otherwise, they could be fetch from the event. 
 	 */
@@ -851,7 +981,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				Position[] collapsed= computeCollapsedRanges(expanded);
 				expand(expanded, collapsed, false);
 				if (fireRedraw)
-					invalidateTextPresentation(expanded.getOffset(), expanded.getLength());
+					internalInvalidateTextPresentation(expanded.getOffset(), expanded.getLength());
 			}
 		}
 	}
@@ -901,7 +1031,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					Position[] collapsed= computeCollapsedRanges(position);
 					expand(position, collapsed, false);
 					if (fireRedraw)
-						invalidateTextPresentation(position.getOffset(), position.getLength());
+						internalInvalidateTextPresentation(position.getOffset(), position.getLength());
 				}
 			}
 		}
@@ -1040,25 +1170,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (position.getOffset() < offset && offset + length < position.getOffset() + position.getLength())
 			return true;
 		return false;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.TextViewer#inputChanged(java.lang.Object, java.lang.Object)
-	 */
-	protected void inputChanged(Object newInput, Object oldInput) {
-		if (oldInput instanceof IDocument) {
-			IDocument previous= (IDocument) oldInput;
-			previous.removeDocumentListener(fDocumentListener);
-		}
-		
-		super.inputChanged(newInput, oldInput);
-		
-		if (newInput instanceof IDocument) {
-			IDocument current= (IDocument) newInput;
-			current.addDocumentListener(fDocumentListener);
-		}
-	}
-	
+	}	
 	
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
@@ -1297,20 +1409,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		
 		if (!isProjectionMode())
 			return super.widgetSelection2ModelSelection(widgetSelection);
-		
+			
 		IRegion modelSelection= widgetRange2ModelRange(new Region(widgetSelection.x, widgetSelection.y));
 		if (modelSelection == null)
 			return null;
 		
 		int modelOffset= modelSelection.getOffset();
 		int modelLength= modelSelection.getLength();
+		if (getVisibleDocument().getLength() == 0)
+			modelLength= 0;
+		
 		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
 		int modelExclusiveEnd= widgetOffset2ModelOffset(widgetSelectionExclusiveEnd);
 		
 		if (modelOffset + modelLength < modelExclusiveEnd)
 			return new Point(modelOffset, modelExclusiveEnd - modelOffset);
 		
-		if (widgetSelectionExclusiveEnd == getVisibleDocument().getLength())
+		if (widgetSelectionExclusiveEnd == getVisibleDocument().getLength() && widgetSelectionExclusiveEnd > 0)
 			return new Point(modelOffset, getDocument().getLength() - modelOffset);
 		
 		return new Point(modelOffset, modelLength);

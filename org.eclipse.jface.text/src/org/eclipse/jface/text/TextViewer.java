@@ -1871,7 +1871,7 @@ public class TextViewer extends Viewer implements
 	 */
 	public Point getSelectedRange() {
 		
-		if (!redraws())
+		if (!redraws() && fDocumentSelection != null)
 			return fDocumentSelection.getNormalizedSelection();
 		
 		if (fTextWidget != null) {
@@ -4294,13 +4294,28 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	protected void enabledRedrawing() {
+		enabledRedrawing(-1);
+	}
+	/**
+	 * Enables the redrawing of this text viewer.
+	 * 
+	 * @param topIndex the top index to be set or <code>-1</code>
+	 * @since 3.0
+	 */
+	protected void enabledRedrawing(int topIndex) {
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
 			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
 			StyledText textWidget= getTextWidget();
 			if (textWidget != null && !textWidget.isDisposed()) {
-				int topPixel= textWidget.getTopPixel();	
+				int topPixel= textWidget.getTopPixel();
 				extension.resumeForwardingDocumentChanges();
-				if (topPixel > -1) {
+				if (topIndex > -1) {
+					try {
+						setTopIndex(topIndex);
+					} catch (IllegalArgumentException x) {
+						// changes don't allow for the previous top pixel
+					}
+				} else if (topPixel > -1) {
 					try {
 						textWidget.setTopPixel(topPixel);
 					} catch (IllegalArgumentException x) {
@@ -4313,7 +4328,8 @@ public class TextViewer extends Viewer implements
 		Point selection= forgetDocumentSelection();
 		if (selection != null) {
 			setSelectedRange(selection.x, selection.y);
-			revealRange(selection.x, selection.y);
+			if (topIndex == -1)
+				revealRange(selection.x, selection.y);
 		}
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed())
@@ -4366,14 +4382,38 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	public final void setRedraw(boolean redraw) {
+		setRedraw(redraw, -1);
+	}
+	
+	/**
+	 * Basically same functionality as
+	 * <code>ITextViewerExtension.setRedraw(boolean)</code>. Adds a way for
+	 * subclasses to pass in a desired top index that should be used when
+	 * <code>redraw</code> is <code>true</code>. If <code>topIndex</code>
+	 * is -1, this method is identical to
+	 * <code>ITextViewerExtension.setRedraw(boolean)</code>.
+	 * 
+	 * @see ITextViewerExtension#setRedraw(boolean)
+	 * 
+	 * @param redraw
+	 * @param topIndex
+	 * @since 3.0
+	 */
+	protected final void setRedraw(boolean redraw, int topIndex) {
 		if (!redraw) {
-			if (fRedrawCounter == 0)
-				disableRedrawing();
+			
 			++ fRedrawCounter;
+			if (fRedrawCounter == 1)
+				disableRedrawing();
+			
 		} else {
 			-- fRedrawCounter;
-			if (fRedrawCounter == 0)
-				enabledRedrawing();
+			if (fRedrawCounter == 0) {
+				if (topIndex == -1)
+					enabledRedrawing();
+				else
+					enabledRedrawing(topIndex);
+			}
 		}
 	}
 	
