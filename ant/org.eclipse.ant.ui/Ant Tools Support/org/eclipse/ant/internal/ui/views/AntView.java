@@ -19,6 +19,15 @@ import java.util.List;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.views.actions.AddBuildFileAction;
+import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
+import org.eclipse.ant.internal.ui.views.actions.EditLaunchConfigurationAction;
+import org.eclipse.ant.internal.ui.views.actions.FilterInternalTargetsAction;
+import org.eclipse.ant.internal.ui.views.actions.RefreshBuildFilesAction;
+import org.eclipse.ant.internal.ui.views.actions.RemoveAllAction;
+import org.eclipse.ant.internal.ui.views.actions.RemoveProjectAction;
+import org.eclipse.ant.internal.ui.views.actions.RunTargetAction;
+import org.eclipse.ant.internal.ui.views.actions.SearchForBuildFilesAction;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.ant.internal.ui.views.elements.RootNode;
 import org.eclipse.ant.internal.ui.views.elements.TargetNode;
@@ -46,6 +55,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -59,15 +71,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ant.internal.ui.views.actions.*;
-import org.eclipse.ant.internal.ui.views.actions.AddBuildFileAction;
-import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
-import org.eclipse.ant.internal.ui.views.actions.EditLaunchConfigurationAction;
-import org.eclipse.ant.internal.ui.views.actions.RefreshBuildFilesAction;
-import org.eclipse.ant.internal.ui.views.actions.RemoveAllAction;
-import org.eclipse.ant.internal.ui.views.actions.RemoveProjectAction;
-import org.eclipse.ant.internal.ui.views.actions.RunTargetAction;
-import org.eclipse.ant.internal.ui.views.actions.SearchForBuildFilesAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -157,6 +160,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void createPartControl(Composite parent) {
 		initializeActions();
 		createProjectViewer(parent);
+		initializeDragAndDrop();
 		fillMainToolBar();
 		if (getProjects().length > 0) {
 			// If any projects have been added to the view during startup,
@@ -165,6 +169,14 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		}
 		WorkbenchHelp.setHelp(parent, IAntUIHelpContextIds.ANT_VIEW);
 		updateProjectActions();
+	}
+	
+	private void initializeDragAndDrop() {
+		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_DEFAULT;
+		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
+		TreeViewer viewer = getProjectViewer();
+		AntViewDropAdapter adapter = new AntViewDropAdapter(this);
+		viewer.addDropSupport(ops, transfers, adapter);
 	}
 
 	/**
