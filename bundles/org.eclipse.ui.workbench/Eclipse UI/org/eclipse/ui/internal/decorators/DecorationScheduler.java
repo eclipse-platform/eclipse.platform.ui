@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.progress.AnimateJob;
+import org.eclipse.ui.internal.progress.UIJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -42,6 +43,8 @@ public class DecorationScheduler {
 	private DecoratorManager decoratorManager;
 
 	private boolean shutdown = false;
+
+	private boolean scheduled = false;
 
 	Job decorationJob;
 
@@ -100,14 +103,17 @@ public class DecorationScheduler {
 		boolean forceUpdate) {
 
 		if (!awaitingDecorationValues.containsKey(element)) {
-			boolean waiting = awaitingDecoration.isEmpty();
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
 			reference.setForceUpdate(forceUpdate);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
-			if (!shutdown && waiting)
+			if (shutdown || scheduled)
+				return;
+			else {
+				scheduled = true;
 				JobManager.getInstance().schedule(decorationJob);
+			}
 
 		}
 
@@ -152,11 +158,12 @@ public class DecorationScheduler {
 
 		//Don't bother if we are shutdown now
 		if (!shutdown) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
+
+			UIJob job = new UIJob() {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 
 					if (pendingUpdate.isEmpty())
-						return;
+						return Status.OK_STATUS;
 					synchronized (resultLock) {
 						//Get the elements awaiting update and then
 						//clear the list
@@ -173,8 +180,12 @@ public class DecorationScheduler {
 						if (awaitingDecoration.isEmpty())
 							resultCache.clear();
 					}
+					return Status.OK_STATUS;
 				}
-			});
+			};
+
+			job.setDisplay(Display.getDefault());
+			JobManager.getInstance().schedule(job);
 
 		}
 	}
@@ -298,9 +309,10 @@ public class DecorationScheduler {
 					// Only notify listeners when we have exhausted the
 					// queue of decoration requests.
 					if (awaitingDecoration.isEmpty()) {
+						scheduled = false;
 						decorated();
 					}
-				}
+				}				
 				return Status.OK_STATUS;
 			};
 		};

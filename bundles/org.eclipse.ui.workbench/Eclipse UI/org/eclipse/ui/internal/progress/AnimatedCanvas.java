@@ -197,6 +197,9 @@ public class AnimatedCanvas {
 			// Use syncExec to get the background color of the imageCanvas.
 			display.syncExec(new Runnable() {
 				public void run() {
+					if(imageCanvas.isDisposed())
+						return;
+						
 					backgrounds[0] = imageCanvas.getBackground();
 				}
 			});

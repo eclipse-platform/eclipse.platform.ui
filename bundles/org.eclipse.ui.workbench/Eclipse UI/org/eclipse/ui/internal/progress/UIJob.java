@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class UIJob extends NotifyingJob {
 
-	Display display;
+	Display display;	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
