@@ -21,6 +21,7 @@
 </runtime>
 
 <extension-point id="configurationWizards" name="Configuration Wizards"/>
+<extension-point id="targetConfigWizards" name="Target Site Addition Wizards"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension

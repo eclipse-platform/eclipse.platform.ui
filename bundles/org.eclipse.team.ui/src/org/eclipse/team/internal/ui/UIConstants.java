@@ -14,6 +14,7 @@ public interface UIConstants {
 	
 	// extension points
 	public final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
+	public final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
 	public final String PT_DECORATORS = "decorators"; //$NON-NLS-1$
 
 	// image paths

@@ -29,7 +29,6 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	private ConfigureProjectWizardMainPage mainPage;
 	private String pluginId = UIConstants.PLUGIN_ID;
-	private String extensionPoint = UIConstants.PT_CONFIGURATION;
 	
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 	protected final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -41,6 +40,10 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	public ConfigureProjectWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Policy.bind("ConfigureProjectWizard.title")); //$NON-NLS-1$
+	}
+	
+	protected String getExtensionPoint() {
+		return UIConstants.PT_CONFIGURATION;
 	}
 	
 	/*
@@ -111,7 +114,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	AdaptableList getAvailableWizards() {
 		AdaptableList result = new AdaptableList();
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
