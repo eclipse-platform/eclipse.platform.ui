@@ -21,13 +21,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
@@ -49,7 +50,6 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -235,6 +235,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * @param progressKind  one of PROGRESS_BUSYCURSOR or PROGRESS_DIALOG
 	 */
 	final protected void run(final IRunnableWithProgress runnable, boolean cancelable, int progressKind) throws InvocationTargetException, InterruptedException {
+		final Exception[] exceptions = new Exception[] {null};
 		
 		// Ensure that no repository view refresh happens until after the action
 		final IRunnableWithProgress innerRunnable = new IRunnableWithProgress() {
@@ -245,12 +246,28 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		
 		switch (progressKind) {
 			case PROGRESS_BUSYCURSOR :
-				PlatformUI.getWorkbench().getProgressService().run(cancelable, cancelable, innerRunnable);
+				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+					public void run() {
+						try {
+							innerRunnable.run(new NullProgressMonitor());
+						} catch (InvocationTargetException e) {
+							exceptions[0] = e;
+						} catch (InterruptedException e) {
+							exceptions[0] = e;
+						}
+					}
+				});
 				break;
 			case PROGRESS_DIALOG :
 			default :
-				new ProgressMonitorDialog(getShell()).run(cancelable, true, innerRunnable);	
+				new ProgressMonitorDialog(getShell()).run(cancelable, true, innerRunnable);
 				break;
+		}
+		if (exceptions[0] != null) {
+			if (exceptions[0] instanceof InvocationTargetException)
+				throw (InvocationTargetException)exceptions[0];
+			else
+				throw (InterruptedException)exceptions[0];
 		}
 	}
 	
@@ -270,7 +287,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSResource) {
@@ -300,7 +317,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFolder) {
@@ -330,7 +347,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection)selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteResource) {
