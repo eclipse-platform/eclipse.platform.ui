@@ -105,7 +105,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 				monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", root.toString()), 100); //$NON-NLS-1$
 				FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
 				operation.setFilter(new RemoteFolderFilter() {
-					public ICVSRemoteResource[] filter(ICVSRemoteFolder[] folders) {
+					public ICVSRemoteResource[] filter(ICVSRemoteResource[] folders) {
 						return CVSUIPlugin.getPlugin().getRepositoryManager().filterResources(getWorkingSet(), folders);
 					}
 				});

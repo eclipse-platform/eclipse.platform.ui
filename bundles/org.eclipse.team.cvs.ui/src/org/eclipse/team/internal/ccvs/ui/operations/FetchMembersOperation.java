@@ -39,8 +39,8 @@ public class FetchMembersOperation extends RemoteOperation {
 	private RemoteFolderFilter filter = new RemoteFolderFilter();
 	
 	public static class RemoteFolderFilter {
-		public ICVSRemoteResource[] filter(ICVSRemoteFolder[] folders) {
-			return folders;
+		public ICVSRemoteResource[] filter(ICVSRemoteResource[] resource) {
+			return resource;
 		}
 	}
 	
@@ -108,7 +108,7 @@ public class FetchMembersOperation extends RemoteOperation {
 					.getRepositoryManager()
 					.getRepositoryRootFor(remote.getRepository())
 					.getDefinedModules(remote.getTag(), Policy.subMonitorFor(monitor, 25));
-				collector.add(modules, Policy.subMonitorFor(monitor, 5));
+				collector.add(filter.filter(modules), Policy.subMonitorFor(monitor, 5));
 			}
 		} else {
 			monitor = Policy.monitorFor(monitor);

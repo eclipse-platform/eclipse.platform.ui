@@ -99,9 +99,18 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 	public Object[] getChildren(Object element) {
 		if (manager != null) {
 			Object[] children = manager.getChildren(element);
-			if (children != null)
+			if (children != null) {
+				// This will be a placeholder to indicate 
+				// that the real children are being fetched
 				return children;
+			}
 		}
-		return super.getChildren(element);
+		Object[] children = super.getChildren(element);
+		for (int i = 0; i < children.length; i++) {
+			Object object = children[i];
+			if (object instanceof CVSModelElement) 
+				((CVSModelElement)object).setWorkingSet(getWorkingSet());
+		}
+		return children;
 	}
 }
