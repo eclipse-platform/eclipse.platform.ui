@@ -6,6 +6,7 @@ package org.eclipse.search.internal.ui.util;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
@@ -46,14 +47,19 @@ public class FileLabelProvider extends LabelProvider {
 			return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
 		StringBuffer buf;
+		IPath path= resource.getFullPath().removeLastSegments(1);
+		if (path.getDevice() == null)
+			path= path.makeRelative();
 		if (fOrder == SHOW_LABEL || fOrder == SHOW_LABEL_PATH) {
 			buf= new StringBuffer(fWorkbenchLabelProvider.getText(resource));
-			if (fOrder == SHOW_LABEL_PATH) {
-				buf.append(fgSeparatorString);					
-				buf.append(resource.getFullPath().removeLastSegments(1).makeRelative().toString());
+			if (path != null && fOrder == SHOW_LABEL_PATH) {
+				buf.append(fgSeparatorString);
+				buf.append(path.toString());
 			}
 		} else {
-			buf= new StringBuffer(resource.getFullPath().removeLastSegments(1).makeRelative().toString());
+			buf= new StringBuffer();
+			if (path != null)
+				buf.append(path.toString());
 			if (fOrder == SHOW_PATH_LABEL) {
 				buf.append(fgSeparatorString);
 				buf.append(fWorkbenchLabelProvider.getText(resource));
