@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-description>
-	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
 	<reference project-name="org.eclipse.core.boot"/>
 	<reference project-name="org.eclipse.core.resources"/>
 	<reference project-name="org.eclipse.core.runtime"/>
+	<reference project-name="org.eclipse.help"/>
 	<reference project-name="org.eclipse.ui"/>
 	<reference project-name="org.eclipse.update.core"/>
 	<reference project-name="org.eclipse.update.ui.forms"/>
+	<reference project-name="org.eclipse.webdav"/>
+	<reference project-name="org.junit"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">

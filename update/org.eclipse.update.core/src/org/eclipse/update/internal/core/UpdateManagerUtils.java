@@ -201,4 +201,46 @@ public class UpdateManagerUtils {
 		return resultEntry;
 	}
 
+/**
+ * Returns the parent URL of the given URL, or <code>null</code> if the
+ * given URL is the root.
+ * <table>
+ * <caption>Example</caption>
+ * <tr>
+ *   <th>Given URL</th>
+ *   <th>Parent URL</th>
+ * <tr>
+ *   <td>"http://hostname/"</td>
+ *   <td>null</td>
+ * <tr>
+ *   <td>"http://hostname/folder/file</td>
+ *   <td>"http://hostname/folder/</td>
+ * </table>
+ *
+ * @param url a URL
+ * @return    the parent of the given URL
+ */
+public static URL getParent(URL url) {
+	String file = url.getFile();
+	int len = file.length();
+	if (len == 0 || len == 1 && file.charAt(0) == '/')
+		return null;
+	int lastSlashIndex = -1;
+	for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i){
+		if (file.charAt(i) == '/')
+			lastSlashIndex = i;
+	}
+	if (lastSlashIndex == -1)
+		file = "";
+	else
+		file = file.substring(0, lastSlashIndex + 1);
+
+	try {
+		url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
+	} catch(MalformedURLException e){
+		Assert.isTrue(false, e.getMessage());
+	}
+	return url;
+}
+
 }

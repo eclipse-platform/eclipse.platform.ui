@@ -12,11 +12,16 @@ import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.security.*;
+import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
+import org.eclipse.update.internal.security.*;
 import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 
 import java.lang.reflect.*;
+import java.net.Authenticator;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 
 
@@ -117,7 +122,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
 		manager.registerAdapters(adapterFactory, ModelObject.class);
-		
+		Authenticator.setDefault(new AuthorizationDatabase());
 	}
 	
 	public void shutdown() throws CoreException {
