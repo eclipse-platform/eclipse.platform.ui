@@ -39,6 +39,7 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * responsible for disposing the colors (disposing the toolkit that uses shared
  * color object will not dispose the colors).
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class FormToolkit {

@@ -16,11 +16,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 /**
  * This class extends managed form and specializes it for use
  * inside a multi-page form editor.
- * @since 3.0
+ * 
+ * TODO (dejan) - spell out subclass contract
  * @see FormPage
+ * @since 3.0
  */
 public class PageForm extends ManagedForm {
 	/**
+	 * TODO (dejan) missing spec
 	 * @param toolkit
 	 * @param form
 	 */

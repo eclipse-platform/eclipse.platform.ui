@@ -94,9 +94,10 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * controls and let SWT take care of the dirty regions.
  * </p>
  * 
- * @since 3.0
+ * TODO (dejan) - spell out subclass contract
  * @see FormToolkit
  * @see TableWrapLayout
+ * @since 3.0
  */
 public class FormText extends Canvas {
 	/**

@@ -16,7 +16,9 @@ import org.eclipse.ui.forms.widgets.*;
  * Section part implements IFormPart interface based on the Section widget. It
  * can either wrap the widget or create one itself.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @see Section
+ * @since 3.0
  */
 public class SectionPart extends AbstractFormPart {
 	private Section section;

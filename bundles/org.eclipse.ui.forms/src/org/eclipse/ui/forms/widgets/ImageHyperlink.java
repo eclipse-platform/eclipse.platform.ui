@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
  * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
  * SWT.CENTER).
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class ImageHyperlink extends Hyperlink {

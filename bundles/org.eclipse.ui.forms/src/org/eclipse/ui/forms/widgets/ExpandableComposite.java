@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.internal.widgets.FormsResources;
  * (can be selected and is traversable). The client is layed out below the
  * title when expanded, or hidden when collapsed.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class ExpandableComposite extends Composite {

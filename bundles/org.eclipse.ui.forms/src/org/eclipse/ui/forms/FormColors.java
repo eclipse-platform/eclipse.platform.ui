@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
  * different set of colors is needed, subclass this class and override
  * 'initialize' and/or 'initializeColors'.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class FormColors {

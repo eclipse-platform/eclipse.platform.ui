@@ -28,7 +28,9 @@ import org.eclipse.ui.part.EditorPart;
  * the form content can come after the editor has been opened
  * for a while (in fact, it is possible to open and close the
  * editor and never create the form because no attempt was
- * made to show the page). 
+ * made to show the page).
+ * 
+ * @since 3.0
  */
 public class FormPage extends EditorPart implements IFormPage {
 	private FormEditor editor;

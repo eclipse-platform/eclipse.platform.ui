@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.*;
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class ScrolledForm extends SharedScrolledComposite {

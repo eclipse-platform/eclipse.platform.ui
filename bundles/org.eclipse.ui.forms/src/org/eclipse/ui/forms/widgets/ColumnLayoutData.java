@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
  * alignment using instances of this class. As with other layouts, they are not
  * required to get the default behaviour.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @see ColumnLayout
  * @since 3.0
  */

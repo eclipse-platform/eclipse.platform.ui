@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Composite;
  * a part selection listener since selections in the master
  * part will be passed to the currently visible page.
  * 
- * @since 3.0
  * @see DetailsPart
  * @see MasterDetailsBlock
+ * @since 3.0
  */
 public interface IDetailsPage extends IFormPart, IPartSelectionListener {
 	/**

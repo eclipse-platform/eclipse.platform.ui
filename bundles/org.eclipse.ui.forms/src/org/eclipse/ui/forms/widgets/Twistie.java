@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * The control is rendered as a triangle that points to the right in the
  * collapsed and down in the expanded state. Triangle color can be changed.
+ * 
+ * TODO (dejan) - spell out subclass contract
  * @see TreeNode
  * @since 3.0
  */

@@ -17,9 +17,10 @@ package org.eclipse.ui.forms;
  * using the object class as a static key is not enough
  * i.e. different pages may need to be loaded for objects
  * of the same type depending on their state.
- * @since 3.0
+ * 
  * @see DetailsPart
  * @see MasterDetailsBlock
+ * @since 3.0
  */
 public interface IDetailsPageProvider {
 /**

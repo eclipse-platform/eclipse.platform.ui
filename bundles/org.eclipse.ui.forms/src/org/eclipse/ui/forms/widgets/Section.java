@@ -16,6 +16,9 @@ import org.eclipse.swt.widgets.*;
 /**
  * A variation of the expandable composite that adds optional description below
  * the title.
+ * 
+ * TODO (dejan) - spell out subclass contract
+ * @since 3.0
  */
 public class Section extends ExpandableComposite {
 	/**

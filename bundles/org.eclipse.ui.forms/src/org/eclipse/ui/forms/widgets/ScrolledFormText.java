@@ -29,10 +29,11 @@ import org.eclipse.swt.widgets.*;
  *  ftext.setText(&quot;&lt;p&gt;Some text here&lt;/&gt;&quot;);
  * </pre>
  * 
- * will not cause an error. The same behaviour does not exist for content from
+ * will not cause an error. The same behavior does not exist for content from
  * the input stream, however - it must be well formed in that case.
  * </p>
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  * @see FormText
  */

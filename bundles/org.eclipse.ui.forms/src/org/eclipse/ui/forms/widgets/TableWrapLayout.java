@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.*;
  * will show up for layouts that contain controls whose minimum and maximum
  * widths are not the same.
  * 
- * @since 3.0
+ * TODO (dejan) - spell out subclass contract
  * @see TableWrapData
+ * @since 3.0
  */
 public class TableWrapLayout extends Layout implements ILayoutExtension {
 	/**

@@ -25,6 +25,7 @@ import org.eclipse.ui.part.*;
  * attempt is made to select the page in question. This allows editors with
  * several tabs and complex pages to open quickly.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class FormEditor extends MultiPageEditorPart {

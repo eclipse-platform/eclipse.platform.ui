@@ -17,8 +17,11 @@ import org.eclipse.ui.forms.internal.widgets.*;
 
 /**
  * Manages color and underline mode settings for a group of hyperlinks.
+ * 
+ * TODO (dejan) - spell out subclass contract
+ * TODO (dejan) - mark non-overrideable methods as final
+ * @since 3.0
  */
-
 public class HyperlinkSettings {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;

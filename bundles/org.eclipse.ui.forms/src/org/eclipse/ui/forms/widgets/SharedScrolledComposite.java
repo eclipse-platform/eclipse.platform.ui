@@ -17,6 +17,8 @@ import org.eclipse.ui.forms.internal.widgets.*;
 /**
  * This class is used to provide common scrolling services to a number
  * of control in the toolkit.
+ * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class SharedScrolledComposite extends ScrolledComposite {

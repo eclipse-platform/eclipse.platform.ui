@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Point;
  * <samp>setLayoutData </samp> and pass an instance of this class to control
  * physical placement in the parent.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @see TableWrapLayout
  * @since 3.0
  */

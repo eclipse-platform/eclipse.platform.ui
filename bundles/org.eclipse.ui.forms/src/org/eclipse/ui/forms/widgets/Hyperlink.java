@@ -1,9 +1,13 @@
-/*
- * Created on Nov 26, 2003
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * To change the template for this generated file go to Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
@@ -16,6 +20,7 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * typically added to the hyperlink group so that certain properties are
  * managed for all the hyperlinks that belong to it.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0
  */

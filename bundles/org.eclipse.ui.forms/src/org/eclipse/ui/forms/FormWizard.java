@@ -16,6 +16,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Creates a wizard that hosts one or more pages based on forms.
+ * 
+ * TODO (dejan) - spell out subclass contract
+ * @since 3.0
  */
 public abstract class FormWizard extends Wizard {
 	protected FormToolkit toolkit;

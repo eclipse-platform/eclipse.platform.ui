@@ -16,8 +16,8 @@ import org.eclipse.jface.viewers.ISelection;
  * Form parts can implement this interface if they want to be notified when
  * another part on the same form changes selection state.
  * 
- * @since 3.0
  * @see IFormPart
+ * @since 3.0
  */
 public interface IPartSelectionListener {
 	/**

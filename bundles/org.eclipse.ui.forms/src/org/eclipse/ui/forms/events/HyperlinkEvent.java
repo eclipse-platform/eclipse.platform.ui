@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Notifies listeners about a hyperlink change.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class HyperlinkEvent extends TypedEvent {

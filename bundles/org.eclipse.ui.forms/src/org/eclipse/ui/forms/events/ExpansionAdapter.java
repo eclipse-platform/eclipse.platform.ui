@@ -17,9 +17,9 @@ package org.eclipse.ui.forms.events;
  * this class and override only the methods which they are interested in.
  * </p>
  * 
- * @since 3.0
  * @see ExpansionListener
  * @see ExpansionEvent
+ * @since 3.0
  */
 public class ExpansionAdapter implements ExpansionListener {
 	/**

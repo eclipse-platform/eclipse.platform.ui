@@ -52,6 +52,7 @@ import org.eclipse.ui.forms.internal.widgets.FormsResources;
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class Form extends Composite {

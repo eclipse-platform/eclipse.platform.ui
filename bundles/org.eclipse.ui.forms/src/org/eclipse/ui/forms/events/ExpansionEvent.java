@@ -13,6 +13,7 @@ import org.eclipse.swt.events.TypedEvent;
 /**
  * Notifies listeners when expandable controls change expansion state.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class ExpansionEvent extends TypedEvent {

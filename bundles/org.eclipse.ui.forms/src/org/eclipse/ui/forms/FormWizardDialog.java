@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
  * consists of adjusting colors and layout so that scrollable forms can be
  * hosted.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class FormWizardDialog extends WizardDialog {

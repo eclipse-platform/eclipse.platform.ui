@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
  * expansion state. Focus indication is rendered around the box when the
  * control has keyboard focus.
  * 
+ * TODO (dejan) - spell out subclass contract
  * @see Twistie
  * @since 3.0
  */

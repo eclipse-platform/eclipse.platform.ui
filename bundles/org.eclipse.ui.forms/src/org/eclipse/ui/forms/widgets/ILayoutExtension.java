@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
  * renders tables). Custom layout managers that implement this interface will
  * allow TableWrapLayout to properly compute width hint to pass.
  * 
- * @since 3.0
  * @see TableWrapLayout
  * @see ColumnLayout
+ * @since 3.0
  */
 public interface ILayoutExtension {
 	/**

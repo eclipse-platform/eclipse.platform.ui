@@ -17,6 +17,9 @@ import org.eclipse.ui.forms.widgets.*;
 /**
  * Form wizard page is a page that hosts a scrollable form. Subclasses
  * are supposed to implement 'fillFormBody' that 
+ * 
+ * TODO (dejan) - spell out subclass contract
+ * @since 3.0
  */
 public abstract class FormWizardPage extends WizardPage {
 	protected FormToolkit toolkit;

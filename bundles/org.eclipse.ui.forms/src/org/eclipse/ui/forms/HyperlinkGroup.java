@@ -24,6 +24,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  * preference. Hyperlink labels are added to the group after creation and are
  * automatically removed from the group when they are disposed.
  * 
+ * TODO (dejan) - spell out subclass contract
+ * TODO (dejan) - mark non-overrideable methods as final
  * @since 3.0
  */
 

@@ -31,10 +31,11 @@ import org.eclipse.ui.forms.widgets.*;
  * different pages need to be shown for objects of the same type depending on
  * their state.
  * 
- * @since 3.0
+ * TODO (dejan) - spell out subclass contract
  * @see DetailsPart
  * @see IDetailsPage
  * @see IDetailsPageProvider
+ * @since 3.0
  */
 public abstract class MasterDetailsBlock {
 	protected DetailsPart detailsPart;
