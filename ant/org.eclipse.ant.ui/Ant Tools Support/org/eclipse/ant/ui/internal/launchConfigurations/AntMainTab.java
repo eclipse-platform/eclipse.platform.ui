@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.ILaunchVariableConstants;
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -116,7 +116,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 			return;
 		}
 		StringBuffer buf = new StringBuffer();
-		VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+		LaunchVariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 		String text= buf.toString();
 		if (text != null) {
 			locationField.setText(text);
