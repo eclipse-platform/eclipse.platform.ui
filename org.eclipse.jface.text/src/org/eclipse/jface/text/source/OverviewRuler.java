@@ -122,6 +122,13 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 		}
 		
+		public FilterIterator(Object annotationType, boolean temporary, Iterator iterator) {
+			fType= annotationType;
+			fTemporary= temporary ? TEMPORARY : PERSISTENT;
+			fIterator= iterator;
+			skip();
+		}
+
 		private void skip() {
 			while (fIterator.hasNext()) {
 				Annotation next= (Annotation) fIterator.next();
@@ -161,7 +168,7 @@ public class OverviewRuler implements IOverviewRuler {
 			try {
 				return fNext;
 			} finally {
-				if (fModel != null)
+				if (fIterator != null)
 					skip();
 			}
 		}
@@ -277,15 +284,24 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private List fLayersSortedByLayer= new ArrayList();
 	/**
-	 * Set of allowed annotation types.
+	 * Map of allowed annotation types.
+	 * An allowed annotation type maps to <code>true</code>, a disallowed
+	 * to <code>false</code>.
 	 * @since 3.0 
 	 */
-	private Set fAllowedAnnotationTypes= new HashSet();
+	private Map fAllowedAnnotationTypes= new HashMap();
 	/**
-	 * Set of allowed header annotation types.
+	 * Map of allowed header annotation types.
+	 * An allowed annotation type maps to <code>true</code>, a disallowed
+	 * to <code>false</code>.
 	 * @since 3.0
 	 */
-	private Set fAllowedHeaderAnnotationTypes= new HashSet();
+	private Map fAllowedHeaderAnnotationTypes= new HashMap();
+	/**
+	 * The cached annotations.
+	 * @since 3.0
+	 */
+	private List fCachedAnnotations= new ArrayList();
 	
 	
 	/**
@@ -563,6 +579,20 @@ public class OverviewRuler implements IOverviewRuler {
 		if (size.y > writable)
 			size.y= Math.max(writable - fHeader.getSize().y, 0);
 			
+		fCachedAnnotations.clear();
+		Iterator iter= fModel.getAnnotationIterator();
+		while (iter.hasNext()) {
+			Annotation annotation= (Annotation) iter.next();
+			
+			if (annotation.isMarkedDeleted())
+				continue;
+			
+			if (skip(annotation.getType()))
+				continue;
+			
+			fCachedAnnotations.add(annotation);
+		}
+		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
 
@@ -572,7 +602,7 @@ public class OverviewRuler implements IOverviewRuler {
 			boolean[] temporary= new boolean[] { false, true };
 			for (int t=0; t < temporary.length; t++) {
 
-				Iterator e= new FilterIterator(annotationType, temporary[t]);
+				Iterator e= new FilterIterator(annotationType, temporary[t], fCachedAnnotations.iterator());
 				Color fill= getFillColor(annotationType, temporary[t]);
 				Color stroke= getStrokeColor(annotationType, temporary[t]);
 
@@ -625,6 +655,7 @@ public class OverviewRuler implements IOverviewRuler {
 				}
 			}
 		}
+		fCachedAnnotations.clear();
 	}
 
 	/*
@@ -826,6 +857,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	public void addAnnotationType(Object annotationType) {
 		fConfiguredAnnotationTypes.add(annotationType);
+		fAllowedAnnotationTypes.clear();
 	}
 	
 	/*
@@ -886,25 +918,24 @@ public class OverviewRuler implements IOverviewRuler {
 	}
 	
 	/**
-	 * Returns whether the given annotation type is contained in the given <code>allowed</code>
-	 * set. This is the case if the type is either in the set
-	 * or covered by the <code>configured</code> set.
+	 * Returns whether the given annotation type is mapped to <code>true</code>
+	 * in the given <code>allowed</code> map or covered by the <code>configured</code>
+	 * set.
 	 * 
 	 * @param annotationType the annotation type
-	 * @param allowed the set with allowed annotation types
+	 * @param allowed the map with allowed annotation types mapped to booleans
 	 * @param configured the set with configured annotation types
 	 * @return <code>true</code> if annotation is contained, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
 	 */
-	private boolean contains(Object annotationType, Set allowed, Set configured) {
-		if (allowed.contains(annotationType))
-			return true;
+	private boolean contains(Object annotationType, Map allowed, Set configured) {
+		Boolean cached= (Boolean) allowed.get(annotationType);
+		if (cached != null)
+			return cached.booleanValue();
 		
 		boolean covered= isCovered(annotationType, configured);
-		if (covered)
-			allowed.add(annotationType);
-		
+		allowed.put(annotationType, covered ? Boolean.TRUE : Boolean.FALSE);
 		return covered;
 	}
 
@@ -1100,6 +1131,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	public void addHeaderAnnotationType(Object annotationType) {
 		fConfiguredHeaderAnnotationTypes.add(annotationType);
+		fAllowedHeaderAnnotationTypes.clear();
 	}
 
 	/*
