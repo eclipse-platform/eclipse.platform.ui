@@ -30,6 +30,8 @@ import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.themes.ITheme;
 
 /**
+ * Controls the appearance of views stacked into the workbench.
+ * 
  * @since 3.0
  */
 public class PartTabFolderPresentation extends BasicStackPresentation {
