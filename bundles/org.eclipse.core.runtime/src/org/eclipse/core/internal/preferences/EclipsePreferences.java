@@ -21,6 +21,10 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
+ * Represents a node in the Eclipse preference node hierarchy. This class
+ * is used as a default implementation/super class for those nodes which
+ * belong to scopes which are contributed by the Platform.
+ * 
  * @since 3.0
  */
 public class EclipsePreferences implements IEclipsePreferences, IScope {
