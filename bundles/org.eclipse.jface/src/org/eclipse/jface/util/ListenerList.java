@@ -100,7 +100,9 @@ public class ListenerList {
 				System.arraycopy(listeners, 0, listeners = new Object[size * 2 + 1], 0, size);
 			}
 		}
-		listeners[size++] = listener;
+		
+		listeners[size] = listener;
+		size++;
 	}
 
 	/**
