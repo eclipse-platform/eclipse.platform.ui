@@ -943,7 +943,7 @@ public IStatus restoreState() {
 			}
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			IViewReference ref = viewFactory.getView(viewID);
+			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID);
 			if(ref == null) {
 				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				result.add(new Status(
@@ -951,9 +951,15 @@ public IStatus restoreState() {
 					WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
 					null));
 				continue;
-			}		
-			page.addPart(ref);
+			}
+			// Add to fast view list because creating a view pane
+			// will come back to check if its a fast view. We really
+			// need to clean up this code.		
 			fastViews.add(ref);
+			if(ref.getPane() == null) {
+				ref.setPane(new ViewPane((IViewReference)ref,page));
+			}
+			page.addPart(ref);
 		}
 	}
 		
