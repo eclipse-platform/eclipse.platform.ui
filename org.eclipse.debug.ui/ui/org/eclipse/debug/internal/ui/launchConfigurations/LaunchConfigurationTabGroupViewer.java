@@ -803,8 +803,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			tab.isValid(getWorkingCopy());
 			message = tab.getErrorMessage();
 			if (message != null) {
-				message = '[' + removeAmpersandsFrom(tab.getName()) + "]: " + message; //$NON-NLS-1$
-				return message;
+				StringBuffer temp= new StringBuffer();
+				temp.append('[');
+				temp.append(removeAmpersandsFrom(tab.getName()));
+				temp.append("]: "); //$NON-NLS-1$
+				temp.append(message);
+				return temp.toString();
 			}
 		}
 		return null;
