@@ -154,9 +154,8 @@ private int convertAccelerator(String acceleratorText) {
 			int modifier = findModifier(token);
 			if (modifier != 0) {
 				accelerator |= modifier;
-			} else {
-				// System.out.println("JFace Warning: Unknown key modifier \"" + token + "\" used in label: " + fLabel);
-				// System.out.println("               Valid modifiers are: Ctrl, Shift, and Alt");
+			} else {//Leave if there are none
+				return 0;
 			}
 		} else {
 			keyCode = findKeyCode(token);
@@ -562,4 +561,11 @@ public void setToolTipText(String text) {
 		firePropertyChange(TOOL_TIP_TEXT, oldToolTipText, toolTipText);
 	}
 }
+/*
+ * @see IAction#setAccelerator(int)
+ */
+public void setAccelerator(int keycode) {
+	this.accelerator = keycode;
+}
+
 }
