@@ -1,0 +1,170 @@
+package org.eclipse.search.internal.ui;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.ui.part.ViewPart;
+
+import org.eclipse.search.ui.IContextMenuContributor;
+import org.eclipse.search.ui.IGroupByKeyComputer;
+import org.eclipse.search.ui.ISearchResultView;
+
+public class SearchResultView extends ViewPart implements ISearchResultView {
+	private SearchResultViewer fViewer;
+	private Map fResponse;
+	
+	/**
+	 * Creates the search list inner viewer.
+	 */
+	public void createPartControl(Composite parent) {
+		Assert.isTrue(fViewer == null);
+		fViewer= new SearchResultViewer(this, parent);
+		IWorkspace workspace= SearchPlugin.getWorkspace();
+		SearchManager.getDefault().addSearchChangeListener(fViewer);
+		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
+		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
+		getSite().setSelectionProvider(fViewer);
+	}
+	
+	/**
+	 * Returns the search result viewer.
+	 */
+	SearchResultViewer getViewer() {
+		return fViewer;
+	}
+	
+	//---- IWorkbenchPart ------------------------------------------------------
+
+	public void setFocus() {
+		fViewer.getControl().setFocus();
+	}
+	
+	public void dispose() {
+		SearchManager.getDefault().removeSearchChangeListener(fViewer);
+		fViewer= null;
+		super.dispose();
+	}
+	
+	protected void setTitle(String title) {
+		super.setTitle(title);
+	}
+	
+	//---- Adding Action to Toolbar -------------------------------------------
+	
+	private void fillToolBar(IToolBarManager tbm) {
+		fViewer.fillToolBar(tbm);
+	}	
+	
+	private void setLabelProvider(final ILabelProvider provider) {
+		// Make sure we are doing it in the right thread.
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				fViewer.internalGetLabelProvider().setLabelProvider(provider);
+			}
+		});
+	}
+	
+	private void setContextMenuContributor(final IContextMenuContributor contributor) {
+		// Make sure we are doing it in the right thread.
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				fViewer.setContextMenuTarget(contributor);
+			}
+		});
+	}
+
+	private void setGotoMarkerAction(final IAction gotoMarkerAction) {
+		// Make sure we are doing it in the right thread.
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				fViewer.setGotoMarkerAction(gotoMarkerAction);
+			}
+		});
+	}
+
+	Display getDisplay() {
+		return fViewer.getControl().getDisplay();
+	}	
+
+	//---- ISearchResultView --------------------------------------------------
+
+	/*
+	 * Implements method from ISearchResultView
+	 */
+	public ISelection getSelection() {
+		return fViewer.getSelection();
+	}
+
+	/*
+	 * Implements method from ISearchResultView
+	 */
+	public void searchStarted(
+				String			pageId,
+				String			label,
+				ImageDescriptor		imageDescriptor,
+				IContextMenuContributor contributor,
+				ILabelProvider		labelProvider,
+				IAction			gotoAction,
+				IGroupByKeyComputer	groupByKeyComputer,
+				IRunnableWithProgress	operation) {
+
+		Assert.isNotNull(pageId);
+		Assert.isNotNull(label);
+		Assert.isNotNull(gotoAction);		
+
+		fViewer.setPageId(pageId);
+		fResponse= new HashMap(500);
+		setContextMenuContributor(contributor);
+		setLabelProvider(labelProvider);
+		setGotoMarkerAction(gotoAction);
+		SearchManager.getDefault().addNewSearch(		
+			new Search(
+				pageId,
+				label,
+				fViewer.internalGetLabelProvider().getLabelProvider(),
+				imageDescriptor,
+				fViewer.getGotoMarkerAction(),
+				contributor,
+				groupByKeyComputer,
+				operation));
+	};
+
+	/*
+	 * Implements method from ISearchResultView
+	 */
+	public void addMatch(String description, Object groupByKey, IResource resource, IMarker marker) {
+		SearchResultViewEntry entry= (SearchResultViewEntry)fResponse.get(groupByKey);
+		if (entry == null) {
+			entry= new SearchResultViewEntry(groupByKey, resource);
+			fResponse.put(groupByKey, entry);
+		}
+		entry.add(marker);
+	}
+
+	/*
+	 * Implements method from ISearchResultView
+	 */
+	public void searchFinished() {
+		SearchManager.getDefault().setCurrentResults(new ArrayList(fResponse.values()));
+	}	
+}

@@ -57,7 +57,7 @@
 	   name="%searchResults"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.search.internal.ui.SearchResultView"
-	   icon="icons/full/view16/searchres.gif">
+	   icon="icons/full/cview16/searchres.gif">
 	</view>
 </extension>
 
@@ -79,7 +79,7 @@
 		pageId="*"
 		label="%MatchSorter.label"
 		tooltip="%MatchSorter.tooltip"
-		icon="icons/full/ecl16/search_sort.gif"
+		icon="icons/full/clcl16/search_sortmatch.gif"
 		class="org.eclipse.search.internal.ui.MatchSorter">
 	</sorter>
 	<sorter
@@ -87,7 +87,7 @@
 		pageId="*"
 		label="%ResourcenameSorter.label"
 		tooltip="%ResourcenameSorter.tooltip"
-		icon="icons/full/ecl16/search_sort.gif"
+		icon="icons/full/clcl16/search_sortmatch.gif"
 		class="org.eclipse.search.internal.ui.ResourcenameSorter">
 	</sorter>
 	<sorter
@@ -95,7 +95,7 @@
 		pageId="*"
 		label="%ResourcePathSorter.label"
 		tooltip="%ResourcePathSorter.tooltip"
-		icon="icons/full/ecl16/search_sort.gif"
+		icon="icons/full/clcl16/search_sortmatch.gif"
 		class="org.eclipse.search.internal.ui.ResourcePathSorter">
 	</sorter>
 </extension>

@@ -1,0 +1,148 @@
+package org.eclipse.search.internal.ui;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 1999, 2000
+ */
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.search.ui.ISearchResultViewEntry;
+
+/**
+ * Represents an entry in the search result view
+ */
+class SearchResultViewEntry implements ISearchResultViewEntry {
+
+	private Object fGroupByKey= null;
+	private IResource fResource= null;
+	private IMarker fMarker= null;
+	private List fMarkers= null;
+	private ArrayList fAttributes;
+	private int fSelectedMarkerIndex;
+	private long fModificationStamp= IResource.NULL_STAMP;
+	
+	public SearchResultViewEntry(Object groupByKey, IResource resource) {
+		fGroupByKey= groupByKey;
+		fResource= resource;
+	}
+	
+	//---- Accessors ------------------------------------------------
+	public Object getGroupByKey() {
+		return fGroupByKey;
+	}
+
+	void setGroupByKey(Object groupByKey) {
+		fGroupByKey= groupByKey;
+	}
+	
+	public IResource getResource() {
+		return fResource;
+	}
+	
+	public int getMatchCount() {
+		if (fMarkers != null)
+			return fMarkers.size();
+		if (fMarkers == null && fMarker != null)
+			return 1;
+		return 0;
+	}
+	
+	List getAttributesPerMarker() {
+		if (fAttributes == null)
+			return new ArrayList(0);
+		return fAttributes;
+	}
+	
+	long getModificationStamp() {
+		return fModificationStamp;
+	}
+	
+	void clearMarkerList() {
+		fMarker= null;
+		if (fMarkers != null)
+			fMarkers.clear();
+	}
+		
+	void add(IMarker marker) {
+		if (fMarker == null) {
+			fMarker= marker;
+			if (fMarkers != null)
+				fMarkers.add(marker);
+			return;
+		}
+		if (fMarkers == null) {
+			fMarkers= new ArrayList(10);
+			fMarkers.add(fMarker);
+		}
+		fMarkers.add(marker);
+	}
+	
+	void setSelectedMarkerIndex(int index) {
+		fSelectedMarkerIndex= index;
+	}
+	
+	public IMarker getSelectedMarker() {
+		if (fMarkers == null && fMarker == null)
+			return null;
+		if (fMarkers != null && fSelectedMarkerIndex >= 0 && fSelectedMarkerIndex < getMatchCount())
+			return (IMarker)fMarkers.get(fSelectedMarkerIndex);
+		return fMarker;
+	}
+	
+	List getMarkers() {
+		if (fMarkers == null && fMarker == null)
+			return new ArrayList(0);
+		else if (fMarkers == null && fMarker != null) {
+			List markers= new ArrayList(1);
+			markers.add(fMarker);
+			return markers;
+		}
+		return fMarkers;
+	}
+	
+	boolean contains(IMarker marker) {
+		if (fMarkers == null && fMarker == null)
+			return false;
+		if (fMarkers == null)
+			return fMarker.equals(marker);
+		else
+			return fMarkers.contains(marker);
+	}
+	
+	void remove(IMarker marker) {
+		if (fMarkers == null) {
+			if (fMarker != null && fMarker.equals(marker))
+				fMarker= null;
+		}
+		else
+			fMarkers.remove(marker);
+	}
+	
+	void backupMarkers() {
+		if (fResource != null)
+			fModificationStamp= fResource.getModificationStamp();
+		List markers= getMarkers();
+		fAttributes= new ArrayList(markers.size());
+		Iterator iter= markers.iterator();
+		while (iter.hasNext()) {
+			IMarker marker= (IMarker)iter.next();
+			Map attributes= null;
+			try {
+				attributes= marker.getAttributes();
+			} catch (CoreException ex) {
+				// don't backup corrupt marker
+				continue;
+			}
+			fAttributes.add(attributes);
+		}
+	}
+}
+
