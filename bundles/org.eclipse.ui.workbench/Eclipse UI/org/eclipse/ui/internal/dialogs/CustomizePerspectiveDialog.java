@@ -877,6 +877,7 @@ private Composite createMenusPage(Composite parent) {
 	menuCategoriesViewer.getControl().setLayoutData(data);
 	menuCategoriesViewer.setLabelProvider(new LabelProvider());
 	menuCategoriesViewer.setContentProvider(new TreeContentProvider());
+	menuCategoriesViewer.setSorter(new WorkbenchViewerSorter());
 
 	// Menu items list
 	Composite menuItemsGroup = new Composite(sashComposite, SWT.NONE);
