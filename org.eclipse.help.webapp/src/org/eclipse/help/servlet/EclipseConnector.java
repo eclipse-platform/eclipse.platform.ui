@@ -58,7 +58,7 @@ public class EclipseConnector
 			if (is == null)
 				return;
 			OutputStream os = resp.getOutputStream();
-			
+
 			IFilter[] filters = getFilters(req);
 			if (filters.length == 0)
 				transferContent(is, os);
@@ -80,10 +80,9 @@ public class EclipseConnector
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
-
 
 	/**
 	 * Write the body to the response
@@ -91,20 +90,26 @@ public class EclipseConnector
 	private void transferContent(InputStream inputStream, OutputStream out)
 		throws IOException
 	{
-
-		// Prepare the input stream for reading
-		BufferedInputStream dataStream = new BufferedInputStream(inputStream);
-
-		// Create a fixed sized buffer for reading.
-		// We could create one with the size of availabe data...
-		byte[] buffer = new byte[4096];
-		int len = 0;
-		while (true)
+		try
 		{
-			len = dataStream.read(buffer); // Read file into the byte array
-			if (len == -1)
-				break;
-			out.write(buffer, 0, len);
+			// Prepare the input stream for reading
+			BufferedInputStream dataStream = new BufferedInputStream(inputStream);
+
+			// Create a fixed sized buffer for reading.
+			// We could create one with the size of availabe data...
+			byte[] buffer = new byte[4096];
+			int len = 0;
+			while (true)
+			{
+				len = dataStream.read(buffer); // Read file into the byte array
+				if (len == -1)
+					break;
+				out.write(buffer, 0, len);
+			}
+		}
+		catch (Exception e)
+		{
+			// e.printStackTrace();
 		}
 	}
 
