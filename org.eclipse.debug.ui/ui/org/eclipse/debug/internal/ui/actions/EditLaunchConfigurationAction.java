@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -71,6 +72,20 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 			if (launch != null) {
 				ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 				if (configuration != null) {
+					try {
+						// The DebugUIPlugin creates stand-in launches with copied configurations
+						// while a launch is waiting for a build. These copied configurations
+						// have an attribute that points to the config that the user is really
+						// launching.
+						String underlyingHandle = configuration.getAttribute(DebugUIPlugin.ATTR_LAUNCHING_CONFIG_HANDLE, ""); //$NON-NLS-1$
+						if (underlyingHandle.length() > 0) {
+							ILaunchConfiguration underlyingConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(underlyingHandle);
+							if (underlyingConfig != null) {
+								configuration = underlyingConfig;
+							}
+						}
+					} catch (CoreException e1) {
+					}	
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
 					setText(MessageFormat.format(ActionMessages.getString("EditLaunchConfigurationAction.1"), new String[]{configuration.getName()})); //$NON-NLS-1$

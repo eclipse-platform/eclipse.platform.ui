@@ -102,6 +102,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	private static DefaultLabelProvider fgDefaultLabelProvider;
 	
 	/**
+	 * Launch configuration attribute - used by the stand-in launch
+	 * config working copies that are created while a launch is waiting
+	 * for a build to finish. This attribute allows the EditLaunchConfigurationAction
+	 * to access the original config if the user asks to edit it.
+	 */
+	public static String ATTR_LAUNCHING_CONFIG_HANDLE= getUniqueIdentifier() + "launching_config_handle"; //$NON-NLS-1$
+	
+	/**
 	 * Flag indicating whether the debug UI is in trace
 	 * mode. When in trace mode, extra debug information
 	 * is produced.
@@ -763,6 +771,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						StringBuffer buffer= new StringBuffer(configuration.getName());
 						buffer.append(DebugUIMessages.getString("DebugUIPlugin.19")); //$NON-NLS-1$
 						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
+						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
 						ILaunch pendingLaunch= new Launch(workingCopy, mode, null);
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
 						subMonitor = new SubProgressMonitor(monitor, 100);
