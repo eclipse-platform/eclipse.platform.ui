@@ -317,7 +317,27 @@
             name="Title Test Editor"
             id="org.eclipse.ui.tests.TitleTestEditor"
             extensions="titletest"/>
-   </extension>
+	   <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.gif"
+            default="true"
+            name="Plugin Icon Test 1"
+            id="org.eclipse.ui.tests.IconTestEditor1"
+            extensions="icontest1"/>            
+       <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/class_obj.gif"
+            default="true"
+            name="Plugin Icon Test 2"
+            id="org.eclipse.ui.tests.IconTestEditor1"
+            extensions="icontest2"/>                      
+       <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            icon="bad"
+            default="true"
+            name="Plugin Icon Test 3"
+            id="org.eclipse.ui.tests.IconTestEditor3"
+            extensions="icontest3"/>       </extension>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet

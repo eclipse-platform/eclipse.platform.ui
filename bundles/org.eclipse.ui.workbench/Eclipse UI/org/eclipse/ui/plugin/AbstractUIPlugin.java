@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -953,9 +954,16 @@ public abstract class AbstractUIPlugin extends Plugin {
 
         // look for the image (this will check both the plugin and fragment folders
         URL fullPathString = BundleUtility.find(bundle, imageFilePath);
-        if (fullPathString == null)
-            return null;
+        if (fullPathString == null) {
+        	try {
+				fullPathString = new URL(imageFilePath);
+			} catch (MalformedURLException e) {
+				return null;
+			}
+        }
 
+        if (fullPathString == null)
+        	return null;
         return ImageDescriptor.createFromURL(fullPathString);
     }
 }

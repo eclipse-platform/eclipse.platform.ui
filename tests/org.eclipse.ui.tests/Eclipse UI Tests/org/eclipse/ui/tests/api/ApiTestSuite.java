@@ -60,5 +60,6 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(Bug42616Test.class));
 		addTest(new TestSuite(NullTitleTest.class));
 		addTest(new TestSuite(StickyViewTest.class));
+		addTest(new TestSuite(EditorIconTest.class));
 	}
 }
