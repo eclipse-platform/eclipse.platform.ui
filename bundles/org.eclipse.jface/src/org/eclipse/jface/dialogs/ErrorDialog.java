@@ -406,7 +406,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 		buffer.append(buildingStatus.getMessage());
 		buffer.append("\n"); //$NON-NLS-1$
-		IStatus[] children = status.getChildren();
+		IStatus[] children = buildingStatus.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			populateCopyBuffer(children[i], buffer, nesting + 1);
 		}
