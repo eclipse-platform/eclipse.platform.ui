@@ -44,38 +44,38 @@ public class AntElementNode implements IAdaptable {
 	 * The offset of the corresponding source.
 	 * @see #getOffset()
 	 */
-	protected int offset= -1;
+	protected int fOffset= -1;
 	
 	/**
 	 * The length of the corresponding source.
 	 * @see #getLength()
 	 */
-	protected int length= -1;
+	protected int fLength= -1;
 	
 	/**
 	 * The length of the source to select for this node
 	 */
-	protected int selectionLength;
+	protected int fSelectionLength;
 	
     /**
      * The parent node.
      */
-    protected AntElementNode parent;
+    protected AntElementNode fParent;
     
     /**
      * The import node that "imported" this element
      */
-    private AntElementNode importNode;
+    private AntElementNode fImportNode;
 
     /**
      * The child nodes.
      */
-    protected List childNodes= null;
+    protected List fChildNodes= null;
 
     /**
      * The (tag-)name of the element.
      */
-    protected String name;
+    protected String fName;
 
 	/**
 	 * Whether this element has been generated as part of an element hierarchy
@@ -85,18 +85,20 @@ public class AntElementNode implements IAdaptable {
 	 * @see XMLProblem#SEVERITY_WARNING
 	 * @see XMLProblem#SEVERITY_FATAL_ERROR
 	 */
-	private int problemSeverity= AntModelProblem.NO_PROBLEM;
+	private int fProblemSeverity= AntModelProblem.NO_PROBLEM;
+	
+	private String fProblemMessage= null;
 	
 	/**
 	 * The absolute file system path of the file this element is
 	 * defined within.
 	 */
-	private String filePath;
+	private String fFilePath;
 	
 	/**
 	 * Whether this element has been generated from an external entity definition
 	 */
-	private boolean isExternal = false;
+	private boolean fIsExternal = false;
 	
 	/**
 	 * The unique (in the corresponding element tree) path of this element.
@@ -123,7 +125,7 @@ public class AntElementNode implements IAdaptable {
      * Creates an instance with the specified name.
      */
     public AntElementNode(String aName) {
-       name = aName;
+       fName = aName;
     }
     
     /**
@@ -137,12 +139,12 @@ public class AntElementNode implements IAdaptable {
      * Returns the name.
      */
     public String getName() {
-        return name;
+        return fName;
     }
     
     
     /**
-     * Returns the label that is used for display in outline view.
+     * Returns the label that is used for display.
      * <P>
      * The default implementation returns just the same as the method <code>getName()</code>.
      * Override this method in your own subclass for special elements in order to provide a
@@ -157,18 +159,18 @@ public class AntElementNode implements IAdaptable {
      * Returns the child nodes.
      */
     public List getChildNodes() {
-        return childNodes;
+        return fChildNodes;
     }
     
     /**
      * Returns all the descendents of this node
      */
     public List getDescendents() {
-    	if (childNodes == null) {
+    	if (fChildNodes == null) {
     		return null;
     	}
     	List descendents= new ArrayList();
-        determineDescendents(descendents, childNodes);
+        determineDescendents(descendents, fChildNodes);
         
         return descendents;
     }
@@ -191,7 +193,7 @@ public class AntElementNode implements IAdaptable {
      * @return the parent or <code>null</code> if this element has no parent.
      */
     public AntElementNode getParentNode() {
-        return parent;
+        return fParent;
     } 
     
     public AntProjectNode getProjectNode() {
@@ -210,14 +212,14 @@ public class AntElementNode implements IAdaptable {
      */
     public void addChildNode(AntElementNode childElement) {
     	childElement.setParent(this);
-        if (childNodes == null) {
-        	childNodes= new ArrayList();
+        if (fChildNodes == null) {
+        	fChildNodes= new ArrayList();
         }
-        childNodes.add(childElement);
+        fChildNodes.add(childElement);
     }
     
 	protected void setParent(AntElementNode node) {
-		parent= node;
+		fParent= node;
 	}
 
 	/**
@@ -232,10 +234,10 @@ public class AntElementNode implements IAdaptable {
 		try {		
 			url= new URL(path);
 		} catch (MalformedURLException e) {		
-			filePath= path;
+			fFilePath= path;
 			return;
 		}
-		filePath = new Path(new File(url.getPath()).getAbsolutePath()).toString();
+		fFilePath = new Path(new File(url.getPath()).getAbsolutePath()).toString();
 	}
 	
 	/**
@@ -244,7 +246,7 @@ public class AntElementNode implements IAdaptable {
      * @see #isExternal()
      */
 	public String getFilePath() {
-		return filePath;
+		return fFilePath;
 	}
 
     /**
@@ -255,7 +257,7 @@ public class AntElementNode implements IAdaptable {
 	 * relative to the source buffer in which this element is contained
 	 */
 	public int getOffset() {
-		return offset;
+		return fOffset;
 	}
 	
 	/**
@@ -264,7 +266,7 @@ public class AntElementNode implements IAdaptable {
 	 * @see #getOffset()
 	 */
 	public void setOffset(int anOffset) {
-		offset = anOffset;
+		fOffset = anOffset;
 	}
 	
 	/**
@@ -275,7 +277,7 @@ public class AntElementNode implements IAdaptable {
 	 * relative to the source buffer in which this element is contained
 	 */
     public int getLength() {
-        return length;
+        return fLength;
     }
 
 	/**
@@ -284,10 +286,10 @@ public class AntElementNode implements IAdaptable {
 	 * @see #getLength()
 	 */
 	public void setLength(int aLength) {
-		length = aLength;
+		fLength = aLength;
 		if (fProblem != null && fProblem instanceof AntModelProblem) {
 			((AntModelProblem)fProblem).setLength(aLength);
-			fProblem= null;
+			//fProblem= null;
 		}
 	}
 
@@ -300,10 +302,10 @@ public class AntElementNode implements IAdaptable {
 	
 	/**
 	 * Returns whether this element has been generated as part of an element
-	 * hierarchy this is not complete as a result of an error.
+	 * hierarchy that has error(s) associated with it
 	 */
 	public boolean isErrorNode() {
-		return problemSeverity == AntModelProblem.SEVERITY_ERROR || problemSeverity == AntModelProblem.SEVERITY_FATAL_ERROR;
+		return fProblemSeverity == AntModelProblem.SEVERITY_ERROR || fProblemSeverity == AntModelProblem.SEVERITY_FATAL_ERROR;
 	}
 	
 	/**
@@ -311,7 +313,7 @@ public class AntElementNode implements IAdaptable {
 	 * hierarchy that has warning(s) associated with it
 	 */
 	public boolean isWarningNode() {
-		return problemSeverity == AntModelProblem.SEVERITY_WARNING;
+		return fProblemSeverity == AntModelProblem.SEVERITY_WARNING;
 	}
 	
 	/**
@@ -319,7 +321,7 @@ public class AntElementNode implements IAdaptable {
 	 * hierarchy that has problems. The severity of the problem is provided.
 	 */
 	public void setProblemSeverity(int severity) {
-		this.problemSeverity= severity;
+		this.fProblemSeverity= severity;
 	}
 	
 	/**
@@ -328,19 +330,20 @@ public class AntElementNode implements IAdaptable {
 	 * @return boolean
 	 */
 	public boolean isExternal() {
-		return isExternal;
+		return fIsExternal;
 	}
 
 	/**
 	 * Sets whether this xml element is defined in an external entity.
 	 */
 	public void setExternal(boolean isExternal) {
-		this.isExternal = isExternal;
+		fIsExternal = isExternal;
 	}
 	
 	private String getElementPath() {
 		if (fElementPath == null) {
-			StringBuffer buffer= new StringBuffer(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
+			StringBuffer buffer= new StringBuffer(getProjectNode().getBuildFileName());
+			buffer.append(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
 			buffer.append('/');
 			buffer.append(getElementIdentifier());
 			buffer.append('[');
@@ -395,11 +398,10 @@ public class AntElementNode implements IAdaptable {
 		return result;
 	}
 
-	/*
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o2) {
-		// prepared to be used in an IElementComparer, depends on http://dev.eclipse.org/bugs/show_bug.cgi?id=32254
 		Object o1= this;
 		
 		if (o1 == o2) {
@@ -421,12 +423,10 @@ public class AntElementNode implements IAdaptable {
 		return e1.getElementPath().equals(e2.getElementPath());
 	}
 
-	/*
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		// prepared to be used in an IElementComparer, depends on http://dev.eclipse.org/bugs/show_bug.cgi?id=32254
-		
 		return getElementPath().hashCode();
 	}
 
@@ -435,11 +435,11 @@ public class AntElementNode implements IAdaptable {
 	 * @return the length of source to select
 	 */
 	public int getSelectionLength() {
-		return selectionLength;
+		return fSelectionLength;
 	}
 	
 	public void setSelectionLength(int selectionLength) {
-		this.selectionLength= selectionLength;
+		this.fSelectionLength= selectionLength;
 	}
 	
 	/**
@@ -449,8 +449,8 @@ public class AntElementNode implements IAdaptable {
 	 * @return the node that includes the offset in its source range or <code>null</code>
 	 */
 	public AntElementNode getNode(int sourceOffset) {
-		if (childNodes != null) {
-			for (Iterator iter = childNodes.iterator(); iter.hasNext(); ) {
+		if (fChildNodes != null) {
+			for (Iterator iter = fChildNodes.iterator(); iter.hasNext(); ) {
 				AntElementNode node = (AntElementNode) iter.next();
 				AntElementNode containingNode= node.getNode(sourceOffset);
 				if (containingNode != null) {
@@ -458,10 +458,10 @@ public class AntElementNode implements IAdaptable {
 				}
 			}
 		}
-		if (length == -1 && offset <= sourceOffset && !isExternal()) { //this is still an open element
+		if (fLength == -1 && fOffset <= sourceOffset && !isExternal()) { //this is still an open element
 			return this;
 		}
-		if (offset <= sourceOffset && sourceOffset <= (offset + length - 2)) {
+		if (fOffset <= sourceOffset && sourceOffset <= (fOffset + fLength - 2)) {
 			return this;
 		}
 		
@@ -476,7 +476,7 @@ public class AntElementNode implements IAdaptable {
 		} else if (isWarningNode()) {
 			flags = flags | AntImageDescriptor.HAS_WARNINGS;
 		}
-		if(importNode != null || isExternal()){
+		if(fImportNode != null || isExternal()){
 			flags = flags | AntImageDescriptor.IMPORTED;
 		}
 		ImageDescriptor base= getBaseImageDescriptor();
@@ -487,7 +487,7 @@ public class AntElementNode implements IAdaptable {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
 	}
 	
-	protected AntModel getAntModel() {
+	protected IAntModel getAntModel() {
 		AntElementNode parentNode= getParentNode();
 		while (!(parentNode instanceof AntProjectNode)) {
 			parentNode= parentNode.getParentNode();
@@ -502,6 +502,10 @@ public class AntElementNode implements IAdaptable {
 	public void associatedProblem(IProblem problem) {
 		fProblem= problem;
 	}
+	
+	public IProblem getProblem() {
+	    return fProblem;
+	}
 
 	protected void appendEntityName(StringBuffer displayName) {
 		String path= getFilePath();
@@ -515,22 +519,22 @@ public class AntElementNode implements IAdaptable {
 	}
 	
 	public AntElementNode getImportNode() {
-		return importNode;
+		return fImportNode;
 	}
 	
 	public void setImportNode(AntElementNode importNode) {
-		this.importNode = importNode;
+		this.fImportNode = importNode;
 	}
 	
 	public boolean hasChildren() {
-		if (childNodes == null) {
+		if (fChildNodes == null) {
 			return false;
 		}
-		return !childNodes.isEmpty();
+		return !fChildNodes.isEmpty();
 	}
 
 	public void reset() {
-		childNodes= null;
+		fChildNodes= null;
 	}
 
 	public void setExternalInfo(int line, int column) {
@@ -550,7 +554,7 @@ public class AntElementNode implements IAdaptable {
      */
 	public IFile getIFile() {
 		if (isExternal()) {
-			return AntUtil.getFileForLocation(filePath, null);
+			return AntUtil.getFileForLocation(fFilePath, null);
 		} 
 		return getBuildFileResource();
 	}
@@ -583,11 +587,28 @@ public class AntElementNode implements IAdaptable {
 		return true;
 	}
 	
+	/**
+	 * Returns whether to collapse the code folding projection (region) represented by this node. 
+	 * @return whether the user preference is set to collapse the code folding projection (region)
+	 *  represented by this node
+	 */
 	public boolean collapseProjection() {
 		return false;
 	}
 	
-	public String getReferencedElement(int offset) {
+	public void dispose() {
+        getAntModel().dispose();
+    }
+    
+    public String getReferencedElement(int offset) {
 		return null;
 	}
+   
+    public String getProblemMessage() {
+        return fProblemMessage;
+    }
+   
+    public void setProblemMessage(String problemMessage) {
+        fProblemMessage = problemMessage;
+    }
 }

@@ -29,16 +29,15 @@ import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.AntModelLite;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -57,11 +56,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * General utility class dealing with Ant build files
@@ -109,7 +104,7 @@ public final class AntUtil {
 	 * @return array of target names, or <code>null</code>
 	 * @throws CoreException if unable to access the associated attribute
 	 */
-	public static String[] getTargetsFromConfig(ILaunchConfiguration configuration) throws CoreException {
+	public static String[] getTargetNames(ILaunchConfiguration configuration) throws CoreException {
 		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
 		if (attribute == null) {
 			return null;
@@ -176,59 +171,13 @@ public final class AntUtil {
 		return propertyFiles;
 	}
 	
-	/**
-	 * Returns the list of all targets for the Ant build file specified by
-	 * the provided IPath, or <code>null</code> if no targets found.
-	 * 
-	 * @param path the location of the Ant build file to get the targets from
-	 * @return a list of <code>TargetInfo</code>
-	 * 
-	 * @throws CoreException if file does not exist, IO problems, or invalid format.
-	 */
-	public static TargetInfo[] getTargets(String path) throws CoreException {
-		AntRunner runner = new AntRunner();
-		runner.setBuildFileLocation(path);
-	 	return runner.getAvailableTargets();
-	}
-	
-	/**
-	 * Returns the list of all targets for the Ant build file specified by
-	 * the provided IPath, arguments and ILaunchConfiguration.
-	 * 
-	 * @param path the location of the Ant build file to get the targets from
-	 * @param config the launch configuration for the Ant build
-	 * @return a list of <code>TargetInfo</code>
-	 * 
-	 * @throws CoreException if file does not exist, IO problems, or invalid format.
-	 */
-	public static TargetInfo[] getTargets(String path, ILaunchConfiguration config) throws CoreException {
-		Map properties=getProperties(config);
-		String[] propertyFiles= getPropertyFiles(config);
-		AntRunner runner = new AntRunner();
-		runner.setBuildFileLocation(path);
-		if (properties != null){
-			runner.addUserProperties(properties);
-		}
-		if (propertyFiles != null && propertyFiles.length > 0) {
-			runner.setPropertyFiles(propertyFiles);
-		}
-		String[] arguments = parseString(config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
-		if (arguments != null && arguments.length > 0) {
-			runner.setArguments(arguments);
-		}
-		runner.setCustomClasspath(getCustomClasspath(config));
-		
-		String antHome= getAntHome(config);
-		if (antHome != null) {
-			runner.setAntHome(antHome);
-		}
-		return runner.getAvailableTargets();
-	}
-	
-	public static AntTargetNode[] getTargetsTemp(String path, ILaunchConfiguration config) throws CoreException {
-		//TODO work in progress
+	public static AntTargetNode[] getTargets(String path, ILaunchConfiguration config) throws CoreException {
 		File buildfile= getBuildFile(path);
-		AntModel model= getAntModel(buildfile);
+		URL[] urls= getCustomClasspath(config);
+		IAntModel model= getAntModel(buildfile, urls);
+		model.setCanGetLexicalInfo(false);
+		model.setCanGetPositionInfo(false);
+		model.setCanGetTaskInfo(true);
 		AntProjectNode project= model.getProjectNode();
 		List targets= new ArrayList();
 		if (project.hasChildren()) {
@@ -240,8 +189,39 @@ public final class AntUtil {
 				}
 			}
 		}
+		model.dispose();
+		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
+	}
+	
+	public static AntTargetNode[] getTargets(String path) {
+		File buildfile= getBuildFile(path);
+		if (buildfile == null) {
+		    return new AntTargetNode[0];
+		}
+		IAntModel model= getAntModel(buildfile, null);
+		model.setCanGetTaskInfo(true);
+		model.setCanGetPositionInfo(true);
+		AntProjectNode project= model.getProjectNode();
+		List targets= new ArrayList();
+		if (project != null && project.hasChildren()) {
+			Iterator possibleTargets= project.getChildNodes().iterator();
+			while (possibleTargets.hasNext()) {
+				AntElementNode node= (AntElementNode)possibleTargets.next();
+				if (node instanceof AntTargetNode) {
+					targets.add(node);
+				}
+			}
+		}
 		
 		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
+	}
+	
+	public static IAntModel getAntModel(String buildFilePath, boolean needsTaskResolution, boolean needsLexicalResolution, boolean needsPositionResolution) {
+	    IAntModel model= getAntModel(getBuildFile(buildFilePath), null);
+	    model.setCanGetTaskInfo(needsTaskResolution);
+	    model.setCanGetLexicalInfo(needsLexicalResolution);
+	    model.setCanGetPositionInfo(needsPositionResolution);
+	    return model;   
 	}
 	
 	/**
@@ -257,20 +237,33 @@ public final class AntUtil {
 		return buildFile;
 	}
 	
-	private static AntModel getAntModel(final File buildFile) {
+	private static IAntModel getAntModel(final File buildFile, URL[] urls) {
 		IDocument doc= getDocument(buildFile);
 		if (doc == null) {
 			return null;
 		}
-		AntModel model= new AntModel(doc, null, new LocationProvider(null) {
+		final IFile file= getFileForLocation(buildFile.getAbsolutePath(), null);
+		IAntModel model= new AntModelLite(doc, null, new LocationProvider(null) {
+		    /* (non-Javadoc)
+		     * @see org.eclipse.ant.internal.ui.model.LocationProvider#getFile()
+		     */
+		    public IFile getFile() {
+		        return file;
+		    }
 			/* (non-Javadoc)
-			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
+			 * @see org.eclipse.ant.internal.ui.model.LocationProvider#getLocation()
 			 */
 			public IPath getLocation() {
-				return new Path(buildFile.getAbsolutePath());
+			    if (file == null) {
+			        return new Path(buildFile.getAbsolutePath());   
+			    } 
+			    return file.getLocation();
 			}
 		});
-		model.reconcile();
+		
+		if (urls != null) {
+		    model.setClassLoader(AntCorePlugin.getPlugin().getNewClassLoader(urls));
+		}
 		return model;
 	}
 	
@@ -361,23 +354,6 @@ public final class AntUtil {
 		} 
 		
 		return expandedString;
-	}
-
-	/**
-	 * Returns the currently displayed Ant View if it is open.
-	 * 
-	 * @return the Ant View open in the current workbench page or
-	 * <code>null</code> if there is none.
-	 */
-	public static AntView getAntView() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page= window.getActivePage(); 
-			if (page != null) {
-				return (AntView) page.findView(IAntUIConstants.ANT_VIEW_ID);
-			}
-		}
-		return null;
 	}
 	
 	/**
