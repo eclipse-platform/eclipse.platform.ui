@@ -148,7 +148,6 @@
 			tabPosition="1"
 			extensions="*:1"
 			showScopeSection="true"		
-			showReplaceButton="true"
 			canSearchEnclosingProjects="true"
 			class="org.eclipse.search.internal.ui.text.TextSearchPage">
 		</page>

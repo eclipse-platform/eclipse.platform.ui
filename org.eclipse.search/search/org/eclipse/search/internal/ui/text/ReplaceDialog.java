@@ -222,6 +222,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		clabel.setLayoutData(gd);
 		
+	
 		label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
 		fTextField= new Text(result, SWT.BORDER);
@@ -230,11 +231,18 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
 		
+		label= new Label(result, SWT.NONE); // filler
+		
+		Button replaceWithRegex= new Button(result, SWT.CHECK);
+		replaceWithRegex.setText("Regular Expression");
+		replaceWithRegex.setEnabled(false);
+		replaceWithRegex.setSelection(false);
+		
 		new Label(result, SWT.NONE);
 		
 		Composite actionButtons= createActionButtons(result);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 1;
+		gd.horizontalSpan= 2;
 		actionButtons.setLayoutData(gd);
 		
 		fFileLabel= new Label(result, SWT.NONE);
@@ -274,6 +282,8 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		GridLayout gl= new GridLayout();
 		gl.numColumns= 2;
 		gl.makeColumnsEqualWidth= true;
+		gl.marginHeight= 0;
+		gl.marginWidth= 0;
 		buttonContainer.setLayout(gl);
 		
 		fReplaceButton= createActionButton(buttonContainer, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$

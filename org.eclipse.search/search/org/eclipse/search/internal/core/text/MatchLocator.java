@@ -22,10 +22,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
- * @author tma
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * A class finding matches withing a file.
+ * @since 3.0
  */
 public class MatchLocator {
 	

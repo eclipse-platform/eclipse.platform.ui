@@ -80,9 +80,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 	}
 	
-	/**
-	 * @return
-	 */
 	private boolean validateResources(final TextSearchOperation operation) {
 		final List outOfDateEntries= new ArrayList();
 		for (Iterator elements = fElements.iterator(); elements.hasNext();) {
@@ -132,11 +129,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean askForResearch(List outOfDateEntries, List outOfSyncEntries) {
-		ResearchSelectionDialog dialog= new ResearchSelectionDialog(fSite.getShell(), outOfSyncEntries, outOfDateEntries);
+		SearchAgainConfirmationDialog dialog= new SearchAgainConfirmationDialog(fSite.getShell(), outOfSyncEntries, outOfDateEntries);
 		return dialog.open() == IDialogConstants.OK_ID;
 	}
 

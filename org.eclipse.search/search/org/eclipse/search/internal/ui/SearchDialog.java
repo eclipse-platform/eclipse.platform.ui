@@ -15,7 +15,25 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.IReplacePage;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchPageScoreComputer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
@@ -37,33 +55,11 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchPageScoreComputer;
-
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
-import org.eclipse.search.internal.ui.util.SWTUtil;
 
 class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
 
@@ -117,8 +113,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private boolean fPageStateIgnoringScopePart;
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
-	private int fActionId= ACTION_SEARCH;
-	private Runnable fPostCloseRunnable;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor, String pageId) {
 		super(shell);
@@ -313,7 +307,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		fReplaceButton= createActionButton(parent, REPLACE_ID, SearchMessages.getString("SearchDialog.replaceAction"), true); //$NON-NLS-1$
-		fReplaceButton.setVisible(getDescriptorAt(fCurrentIndex).shouldShowReplace());
+		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		createActionButton(parent, SEARCH_ID, SearchMessages.getString("SearchDialog.searchAction"), true); //$NON-NLS-1$
 		super.createButtonsForButtonBar(parent);
 	}
@@ -349,7 +343,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		return result;
 	}
 
-	protected boolean doPerformAction() {
+	protected boolean doPerformAction(int actionID) {
 		if (fCurrentPage == null)
 			return true;
 		
@@ -359,7 +353,12 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			SearchPlugin.setAutoBuilding(false);
 		try {
 			fCustomizeButton.setEnabled(false);
-			return fCurrentPage.performAction();
+			if (actionID == SEARCH_ID)
+				return fCurrentPage.performAction();
+			else
+				// safe cast, replace button is only visible when the curren page is 
+				// a replace page.
+				return ((IReplacePage)fCurrentPage).performReplace();
 		} finally {
 			fCustomizeButton.setEnabled(true);
 			if (isAutoBuilding)
@@ -368,26 +367,10 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		}
 		
 	}
-	protected void performAction(int actionID) {
-		switch (actionID) {
-			case SEARCH_ID :
-				fActionId= ACTION_SEARCH;
-				performAction();
-				break;
-			case REPLACE_ID:
-				fActionId= ACTION_REPLACE;
-				performAction();
-				break;
-		}
-	}
 	
-	private void performAction() {
-		if (doPerformAction()) {
+	protected void performAction(int actionID) {
+		if (doPerformAction(actionID)) {
 			close();
-			if (fPostCloseRunnable != null) {
-				fPostCloseRunnable.run();
-				fPostCloseRunnable= null;
-			}
 		}
 	}
 
@@ -416,10 +399,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private void turnToPage(SelectionEvent event) {
 		final TabItem item= (TabItem)event.item;
-		int selectionIndex= item.getParent().getSelectionIndex();
 		if (item.getControl() == null) {
-			
 			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
+
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
 					item.setData(descriptor.createObject());
@@ -433,9 +415,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			item.setControl(newControl);
 		}
 		if (item.getData() instanceof ISearchPage) {
-			SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(selectionIndex);
-			fReplaceButton.setVisible(descriptor.shouldShowReplace());
 			fCurrentPage= (ISearchPage)item.getData();
+			fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 			fCurrentIndex= item.getParent().getSelectionIndex();
 			resizeDialogIfNeeded(item.getControl());
 			fCurrentPage.setVisible(true);
@@ -520,23 +501,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			fScopeParts[fCurrentIndex].setSelectedWorkingSets(workingSets);
 	}
 
-	/*
-	 * Implements method from ISearchPageContainer
-	 */
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchPageContainer#getActionId()
-	 */
-	public int getActionId() {
-		return fActionId;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchPageContainer#setPostPerformRunnable(java.lang.Runnable)
-	 */
-	public void setPostPerformRunnable(Runnable runnable) {
-		fPostCloseRunnable= runnable;
-	}
-	
 	/*
 	 * Overrides method from ExtendedDialogWindow
 	 */

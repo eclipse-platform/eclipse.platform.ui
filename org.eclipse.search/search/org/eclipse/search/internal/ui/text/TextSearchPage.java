@@ -48,6 +48,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
@@ -63,6 +64,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -71,7 +73,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class TextSearchPage extends DialogPage implements ISearchPage {
+public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
@@ -118,6 +120,41 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	
 	public boolean performAction() {
 				
+		TextSearchOperation op = createTextSearchOperation();
+			
+		return runOperation(op);
+	}
+	
+	private boolean runOperation(final TextSearchOperation op) {
+		IRunnableContext context=  null;
+		context= getContainer().getRunnableContext();
+			
+		Shell shell= fPattern.getShell();
+		if (context == null)
+			context= new ProgressMonitorDialog(shell);
+
+		try {			
+			context.run(true, true, op);
+		} catch (InvocationTargetException ex) {
+			if (ex.getTargetException() instanceof PatternSyntaxException)
+				showRegExSyntaxError((PatternSyntaxException)ex.getTargetException());
+			else
+				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.search.title"),SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
+		IStatus status= op.getStatus();
+		if (status != null && !status.isOK()) {
+			String title= SearchMessages.getString("Search.Problems.title"); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), title, null, status); //$NON-NLS-1$
+			return false;
+		}
+
+		return true;
+	}
+
+	private TextSearchOperation createTextSearchOperation() {
 		SearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
@@ -153,41 +190,24 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			getSearchOptions(),
 			scope,
 			collector);
-			
-		IRunnableContext context=  null;
-		context= getContainer().getRunnableContext();
-			
-		Shell shell= fPattern.getShell();
-		if (context == null)
-			context= new ProgressMonitorDialog(shell);
+		return op;
+	}
 
-		try {			
-			context.run(true, true, op);
-		} catch (InvocationTargetException ex) {
-			if (ex.getTargetException() instanceof PatternSyntaxException)
-				showRegExSyntaxError((PatternSyntaxException)ex.getTargetException());
-			else
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.search.title"),SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
+	 */
+	public boolean performReplace() {
+		final TextSearchOperation op= createTextSearchOperation();
+		
+		if (!runOperation(op))
 			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
-		IStatus status= op.getStatus();
-		if (status != null && !status.isOK()) {
-			String title= SearchMessages.getString("Search.Problems.title"); //$NON-NLS-1$
-			ErrorDialog.openError(getShell(), title, null, status); //$NON-NLS-1$
-			return false;
-		}
-
-		if (getContainer().getActionId() == ISearchPageContainer.ACTION_REPLACE){
-			getContainer().setPostPerformRunnable(new Runnable() {
-				public void run() {
-					SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
-					
-					new ReplaceDialog(SearchPlugin.getSearchResultView().getViewSite().getShell(), (List) view.getViewer().getInput(), op).open();
-				}
-			});
-		}
+		
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
+				new ReplaceDialog(SearchPlugin.getSearchResultView().getViewSite().getShell(), (List) view.getViewer().getInput(), op).open();
+			}
+		});
 		return true;
 	}
 	

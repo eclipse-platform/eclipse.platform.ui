@@ -51,7 +51,6 @@ class SearchPageDescriptor implements Comparable {
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
 	private final static String CAN_SEARCH_ENCLOSING_PROJECTS= "canSearchEnclosingProjects"; //$NON-NLS-1$
-	private final static String SHOW_REPLACE_BUTTON= "showReplaceButton"; //$NON-NLS-1$
 	private final static String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private final static String SEARCH_VIEW_HELP_CONTEXT_ID_ATTRIBUTE= "searchViewHelpContextId"; //$NON-NLS-1$
 	
@@ -164,17 +163,6 @@ class SearchPageDescriptor implements Comparable {
 	 */
 	public boolean canSearchInProjects() {
 		return Boolean.valueOf(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS)).booleanValue();
-	}
-
-	/**
-	 * Returns <code>true</code> if the if the replace button 
-	 * should be shown
-	 * 
-	 * This attribute is optional and defaults to <code>false</code>.
-	 * @since 3.0
-	 */
-	public boolean shouldShowReplace() {
-		return Boolean.valueOf(fElement.getAttribute(SHOW_REPLACE_BUTTON)).booleanValue();
 	}
 
 	/**
