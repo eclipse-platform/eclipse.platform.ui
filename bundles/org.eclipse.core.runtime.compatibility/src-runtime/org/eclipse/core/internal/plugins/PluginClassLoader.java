@@ -21,8 +21,9 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 public class PluginClassLoader extends URLClassLoader {
-	private Bundle bundle;	//We should be able to get rid of this field, since the info is in the descriptor
+	private Bundle bundle; //We should be able to get rid of this field, since the info is in the descriptor
 	private PluginDescriptor descriptor;
+
 	PluginClassLoader(PluginDescriptor descriptor) {
 		super(computeURLs(descriptor));
 		this.descriptor = descriptor;
@@ -30,6 +31,7 @@ public class PluginClassLoader extends URLClassLoader {
 		if (bundle == null)
 			throw new IllegalArgumentException();
 	}
+
 	private static URL[] computeURLs(PluginDescriptor descriptor) {
 		Bundle bundle = InternalPlatform.getDefault().getBundle(descriptor.getUniqueIdentifier());
 		if (bundle == null)
@@ -63,7 +65,7 @@ public class PluginClassLoader extends URLClassLoader {
 		return urls;
 	}
 
-	private static String[] computeDevPath() {	//TODO This must use the new classpath computer for dev.properties
+	private static String[] computeDevPath() { //TODO This must use the new classpath computer for dev.properties //TODO Do we want to put much effort for this non API thing?
 		//Code copied from DefaultAdaptor
 		if (!BootLoader.inDevelopmentMode())
 			return new String[0];
@@ -84,9 +86,11 @@ public class PluginClassLoader extends URLClassLoader {
 	protected Class findClass(String name) throws ClassNotFoundException {
 		return bundle.loadClass(name); // if no CNFE is thrown, activate the bundle (if needed)
 	}
+
 	public URL findResource(String name) {
 		return bundle.getResource(name);
 	}
+
 	public PluginDescriptor getPluginDescriptor() {
 		return descriptor;
 	}

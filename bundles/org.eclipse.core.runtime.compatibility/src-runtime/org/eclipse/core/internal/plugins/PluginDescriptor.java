@@ -48,22 +48,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 		deactivated = false;
 	}
 	/**
-	 * convert a list of comma-separated tokens into an array
-	 *TODO This method is not used. 
-	 */
-	private static String[] getArrayFromList(String prop) {
-		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
-			return new String[0];
-		Vector list = new Vector();
-		StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
-				list.addElement(token);
-		}
-		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
-	}
-	/**
 	 * @see IPluginDescriptor
 	 */
 	public IExtension getExtension(String id) {
@@ -108,6 +92,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @return a URL to the install location that does not need to be resolved.
 	 */
 	//TODO this can be private
+	//TODO Given that we can have a pluginDescriptor for a real bundle, what happens here?
 	public URL getInstallURLInternal() {
 		try {
 			return InternalPlatform.getDefault().resolve(getInstallURL());
