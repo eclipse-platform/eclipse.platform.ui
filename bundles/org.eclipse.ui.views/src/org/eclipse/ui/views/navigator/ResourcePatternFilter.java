@@ -66,13 +66,13 @@ public String[] getPatterns() {
  * Initialize the settings from the workbench preferences.
  */
 private void initializeFromPreferences() {
-
-	AbstractUIPlugin plugin =
-		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-
+	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+	// get the filters that were saved by ResourceNavigator.setFiltersPreference
 	String storedPatterns = plugin.getPreferenceStore().getString(FILTERS_TAG);
 
 	if (storedPatterns.length() == 0) {
+		// revert to all filter extensions with selected == "true"
+		// if there are no filters in the preference store
 		List defaultFilters = FiltersContentProvider.getDefaultFilters();
 		String[] patterns = new String[defaultFilters.size()];
 		defaultFilters.toArray(patterns);
@@ -82,9 +82,7 @@ private void initializeFromPreferences() {
 
 	//Get the strings separated by a comma and filter them from the currently
 	//defined ones
-
 	List definedFilters = FiltersContentProvider.getDefinedFilters();
-
 	StringTokenizer entries = new StringTokenizer(storedPatterns, COMMA_SEPARATOR);
 	List patterns = new ArrayList();
 
