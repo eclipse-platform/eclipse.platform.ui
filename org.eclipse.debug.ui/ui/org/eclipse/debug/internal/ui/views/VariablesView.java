@@ -60,6 +60,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -198,6 +200,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			getDetailViewer().setEditable(true);
 		}
 		getDetailViewer().configure(svc);
+		//update actions that depend on the configuration of the details viewer
+		updateAction("ContentAssist"); //$NON-NLS-1$
 		setDetailViewerConfiguration(svc);
 	}
 	
@@ -249,6 +253,23 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setEventHandler(createEventHandler(vv));
 		
 		return vv;
+	}
+	
+	protected void addVerifyKeyListener() {
+		getDetailViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+			public void verifyKey(VerifyEvent event) {
+				//do code assist for CTRL-SPACE
+				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
+					if (event.character == 0x20) {
+						IAction action= getAction("ContentAssist"); //$NON-NLS-1$
+						if(action != null && action.isEnabled()) {
+							action.run();
+							event.doit= false;
+						}
+					}
+				}
+			}
+		});
 	}
 	
 	/**
@@ -403,6 +424,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		updateAction(ITextEditorActionConstants.FIND);
 		
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().CONTENTASSIST_PROPOSALS);
+		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		setAction("ContentAssist", textAction); //$NON-NLS-1$
+		addVerifyKeyListener();
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	} 
@@ -451,6 +476,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	* @param menu The menu to add the item to.
 	*/
 	protected void fillDetailContextMenu(IMenuManager menu) {
+		
+		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
+		menu.add(new Separator());		
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
@@ -607,8 +635,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 	protected void updateAction(String actionId) {
 		IAction action= (IAction)fGlobalActions.get(actionId);
-		if (action instanceof IUpdate)
+		if (action == null) {
+			action= getAction(actionId);
+		}
+		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
+		}
 	}
 	
 	protected boolean isDetailPaneVisible() {
