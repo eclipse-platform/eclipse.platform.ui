@@ -289,7 +289,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 				}
 			} catch (TeamException e) {
 				// Participant instance is invalid - remove from list
-				synchronizeParticipants.remove(instance);
+				synchronizeParticipants.remove(instance.getId());
 				TeamUIPlugin.log(e);
 			}				
 		}
