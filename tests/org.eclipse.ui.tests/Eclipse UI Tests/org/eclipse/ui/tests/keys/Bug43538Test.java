@@ -37,10 +37,10 @@ public class Bug43538Test extends UITestCase {
     }
 
     /**
-     * Tests that if "Shift+Alt+" is pressed, then the key code should
-     * represent the "Alt+" key press.
+     * Tests that if "Ctrl+Space" is pressed only one key down event with the
+     * "CTRL" mask is received.
      */
-    public void testShiftAlt() {
+    public void testCtrlSpace() {
         // Set up a working environment.
         Display display = Display.getCurrent();
         Listener listener = new Listener() {
