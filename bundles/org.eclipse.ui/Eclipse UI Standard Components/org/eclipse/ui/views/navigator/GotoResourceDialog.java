@@ -29,13 +29,7 @@ import org.eclipse.ui.help.*;
 
 	String patternString;
 	IResource selection;
-	private static Collator collator;
-	{
-		collator = Collator.getInstance();
-		//Set the strength to secondary so that the TERTIARY
-		//case is ignored
-		collator.setStrength(Collator.SECONDARY);
-	}
+	private static Collator collator = Collator.getInstance();
 	
 	StringMatcher stringMatcher;
 	
