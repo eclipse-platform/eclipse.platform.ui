@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,15 +22,16 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+
+import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
-import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -76,50 +78,19 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	
-	
 	public EditorsPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
+		Assert.isTrue(fgInstance == null);
 		fgInstance= this;
 	}
-
 
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeDefaultPreferences(org.eclipse.jface.preference.IPreferenceStore)
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		MarkerAnnotationPreferences.initializeDefaultValues(store);
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 	
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#startup()
-	 * @since 3.0
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-		fFileEditorInputAdapterFactory= new FileEditorInputAdapterFactory();
-		IAdapterManager manager= Platform.getAdapterManager();		
-		manager.registerAdapters(fFileEditorInputAdapterFactory, IFile.class);
-	}
-	
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		IAdapterManager manager= Platform.getAdapterManager();		
-		manager.unregisterAdapters(fFileEditorInputAdapterFactory);
-		
-		if (fSharedTextColors != null) {
-			fSharedTextColors.dispose();
-			fSharedTextColors= null;
-		}
-		
-		fAnnotationTypeLookup= null;
-		fAnnotationPreferenceLookup= null;
-		fAnnotationTypeHierarchy= null;
-		
-		super.shutdown();
-	}
 	
 	/**
 	 * Returns the shared text colors of this plug-in.
@@ -167,5 +138,36 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		if (fAnnotationTypeHierarchy == null)
 			fAnnotationTypeHierarchy= new AnnotationTypeHierarchy();
 		return fAnnotationTypeHierarchy;
+	}
+
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @since 3.0
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		fFileEditorInputAdapterFactory= new FileEditorInputAdapterFactory();
+		IAdapterManager manager= Platform.getAdapterManager();		
+		manager.registerAdapters(fFileEditorInputAdapterFactory, IFile.class);
+	}
+
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * @since 3.0
+	 */
+	public void stop(BundleContext context) throws Exception {
+		IAdapterManager manager= Platform.getAdapterManager();		
+		manager.unregisterAdapters(fFileEditorInputAdapterFactory);
+		
+		if (fSharedTextColors != null) {
+			fSharedTextColors.dispose();
+			fSharedTextColors= null;
+		}
+		
+		fAnnotationTypeLookup= null;
+		fAnnotationPreferenceLookup= null;
+		fAnnotationTypeHierarchy= null;
+		
+		super.stop(context);
 	}
 }

@@ -47,6 +47,8 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  */
 public class MarkerAnnotationPreferences {
 	
+	private static String IGNORE_GENERAL_VALUES_FOR_GENERAL_PREFERENCE_PAGE= "org.eclipse.ui.internal.editors.text.useSharedStore"; //$NON-NLS-1$
+	
 	/**
 	 * Initializes the given preference store with the default marker annotation values.
 	 * 
@@ -54,10 +56,17 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	public static void initializeDefaultValues(IPreferenceStore store) {
+		
+		boolean ignoreGeneralAnnotationPreferences= store.getBoolean(IGNORE_GENERAL_VALUES_FOR_GENERAL_PREFERENCE_PAGE);
+		
 		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
+			
+			if (ignoreGeneralAnnotationPreferences && info.isIncludeOnPreferencePage() && isComplete(info))
+				continue;
+			
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
 			if (info.getVerticalRulerPreferenceKey() != null)
@@ -75,8 +84,53 @@ public class MarkerAnnotationPreferences {
 				store.setDefault(info.getTextStylePreferenceKey(), info.getTextStyleValue());
 		}
 	}
-	
-	
+
+	/**
+	 * Removes the marker annotation values which are shown on the
+	 * general Annotations page  from the given store and prevents
+	 * setting the default values in the future.
+	 * <p>
+	 * Note: In order to work this method must be called before
+	 * any call to {@link #initializeDefaultValues(IPreferenceStore)
+	 * </p>
+	 * 
+	 * @param store the preference store to be initialized
+	 * @param state the new state
+	 * @since 3.0
+	 */
+	public static void ignoreValuesIncludedOnPreferencePage(IPreferenceStore store, boolean state) {
+		store.putValue(IGNORE_GENERAL_VALUES_FOR_GENERAL_PREFERENCE_PAGE, Boolean.toString(state));
+		
+		if (state) {
+			MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+			Iterator e= preferences.getAnnotationPreferences().iterator();
+			while (e.hasNext()) {
+				AnnotationPreference info= (AnnotationPreference) e.next();
+				
+				// Only reset annotations shown on Annotations preference page
+				if (!info.isIncludeOnPreferencePage() || !isComplete(info))
+					continue;
+				
+				store.setToDefault(info.getTextPreferenceKey());
+				store.setToDefault(info.getOverviewRulerPreferenceKey());
+				if (info.getVerticalRulerPreferenceKey() != null)
+					store.setToDefault(info.getVerticalRulerPreferenceKey());
+				store.setToDefault(info.getColorPreferenceKey());
+				if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+					store.setToDefault(info.getShowInNextPrevDropdownToolbarActionKey());
+				if (info.getIsGoToNextNavigationTargetKey() != null)
+					store.setToDefault(info.getIsGoToNextNavigationTargetKey());
+				if (info.getIsGoToPreviousNavigationTargetKey() != null)
+					store.setToDefault(info.getIsGoToPreviousNavigationTargetKey());
+				if (info.getHighlightPreferenceKey() != null)
+					store.setToDefault(info.getHighlightPreferenceKey());
+				if (info.getTextStylePreferenceKey() != null)
+					store.setToDefault(info.getTextStylePreferenceKey());
+			}
+		} else
+			initializeDefaultValues(store);
+	}
+
 	
 	/** The list of extension fragments */
 	private List fFragments;
@@ -176,7 +230,7 @@ public class MarkerAnnotationPreferences {
 	 * @return <code>true</code> if <code>spec</code> is complete, <code>false</code> otherwise
 	 * @since 3.0
 	 */
-	private boolean isComplete(AnnotationPreference spec) {
+	private static boolean isComplete(AnnotationPreference spec) {
 		return spec.getColorPreferenceKey() != null
 				&& spec.getColorPreferenceValue() != null
 				&& spec.getTextPreferenceKey() != null

@@ -169,6 +169,12 @@
             class="org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2"
             id="org.eclipse.ui.preferencePages.TextEditor">
       </page>
+      <page
+            name="%PreferencePages.Annotations"
+            category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.editors.text.AnnotationsPreferencePage"
+            id="org.eclipse.ui.editors.preferencePages.Annotations">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">

@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
- * The central class for access to the Search Plug-in's User Interface. 
+ * The central class for access to this plug-in. 
  * This class cannot be instantiated; all functionality is provided by 
  * static methods.
  * 
@@ -51,6 +53,15 @@ public final class EditorsUI {
 	 */
 	public static AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
 		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
+	}
+
+	/**
+	 * Returns the preference store of this plug-in.
+	 * 
+	 * @return this plug-in's preference store
+	 */
+	public static IPreferenceStore getPreferenceStore() {
+		return EditorsPlugin.getDefault().getPreferenceStore();
 	}
 	
 	private EditorsUI() {
