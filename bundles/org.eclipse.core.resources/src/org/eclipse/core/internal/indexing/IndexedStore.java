@@ -101,6 +101,8 @@ private static final Map registry = new HashMap();
 	 * Closes the store.  This is required to free the underlying file.
 	 */
 	public synchronized void close() throws IndexedStoreException {
+		if (name == null)
+			return;//already closed
 		try {
 			commit();
 			if (objectDirectoryCursor != null)
