@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
@@ -387,15 +388,20 @@ public class OperationValidator implements IOperationValidator {
 		try {
 			// checks if the platform has been modified outside this eclipse instance
 			IPlatformConfiguration platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
-			// Divide timestamp by 1000 so we compare up to second, to account for filesystem particulars
-			long currentTimeStamp = platformConfig.getChangeStamp()/1000;
+			
+			long currentTimeStamp = platformConfig.getChangeStamp();
+			// get the last modified value for this config, from this process point of view
+			if (platformConfig instanceof PlatformConfiguration) 
+				currentTimeStamp = ((PlatformConfiguration)platformConfig).getConfiguration().lastModified();
+				
+			// get the real last modified value
 			URL platformXML = platformConfig.getConfigurationLocation();
 			long actualTimeStamp = currentTimeStamp;
 			if ("file".equals(platformXML.getProtocol()))
-				actualTimeStamp = new File(platformXML.getFile()).lastModified()/1000;
+				actualTimeStamp = new File(platformXML.getFile()).lastModified();
 			else {
 				URLConnection connection = platformXML.openConnection();
-				actualTimeStamp = connection.getLastModified()/1000;
+				actualTimeStamp = connection.getLastModified();
 			}
 			if (currentTimeStamp != actualTimeStamp)
 				status.add(createStatus(

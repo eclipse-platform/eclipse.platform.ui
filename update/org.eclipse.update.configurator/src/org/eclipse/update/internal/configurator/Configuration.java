@@ -22,6 +22,7 @@ public class Configuration implements IConfigurationConstants {
 	
 	private HashMap sites = new HashMap();
 	private Date date;
+	private long lastModified; // needed to account for file system limitations
 	private URL url;
 	private boolean transientConfig;
 	private boolean isDirty;
@@ -147,5 +148,13 @@ public class Configuration implements IConfigurationConstants {
 			if (sites[i].unconfigureFeatureEntry(feature))
 				return true;
 		return false;
+	}
+	
+	public void setLastModified(long lastModified) {
+		this.lastModified = lastModified;
+	}
+	
+	public long lastModified() {
+		return lastModified;
 	}
 }
