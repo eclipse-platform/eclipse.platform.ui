@@ -3,7 +3,7 @@
 <plugin
   name="Eclipse Core Tests Resources"
   id="org.eclipse.core.tests.resources"
-  version="3.0.0"
+  version="3.1.0"
   provider-name="Eclipse.org">
 
   <requires>
