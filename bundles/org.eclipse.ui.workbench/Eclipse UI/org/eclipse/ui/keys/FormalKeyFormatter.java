@@ -30,6 +30,15 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 */
+	public String format(Key key) {
+		return key.name;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
