@@ -461,19 +461,27 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth());
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
-						Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-						if(severity != null) {
-							if(severity.intValue() == IMarker.SEVERITY_ERROR) {
-								property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
-								break;
-							} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
-								property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
-								// Keep going because there may be errors on other resources
+						try {
+							Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
+							if(severity != null) {
+								if(severity.intValue() == IMarker.SEVERITY_ERROR) {
+									property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+									break;
+								} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
+									property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+									// Keep going because there may be errors on other resources
+								}
 							}
+						} catch(CoreException e) {
+							// the marker has been deleted skip this marker and keep going
+							if(! (e.getStatus().getCode() == IResourceStatus.MARKER_NOT_FOUND)) {
+								TeamUIPlugin.log(e);
+								return;
+							}
+							continue;
 						}
 					}
-				}
-				
+				}			
 				// If it doesn't have a direct change, a parent might
 				boolean recalculateParentDecorations = hadProblemProperty(element, property);
 				if(recalculateParentDecorations) {
@@ -571,28 +579,28 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 						}
 					}
 				}
-				
-			synchronized(this) {
+			
+			if (! changes.isEmpty()) {
+			synchronized (this) {
 				// Changes contains all resources with marker changes
 				for (Iterator it = changes.values().iterator(); it.hasNext();) {
 					ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
 					calculateProperties(element, false);
 				}
 			}
-					
-			if(DEBUG) {
-			long time = System.currentTimeMillis() - start;
+			if (DEBUG) {
+				long time = System.currentTimeMillis() - start;
 				DateFormat TIME_FORMAT = new SimpleDateFormat("m:ss.SSS"); //$NON-NLS-1$
 				String took = TIME_FORMAT.format(new Date(time));
-				System.out.println(took + " for " + changes.size() + " files");  //$NON-NLS-1$//$NON-NLS-2$
+				System.out.println(took + " for " + changes.size() + " files"); //$NON-NLS-1$//$NON-NLS-2$
 			}
-				
 			// Fire label changed
 			asyncExec(new Runnable() {
 				public void run() {
 					firePendingLabelUpdates();
 				}
-			});		
+			});
+		}
 	}
 	
 	protected ISynchronizeModelElement getClosestExistingParent(IResource resource) {
