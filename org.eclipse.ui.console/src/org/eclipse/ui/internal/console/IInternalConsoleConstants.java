@@ -8,28 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.console;
-
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-public class ConsolePlugin extends AbstractUIPlugin {
-
-	/**
-	 * The singleton console plugin instance
-	 */
-	private static ConsolePlugin fgPlugin= null;
-		
-	/**
-	 * Returns the singleton instance of the console plugin.
-	 */
-	public static ConsolePlugin getDefault() {
-		return fgPlugin;
-	}
-
-	public ConsolePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		fgPlugin = this;
-	}
+ 
+public interface IInternalConsoleConstants {
+	
+	// tool images
+	public static final String IMG_LCL_PIN = "IMG_LCL_PIN"; //$NON-NLS-1$
+	
+	// disabled local tool images
+	public static final String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
+	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
+	
+	// enabled local tool images	
+	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
+	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
 }

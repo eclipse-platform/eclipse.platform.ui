@@ -1,21 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   id="org.eclipse.ui.console"
-   name="%pluginName"
-   version="3.0.0"
-   provider-name="%providerName"
-   class="org.eclipse.ui.internal.console.ConsolePlugin">
+	id="org.eclipse.ui.console"
+	name="%pluginName"
+	version="3.0.0"
+	provider-name="%providerName"
+	class="org.eclipse.ui.console.ConsolePlugin">
 
-   <runtime>
-      <library name="console.jar">
-         <export name="*"/>
-         <packages prefixes="org.eclipse.ui.console, org.eclipse.ui.internal.console"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.help"/>
+	<runtime>
+		<library name="console.jar">
+			<export name="*"/>
+			<packages prefixes="org.eclipse.ui.console, org.eclipse.ui.internal.console"/>
+		</library>
+	</runtime>
+	<requires>
+		<import plugin="org.apache.xerces"/>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.ui"/>
+		<import plugin="org.eclipse.jface.text"/>
+		<import plugin="org.eclipse.help"/>
    </requires>
+	<extension
+		point="org.eclipse.ui.views">
+    	<view
+			name="%ConsoleView.name"
+			icon="icons/full/cview16/console_view.gif"
+			category="org.eclipse.ui"
+			class="org.eclipse.ui.internal.console.ConsoleView"
+			id="org.eclipse.ui.console.ConsoleView">
+		</view>
+	</extension>
+	<extension
+         point="org.eclipse.ui.fontDefinitions">
+      <fontDefinition
+            label="%ConsoleFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            id="org.eclipse.ui.console.ConsoleFont">
+         <description>
+            %ConsoleFontDefinition.description
+         </description>
+      </fontDefinition>
+   </extension>
 </plugin>

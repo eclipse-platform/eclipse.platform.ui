@@ -5,6 +5,7 @@
 	<projects>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.runtime</project>
+		<project>org.eclipse.jface.text</project>
 		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
