@@ -23,10 +23,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WWinKeyBindingService;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 
