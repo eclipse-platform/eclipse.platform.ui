@@ -334,7 +334,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Returns whether the user wishes to include results which cannot be
 	 * parsed.
 	 */
-	public boolean getIncludeErrorResults() {
+	protected boolean getIncludeErrorResults() {
 		return settings.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS);
 	}
 
