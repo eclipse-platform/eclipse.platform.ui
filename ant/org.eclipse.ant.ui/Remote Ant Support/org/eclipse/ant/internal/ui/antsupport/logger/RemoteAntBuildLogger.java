@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.antsupport.logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -49,10 +48,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 */
 	private PrintWriter fWriter;
 	/**
-	 * Reader for incoming messages
-	 */
-	private BufferedReader fReader;
-	/**
 	 * Host to connect to, default is the localhost
 	 */
 	private String fHost= ""; //$NON-NLS-1$
@@ -65,54 +60,15 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 */
 	private boolean fDebugMode= false;	
 	
-	private boolean fCancelled;
-	
 	private boolean fSentProcessId= false;
 	
 	private List fEventQueue;
 	
-	private List fMessageQueue;
-	
-	/**
-	 * Thread reading from the socket
-	 */
-	private ReaderThread fReaderThread;
-	/**
-	 * Reader thread that processes messages from the client.
-	 */
-	private class ReaderThread extends Thread {
-
-		public ReaderThread() {
-			super("ReaderThread"); //$NON-NLS-1$
-		}
-
-		public void run(){
-			try { 
-				String message= null; 
-				while (true) { 
-					if ((message= fReader.readLine()) != null) {
-						
-						if (message.startsWith(MessageIds.BUILD_CANCELLED)){
-							fCancelled= true;
-							//RemoteAntBuildLogger.this.stop();
-							synchronized(RemoteAntBuildLogger.this) {
-								RemoteAntBuildLogger.this.notifyAll();
-							}
-							break;
-						}
-					}
-				} 
-			} catch (Exception e) {
-				//RemoteTestRunner.this.stop();
-			}
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
 	 */
 	protected void printMessage(String message, PrintStream stream, int priority) {
-		super.printMessage(message, stream, priority);
 		StringBuffer sendMessage= new StringBuffer();
 		sendMessage.append(priority);
 		sendMessage.append(',');
@@ -121,25 +77,22 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	}
 	
 	/**
-	 * Connect to the remote test listener.
+	 * Connect to the remote Ant build listener.
 	 */
 	private void connect() {
 		if (fDebugMode) {
 			System.out.println("RemoteAntBuildLogger: trying to connect" + fHost + ":" + fPort); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		for (int i= 1; i < 20; i++) {
+		for (int i= 1; i < 5; i++) {
 			try{
 				fClientSocket= new Socket(fHost, fPort);
 				fWriter= new PrintWriter(fClientSocket.getOutputStream(), true);
-				fReader= new BufferedReader(new InputStreamReader(fClientSocket.getInputStream()));
-				fReaderThread= new ReaderThread();
-				fReaderThread.start();
 				return;
 			} catch(IOException e){
 			}
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch(InterruptedException e) {
 			}
 		}
@@ -157,19 +110,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			fWriter.close();
 			fWriter= null;
 		}
-		try {
-			if (fReaderThread != null)   {
-				// interrupt reader thread so that we don't block on close
-				// on a lock held by the BufferedReader
-				// fix for bug: 38955
-				fReaderThread.interrupt();
-			}
-			if (fReader != null) {
-				fReader.close();
-				fReader= null;
-			}
-		} catch(IOException e) {
-		}
 		
 		try {
 			if (fClientSocket != null) {
@@ -182,22 +122,9 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	private void sendMessage(String msg) {
 		if (fWriter == null) {
-			if (msg != null) {
-				if (fMessageQueue == null) {
-					fMessageQueue= new ArrayList();
-				}
-				fMessageQueue.add(msg);
-			}
 			return;
 		}
 		
-		if (fMessageQueue != null) {
-			for (Iterator iter = fMessageQueue.iterator(); iter.hasNext();) {
-				String message = (String) iter.next();
-				fWriter.println(message);
-			}
-			fMessageQueue= null;
-		}
 		fWriter.println(msg);
 	}
 	
@@ -287,11 +214,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		if (fCancelled) {
-			shutDown();
-			System.exit(0);
-		}
-		
 		if (event.getPriority() > msgOutputLevel) {
 			return;
 		}
