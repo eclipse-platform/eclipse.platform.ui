@@ -52,10 +52,7 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		if (!(input instanceof CompareEditorInput))
 			throw new PartInitException("Invalid Input: Must be CompareEditorInput");
-		
-		CompareConfiguration cc= getCompareConfiguration();
-		cc.setProperty(CONFIRM_SAVE_PROPERTY, new Boolean(false));
-		
+				
 		CompareEditorInput cei= (CompareEditorInput) input;
 			
 		setSite(site);

@@ -24,8 +24,11 @@ public class CompareAction implements IActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (fInput == null)
-			fInput= new ResourceCompareInput(new CompareConfiguration());
+		if (fInput == null) {
+			CompareConfiguration cc= new CompareConfiguration();
+			cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
+			fInput= new ResourceCompareInput(cc);
+		}
 		action.setEnabled(fInput.setSelection(selection));
 	}
 }
