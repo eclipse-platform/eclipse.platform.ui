@@ -52,7 +52,7 @@ public PerspectiveDescriptor(File file)
 	InputStream stream = null;
 	try {
 		stream = new FileInputStream(file);
-		InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		IStatus status = restoreState(memento);

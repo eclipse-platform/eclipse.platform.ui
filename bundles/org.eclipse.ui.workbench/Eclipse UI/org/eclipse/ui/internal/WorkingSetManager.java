@@ -258,7 +258,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 		if (stateFile.exists()) {
 			try {
 				FileInputStream input = new FileInputStream(stateFile);
-				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
 
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				restoreWorkingSetState(memento);

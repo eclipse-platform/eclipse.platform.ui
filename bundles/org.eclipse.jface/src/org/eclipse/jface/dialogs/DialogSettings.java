@@ -199,7 +199,7 @@ public void load(Reader r) {
  */
 public void load(String fileName) throws IOException {
 	FileInputStream stream = new FileInputStream(fileName);
-	InputStreamReader reader = new InputStreamReader(stream, "utf-8");//$NON-NLS-1$
+	BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8"));//$NON-NLS-1$
 	load(reader);
 	reader.close();
 }

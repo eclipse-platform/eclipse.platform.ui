@@ -548,7 +548,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 {
 	try {
 		InputStream stream = new FileInputStream(persp.getCustomFile());
-		InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		MultiStatus status = new MultiStatus(
