@@ -105,6 +105,7 @@ public class DefaultFeature extends Feature {
 	 * @param image The image to set
 	 */
 	public void setImage(URL image) {
+		if (image==null) return;
 		setImageURLString(image.toExternalForm());
 	}
 

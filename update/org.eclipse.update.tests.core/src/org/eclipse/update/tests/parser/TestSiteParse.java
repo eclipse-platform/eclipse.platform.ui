@@ -140,7 +140,8 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of archives", archives.length == 3);
 
 		URL path1 = new URL(SOURCE_FILE_SITE + "SiteURLTest/data/artifacts/features/helpFeature.jar");
-		assertEquals(path1, feature[0].getURL());
+		URL url1 = feature[0].getURL();
+		assertEquals(path1, url1);
 		URL path2 = new URL(SOURCE_FILE_SITE + "SiteURLTest/data/artifacts/plugins/help.jar");
 		assertEquals(path2, archives[0].getURL());
 

@@ -53,7 +53,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 	
 	public void testSite2() throws Exception {
 
-		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site2/children");
+		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site2/");
 		File file = new File(remoteUrl.getFile());
 		ILocalSite local = SiteManager.getLocalSite();
 		IInstallConfiguration currentConfig = local.getCurrentConfiguration();

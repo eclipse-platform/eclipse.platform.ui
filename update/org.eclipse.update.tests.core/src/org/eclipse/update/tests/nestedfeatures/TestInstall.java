@@ -24,7 +24,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	public void testFileSite() throws Exception {
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/"));
+			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"));
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature, null, null);
@@ -216,7 +216,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		URL INSTALL_SITE = null;
 		try {
-			INSTALL_SITE = new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/");
+			INSTALL_SITE = new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml");
 		} catch (Exception e) {
 			fail(e.toString());
 			e.printStackTrace();

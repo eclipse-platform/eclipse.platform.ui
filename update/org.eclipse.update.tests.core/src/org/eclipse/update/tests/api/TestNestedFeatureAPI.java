@@ -24,7 +24,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	 * the feature to test
 	 */
 	private IFeature getRootFeature() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest/site.xml"));
 		URL url =
 			UpdateManagerUtils.getURL(
 				site.getURL(),
@@ -80,7 +80,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	 * the feature to test
 	 */
 	private IFeature getRootFeature2() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/site.xml"));
 		URL url =
 			UpdateManagerUtils.getURL(
 				site.getURL(),
@@ -101,7 +101,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	private IFeature getChildFeature2()
 		throws MalformedURLException, CoreException {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/site.xml"));
 		URL url =
 			UpdateManagerUtils.getURL(
 				site.getURL(),
@@ -136,7 +136,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	 * the feature to test
 	 */
 	private IFeature getRootFeature3() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/site.xml"));
 		URL url =
 			UpdateManagerUtils.getURL(
 				site.getURL(),
@@ -157,7 +157,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	private IFeature getChildFeature3()
 		throws MalformedURLException, CoreException {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/site.xml"));
 		URL url =
 			UpdateManagerUtils.getURL(
 				site.getURL(),

@@ -34,7 +34,7 @@ public class FeatureMain extends UpdateManagerTestCase {
 		w.println("Resolving feature using "+base+" ...");
 		ResourceBundle bundle = null;
 		bundle = ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
-		feature.resolve(new URL(base), bundle);
+		feature.resolve(new URL(base), new URL(base));
 				
 		w.close();
 	}
