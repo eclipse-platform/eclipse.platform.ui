@@ -392,6 +392,8 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * disposes of this console.
      */
     protected void dispose() {
+        super.dispose();
+        matchJob.cancel();
         partitioner.disconnect();
         try {
             inputStream.close();
@@ -507,10 +509,13 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         	IDocument doc = getDocument();
         	String text = null;
         	int prevBaseOffset = -1;
-        	if (doc != null) {
+        	if (doc != null && !monitor.isCanceled()) {
         	    boolean allDone = true;
 	        	int docLength = doc.getLength();
 	        	for (int i = 0; i < patterns.size(); i++) {
+	        	    if (monitor.isCanceled()) {
+	        	        break;
+	        	    }
 	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
 	        		int baseOffset = notifier.end;
 					int length = docLength - baseOffset;
@@ -526,7 +531,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 								quick = notifier.qualifier.matcher(text);
 							}
 							int start = 0;
-							while (start < length) {
+							while (start < length && !monitor.isCanceled()) {
 								if (quick != null) {
 									if (quick.find(start)) {
 										int line = doc.getLineOfOffset(baseOffset + quick.start());
@@ -539,7 +544,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 									if (reg.find(start)) {
 										start = reg.end();
 										int regStart = reg.start();
-										notifier.listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, start - regStart));
+										IPatternMatchListener listener = notifier.listener;
+										if (listener != null) {
+										    listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, start - regStart));
+										}
 									} else {
 										start = length;
 									}
@@ -554,8 +562,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 					prevBaseOffset = baseOffset;
 					allDone = allDone && (notifier.end >= doc.getLength()); 
 		        }
-	        	if (allDone && partitionerFinished) {
+	        	if (allDone && partitionerFinished && !monitor.isCanceled()) {
 	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+	        	    cancel(); // cancels this job if it has already been re-scheduled
 	        	}
         	}
             return Status.OK_STATUS;
