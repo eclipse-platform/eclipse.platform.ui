@@ -19,8 +19,12 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -34,6 +38,7 @@ public class AddAction extends WorkspaceAction {
 	 * @see CVSAction#execute()
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
+		if (!promptForAddOfIgnored()) return;
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
@@ -57,6 +62,27 @@ public class AddAction extends WorkspaceAction {
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
 
+	}
+	
+	/**
+	 * Method promptForAddOfIgnored.
+	 */
+	private boolean promptForAddOfIgnored() {
+		IResource[] resources = getSelectedResources();
+		boolean prompt = false;
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource resource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+			try {
+				if (resource.isIgnored()) prompt = true;
+			} catch (CVSException e) {
+				handle(e);
+			}
+			break;
+		}
+		if (prompt) {
+			return MessageDialog.openQuestion(getShell(), Policy.bind("AddAction.addIgnoredTitle"), Policy.bind("AddAction.addIgnoredQuestion")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return true;
 	}
 
 	/*
