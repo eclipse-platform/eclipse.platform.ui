@@ -492,7 +492,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	}
 	
 	private FolderSyncInfo dummyFolderSync(IContainer container) {
-		return new FolderSyncInfo("repo", "root", CVSTag.DEFAULT, false);
+		return new FolderSyncInfo("repo", ":pserver:user@host:/root", CVSTag.DEFAULT, false);
 	}
 
 	private ResourceSyncInfo dummyResourceSync(IResource resource) {
