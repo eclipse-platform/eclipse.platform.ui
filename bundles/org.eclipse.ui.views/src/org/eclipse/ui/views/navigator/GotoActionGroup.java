@@ -11,12 +11,13 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.views.framelist.*;
-import org.eclipse.ui.views.navigator.*;
 
 /**
  * This is the action group for the goto actions.
@@ -95,20 +96,28 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	}	
 
 	public void updateActionBars() {
-		IStructuredSelection selection =
-			(IStructuredSelection) getContext().getSelection();
+		ActionContext context = getContext();
 		boolean enable = false;
-				
-		if (selection.size() == 1) {
-			Object object = selection.getFirstElement();
-			if (object instanceof IProject) {
-				enable = ((IProject) object).isOpen();
+
+		// Fix for bug 26126. Resource change listener could call
+		// updateActionBars without a context being set.
+		// This should never happen because resource navigator sets
+		// context immediately after this group is created.
+		if (context != null) {
+			IStructuredSelection selection =
+				(IStructuredSelection) context.getSelection();
+	
+			if (selection.size() == 1) {
+				Object object = selection.getFirstElement();
+				if (object instanceof IProject) {
+					enable = ((IProject) object).isOpen();
+				}
+				else
+				if (object instanceof IFolder) {
+					enable = true;
+				}
 			}
-			else
-			if (object instanceof IFolder) {
-				enable = true;
-			}
-		}
+		}	
 		goIntoAction.setEnabled(enable);
 		// the rest of the actions update by listening to frame list changes
 	}
