@@ -56,7 +56,7 @@ public class IntroPartPresentation extends IntroElement {
 
     private static final String WS_ATTRIBUTE = "ws";
 
-    private static final String HOME_PAGE_ID_ATTRIBUTE = "home-page-id";
+    protected static final String HOME_PAGE_ID_ATTRIBUTE = "home-page-id";
 
     private String title;
 
@@ -176,18 +176,18 @@ public class IntroPartPresentation extends IntroElement {
                 implementation.createPartControl(parent);
                 Logger.logInfo("Loaded config implementation from: "
                         + ExtensionPointManager
-                                .getLogString(implementationElement));
+                                .getLogString(implementationElement, "class"));
                 break;
             } catch (SWTError e) {
-                Logger.logWarning("failed to create implementation from: "
+                Logger.logWarning("Failed to create implementation from: "
                         + ExtensionPointManager
-                                .getLogString(implementationElement));
+                                .getLogString(implementationElement, "class"));
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
-                Logger.logWarning("failed to create implementation from: "
+                Logger.logWarning("Failed to create implementation from: "
                         + ExtensionPointManager
-                                .getLogString(implementationElement));
+                                .getLogString(implementationElement, "class"));
                 implementation = null;
                 implementationElement = null;
             }

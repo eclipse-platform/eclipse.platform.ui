@@ -122,7 +122,7 @@ public class BrowserIntroPartImplementation extends
     public void createPartControl(Composite parent){
        
         
-        browser = new Browser(parent, SWT.MULTI);
+       browser = new Browser(parent, SWT.MULTI);
         
 
         // add a location listener on the browser so we can intercept
@@ -202,7 +202,7 @@ public class BrowserIntroPartImplementation extends
             if (printHtml != null && printHtml.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 System.out.println(html);
             }
-        }
+        } 
     }
 
     /**

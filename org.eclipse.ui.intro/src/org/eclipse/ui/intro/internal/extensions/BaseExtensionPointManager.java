@@ -39,6 +39,7 @@ public class BaseExtensionPointManager {
     protected static final String ID_ATTRIBUTE = IntroElement.ID_ATTRIBUTE;
 
     protected Hashtable introModels = new Hashtable();
+
     protected IPluginRegistry registry;
 
     // holds all standbyPart extensions. Key is id, value is
@@ -170,7 +171,8 @@ public class BaseExtensionPointManager {
         IConfigurationElement[] filteredConfigElements = getConfigurationsFromAttribute(
                 configElements, attributeName, attributeValue);
         // now validate that we got only one.
-        IConfigurationElement config = validateSingleContribution(filteredConfigElements);
+        IConfigurationElement config = validateSingleContribution(
+                filteredConfigElements, attributeName);
         return config;
     }
 
@@ -231,7 +233,6 @@ public class BaseExtensionPointManager {
         return (StandbyPartContent) standbyParts.get(partId);
     }
 
-
     // ========================================
     //   Util Methods for Extensions
     // ========================================
@@ -254,17 +255,17 @@ public class BaseExtensionPointManager {
     }
 
     /**
-     * Utility method to verify that there is only a single configElement in
-     * the passed array of elements. If the array is empty, null is returned.
-     * If there is more than one element in the array, the first one is picked,
-     * but this fact is logged.
+     * Utility method to verify that there is only a single configElement in the
+     * passed array of elements. If the array is empty, null is returned. If
+     * there is more than one element in the array, the first one is picked, but
+     * this fact is logged. Attribute passed is used for logging.
      * 
      * @param configElements
      * @return the first configElement in the array, or null if the array is
      *         empty.
      */
     public static IConfigurationElement validateSingleContribution(
-            IConfigurationElement[] configElements) {
+            IConfigurationElement[] configElements, String logAttribute) {
 
         IConfigurationElement configElement = null;
         if (configElements.length == 0)
@@ -274,32 +275,41 @@ public class BaseExtensionPointManager {
         // we should only have one, so use first one.
         configElement = configElements[0];
         Logger.logInfo("Loaded " + configElement.getName() + " from "
-                + getLogString(configElement));
+                + getLogString(configElement, logAttribute));
 
         if (configElements.length != 1) {
             // we should only have one! Use first one, but warn in the log.
             configElement = configElements[0];
             for (int i = 1; i < configElements.length; i++)
                 // log each extra extension.
-                Logger.logWarning(getLogString(configElements[i])
-                        + " ignored due to multiple contributions");
+                Logger
+                        .logWarning(getLogString(configElements[i],
+                                logAttribute)
+                                + " ignored due to multiple contributions");
         }
         return configElement;
     }
 
     /**
-     * Utility method to return a string to display in .log warnings when we
-     * have a bad contribution.
+     * Utility method to return a string to display in .log. If someAttribute is
+     * not null, its value is also printed.
      */
-    public static String getLogString(IConfigurationElement element) {
-        return "Plugin: "
-                + element.getDeclaringExtension()
-                        .getDeclaringPluginDescriptor().getUniqueIdentifier()
-                + "  Extension: "
-                + element.getDeclaringExtension()
-                        .getExtensionPointUniqueIdentifier() + "  Element: "
-                + element.getName() + " id= "
-                + element.getAttribute(ID_ATTRIBUTE);
+    public static String getLogString(IConfigurationElement element,
+            String logAttribute) {
+        StringBuffer buffer = new StringBuffer("Plugin:");
+        buffer.append(element.getDeclaringExtension()
+                .getDeclaringPluginDescriptor().getUniqueIdentifier());
+        buffer.append("  Extension:");
+        buffer.append(element.getDeclaringExtension()
+                .getExtensionPointUniqueIdentifier());
+        buffer.append("  element:");
+        buffer.append(element.getName());
+        if (logAttribute != null) {
+            buffer.append("  ");
+            buffer.append(logAttribute);
+            buffer.append(":");
+            buffer.append(element.getAttribute(logAttribute));
+        }
+        return buffer.toString();
     }
-
 }

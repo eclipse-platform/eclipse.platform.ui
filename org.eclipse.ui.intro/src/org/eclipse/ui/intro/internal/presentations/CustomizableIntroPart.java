@@ -73,8 +73,8 @@ public class CustomizableIntroPart extends IntroPart {
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
                     "Could not find a valid configuration for Intro Part: "
-                            + ExtensionPointManager
-                                    .getLogString(getConfigurationElement())
+                            + ExtensionPointManager.getLogString(
+                                    getConfigurationElement(), "id")
                             + "\nCheck Log View for details.", null);
 
     }
@@ -116,9 +116,9 @@ public class CustomizableIntroPart extends IntroPart {
     public void standbyStateChanged(boolean standby) {
         // do this only if there is a valid config.
         if (model != null && model.hasValidConfig()) {
-            if (standby) {
+            if (standby)
                 standbyPart.setFocus();
-            } else
+            else
                 presentation.setFocus();
             setTopControl(standby ? getStandbyControl()
                     : getPresentationControl());

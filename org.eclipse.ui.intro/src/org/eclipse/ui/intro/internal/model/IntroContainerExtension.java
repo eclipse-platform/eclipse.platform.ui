@@ -20,7 +20,7 @@ public class IntroContainerExtension extends IntroElement {
 
     protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
 
-    private static final String PATH_ATTRIBUTE = "path";
+    protected static final String PATH_ATTRIBUTE = "path";
     private static final String STYLE_ATTRIBUTE = "style";
     private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
 

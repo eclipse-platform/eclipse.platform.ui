@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.intro.internal.model;
 
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
@@ -84,14 +84,15 @@ public class IntroURL {
      *  
      */
     public void execute() {
-    	Display display = Display.getCurrent();
-    	BusyIndicator.showWhile(display, new Runnable() {
-    		public void run() {
-    			doExecute();
-    		}
-    	});
+        Display display = Display.getCurrent();
+        BusyIndicator.showWhile(display, new Runnable() {
+
+            public void run() {
+                doExecute();
+            }
+        });
     }
-    
+
     private void doExecute() {
         // check to see if we have a custom action
         // if (action.indexOf("/") != -1)
@@ -127,8 +128,9 @@ public class IntroURL {
         else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
             showPage(getParameter(KEY_ID));
+        
         else if (action.equals(SHOW_MESSAGE))
-        	showMessage(getParameter(KEY_MESSAGE));
+            showMessage(getParameter(KEY_MESSAGE));
     }
 
     private void closeIntro() {
@@ -138,7 +140,7 @@ public class IntroURL {
     }
 
     /**
-     * Sets the into part to standby, ans shows the passed standby part, with
+     * Sets the into part to standby, and shows the passed standby part, with
      * the given input.
      * 
      * @param partId
@@ -169,12 +171,10 @@ public class IntroURL {
             }
         }
 
-        // we do not have a valid partI or we failed to instantiate part, show
+        // we do not have a valid partId or we failed to instantiate part, show
         // Context help part.
         standbyPart.setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
     }
-
-
 
     /**
      * Set the Workbench Intro Part state.
@@ -186,10 +186,6 @@ public class IntroURL {
         CustomizableIntroPart introPart = getCustomizableIntroPart();
         // should rely on Workbench api.
         PlatformUI.getWorkbench().setIntroStandby(introPart, standby);
-        if (standby)
-            // force the creation of a context help part, if one is not
-            // created.
-            introPart.getStandbyPart().setInput(null);
     }
 
     private CustomizableIntroPart getCustomizableIntroPart() {
@@ -197,8 +193,6 @@ public class IntroURL {
         return (CustomizableIntroPart) IntroPlugin.getDefault()
                 .getIntroModelRoot().getPresentation().getIntroPart();
     }
-
-
 
     /**
      * Run an action
@@ -273,15 +267,16 @@ public class IntroURL {
     private void showHelp() {
         WorkbenchHelp.displayHelp();
     }
-    
+
     private void showMessage(String message) {
-    	
-    	//TODO some of the actions run UI code yet they are in 
-    	// model package.
-    	if (message==null) message = "";
-    	else
-    		message = URLDecoder.decode(message);
-    	MessageDialog.openInformation(null, "Introduction", message);
+
+        //TODO some of the actions run UI code yet they are in
+        // model package.
+        if (message == null)
+            message = "";
+        else
+            message = URLDecoder.decode(message);
+        MessageDialog.openInformation(null, "Introduction", message);
     }
 
     /**

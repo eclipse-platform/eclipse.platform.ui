@@ -139,7 +139,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getChildren(IntroPartPresentation.PRESENTATION_ELEMENT);
 
         IConfigurationElement presentationElement = ExtensionPointManager
-                .validateSingleContribution(presentationElements);
+                .validateSingleContribution(presentationElements,
+                        IntroPartPresentation.HOME_PAGE_ID_ATTRIBUTE);
         return presentationElement;
     }
 
@@ -232,7 +233,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getChildren(IntroContainerExtension.CONTAINER_EXTENSION_ELEMENT);
         // There should only be one container extension.
         IConfigurationElement extension = ExtensionPointManager
-                .validateSingleContribution(containerExtensions);
+                .validateSingleContribution(containerExtensions,
+                        IntroContainerExtension.PATH_ATTRIBUTE);
         if (extension == null)
             return false;
         // Create the model class.

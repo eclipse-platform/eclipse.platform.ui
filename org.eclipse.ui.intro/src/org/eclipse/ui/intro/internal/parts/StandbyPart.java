@@ -27,17 +27,11 @@ import org.eclipse.ui.intro.internal.util.*;
 public class StandbyPart {
 
     private FormToolkit toolkit;
-
     private IntroModelRoot model;
-
     private ImageHyperlink returnLink;
-
     private Composite container;
-
     private Composite content;
-
     private ContextHelpPart helpPart;
-
     private IIntroPart introPart;
 
     // hastable has partIds as keys, and ControlKeys are values.
@@ -48,9 +42,7 @@ public class StandbyPart {
     class StandbyLayout extends Layout {
 
         private int VGAP = 10;
-
         private int VMARGIN = 5;
-
         private int HMARGIN = 5;
 
         /*
@@ -130,14 +122,13 @@ public class StandbyPart {
         StackLayout slayout = new StackLayout();
         slayout.marginWidth = slayout.marginHeight = 0;
         content.setLayout(slayout);
+
+        // By default, we always have the Context Help standby content.
+        addContextHelpPart();
+        updateReturnLinkLabel();
     }
 
     public void setInput(Object input) {
-        if (cachedControlKey == null) {
-            // we never created a standby part yet. create the context help
-            // standby part in the stack.
-            addContextHelpPart();
-        }
         IStandbyContentPart standbyContent = cachedControlKey.getPart();
         standbyContent.setInput(input);
         updateReturnLinkLabel();
@@ -247,7 +238,6 @@ public class StandbyPart {
     class ControlKey {
 
         Control c;
-
         IStandbyContentPart part;
 
         ControlKey(Control c, IStandbyContentPart part) {
