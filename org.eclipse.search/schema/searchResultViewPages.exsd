@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.search.ui">
+<schema targetNamespace="org.eclipse.search">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.search.ui" id="searchResultViewPages" name="Search Result View Pages"/>
+         <meta.schema plugin="org.eclipse.search" id="searchResultViewPages" name="Search Result View Pages"/>
       </appInfo>
       <documentation>
          This extension point allows clients to plug pages into the search result view.
