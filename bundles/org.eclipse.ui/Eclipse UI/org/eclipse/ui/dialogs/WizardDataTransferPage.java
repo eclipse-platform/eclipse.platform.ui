@@ -8,13 +8,13 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import java.util.Vector;
@@ -110,7 +110,7 @@ protected Label createBoldLabel(Composite parent, String text) {
  *
  * @param parent the parent control
  */
-protected void createOptionsGroup(Composite parent) {
+protected void createOptionsGroupButtons(Group optionsGroup) {
 }
 /**
  * Creates a new label with a bold font.
@@ -321,4 +321,23 @@ protected boolean validateOptionsGroup() {
 protected boolean validateSourceGroup() {
 	return true;
 }
+
+/**
+ *	Create the options specification widgets.
+ *
+ *	@param parent org.eclipse.swt.widgets.Composite
+ */
+protected void createOptionsGroup(Composite parent) {
+	// options group
+	Group optionsGroup = new Group(parent, SWT.NONE);
+	GridLayout layout = new GridLayout();
+	optionsGroup.setLayout(layout);
+	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
+	
+
+	createOptionsGroupButtons(optionsGroup);
+	
+}
+
 }
