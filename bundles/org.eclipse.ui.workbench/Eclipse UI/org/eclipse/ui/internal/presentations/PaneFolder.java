@@ -183,6 +183,10 @@ public final class PaneFolder {
 	public void setTopCenter(Control topCenter) {
 		topCenterCache.setControl(topCenter);
 		if (topCenter != null) {
+			if (!putTrimOnTop) {
+				viewFormTopCenterProxy.setTarget(topCenterCache);
+				viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
+			}
 			topCenter.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
 		}
 	}
@@ -195,6 +199,10 @@ public final class PaneFolder {
 	public void setTopRight(Control topRight) {
 		topRightCache.setControl(topRight);
 		if (topRight != null) {
+			if (!putTrimOnTop) {
+				viewFormTopRightProxy.setTarget(topRightCache);
+				viewForm.setTopRight(viewFormTopRightProxy.getControl());
+			}
 			topRight.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
 		}
 	}
