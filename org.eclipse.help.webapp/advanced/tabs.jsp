@@ -51,9 +51,11 @@ BODY {
 }
 
 .separator {
-	margin:0px;
-	padding:0px;
-	border:0px;
+	background-color:ThreeDShadow;
+	border-top:10px solid <%=prefs.getToolbarBackground()%>;
+}
+
+.separator_pressed {
 	height:100%;
 	background-color:ThreeDShadow;
 }
@@ -102,10 +104,25 @@ function showTab(tab)
   	var buttons = document.body.getElementsByTagName("TD");
   	for (var i=0; i<buttons.length; i++)
   	{
-  		if (buttons[i].id == tab) 
+  		if (buttons[i].id == tab) { 
 			buttons[i].className = "pressed";
-		else if (buttons[i].className == "pressed")
+			if (i > 0) 
+				buttons[i-1].className = "separator_pressed";
+			if (i<buttons.length-1) 
+				buttons[i+1].className = "separator_pressed";
+		} else if (buttons[i].className == "pressed") {
 			buttons[i].className = "tab";
+			if (i > 0) 
+				if (i > 1 && buttons[i-2].id == tab) 
+					buttons[i-1].className = "separator_pressed";
+				else
+					buttons[i-1].className = "separator";
+			if (i<buttons.length-1) 
+				if (i<buttons.length-2 && buttons[i+2].id == tab) 
+					buttons[i+1].className = "separator_pressed";
+				else
+					buttons[i+1].className = "separator";
+		}
  	 }
 }
 </script>
