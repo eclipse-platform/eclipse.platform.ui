@@ -102,13 +102,15 @@ public ImageData getImageData() {
  * Returns a stream on the image contents.  Returns
  * null if a stream could not be opened.
  * 
- * @return the buffered stream on the file
+ * @return the buffered stream on the file or <code>null</code>
+ * if the file cannot be found
  */
-private BufferedInputStream getStream() {
+private InputStream getStream() {
 	InputStream is = null;
 
 	if (location != null) {
 		is = location.getResourceAsStream(name);
+		
 	} else {
 		try {
 			is = new FileInputStream(name);
@@ -116,7 +118,10 @@ private BufferedInputStream getStream() {
 			return null;
 		}
 	}
-	return new BufferedInputStream(is);
+	if(is == null)
+		return null;
+	else
+		return new BufferedInputStream(is);
 }
 /* (non-Javadoc)
  * Method declared on Object.
