@@ -204,19 +204,4 @@ public interface IWorkbenchHelpSystem {
 	 *         available.
 	 */
 	URL resolve(String href, boolean documentOnly);
-
-	/**
-	 * Ensures a roundtrip by restoring the original href previously resolved
-	 * into a URL in the <code>resolve</code> method. The method can also
-	 * unresolve other legitimate URLs but successful resolution is only
-	 * guaranteed with the URLs created by the <code>resolve</code> method.
-	 * <p>
-	 * If the source url does not start with an expected prefix, it will be
-	 * returned unchanged.
-	 * 
-	 * @param url
-	 *            the URL that needs to be unresolved into an href.
-	 * @return the unresolved href or the source url if no help UI is available.
-	 */
-	String unresolve(URL url);
 }

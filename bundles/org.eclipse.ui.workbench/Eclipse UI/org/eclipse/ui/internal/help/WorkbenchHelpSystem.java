@@ -823,17 +823,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#unresolve(java.net.URL)
-	 */
-	public String unresolve(URL url) {
-		AbstractHelpUI helpUI = getHelpUI();
-		if (helpUI != null) {
-			return helpUI.unresolve(url);
-		}
-		return url.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
