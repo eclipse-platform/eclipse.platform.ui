@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
@@ -46,7 +53,8 @@ public class OpenInCompareAction extends Action {
 	
 	private void openEditor() {
 		CompareEditorInput input = getCompareInput();
-		if(input != null) { 
+		if(input != null) {
+			prefetchFileContents();
 			IEditorPart editor = reuseCompareEditor((SyncInfoCompareInput)input);
 			if(editor != null && editor instanceof IReusableEditor) {
 				CompareUI.openCompareEditor(input);
@@ -60,6 +68,33 @@ public class OpenInCompareAction extends Action {
 		}		
 	}
 	
+	/*
+	 * Prefetching the file contents will cache them for use by the compare editor
+	 */
+	private void prefetchFileContents() {
+		ISelection selection = viewer.getViewer().getSelection();
+		Object obj = ((IStructuredSelection)selection).getFirstElement();
+		SyncInfo info = getSyncInfo(obj);
+		final IRemoteResource remote = info.getRemote();
+		final IRemoteResource base = info.getBase();
+		if (remote != null || base != null) {
+			viewer.run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						monitor.beginTask(null, (remote == null ? 0 : 100) + (base == null ? 0 : 100));
+						if (remote != null)
+							remote.getContents(Policy.subMonitorFor(monitor, 100));
+						if (base != null)
+							base.getContents(Policy.subMonitorFor(monitor, 100));
+						monitor.done();
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		}
+	}
+
 	private CompareEditorInput getCompareInput() {
 		ISelection selection = viewer.getViewer().getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
