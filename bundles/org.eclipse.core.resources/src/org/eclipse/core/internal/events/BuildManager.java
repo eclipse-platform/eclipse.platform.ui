@@ -218,7 +218,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				// builder exceptions in core exceptions if required.
 				String message = e.getMessage();
 				if (message == null)
-					message = NLS.bind(Messages.events_unknown, e.getClass().getName(), currentBuilder.getClass().getName());
+					message = NLS.bind(Messages.events_unknown, e.getClass().getName(), project.getName());
 				status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 			}
 
