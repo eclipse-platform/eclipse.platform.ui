@@ -3,10 +3,14 @@ package org.eclipse.update.internal.ui.search;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -74,16 +78,34 @@ public class ExpressionSearchCategory extends SearchCategory {
 			public ISiteAdapter getSearchSite() {
 				return null;
 			}
-			public IFeature [] getMatchingFeatures(IFeature [] candidates) {
+			public IFeature [] getMatchingFeatures(ISite site, IProgressMonitor monitor) {
 				ArrayList result = new ArrayList();
-				for (int i=0; i<candidates.length; i++) {
-					if (internalMatches(candidates[i]))
-						result.add(candidates[i]);
+				ArrayList candidates = getCandidates(site, monitor);
+				for (int i=0; i<candidates.size(); i++) {
+					if (internalMatches((IFeature)candidates.get(i)))
+						result.add(candidates.get(i));
 				}
 				return (IFeature[])result.toArray(new IFeature[result.size()]);
 			}
 		};
 		return new ISearchQuery [] { query };
+	}
+	
+	private ArrayList getCandidates(ISite site, IProgressMonitor monitor) {
+		IFeatureReference [] references = site.getFeatureReferences();
+		ArrayList result = new ArrayList();
+		monitor.beginTask("", references.length);
+		for (int i=0; i<references.length; i++) {
+			try {
+				IFeature feature = references[i].getFeature();
+				result.add(feature);
+			}
+			catch (CoreException e) {
+			}
+			monitor.worked(1);
+		}
+		monitor.done();
+		return result;
 	}
 	
 	private void storeSettingsFromWidgets() {

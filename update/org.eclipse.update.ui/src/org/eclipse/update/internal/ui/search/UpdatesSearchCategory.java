@@ -21,6 +21,24 @@ public class UpdatesSearchCategory extends SearchCategory {
 	private static final String KEY_CURRENT_SEARCH =
 		"UpdatesSearchCategory.currentSearch";
 
+	class Hit {
+		IFeature candidate;
+		IFeatureReference ref;
+		public Hit(IFeature candidate, IFeatureReference ref) {
+			this.candidate = candidate;
+			this.ref = ref;
+		}
+
+		public PendingChange getJob() {
+			try {
+				IFeature feature = ref.getFeature();
+				return new PendingChange(candidate, feature);
+			} catch (CoreException e) {
+				return null;
+			}
+		}
+	}
+
 	class SiteAdapter implements ISiteAdapter {
 		IURLEntry entry;
 		SiteAdapter(IURLEntry entry) {
@@ -44,11 +62,17 @@ public class UpdatesSearchCategory extends SearchCategory {
 		}
 	}
 
-	class JobSorter extends Sorter {
+	class HitSorter extends Sorter {
 		public boolean compare(Object left, Object right) {
-			PendingChange job1 = (PendingChange) left;
-			PendingChange job2 = (PendingChange) right;
-			return isNewerVersion(job2.getFeature(), job1.getFeature());
+			Hit hit1 = (Hit) left;
+			Hit hit2 = (Hit) right;
+			try {
+				VersionedIdentifier hv1 = hit1.ref.getVersionedIdentifier();
+				VersionedIdentifier hv2 = hit2.ref.getVersionedIdentifier();
+				return isNewerVersion(hv2, hv1);
+			} catch (CoreException e) {
+				return false;
+			}
 		}
 	}
 
@@ -65,22 +89,36 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public ISiteAdapter getSearchSite() {
 			return adapter;
 		}
-		public IFeature[] getMatchingFeatures(IFeature[] features) {
+		public IFeature[] getMatchingFeatures(
+			ISite site,
+			IProgressMonitor monitor) {
 			ArrayList hits = new ArrayList();
-			for (int i = 0; i < features.length; i++) {
-				IFeature feature = features[i];
-				if (isNewerVersion(candidate, feature))
-					hits.add(new PendingChange(candidate, feature));
+			IFeatureReference[] refs = site.getFeatureReferences();
+			monitor.beginTask("", refs.length + 1);
+			for (int i = 0; i < refs.length; i++) {
+				IFeatureReference ref = refs[i];
+				try {
+					if (isNewerVersion(candidate.getVersionedIdentifier(),
+						ref.getVersionedIdentifier())) {
+						hits.add(new Hit(candidate, ref));
+					}
+				} catch (CoreException e) {
+				}
+				monitor.worked(1);
 			}
+			IFeature[] result;
 			if (hits.size() == 0)
-				return new IFeature[0];
+				result = new IFeature[0];
 			else {
 				IFeature topHit = getFirstValid(hits);
-				if (topHit==null)
-					return new IFeature[0];
+				if (topHit == null)
+					result = new IFeature[0];
 				else
-					return new IFeature[] { topHit };
+					result = new IFeature[] { topHit };
 			}
+			monitor.worked(1);
+			monitor.done();
+			return result;
 		}
 	}
 
@@ -91,10 +129,13 @@ public class UpdatesSearchCategory extends SearchCategory {
 
 	private IFeature getFirstValid(ArrayList hits) {
 		Object[] array = hits.toArray();
-		JobSorter sorter = new JobSorter();
+		HitSorter sorter = new HitSorter();
 		sorter.sortInPlace(array);
 		for (int i = 0; i < array.length; i++) {
-			PendingChange job = (PendingChange) array[i];
+			Hit hit = (Hit) array[i];
+			PendingChange job = hit.getJob();
+			if (job == null)
+				continue;
 			IStatus status = ActivityConstraints.validatePendingChange(job);
 			if (status == null)
 				return job.getFeature();
@@ -154,16 +195,17 @@ public class UpdatesSearchCategory extends SearchCategory {
 		return UpdateUIPlugin.getResourceString(KEY_CURRENT_SEARCH);
 	}
 
-	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
-		VersionedIdentifier fvi = feature.getVersionedIdentifier();
-		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
+	private boolean isNewerVersion(
+		VersionedIdentifier fvi,
+		VersionedIdentifier cvi) {
 		if (!fvi.getIdentifier().equals(cvi.getIdentifier()))
 			return false;
 		PluginVersionIdentifier fv = fvi.getVersion();
 		PluginVersionIdentifier cv = cvi.getVersion();
 		String mode = MainPreferencePage.getUpdateVersionsMode();
 		boolean greater = cv.isGreaterThan(fv);
-		if (!greater) return false;
+		if (!greater)
+			return false;
 		if (mode.equals(MainPreferencePage.EQUIVALENT_VALUE))
 			return cv.isEquivalentTo(fv);
 		else if (mode.equals(MainPreferencePage.COMPATIBLE_VALUE))

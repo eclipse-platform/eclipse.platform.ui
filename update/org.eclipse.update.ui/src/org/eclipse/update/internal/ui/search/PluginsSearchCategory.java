@@ -2,6 +2,8 @@ package org.eclipse.update.internal.ui.search;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -53,11 +55,19 @@ public class PluginsSearchCategory extends SearchCategory {
 				return null;
 			}
 			
-			public IFeature [] getMatchingFeatures(IFeature [] candidates) {
+			public IFeature [] getMatchingFeatures(ISite site, IProgressMonitor monitor) {
 				ArrayList result =new ArrayList();
-				for (int i=0; i<candidates.length; i++) {
-					if (matches(candidates[i]))
-						result.add(candidates[i]);
+				IFeatureReference [] refs = site.getFeatureReferences();
+				monitor.beginTask("", refs.length);
+				for (int i=0; i<refs.length; i++) {
+					try {
+						IFeature feature = refs[i].getFeature();
+						if (matches(feature))
+							result.add(feature);
+					}
+					catch (CoreException e) {
+					}
+					monitor.worked(1);
 				}
 				return (IFeature[])result.toArray(new IFeature[result.size()]);
 			}

@@ -1,7 +1,8 @@
 package org.eclipse.update.internal.ui.search;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.IFeature;
-import java.net.URL;
+import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
 
 public interface ISearchQuery {
@@ -16,5 +17,5 @@ public interface ISearchQuery {
  */
 	public ISiteAdapter getSearchSite();
 	
-	public IFeature [] getMatchingFeatures(IFeature[] candidates);
+	public IFeature [] getMatchingFeatures(ISite site, IProgressMonitor monitor);
 }

@@ -285,23 +285,15 @@ public class SearchObject extends NamedModelObject {
 		ISite site = SiteManager.getSite(siteURL);
 		monitor.getWrappedProgressMonitor().subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 
-		IFeatureReference[] refs = site.getFeatureReferences();
-		monitor.beginTask("", refs.length+1);
+		monitor.beginTask("", 2);
 	
-		ArrayList candidates = new ArrayList();
-		for (int i = 0; i < refs.length; i++) {
-			IFeature candidate = refs[i].getFeature();
-			// filter out the feature for environment
-			if (!getFilterEnvironment() || isValidEnvironment(candidate))
-				candidates.add(candidate);
-			monitor.worked(1);
-			if (monitor.isCanceled()) return;
-		}
-		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
-		IFeature [] matches = query.getMatchingFeatures(array);
+		IFeature [] matches = query.getMatchingFeatures(site, new SubProgressMonitor(monitor, 1));
+
 		for (int i=0; i<matches.length; i++) {
-			// bingo - add this
 			if (monitor.isCanceled()) return;
+			if (getFilterEnvironment() && !isValidEnvironment(matches[i]))
+				continue;
+			// bingo - add this
 			SearchResultSite searchSite = findResultSite(site);
 			if (searchSite == null) {
 				searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);
