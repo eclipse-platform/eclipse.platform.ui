@@ -42,7 +42,7 @@ public IAdaptable createElement(IMemento memento) {
 
 	AboutInfo info = null;
 	AboutInfo [] infos = 
-		((Workbench)(WorkbenchPlugin.getDefault().getWorkbench())).getFeaturesInfo();
+		((Workbench)(WorkbenchPlugin.getDefault().getWorkbench())).getConfigurationInfo().getFeaturesInfo();
 	for (int i = 0; i < infos.length; i++) {
 		if (featureId.equals(infos[i].getFeatureId())) {
 			info = infos[i];

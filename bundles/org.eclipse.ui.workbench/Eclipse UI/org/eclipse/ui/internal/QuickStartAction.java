@@ -48,7 +48,7 @@ public QuickStartAction(IWorkbench aWorkbench) {
  */
 public void run() {
 	// Ask the user to select a feature
-	AboutInfo[] features = ((Workbench)workbench).getFeaturesInfo();
+	AboutInfo[] features = ((Workbench)workbench).getConfigurationInfo().getFeaturesInfo();
 	ArrayList welcomeFeatures = new ArrayList();
 	for (int i = 0; i < features.length; i++) {
 		if (features[i].getWelcomePageURL() != null) 
@@ -91,7 +91,7 @@ public void run() {
 		});
 
 	// Find primary feature
-	AboutInfo primaryFeature = ((Workbench)workbench).getAboutInfo();
+	AboutInfo primaryFeature = ((Workbench)workbench).getConfigurationInfo().getAboutInfo();
 	int index = -1;
 	if (primaryFeature != null) {
 		for (int i = 0; i < features.length; i++) {

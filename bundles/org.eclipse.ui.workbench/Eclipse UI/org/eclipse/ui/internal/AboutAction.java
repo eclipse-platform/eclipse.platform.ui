@@ -22,7 +22,7 @@ public class AboutAction extends Action {
  */
 public AboutAction(IWorkbenchWindow window) {
 	this.workbenchWindow = window;
-	AboutInfo aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
+	AboutInfo aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
 	String productName = aboutInfo.getProductName();
 	if (productName == null) {
 		productName = ""; //$NON-NLS$

@@ -81,7 +81,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		this.title = title;
 		message = msg;
 		sortByProvider();
-		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
+		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
 	}
 
 	/* (non-Javadoc)

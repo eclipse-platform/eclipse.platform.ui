@@ -796,7 +796,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		//keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
-		AboutInfo[] infos = ((Workbench)workbench).getFeaturesInfo();
+		AboutInfo[] infos = ((Workbench)workbench).getConfigurationInfo().getFeaturesInfo();
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
 				quickStartAction = new QuickStartAction(workbench);

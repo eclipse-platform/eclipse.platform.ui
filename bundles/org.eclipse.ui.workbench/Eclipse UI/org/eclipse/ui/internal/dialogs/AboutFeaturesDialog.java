@@ -76,8 +76,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	public AboutFeaturesDialog(Shell parentShell) {
 		super(parentShell);
 		Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-		aboutInfo = workbench.getAboutInfo();
-		featuresInfo = workbench.getFeaturesInfo();
+		aboutInfo = workbench.getConfigurationInfo().getAboutInfo();
+		featuresInfo = workbench.getConfigurationInfo().getFeaturesInfo();
 		sortByProvider();
 	}
 	/* (non-Javadoc)

@@ -1150,7 +1150,7 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
 			result.add(e.getStatus());
-			String productName = workbench.getAboutInfo().getProductName();
+			String productName = workbench.getConfigurationInfo().getAboutInfo().getProductName();
 			if (productName == null) {
 				productName = ""; //$NON-NLS-1$
 			}
@@ -1535,7 +1535,7 @@ public void updateTitle() {
 	if(updateDisabled)
 		return;
 		
-	String title = workbench.getAboutInfo().getProductName();
+	String title = workbench.getConfigurationInfo().getAboutInfo().getProductName();
 	if (title == null) {
 		title = ""; //$NON-NLS-1$
 	}

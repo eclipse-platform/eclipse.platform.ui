@@ -12,18 +12,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
+  
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -46,14 +37,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Plugin; 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IDialogConstants; 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -81,7 +70,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
@@ -114,16 +102,6 @@ import org.eclipse.update.core.SiteManager;
  * responsability is the management of workbench windows and other ISV windows.
  */
 public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExtension {
-	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
-	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
-	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
-	private static final int RESTORE_CODE_OK = 0;
-	private static final int RESTORE_CODE_RESET = 1;
-	private static final int RESTORE_CODE_EXIT = 2;
-	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
-	private static final String INSTALLED_FEATURES = "installedFeatures";
-	private static final String FEATURES_CHANGE_STAMP = "features_change_stamp";
 
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
@@ -131,16 +109,19 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
-	private IPluginDescriptor startingPlugin; // the plugin which caused the workbench to be instantiated
-	private String productInfoFilename;
-	private AboutInfo aboutInfo;
-	private AboutInfo[] featuresInfo;
-	private AboutInfo[] newFeaturesInfo;
-	private String[] commandLineArgs;
-	private Window.IExceptionHandler handler;
 	private Item acceleratorConfiguration;
 	private Object returnCode;
+	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
+
+	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
+	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
+	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
+	private static final int RESTORE_CODE_OK = 0;
+	private static final int RESTORE_CODE_RESET = 1;
+	private static final int RESTORE_CODE_EXIT = 2;
+	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 
 	/**
 	 * Workbench constructor comment.
@@ -407,7 +388,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Checks if the -newUpdates command line argument is present
 	 * and if so, opens the update manager.
 	 */
-	private void checkUpdates() {
+	private void checkUpdates(String[] commandLineArgs) {
 		boolean newUpdates = false;
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) { //$NON-NLS-1$
@@ -508,12 +489,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				return (IWorkbenchWindow) data;
 		}
 		return null;
-	}
-	/**
-	 * Returns the command line arguments, excluding any which were filtered out by the launcher.
-	 */
-	public String[] getCommandLineArgs() {
-		return commandLineArgs;
 	}
 	/**
 	 * Returns the editor history.
@@ -621,31 +596,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 *
 	 * @return the about info
 	 */
-	public AboutInfo getAboutInfo() {
-		return aboutInfo;
-	}
-
-	/**
-	 * Returns the about info for all configured features with a corresponding plugin.
-	 *
-	 * @return the about info
-	 */
-	public AboutInfo[] getFeaturesInfo() {
-		if (featuresInfo == null)
-			readFeaturesInfo();
-		return featuresInfo;
-	}
-
-	/**
-	 * Returns the about info for all new (since the last time the workbench was run)
-	 * configured features with a corresponding plugin.
-	 *
-	 * @return the about info
-	 */
-	private AboutInfo[] getNewFeaturesInfo() {
-		if (newFeaturesInfo == null)
-			readFeaturesInfo();
-		return newFeaturesInfo;
+	public WorkbenchConfigurationInfo getConfigurationInfo() {
+		if(configurationInfo == null)
+			configurationInfo = new WorkbenchConfigurationInfo();
+		return configurationInfo;
 	}
 
 	/**
@@ -698,7 +652,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		isStarting = true;
 
-		this.commandLineArgs = commandLineArgs;
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
 			ModalContext.setDebugMode(true);
@@ -736,13 +689,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (restoreCode == RESTORE_CODE_RESET)
 			openFirstTimeWindow();
 
-		forceOpenPerspective();
-		openWelcomeEditors();
-		refreshFromLocal();
+		forceOpenPerspective(commandLineArgs);
+		getConfigurationInfo().openWelcomeEditors();
+		refreshFromLocal(commandLineArgs);
 		isStarting = false;
 		return true;
 	}
-	private void refreshFromLocal() {
+	private void refreshFromLocal(String[] commandLineArgs) {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
 		if (!refresh)
@@ -779,7 +732,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 	}
 
-	private void forceOpenPerspective() {
+	private void forceOpenPerspective(String[] commandLineArgs) {
 		if (getWorkbenchWindowCount() == 0) {
 			// Something is wrong, there should be at least
 			// one workbench window open by now.
@@ -896,7 +849,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Initialize the product image obtained from the product info file
 	 */
 	private void initializeProductImage() {
-		ImageDescriptor descriptor = getAboutInfo().getWindowImage();
+		ImageDescriptor descriptor = getConfigurationInfo().getAboutInfo().getWindowImage();
 		if (descriptor != null) {
 			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
 			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
@@ -1022,146 +975,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return result[0];
 	}
 	/**
-	 * Open the system summary editor
-	 */
-	public void openSystemSummaryEditor() {
-		openEditor(new SystemSummaryEditorInput(), PlatformUI.PLUGIN_ID + ".SystemSummaryEditor", null); //$NON-NLS-1$
-	}
-
-	/**
-	 * Open the Welcome editor for the primary feature or for a new feature
-	 */
-	private void openWelcomeEditors() {
-		AboutInfo info = getAboutInfo();
-		AboutInfo[] newFeatures = getNewFeaturesInfo();
-
-		if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
-			// Show the quick start wizard the first time the workbench opens.
-
-			// See if a welcome page is specified
-			URL url = info.getWelcomePageURL();
-			if (url == null)
-				return;
-
-			// Don't show it again
-			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
-
-			openEditor(new WelcomeEditorInput(info), WELCOME_EDITOR_ID, null);
-		} else {
-			// Show the welcome page for any newly installed features
-
-			// Get the infos with welcome pages
-			ArrayList welcomeFeatures = new ArrayList();
-			IPluginRegistry registry = Platform.getPluginRegistry();
-			for (int i = 0; i < newFeatures.length; i++) {
-				if (newFeatures[i].getWelcomePageURL() != null) {
-					if (newFeatures[i].getFeatureId() != null && newFeatures[i].getWelcomePerspective() != null) {
-						IPluginDescriptor desc = registry.getPluginDescriptor(newFeatures[i].getFeatureId());
-						//activates the feature plugin so it can run some install code.
-						try {
-							desc.getPlugin();
-						} catch (CoreException e) {
-						}
-					}
-					welcomeFeatures.add(newFeatures[i]);
-				}
-			}
-
-			int wCount = getWorkbenchWindowCount();
-			for (int i = 0; i < welcomeFeatures.size(); i++) {
-				AboutInfo newInfo = (AboutInfo) welcomeFeatures.get(i);
-				String id = newInfo.getWelcomePerspective();
-				if (id == null || i >= wCount) //Other editors were already opened in restoreState(..)
-					openEditor(new WelcomeEditorInput(newInfo), WELCOME_EDITOR_ID, id);
-			}
-		}
-	}
-
-	/**
-	 * Open an editor for the given input
-	 */
-	private void openEditor(IEditorInput input, String editorId, String perspectiveId) {
-		if (getWorkbenchWindowCount() == 0) {
-			// Something is wrong, there should be at least
-			// one workbench window open by now.
-			return;
-		}
-
-		IWorkbenchWindow win = null;
-		if (perspectiveId == null) {
-			win = getActiveWorkbenchWindow();
-		} else {
-			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-			try {
-				win = openWorkbenchWindow(perspectiveId, root);
-			} catch (WorkbenchException e) {
-				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-					WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)");
-				return;
-			}
-		}
-
-		if (win == null)
-			win = getWorkbenchWindows()[0];
-
-		WorkbenchPage page = (WorkbenchPage) win.getActivePage();
-		String id = perspectiveId;
-		if (id == null)
-			id = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
-
-		if (page == null) {
-			// Create the page.
-			try {
-				IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-				page = (WorkbenchPage) getActiveWorkbenchWindow().openPage(id, root);
-			} catch (WorkbenchException e) {
-				ErrorDialog.openError(
-					win.getShell(), 
-					WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
-					e.getMessage(),
-					e.getStatus());
-			}
-		}
-
-		if (page == null)
-			return;
-
-		if (page.getActivePerspective() == null) {
-			try {
-				page = (WorkbenchPage) showPerspective(id, win);
-			} catch (WorkbenchException e) {
-				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
-				ErrorDialog.openError(
-					win.getShell(),
-					WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
-				status);
-				return;
-			}
-		}
-
-		page.setEditorAreaVisible(true);
-
-		// see if we already have an editor
-		IEditorPart editor = page.findEditor(input);
-		if (editor != null) {
-			page.activate(editor);
-			return;
-		}
-
-		try {
-			page.openEditor(input, editorId);
-		} catch (PartInitException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
-			ErrorDialog.openError(
-				win.getShell(),
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
-			status);
-		}
-		return;
-	}
-	/**
 	 * Opens a new window and page with the default perspective.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
@@ -1197,130 +1010,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 *
 	 * @return true if the method succeeds 
 	 */
-	private boolean readInfo() {
-		// determine the identifier of the "dominant" application
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
-		IPlatformConfiguration.IFeatureEntry primaryFeature = conf.findConfiguredFeatureEntry(versionedFeatureId);
-
-		if (primaryFeature == null) {
-			aboutInfo = new AboutInfo(null, null); // Ok to pass null
-		} else {
-			String versionedFeaturePluginIdentifier = primaryFeature.getFeaturePluginIdentifier();
-			String versionedFeaturePluginVersion = primaryFeature.getFeaturePluginVersion();
-
-			if (versionedFeaturePluginIdentifier == null) {
-				aboutInfo = new AboutInfo(null, null); // Ok to pass null
-			} else {
-				if (versionedFeaturePluginVersion == null) {
-					aboutInfo = new AboutInfo(versionedFeaturePluginIdentifier, null);
-				} else {
-					PluginVersionIdentifier mainPluginVersion = null;
-					try {
-						mainPluginVersion = new PluginVersionIdentifier(versionedFeaturePluginVersion);
-					} catch (Exception e) {
-						IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
-						WorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus); //$NON-NLS-1$
-					}
-					aboutInfo = new AboutInfo(versionedFeaturePluginIdentifier, mainPluginVersion);
-				}
-			}
-		}
-
-		boolean success = true;
-
-		try {
-			aboutInfo.readINIFile();
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
-			success = false;
-		}
-
-		return success;
-	}
-
-	/**
-	 * Reads the about info for all the configured features.
-	 */
-	private void readFeaturesInfo() {
- 
-		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
- 
-		String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
-		List oldFeatures = null;
-		if (oldFeaturesArray != null)
-			oldFeatures = Arrays.asList(oldFeaturesArray);
-
-		ArrayList aboutInfos = new ArrayList();
-		ArrayList newAboutInfos = new ArrayList();
-
-
-		IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.IFeatureEntry[] features = platformConfiguration.getConfiguredFeatureEntries();
-
-		String[] idArray = new String[features.length];
-		for (int i = 0; i < features.length; i++) {
-			String id = features[i].getFeatureIdentifier();
-			String version = features[i].getFeatureVersion();
-			PluginVersionIdentifier vid = null;
-			if (version != null)
-				vid = new PluginVersionIdentifier(version);			
-			
-			String versionedId = id + ":" + vid;
-			idArray[i] = versionedId;
-
-			try {
-				AboutInfo info = new AboutInfo(id, vid);
-				aboutInfos.add(info);
-				if (oldFeatures != null && !oldFeatures.contains(versionedId))
-					// only report a feature as new if we have a previous record of old features
-					newAboutInfos.add(info);
-			} catch (RuntimeException e) {
-				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-					WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
-				// continue
-			}
-		}
-		settings.put(INSTALLED_FEATURES, idArray);
-
-		// ensure a consistent ordering
-		Collections.sort(aboutInfos, new Comparator() {
-			Collator coll = Collator.getInstance();
-			public int compare(Object a, Object b) {
-				AboutInfo infoA = (AboutInfo) a;
-				AboutInfo infoB = (AboutInfo) b;
-				int c = coll.compare(infoA.getFeatureId(), infoB.getFeatureId());
-				if (c == 0) {
-					c = infoA.getVersionId().isGreaterThan(infoB.getVersionId()) ? 1 : -1;
-				}
-				return c;
-			}
-		});
-
-		featuresInfo = new AboutInfo[aboutInfos.size()];
-		aboutInfos.toArray(featuresInfo);
-
-		for (int i = 0; i < featuresInfo.length; i++) {
-			try {
-				featuresInfo[i].readINIFile();
-				// Exclude any feature for which there is no corresponding plug-in
-				if (featuresInfo[i].getDescriptor() == null) {
-					aboutInfos.remove(featuresInfo[i]);
-					newAboutInfos.remove(featuresInfo[i]);
-				}
-			} catch (CoreException e) {
-				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-					WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
-			}
-		}
-
-		newFeaturesInfo = new AboutInfo[newAboutInfos.size()];
-		newAboutInfos.toArray(newFeaturesInfo);
-		if (aboutInfos.size() < featuresInfo.length) {
-			featuresInfo = new AboutInfo[aboutInfos.size()];
-			aboutInfos.toArray(featuresInfo);
-		}
-	}
 
 	/**
 	 * Record the workbench UI in a document
@@ -1366,7 +1055,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 		IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 
-		AboutInfo newFeaturesWithPerspectives[] = collectNewFeaturesWithPerspectives();
+		AboutInfo newFeaturesWithPerspectives[] = getConfigurationInfo().collectNewFeaturesWithPerspectives();
 		// Read the workbench windows.
 		for (int x = 0; x < children.length; x++) {
 			childMem = children[x];
@@ -1406,20 +1095,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		return result;
 	}
-	/**
-	 * Return an array with all new welcome perspectives declared in the
-	 * new installed features.
-	 */
-	private AboutInfo[] collectNewFeaturesWithPerspectives() {
-		ArrayList result = new ArrayList();
-		AboutInfo newFeatures[] = getNewFeaturesInfo();
-		for (int i = 0; i < newFeatures.length; i++) {
-			AboutInfo info = newFeatures[i];
-			if (info.getWelcomePerspective() != null && info.getWelcomePageURL() != null)
-				result.add(info);
-		}
-		return (AboutInfo[]) result.toArray(new AboutInfo[result.size()]);
-	}
+
 	/**
 	 * Returns an array of all plugins that extend org.eclipse.ui.startup.
 	 */
@@ -1475,9 +1151,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		String[] commandLineArgs = new String[0];
 		if (arg != null && arg instanceof String[])
 			commandLineArgs = (String[]) arg;
-		if (!readInfo())
+		if (!getConfigurationInfo().readInfo())
 			return null;
-		String appName = getAboutInfo().getAppName();
+		String appName = getConfigurationInfo().getAboutInfo().getAppName();
 		if (appName != null)
 			Display.setAppName(appName);
 		Display display = null;
@@ -1496,16 +1172,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 		});
 		try {
-			handler = new ExceptionHandler(this);
+			Window.IExceptionHandler handler = new ExceptionHandler(this);
 			Window.setExceptionHandler(handler);
 			boolean initOK = init(commandLineArgs);
 			Platform.endSplash();
 			runEventLoop = true;
 			if (initOK)
-				checkUpdates(); // may trigger a close/restart
+				checkUpdates(commandLineArgs); // may trigger a close/restart
 			if (initOK && runEventLoop) {
 				startPlugins();
-				runEventLoop();
+				runEventLoop(handler);
 			}
 			shutdown();
 		} finally {
@@ -1517,7 +1193,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * run an event loop for the workbench.
 	 */
-	protected void runEventLoop() {
+	protected void runEventLoop(Window.IExceptionHandler handler) {
 		Display display = Display.getCurrent();
 		runEventLoop = true;
 		while (runEventLoop) {
@@ -1602,8 +1278,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @see IExecutableExtension
 	 */
 	public void setInitializationData(IConfigurationElement configElement, String propertyName, Object data) {
-		startingPlugin = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-		productInfoFilename = (String) ((Map) data).get(P_PRODUCT_INFO);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.

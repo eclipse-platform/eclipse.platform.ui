@@ -42,7 +42,7 @@ public class AboutDialog extends ProductInfoDialog {
 public AboutDialog(Shell parentShell) {
 	super(parentShell);
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-	aboutInfo = workbench.getAboutInfo();
+	aboutInfo = workbench.getConfigurationInfo().getAboutInfo();
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -60,7 +60,7 @@ protected void buttonPressed(int buttonId) {
 		case INFO_ID : {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
-					((Workbench)PlatformUI.getWorkbench()).openSystemSummaryEditor();
+					((Workbench)PlatformUI.getWorkbench()).getConfigurationInfo().openSystemSummaryEditor();
 				}
 			});
 			close();
@@ -245,7 +245,7 @@ protected Control createDialogArea(Composite parent) {
  * They are grouped by provider and image.
  */
 private AboutInfo[] getFeaturesInfo() {
-	AboutInfo[] rawArray = ((Workbench)PlatformUI.getWorkbench()).getFeaturesInfo();
+	AboutInfo[] rawArray = ((Workbench)PlatformUI.getWorkbench()).getConfigurationInfo().getFeaturesInfo();
 	// quickly exclude any that do not have a provider name and image
 	ArrayList infoList = new ArrayList();
 	for (int i = 0; i < rawArray.length; i++) {
