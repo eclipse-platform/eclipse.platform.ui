@@ -3,14 +3,22 @@ package org.eclipse.ui.tests.commands;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class CommandsTestSuite extends TestSuite {
+/**
+ * Tests for all areas of command support for the platform.
+ */
+public final class CommandsTestSuite extends TestSuite {
 
-    public static Test suite() {
+    /**
+     * Returns the suite. This is required to use the JUnit Launcher.
+     */
+    public static final Test suite() {
         return new CommandsTestSuite();
     }
 
+    /**
+     * Construct the test suite.
+     */
     public CommandsTestSuite() {
-        addTestSuite(CommandsTestCase1.class);
-        addTestSuite(CommandsTestCase2.class);
+        addTest(new TestSuite(Bug66182Test.class));
     }
 }

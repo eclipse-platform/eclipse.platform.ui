@@ -70,11 +70,51 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
     
+    /**
+     * The least specific way in which a submissions may match another item.
+     * This means that the submissions will match any value.
+     */
+    private static final int MATCH_ANY = 0;
+
+    /**
+     * The submissions specifies a shell, and this shell is not the active
+     * shell. However, it is the active workbench window's shell. This is
+     * halfway between matching any and matching specifically.
+     */
+    private static final int MATCH_PARTIAL = 1;
+
+    /**
+     * The items match exactly.
+     */
+    private static final int MATCH_EXACT = 2;
+    
     static {
         MutableCommandManager.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
                 && Policy.DEBUG_HANDLERS_VERBOSE;
         MutableCommandManager.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
         MutableCommandManager.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+    }
+
+    /**
+     * Generates an integer value representing the quality of the match between
+     * <code>shellToMatch</code> and the active shell and workbench window's
+     * shell. It is assumed that <code>shellToMatch</code> is either
+     * <code>null</code>,<code>wbWinShell</code> or the active shell.
+     * 
+     * @param shellToMatch
+     *            The shell to match; may be <code>null</code>.
+     * @param wbWinShell
+     *            The workbench window's shell; may be <code>null</code>.
+     * @return One of <code>MATCH_ANY</code>,<code>MATCH_PARTIAL</code>,
+     *         or <code>MATCH_EXACT</code>.
+     */
+    private static final int compareWindows(final Shell shellToMatch,
+            final Shell wbWinShell) {
+        if (shellToMatch == null) {
+            return MATCH_ANY;
+        } else if (shellToMatch == wbWinShell) { return MATCH_PARTIAL; }
+
+        return MATCH_EXACT;
     }
 
     /**
@@ -354,8 +394,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             update = true;
         }
 
-        if ((newWorkbenchWindow != null)
-                && (newWorkbenchWindow.getShell() == newActiveShell)) {
+        if (newWorkbenchWindow != null) {
             IWorkbenchPage activeWorkbenchPage = newWorkbenchWindow
                     .getActivePage();
 
@@ -394,21 +433,37 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             && activeWorkbenchSite2 != newWorkbenchSite)
                             continue;
 
-                    Shell activeShell2 = handlerSubmission.getActiveShell();
+                    final Shell activeShell2 = handlerSubmission
+                            .getActiveShell();
+                    final Shell wbWinShell;
+                    if (activeWorkbenchWindow == null) {
+                        wbWinShell = null;
+                    } else {
+                        wbWinShell = activeWorkbenchWindow.getShell();
+                    }
 
-                    if (activeShell2 != null && activeShell2 != activeShell)
-                            continue;
+                    if ((activeShell2 != null) && (activeShell2 != activeShell)
+                            && (activeShell2 != wbWinShell)) continue;
 
-                    if (bestHandlerSubmission == null)
+                    if (bestHandlerSubmission == null) {
                         bestHandlerSubmission = handlerSubmission;
-                    else {
-                        int compareTo = Util.compareIdentity(activeWorkbenchSite2,
-                                bestHandlerSubmission
+                    } else {
+                        int compareTo = Util.compareIdentity(
+                                activeWorkbenchSite2, bestHandlerSubmission
                                         .getActiveWorkbenchPartSite());
+                        final int currentMatch = compareWindows(activeShell2,
+                                wbWinShell);
+                        final Shell bestMatchingShell = bestHandlerSubmission
+                                .getActiveShell();
+                        final int bestMatch = compareWindows(bestMatchingShell,
+                                wbWinShell);
 
-                        if (compareTo == 0) {
-                            compareTo = Util.compareIdentity(activeShell2,
-                                    bestHandlerSubmission.getActiveShell());
+                        if ((currentMatch > bestMatch) || (compareTo == 0)) {
+
+                            /*
+                             * Compare the two, to see if one is a better match.
+                             */
+                            compareTo = currentMatch - bestMatch;
 
                             if (compareTo == 0)
                                     compareTo = Util

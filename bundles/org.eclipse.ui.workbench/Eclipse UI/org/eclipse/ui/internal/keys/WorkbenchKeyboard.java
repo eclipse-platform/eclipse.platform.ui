@@ -822,7 +822,7 @@ public final class WorkbenchKeyboard {
 
         // Open the shell.
         workbench.getContextSupport().registerShell(multiKeyAssistShell,
-                IWorkbenchContextSupport.TYPE_NONE);
+                IWorkbenchContextSupport.TYPE_WINDOW);
         multiKeyAssistShell.open();
     }
 
