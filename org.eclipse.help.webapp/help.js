@@ -121,7 +121,8 @@ function switchTab(nav, newTitle)
  	 }
  	 
  	 if (nav == "toc" && 
- 	 	 (NavFrame.toc.location.href == "about:blank" || NavFrame.toc.location.href.indexOf("tocs.jsp") >= 0 ))
+ 	 	 (NavFrame.toc.location.href == "about:blank" && NavFrame.document.getElementById("toc").src.indexOf("tocs.jsp") >= 0
+ 	 	  || NavFrame.toc.location.href.indexOf("tocs.jsp") >= 0 ))
  	 	showBookshelfIcon(false);
  	 else
  	 	showBookshelfIcon(true);
@@ -176,7 +177,6 @@ function showBookshelf()
 { 	
 	switchTab("toc");
 	// load the bookshelf
-	//window.toc.window.location.href = "tocs.jsp";
 	NavFrame.toc.window.location.replace("tocs.jsp");
 	// clear the content page
 	parent.MainFrame.location=help_home;
@@ -190,9 +190,6 @@ function showBookshelf()
 function loadTOC(tocId)
 {
 	showBookshelfIcon(true);
-	
-	// clear the content page
-	//MainFrame.location="home.jsp?toc="+tocId;
 	
 	// navigate to this toc
 	NavFrame.toc.window.location.replace("toc.jsp?toc="+tocId);
