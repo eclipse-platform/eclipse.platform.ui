@@ -34,12 +34,12 @@ public class TocWriter extends XMLGenerator {
 		println(
 			"<toc label=\""
 				+ xmlEscape(toc.getLabel())
-				+ "\" tocID=\""
-				+ reduceURL(toc.getTocID())
+				+ "\" href=\""
+				+ reduceURL(toc.getHref())
 				+ "\">");
-		ITopic[] subtopics = toc.getSubtopics();
-		for (int i = 0; i < subtopics.length; i++) {
-			generate(subtopics[i]);
+		ITopic[] topics = toc.getTopics();
+		for (int i = 0; i < topics.length; i++) {
+			generate(topics[i]);
 		}
 		println("</toc>");
 		super.close();

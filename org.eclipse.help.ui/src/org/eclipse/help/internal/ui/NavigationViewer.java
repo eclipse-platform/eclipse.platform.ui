@@ -4,8 +4,10 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import java.util.*;
+
+import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -14,18 +16,18 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.*;
 /**
  * Navigation Viewer.  Contains combo for InfoSet selection and Workbook for display
  * of views.
  */
 public class NavigationViewer implements ISelectionProvider, IMenuListener {
+	private Collection selectionChangedListeners = new ArrayList();
 	private Composite contents;
 	private EmbeddedHelpView helpView;
-	private ArrayList tocIDs = new ArrayList();
 	private Combo toc_Combo;
 	private TreeViewer viewer;
-	private Collection selectionChangedListeners = new ArrayList();
+	private IToc[] tocs;
+
 	/**
 	 * NavigationViewer constructor.
 	 */
@@ -40,7 +42,7 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	}
 	protected Control createControl(Composite parent) {
 		// Create a list of available Topics_
-		tocIDs.addAll(HelpSystem.getTocManager().getTocIDs());
+		tocs = HelpSystem.getTocManager().getTocs();
 		contents = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -58,22 +60,21 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		toc_Combo = new Combo(contents, SWT.DROP_DOWN | SWT.READ_ONLY /*| SWT.FLAT*/
 		);
 		toc_Combo.setLayoutData(gd);
-		TocManager tocManager = HelpSystem.getTocManager();
-		for (int i = 0; i < tocIDs.size(); i++) {
-			toc_Combo.add(tocManager.getTocLabel((String) tocIDs.get(i)));
+
+		for (int i = 0; i < tocs.length; i++) {
+			toc_Combo.add(tocs[i].getLabel());
 		}
 		toc_Combo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = ((Combo) e.widget).getSelectionIndex();
-				final String id = (String) tocIDs.get(index);
+				final String href = tocs[index].getHref();
 				// Switching to another infoset may be time consuming
 				// so display the busy cursor
 				BusyIndicator.showWhile(null, new Runnable() {
 					public void run() {
 						try {
-							ITopic selectedTopics =
-								HelpSystem.getTocManager().getToc(id);
-							setInput(selectedTopics);
+							IToc selectedToc = HelpSystem.getTocManager().getToc(href);
+							setInput(selectedToc);
 						} catch (Exception e) {
 						}
 					}
@@ -167,21 +168,19 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		}
 	}
 	/**
-	 * @param input an InfoSet or Contribution[]
-	 *  if Infoset, then Pages will be created containing trees representations
-	 *   of Infoset's children (InfoViews)
-	 *  If Array of Contribution, the elements can be either InfoView or InfoSet.
-	 *   Pages will be created containing trees representations
-	 *   of InfoView element and each of Infoset's children (InfoViews)
+	 * New TOC to show
 	 */
 	public void setInput(Object input) {
 		if (input instanceof Toc) {
-			// do nothing if asked to display the same infoset
+			// do nothing if asked to display the same TOC
 			if (input == getInput())
 				return;
-			int index = tocIDs.indexOf(((Toc)input).getTocID());
-			if (index != -1)
-				toc_Combo.select(index);
+			for (int i=0; i<tocs.length; i++)
+				if (tocs[i] == input)
+				{
+					toc_Combo.select(i);
+					break;
+				}
 			// remove selection, so it is gray not blue;
 			toc_Combo.clearSelection();
 			viewer.setInput(input);

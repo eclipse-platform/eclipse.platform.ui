@@ -13,14 +13,12 @@ import org.eclipse.help.*;
  * Root of navigation TocFile
  * Can be linked with other Toc objects.
  */
-public class Toc extends TocNode implements ITopic {
-	private final static String defaultSplash =
-		"/org.eclipse.help/" + Resources.getString("splash_location");
+public class Toc extends TocNode implements IToc {
+
 	private String link_to;
 	private String href;
 	private String label;
 	private TocFile tocFile;
-	private String tocID;
 	private ITopic[] topicArray;
 	
 	/**
@@ -33,13 +31,8 @@ public class Toc extends TocNode implements ITopic {
 		this.tocFile = tocFile;
 		this.label = attrs.getValue("label");
 		this.link_to = attrs.getValue("link_to");
-		this.tocID=attrs.getValue("tocID");
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
-		this.tocID=HrefUtil.normalizeHref(tocFile.getPluginID(),tocFile.getHref());
-		this.href =
-			defaultSplash
-				+ "?title="
-				+ URLEncoder.encode(TString.getUnicodeNumbers(label));
+		this.href=HrefUtil.normalizeHref(tocFile.getPluginID(),tocFile.getHref());
 	}
 
 	/**
@@ -88,7 +81,7 @@ public class Toc extends TocNode implements ITopic {
 		// by href, but for now let's just traverse the
 		// tree and find the topic.
 		Stack stack = new Stack();
-		ITopic[] topics = getSubtopics();
+		ITopic[] topics = getTopics();
 		for (int i=0; i<topics.length; i++)
 			stack.push(topics[i]);
 		
@@ -102,10 +95,10 @@ public class Toc extends TocNode implements ITopic {
 	}
 			
 	/**
-	 * Note: assumes the toc have been built....
+	 * Note: assumes the toc has been built....
 	 * @return ITopic list
 	 */
-	public ITopic[] getSubtopics() {
+	public ITopic[] getTopics() {
 		if (topicArray == null)
 		{
 			List topics = getChildTopics();
@@ -119,13 +112,7 @@ public class Toc extends TocNode implements ITopic {
 	 * Used by debugger
 	 */
 	public String toString() {
-		return tocID != null ? tocID : super.toString();
+		return href != null ? href: super.toString();
 	}
-	/**
-	 * Gets the topicsID.
-	 * @return Returns a String
-	 */
-	public String getTocID() {
-		return tocID;
-	}
+
 }

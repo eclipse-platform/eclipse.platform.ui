@@ -8,6 +8,7 @@ import org.eclipse.help.IHelpResource;
 
 /**
  * ITopic is one topic in a hierarchy of topics.
+ * @since 2.0
  */
 public interface ITopic extends IHelpResource {
 	public final static String TOPIC = "topic";

@@ -9,6 +9,7 @@ package org.eclipse.help;
  * This interface models a help resource. In general, help resources are either
  * html help files, or xml navigation/toc files.
  * </p>
+ * @since 2.0
  */
 public interface IHelpResource {
 
@@ -16,11 +17,15 @@ public interface IHelpResource {
 	public final static String LABEL = "label";
 	
 	/**
-	 * Obtains href
+	 * Returns the string URL associated with this help resource.
+	 *
+	 * @return the string URL of the resource
 	 */
 	public String getHref();
 	/**
-	 * Obtains label
+	 * Returns the label of this help resource.
+	 *
+	 * @return the label
 	 */
 	public String getLabel();
 }

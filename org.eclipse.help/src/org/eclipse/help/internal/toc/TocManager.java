@@ -7,20 +7,16 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ITopic;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
 /**
- * Manages the navigation model. It generates it and it reads it back
- * and instantiates the model for future rendering.
- * There is a model (notifier) for each <views> node.
+ * Manages the navigation model. It keeps track of all the tables of contents.
  */
 public class TocManager {
-	private Map idToToc =
-		new HashMap(/* of ID to Toc */
-	);
-	// Ordered List of all TOC available;
-	private List tocIDs;
+	
+	private IToc[] tocs;
+
 	/**
 	 * HelpNavigationManager constructor.
 	 */
@@ -32,97 +28,123 @@ public class TocManager {
 			Logger.logError("", e);
 		}
 	}
+
+	/**
+	 * Returns the list of TOC's available in the help system
+	 */
+	public IToc[] getTocs()
+	{
+		return tocs;
+	}
+	
+	/**
+	 * Returns the navigation model for specified toc
+	 */
+	public IToc getToc(String href) {
+		if (href == null || href.equals(""))
+			return null;
+		for (int i = 0; i < tocs.length; i++)
+			if (tocs[i].getHref().equals(href))
+				return tocs[i];
+		return null;
+	}
+
+	
+	/**
+	 * Builds the toc from the contribution files
+	 */
 	private void build() {
 		try {
 			Collection contributedTocFiles = getContributedTocFiles();
 			TocBuilder builder = new TocBuilder();
 			builder.build(contributedTocFiles);
 			Collection builtTocs = builder.getBuiltTocs();
+			tocs = new IToc[builtTocs.size()];
+			int i = 0;
 			for (Iterator it = builtTocs.iterator(); it.hasNext();) {
-				Toc toc = (Toc) it.next();
-				idToToc.put(toc.getTocID(), toc);
+				tocs[i++] = (IToc) it.next();
 			}
+			orderTocs(builtTocs);
 
 		} catch (Exception e) {
+			tocs = new IToc[0];
 			Logger.logError("", e);
 		}
 	}
+	
 	/**
-	 * Returns the navigation model for specified toc
+	 * Orders the TOCs according to a product wide preference.
 	 */
-	public ITopic getToc(String id) {
-		if (id == null || id.equals(""))
-			return null;
-		return (ITopic) idToToc.get(id);
-	}
-	/**
-	 * @return List of Toc hrefs available, not including
-	 * ones that do not have navigation
-	 * (i.e. require not met)
-	 */
-	public List getTocIDs() {
-		if (tocIDs != null)
-			return tocIDs;
-		tocIDs = new ArrayList(idToToc.size());
-		// obtain unordered hrefs
-		List unorderedIDs = new ArrayList(idToToc.size());
-		unorderedIDs.addAll(idToToc.keySet());
-		// Now create ordered list, as specified in product.ini
-		List preferedOrder = getPreferedInfosetsOrder();
-		// add all infosets that have order specified
-		if (preferedOrder != null) {
-			for (Iterator it = preferedOrder.iterator(); it.hasNext();) {
-				String infosetID = (String) it.next();
-				if (unorderedIDs.contains(infosetID))
-					tocIDs.add(infosetID);
-				unorderedIDs.remove(infosetID);
-			}
+	private void orderTocs(Collection unorderedTocs)
+	{
+		ArrayList orderedHrefs = getPreferredTocOrder();
+		ArrayList orderedTocs = new ArrayList(unorderedTocs.size());
+		
+		// add the tocs from the preferred order...
+		for (Iterator it = orderedHrefs.iterator(); it.hasNext(); )
+		{
+			String href = (String)it.next();
+			IToc toc = getToc(unorderedTocs, href);
+			if (toc != null)
+				orderedTocs.add(toc);
 		}
-		// add the rest of infosets
-		tocIDs.addAll(unorderedIDs);
-		return tocIDs;
+		// add the remaining tocs 
+		for (Iterator it=unorderedTocs.iterator(); it.hasNext(); )
+		{
+			IToc toc = (IToc)it.next();
+			if (!orderedTocs.contains(toc))
+				orderedTocs.add(toc);
+		}
+		
+		this.tocs = new IToc[orderedTocs.size()];
+		orderedTocs.toArray(this.tocs);
 	}
+	
 	/**
-	 * Returns the label for Toc.
-	 * This method uses the label from the toc map file
-	 * so that the navigation file does not need to be
-	 * read in memory
-	 */
-	public String getTocLabel(String href) {
-		Object toc = idToToc.get(href);
-		if (toc != null)
-			return ((ITopic) toc).getLabel();
-		return null;
-	}
-	/**
-	 * Reads product.ini to determine infosets ordering.
+	 * Reads product.ini to determine toc ordering.
 	 * It works in current drivers, but will not
-	 * if location/name of product.ini change
+	 * if location/name of product.ini change.
+	 * Return the list of href's.
 	 */
-	private List getPreferedInfosetsOrder() {
-		List infosets = new ArrayList();
+	private ArrayList getPreferredTocOrder() {
+		ArrayList orderedTocs = new ArrayList();
 		try {
 			Plugin p = Platform.getPlugin("org.eclipse.sdk");
 			if (p == null)
-				return infosets;
+				return orderedTocs;
 			URL pURL = p.getDescriptor().getInstallURL();
 			URL productIniURL = new URL(pURL, "product.ini");
 			Properties prop = new Properties();
 			prop.load(productIniURL.openStream());
-			String infosetsList = prop.getProperty("baseInfosets");
-			if (infosetsList != null) {
+			String preferredTocs = prop.getProperty("baseInfosets");
+			if (preferredTocs != null) {
 				StringTokenizer suggestdOrderedInfosets =
-					new StringTokenizer(infosetsList, " ;,");
+					new StringTokenizer(preferredTocs, " ;,");
+
 				while (suggestdOrderedInfosets.hasMoreElements()) {
-					String infoset = (String) suggestdOrderedInfosets.nextElement();
-					infosets.add(infoset);
+					orderedTocs.add(suggestdOrderedInfosets.nextElement());
 				}
 			}
 		} catch (Exception e) {
 			Logger.logWarning(Resources.getString("W001"));
 		}
-		return infosets;
+		return orderedTocs;
 	}
+	
+	/**
+	 * Returns the toc from a list of IToc by identifying it with its (unique) href.
+	 */
+	private IToc getToc(Collection list, String href)
+	{
+		for(Iterator it=list.iterator(); it.hasNext(); )
+		{
+			IToc toc = (IToc)it.next();
+			if (toc.getHref().equals(href))
+				return toc;
+		}
+		return null;
+	}
+	
 	/**
 	* Returns a collection of TocFile that were not processed.
 	*/

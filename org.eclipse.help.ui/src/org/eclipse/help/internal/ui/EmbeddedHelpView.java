@@ -3,11 +3,9 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.Iterator;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.Actions.ShowHideAction;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -17,7 +15,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.help.*;
 /**
  * EmbeddedHelpView
  */
@@ -34,7 +31,7 @@ public class EmbeddedHelpView extends ViewPart {
 	protected float viewsWidthPercentage = 0.25f;
 	protected HTMLHelpViewer htmlViewer = null;
 	protected NavigationViewer navigationViewer = null;
-	private ITopic tocToDisplay;
+	private IToc   tocToDisplay;
 	private String topicHrefToDisplay;
 	private Action showHideAction;
 	private Action backAction;
@@ -70,12 +67,9 @@ public class EmbeddedHelpView extends ViewPart {
 		try {
 			if (tocToDisplay == null) {
 				// get first Toc available
-				Iterator tocHrefsIt =
-					HelpSystem.getTocManager().getTocIDs().iterator();
-				if (tocHrefsIt.hasNext()) {
-					String tocHref = (String) tocHrefsIt.next();
-					tocToDisplay = HelpSystem.getTocManager().getToc(tocHref);
-				}
+				IToc[] tocs = HelpSystem.getTocManager().getTocs();
+				if (tocs.length > 0) 
+					tocToDisplay = tocs[0];
 			}
 			// No TOCs installed at all. Display error dialog, but also handle
 			// empty view. Since view is already created, do *not* close for safety. 
@@ -136,8 +130,8 @@ public class EmbeddedHelpView extends ViewPart {
 	/**
 	 * Show the specified infoset and (optional) topic
 	 */
-	public void displayHelp(ITopic topics, String topicHref) {
-		navigationViewer.setInput(topics);
+	public void displayHelp(IToc toc, String topicHref) {
+		navigationViewer.setInput(toc);
 		if (topicHref != null)
 			navigationViewer.setSelection(new StructuredSelection(topicHref));
 	}
@@ -267,9 +261,9 @@ public class EmbeddedHelpView extends ViewPart {
 	public void saveState(IMemento memento) {
 		try {
 			if (navigationViewer != null) {
-				Toc topics = (Toc)navigationViewer.getInput();
-				if (topics != null)
-					memento.putString("tocToDisplay", topics.getTocID());
+				IToc toc = (IToc)navigationViewer.getInput();
+				if (toc != null)
+					memento.putString("tocToDisplay", toc.getHref());
 				ISelection sel = navigationViewer.getSelection();
 				if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 					Object selectedTopic = ((IStructuredSelection) sel).getFirstElement();
@@ -341,13 +335,6 @@ public class EmbeddedHelpView extends ViewPart {
 	 * @see WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-	}
-	/**
-	 * Gets the tocToDisplay.
-	 * @return Returns a ITopic
-	 */
-	public ITopic getTocToDisplay() {
-		return tocToDisplay;
 	}
 
 }

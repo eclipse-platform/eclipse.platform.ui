@@ -24,18 +24,8 @@ package org.eclipse.help;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @deprecated In 2.0 this will be replaced by IHelpResource
  */
-public interface IHelpTopic {
-	/**
-	 * Returns the string URL associated with this help topic.
-	 *
-	 * @return the string URL of the topic
-	 */
-	public String getHref();
-	/**
-	 * Returns the label of this help topic.
-	 *
-	 * @return the label
-	 */
-	public String getLabel();
+public interface IHelpTopic extends IHelpResource
+{
 }

@@ -5,8 +5,8 @@ package org.eclipse.help.internal.server;
  */
 
 import java.io.*;
-import java.util.*;
 
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.XMLGenerator;
@@ -62,18 +62,17 @@ public class TocURL extends HelpURL {
 	 */
 	private InputStream serializeTocs(){
 		TocManager tocManager=HelpSystem.getTocManager();
-		List tocs = tocManager.getTocIDs();
+		IToc[] tocs = tocManager.getTocs();
 		StringWriter stWriter=new StringWriter();
 		XMLGenerator gen = new XMLGenerator(stWriter);
 		gen.println("<tocs>");
 		gen.pad++;
-		for (Iterator it=tocs.iterator();it.hasNext();) {
-			String tocID = (String)it.next();
+		for (int i=0; i<tocs.length; i++) {
 			gen.printPad();
-			gen.print("<toc tocID=\"");
-			gen.print(tocID);
+			gen.print("<toc href=\"");
+			gen.print(tocs[i].getHref());
 			gen.print("\" label=\"");
-			gen.print(tocManager.getTocLabel(tocID));
+			gen.print(tocs[i].getLabel());
 			gen.println("\"/>");
 		}
 		gen.pad--;

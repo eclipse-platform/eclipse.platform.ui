@@ -76,7 +76,7 @@ public class DefaultHelp implements IHelp {
 		if (topic == null || topic.getHref() == null)
 			return;
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTocManager().getTocIDs().size() <= 0) {
+		if (HelpSystem.getTocManager().getTocs().length == 0) {
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -115,14 +115,14 @@ public class DefaultHelp implements IHelp {
 	 */
 	public void displayHelp(String tocFileHref, String topicHref) {
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTocManager().getTocIDs().size() <= 0) {
+		if (HelpSystem.getTocManager().getTocs().length == 0) {
 			// There is no documentation
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
 		}
 
-		ITopic toc = HelpSystem.getTocManager().getToc(tocFileHref);
+		IToc toc = HelpSystem.getTocManager().getToc(tocFileHref);
 		if (toc == null) {
 			// if toc href specified, but not found, log it
 			if (tocFileHref != null && tocFileHref.trim().length() != 0)

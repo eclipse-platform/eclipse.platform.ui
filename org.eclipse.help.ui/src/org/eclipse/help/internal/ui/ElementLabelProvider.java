@@ -50,6 +50,8 @@ public class ElementLabelProvider extends LabelProvider {
 				ITopic[] children = null;
 				if (element instanceof ITopic)
 					children = ((ITopic)element).getSubtopics();
+				else if (element instanceof IToc)
+					children = ((IToc)element).getTopics();
 				if (children == null || children.length == 0)
 					return imgRegistry.get(IMAGE_TOPIC);
 			}

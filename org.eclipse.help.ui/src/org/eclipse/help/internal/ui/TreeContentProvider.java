@@ -21,6 +21,8 @@ public class TreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof ITopic) 
 			return ((ITopic) element).getSubtopics();
+		else if (element instanceof IToc) 
+			return ((IToc) element).getTopics();
 		else
 			return null;
 	}
@@ -36,6 +38,8 @@ public class TreeContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		if (element instanceof ITopic)
 			return ((ITopic) element).getSubtopics().length > 0;
+		else if (element instanceof IToc)
+			return ((IToc) element).getTopics().length > 0;
 		else
 			return false;
 	}
