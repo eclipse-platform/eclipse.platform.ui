@@ -128,15 +128,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
         super.createControl(parent);
     }
 
-    protected void createChildControl() {
+    protected void doCreateChildControl() {
         final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(true) };
+                .getPart(false) };
         if (part[0] == null)
             return;
 
         Assert.isNotNull(control);
 
-        super.createChildControl();
+        super.doCreateChildControl();
 
         Platform.run(new SafeRunnable() {
             public void run() {

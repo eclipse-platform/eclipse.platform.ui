@@ -121,21 +121,13 @@ public abstract class PartPane extends LayoutPart implements Listener {
     /**
      * Factory method for creating the SWT Control hierarchy for this Pane's child.
      */
-    protected void createChildControl() {
+    protected void doCreateChildControl() {
         final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(true) };
+                .getPart(false) };
         if (part[0] == null)
             return;
 
         Assert.isNotNull(control);
-        
-        // must call createControl(..) first.
-        if (control == null)
-            return;
-
-        // Make sure the child control has not been created yet
-        if (control.getChildren().length != 0)
-            return;
 
         final Composite content = new Composite(control, SWT.NONE);
         content.setLayout(new FillLayout());
@@ -336,12 +328,27 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Shows the receiver if <code>visible</code> is true otherwise hide it.
      */
     public void setVisible(boolean makeVisible) {
-        if (makeVisible) {
-        	createChildControl();
-        }
+    	if (makeVisible) {
+    		createChildControl();
+    	}
+    	
         super.setVisible(makeVisible);
     }
+    
+    protected final void createChildControl() {
 
+    	// Force the view to be loaded if it isn't already
+    	partReference.getPart(true);
+    	
+        Assert.isNotNull(control);
+
+        // Make sure the child control has not been created yet
+        if (control.getChildren().length != 0)
+            return;
+        
+        doCreateChildControl();
+    }
+    
     /**
      * Sets focus to this part.
      */
