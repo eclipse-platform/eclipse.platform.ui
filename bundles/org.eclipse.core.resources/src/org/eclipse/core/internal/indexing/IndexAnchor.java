@@ -195,7 +195,7 @@ class IndexAnchor extends IndexedStoreObject {
 			try {
 				store.insertObject(rootNode);
 			} catch (ObjectStoreException e) {
-				throw new IndexedStoreException(IndexedStoreException.IndexNodeNotCreated);
+				throw new IndexedStoreException(IndexedStoreException.IndexNodeNotCreated, e);
 			}
 			rootNodeAddress = rootNode.getAddress();
 		}

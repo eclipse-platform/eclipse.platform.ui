@@ -44,7 +44,7 @@ public class PageStore implements Observer {
 			FileOutputStream out = new FileOutputStream(fileName);
 			out.close();
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.CreateFailure);
+			throw new PageStoreException(PageStoreException.CreateFailure, e);
 		}
 	}
 
@@ -133,7 +133,7 @@ public class PageStore implements Observer {
 		try {
 			this.file = new RandomAccessFile(name, "rw"); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.OpenFailure);
+			throw new PageStoreException(PageStoreException.OpenFailure, e);
 		}
 		checkMetadata();
 		numberOfPages = numberOfPagesInFile();

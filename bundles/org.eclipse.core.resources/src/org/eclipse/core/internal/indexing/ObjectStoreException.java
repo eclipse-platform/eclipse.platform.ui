@@ -12,7 +12,7 @@ package org.eclipse.core.internal.indexing;
 
 import org.eclipse.core.internal.utils.Policy;
 
-public class ObjectStoreException extends Exception {
+public class ObjectStoreException extends StoreException {
 
 	public final static int GenericFailure              = 0;
 	public final static int InternalFailure             = 1;
@@ -41,11 +41,17 @@ public class ObjectStoreException extends Exception {
 	public int id = 0; // exception id
 
 	public ObjectStoreException(int id) {
-		super(message[id]);
+		this(id, null);
+	}
+	public ObjectStoreException(int id, Throwable exception) {
+		super(message[id], exception);
 		this.id = id;
 	}
 	public ObjectStoreException(String s) {
-		super(s);
+		this(s, null);
+	}
+	public ObjectStoreException(String s, Throwable exception) {
+		super(s, exception);
 		this.id = GenericFailure;
 	}
 	
@@ -55,22 +61,22 @@ public class ObjectStoreException extends Exception {
 	private static void initializeMessages() {
 		message[GenericFailure] = bind("objectStore.genericFailure"); //$NON-NLS-1$
 		message[InternalFailure] = bind("objectStore.internalFailure"); //$NON-NLS-1$
-		message[ObjectSizeFailure] = bind("objectStore.objectSizeFailure"); //$NON-NLS-1$
+		message[StoreCreateFailure] = bind("objectStore.storeCreateFailure"); //$NON-NLS-1$
+		message[StoreConversionFailure] = bind("objectStore.storeConversionFailure"); //$NON-NLS-1$
+		message[StoreOpenFailure] = bind("objectStore.storeOpenFailure"); //$NON-NLS-1$
+		message[StoreCloseFailure] = bind("objectStore.storeCloseFailure"); //$NON-NLS-1$
+		message[PageReadFailure] = bind("objectStore.pageReadFailure"); //$NON-NLS-1$
+		message[PageWriteFailure] = bind("objectStore.pageWriteFailure"); //$NON-NLS-1$
 		message[PageVacancyFailure] = bind("objectStore.pageVacancyFailure"); //$NON-NLS-1$
+		message[ObjectTypeFailure] = bind("objectStore.objectTypeFailure"); //$NON-NLS-1$
+		message[ObjectSizeFailure] = bind("objectStore.objectSizeFailure"); //$NON-NLS-1$
 		message[ObjectExistenceFailure] = bind("objectStore.objectExistenceFailure"); //$NON-NLS-1$
 		message[ObjectHeaderFailure] = bind("objectStore.objectHeaderFailure"); //$NON-NLS-1$
-		message[StoreCloseFailure] = bind("objectStore.storeCloseFailure"); //$NON-NLS-1$
-		message[StoreCreateFailure] = bind("objectStore.storeCreateFailure"); //$NON-NLS-1$
-		message[PageReadFailure] = bind("objectStore.pageReadFailure"); //$NON-NLS-1$
-		message[StoreOpenFailure] = bind("objectStore.storeOpenFailure"); //$NON-NLS-1$
 		message[ObjectInsertFailure] = bind("objectStore.objectInsertFailure"); //$NON-NLS-1$
-		message[PageWriteFailure] = bind("objectStore.pageWriteFailure"); //$NON-NLS-1$
 		message[ObjectRemoveFailure] = bind("objectStore.objectRemoveFailure"); //$NON-NLS-1$
 		message[ObjectUpdateFailure] = bind("objectStore.objectUpdateFailure"); //$NON-NLS-1$
-		message[StoreConversionFailure] = bind("objectStore.storeConversionFailure"); //$NON-NLS-1$
-		message[MetadataRequestFailure] = bind("objectStore.metadataRequestFailure"); //$NON-NLS-1$
-		message[ObjectTypeFailure] = bind("objectStore.objectTypeFailure"); //$NON-NLS-1$
 		message[ObjectIsLocked] = bind("objectStore.objectIsLocked"); //$NON-NLS-1$
+		message[MetadataRequestFailure] = bind("objectStore.metadataRequestFailure"); //$NON-NLS-1$
 	}
 
 	private static String bind(String name) {

@@ -12,7 +12,7 @@ package org.eclipse.core.internal.indexing;
 
 import org.eclipse.core.internal.utils.Policy;
 
-public class IndexedStoreException extends Exception {
+public class IndexedStoreException extends StoreException {
 
 	public static final int GenericError                =  0;
 	public static final int EntryKeyLengthError         =  1;
@@ -60,9 +60,6 @@ public class IndexedStoreException extends Exception {
 	}
 
 	public int id = GenericError;
-	public Throwable previousError = null;
-
-
 	
 	/**
 	 * IndexedStoreException constructor comment.
@@ -70,16 +67,14 @@ public class IndexedStoreException extends Exception {
 	public IndexedStoreException(int id) {
 		super(messages[id]);
 		this.id = id;
-		previousError = null;
 	}
 	
 	/**
 	 * IndexedStoreException constructor comment.
 	 */
 	public IndexedStoreException(int id, Throwable e) {
-		super(messages[id]);
+		super(messages[id], e);
 		this.id = id;
-		previousError = e;
 	}
 	
 	/**
@@ -88,7 +83,6 @@ public class IndexedStoreException extends Exception {
 	public IndexedStoreException(String s) {
 		super(s);
 		id = GenericError;
-		previousError = null;
 	}
 	
 	/**
@@ -108,27 +102,31 @@ public class IndexedStoreException extends Exception {
 		messages[IndexNotCreated] = bind("indexedStore.indexNotCreated"); //$NON-NLS-1$
 		messages[IndexNotFound] = bind("indexedStore.indexNotFound"); //$NON-NLS-1$
 		messages[IndexNotRemoved] = bind("indexedStore.indexNotRemoved"); //$NON-NLS-1$
-		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated"); //$NON-NLS-1$
 		messages[ObjectExists] = bind("indexedStore.objectExists"); //$NON-NLS-1$
-		messages[ObjectNotFound] = bind("indexedStore.objectNotFound"); //$NON-NLS-1$
 		messages[ObjectNotAcquired] = bind("indexedStore.objectNotAcquired"); //$NON-NLS-1$
+		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated"); //$NON-NLS-1$
+		messages[ObjectNotFound] = bind("indexedStore.objectNotFound"); //$NON-NLS-1$
 		messages[ObjectNotReleased] = bind("indexedStore.objectNotReleased"); //$NON-NLS-1$
 		messages[ObjectNotRemoved] = bind("indexedStore.objectNotRemoved"); //$NON-NLS-1$
-		messages[ObjectTypeError] = bind("indexedStore.objectTypeError"); //$NON-NLS-1$
 		messages[ObjectNotUpdated] = bind("indexedStore.objectNotUpdated"); //$NON-NLS-1$
 		messages[ObjectNotStored] = bind("indexedStore.objectNotStored"); //$NON-NLS-1$
-		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated"); //$NON-NLS-1$
+		messages[ObjectTypeError] = bind("indexedStore.objectTypeError"); //$NON-NLS-1$
 		messages[StoreEmpty] = bind("indexedStore.storeEmpty"); //$NON-NLS-1$
 		messages[StoreFormatError] = bind("indexedStore.storeFormatError"); //$NON-NLS-1$
+		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated"); //$NON-NLS-1$
 		messages[StoreNotOpen] = bind("indexedStore.storeNotOpen"); //$NON-NLS-1$
-		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite"); //$NON-NLS-1$
-		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened"); //$NON-NLS-1$
 		messages[StoreNotClosed] = bind("indexedStore.storeNotClosed"); //$NON-NLS-1$
 		messages[StoreNotFlushed] = bind("indexedStore.storeNotFlushed"); //$NON-NLS-1$
+		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened"); //$NON-NLS-1$
+		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite"); //$NON-NLS-1$
 		messages[ContextNotAvailable] = bind("indexedStore.contextNotAvailable"); //$NON-NLS-1$
 		messages[ObjectIDInvalid] = bind("indexedStore.objectIDInvalid"); //$NON-NLS-1$
+		messages[MetadataRequestError] = bind("indexedStore.metadataRequestError"); //$NON-NLS-1$
 		messages[EntryRemoved] = bind("indexedStore.entryRemoved"); //$NON-NLS-1$
 		messages[StoreNotConverted] = bind("indexedStore.storeNotConverted"); //$NON-NLS-1$
+		messages[StoreIsOpen] = bind("indexedStore.storeIsOpen"); //$NON-NLS-1$
+		messages[StoreNotCommitted] = bind("indexedStore.storeNotCommitted"); //$NON-NLS-1$
+		messages[StoreNotRolledBack] = bind("indexedStore.storeNotRolledBack"); //$NON-NLS-1$
 	}
 	
 	private static String bind(String name) {
@@ -142,9 +140,9 @@ public class IndexedStoreException extends Exception {
 		StringBuffer buffer = new StringBuffer(50);
 		buffer.append("IndexedStoreException:"); //$NON-NLS-1$
 		buffer.append(getMessage());
-		if (previousError != null) {
+		if (wrappedException != null) {
 			buffer.append("\n"); //$NON-NLS-1$
-			buffer.append(previousError.toString());
+			buffer.append(wrappedException.toString());
 		}
 		return buffer.toString();
 	}

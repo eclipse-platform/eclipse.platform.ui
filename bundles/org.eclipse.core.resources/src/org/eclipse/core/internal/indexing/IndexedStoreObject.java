@@ -46,7 +46,7 @@ abstract class IndexedStoreObject extends StoredObject {
 		try {
 			object = store.acquireObject(address);
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotAcquired);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotAcquired, e);
 		}
 		return object;
 	}
@@ -59,7 +59,7 @@ abstract class IndexedStoreObject extends StoredObject {
 			ObjectAddress address = store.insertObject(object);
 			return address;
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored, e);
 		}
 	}
 	
@@ -70,7 +70,7 @@ abstract class IndexedStoreObject extends StoredObject {
 		try {
 			store.releaseObject(this);
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotReleased);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotReleased, e);
 		}
 	}
 	
@@ -81,7 +81,7 @@ abstract class IndexedStoreObject extends StoredObject {
 		try {
 			store.removeObject(address);
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotRemoved);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotRemoved, e);
 		}
 	}
 }

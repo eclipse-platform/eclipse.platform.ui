@@ -37,7 +37,7 @@ public class ObjectStore implements Observer {
 		try {
 			PageStore.create(path);
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.StoreCreateFailure);
+			throw new ObjectStoreException(ObjectStoreException.StoreCreateFailure, e);
 		}
 	}
 	/**
@@ -68,7 +68,7 @@ public class ObjectStore implements Observer {
 			pageStore = new PageStore(pagePolicy);
 			pageStore.open(name);
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.StoreOpenFailure);
+			throw new ObjectStoreException(ObjectStoreException.StoreOpenFailure, e);
 		}
 		checkMetadata();
 		acquiredObjects = new HashMap();
@@ -105,7 +105,7 @@ public class ObjectStore implements Observer {
 		try {
 			return new Buffer(pageStore.readMetadataArea(i));
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure);
+			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure, e);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class ObjectStore implements Observer {
 		try {
 			pageStore.writeMetadataArea(i, buffer.getByteArray());
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure);
+			throw new ObjectStoreException(ObjectStoreException.MetadataRequestFailure, e);
 		}
 	}
 	
@@ -180,7 +180,7 @@ public class ObjectStore implements Observer {
 		try {
 			pageStore.commit();
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.PageWriteFailure);
+			throw new ObjectStoreException(ObjectStoreException.PageWriteFailure, e);
 		}
 	}
 	
@@ -386,7 +386,7 @@ public class ObjectStore implements Observer {
 		try {
 			page = (ObjectPage) pageStore.acquire(pageNumber);
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure, e);
 		}
 		return page;
 	}
@@ -420,7 +420,7 @@ public class ObjectStore implements Observer {
 				}
 				sPage.release();
 			} catch (PageStoreException e) {
-				throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+				throw new ObjectStoreException(ObjectStoreException.PageReadFailure, e);
 			}
 			if (oPageNumber != 0) break;
 		}
@@ -431,7 +431,7 @@ public class ObjectStore implements Observer {
 			ObjectPage oPage = (ObjectPage) pageStore.acquire(oPageNumber);
 			return oPage;
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure, e);
 		}
 	}
 	
@@ -444,7 +444,7 @@ public class ObjectStore implements Observer {
 		try {
 			p = (SpaceMapPage)pageStore.acquire(pageNumber);
 		} catch (PageStoreException e) {
-			throw new ObjectStoreException(ObjectStoreException.PageReadFailure);
+			throw new ObjectStoreException(ObjectStoreException.PageReadFailure, e);
 		}
 		return p;
 	}

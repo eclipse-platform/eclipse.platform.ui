@@ -46,7 +46,7 @@ class LogReader {
 		try {
 			in = new FileInputStream(Log.name(name));
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.LogOpenFailure);
+			throw new PageStoreException(PageStoreException.LogOpenFailure, e);
 		}
 	}
 
@@ -88,7 +88,7 @@ class LogReader {
 		try {
 			in.read(buffer);
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.LogReadFailure);
+			throw new PageStoreException(PageStoreException.LogReadFailure, e);
 		}
 	}
 	
@@ -96,7 +96,7 @@ class LogReader {
 		try {
 			return in.available();
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.LogReadFailure);
+			throw new PageStoreException(PageStoreException.LogReadFailure, e);
 		}
 	}
 		

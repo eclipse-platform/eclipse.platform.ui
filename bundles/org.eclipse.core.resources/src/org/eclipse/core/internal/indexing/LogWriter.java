@@ -36,7 +36,7 @@ class LogWriter {
 		try {
 			out = new FileOutputStream(Log.name(pageStore.getName()));
 		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.LogOpenFailure);
+			throw new PageStoreException(PageStoreException.LogOpenFailure, e);
 		}
 	}
 
@@ -59,26 +59,25 @@ class LogWriter {
 		byte[] pageBuffer = new byte[Page.SIZE];
 		int numberOfPages = modifiedPages.size();
 		b4.put(0, 4, numberOfPages);
-		if (!write(b4.getByteArray())) throw new PageStoreException(PageStoreException.LogWriteFailure);
-		Iterator pageStream = modifiedPages.values().iterator();
-		while (pageStream.hasNext()) {
-			Page page = (Page) pageStream.next();
-			int pageNumber = page.getPageNumber();
-			b4.put(0, 4, pageNumber);
-			if (!write(b4.getByteArray())) throw new PageStoreException(PageStoreException.LogWriteFailure);
-			page.toBuffer(pageBuffer);
-			if (!write(pageBuffer)) throw new PageStoreException(PageStoreException.LogWriteFailure);
+		try {
+			write(b4.getByteArray());
+			Iterator pageStream = modifiedPages.values().iterator();
+			while (pageStream.hasNext()) {
+				Page page = (Page) pageStream.next();
+				int pageNumber = page.getPageNumber();
+				b4.put(0, 4, pageNumber);
+				write(b4.getByteArray());
+				page.toBuffer(pageBuffer);
+				write(pageBuffer);
+			}
+		} catch (IOException e) {
+			throw new PageStoreException(PageStoreException.LogWriteFailure, e);
 		}
 	}
 	
-	public boolean write(byte[] buffer) {
-		try {
-			out.write(buffer);
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
-		}
+	public void write(byte[] buffer) throws IOException {
+		out.write(buffer);
+	}
 
 
 }

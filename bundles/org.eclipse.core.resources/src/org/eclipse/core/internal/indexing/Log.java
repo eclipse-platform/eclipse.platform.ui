@@ -25,7 +25,7 @@ static void create(String storeName) throws PageStoreException {
 	try {
 		new RandomAccessFile(name(storeName), "rw").close(); //$NON-NLS-1$
 	} catch (IOException e) {
-		throw new PageStoreException(PageStoreException.LogCreateFailure);
+		throw new PageStoreException(PageStoreException.LogCreateFailure, e);
 	}
 }
 /**

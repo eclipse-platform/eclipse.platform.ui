@@ -69,7 +69,7 @@ private static final Map registry = new HashMap();
 		try {
 			object = objectStore.acquireObject(address);
 		} catch(ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotAcquired);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotAcquired, e);
 		}
 		return object;
 	}
@@ -121,7 +121,7 @@ private static final Map registry = new HashMap();
 		try {
 			objectStore.close();
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotClosed);
+			throw new IndexedStoreException(IndexedStoreException.StoreNotClosed, e);
 		}
 		registry.remove(name);
 		name = null;
@@ -136,7 +136,7 @@ private static final Map registry = new HashMap();
 		try {
 			objectStore.commit();
 		} catch (Exception e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotCommitted);
+			throw new IndexedStoreException(IndexedStoreException.StoreNotCommitted, e);
 		}
 	}
 	/**
@@ -172,7 +172,7 @@ private static final Map registry = new HashMap();
 				//real exception thrown below
 			}
 			ObjectStore.delete(name);
-			throw new IndexedStoreException(IndexedStoreException.StoreNotCreated);
+			throw new IndexedStoreException(IndexedStoreException.StoreNotCreated, e1);
 		}
 	}
 	/**
@@ -248,7 +248,7 @@ private static final Map registry = new HashMap();
 		try {
 			objectStore.commit();
 		} catch (Exception e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotFlushed);
+			throw new IndexedStoreException(IndexedStoreException.StoreNotFlushed, e);
 		}
 	}
 	/**
@@ -268,7 +268,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 	try {
 		return objectStore.getMetadataArea(i);
 	} catch (ObjectStoreException e) {
-		throw new IndexedStoreException(IndexedStoreException.MetadataRequestError);
+		throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
 	}
 }
 	/**
@@ -324,7 +324,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 			ObjectAddress address = objectStore.insertObject(object);
 			return address;
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotStored, e);
 		}
 	}
 	/**
@@ -360,14 +360,14 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		} catch (IndexedStoreException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IndexedStoreException(IndexedStoreException.GenericError);
+			throw new IndexedStoreException(IndexedStoreException.GenericError, e);
 		}
 	}
 	private void putMetadataArea(int i, Buffer b) throws IndexedStoreException {
 		try {
 			objectStore.putMetadataArea(i, b);
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.MetadataRequestError);
+			throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
 		}
 	}
 	/**
@@ -393,7 +393,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		try {
 			objectStore.removeObject(address);
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotRemoved);
+			throw new IndexedStoreException(IndexedStoreException.ObjectNotRemoved, e);
 		}
 	}
 	/**
@@ -413,7 +413,7 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 		try {
 		objectStore.rollback();
 		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotRolledBack);
+			throw new IndexedStoreException(IndexedStoreException.StoreNotRolledBack, e);
 		}
 	}
 	/**
