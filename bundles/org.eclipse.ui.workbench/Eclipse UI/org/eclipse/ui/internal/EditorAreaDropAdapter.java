@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
@@ -38,7 +39,17 @@ import org.eclipse.ui.part.ResourceTransfer;
 		this.page = page;
 	}
 
-	public void drop(DropTargetEvent event) {
+
+	public void drop(final DropTargetEvent event) {
+		Display d = page.getWorkbenchWindow().getShell().getDisplay();
+		d.asyncExec(new Runnable() {
+			public void run() {
+				asyncDrop(event);
+			}
+		});
+	}
+
+	private void asyncDrop(DropTargetEvent event) {
 
 		/* Open Editor for generic IEditorInput */
 		if (EditorInputTransfer.getInstance().isSupportedType(event.currentDataType)) {
