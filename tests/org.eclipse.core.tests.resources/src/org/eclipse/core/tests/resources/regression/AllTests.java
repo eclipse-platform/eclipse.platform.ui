@@ -40,6 +40,7 @@ public AllTests(String name) {
 		suite.addTest(PR_1GEAB3C_Test.suite());
 		suite.addTest(PR_1GH2B0N_Test.suite());
 		suite.addTest(PR_1GHOM0N_Test.suite());
+		suite.addTest(Bug_25457.suite());
 		suite.addTest(Bug_26294.suite());
 		suite.addTest(Bug_27271.suite());
 		suite.addTest(Bug_28981.suite());

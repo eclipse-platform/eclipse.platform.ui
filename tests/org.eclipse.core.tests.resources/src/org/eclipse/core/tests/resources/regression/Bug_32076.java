@@ -28,6 +28,9 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
  */
 public class Bug_32076 extends EclipseWorkspaceTest {
 
+	public Bug_32076() {
+		super("");
+	}
 	public Bug_32076(String name) {
 		super(name);
 	}

@@ -167,6 +167,12 @@
     <test id="regression.Bug_29116">
       <run class="org.eclipse.core.tests.resources.regression.Bug_29116"/>
     </test>
+    <test id="regression.Bug_25457">
+      <run class="org.eclipse.core.tests.resources.regression.Bug_25457"/>
+    </test>
+    <test id="regression.Bug_32076">
+      <run class="org.eclipse.core.tests.resources.regression.Bug_32076"/>
+    </test>
 
 	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
 		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
