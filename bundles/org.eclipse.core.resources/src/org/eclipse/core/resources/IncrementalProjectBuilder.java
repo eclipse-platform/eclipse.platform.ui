@@ -180,6 +180,22 @@ public final boolean hasBeenBuilt(IProject project) {
 	return super.hasBeenBuilt(project);
 }
 /**
+ * Returns whether an interrupt request has been made for this build.
+ * Background autobuild is interrupted when another thread tries to
+ * modify the workspace concurrently with the build thread.  When this
+ * occurs, the build cycle is flagged as interrupted and the build will
+ * be terminated at the earliest opportunity. This method allows long 
+ * running builders to respond to this interruption in a timely manner.  
+ * Builders are not required to respond to interruption requests.
+ * <p>
+ * @return <code>true</code> if the build cycle has been interrupted,
+ * and <code>false</code> otherwise.
+ * @since 3.0
+ */
+public final boolean isInterrupted() {
+	return super.isInterrupted();
+}
+/**
  * Indicates that this builder made changes that affect a project that preceeds
  * this project in the currently executing build order, and thus a rebuild will
  * be necessary.

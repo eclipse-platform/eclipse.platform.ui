@@ -88,6 +88,12 @@ protected boolean hasBeenBuilt(IProject project) {
 	return ((Workspace) project.getWorkspace()).getBuildManager().hasBeenBuilt(project);
 }
 /**
+ * @see IncrementalProjectBuilder#isInterrupted
+ */
+public boolean isInterrupted() {
+	return ((Workspace) project.getWorkspace()).getBuildManager().interrupted;
+}
+/**
  * @see IncrementalProjectBuilder#needRebuild
  */
 protected void needRebuild() {
