@@ -61,7 +61,12 @@ public void run() {
 		if (features[i].getWelcomePageURL() != null) 
 			welcomeFeatures.add(features[i]);
 	}
-	Shell shell = workbench.getActiveWorkbenchWindow().getShell();
+	
+	IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+	if (window == null)
+		return;
+	
+	Shell shell = window.getShell();
 	
 	if (welcomeFeatures.size() == 0) {
 		MessageDialog.openInformation(
@@ -106,7 +111,7 @@ public void run() {
 
 	WelcomePageSelectionDialog d = 
 		new WelcomePageSelectionDialog(
-			workbench.getActiveWorkbenchWindow().getShell(),
+			shell,
 			features,
 			index);
 	if(d.open() != d.OK || d.getResult().length != 1)
@@ -115,9 +120,6 @@ public void run() {
 	AboutInfo feature = (AboutInfo)d.getResult()[0];
 	
 	IWorkbenchPage page = null;
-	IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-	if (window == null)
-		return;
 
 	// See if the feature wants a specific perspective
 	String perspectiveId = feature.getWelcomePerspective();
