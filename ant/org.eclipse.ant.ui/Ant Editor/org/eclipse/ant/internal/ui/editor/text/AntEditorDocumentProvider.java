@@ -37,6 +37,7 @@ import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
@@ -66,7 +67,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#createMarkerAnnotation(org.eclipse.core.resources.IMarker)
 		 */
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
-			return new XMLMarkerAnnotation(computeAnnotationType(marker), marker);
+			return new XMLMarkerAnnotation(EditorsUI.getAnnotationTypeLookup().getAnnotationType(marker), marker);
 		}
 
 		protected Position createPositionFromProblem(IProblem problem) {
