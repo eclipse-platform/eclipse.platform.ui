@@ -187,7 +187,13 @@
 	            overviewRulerPreferenceValue="true"
 	            colorPreferenceKey="searchResultIndicationColor"
 	            colorPreferenceValue="192,192,192"
-	            presentationLayer="3">
+	            presentationLayer="3"
+	            showInNextPrevDropdownToolbarActionKey="showSearchResultInNextPrevDropdownToolbarAction"
+	            showInNextPrevDropdownToolbarAction="true"
+	            isGoToNextNavigationTargetKey="isSearchResultGoToNextNavigationTarget"
+	            isGoToNextNavigationTarget="false"
+	            isGoToPreviousNavigationTargetKey="isSearchResultGoToPreviousNavigationTarget"
+	            isGoToPreviousNavigationTarget="false">
 	     </specification>
 	</extension>
 

@@ -21,6 +21,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IWorkbenchWindow;
@@ -29,35 +30,54 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
- * The next and previous pulldown action delegates.
+ * The abstract class for next and previous pulldown action delegates.
  * 
  * @since 3.0
  */
-public class NextPreviousPulldownActionDelegate extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
+public abstract class NextPreviousPulldownActionDelegate extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 
 	/** The cached menu. */
 	private Menu fMenu;
+	
+	/** The preference store */
+	private IPreferenceStore fStore;
 
 	/** Action for handling menu item selection. */
 	private static class NavigationEnablementAction extends Action {
+
+		/** The preference store. */
+		private IPreferenceStore fStore;
+		
+		/** The preference key for the value in the store. */
+		private String fKey;
 
 		/**
 		 * Creates a named navigation enablement action.
 		 * 
 		 * @param name the name of this action. 
 		 */ 
-		public NavigationEnablementAction(String name) {
+		public NavigationEnablementAction(String name, IPreferenceStore store, String key) {
 			super(name, IAction.AS_CHECK_BOX);
+			fStore= store;
+			fKey= key;
+			setChecked(fStore.getBoolean(fKey));
 		}
 
 		/*
 		 * @see IAction#run()
 		 */		
 		public void run() {
-			// XXX: must store preference here.
-			System.out.println("State of " + getText() + ": " + isChecked());
+			fStore.setValue(fKey, isChecked());
 		}
 	}
+
+	/**
+	 * Returns the preference key to be used in the
+	 * <code>NavigationEnablementAction</code>.
+	 * 
+	 * @return the preference key or <code>null</code> if the key is not defined in XML
+	 */
+	public abstract String getPreferenceKey(AnnotationPreference annotationPreference);
 
 	/*
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
@@ -68,6 +88,13 @@ public class NextPreviousPulldownActionDelegate extends Action implements IMenuC
 			fillMenu(fMenu);
 		}
 		return fMenu;
+	}
+
+	/**
+	 * Creates a next previous action delegate.
+	 */
+	public NextPreviousPulldownActionDelegate() {
+		fStore= TextEditorPlugin.getDefault().getPreferenceStore();
 	}
 
 	/*
@@ -120,7 +147,10 @@ public class NextPreviousPulldownActionDelegate extends Action implements IMenuC
 		Iterator iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (iter.hasNext()) {
 			AnnotationPreference preference= (AnnotationPreference)iter.next();
-			containers.add(new NavigationEnablementAction(preference.getPreferenceLabel()));
+			String key= preference.getShowInNextPrevDropdownToolbarActionKey();
+			if (key != null && fStore.getBoolean(key))
+				if (getPreferenceKey(preference) != null)
+					containers.add(new NavigationEnablementAction(preference.getPreferenceLabel(), fStore, getPreferenceKey(preference)));
 		}
 
 		return (IAction[]) containers.toArray(new Action[containers.size()]);

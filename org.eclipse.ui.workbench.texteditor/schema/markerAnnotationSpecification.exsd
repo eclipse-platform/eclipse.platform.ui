@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
       </appInfo>
       <documentation>
-         This extension point is used to define presentation properties of markers in the Default Text Editor. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.MarkerAnnotationPreferences.
+         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.MarkerAnnotationPreferences.
       </documentation>
    </annotation>
 
@@ -135,6 +135,54 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="showInNextPrevDropdownToolbarActionKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for the visibility in the next/previous drop down toolbar action.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showInNextPrevDropdownToolbarAction" type="boolean">
+            <annotation>
+               <documentation>
+                  The default value for the visibility in the next/previous drop down toolbar action.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToNextNavigationTargetKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for go to next navigation enablement.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToNextNavigationTarget" type="boolean">
+            <annotation>
+               <documentation>
+                  The default value for go to next navigation enablement.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToPreviousNavigationTargetKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for go to previous navigation enablement.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToPreviousNavigationTarget" type="boolean">
+            <annotation>
+               <documentation>
+                  The default value for go to previous navigation enablement.
+Since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -143,6 +191,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -151,6 +200,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -159,6 +209,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
@@ -167,6 +218,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 
