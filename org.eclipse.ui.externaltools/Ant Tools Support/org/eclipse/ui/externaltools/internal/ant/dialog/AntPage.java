@@ -232,6 +232,9 @@ public abstract class AntPage {
 		private TableViewer viewer;
 	
 		public void add(Object o) {
+			if (elements.contains(o)) {
+				return;
+			}
 			elements.add(o);
 			viewer.add(o);
 		}
@@ -254,5 +257,9 @@ public abstract class AntPage {
 			elements.remove(o);
 			viewer.remove(o);
 		}
+	}
+	
+	protected AntPreferencePage getPreferencePage() {
+		return preferencePage;
 	}
 }
