@@ -67,12 +67,15 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		boolean movedFrom = (delta.getFlags() & IResourceDelta.MOVED_FROM) > 0;
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
-				if (resource.getType() == IResource.FOLDER) {
-					handleOrphanedSubtree((IContainer)resource);
-					handleAddedFolder((IFolder) resource);
-				} else if (resource.getType() == IResource.FILE) {
-					handleAddedFile((IFile)resource);
-				}
+				// make sure the added resource isn't a phantom
+				if (resource.exists()) {
+					if (resource.getType() == IResource.FOLDER) {
+						handleOrphanedSubtree((IContainer)resource);
+						handleAddedFolder((IFolder) resource);
+					} else if (resource.getType() == IResource.FILE) {
+						handleAddedFile((IFile)resource);
+					}
+				}	
 				break;
 			case IResourceDelta.REMOVED :
 				if (resource.getType() == IResource.FILE) {

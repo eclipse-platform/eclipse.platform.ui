@@ -408,6 +408,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		// if (isIgnored()) return false;
 		IContainer container = (IContainer)getIResource();
 		boolean shared = isCVSFolder();
+		// only phantoms that ae shared can be dirty
+		if (!shared && container.isPhantom()) return false;
 		int count = EclipseSynchronizer.getInstance().getDirtyCount(container);
 		if (count == -1) {
 			if (!exists()) return false;
