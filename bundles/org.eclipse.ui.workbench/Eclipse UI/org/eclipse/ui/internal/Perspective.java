@@ -658,7 +658,14 @@ public class Perspective {
         } catch (CoreException e) {
             throw new WorkbenchException(NLS.bind(WorkbenchMessages.Perspective_unableToLoad, persp.getId() ));
         }
-
+		
+		/*
+		 * IPerspectiveFactory#createFactory() can return null
+		 */
+		if (factory == null)
+			throw new WorkbenchException(NLS.bind(WorkbenchMessages.Perspective_unableToLoad, persp.getId() ));		
+		
+		
         // Create layout factory.
         ViewSashContainer container = new ViewSashContainer(page);
         PageLayout layout = new PageLayout(container, getViewFactory(),
