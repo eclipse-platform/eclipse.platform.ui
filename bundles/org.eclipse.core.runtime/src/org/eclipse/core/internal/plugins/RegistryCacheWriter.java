@@ -278,7 +278,7 @@ public void writeHeaderInformation(DataOutputStream out) {
 	try {
 		out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
 		// install stamp
-		out.writeUTF(Long.toString(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp()));
+		out.writeLong(InternalPlatform.getRegistryCacheTimeStamp());
 		// OS stamp
 		out.writeUTF(BootLoader.getOS());
 		// windows system stamp

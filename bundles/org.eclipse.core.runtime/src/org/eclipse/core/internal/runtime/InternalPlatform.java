@@ -43,6 +43,7 @@ public final class InternalPlatform {
 	private static Runnable endOfInitializationHandler = null;
 	private static IPath location;
 	private static PluginClassLoader xmlClassLoader = null;
+	private static long cacheReadTimeStamp;
 
 	private static boolean debugEnabled = false;
 	private static boolean consoleLogEnabled = false;
@@ -633,6 +634,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	if (registry == null) {
 		clearRegIndex();
 		long start = System.currentTimeMillis();
+		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 		IStatus resolveStatus = registry.resolve(true, true);
 		problems.merge(resolveStatus);
@@ -991,4 +993,11 @@ private static void applyPluginDefaultOverrides(
 			preferences.setDefault(propertyName, value);
 		}
 	}
-}}
+}
+public static long getRegistryCacheTimeStamp() {
+	return cacheReadTimeStamp;
+}
+public static void setRegistryCacheTimeStamp(long timeStamp) {
+	cacheReadTimeStamp = timeStamp;
+}
+}

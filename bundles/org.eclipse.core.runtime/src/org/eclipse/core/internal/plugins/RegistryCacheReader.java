@@ -30,7 +30,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 5;
+	public static final byte REGISTRY_CACHE_VERSION = 6;
 
 	public static final byte NONLABEL = 0;
 
@@ -234,18 +234,22 @@ public static String decipherLabel(byte labelValue) {
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
 	try {
-		int version = in.readInt();
+		if (in.readInt() != REGISTRY_CACHE_VERSION)
+			return false;
+			
 		// install stamp
-		String installStamp = in.readUTF();
+		long installStamp = in.readLong();
 		// OS stamp
 		String osStamp = in.readUTF();
 		// windows system stamp
 		String windowsStamp = in.readUTF();
 		// locale stamp
 		String localeStamp = in.readUTF();
+		// Save the current plugin timestamp for writing to the
+		// cache when we shutdown
+		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 
-		return ((version == REGISTRY_CACHE_VERSION) &&
-			(installStamp.equals(Long.toString(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp()))) &&
+		return ((installStamp == InternalPlatform.getRegistryCacheTimeStamp()) &&
 			(osStamp.equals(BootLoader.getOS())) &&
 			(windowsStamp.equals(BootLoader.getWS())) &&
 			(localeStamp.equals(BootLoader.getNL())) );
