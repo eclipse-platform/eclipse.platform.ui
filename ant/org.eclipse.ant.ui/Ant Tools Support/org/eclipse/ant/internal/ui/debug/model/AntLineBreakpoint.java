@@ -13,7 +13,9 @@ package org.eclipse.ant.internal.ui.debug.model;
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
 
@@ -40,12 +42,17 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 * @param lineNumber 1-based line number of the breakpoint
 	 * @throws CoreException if unable to create the breakpoint
 	 */
-	public AntLineBreakpoint(IResource resource, int lineNumber) throws CoreException {
-		IMarker marker = resource.createMarker(IAntDebugConstants.ID_ANT_LINE_BREAKPOINT);
-		setMarker(marker);
-		setEnabled(true);
-		ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
-		ensureMarker().setAttribute(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+	public AntLineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
+	    IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+			    IMarker marker = resource.createMarker(IAntDebugConstants.ID_ANT_LINE_BREAKPOINT_MARKER);
+			    setMarker(marker);
+			    setEnabled(true);
+			    ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			    ensureMarker().setAttribute(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+			}
+	    };
+	    run(getMarkerRule(resource), wr);
 	}
 	
 	/* (non-Javadoc)

@@ -20,8 +20,8 @@ public interface IAntDebugConstants {
 	public static final String ID_ANT_DEBUG_MODEL = "org.eclipse.ant.ui.debug"; //$NON-NLS-1$
 	
 	/**
-	 * Unique identifier for the Ant line breakpoints(value 
-	 * <code>org.eclipse.ant.ui.lineBreakpoint</code>).
+	 * Unique identifier for the Ant line breakpoint markers 
+	 * (value <code>org.eclipse.ant.ui.antLineBreakpointMarker</code>).
 	 */
-	public static final String ID_ANT_LINE_BREAKPOINT= "org.eclipse.ant.ui.lineBreakpoint"; //$NON-NLS-1$
+	public static final String ID_ANT_LINE_BREAKPOINT_MARKER= "org.eclipse.ant.ui.antLineBreakpointMarker"; //$NON-NLS-1$
 }
