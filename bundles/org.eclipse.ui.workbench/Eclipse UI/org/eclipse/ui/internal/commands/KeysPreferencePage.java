@@ -1168,7 +1168,6 @@ public class KeysPreferencePage extends
                 | SWT.H_SCROLL | SWT.V_SCROLL);
         tableKeyBindings.setHeaderVisible(true);
         gridData = new GridData(GridData.FILL_BOTH);
-        gridData.widthHint = 800;
         gridData.heightHint = 400;
         tableKeyBindings.setLayoutData(gridData);
         final TableColumn tableColumnCategory = new TableColumn(
