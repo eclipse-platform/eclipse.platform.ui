@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceDescription;
-
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
