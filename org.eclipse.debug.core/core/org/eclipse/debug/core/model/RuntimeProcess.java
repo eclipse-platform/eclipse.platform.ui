@@ -202,7 +202,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				attempts++;
 			}
 			// clean-up
-			fMonitor.killJob();
+			if (fMonitor != null) {
+				fMonitor.killJob();
+				fMonitor = null;
+			}
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
 			throw new DebugException(status);
 		}
