@@ -93,6 +93,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 				
+				if (length < 1)
+					return;
+				
 				Point left= textWidget.getLocationAtOffset(offset);
 				Point right= textWidget.getLocationAtOffset(offset + length);
 				
