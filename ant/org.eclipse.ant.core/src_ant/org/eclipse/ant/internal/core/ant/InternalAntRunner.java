@@ -863,6 +863,19 @@ public class InternalAntRunner {
 	 * working directory if specified or in the same directory as the location
 	 * of the build file.	 */
 	protected void createLogFile(String fileName) throws FileNotFoundException, IOException {
+		File logFile = getFileRelativeToBaseDir(fileName);
+		
+		//this stream is closed in the finally block of run(list)
+		out = new PrintStream(new FileOutputStream(logFile));
+		err = out;
+		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
+		if (buildLogger != null) {
+			buildLogger.setErrorPrintStream(err);
+			buildLogger.setOutputPrintStream(out);
+		}
+	}
+
+	protected File getFileRelativeToBaseDir(String fileName) {
 		IPath path= new Path(fileName);
 		if (!path.isAbsolute()) {
 			String base= getCurrentProject().getUserProperty("basedir"); //$NON-NLS-1$
@@ -881,16 +894,7 @@ public class InternalAntRunner {
 			path= path.append(fileName);
 		}
 		
-		File logFile= path.toFile();
-		
-		//this stream is closed in the finally block of run(list)
-		out = new PrintStream(new FileOutputStream(logFile));
-		err = out;
-		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
-		if (buildLogger != null) {
-			buildLogger.setErrorPrintStream(err);
-			buildLogger.setOutputPrintStream(out);
-		}
+		return path.toFile();
 	}
 
 	/**
@@ -1123,10 +1127,11 @@ public class InternalAntRunner {
 		Iterator itr= propertyFiles.iterator();
         while (itr.hasNext()) {
             String filename= (String) itr.next();
+           	File file= getFileRelativeToBaseDir(filename);
             Properties props = new Properties();
             FileInputStream fis = null;
             try {
-                fis = new FileInputStream(filename);
+                fis = new FileInputStream(file);
                 props.load(fis);
             } catch (IOException e) {
             	String msg= MessageFormat.format("Could not load property file {0}: {1}", new String[]{filename, e.getMessage()});
