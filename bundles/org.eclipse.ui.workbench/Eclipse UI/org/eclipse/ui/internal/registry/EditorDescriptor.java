@@ -109,7 +109,11 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	public ImageDescriptor getImageDescriptor() {
 		if (testImage) {
 			testImage = false;
-			if (imageDesc != null) {
+			if (imageDesc == null)
+				imageDesc =
+					WorkbenchImages.getImageDescriptor(
+						ISharedImages.IMG_OBJ_FILE);
+			else {
 				Image img = imageDesc.createImage(false);
 				if (img == null)
 					imageDesc =
