@@ -3946,7 +3946,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		// if the line below is uncommented then the key binding does not work any more
+		/*
+		 * if the line below is uncommented then the key binding does not work any more
+		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=53417
+		 */
 //		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
