@@ -114,5 +114,12 @@ public class PageSite implements IPageSite {
 	public void setSelectionProvider(ISelectionProvider provider) {
 		selectionProvider = provider;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }
 

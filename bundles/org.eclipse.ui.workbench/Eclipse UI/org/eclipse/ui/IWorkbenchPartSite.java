@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  */
-public interface IWorkbenchPartSite extends IWorkbenchSite, IAdaptable {
+public interface IWorkbenchPartSite extends IWorkbenchSite {
 	
 
 /**
