@@ -86,6 +86,7 @@ public class CheatSheetView extends ViewPart {
 	public void dispose() {
 		super.dispose();
 
+		// TODO: remove this if the dispose api is removed
 		if(viewer != null)
 			viewer.dispose();
 	}
