@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Point;
  * @since 3.0
  */
 
-public class TableData {
+public class TableWrapData {
 /**
  * The control will be left-justified.
  */
@@ -99,7 +99,7 @@ public class TableData {
  * The default constructor.
  *
  */
-	public TableData() {
+	public TableWrapData() {
 	}
 	
 /**
@@ -107,7 +107,7 @@ public class TableData {
  * @param align horizontal alignment
  * @param valign vertical alignment
  */
-	public TableData(int align, int valign) {
+	public TableWrapData(int align, int valign) {
 		this(align, valign, 1, 1);
 	}
 	
@@ -119,7 +119,7 @@ public class TableData {
  * @param rowspan row span
  * @param colspan column span
  */
-	public TableData(int align, int valign, int rowspan, int colspan) {
+	public TableWrapData(int align, int valign, int rowspan, int colspan) {
 		this.align = align;
 		this.valign = valign;
 		this.rowspan = rowspan;

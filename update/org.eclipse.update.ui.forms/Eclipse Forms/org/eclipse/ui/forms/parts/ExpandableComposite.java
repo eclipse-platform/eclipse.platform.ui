@@ -32,29 +32,38 @@ public class ExpandableComposite extends Composite {
 	/**
 	 *  
 	 */
-	public static final int NONE = 0;
+	public static final int NONE = 1 << 1;
 	/**
-	 * If this style is used, a twistie will be used
+	 * If this style is used, a twistie will be used to render the expansion
+	 * toggle.
+	 */
+	public static final int TWISTIE = 1 << 2;
+	/**
+	 * If this style is used, a tree node with either + or - signs will be used
 	 * to render the expansion toggle.
 	 */
-	public static final int TWISTIE = 1;
-	/**
-	 * If this style is used, a tree node with either + or - signs
-	 * will be used to render the expansion toggle.
-	 */
-	public static final int TREE_NODE = 2;
+	public static final int TREE_NODE = 1 << 3;
 	/**
 	 * If this style is used, the title text will be rendered as a hyperlink
 	 * that can individually accept focus. Otherwise, it will still act like a
 	 * hyperlink, but only the toggle control will accept focus.
 	 */
-	public static final int FOCUS_TITLE = 4;
+	public static final int FOCUS_TITLE = 1 << 4;
 	/**
 	 * If this style is used, the client origin will be vertically aligned with
 	 * the title text. Otherwise, it will start at x = 0.
 	 */
-	public static final int CLIENT_INDENT = 8;
+	public static final int CLIENT_INDENT = 1 << 5;
+	/**
+	 * If this style is used, computed size of the composite will
+	 * take the client width into consideration only in the
+	 * expanded state. Otherwise, client width will always
+	 * be taken into acount.
+	 */
+	public static final int COMPACT = 1 << 6;
 	private int GAP = 4;
+	private int VSPACE = 3;
+	private int SEPARATOR_HEIGHT = 2;
 	private int expansionStyle = TWISTIE | FOCUS_TITLE;
 	private boolean expanded;
 	private Control client;
@@ -89,7 +98,15 @@ public class ExpandableComposite extends Composite {
 				x += tsize.x + GAP;
 			}
 			textLabel.setBounds(x, y, size.x, size.y);
-
+			y += size.y;
+			
+			if (getSeparatorControl()!=null) {
+				y+= VSPACE;
+				getSeparatorControl().setBounds(0, y, clientArea.width, SEPARATOR_HEIGHT);
+				y+= SEPARATOR_HEIGHT;
+				if (expanded) y+= VSPACE;
+			}
+			
 			if (expanded) {
 				int areaWidth = clientArea.width;
 				int cx = 0;
@@ -97,8 +114,14 @@ public class ExpandableComposite extends Composite {
 					cx = x;
 					areaWidth -= x;
 				}
-				y += size.y;
 				if (client != null) {
+					Point dsize = null;
+					Control desc = getDescriptionControl();
+					if (desc!=null) {
+						dsize = desc.computeSize(areaWidth, SWT.DEFAULT, changed);
+						desc.setBounds(cx, y, dsize.x, dsize.y);
+						y+= dsize.y+VSPACE;
+					}
 					size = client.computeSize(areaWidth, SWT.DEFAULT, changed);
 					client.setBounds(cx, y, size.x, size.y);
 				}
@@ -124,14 +147,28 @@ public class ExpandableComposite extends Composite {
 				textLabel.computeSize(innerwHint, SWT.DEFAULT, changed);
 			width = size.x;
 			height = size.y;
+			
+			if (getSeparatorControl()!=null) {
+				height+= VSPACE + SEPARATOR_HEIGHT;
+				if (expanded && client!=null)
+					height += VSPACE;
+			}
 
-			if (expanded && client != null) {
+			if ((expanded || (expansionStyle & COMPACT)==0) && client != null) {
 				int cwHint = wHint;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					cwHint = innerwHint;
+				Point dsize = null;
+				if (getDescriptionControl()!=null)
+					dsize = getDescriptionControl().computeSize(cwHint, SWT.DEFAULT, changed);
 				Point csize = client.computeSize(cwHint, SWT.DEFAULT, changed);
+				if (dsize!=null) {
+					width = Math.max(width, dsize.x);
+					if (expanded)
+						height += dsize.y+VSPACE;
+				}
 				width = Math.max(width, csize.x);
-				height += csize.y;
+				if (expanded) height += csize.y;
 			}
 			if (toggle != null) {
 				height = height - size.y + Math.max(size.y, tsize.y);
@@ -144,7 +181,12 @@ public class ExpandableComposite extends Composite {
 			Point size = textLabel.computeSize(5, SWT.DEFAULT, changed);
 			width = size.x;
 
-			if (expanded && client != null) {
+			if ((expanded ||(expansionStyle & COMPACT)==0)&& client != null) {
+				Point dsize = null;
+				if (getDescriptionControl()!=null) {
+					dsize = getDescriptionControl().computeSize(5, SWT.DEFAULT, changed);
+					width = Math.max(width, dsize.x);
+				}
 				Point csize = client.computeSize(5, SWT.DEFAULT, changed);
 				width = Math.max(width, csize.x);
 			}
@@ -168,7 +210,12 @@ public class ExpandableComposite extends Composite {
 				textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			width = size.x;
 
-			if (expanded && client != null) {
+			if ((expanded || (expansionStyle & COMPACT)==0) && client != null) {
+				Point dsize = null;
+				if (getDescriptionControl()!=null) {
+					dsize = getDescriptionControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+					width = Math.max(width, dsize.x);
+				}
 				Point csize =
 					client.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 				width = Math.max(width, csize.x);
@@ -204,10 +251,13 @@ public class ExpandableComposite extends Composite {
 		this.expansionStyle = expansionStyle;
 		setLayout(new ExpandableLayout());
 		listeners = new Vector();
+
 		if ((expansionStyle & TWISTIE) != 0)
 			toggle = new Twistie(this, SWT.NULL);
 		else if ((expansionStyle & TREE_NODE) != 0)
 			toggle = new TreeNode(this, SWT.NULL);
+		else if ((expansionStyle & NONE) != 0)
+			expanded = true;
 		if (toggle != null) {
 			toggle.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -225,20 +275,24 @@ public class ExpandableComposite extends Composite {
 			});
 			textLabel = link;
 		} else {
-			Label label = new Label(this, SWT.WRAP);
-			label.setCursor(FormsResources.getHandCursor());
-			label.addListener(SWT.MouseDown, new Listener() {
-				public void handleEvent(Event e) {
-					if (toggle != null)
-						toggle.setFocus();
-				}
-			});
-			label.addListener(SWT.MouseUp, new Listener() {
-				public void handleEvent(Event e) {
-					toggle.setExpanded(!toggle.isExpanded());
-					toggleState();
-				}
-			});
+			final Label label = new Label(this, SWT.WRAP);
+			if ((expansionStyle & NONE) == 0) {
+				label.setCursor(FormsResources.getHandCursor());
+				label.addListener(SWT.MouseDown, new Listener() {
+					public void handleEvent(Event e) {
+						if (toggle != null)
+							toggle.setFocus();
+					}
+				});
+				label.addListener(SWT.MouseUp, new Listener() {
+					public void handleEvent(Event e) {
+						label.setCursor(FormsResources.getBusyCursor());
+						toggle.setExpanded(!toggle.isExpanded());
+						toggleState();
+						label.setCursor(FormsResources.getHandCursor());
+					}
+				});
+			}
 			textLabel = label;
 		}
 	}
@@ -342,12 +396,20 @@ public class ExpandableComposite extends Composite {
 	 *            the new expanded state
 	 */
 	public void setExpanded(boolean expanded) {
+		internalSetExpanded(expanded);
+		if (toggle!=null)
+			toggle.setExpanded(expanded);
+	}
+	
+	protected void internalSetExpanded(boolean expanded) {
 		if (this.expanded != expanded) {
 			this.expanded = expanded;
+			if (getDescriptionControl()!=null)
+				getDescriptionControl().setVisible(expanded);
 			if (client != null)
 				client.setVisible(expanded);
 			layout();
-		}
+		}		
 	}
 
 	public void addExpansionListener(ExpansionListener listener) {
@@ -360,7 +422,7 @@ public class ExpandableComposite extends Composite {
 	private void toggleState() {
 		boolean newState = !isExpanded();
 		fireExpanding(newState, true);
-		setExpanded(!isExpanded());
+		internalSetExpanded(!isExpanded());
 		fireExpanding(newState, false);
 	}
 
@@ -376,5 +438,12 @@ public class ExpandableComposite extends Composite {
 			else
 				listener.expansionStateChanged(e);
 		}
+	}
+
+	protected Control getDescriptionControl() {
+		return null;
+	}
+	protected Control getSeparatorControl() {
+		return null;
 	}
 }

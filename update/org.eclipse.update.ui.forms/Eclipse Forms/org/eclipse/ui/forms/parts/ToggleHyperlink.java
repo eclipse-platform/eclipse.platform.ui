@@ -17,8 +17,7 @@ import org.eclipse.ui.forms.events.*;
 
 /**
  * A custom selectable control that can be used to control 
- * areas that can be
- * expanded or collapsed. 
+ * areas that can be expanded or collapsed. 
  * <p>
  * This is an abstract class. Subclasses are responsible
  * for rendering the control using decoration and

@@ -15,12 +15,14 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * Classes that extend abstract class Layout and implement
  * this interface can take part in layout computation of
- * the HTMLTableLayout manager. The said layout uses
+ * the TableWrapLayout manager. The said layout uses
  * alternative algorithm that computes columns before rows.
  * It allows it to 'flow' wrapped text proportionally
- * (similar to web browser layout engines). Custom layout 
- * managers that implement this interface allow recursive 
+ * (similar to the way web browser render tables). Custom 
+ * layout managers that implement this interface allow recursive 
  * reflow to be performed.
+ * @since 3.0
+ * @see TableWrapLayout
  */
 public interface ILayoutExtension {
 /**

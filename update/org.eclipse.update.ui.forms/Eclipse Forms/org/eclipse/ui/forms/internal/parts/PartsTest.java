@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.internal.parts;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
@@ -19,7 +23,6 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.parts.*;
 
 public class PartsTest {
-
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
@@ -40,16 +43,17 @@ public class PartsTest {
 			}
 		});
 		//c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		HTMLTableLayout layout = new HTMLTableLayout();
+		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		layout.leftMargin = 0;
 		layout.rightMargin = 0;
-		layout.makeColumnsEqualWidth = false;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 		c.setLayout(layout);
 
 		Label label;
 		Button b;
-		TableData td;
+		TableWrapData td;
 		/*
 		 * label = new Label(c, SWT.NULL); label.setText("Text in the left
 		 * column");
@@ -85,15 +89,36 @@ public class PartsTest {
 				}
 			}
 		});
+		td = new TableWrapData();
+		td.colspan = 2;
+		link.setLayoutData(td);
+		createExpandable(c, sc, toolkit);
+		createSection3(c, sc, toolkit);
+		createSection2(c, sc, toolkit);
+		createSection(c, sc, toolkit);
+		createSection(c, sc, toolkit);
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		display.dispose();
+	}
 
+	private static void createExpandable(
+		final Composite c,
+		final ScrolledComposite sc,
+		FormToolkit toolkit) {
 		ExpandableComposite exp =
-			toolkit.createExpandableComposite(c, ExpandableComposite.TREE_NODE|ExpandableComposite.CLIENT_INDENT);
+			toolkit.createExpandableComposite(c, ExpandableComposite.TREE_NODE
+			//	ExpandableComposite.NONE
+	);
 		exp.setActiveToggleColor(
-				toolkit.getHyperlinkGroup().getActiveForeground());
+			toolkit.getHyperlinkGroup().getActiveForeground());
 		exp.setToggleColor(toolkit.getColors().getColor(FormColors.SEPARATOR));
 		Composite client = toolkit.createComposite(exp);
 		exp.setClient(client);
-		HTMLTableLayout elayout = new HTMLTableLayout();
+		TableWrapLayout elayout = new TableWrapLayout();
 		client.setLayout(elayout);
 		elayout.leftMargin = elayout.rightMargin = 0;
 		Button button = toolkit.createButton(client, "Button", SWT.PUSH);
@@ -104,42 +129,123 @@ public class PartsTest {
 			}
 		});
 		exp.setText("Expandable Section with a longer title");
-		td = new TableData();
-		//td.colspan = 2;
-		td.align = TableData.FILL;
+		TableWrapData td = new TableWrapData();
+		td.colspan = 2;
+		//td.align = TableWrapData.FILL;
 		exp.setLayoutData(td);
-
-		//StatusLineManager manager = new StatusLineManager();
-		/*
-		 * Control mcontrol = manager.createControl(c); td = new TableData();
-		 * td.colspan = 2; td.align = TableData.FILL;
-		 * mcontrol.setLayoutData(td);
-		 * 
-		 * factory.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
-		 * 
-		 * SelectableFormLabel ft = new SelectableFormLabel(c, SWT.WRAP);
-		 * ft.setText("Some text in the form text that should also wrap");
-		 * factory.turnIntoHyperlink(ft, new IHyperlinkListener() { public void
-		 * linkEntered(Control link) { System.out.println("Link entered"); }
-		 * public void linkExited(Control link) { System.out.println("Link
-		 * exited"); } public void linkActivated(Control link) {
-		 * System.out.println("Link activated"); } });
-		 * 
-		 * ft = new SelectableFormLabel(c, SWT.WRAP); ft.setText("Some more
-		 * form text here"); factory.turnIntoHyperlink(ft, new
-		 * IHyperlinkListener() { public void linkEntered(Control link) {
-		 * System.out.println("Link entered"); } public void linkExited(Control
-		 * link) { System.out.println("Link exited"); } public void
-		 * linkActivated(Control link) { System.out.println("Link activated"); }
-		 * });
-		 */
-
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
+	}
+	
+	private static void createSection(
+			final Composite c,
+			final ScrolledComposite sc,
+			FormToolkit toolkit) {
+		Section section =
+			toolkit.createSection(c, Section.TWISTIE | Section.DESCRIPTION);
+		section.setActiveToggleColor(
+				toolkit.getHyperlinkGroup().getActiveForeground());
+		section.setToggleColor(toolkit.getColors().getColor(FormColors.SEPARATOR));
+		toolkit.createCompositeSeparator(section);
+		RichText rtext = toolkit.createRichText(section, false);
+		section.setClient(rtext);
+		loadRichText(rtext, toolkit);
+		section.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				c.layout(true);
+				updateSize(sc, c);
+			}
+		});
+		section.setText("Section title");
+		section.setDescription("This is a section description that should be rendered below the separator.");
+		TableWrapData td = new TableWrapData();
+		td.align = TableWrapData.FILL;
+		//td.grabHorizontal = true;
+		section.setLayoutData(td);
+	}
+	
+	private static void createSection2(
+			final Composite c,
+			final ScrolledComposite sc,
+			FormToolkit toolkit) {
+		Section section =
+			toolkit.createSection(c, Section.TWISTIE | Section.DESCRIPTION);
+		section.setActiveToggleColor(
+				toolkit.getHyperlinkGroup().getActiveForeground());
+		section.setToggleColor(toolkit.getColors().getColor(FormColors.SEPARATOR));
+		toolkit.createCompositeSeparator(section);
+		Composite client = toolkit.createComposite(section, SWT.WRAP);
+		GridLayout layout = new GridLayout();
+		client.setLayout(layout);
+		toolkit.createButton(client, "Radio 1", SWT.RADIO);
+		toolkit.createButton(client, "Radio 2", SWT.RADIO);
+		toolkit.createButton(client, "Radio 3", SWT.RADIO);
+		toolkit.createButton(client, "Checkbox with somewhat longer text", SWT.CHECK);
+		section.setText("Static Section");
+		section.setDescription("This section contains a list of links.");
+		section.setClient(client);
+		section.setExpanded(true);
+		section.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				c.layout(true);
+				updateSize(sc, c);
+			}
+		});
+		TableWrapData td = new TableWrapData();
+		td.align = TableWrapData.FILL;
+		//td.grabHorizontal = true;
+		section.setLayoutData(td);
+	}
+	
+	private static void createSection3(
+			final Composite c,
+			final ScrolledComposite sc,
+			FormToolkit toolkit) {
+		Section section =
+			toolkit.createSection(c, Section.TWISTIE | Section.DESCRIPTION);
+		section.setActiveToggleColor(
+				toolkit.getHyperlinkGroup().getActiveForeground());
+		section.setToggleColor(toolkit.getColors().getColor(FormColors.SEPARATOR));
+		toolkit.createCompositeSeparator(section);
+		Composite client = toolkit.createComposite(section, SWT.WRAP);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		
+		client.setLayout(layout);
+		Table t = toolkit.createTable(client, SWT.NULL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		t.setLayoutData(gd);
+		toolkit.paintBordersFor(client);
+		Button b = toolkit.createButton(client, "Add...", SWT.PUSH);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		b.setLayoutData(gd);
+		section.setText("Tree Section");
+		section.setDescription("This section a tree and a button.");
+		section.setClient(client);
+		section.setExpanded(true);
+		section.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				c.layout(true);
+				updateSize(sc, c);
+			}
+		});
+		TableWrapData td = new TableWrapData();
+		td.align = TableWrapData.FILL;
+	    //td.valign = TableWrapData.FILL;
+		//td.grabHorizontal = true;
+		section.setLayoutData(td);
+	}
+	
+	private static void loadRichText(RichText rtext, FormToolkit toolkit) {
+		rtext.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				System.out.println("Link activated: href="+e.getHref());
+			}
+		});
+		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
+		URL i1URL = PartsTest.class.getResource("image1.gif");
+		ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
+		rtext.setImage("image1", id1.createImage());
+		InputStream is = PartsTest.class.getResourceAsStream("index.xml");
+		rtext.setContents(is, true);
 	}
 
 	/*
@@ -171,9 +277,9 @@ public class PartsTest {
 			Button button = new Button(row, SWT.PUSH);
 			button.setText("Button that should be wrapped");
 		}
-		TableData td = new TableData();
+		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
-		td.align = TableData.FILL;
+		td.align = TableWrapData.FILL;
 		td.grabHorizontal = true;
 		row.setLayoutData(td);
 	}

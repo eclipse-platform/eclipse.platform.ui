@@ -451,6 +451,7 @@ public class RichText extends Canvas {
 	
 
 	private void makeActions() {
+		/*
 		openAction = new Action() {
 			public void run() {
 				activateSelectedLink();
@@ -465,6 +466,7 @@ public class RichText extends Canvas {
 		};
 		copyShortcutAction.setText(
 			FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
+		*/
 	}
 
 	private String getAcessibleText() {

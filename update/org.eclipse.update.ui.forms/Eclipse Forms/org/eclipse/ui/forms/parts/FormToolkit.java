@@ -159,6 +159,8 @@ public class FormToolkit {
 	public Composite createCompositeSeparator(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(colors.getColor(FormColors.SEPARATOR));
+		if (parent instanceof Section)
+			((Section)parent).setSeparatorControl(composite);
 		return composite;
 	}
 
@@ -227,6 +229,17 @@ public class FormToolkit {
 		twistie.addFocusListener(visibilityHandler);
 		twistie.addKeyListener(keyboardHandler);
 		return twistie;
+	}
+	
+	public Section createSection(Composite parent, int sectionStyle) {
+		Section section = new Section(parent, sectionStyle);
+		section.setBackground(colors.getBackground());
+		section.setForeground(colors.getForeground());
+		section.textLabel.addFocusListener(visibilityHandler);
+		section.textLabel.addKeyListener(keyboardHandler);
+		section.setFont(
+				JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		return section;
 	}
 
 	public ExpandableComposite createExpandableComposite(Composite parent, int expansionStyle) {

@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.*;
  * @since 3.0
  */
 
-public class HTMLTableLayout extends Layout implements ILayoutExtension {
+public class TableWrapLayout extends Layout implements ILayoutExtension {
 	public int numColumns = 1;
 	public int leftMargin = 5;
 	public int rightMargin = 5;
@@ -177,12 +177,12 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		int y = topMargin;
 		// assign widths
 		for (int i = 0; i < grid.size(); i++) {
-			TableData[] row = (TableData[]) grid.elementAt(i);
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			// assign widths, calculate heights
 			int rowHeight = 0;
 			x = leftMargin;
 			for (int j = 0; j < numColumns; j++) {
-				TableData td = row[j];
+				TableWrapData td = row[j];
 				if (td.isItemData == false) {
 					continue;
 				}
@@ -203,7 +203,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 				rowHeight = Math.max(rowHeight, size.y);
 			}
 			for (int j = 0; j < numColumns; j++) {
-				TableData td = row[j];
+				TableWrapData td = row[j];
 				if (td.isItemData == false) {
 					continue;
 				}
@@ -262,7 +262,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 
 	void placeControl(
 		Control control,
-		TableData td,
+		TableWrapData td,
 		int x,
 		int y,
 		int rowHeight) {
@@ -273,19 +273,19 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		int colWidth = td.compWidth;
 
 		// align horizontally
-		if (td.align == TableData.CENTER) {
+		if (td.align == TableWrapData.CENTER) {
 			xloc = x + colWidth / 2 - width / 2;
-		} else if (td.align == TableData.RIGHT) {
+		} else if (td.align == TableWrapData.RIGHT) {
 			xloc = x + colWidth - width;
-		} else if (td.align == TableData.FILL) {
+		} else if (td.align == TableWrapData.FILL) {
 			width = colWidth;
 		}
 		// align vertically
-		if (td.valign == TableData.MIDDLE) {
+		if (td.valign == TableWrapData.MIDDLE) {
 			yloc = y + rowHeight / 2 - height / 2;
-		} else if (td.valign == TableData.BOTTOM) {
+		} else if (td.valign == TableWrapData.BOTTOM) {
 			yloc = y + rowHeight - height;
-		} else if (td.valign == TableData.FILL) {
+		} else if (td.valign == TableWrapData.FILL) {
 			height = rowHeight;
 		}
 		control.setBounds(xloc, yloc, width, height);
@@ -294,7 +294,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 	void createGrid(Composite composite) {
 		int row, column, rowFill, columnFill;
 		Control[] children;
-		TableData spacerSpec;
+		TableWrapData spacerSpec;
 		Vector growingCols = new Vector();
 
 		// 
@@ -313,8 +313,8 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		for (int i = 0; i < children.length; i++) {
 			// Find the first available spot in the grid.
 			Control child = children[i];
-			TableData spec = (TableData) child.getLayoutData();
-			while (((TableData[]) grid.elementAt(row))[column] != null) {
+			TableWrapData spec = (TableWrapData) child.getLayoutData();
+			while (((TableWrapData[]) grid.elementAt(row))[column] != null) {
 				column = column + 1;
 				if (column >= numColumns) {
 					row = row + 1;
@@ -345,7 +345,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 			// assume the children of a
 			// composite are maintained in the order in which they are created
 			// and added to the composite.
-			 ((TableData[]) grid.elementAt(row))[column] = spec;
+			 ((TableWrapData[]) grid.elementAt(row))[column] = spec;
 			spec.childIndex = i;
 
 			if (spec.grabHorizontal) {
@@ -359,17 +359,17 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 			columnFill = spec.colspan - 1;
 			for (int r = 1; r <= rowFill; r++) {
 				for (int c = 0; c < spec.colspan; c++) {
-					spacerSpec = new TableData();
+					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					((TableData[]) grid.elementAt(row + r))[column + c] =
+					((TableWrapData[]) grid.elementAt(row + r))[column + c] =
 						spacerSpec;
 				}
 			}
 			for (int c = 1; c <= columnFill; c++) {
 				for (int r = 0; r < spec.rowspan; r++) {
-					spacerSpec = new TableData();
+					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					((TableData[]) grid.elementAt(row + r))[column + c] =
+					((TableWrapData[]) grid.elementAt(row + r))[column + c] =
 						spacerSpec;
 				}
 			}
@@ -378,14 +378,14 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 
 		// Fill out empty grid cells with spacers.
 		for (int k = column + 1; k < numColumns; k++) {
-			spacerSpec = new TableData();
+			spacerSpec = new TableWrapData();
 			spacerSpec.isItemData = false;
-			((TableData[]) grid.elementAt(row))[k] = spacerSpec;
+			((TableWrapData[]) grid.elementAt(row))[k] = spacerSpec;
 		}
 		for (int k = row + 1; k < grid.size(); k++) {
-			spacerSpec = new TableData();
+			spacerSpec = new TableWrapData();
 			spacerSpec.isItemData = false;
-			((TableData[]) grid.elementAt(k))[column] = spacerSpec;
+			((TableWrapData[]) grid.elementAt(k))[column] = spacerSpec;
 		}
 		growingColumns = new int[growingCols.size()];
 		for (int i = 0; i < growingCols.size(); i++) {
@@ -395,7 +395,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 
 	private void updateGrowingColumns(
 		Vector growingColumns,
-		TableData spec,
+		TableWrapData spec,
 		int column) {
 		int affectedColumn = column + spec.colspan - 1;
 		for (int i = 0; i < growingColumns.size(); i++) {
@@ -406,8 +406,8 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		growingColumns.add(new Integer(affectedColumn));
 	}
 
-	private TableData[] createEmptyRow() {
-		TableData[] row = new TableData[numColumns];
+	private TableWrapData[] createEmptyRow() {
+		TableWrapData[] row = new TableWrapData[numColumns];
 		for (int i = 0; i < numColumns; i++)
 			row[i] = null;
 		return row;
@@ -489,11 +489,11 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		int y = topMargin;
 		// compute widths
 		for (int i = 0; i < grid.size(); i++) {
-			TableData[] row = (TableData[]) grid.elementAt(i);
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			// assign widths, calculate heights
 			int rowHeight = 0;
 			for (int j = 0; j < numColumns; j++) {
-				TableData td = row[j];
+				TableWrapData td = row[j];
 				if (td.isItemData == false) {
 					continue;
 				}
@@ -575,9 +575,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		Control[] children = parent.getChildren();
 
 		for (int i = 0; i < grid.size(); i++) {
-			TableData[] row = (TableData[]) grid.elementAt(i);
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
-				TableData td = row[j];
+				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
 				Control child = children[td.childIndex];
@@ -627,9 +627,9 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 			maxColumnWidths[i] = 0;
 		}
 		for (int i = 0; i < grid.size(); i++) {
-			TableData[] row = (TableData[]) grid.elementAt(i);
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
-				TableData td = row[j];
+				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
 				Control child = children[td.childIndex];
@@ -681,7 +681,7 @@ public class HTMLTableLayout extends Layout implements ILayoutExtension {
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			if (child.getLayoutData() == null) {
-				child.setLayoutData(new TableData());
+				child.setLayoutData(new TableWrapData());
 			}
 		}
 	}

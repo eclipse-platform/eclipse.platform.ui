@@ -20,8 +20,9 @@ import org.eclipse.swt.widgets.Composite;
  * and deselected state with a mouse or by pressing 'Enter' while the control
  * has focus.
  * <p>
- * The control is rendered as a triangle that points to the right in the
- * collapsed and down in the expanded state. Triangle color can be changed.
+ * The control is rendered as box with a '+' or '-' sign, depending
+ * on the expansion state. Focus indication is rendered around
+ * the box when the control has keyboard focus.
  */
 
 public class TreeNode extends ToggleHyperlink {
