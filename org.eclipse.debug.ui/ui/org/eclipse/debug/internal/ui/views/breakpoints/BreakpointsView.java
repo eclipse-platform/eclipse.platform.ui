@@ -276,7 +276,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			if (group != null) {
 				// First, assume that all other breakpoints will match the group
 				// (set ungrayed with appropriate check state)
-				viewer.setGrayed(group, false);
+				if (DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+					viewer.setGrayed(group, false);
+				}
 				viewer.setChecked(group, enable);
 				Object[] children = contentProvider.getChildren(group);
 				for (int i = 0; i < children.length; i++) {
@@ -287,9 +289,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 						break;
 					}
 				}
-			}
-			if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-				viewer.setGrayed(group, true);
 			}
 			viewer.update(breakpoint, null);
 		} catch (CoreException e) {
