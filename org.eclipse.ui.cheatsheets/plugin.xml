@@ -4,7 +4,7 @@
    id="org.eclipse.ui.cheatsheets"
    name="%PLUGIN_NAME"
    version="3.0"
-   provider-name="IBM"
+   provider-name="%PROVIDER_NAME"
    class="org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin">
 
    <runtime>
@@ -25,7 +25,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Cheat Sheets"
+            name="%CHEAT_SHEETS"
             id="org.eclipse.ui.cheatsheets.cheatsheetCategory">
       </category>
       <view
