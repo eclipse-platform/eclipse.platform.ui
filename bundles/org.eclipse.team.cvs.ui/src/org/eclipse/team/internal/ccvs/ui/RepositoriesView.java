@@ -57,54 +57,30 @@ public class RepositoriesView extends ViewPart {
 	// Drill down adapter
 	private DrillDownAdapter drillPart;
 	
-	// Listener
-	// This listener can be called from outside the UI thread.
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(ICVSRepositoryLocation root) {
-			Display display = viewer.getControl().getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					viewer.refresh();
-				}
-			});
+			refresh();
 		}
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
+			refresh();
+		}
+		public void branchTagsAdded(BranchTag[] tags, final ICVSRepositoryLocation root) {
+			refresh();
+		}
+		public void branchTagsRemoved(BranchTag[] tags, final ICVSRepositoryLocation root) {
+			refresh();
+		}
+		public void versionTagsAdded(CVSTag[] tags, final ICVSRepositoryLocation root) {
+			refresh();
+		}
+		public void versionTagsRemoved(CVSTag[] tags, final ICVSRepositoryLocation root) {
+			refresh();
+		}
+		private void refresh() {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					viewer.refresh();
-				}
-			});
-		}
-		public void branchTagsAdded(BranchTag[] tags, final ICVSRepositoryLocation root) {
-			Display display = viewer.getControl().getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					viewer.refresh(root);
-				}
-			});
-		}
-		public void branchTagsRemoved(BranchTag[] tags, final ICVSRepositoryLocation root) {
-			Display display = viewer.getControl().getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					viewer.refresh(root);
-				}
-			});
-		}
-		public void versionTagsAdded(CVSTag[] tags, final ICVSRepositoryLocation root) {
-			Display display = viewer.getControl().getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					viewer.refresh(root);
-				}
-			});
-		}
-		public void versionTagsRemoved(CVSTag[] tags, final ICVSRepositoryLocation root) {
-			Display display = viewer.getControl().getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					viewer.refresh(root);
 				}
 			});
 		}
@@ -167,16 +143,6 @@ public class RepositoriesView extends ViewPart {
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
-		/*menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mgr) {
-				System.out.println("Menu about to show");
-				ISelection selection = viewer.getSelection();
-				if (selection == null || !(selection instanceof IStructuredSelection)) {
-					return;
-				}
-				IStructuredSelection ss = (IStructuredSelection)selection;
-			}
-		});*/
 		tree.setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	
