@@ -59,6 +59,16 @@ public class LaunchVariableUtil {
 	 * @since 3.0
 	 */
 	public static final String ATTR_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".environmentVariables"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute - a boolean value specifying
+	 * whether the environment variables in this configuration
+	 * should be appended to the native environment or if they
+	 * should replace the environment.
+	 * 
+	 * @since 3.0 
+	 */
+	public static final String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$
 
 	/**
 	 * Boolean attribute indicating if a refresh scope is recursive. Default
@@ -422,8 +432,10 @@ public class LaunchVariableUtil {
 			return null;
 		}
 		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.getString("VariableUtil.6"), null); //$NON-NLS-1$
-		HashMap env= getNativeEnvironment();
-		if (status.isOK()) {
+		Map env;
+		boolean append= configuration.getAttribute(LaunchVariableUtil.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		if (append) {
+			env= getNativeEnvironment();
 			if (envMap != null) {
 				Iterator iter= envMap.entrySet().iterator();
 				// Overwrite system environment with locally defined variables
@@ -432,18 +444,20 @@ public class LaunchVariableUtil {
 					env.put(((String) entry.getKey()).toLowerCase(), expandVariables((String) entry.getValue(), status, context));
 				}
 			}
-			Iterator iter= env.entrySet().iterator();
-			List strings= new ArrayList(env.size());
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				StringBuffer buffer= new StringBuffer((String) entry.getKey());
-				buffer.append('=').append((String) entry.getValue());
-				strings.add(buffer.toString());
-			}
-			return (String[]) strings.toArray(new String[strings.size()]);
+		} else if (envMap != null) {
+			env= envMap;
 		} else {
-			throw new CoreException(status);
+			return null;
 		}
+		Iterator iter= env.entrySet().iterator();
+		List strings= new ArrayList(env.size());
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			StringBuffer buffer= new StringBuffer((String) entry.getKey());
+			buffer.append('=').append((String) entry.getValue());
+			strings.add(buffer.toString());
+		}
+		return (String[]) strings.toArray(new String[strings.size()]);
 	}
 	
 	/**

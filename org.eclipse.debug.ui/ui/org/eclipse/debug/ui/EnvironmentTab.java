@@ -85,6 +85,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
+	protected Button appendEnvironment;
+	protected Button replaceEnvironment;
 	
 	/**
 	 * Content provider for the environment table
@@ -174,9 +176,43 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
-		
+
 		createEnvironmentTable(mainComposite);
-		createButtons(mainComposite);
+		createTableButtons(mainComposite);
+		createAppendReplace(mainComposite);
+	}
+	
+	/**
+	 * Creates and configures the widgets which allow the user to
+	 * choose whether the specified environment should be appended
+	 * to the native environment or if it should completely replace it.
+	 * @param parent the composite in which the widgets should be created
+	 */
+	protected void createAppendReplace(Composite parent) {
+		Composite appendReplaceComposite= new Composite(parent, SWT.NONE);
+		GridData gridData= new GridData();
+		gridData.horizontalSpan= 2;
+		GridLayout layout= new GridLayout();
+		appendReplaceComposite.setLayoutData(gridData);
+		appendReplaceComposite.setLayout(layout);
+		
+		appendEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.getString("EnvironmentTab.16")); //$NON-NLS-1$
+		appendEnvironment.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		replaceEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.getString("EnvironmentTab.17")); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Updates the enablement of the append/replace widgets. The
+	 * widgets should disable when there are no environment variables specified.
+	 */
+	protected void updateAppendReplace() {
+		boolean enable= environmentTable.getTable().getItemCount() > 0;
+		appendEnvironment.setEnabled(enable);
+		replaceEnvironment.setEnabled(enable);
 	}
 	
 	/**
@@ -246,7 +282,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Creates the add/edit/remove buttons for the environment table
 	 * @param parent the composite in which the buttons should be created
 	 */
-	protected void createButtons(Composite parent) {
+	protected void createTableButtons(Composite parent) {
 		// Create button composite
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		GridLayout glayout = new GridLayout();
@@ -301,6 +337,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		String value= dialog.getValue(VALUE_LABEL);
 		EnvironmentVariable newVariable = new EnvironmentVariable(name, value);
 		addVariable(newVariable);
+		updateAppendReplace();
 	}
 	
 	/**
@@ -363,6 +400,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
 		environmentTable.remove(var);
+		updateAppendReplace();
 		updateLaunchConfigurationDialog();
 	}
 
@@ -378,13 +416,29 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		environmentTable.getTable().removeAll();
+		appendEnvironment.setSelection(true);
+		updateAppendReplace();
+		updateLaunchConfigurationDialog();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		boolean append= true;
+		try {
+			append = configuration.getAttribute(LaunchVariableUtil.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+		}
+		if (append) {
+			appendEnvironment.setSelection(true);
+		} else {
+			replaceEnvironment.setSelection(true);
+		}
 		updateEnvironment(configuration);
+		updateAppendReplace();
 	}
 
 	/**
@@ -406,6 +460,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(LaunchVariableUtil.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
+		configuration.setAttribute(LaunchVariableUtil.ATTR_APPEND_ENVIRONMENT_VARIABLES, appendEnvironment.getSelection());
 	}
 
 	/* (non-Javadoc)
