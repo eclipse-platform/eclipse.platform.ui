@@ -27,8 +27,11 @@ package org.eclipse.ui.application;
  * public class MyApplication implements IPlatformRunnable {
  *   public Object run(Object args) {
  *     WorkbenchAdviser workbenchAdviser = new MyWorkbenchAdviser();
- *     boolean restart = PlatformUI.createAndRunWorkbench(workbenchAdviser);
- *     return (restart ? IPlatformRunnable.EXIT_RESTART : IPlatformRunnable.EXIT_OK);
+ *     int returnCode = PlatformUI.createAndRunWorkbench(workbenchAdviser);
+ *     if (returnCode == PlatformUI.RETURN_RESTART) {
+ *        return IPlatformRunnable.EXIT_RESTART;
+ *     } else {
+ *        return IPlatformRunnable.EXIT_OK;
  *   }
  * }
  * </code>
@@ -192,7 +195,6 @@ public abstract class WorkbenchAdviser {
 	 * 
 	 * @param exception the uncaught exception that was thrown inside the UI
 	 * event loop
-	 * @issue Does this also get called when a dialog event loop crashes?
 	 */
 	public void eventLoopException(Throwable exception) {
 		// TODO: carefully log the problem
@@ -253,24 +255,6 @@ public abstract class WorkbenchAdviser {
 	 */
 	public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
-	}
-
-	/**
-	 * Returns whether the given menu is an application menu of the given
-	 * window.
-	 * <p>
-	 * The default implementation returns true. Subclasses may override.
-	 * </p>
-	 * 
-	 * @param configurer an object for configuring the workbench window
-	 * @param menuId the menu id
-	 * @return <code>true</code> for application menus, and <code>false</code>
-	 * for part-specific menus
-	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu
-	 * @issue investigate whether there's a better way to handle these
-	 */
-	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
-		return true;
 	}
 }
 

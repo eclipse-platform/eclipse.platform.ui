@@ -33,6 +33,30 @@ public final class PlatformUI {
 	 * Identifies the workbench plug-in.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
+	
+	/**
+	 * Return code (value 0) indicating that the workbench terminated normally.
+	 * 
+	 * @see #createAndRunWorkbench
+	 */
+	public static final int RETURN_OK = 0;
+
+	/**
+	 * Return code (value 1) indicating that the workbench was terminated with
+	 * a call to <code>IWorkbench.restart</code>.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbench#restart
+	 */
+	public static final int RETURN_RESTART = 1;
+
+	/**
+	 * Return code (value 2) indicating that the workbench failed to start.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbench#restart
+	 */
+	public static final int RETURN_UNSTARTABLE = 2;
 
 	/**
 	 * Block instantiation.
@@ -52,7 +76,7 @@ public final class PlatformUI {
 		}
 		return Workbench.getInstance();
 	}
-
+	
 	/**
 	 * Creates the workbench and associates it with the given workbench adviser,
 	 * and runs the workbench UI. This entails processing and dispatching
@@ -70,12 +94,14 @@ public final class PlatformUI {
 	 * 
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes the workbench
-	 * @return <code>true</code> if the workbench was terminated with a call
-	 * to <code>restart</code>, and <code>false</code> otherwise
+	 * @return return code {@link #RETURN_OK RETURN_OK} for normal exit; 
+	 * {@link #RETURN_RESTART RETURN_RESTART} if the workbench was terminated
+	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+	 * {@link #RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
+	 * not be started; other values reserved for future use
 	 * @since 3.0
-	 * @issue consider returning an int or Object rather than a boolean
 	 */
-	public static boolean createAndRunWorkbench(WorkbenchAdviser adviser) {
+	public static int createAndRunWorkbench(WorkbenchAdviser adviser) {
 		return Workbench.createAndRunWorkbench(adviser);
 	}
 }

@@ -43,10 +43,10 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		// N.B. createWorkbench remembers the adviser, and also registers the
 		// workbench globally so that all UI plug-ins can find it using
 		// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-		boolean restart = PlatformUI.createAndRunWorkbench(workbenchAdviser);
+		int returnCode = PlatformUI.createAndRunWorkbench(workbenchAdviser);
 		
 		// exit the application with an appropriate return code
-		if (restart) {
+		if (returnCode == PlatformUI.RETURN_RESTART) {
 			return IPlatformRunnable.EXIT_RESTART;
 		} else {
 			return IPlatformRunnable.EXIT_OK;

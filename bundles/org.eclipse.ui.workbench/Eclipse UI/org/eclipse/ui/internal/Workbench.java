@@ -119,7 +119,12 @@ public final class Workbench implements IWorkbench {
 	private boolean runEventLoop = true;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
-	private Object returnCode;
+	
+	/**
+	 * PlatformUI return code (as opposed to IPlatformRunnable return code).
+	 */
+	private int returnCode;
+	
 	private ListenerList windowListeners = new ListenerList();
 	
 	/**
@@ -174,12 +179,13 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes the workbench
-	 * @return <code>true</code> if the workbench was terminated with a call
-	 * to <code>restart</code>, and <code>false</code> otherwise
-	 * 
-	 * @issue consider returning an int or Object rather than a boolean
+	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK} for normal
+	 * exit; {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench
+	 * was terminated with a call to
+	 * {@link IWorkbench#restart IWorkbench.restart}; other values reserved
+	 * for future use
 	 */
-	public static final boolean createAndRunWorkbench(WorkbenchAdviser adviser) {
+	public static final int createAndRunWorkbench(WorkbenchAdviser adviser) {
 		// create the workbench instance
 		Workbench workbench = new Workbench(adviser);
 		// run the workbench event loop
@@ -381,19 +387,37 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public boolean close() {
-		return close(IPlatformRunnable.EXIT_OK);
+		return close(PlatformUI.RETURN_OK);
 	}
 	/*
 	 * Closes the workbench, returning the given return code from the run method.
+	 * 
+	 * @param returnCode {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
+	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
+	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
+	 * not be started; other values reserved for future use
+	 * @return true if the close was successful, and false if the close was
+	 * canceled
 	 */
-	private boolean close(Object returnCode) {
+	private boolean close(int returnCode) {
 		return close(returnCode, false);
 	}
 	/**
 	 * Closes the workbench, returning the given return code from the run method.
 	 * If forced, the workbench is closed no matter what.
+	 * 
+	 * @param returnCode {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
+	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
+	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
+	 * not be started; other values reserved for future use
+	 * @param force true to force the workbench close, and false for a "soft"
+	 * close that can be canceled
+	 * @return true if the close was successful, and false if the close was
+	 * canceled
 	 */
-	/* package */ boolean close(Object returnCode, final boolean force) {
+	/* package */ boolean close(int returnCode, final boolean force) {
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -932,7 +956,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	public boolean restart() {
 		// this is the return code from run() to trigger a restart
-		return close(IPlatformRunnable.EXIT_RESTART);
+		return close(PlatformUI.RETURN_RESTART);
 	}
 	
 	/*
@@ -1105,12 +1129,14 @@ public final class Workbench implements IWorkbench {
 	 * Internal method for running the workbench UI. This entails processing
 	 * and dispatching events until the workbench is closed or restarted.
 	 * 
-	 * @return <code>true</code> if the workbench was terminated with a call
-	 * to <code>restart</code>, and <code>false</code> otherwise
+	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
+	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
+	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
+	 * not be started; other values reserved for future use
 	 * @since 3.0
-	 * @issue consider returning an int or Object rather than a boolean
 	 */
-	private boolean runUI() {
+	private int runUI() {
 		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 
 		// get the primary feature info loaded
@@ -1119,8 +1145,7 @@ public final class Workbench implements IWorkbench {
 			aboutInfo = getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Error reading primary feature's about.ini file", e.getStatus()); //$NON-NLS-1$
-			// @issue we should return a valid return code here indicating something went wrong.
-			return false;
+			return PlatformUI.RETURN_UNSTARTABLE;
 		}
 
 		// create and startup the display for the workbench
@@ -1167,7 +1192,7 @@ public final class Workbench implements IWorkbench {
 		
 		// restart or exit based on returnCode
 		Workbench.instance = null;
-		return (IPlatformRunnable.EXIT_RESTART.equals(returnCode));
+		return returnCode;
 	}
 
 	/*

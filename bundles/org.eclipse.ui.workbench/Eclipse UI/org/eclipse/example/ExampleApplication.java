@@ -40,10 +40,10 @@ public class ExampleApplication implements IPlatformRunnable, IExecutableExtensi
 		ExampleWorkbenchAdviser workbenchAdviser = new ExampleWorkbenchAdviser();
 		
 		// create the workbench and run its event loop
-		boolean restart = PlatformUI.createAndRunWorkbench(workbenchAdviser);
+		int returnCode = PlatformUI.createAndRunWorkbench(workbenchAdviser);
 		
 		// exit the application with an appropriate return code
-		if (restart) {
+		if (returnCode == PlatformUI.RETURN_RESTART) {
 			return IPlatformRunnable.EXIT_RESTART;
 		} else {
 			return IPlatformRunnable.EXIT_OK;
