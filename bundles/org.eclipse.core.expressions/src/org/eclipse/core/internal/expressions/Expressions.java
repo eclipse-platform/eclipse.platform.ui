@@ -25,7 +25,7 @@ public class Expressions {
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
 	static {
-		String value= Platform.getDebugOption("org.eclipse.jdt.ui/typeExtension/tracing"); //$NON-NLS-1$
+		String value= Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving"); //$NON-NLS-1$
 		TRACING= value != null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
 	
