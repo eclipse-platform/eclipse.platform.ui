@@ -12,6 +12,7 @@ package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.regex.*;
 
 import javax.servlet.http.*;
 
@@ -24,6 +25,10 @@ public class UrlUtil {
 	private static final String invalidXML[] = { "&", ">", "<", "\"" };
 	private static final String escapedXML[] =
 		{ "&amp;", "&gt;", "&lt;", "&quot;" };
+	
+	// for Safari build 125.1 finds version 125
+	static final Pattern safariPatern = Pattern.compile("Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE);
+
 	// Default locale to use for serving requests to help
 	private static String defaultLocale;
 	// Locales that infocenter can serve in addition to the default locale.
@@ -178,6 +183,20 @@ public class UrlUtil {
 		return agent.indexOf("opera") >= 0;
 	}
 	
+	public static boolean isSafari(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		return agent.indexOf("Safari/") >= 0;
+	}
+	
+	public static String getSafariVersion(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		Matcher m = safariPatern.matcher(agent);
+		boolean matched = m.find();
+		if (matched) {
+			return m.group(1);
+		}
+		return "0";
+	}
 	/**
 	 * 
 	 * @param request

@@ -73,6 +73,14 @@ public class RequestData {
 		return UrlUtil.getMozillaVersion(request);
 	}
 
+	public boolean isSafari() {
+		return UrlUtil.isSafari(request);
+	}
+
+	public String getSafariVersion() {
+		return UrlUtil.getSafariVersion(request);
+	}
+
 	public boolean isOpera() {
 		return UrlUtil.isOpera(request);
 	}
