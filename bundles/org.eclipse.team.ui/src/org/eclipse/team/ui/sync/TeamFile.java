@@ -170,7 +170,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	 */
 	public String getName() {
 		if(hasBeenSaved) {
-			return "<" + mergeResource.getName() + ">";
+			return Policy.bind("TeamFile.modified", mergeResource.getName()); //$NON-NLS-1$
 		} else {
 			return mergeResource.getName();
 		}
