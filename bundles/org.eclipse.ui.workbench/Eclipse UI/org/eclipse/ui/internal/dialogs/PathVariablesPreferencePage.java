@@ -21,11 +21,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -58,6 +59,12 @@ public class PathVariablesPreferencePage
     
     // widget for showing currently defined variables
     private Table variableTable;    
+    
+    // file image
+    private final Image FILE_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FILE);
+    
+    // folder image
+    private final Image FOLDER_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
     
 /**
  * Constructs a preference page of path variables, initializing internal state
@@ -101,10 +108,9 @@ protected Control createContents(Composite parent) {
     //layout the contents
     
     Label topLabel = new Label(pageComponent, SWT.NONE);
-    topLabel.setText(
-        WorkbenchMessages.getString("PathVariablesPreference.explanation")); //$NON-NLS-1$
+    topLabel.setText(WorkbenchMessages.getString("PathVariablesPreference.explanation")); //$NON-NLS-1$
+    topLabel.setLayoutData(data); 
     topLabel.setFont(font);
-    
 
     // layout the table & its buttons
     Label variableLabel = new Label(pageComponent, SWT.LEFT);
@@ -114,6 +120,7 @@ protected Control createContents(Composite parent) {
     data.horizontalSpan = 2;
     variableLabel.setLayoutData(data);
     variableLabel.setFont(font);
+    
 
     variableTable = new Table(pageComponent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
     variableTable.addSelectionListener(new SelectionListener() {
@@ -173,7 +180,7 @@ protected Control createContents(Composite parent) {
     setButtonLayoutData(editButton);
 
     // populate table with current internal state and set buttons' initial state
-    updateUIState();
+    updateUIState(null);
    
     return pageComponent;
         
@@ -205,13 +212,18 @@ private void updateEnabledState() {
 }
 /**
  * Rebuilds table widget state with the current list of variables (reflecting
- * any changes, additions and removals).
+ * any changes, additions and removals), and selects the item corresponding to
+ * the given variable name. If the variable name is <code>null</code>, the
+ * first item (if any) will be selected.
  * 
+ * @param selectedVarName the name for the variable to be selected (may be
+ * <code>null</code>)
  * @see IPathVariableManager#getPathVariableNames()
  * @see IPathVariableManager#getValue(String)
  */
-private void updateVariableTable() {
+private void updateVariableTable(String selectedVarName) {
     variableTable.removeAll();        
+    int selectedVarIndex = 0;
     for (Iterator varNames = tempPathVariables.keySet().iterator();varNames.hasNext();) {
         TableItem item = new TableItem(variableTable,SWT.NONE);
         String varName = (String) varNames.next();
@@ -219,7 +231,12 @@ private void updateVariableTable() {
         item.setText(varName + " - " + value.toString()); //$NON-NLS-1$ 
         // the corresponding variable name is stored in each table widget item
         item.setData(varName);
+        item.setImage(value.toFile().isFile() ? FILE_IMG : FOLDER_IMG);
+        if (varName.equals(selectedVarName))
+            selectedVarIndex = variableTable.getItemCount() - 1;
     }
+    if (variableTable.getItemCount() > selectedVarIndex)
+        variableTable.setSelection(selectedVarIndex);    
 }
 
 /**
@@ -284,13 +301,16 @@ private void editSelectedVariable() {
     
     // the name can be changed, so we remove the current variable definition...    
     removedVariableNames.add(variableName);
-    tempPathVariables.remove(variableName); 
+    tempPathVariables.remove(variableName);
+    
+    String newVariableName = dialog.getVariableName();
+    IPath newVariableValue = new Path(dialog.getVariableValue());
        
     // and add it again (maybe with a different name)
-    tempPathVariables.put(dialog.getVariableName(),new Path(dialog.getVariableValue()));
+    tempPathVariables.put(newVariableName,newVariableValue);
     
     // now we must refresh the UI state
-    updateUIState();
+    updateUIState(newVariableName);
     
 }
 /**
@@ -305,17 +325,19 @@ private void removeSelectedVariables() {
         removedVariableNames.add(varName);
         tempPathVariables.remove(varName);
     }      
-	updateUIState();
+	updateUIState(null);
 }
 
 /**
  * Updates the UI's current state: refreshes the table with the current defined
- * variables and updates the enabled state for the Add/Remove/Edit buttons.
+ * variables, selects the item corresponding to the given variable (selects
+ * the first item if <code>null</code> is provided) and updates the enabled
+ * state for the Add/Remove/Edit buttons.
+ * 
+ * @param selectedVarName the name of the variable to be selected (may be null)
  */
-private void updateUIState() {
-	updateVariableTable();    
-    if (variableTable.getSelectionIndex() == -1 && variableTable.getItemCount() > 0)
-        variableTable.setSelection(0);
+private void updateUIState(String selectedVarName) {
+	updateVariableTable(selectedVarName);    
 	updateEnabledState();
 }
 
@@ -330,12 +352,14 @@ private void addNewVariable() {
     if (dialog.open() == Window.CANCEL)
         return;
         
-    // otherwise, adds the new variable (or updates an existing one) to the 
+    // otherwise, adds the new variable (or updates an existing one) in the 
     // temporary collection of currently defined variables    
-    tempPathVariables.put(dialog.getVariableName(),new Path(dialog.getVariableValue()));
-    
+    String newVariableName = dialog.getVariableName();
+    IPath newVariableValue = new Path(dialog.getVariableValue());
+    tempPathVariables.put(newVariableName,newVariableValue);
+        
     // the UI must be updated
-    updateUIState();
+    updateUIState(newVariableName);
 }
 
    

@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.File;
 import java.util.Set;
 import org.eclipse.core.resources.IPathVariableManager;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
@@ -23,7 +22,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
-
 
 /**
  * Dialog that prompts the user for defining a variable's name and value. It
@@ -89,6 +87,12 @@ public class PathVariableDialog extends TitleAreaDialog {
      * Used when validating the user input.
      */
     private int validationStatus;
+    
+    /**
+     * The standard message to be shown when there are no problems being
+     * reported.
+     */    
+    private String standardMessage;
 
     /**
      * Constant for defining this dialog as intended to create a new variable
@@ -104,9 +108,12 @@ public class PathVariableDialog extends TitleAreaDialog {
 /**
  * Constructs a dialog for editing a new/existing path variable.
  * 
- * @param parentShell the parent shell * @param type the dialog type: <code>NEW_VARIABLE</code> or
+ * @param parentShell the parent shell
+ * @param type the dialog type: <code>NEW_VARIABLE</code> or
  * <code>EXISTING_VARIABLE</code>
- * @param pathVariableManager a reference to the path variable manager * @param namesInUse a set of variable names currently in use  */
+ * @param pathVariableManager a reference to the path variable manager
+ * @param namesInUse a set of variable names currently in use 
+ */
 public PathVariableDialog(Shell parentShell, int type, IPathVariableManager pathVariableManager, Set namesInUse) {
 	super(parentShell);
 	this.type = type;
@@ -120,7 +127,8 @@ public PathVariableDialog(Shell parentShell, int type, IPathVariableManager path
 /**
  * Configures this dialog's shell, setting the shell's text.
  * 
- * @see org.eclipse.jface.window.Window#configureShell(Shell) */
+ * @see org.eclipse.jface.window.Window#configureShell(Shell)
+ */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("PathVariableDialog.shellTitle." + typeKeySuffix)); //$NON-NLS-1$
@@ -150,7 +158,9 @@ protected Control createDialogArea(Composite parent) {
 /**
  * Creates and configures this dialog's main composite.
  * 
- * @param parentComposite parent's composite * @return this dialog's main composite */
+ * @param parentComposite parent's composite
+ * @return this dialog's main composite
+ */
 private Composite createComposite(Composite parentComposite) {
 	// creates a composite with standard margins and spacing
 	Composite contents = new Composite(parentComposite, SWT.NONE);
@@ -171,7 +181,9 @@ private Composite createComposite(Composite parentComposite) {
 /**
  * Creates widgets for this dialog.
  * 
- * @param parent the parent composite where to create widgets * @param contents  */
+ * @param parent the parent composite where to create widgets
+ * @param contents 
+ */
 private void createWidgets(Composite contents,Font font) {
 	FormData data;
 	
@@ -328,7 +340,8 @@ protected void createButtonsForButtonBar(Composite parent) {
 /**
  * Validates the current variable name, and updates this dialog's message.
  * 
- * @return true if the name is valid, false otherwise */
+ * @return true if the name is valid, false otherwise
+ */
 private boolean validateVariableName() {    
     
     // if the current validationStatus is ERROR, no additional validation applies
