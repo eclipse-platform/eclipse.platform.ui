@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.wizards.preferences;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -47,9 +46,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  */
 public class PreferencesImportWizard extends Wizard implements IImportWizard {
-    private IWorkbench workbench;
-
-    private IStructuredSelection selection;
 
     private WizardPreferencesImportPage1 mainPage;
 	
@@ -74,17 +70,14 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
     public void addPages() {
         super.addPages();
         mainPage = new WizardPreferencesImportPage1();
-        addPage((IWizardPage)mainPage);
+        addPage(mainPage);
     }
 
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.workbench = workbench;
-        this.selection = currentSelection;
-
-        setWindowTitle("Title"); //$NON-NLS-1$
+        setWindowTitle(PreferencesMessages.PreferencesImportWizard_import);
         setDefaultPageImageDescriptor(
 				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);

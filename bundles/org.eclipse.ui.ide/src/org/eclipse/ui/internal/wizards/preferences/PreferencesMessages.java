@@ -26,6 +26,7 @@ public class PreferencesMessages extends NLS {
 	public static String WizardPreferencesExportPage1_choose;
 	public static String WizardPreferencesExportPage1_file;
 
+	public static String PreferencesImportWizard_import;
 	public static String WizardPreferencesImportPage1_importTitle;
 	public static String WizardPreferencesImportPage1_importDescription;
 	public static String WizardPreferencesImportPage1_all;
