@@ -391,23 +391,33 @@ public final class AntUtil {
 	 * local file system, or <code>null</code> if none.
 	 * If the path happens to be a relative path, then the path is interpreted as
 	 * relative to the specified parent file.
+	 * 
+	 * Attempts to handle linked files; the first found linked file with the correct
+	 * path is returned.
 	 *   
 	 * @param path
 	 * @param buildFileParent
 	 * @return file or <code>null</code>
+	 * @see IWorkspaceRoot.findFilesForLocation(IPath)
 	 */
 	public static IFile getFileForLocation(String path, File buildFileParent) {
 		IPath filePath= new Path(path);
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+		IFile file = null;
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
+		if (files.length > 0) {
+			file= files[0];
+		}
 		if (file == null) {
 			//relative path
 			File relativeFile= null;
 			try {
-				//this call is ok if fBuildFileParent is null
+				//this call is ok if buildFileParent is null
 				relativeFile= FileUtils.newFileUtils().resolveFile(buildFileParent, path);
 				filePath= new Path(relativeFile.getAbsolutePath());
-				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-				if (file == null) {
+				files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
+				if (files.length > 0) {
+					file= files[0];
+				} else {
 					return null;
 				}
 			} catch (BuildException be) {
