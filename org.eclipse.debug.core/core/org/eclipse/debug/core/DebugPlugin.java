@@ -268,6 +268,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	private Vector fRunnables = null;
+	private final Object fRunnableLock = new Object();
 	
 	/**
 	 * Job that executes runnables
@@ -435,12 +436,14 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		if (fRunnables == null) {
-			// initialize runnables and async job
-			fRunnables= new Vector(5);
-			fAsynchJob = new AsynchJob();
+		synchronized(fRunnableLock) {
+			if (fRunnables == null) {
+				// initialize runnables and async job
+				fRunnables= new Vector(5);
+				fAsynchJob = new AsynchJob();
+			}
+			fRunnables.add(r);
 		}
-		fRunnables.add(r);
 		if (!isDispatching()) {
 			fAsynchJob.schedule();
 		} 
@@ -967,7 +970,7 @@ public class DebugPlugin extends Plugin {
 		public IStatus run(IProgressMonitor monitor) {
 			// Executes runnables and empties the queue
 			Vector v = null;
-			synchronized (fRunnables) {
+			synchronized (fRunnableLock) {
 				v = fRunnables;
 				fRunnables = new Vector(5);
 			}
