@@ -85,6 +85,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
@@ -154,16 +155,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			IResourceChangeEvent.POST_CHANGE);
 	}
 	
-	
-	// TODO: The code for bringing the Tasks view to front must be moved 
+	// TODO: The code for bringing the problem view to front must be moved 
 	// to org.eclipse.ui.views.
-	
-	/**
-	 * The id of the Tasks view.
-	 */
-	private static final String TASK_LIST_ID = WorkbenchPlugin.PI_WORKBENCH + ".views.TaskList"; //$NON-NLS-1$
-	
-	
+		
 	/**
 	 * Returns the resource change listener for noticing new errors.
 	 * Processes the delta and shows the Tasks view if new errors 
@@ -183,10 +177,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 									if (window != null && !window.getShell().isDisposed()) { 
 										IWorkbenchPage page = window.getActivePage();
 										if (page != null) {
-											IViewPart tasksView= page.findView(TASK_LIST_ID);
+											IViewPart tasksView= page.findView(IPageLayout.ID_PROBLEM_VIEW);
 											if(tasksView == null) {
 												IWorkbenchPart activePart= page.getActivePart();
-												page.showView(TASK_LIST_ID);
+												page.showView(IPageLayout.ID_PROBLEM_VIEW);
 												//restore focus stolen by showing the Tasks view
 												page.activate(activePart);
 											} else {
@@ -195,7 +189,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 										}
 									}
 								} catch (PartInitException e) {
-									WorkbenchPlugin.log("Error bringing Tasks view to front", e.getStatus()); //$NON-NLS$ //$NON-NLS-1$
+									WorkbenchPlugin.log("Error bringing problem view to front", e.getStatus()); //$NON-NLS$ //$NON-NLS-1$
 								}
 							}
 						});

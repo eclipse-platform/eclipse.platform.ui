@@ -63,7 +63,6 @@ import org.eclipse.ui.views.internal.tableview.TableView;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
-
 public abstract class MarkerView extends TableView {
 	
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
@@ -73,6 +72,7 @@ public abstract class MarkerView extends TableView {
 	
 	protected IResource[] focusResources;
 
+	private TableViewer viewer;
 	private MarkerFilter filter;
 	private Clipboard clipboard;
 	
@@ -153,7 +153,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createActions()
 	 */
 	protected void createActions() {
-		TableViewer viewer = getViewer();
+		viewer = getViewer();
 		revealAction = new RevealMarkerAction(this, viewer);
 		openAction = new OpenMarkerAction(this, viewer);
 		copyAction = new CopyMarkerAction(this, viewer);
@@ -518,4 +518,12 @@ public abstract class MarkerView extends TableView {
 		}
 	}
 
+	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
+		for (Iterator i = structuredSelection.iterator(); i.hasNext();)
+			if (!(i.next() instanceof IMarker))
+				return;
+		
+		if (viewer != null)
+			viewer.setSelection(structuredSelection, reveal);
+	}
 }

@@ -356,7 +356,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
       &lt;/objectContribution&gt; 
       &lt;viewerContribution 
          id=&quot;com.xyz.C2&quot; 
-         targetID=&quot;org.eclipse.ui.views.TaskList&quot;&gt; 
+         targetID=&quot;org.eclipse.ui.views.TaskView&quot;&gt; 
          &lt;action
             id=&quot;com.xyz.showXYZ&quot; 
             label=&quot;&amp;amp;Show XYZ&quot;
@@ -401,7 +401,7 @@ The following is an other example of using the visibility element:
    &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt; 
       &lt;viewerContribution 
          id=&quot;com.xyz.C4&quot; 
-         targetID=&quot;org.eclipse.ui.views.TaskList&quot;&gt;
+         targetID=&quot;org.eclipse.ui.views.TaskView&quot;&gt;
          &lt;visibility&gt;
             &lt;and&gt;
                &lt;pluginState id=&quot;com.xyz&quot; value=&quot;activated&quot;/&gt;

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.views.internal.markers.tasks;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,6 +32,7 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
@@ -39,6 +42,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.markers.CreationTime;
@@ -146,9 +150,10 @@ public class TaskView extends MarkerView {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
 		IDialogSettings settings = workbenchSettings.getSection(TAG_DIALOG_SECTION);
-		if (settings == null) {
+		
+		if (settings == null)
 			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
-		}
+
 		return settings;
 	}
 	
@@ -328,5 +333,4 @@ public class TaskView extends MarkerView {
 	protected Object getViewerInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-
 }
