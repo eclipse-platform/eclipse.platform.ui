@@ -159,6 +159,9 @@ public class UpdateSyncAction extends MergeAction {
 		Set parentDeletionElements = new HashSet();
 		// A list of the team nodes that we need to perform makeIncoming on
 		List makeIncoming = new ArrayList();
+		// A list of diff elements that are incoming deletions.
+		// We do these first to avoid case conflicts
+		List updateDeletions = new ArrayList();
 		// A list of diff elements that need to be unmanaged and locally deleted
 		List deletions = new ArrayList();
 		
@@ -185,7 +188,7 @@ public class UpdateSyncAction extends MergeAction {
 							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:
-							updateIgnoreLocalShallow.add(changedNode);
+							updateDeletions.add(changedNode);
 							break;
 						case Differencer.CHANGE:
 							updateDeep.add(changedNode);
@@ -254,7 +257,7 @@ public class UpdateSyncAction extends MergeAction {
 		}
 		try {
 			// Calculate the total amount of work needed
-			int work = (makeIncoming.size() + (deletions.size() * 2) + updateShallow.size() + updateIgnoreLocalShallow.size() + updateDeep.size()) * 100;
+			int work = (makeIncoming.size() + (deletions.size() * 2) + updateDeletions.size() + updateShallow.size() + updateIgnoreLocalShallow.size() + updateDeep.size()) * 100;
 			monitor.beginTask(null, work);
 
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
@@ -307,6 +310,9 @@ public class UpdateSyncAction extends MergeAction {
 				deleteAndKeepHistory(element.getLocal(), Policy.subMonitorFor(monitor, 100));
 			}
 			
+			if (updateDeletions.size() > 0) {
+				runUpdateShallow((ITeamNode[])updateDeletions.toArray(new ITeamNode[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, 100));
+			}			
 			if (updateShallow.size() > 0) {
 				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, 100));
 			}
