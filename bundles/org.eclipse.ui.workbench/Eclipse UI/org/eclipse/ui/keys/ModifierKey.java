@@ -118,10 +118,10 @@ public final class ModifierKey extends Key {
 		modifierKeysByName.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
 		modifierKeysByName.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
 		modifierKeysByName.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
-		modifierKeysByName.put(M1_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL);
+		modifierKeysByName.put(M1_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL); //$NON-NLS-1$
 		modifierKeysByName.put(M2_NAME, ModifierKey.SHIFT);
 		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
-		modifierKeysByName.put(M4_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND);
+		modifierKeysByName.put(M4_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND); //$NON-NLS-1$
 	}
 	
 	/**
