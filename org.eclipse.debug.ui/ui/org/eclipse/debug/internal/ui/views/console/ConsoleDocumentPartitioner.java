@@ -641,7 +641,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Checks to see if the console buffer has overflowed, and empties the
 	 * overflow if needed, updating partitions and hyperlink positions.
 	 */
-	protected synchronized void checkOverflow() {
+	protected void checkOverflow() {
 		if (fHighWaterMark >= 0) {
 			if (fDocument.getLength() > fHighWaterMark) {
 				int lineDifference = 0;
@@ -698,17 +698,18 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 						}
 					} catch (BadPositionCategoryException e) {
 					}
-					
-					// update pending hyperlinks
-					Vector newPendingLinks = new Vector(fPendingLinks.size());
-					Iterator pendingLinks = fPendingLinks.iterator();
-					while (pendingLinks.hasNext()) {
-						HyperlinkPosition position = (HyperlinkPosition)pendingLinks.next();
-						if (position.getOffset() >= overflow) {
-							newPendingLinks.add(new HyperlinkPosition(position.getHyperLink(), position.getOffset() - overflow, position.getLength()));
+					synchronized (fPendingLinks) {
+						// update pending hyperlinks
+						Vector newPendingLinks = new Vector(fPendingLinks.size());
+						Iterator pendingLinks = fPendingLinks.iterator();
+						while (pendingLinks.hasNext()) {
+							HyperlinkPosition position = (HyperlinkPosition)pendingLinks.next();
+							if (position.getOffset() >= overflow) {
+								newPendingLinks.add(new HyperlinkPosition(position.getHyperLink(), position.getOffset() - overflow, position.getLength()));
+							}
 						}
+						fPendingLinks = newPendingLinks;
 					}
-					fPendingLinks = newPendingLinks;
 					
 					// remove overflow text
 					try {
