@@ -212,7 +212,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * @see IPositionUpdater
 	 */
 	class RemoveAffectedPositions implements IPositionUpdater {
-		/**
+		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
 		public void update(DocumentEvent event) {
@@ -431,7 +431,7 @@ public class ContentFormatter implements IContentFormatter {
 	}
 	
 	/**
-	 * Returns the partitioning of the given region of the specified document.
+	 * Returns the partitioning of the given region of the document to be formatted.
 	 * As one partition after the other will be formatted and formatting will 
 	 * probably change the length of the formatted partition, it must be kept 
 	 * track of the modifications in order to submit the correct partition to all 
@@ -761,6 +761,7 @@ public class ContentFormatter implements IContentFormatter {
 	 *
 	 * @param offset the offset
 	 * @return the indentation of the line of the offset
+	 * @since 3.0
 	 */
 	private String getIndentation(int offset) {
 		

@@ -1,57 +1,89 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="Author" content="IBM">
-   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
-   <title>Package-level Javadoc</title>
+  <meta content="text/html; charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <title>Package-level Javadoc</title>
 </head>
 <body>
 Provides a content formatter add-on for an <tt>ITextViewer</tt>.
 A content formatter changes the formatting of a document region while
 preserving and correctly updating the positions of the document.
-<h2>
-Package Specification</h2>
+<h2>Package Specification</h2>
 <tt>IContentFormatter</tt> defines the concept of a text formatter. It
 collaborates with content type specific formatting stratgies (<tt>IFormattingStrategy</tt>)
-which for a given document region format the subregion with the matching
+which for a given document region format the subregion with the
+matching
 content type. The package contains a default implementation of <tt>IContentFormatter</tt>
-(<tt>ContentFormatter</tt>).<br>Additionally, an implementation of <tt>IContentFormatter</tt> is provided
-for text edit based formatting strategies. This implementation only accepts formatting strategies
-implementing the extension interface <tt>IFormattingStrategyExtension</tt>. These formatting strategies are required to 
-handle the position updating of the document. To facilitate the work with these text edit based formatting strategies, a default implementation called <tt>ContextBasedFormattingStrategy</tt>
-is provided. Formatting strategies inheriting from this class are text edit based and behave context dependent. Depending on the formatting context that is passed
-to the content formatter, different preferences and modes can be used to format different parts of a document.
-<p>
-To set up a proper working text edit based content formatter, the following steps are needed:
+(<tt>ContentFormatter</tt>).<br>
+Additionally, an implementation of <tt>IContentFormatterExtension</tt>
+is provided
+for text edit based formatting strategies. This implementation only
+accepts formatting strategies
+implementing the extension interface <tt>IFormattingStrategyExtension</tt>.
+These formatting strategies are required to handle the position
+updating of the document. To facilitate the work with these text edit
+based formatting strategies, a default implementation called <tt>ContextBasedFormattingStrategy</tt>
+is provided. Formatting strategies inheriting from this class are text
+edit based and behave context dependent. Depending on the formatting
+context that is passed
+to the content formatter, different preferences and modes can be used
+to format different parts of a document.
+<p>To set up a proper working text edit based content formatter, the
+following steps are needed:
+</p>
 <ul>
-<li>Create an instance of <tt>IFormattingContext</tt>. The default implementation <tt>FormattingContext</tt> already
-provides support for the conversion of preferences from a preference store to a map and vice versa. The method <tt>getPreferenceKeys</tt>
-usually has to be overridden to return the appropriate keys of the preferences used during the formatting process. Then register a map of preferences
-with the formatting context by calling <tt>setProperty(String, Object)</tt> with the property identifier <tt>FormattingContextProperties.CONTEXT_PREFERENCES</tt>.</li>
-<li>Create an instance of the text edit based content formatter class <tt>MultiPassContentFormatter</tt>. The document partitioning and its associated
-default content type have to be passed to the constructor. This information is needed since the content formatter is able to format documents
+  <li>Create an instance of <tt>IFormattingContext</tt>. The default
+implementation <tt>FormattingContext</tt> already
+provides support for the conversion of preferences from a preference
+store to a map and vice versa. The method <tt>getPreferenceKeys</tt>
+usually has to be overridden to return the appropriate keys of the
+preferences used during the formatting process. Then register a map of
+preferences
+with the formatting context by calling <tt>setProperty(String, Object)</tt>
+with the property identifier <tt>FormattingContextProperties.CONTEXT_PREFERENCES</tt>.</li>
+  <li>Create an instance of the text edit based content formatter class
+    <tt>MultiPassContentFormatter</tt>. The document partitioning and
+its associated
+default content type have to be passed to the constructor. This
+information is needed since the content formatter is able to format
+documents
 according to arbitrary partitionings and default content types.</li>
-<li>Register the formatting strategies for the content types that have to be formatted. If a formatting strategy is
-registered as master strategy, it is automatically associated with the default content type of the specified partitioning.
-If the formatting strategy is registered as slave strategy, it is associated with the indicated content type during the registration.
-Note that the master strategy can also be registered as a slave strategy for a content type other than the default content type.</li>
-<li>Specify the proper formatting mode:
-<ul>
-<li>For whole document formatting set the property <tt>CONTEXT_DOCUMENT</tt> of the created formatting context to <tt>true</tt>. This is
-equivalent to setting <code>CONTEXT_REGION</code> with a region spanning the whole document.</li>
-<li>For multiple region formatting set the property <code>CONTEXT_REGION</code> of the formatting context. Note that 
-the content formatter automatically aligns the region to a block selected region, and if the region spans
-multiple partitions, it also completes eventual partitions covered only partially by the region.</li>
-<li>For explicit formatting of a partition with the formatting strategy registered for a certain content type use the
-property <tt>CONTEXT_PARTITION</tt>. Note that the region denoted by this property must correspond to a partition relative 
-to the specified partitioning in the document to be formatted. The content type of this property overrides the content type of the partition
+  <li>Register the formatting strategies for the content types that
+have to be formatted. If a formatting strategy is
+registered as master strategy, it is automatically associated with the
+default content type of the specified partitioning.
+If the formatting strategy is registered as slave strategy, it is
+associated with the indicated content type during the registration.
+Note that the master strategy can also be registered as a slave
+strategy for a content type other than the default content type.</li>
+  <li>Specify the proper formatting mode (see
+FormattingContextProperties):
+    <ul>
+      <li>For whole document formatting set the property <tt>CONTEXT_DOCUMENT</tt>
+of the created formatting context to <tt>true</tt>. This is
+equivalent to setting <code>CONTEXT_REGION</code> with a region
+spanning the whole document.</li>
+      <li>For multiple region formatting set the property <code>CONTEXT_REGION</code>
+of the formatting context. Note that the content formatter
+automatically aligns the offset of a region to a line start for the
+master formatting strategy, it also completes eventual partitions
+covered only partially by the region for the slave formatting
+strategies.</li>
+      <li>For explicit formatting of a partition with the formatting
+strategy registered for a certain content type use the
+property <tt>CONTEXT_PARTITION</tt>. Note that the region denoted by
+this property must correspond to a partition relative to the specified
+partitioning in the document to be formatted. The content type of this
+property overrides the content type of the partition
 in the document.</li>
-</ul>
-</li>
-<li>Call the method <tt>MultiPassContentFormatter#format(IDocument, IFormattingContext)</tt> with the created formatting context
+    </ul>
+  </li>
+  <li>Call the method <tt>MultiPassContentFormatter#format(IDocument,
+IFormattingContext)</tt> with the created formatting context
 and the document to be formatted.</li>
 </ul>
-</p>
+<p></p>
 </body>
 </html>

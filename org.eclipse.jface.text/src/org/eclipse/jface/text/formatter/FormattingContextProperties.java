@@ -25,7 +25,8 @@ public class FormattingContextProperties {
 
 	/**
 	 * Property key of the document property. The property must implement
-	 * <code>java.lang#Boolean</code>.
+	 * <code>java.lang#Boolean</code>. If set to <code>true</code> the whole
+	 * document is formatted.
 	 * <p>
 	 * Value: <code>"formatting.context.document"</code>
 	 */
@@ -33,7 +34,8 @@ public class FormattingContextProperties {
 
 	/**
 	 * Property key of the partition property. The property must implement
-	 * <code>org.eclipse.jface.text#TypedPosition</code>.
+	 * <code>org.eclipse.jface.text#TypedPosition</code>. The partition
+	 * a context based formatting strategy should format.
 	 * <p>
 	 * Value: <code>"formatting.context.partition"</code>
 	 */
@@ -41,7 +43,8 @@ public class FormattingContextProperties {
 
 	/**
 	 * Property key of the preferences property. The property must implement
-	 * <code>java.util#Map</code>.
+	 * <code>java.util#Map</code>. The formatting preferences mapping preference
+	 * keys to values.
 	 * <p>
 	 * Value: <code>"formatting.context.preferences"</code>
 	 */
@@ -49,6 +52,8 @@ public class FormattingContextProperties {
 
 	/**
 	 * Property key of the region property. The property must implement <code>org.eclipse.jface.text#IRegion</code>.
+	 * The region to format. If set, {@link FormattingContextProperties#CONTEXT_DOCUMENT} should be <code>false</code>
+	 * for this to take effect.
 	 * <p>
 	 * Value: <code>"formatting.context.region"</code>
 	 */
@@ -56,6 +61,7 @@ public class FormattingContextProperties {
 
 	/**
 	 * Property key of the medium property. The property must implement <code>org.eclipse.jface.text#IDocument</code>.
+	 * The document to format.
 	 * <p>
 	 * Value: <code>"formatting.context.medium"</code>
 	 */

@@ -34,12 +34,14 @@ import org.eclipse.jface.text.TypedPosition;
  * The master formatting strategy always formats the whole region to be
  * formatted in the first pass. In a second pass, all partitions of the region
  * to be formatted that are not of master content type are formatted using the
- * slave formatting strategy registered for the underlying content type.
+ * slave formatting strategy registered for the underlying content type. All
+ * formatting strategies must implement {@link IFormattingStrategyExtension}.
  * <p>
- * Regions to be formatted with the master formatting strategy are always
- * aligned to block selections. Regions to be formatted with slave formatting
+ * Regions to be formatted with the master formatting strategy always have
+ * an offset aligned to the line start. Regions to be formatted with slave formatting
  * strategies are aligned on partition boundaries.
  * 
+ * @see IFormattingStrategyExtension
  * @since 3.0
  */
 public class MultiPassContentFormatter implements IContentFormatter, IContentFormatterExtension {
@@ -287,7 +289,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * type of documents. If a master strategy has already been registered, it
 	 * is overridden by the new one.
 	 * 
-	 * @param strategy The master formatting strategy
+	 * @param strategy The master formatting strategy, must implement
+	 * 	{@link IFormattingStrategyExtension}
 	 */
 	public final void setMasterStrategy(final IFormattingStrategy strategy) {
 		Assert.isTrue(strategy instanceof IFormattingStrategyExtension);
@@ -304,7 +307,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * default content type of documents.
 	 * 
 	 * @param strategy The slave formatting strategy
-	 * @param type The content type to register this strategy with
+	 * @param type The content type to register this strategy with,
+	 * 	must implement {@link IFormattingStrategyExtension}
 	 */
 	public final void setSlaveStrategy(final IFormattingStrategy strategy, final String type) {
 		Assert.isTrue(strategy instanceof IFormattingStrategyExtension);

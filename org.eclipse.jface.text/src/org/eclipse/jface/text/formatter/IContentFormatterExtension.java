@@ -14,10 +14,10 @@ package org.eclipse.jface.text.formatter;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Extension interface for <code>IContentFormatter</code>.
+ * Extension interface for {@link IContentFormatter}.
  * <p>
- * Updates the content formatter to be able to pass <code>IFormattingContext</code>
- * context objects to <code>IFormattingStrategyExtension<code> objects
+ * Updates the content formatter to be able to pass {@link IFormattingContext}
+ * context objects to {@link IFormattingStrategyExtension} objects
  * operating in context based mode.
  * <p>
  * Clients using context based formatting call the method
@@ -25,14 +25,16 @@ import org.eclipse.jface.text.IDocument;
  * initialized formatting context.<br>
  * The formatting context must be set up according to the desired formatting mode:
  * <ul>
- * <li>For whole document formatting set the property <code>CONTEXT_DOCUMENT</code>. This is
- * equivalent to setting <code>CONTEXT_REGION</code> with a region spanning the whole document.</li>
- * <li>For multiple region formatting set the property <code>CONTEXT_REGION</code>. Note that 
- * the content formatter automatically aligns the region to a block selected region, and if the region spans
- * multiple partitions, it also completes eventual partitions covered only partially by the region.</li>
+ * <li>For whole document formatting set the property {@link FormattingContextProperties#CONTEXT_DOCUMENT}.
+ * This is equivalent to setting {@link FormattingContextProperties#CONTEXT_REGION} with a region spanning
+ * the whole document.</li>
+ * <li>For multiple region formatting set the property {@link FormattingContextProperties#CONTEXT_REGION}.
+ * Note that the content formatter automatically aligns the region to a block selected region,
+ * and if the region spans multiple partitions, it also completes eventual partitions covered only
+ * partially by the region.</li>
  * </ul>
  * Depending on the registered formatting strategies, more context information must
- * be passed in the formatting context, like e.g. <code>CONTEXT_PREFERENCES</code>.
+ * be passed in the formatting context, like e.g. {@link FormattingContextProperties#CONTEXT_PREFERENCES}.
  * <p>
  * Note that in context based mode the content formatter is fully reentrant, but not
  * thread-safe.

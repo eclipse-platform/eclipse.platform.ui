@@ -28,7 +28,7 @@ import org.eclipse.jface.text.IRegion;
  * can be activated. After the last strategy has been finished, all strategies are 
  * informed about the termination of the formatting process.<p>
  * The interface can be implemented by clients. By default, clients use <code>ContentFormatter</code>
- * as the standard implementer of this interface.
+ * or <code>MultiPassContentFormatter</code> as the standard implementers of this interface.
  *
  * @see IDocument
  * @see IFormattingStrategy
