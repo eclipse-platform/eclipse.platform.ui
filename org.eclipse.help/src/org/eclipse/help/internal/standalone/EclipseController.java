@@ -166,7 +166,7 @@ public class EclipseController {
 		}
 		eclipse = new Eclipse();
 		eclipse.start();
-		while (eclipse.getStatus() == Eclipse.STATUS_INTIT) {
+		while (eclipse.getStatus() == Eclipse.STATUS_INIT) {
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException ie) {
