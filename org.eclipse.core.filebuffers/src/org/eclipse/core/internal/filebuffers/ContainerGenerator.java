@@ -20,8 +20,10 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class ContainerGenerator {
@@ -78,9 +80,14 @@ public class ContainerGenerator {
 		
 				// Does the container exist already?
 				IWorkspaceRoot root= fWorkspace.getRoot();
-				fContainer= (IContainer) root.findMember(fContainerFullPath);
-				if (fContainer != null)
+				IResource found= root.findMember(fContainerFullPath);
+				if (found instanceof IContainer) {
+					fContainer= (IContainer) found;
 					return;
+				} else if (found != null) {
+					// fContainerFullPath specifies a file as directory
+					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("ContainerGenerator.destinationMustBeAContainer", fContainerFullPath), null)); //$NON-NLS-1$
+				}
 		
 				// Create the container for the given path
 				fContainer= root;
@@ -88,8 +95,13 @@ public class ContainerGenerator {
 					String currentSegment = fContainerFullPath.segment(i);
 					IResource resource = fContainer.findMember(currentSegment);
 					if (resource != null) {
-						fContainer= (IContainer) resource;
-						monitor.worked(1000);
+						if (resource instanceof IContainer) {
+							fContainer= (IContainer) resource;
+							monitor.worked(1000);
+						} else {
+							// fContainerFullPath specifies a file as directory
+							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("ContainerGenerator.destinationMustBeAContainer", resource.getFullPath()), null)); //$NON-NLS-1$
+						}
 					}
 					else {
 						if (i == 0) {
