@@ -93,6 +93,8 @@ public class TeamSubscriberParticipantLabelProvider extends LabelProvider implem
 		// The label provider may of been created after the subscriber job has been
 		// started.
 		this.working = JobStatusHandler.hasRunningJobs(SubscriberAction.SUBSCRIBER_JOB_TYPE);
+
+
 	}
 	
 	protected String decorateText(String input, Object resource) {
