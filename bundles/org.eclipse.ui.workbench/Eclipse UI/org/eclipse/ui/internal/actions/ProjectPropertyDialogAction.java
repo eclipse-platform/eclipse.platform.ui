@@ -41,8 +41,8 @@ public class ProjectPropertyDialogAction extends PartEventAction implements INul
 public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	super(new String());
 	this.window = window;
-	setText(WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
+	setText(WorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
 	window.getSelectionService().addSelectionListener(this);
 }

@@ -73,7 +73,7 @@ public class WorkbenchActionBuilder {
 	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll"; //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
-	private static final String projectPropertyDialogActionDefId = "org.eclipse.ui.project.property"; //$NON-NLS-1$
+	private static final String projectPropertiesActionDefId = "org.eclipse.ui.project.properties"; //$NON-NLS-1$
 
 	/**
 	 * The window to which this is contributing.
@@ -987,7 +987,7 @@ public class WorkbenchActionBuilder {
 		openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
 		closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
 		projectPropertyDialogAction = new ProjectPropertyDialogAction(window);
-		projectPropertyDialogAction.setActionDefinitionId(projectPropertyDialogActionDefId);
+		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
 		partService.addPartListener(projectPropertyDialogAction);
 		keyBindingService.registerGlobalAction(projectPropertyDialogAction);
 	}

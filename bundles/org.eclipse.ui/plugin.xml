@@ -431,6 +431,12 @@
             description="%command.rebuildAll.description"
             id="org.eclipse.ui.project.rebuildAll">
       </command>
+       <command
+			category="org.eclipse.ui.category.project"
+            name="%command.projectProperties.name"
+            description="%command.projectProperties.description"
+            id="org.eclipse.ui.project.properties">
+      </command>      
       <command
 			category="org.eclipse.ui.category.window"
             name="%command.switchToEditor.name"
