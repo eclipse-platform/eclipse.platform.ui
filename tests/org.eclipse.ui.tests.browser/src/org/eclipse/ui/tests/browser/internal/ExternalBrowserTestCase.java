@@ -28,18 +28,24 @@ public class ExternalBrowserTestCase extends TestCase {
 		
 		try {
 			Thread.sleep(2000);
-		} catch (Exception e) { }
+		} catch (Exception e) {
+			// ignore
+		}
 		
 		wb.openURL(new URL("http://www.eclipse.org"));
 		
 		try {
 			Thread.sleep(2000);
-		} catch (Exception e) { }
+		} catch (Exception e) {
+			// ignore
+		}
 		
 		wb.close();
 		
 		try {
 			Thread.sleep(2000);
-		} catch (Exception e) { }
+		} catch (Exception e) {
+			// ignore
+		}
 	}
 }
