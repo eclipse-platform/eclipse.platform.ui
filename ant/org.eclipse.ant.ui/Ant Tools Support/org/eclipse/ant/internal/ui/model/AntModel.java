@@ -886,6 +886,9 @@ public class AntModel implements IAntModel {
 		if (fProblemRequestor != null) {
 			fProblemRequestor.acceptProblem(problem);
 		}
+		if (fMarkerUpdater != null) {
+			fMarkerUpdater.acceptProblem(problem);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -906,6 +909,9 @@ public class AntModel implements IAntModel {
 	private void beginReporting() {
 		if (fProblemRequestor != null) {
 			fProblemRequestor.beginReporting();
+		}
+		if (fMarkerUpdater != null) {
+			fMarkerUpdater.beginReporting();
 		}
 	}
 	
