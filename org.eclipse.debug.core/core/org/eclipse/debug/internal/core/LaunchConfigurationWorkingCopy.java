@@ -354,7 +354,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public void rename(String name) {
 		if (!getName().equals(name)) {
 			setName(name);
-			fRenamed = true;
+			fRenamed = isNew() || !(getOriginal().getName().equals(name));
 		}
 	}
 
