@@ -43,7 +43,7 @@ public class EditorRegistry implements IEditorRegistry {
 	private Map mapIDtoEditor = initialIdToEditorMap(10);
 
 	// Map of FileEditorMapping (extension to FileEditorMapping)
-	private Map typeEditorMappings;
+	private EditorMap typeEditorMappings;
 
 	// List for prop changed listeners.
 	private ListenerList propChangeListeners = new ListenerList();
@@ -85,7 +85,7 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 			FileEditorMapping mapping = getMappingFor("*." + fileExtension);//$NON-NLS-1$
 			if (mapping == null) {  // no mapping for that extension
 				mapping = new FileEditorMapping(fileExtension);
-				typeEditorMappings.put(mappingKeyFor(mapping), mapping);
+				typeEditorMappings.putDefault(mappingKeyFor(mapping), mapping);
 			}
 			mapping.addEditor(editor);
 			if (bDefault)
@@ -113,7 +113,7 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 					extension = filename.substring(index + 1);
 				}
 				mapping = new FileEditorMapping(name, extension);
-				typeEditorMappings.put(mappingKeyFor(mapping), mapping);
+				typeEditorMappings.putDefault(mappingKeyFor(mapping), mapping);
 			}
 			mapping.addEditor(editor);
 			if (bDefault)
@@ -128,13 +128,12 @@ public void addEditorFromPlugin(EditorDescriptor editor,
  * Add external editors to the editor mapping.
  */
 private void addExternalEditorsToEditorMap() {
-	Iterator enum = null;
 	IEditorDescriptor desc = null;
 	
 	// Add registered editors (may include external editors).
-	enum = typeEditorMappings.values().iterator();
-	while (enum.hasNext()) {
-		FileEditorMapping map = (FileEditorMapping)enum.next();
+	FileEditorMapping maps[] = typeEditorMappings.allMappings();
+	for (int i = 0; i < maps.length; i++) {
+		FileEditorMapping map = maps[i];
 		IEditorDescriptor [] descArray = map.getEditors();
 		for (int n = 0; n < descArray.length; n++) {
 			desc = descArray[n];
@@ -260,9 +259,15 @@ public IEditorDescriptor[] getEditors(IFile element) {
  * Method declared on IEditorRegistry.
  */
 public IFileEditorMapping[] getFileEditorMappings() {
-	List sortedMappings = sortedTypeEditorMappings(); // sort hash table elements
-	IFileEditorMapping[] array = new IFileEditorMapping[sortedMappings.size()];
-	sortedMappings.toArray(array);
+	FileEditorMapping[] array = typeEditorMappings.allMappings();
+	final Collator collator = Collator.getInstance();
+	Arrays.sort(array,new Comparator() {
+		public int compare(Object o1, Object o2) {
+			String s1 = ((FileEditorMapping)o1).getLabel();
+			String s2 = ((FileEditorMapping)o2).getLabel();
+			return collator.compare(s1, s2);
+		}
+	});
 	return array;
 }
 /* (non-Javadoc)
@@ -423,7 +428,7 @@ private HashMap initialIdToEditorMap(int initialSize) {
 	return map;
 }
 private void initializeFromStorage () {
-	typeEditorMappings = new HashMap();
+	typeEditorMappings = new EditorMap();
 	extensionImages = new HashMap();
 	
 	//Get editors from the registry
@@ -674,10 +679,9 @@ public void saveAssociations () {
 	List editors = new ArrayList();
 	
 	XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
-	Iterator enum = typeEditorMappings.values().iterator();
-
-	while (enum.hasNext()) {
-		FileEditorMapping type = (FileEditorMapping)enum.next();
+	FileEditorMapping maps[] = typeEditorMappings.userMappings();
+	for (int mapsIndex = 0; mapsIndex < maps.length; mapsIndex++) {
+		FileEditorMapping type = (FileEditorMapping)maps[mapsIndex];
 		IMemento editorMemento = memento.createChild(IWorkbenchConstants.TAG_INFO);
 		editorMemento.putString(IWorkbenchConstants.TAG_NAME,type.getName());
 		editorMemento.putString(IWorkbenchConstants.TAG_EXTENSION,type.getExtension());
@@ -718,7 +722,7 @@ public void saveAssociations () {
 	
 
 	memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
-	enum = editors.iterator();
+	Iterator enum = editors.iterator();
 	while (enum.hasNext()) {
 		EditorDescriptor editor = (EditorDescriptor)enum.next();
 		IMemento editorMemento = memento.createChild(IWorkbenchConstants.TAG_DESCRIPTOR);
@@ -753,9 +757,7 @@ public void setDefaultEditor(IFile file, String editorID) {
  * The given collection is converted into the internal hash table for faster lookup
  * Each mapping goes from an extension to the collection of editors that work on it.
  */
-
 public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
-	typeEditorMappings = new HashMap();
 	for (int i = 0;i < newResourceTypes.length;i++) {
 		FileEditorMapping mapping = newResourceTypes[i];
 		typeEditorMappings.put(mappingKeyFor(mapping), mapping);
@@ -785,38 +787,6 @@ private Object[] sortEditors(List unsortedList) {
 
 }
 /**
- * Convenience Method
- * Alphabetically sort the FileEditorMappings.
- * The mappings are kept in a hash table for fast lookup. Sorting is
- * typically only needed for certain dialogs/choices etc.
- */
-private List sortedTypeEditorMappings() {
-	
-	Object[] array = new Object[typeEditorMappings.size()];
-	Iterator enum = typeEditorMappings.values().iterator();  // enumeration of FileEditorMapping
-	int j = 0;
-	while (enum.hasNext()) {
-		array[j++] = enum.next();
-	}
-	
-	Sorter s = new Sorter() {
-		private Collator collator = Collator.getInstance();
-
-		public boolean compare(Object o1, Object o2) {
-			String s1 = ((FileEditorMapping)o1).getLabel();
-			String s2 = ((FileEditorMapping)o2).getLabel();
-			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
-		}
-	};
-	array = s.sort(array);
-	List result = new ArrayList();  // vector of FileEditorMapping
-	for (int i = 0; i < array.length; i++) {
-		result.add(array[i]);
-	} 
-	return result;
-}
-/**
  * Alphabetically sort the internal editors
  */
 private void sortInternalEditors() {
@@ -826,4 +796,45 @@ private void sortInternalEditors() {
 		sortedEditorsFromPlugins.add(array[i]);
 	}
 }
+
+/*
+ * Map of FileEditorMapping (extension to FileEditorMapping)
+ * Uses two java.util.HashMap: one keeps the
+ * default which are set by the plugins and the other keeps the
+ * changes made by the user through the preference page.
+ */
+private static class EditorMap {
+	HashMap defaultMap = new HashMap();
+	HashMap map = new HashMap();
+	
+	public void putDefault(String key, FileEditorMapping value) {
+		defaultMap.put(key,value);
+	}
+	public void put(String key, FileEditorMapping value) {
+		Object result = defaultMap.get(key);
+		if(value.equals(result))
+			map.remove(key);
+		else
+			map.put(key,value);
+	}
+	public FileEditorMapping get(String key) {
+		Object result = map.get(key);
+		if(result == null)
+			result = defaultMap.get(key);
+		return (FileEditorMapping)result;
+	}
+	public FileEditorMapping[] allMappings() {
+		HashMap merge = (HashMap)defaultMap.clone();
+		merge.putAll(map);
+		Collection values = merge.values();
+		FileEditorMapping result[] = new FileEditorMapping[values.size()];
+		return (FileEditorMapping[])values.toArray(result);
+	}
+	public FileEditorMapping[] userMappings() {
+		Collection values = map.values();
+		FileEditorMapping result[] = new FileEditorMapping[values.size()];
+		return (FileEditorMapping[])values.toArray(result);
+	}	
+}
+
 }
