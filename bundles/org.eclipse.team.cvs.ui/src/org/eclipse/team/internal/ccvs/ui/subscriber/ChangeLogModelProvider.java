@@ -30,8 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.AndSyncInfoFilter;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.*;
@@ -296,8 +295,14 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
                             return info.getLocal().getType() == IResource.FILE;
                         }
                     },
-                    //TODO: Should be incoming or two-way
-                    new SyncInfoDirectionFilter(new int[] { SyncInfo.INCOMING, SyncInfo.CONFLICTING })
+                    new OrSyncInfoFilter(new FastSyncInfoFilter[] {
+                        new SyncInfoDirectionFilter(new int[] { SyncInfo.INCOMING, SyncInfo.CONFLICTING }),
+                        new FastSyncInfoFilter() {
+                            public boolean select(SyncInfo info) {
+                                return !info.getComparator().isThreeWay();
+                            }
+                        }
+                    })
             });
         }
                 
@@ -745,10 +750,6 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 					addSyncInfoToCommentNode(commentInfos[i], logs);
 					monitor.worked(10);
 				}
-				// Don't cache log entries when in two way mode.
-				if (getConfiguration().getComparisonType().equals(ISynchronizePageConfiguration.TWO_WAY)) {
-					logs.clearEntries();
-				}
 			}
 		} finally {
 			monitor.done();
@@ -763,7 +764,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 */
 	private void addSyncInfoToCommentNode(SyncInfo info, LogEntryCache logs) {
 		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
-		if(isTagComparison()) {
+		if(isTagComparison() && remoteResource != null) {
 			addMultipleRevisions(info, logs, remoteResource);
 		} else {
 			addSingleRevision(info, logs, remoteResource);
@@ -971,8 +972,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	/*
 	 * Return if this sync info should be considered as part of a remote change
 	 * meaning that it can be placed inside an incoming commit set (i.e. the
-	 * set is determined using the comments from the log entry of the file).
-	 * 
+	 * set is determined using the comments from the log entry of the file). 
 	 */
 	private boolean isRemoteChange(SyncInfo info) {
 		int kind = info.getKind();
@@ -980,7 +980,16 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		if(info.getComparator().isThreeWay()) {
 			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
 		}
-		return true;
+		// For two-way, the change is only remote if it has a remote or has a base locally
+		if (info.getRemote() != null) return true;
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)info.getLocal());
+		try {
+            return file.getSyncBytes() != null;
+        } catch (CVSException e) {
+            // Log the error and exclude the file from consideration
+            CVSUIPlugin.log(e);
+            return false;
+        }
 	}
 	
 	/*
@@ -1156,6 +1165,9 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		shutdown = true;
 		if(fetchLogEntriesJob != null && fetchLogEntriesJob.getState() != Job.NONE) {
 			fetchLogEntriesJob.cancel();
+		}
+		if (logs != null) {
+		    logs.clearEntries();
 		}
 		CommitSetManager.getInstance().removeListener(this);
 		super.dispose();
