@@ -62,9 +62,6 @@ public PartSite(IWorkbenchPart part, IWorkbenchPage page)
  * Dispose the contributions.
  */
 public void dispose() {
-	if (keyBindingService != null) {
-		keyBindingService.dispose();
-	}
 }
 /**
  * Returns the action bars for the part.

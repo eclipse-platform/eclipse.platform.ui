@@ -122,12 +122,6 @@ public class KeyBindingService implements IKeyBindingService {
 		allDefIdToAction.putAll(defIdToAction);
 	}
 	
-	/** 
-	 * Remove the part listener when the editor site is disposed.
-	 */
-	public void dispose() {
-	}
-	
     /**
      * Returns the action mapped with the specified <code>definitionId</code>
      */
@@ -138,6 +132,9 @@ public class KeyBindingService implements IKeyBindingService {
     		
     	return (IAction) allDefIdToAction.get(definitionId);
     }
+
+
+
 
 	/*
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
