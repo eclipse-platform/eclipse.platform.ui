@@ -13,6 +13,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -50,6 +51,10 @@ public class CompareRemoteResourcesAction extends TeamAction {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteResource) {
 					resources.add(next);
+					continue;
+				}
+				if (next instanceof ILogEntry) {
+					resources.add(((ILogEntry)next).getRemoteFile());
 					continue;
 				}
 				if (next instanceof IAdaptable) {

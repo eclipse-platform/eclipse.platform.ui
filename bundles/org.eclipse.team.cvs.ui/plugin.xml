@@ -208,6 +208,12 @@
 				label="%OpenLogEntryAction.label"
 				tooltip="%OpenLogEntryAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.compareLogEntries"
+				label="%CompareRemoteResourcesAction.label"
+				tooltip="%CompareRemoteResourcesAction.tooltip"
+				enablesFor="2"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.VersionCategoryContributions"
