@@ -55,7 +55,35 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 		protected LayoutPart part;
 		protected LayoutPart relative;
 		protected int relationship;
-		protected float ratio;
+
+		/**
+		 * Preferred size for the left child (this would be the size, in pixels of the child
+		 * at the time the sash was last moved)
+		 */
+		protected int left;
+	
+		/**
+		 * Preferred size for the right child (this would be the size, in pixels of the child
+		 * at the time the sash was last moved)
+		 */
+		protected int right;
+		
+		/**
+		 * Computes the "ratio" for this container. That is, the ratio of the left side over
+		 * the sum of left + right. This is only used for serializing PartSashContainers in 
+		 * a form that can be read by old versions of Eclipse. This can be removed if this
+		 * is no longer required. 
+		 * 
+		 * @return the pre-Eclipse 3.0 sash ratio
+		 */
+		public float getRatio() {
+			int total = left + right;
+			if (total > 0) {
+				return (float)left / (float)total;
+			} else {
+				return 0.5f;
+			}
+		}
 	}
 
 	private class SashContainerDropTarget extends AbstractDropTarget {
@@ -122,19 +150,11 @@ public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
 /**
  * Add a part.
  */
-public void add(LayoutPart child) {
-	if (isZoomed())
-		zoomOut();
-		
+public void add(LayoutPart child) {		
 	if (child == null)
 		return;
 	
-	RelationshipInfo info = new RelationshipInfo();
-	info.part = child;
-	if(root != null) {
-		findPosition(info);
-	}
-	addChild(info);
+	addEnhanced(child, SWT.RIGHT, 0.5f, findBottomRight());	
 }
 
 /**
@@ -173,27 +193,83 @@ void addEnhanced(LayoutPart child, int swtDirectionConstant, float ratioForNewPa
  * @param relationship one of PageLayout.TOP, PageLayout.BOTTOM, PageLayout.LEFT, or PageLayout.RIGHT
  * @param ratio a value between 0.0 and 1.0, indicating how much space will be allocated to the UPPER-LEFT pane
  * @param relative part where the new part will be attached
- * 
  */
 public void add(LayoutPart child, int relationship, float ratio, LayoutPart relative) {
-	if (isZoomed())
-		zoomOut();
+	boolean isHorizontal = (relationship == IPageLayout.LEFT || relationship == IPageLayout.RIGHT); 
 
-	if (child == null)
-		return;
-	if (relative != null && !isChild(relative))
-		return;
-	if (relationship < IPageLayout.LEFT || relationship > IPageLayout.BOTTOM)
-		relationship = IPageLayout.LEFT;
+	LayoutTree node = null;
+	if (root != null && relative != null) {
+		node = root.find(relative);
+	}
+	
+	Rectangle bounds;
+	if (getParent() == null) {
+		Control control = getPage().getClientComposite();
+		if (control != null && !control.isDisposed()) {
+			bounds = control.getBounds();
+		} else {
+			bounds = new Rectangle(0,0,800,600);
+		}
+		bounds.x = 0;
+		bounds.y = 0;
+	} else {
+		bounds = getBounds();
+	}
+	
+	int totalSize = measureTree(bounds, node, isHorizontal);
+		
+	int left = (int) (totalSize * ratio);
+	int right = totalSize - left;
 
-	// store info about relative positions
-	RelationshipInfo info = new RelationshipInfo();
-	info.part = child;
-	info.relationship = relationship;
-	info.ratio = ratio;
-	info.relative = relative;
-	addChild(info);
+	add(child, relationship, left, right, relative);
 }
+
+static int measureTree(Rectangle outerBounds, LayoutTree toMeasure, boolean horizontal) {
+	if (toMeasure == null) {
+		return Geometry.getDimension(outerBounds, horizontal);
+	}
+	
+	LayoutTreeNode parent = toMeasure.getParent();
+	if (parent == null) {
+		return Geometry.getDimension(outerBounds, horizontal);
+	}
+
+	if (parent.getSash().isHorizontal() == horizontal) {
+		return measureTree(outerBounds, parent, horizontal);
+	}
+
+	boolean isLeft = parent.isLeftChild(toMeasure);
+
+	LayoutTree otherChild = parent.getChild(!isLeft);
+	if (otherChild.isVisible()) {
+		int left = parent.getSash().getLeft();
+		int right = parent.getSash().getRight();
+		int childSize = isLeft ? left : right;
+		
+		int bias = parent.getCompressionBias();
+		
+		// Normalize bias: 1 = we're fixed, -1 = other child is fixed
+		if (isLeft) {
+			bias = -bias;
+		}
+		
+		if (bias == 1) {
+			// If we're fixed, return the fixed size
+			return childSize;
+		} else if (bias == -1) {
+			
+			// If the other child is fixed, return the size of the parent minus the fixed size of the
+			// other child
+			return measureTree(outerBounds, parent, horizontal) - (left + right - childSize);
+		}
+		
+		// Else return the size of the parent, scaled appropriately
+		return measureTree(outerBounds, parent, horizontal) * childSize / (left + right);
+	}
+
+	return measureTree(outerBounds, parent, horizontal);
+}
+
 protected void addChild(RelationshipInfo info) {
 	LayoutPart child = info.part;
 	
@@ -206,7 +282,7 @@ protected void addChild(RelationshipInfo info) {
 		int vertical = (info.relationship == IPageLayout.LEFT || info.relationship == IPageLayout.RIGHT)?SWT.VERTICAL:SWT.HORIZONTAL;
 		boolean left = info.relationship == IPageLayout.LEFT || info.relationship == IPageLayout.TOP; 
 		LayoutPartSash sash = new LayoutPartSash(this,vertical);
-		sash.setRatio(info.ratio);
+		sash.setSizes(info.left, info.right);
 		if((parent != null) && !(child instanceof PartPlaceholder))
 			sash.createControl(parent);
 		root = root.insert(child,left,sash,info.relative);
@@ -222,6 +298,7 @@ protected void addChild(RelationshipInfo info) {
 	}
 
 }
+
 /**
  * Adds the child using ratio and position attributes
  * from the specified placeholder without replacing
@@ -235,7 +312,10 @@ void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
 	RelationshipInfo newRelationshipInfo = new RelationshipInfo();
 	newRelationshipInfo.part = child;
 	if(root != null) {
-		findPosition(newRelationshipInfo);
+		newRelationshipInfo.relationship = IPageLayout.RIGHT;
+		newRelationshipInfo.relative = root.findBottomRight();
+		newRelationshipInfo.left = 200;
+		newRelationshipInfo.right = 200;
 	}
 	
 	// find the relationship info for the placeholder
@@ -243,7 +323,8 @@ void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
 	for (int i = 0; i < relationships.length; i ++) {
 		RelationshipInfo info = relationships[i];
 		if (info.part == placeholder) {
-			newRelationshipInfo.ratio = info.ratio;
+			newRelationshipInfo.left = info.left;
+			newRelationshipInfo.right = info.right;
 			newRelationshipInfo.relationship = info.relationship;
 			newRelationshipInfo.relative = info.relative;
 		}
@@ -373,26 +454,7 @@ public LayoutPart findBottomRight() {
 		return null;
 	return root.findBottomRight();
 }
-/**
- * Find a initial position for a new part.
- */
-private void findPosition(RelationshipInfo info) {
 
-	info.ratio = (float)0.5;
-	info.relationship = IPageLayout.RIGHT;
-	info.relative = root.findBottomRight();
-
-	// If no parent go with default.
-	if (parent == null)
-		return;
-		
-	// If the relative part is too small, place the part on the left of everything.
-	if (((float)this.getBounds().width / (float)info.relative.getBounds().width > 2) ||
-		 ((float)this.getBounds().height / (float)info.relative.getBounds().height > 4)) {
-		info.relative = null;
-		info.ratio = 0.75f;
-	}
-}
 /**
  * @see LayoutPart#getBounds
  */
@@ -468,37 +530,7 @@ private boolean isRelationshipCompatible(int relationship,boolean isVertical) {
 public boolean isZoomed() {
 	return (unzoomRoot != null);
 }
-/**
- * Move a part to a new position and keep the bounds when possible, ie,
- * when the new relative part has the same higth or width as the part
- * being move.
- */
-public void move(LayoutPart child, int relationship, LayoutPart relative) {
-	LayoutTree childTree = root.find(child);
-	LayoutTree relativeTree = root.find(relative);
 
-	LayoutTreeNode commonParent = relativeTree.getParent().findCommonParent(child,relative);
-	boolean isVertical = commonParent.getSash().isVertical();
-	boolean recomputeRatio = false;
-	recomputeRatio =
-		isRelationshipCompatible(relationship,isVertical) &&
-			commonParent.sameDirection(isVertical,relativeTree.getParent()) && 
-				commonParent.sameDirection(isVertical,childTree.getParent());
-
-	root = root.remove(child);
-	int vertical = (relationship == IPageLayout.LEFT || relationship == IPageLayout.RIGHT)?SWT.VERTICAL:SWT.HORIZONTAL;
-	boolean left = relationship == IPageLayout.LEFT || relationship == IPageLayout.TOP; 
-	LayoutPartSash sash = new LayoutPartSash(this,vertical);
-	sash.setRatio(0.5f);
-	if((parent != null) && !(child instanceof PartPlaceholder))
-		sash.createControl(parent);
-	root = root.insert(child,left,sash,relative);
-	root.updateSashes(parent);
-	if(recomputeRatio)
-		root.recomputeRatio();
-		
-	resizeSashes(parent.getClientArea());
-}
 /**
  * Remove a part.
  */ 
@@ -690,8 +722,7 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 		int cursor = Geometry.getOppositeSide(side);
 		
 		if (pointlessDrop) {
-			side = SWT.NONE;
-			//cursor = SWT.CENTER;			
+			side = SWT.NONE;			
 		}
 		
 		return new SashContainerDropTarget(sourcePart, side, cursor, null);
@@ -847,6 +878,36 @@ public void describeLayout(StringBuffer buf) {
 		root.describeLayout(buf);
 		buf.append(")");
 	}
+}
+
+/**
+ * Adds a new child to the container relative to some part
+ * 
+ * @param child
+ * @param relationship
+ * @param left preferred pixel size of the left/top child
+ * @param right preferred pixel size of the right/bottom child
+ * @param relative relative part
+ */
+void add(LayoutPart child, int relationship, int left, int right, LayoutPart relative) {
+	if (isZoomed())
+		zoomOut();
+
+	if (child == null)
+		return;
+	if (relative != null && !isChild(relative))
+		return;
+	if (relationship < IPageLayout.LEFT || relationship > IPageLayout.BOTTOM)
+		relationship = IPageLayout.LEFT;
+
+	// store info about relative positions
+	RelationshipInfo info = new RelationshipInfo();
+	info.part = child;
+	info.relationship = relationship;
+	info.left = left;
+	info.right = right;
+	info.relative = relative;
+	addChild(info);
 }
 
 }

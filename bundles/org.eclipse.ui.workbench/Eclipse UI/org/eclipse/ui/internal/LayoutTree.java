@@ -9,6 +9,8 @@ package org.eclipse.ui.internal;
  * 
  * Contributors: 
  *     IBM Corporation - initial API and implementation
+ *    Randy Hudson <hudsonr@us.ibm.com> 
+ *      - Fix for bug 19524 - Resizing WorkbenchWindow resizes Views
  *     Cagatay Kavukcuoglu <cagatayk@acm.org>
  *       - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
@@ -141,6 +143,14 @@ public LayoutTree insert(LayoutPart child,boolean left,LayoutPartSash sash,Layou
 		oldParent.replaceChild(relativeChild,node);
 		return this;
 	}
+}
+/**
+ * Returns true if this tree can be compressed and expanded.
+ * @return true if springy
+ */
+public boolean isCompressible() {
+	//Added for bug 19524
+	return part.isCompressible();
 }
 /**
  * Returns true if this tree has visible parts otherwise returns false.

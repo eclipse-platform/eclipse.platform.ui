@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.swt.widgets.Composite;
@@ -96,9 +95,23 @@ public IStatus restoreState(IMemento memento)
 		String relativeID = childMem.getString(IWorkbenchConstants.TAG_RELATIVE);
 		int relationship = 0;
 		float ratio = 0.0f;
+		int left = 0, right = 0;
 		if (relativeID != null) {
 			relationship = childMem.getInteger(IWorkbenchConstants.TAG_RELATIONSHIP).intValue();
-			ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO).floatValue();
+			
+			// Note: the ratio is used for reading pre-3.0 eclipse workspaces. It should be ignored
+			// if "left" and "right" are available.
+			Float ratioFloat = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
+			Integer leftInt = childMem.getInteger(IWorkbenchConstants.TAG_RATIO_LEFT);
+			Integer rightInt = childMem.getInteger(IWorkbenchConstants.TAG_RATIO_RIGHT); 
+			if (leftInt != null && rightInt != null) {
+				left = leftInt.intValue();
+				right = rightInt.intValue();
+			} else {
+				if (ratioFloat != null) {
+					ratio = ratioFloat.floatValue();
+				}
+			}
 		}
 		String strFolder = childMem.getString(IWorkbenchConstants.TAG_FOLDER);
 
@@ -123,7 +136,10 @@ public IStatus restoreState(IMemento memento)
 		} else {
 			LayoutPart refPart = (LayoutPart)mapIDtoPart.get(relativeID);
 			if (refPart != null) {
-				add(part, relationship, ratio, refPart);	
+				if (left != 0)
+					add(part, relationship, left, right, refPart);
+				else
+					add(part, relationship, ratio, refPart);
 			} else {
 				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
 			}
@@ -155,7 +171,13 @@ public IStatus saveState(IMemento memento) {
 		if (info.relative != null) {
 			childMem.putString(IWorkbenchConstants.TAG_RELATIVE, info.relative.getID());
 			childMem.putInteger(IWorkbenchConstants.TAG_RELATIONSHIP, info.relationship);
-			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.ratio);
+			childMem.putInteger(IWorkbenchConstants.TAG_RATIO_LEFT, info.left);
+			childMem.putInteger(IWorkbenchConstants.TAG_RATIO_RIGHT, info.right);
+			
+			// The ratio is only needed for saving workspaces that can be read by old versions
+			// of Eclipse. It is not used in newer versions of Eclipse, which use the "left"
+			// and "right" attributes instead.
+			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.getRatio());
 		}
 
 		// Is this part a folder or a placeholder for one?
@@ -183,14 +205,6 @@ public IStatus saveState(IMemento memento) {
 public boolean allowsAutoFocus() {
 	return true;
 }
-
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
- */
-protected void dropObject(LayoutPart sourcePart, LayoutPart targetPart, int side) {
-	super.dropObject(sourcePart, targetPart, side);
-}
-
 
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#getDockingRatio(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart)

@@ -106,6 +106,9 @@ public interface IWorkbenchConstants {
 	public static final String TAG_RELATIVE = "relative"; //$NON-NLS-1$
 	public static final String TAG_RELATIONSHIP = "relationship"; //$NON-NLS-1$
 	public static final String TAG_RATIO = "ratio"; //$NON-NLS-1$
+	public static final String TAG_RATIO_LEFT = "ratioLeft"; //$NON-NLS-1$
+	public static final String TAG_RATIO_RIGHT = "ratioRight"; //$NON-NLS-1$
+	
 	public static final String TAG_ACTIVE_PAGE_ID = "activePageID"; //$NON-NLS-1$
 	public static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	public static final String TAG_PAGE = "page"; //$NON-NLS-1$

@@ -227,10 +227,19 @@ public IStatus restoreState(IMemento memento) {
 		String partID = childMem.getString(IWorkbenchConstants.TAG_PART);
 		String relativeID = childMem.getString(IWorkbenchConstants.TAG_RELATIVE);
 		int relationship = 0;
-		float ratio = 0.0f;
+		int left = 0, right = 0;
+		float ratio = 0.5f;
 		if (relativeID != null) {
 			relationship = childMem.getInteger(IWorkbenchConstants.TAG_RELATIONSHIP).intValue();
-			ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO).floatValue();
+			Float ratioFloat = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
+			Integer leftInt = childMem.getInteger(IWorkbenchConstants.TAG_RATIO_LEFT);
+			Integer rightInt = childMem.getInteger(IWorkbenchConstants.TAG_RATIO_RIGHT);
+			if (leftInt != null && rightInt != null) {
+				left = leftInt.intValue();
+				right = rightInt.intValue();
+			} else if (ratioFloat != null) {
+				ratio = ratioFloat.floatValue();
+			}
 		}
 
 		// Create the part.
@@ -245,7 +254,11 @@ public IStatus restoreState(IMemento memento) {
 		} else {
 			LayoutPart refPart = (LayoutPart)mapIDtoPart.get(relativeID);
 			if (refPart != null) {
-				add(workbook, relationship, ratio, refPart);	
+				//$TODO pass in left and right
+				if (left == 0 || right == 0)
+					add(workbook, relationship, ratio, refPart);
+				else
+					add(workbook, relationship, left, right, refPart);
 			} else {
 				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
 			}
@@ -271,7 +284,11 @@ public IStatus saveState(IMemento memento) {
 		if (info.relative != null) {
 			childMem.putString(IWorkbenchConstants.TAG_RELATIVE, info.relative.getID());
 			childMem.putInteger(IWorkbenchConstants.TAG_RELATIONSHIP, info.relationship);
-			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.ratio);
+			childMem.putInteger(IWorkbenchConstants.TAG_RATIO_LEFT, info.left);
+			childMem.putInteger(IWorkbenchConstants.TAG_RATIO_RIGHT, info.right);
+			// Note: "ratio" is not used in newer versions of Eclipse, which use "left" 
+			// and "right" (above) instead
+			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.getRatio());
 		}
 	}
 	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
@@ -344,7 +361,13 @@ public void updateTabList() {
 	/* package */ DropTarget getDropTarget() {
 		return dropTarget;
 	}
-	
+	/**
+	 * @see org.eclipse.ui.internal.LayoutPart#getImportance()
+	 */
+	public boolean isCompressible() {
+		//Added for bug 19524
+		return true;
+	}	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
 	 */

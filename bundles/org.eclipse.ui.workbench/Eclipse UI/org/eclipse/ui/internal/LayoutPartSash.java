@@ -9,6 +9,8 @@ package org.eclipse.ui.internal;
  * 
  * Contributors: 
  *    IBM Corporation - initial API and implementation 
+ *    Randy Hudson <hudsonr@us.ibm.com> 
+ *      - Fix for bug 19524 - Resizing WorkbenchWindow resizes Views
  *    Cagatay Kavukcuoglu <cagatayk@acm.org>
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
@@ -28,7 +30,7 @@ class LayoutPartSash extends LayoutPart {
 	private LayoutPartSash postLimit;
 
 	SelectionListener selectionListener;
-	private float ratio = 0.5f;
+	private int left = 300, right = 300;
 	
 	/* Optimize limit checks by calculating minimum 
 	 * and maximum ratios once per drag
@@ -138,9 +140,15 @@ LayoutPartSash getPostLimit() {
 LayoutPartSash getPreLimit() {
 	return preLimit;
 }
-float getRatio() {
-	return ratio;
+
+int getLeft() {
+	return left;
 }
+
+int getRight() {
+	return right;	
+}
+
 boolean isHorizontal() {
 	return ((style & SWT.HORIZONTAL) == SWT.HORIZONTAL);
 }
@@ -153,9 +161,16 @@ void setPostLimit(LayoutPartSash newPostLimit) {
 void setPreLimit(LayoutPartSash newPreLimit) {
 	preLimit = newPreLimit;
 }
+
 void setRatio(float newRatio) {
-	if (newRatio < 0.0 || newRatio > 1.0) return;
-	ratio = newRatio;
+	int total = left + right;
+	left = (int) (total * newRatio);
+	right = total - left;
+}
+
+void setSizes(int left, int right) {
+	this.left = left;
+	this.right = right;
 }
 
 private void widgetSelected(int x, int y, int width, int height) {
@@ -163,12 +178,16 @@ private void widgetSelected(int x, int y, int width, int height) {
 	LayoutTreeNode node = root.findSash(this);
 	Rectangle nodeBounds = node.getBounds();
 	//Recompute ratio
+	x -= nodeBounds.x;
+	y -= nodeBounds.y;
 	if(style == SWT.VERTICAL) {
-		setRatio((float)(x - nodeBounds.x)/(float)nodeBounds.width);
+		setSizes(x, nodeBounds.width - x);
+		//setRatio((float)(x - nodeBounds.x)/(float)nodeBounds.width);
 	} else {
-		setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
+		setSizes(y, nodeBounds.height - y);
+		//setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
 	}
-		
+	
 	node.setBounds(nodeBounds);
 	initDragRatios();
 }

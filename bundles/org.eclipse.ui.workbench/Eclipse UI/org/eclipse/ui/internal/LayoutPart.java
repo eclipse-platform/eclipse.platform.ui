@@ -115,6 +115,9 @@ abstract public class LayoutPart {
 	public String getID() {
 		return id;
 	}
+	public boolean isCompressible() {
+		return false;
+	}
 	/**
 	 * Return the preference store for layout parts.
 	 */

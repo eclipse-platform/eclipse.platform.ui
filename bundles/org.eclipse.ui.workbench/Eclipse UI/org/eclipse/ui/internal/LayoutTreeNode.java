@@ -9,13 +9,14 @@ package org.eclipse.ui.internal;
  * 
  * Contributors: 
  *    IBM Corporation - initial API and implementation 
+ *    Randy Hudson <hudsonr@us.ibm.com> 
+ *       - Fix for bug 19524 - Resizing WorkbenchWindow resizes Views
  *    Cagatay Kavukcuoglu <cagatayk@acm.org>
  *       - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -61,8 +62,7 @@ public LayoutPart findPart(Point toFind) {
 	
 	Rectangle bounds = sash.getBounds();
 	
-	int relativePos = Geometry.getRelativePosition(bounds, toFind);
-	
+
 	if(sash.isVertical()) {
 		if (toFind.x < bounds.x + (bounds.width / 2)) {
 			return children[0].findPart(toFind);
@@ -90,7 +90,8 @@ public LayoutPart computeRelation(ArrayList relations) {
 	PartSashContainer.RelationshipInfo r = new PartSashContainer.RelationshipInfo();
 	r.relative = children[0].computeRelation(relations);
 	r.part = children[1].computeRelation(relations);
-	r.ratio = getSash().getRatio();
+	r.left = getSash().getLeft();
+	r.right = getSash().getRight();
 	r.relationship = getSash().isVertical()?IPageLayout.RIGHT:IPageLayout.BOTTOM;
 	relations.add(0,r);
 	return r.relative;
@@ -227,29 +228,7 @@ public LayoutPartSash getSash() {
 public boolean isVisible() {
 	return children[0].isVisible() || children[1].isVisible();
 }
-/**
- * Recompute the ratios in this tree. The ratio for a node is the width
- * (or height if the sash is horizontal) of the left child's bounds 
- * divided by the width or height of node's bounds. Sash width <em>is</em> 
- * considered in ratio computation.
- */
-public void recomputeRatio() {
-	children[0].recomputeRatio();
-	children[1].recomputeRatio();
 
-	if(children[0].isVisible() && children[1].isVisible()) {
-		if(getSash().isVertical()) {
-			float left = children[0].getBounds().width;
-			float right = children[1].getBounds().width;
-			getSash().setRatio(left/(right+left+SASH_WIDTH));
-		} else {
-			float left = children[0].getBounds().height;
-			float right = children[1].getBounds().height;
-			getSash().setRatio(left/(right+left+SASH_WIDTH));
-		}
-	}
-		
-}
 /**
  * Remove the child and this node from the tree
  */
@@ -307,6 +286,8 @@ public boolean sameDirection(boolean isVertical,LayoutTreeNode subTree) {
  * Resize the parts on this tree to fit in <code>bounds</code>.
  */
 public void setBounds(Rectangle bounds) {
+//	if (bounds.isEmpty())
+//		return;
 	if(!children[0].isVisible()) {
 		children[1].setBounds(bounds);
 		return;
@@ -320,12 +301,36 @@ public void setBounds(Rectangle bounds) {
 	Rectangle rightBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	Rectangle sashBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	
-	float ratio = getSash().getRatio();
+	int left = getSash().getLeft();
+	int right = getSash().getRight();
+	int total = left+right;
+	
+	//At first I was going to have a more elaborate weighting system, but all-or-non is
+	// sufficient
+	double wLeft = left, wRight = right;
+	switch (getCompressionBias()) {
+		case -1:
+			wLeft = 0.0;
+			break;
+		case 1:
+			wRight = 0.0;
+			break;
+		default:
+			break;
+	}
+	double wTotal = wLeft + wRight;
 	
 	if(getSash().isVertical()) {
 		
 		//Work on x and width
-		leftBounds.width = (int)(ratio * bounds.width);
+		leftBounds.width = left;
+		rightBounds.width = right;
+		
+		int redistribute = bounds.width - SASH_WIDTH - total;
+
+		leftBounds.x = bounds.x;
+		leftBounds.width += Math.round(redistribute * wLeft / wTotal);
+		
 		sashBounds.x = leftBounds.x + leftBounds.width;
 		sashBounds.width = SASH_WIDTH;
 		
@@ -334,7 +339,7 @@ public void setBounds(Rectangle bounds) {
 		}
 		
 		rightBounds.x = sashBounds.x + sashBounds.width;
-		rightBounds.width = bounds.width - leftBounds.width - sashBounds.width;
+		rightBounds.width = bounds.x + bounds.width - rightBounds.x;
 		
 		if (children[1].fixedHeight()) {
 			rightBounds.height = children[1].getBounds().height;
@@ -343,15 +348,14 @@ public void setBounds(Rectangle bounds) {
 		adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
 	} else {
 		//Work on y and height
+		int redistribute = bounds.height - SASH_WIDTH - total;
+
 		if (children[0].fixedHeight()) {
 			leftBounds.height = children[0].getBounds().height;
+		} else if (children[1].fixedHeight()) {
+			leftBounds.height = bounds.height - children[1].getBounds().height - SASH_WIDTH;
 		} else {
-			
-			if (children[1].fixedHeight()) {
-				leftBounds.height = bounds.height - children[1].getBounds().height - SASH_WIDTH;
-			} else {
-				leftBounds.height = (int)(ratio * bounds.height);
-			}
+			leftBounds.height = left + (int)Math.round(redistribute * wLeft / wTotal);
 		}
 		sashBounds.y = leftBounds.y + leftBounds.height;
 		sashBounds.height = SASH_WIDTH;
@@ -360,7 +364,7 @@ public void setBounds(Rectangle bounds) {
 		if (children[1].fixedHeight()) {
 			rightBounds.height = children[1].getBounds().height;
 		} else {
-			rightBounds.height = bounds.height - leftBounds.height - sashBounds.height;
+			rightBounds.height = bounds.y + bounds.height - rightBounds.y;
 		}
 		adjustHeights(bounds, leftBounds, rightBounds, sashBounds);
 	}
@@ -471,7 +475,28 @@ public float getMinimumRatioFor(Rectangle bounds) {
 	return (part != 0 ) ? part / whole : IPageLayout.RATIO_MIN;
 }
 
-// getMaximumRatioFor added by cagatayk@acm.org 
+
+//Added by hudsonr@us.ibm.com - bug 19524
+
+public boolean isCompressible() {
+	return children[0].isCompressible() || children[1].isCompressible();
+}
+
+/**
+ * Returns 0 if there is no bias. Returns -1 if the first child should be of
+ * fixed size, and the second child should be compressed. Returns 1 if the
+ * second child should be of fixed size.
+ * @return the bias
+ */
+public int getCompressionBias() {
+	boolean left = children[0].isCompressible();
+	boolean right = children[1].isCompressible();
+	if (left == right)
+		return 0;
+	if (right)
+		return -1;
+	return 1;
+}// getMaximumRatioFor added by cagatayk@acm.org 
 /**
  * Obtain the maximum ratio required to display the control on the "right"
  * using its minimum dimensions.
@@ -538,6 +563,14 @@ public int getMinimumWidth() {
 	return minimum;
 }
 
+boolean isLeftChild(LayoutTree toTest) {
+	return children[0] == toTest;
+}
+
+LayoutTree getChild(boolean left) {
+	int index = left?0:1;
+	return (children[index]);
+}
 
 /**
  * Sets a child in this node
