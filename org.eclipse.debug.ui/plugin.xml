@@ -1393,6 +1393,13 @@
             command="org.eclipse.debug.ui.commands.RunLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <keyBinding
+      		platform="carbon"
+            string="Command+Shift+F11"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.RunLast"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
       <command
             name="%ActionDefinition.profileLast.name"
             category="org.eclipse.debug.ui.category.run"
