@@ -259,7 +259,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		synchronized(streamListeners) {
 		    for(Iterator i = streamListeners.iterator(); i.hasNext(); ) {
 		        StreamListener listener = (StreamListener) i.next();
-		        listener.removeListener();
+		        listener.closeStream();
 		    }
 		}
 		synchronized (in) {
@@ -462,23 +462,28 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             return streamMonitor;
         }
         
-        public void removeListener() {
+        public void closeStream() {
             synchronized (streamMonitor) {
                 streamMonitor.removeListener(this);
                 if (!flushed) {
                     streamAppended(null, streamMonitor);
                 }
                 listenerRemoved = true;
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
             }    
         }
         
         public void dispose() {
             if (!listenerRemoved) {
-                removeListener();
-            }
-            try {
-                stream.close();
-            } catch (IOException e) {
+                closeStream();
+                
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
             }
             stream = null;
             streamMonitor = null;
