@@ -151,7 +151,7 @@ public class PathVariablesGroup {
 
 		if (imageUnkown == null ) {
 			// @issue direct access to an image 
-			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPluginID(
+			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPlugin(
 				PlatformUI.PLUGIN_ID, 
 				"icons/full/obj16/warning.gif");	//$NON-NLS-1$
 			imageUnkown = descriptor.createImage();
