@@ -64,6 +64,7 @@ public class ColorThemeDemo {
 		sampleComposite.setData(gridData);
 			
 		sampleTabFolder = new CTabFolder(sampleComposite, SWT.BORDER);
+		sampleTabFolder.setSimpleTab(false);
 		sampleTabFolder.setData(new GridData(GridData.FILL_BOTH));
 		CTabItem temp = new CTabItem(sampleTabFolder, SWT.NONE);
 		temp.setText("Console");
