@@ -86,10 +86,13 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		} else if (element instanceof IProcess) {
 			launch= ((IProcess)element).getLaunch();
 		}
-
+		
+		if (launch == null) {
+			return false;
+		}
 		if (launch.getLaunchConfiguration() == null) {
 			// old launcher support
-			return launch != null && DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
+			return DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
 		} else {
 			// new launch configuration support
 			return true;
