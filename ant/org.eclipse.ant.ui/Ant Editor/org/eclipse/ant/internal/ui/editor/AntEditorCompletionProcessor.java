@@ -517,19 +517,60 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         		} else {
 	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
 	        		if (helper != null) {
-		        		Enumeration attributes= helper.getAttributes();
-			        	while (attributes.hasMoreElements()) {
-							String attribute = (String) attributes.nextElement();
-							if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
-								String replacementString = attribute + "=\"\""; //$NON-NLS-1$
-								addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute, false);
-							}
-						}
+		        		addAttributeProposals(taskName, prefix, proposals, helper);
 	        		}
         		}
+        	} else { //nested user defined element
+        		Class nestedType= getNestedType();
+        		if (nestedType != null) {
+	    			IntrospectionHelper helper= getIntrospectionHelper(nestedType);
+	    			if (helper != null) {
+	    				addAttributeProposals(taskName, prefix, proposals, helper);
+	    			}
+	    		}
         	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+    }
+    
+    /**
+	 * @param taskName
+	 * @param prefix
+	 * @param proposals
+	 * @param helper
+	 */
+	private void addAttributeProposals(String taskName, String prefix, List proposals, IntrospectionHelper helper) {
+		Enumeration attributes= helper.getAttributes();
+		while (attributes.hasMoreElements()) {
+			String attribute = (String) attributes.nextElement();
+			if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
+				String replacementString = attribute + "=\"\""; //$NON-NLS-1$
+				addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute, false);
+			}
+		}
+	}
+
+	private Class getNestedType() {
+    	AntElementNode currentNode= antModel.getNode(cursorPosition, false);
+		AntElementNode parent= currentNode.getParentNode();
+		if (parent instanceof AntTaskNode) {
+			String parentName= parent.getName();
+			if (hasNestedElements(parentName)) {
+				Class taskClass= getTaskClass(parentName);
+		    	if (taskClass != null) {
+		    		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+		    		if (helper != null) {
+		    			Class nestedType= null;
+		    			try {
+		    				nestedType= helper.getElementType(currentNode.getName());
+		    			} catch (BuildException be) {
+		    			}
+		    			return nestedType;
+		    		}
+				}
+			}
+		}
+		return null;
     }
     
     private IntrospectionHelper getIntrospectionHelper(Class taskClass) {
@@ -668,23 +709,35 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         	if (taskClass != null) {
         		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
         		if (helper != null) {
-	        		Enumeration attributes= helper.getAttributes();
-		        	while (attributes.hasMoreElements()) {
-						String attribute= (String) attributes.nextElement();
-						if (attribute.equals(attributeName)) {
-							Class attributeType= helper.getAttributeType(attribute);
-							addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
-							break;
-						}
-					}
+        			addAttributeValueProposals(helper, attributeName, prefix, proposals);
+        		}
+        	} else { //nested user defined element
+        		Class nestedType= getNestedType();
+        		if (nestedType != null) {
+	    			IntrospectionHelper helper= getIntrospectionHelper(nestedType);
+	    			if (helper != null) {
+	    				addAttributeValueProposals(helper, attributeName, prefix, proposals);
+	    			}
         		}
         	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
+	private void addAttributeValueProposals(IntrospectionHelper helper, String attributeName, String prefix, List proposals) {
+		Enumeration attributes= helper.getAttributes();
+		while (attributes.hasMoreElements()) {
+			String attribute= (String) attributes.nextElement();
+			if (attribute.equals(attributeName)) {
+				Class attributeType= helper.getAttributeType(attribute);
+				addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
+				break;
+			}
+		}
+	}
+
 	private void addAttributeValueProposalsForAttributeType(Class attributeType, String prefix, List proposals) {
-		if (attributeType == Boolean.TYPE && prefix.length() <= 5) {
+		if ((attributeType == Boolean.TYPE || attributeType == Boolean.class) && prefix.length() <= 5) {
 			addBooleanAttributeValueProposals(prefix, proposals);
 		} else if (EnumeratedAttribute.class.isAssignableFrom(attributeType)) {
 			try {
@@ -1277,6 +1330,10 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     		}
     		//not everything is a task or type (nested elements)
     		if (dtd.getElement(elementName) != null) {
+    			return true;
+    		}
+    		
+    		if (getNestedType() != null) {
     			return true;
     		}
     	}

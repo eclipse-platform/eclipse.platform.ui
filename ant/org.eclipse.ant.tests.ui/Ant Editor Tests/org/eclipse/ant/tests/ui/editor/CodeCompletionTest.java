@@ -310,7 +310,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
      * Tests the code completion for nested element attributes
      */
-	public void testNestedElementAttributeProposals() throws BadLocationException {
+	public void testMacrodefNestedElementAttributeProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("macrodef.xml"));
 		int lineNumber= 5;
     	int columnNumber= 11;
@@ -645,4 +645,36 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	//the reference to the project by name
     	assertContains("Extension Point Task", proposals);
     }
+    
+    /**
+     * Tests the code completion for nested element attributes of custom tasks
+     */
+	public void testNestedElementAttributeProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("nestedElementAttributes.xml"));
+		int lineNumber= 4;
+    	int columnNumber= 18;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 1);
+    	assertContains("works", proposals);
+	}
+	
+	/**
+     * Tests the code completion for nested element attribute values of custom tasks
+     */
+	public void testNestedElementAttributeValueProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("nestedElementAttributes.xml"));
+    	int lineNumber= 4;
+    	int columnNumber= 25;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 6); //the boolean proposals
+    	assertContains("true", proposals);
+	}
 }

@@ -46,7 +46,9 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	}
 	
     public ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
-    	cursorPosition= taskName.length();
+    	if (cursorPosition == -1) {
+    		cursorPosition= taskName.length();
+    	}
         return super.getAttributeProposals(taskName, prefix);
     }
 
