@@ -158,6 +158,9 @@
    <test id="org.eclipse.core.tests.plugintests.LibraryLookupTests">
       <run class="org.eclipse.core.tests.plugintests.LibraryLookupTests"/>
     </test>
+   <test id="org.eclipse.core.tests.plugintests.PluginFindTests">
+      <run class="org.eclipse.core.tests.plugintests.PluginFindTests"/>
+    </test>
   </extension>
 
 </plugin>

@@ -1,0 +1,1 @@
+Test string from osPluginFind3 plugin os directory.

@@ -1,0 +1,1 @@
+Test string from osFragmentFind3 fragment os directory.

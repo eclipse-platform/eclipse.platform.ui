@@ -147,6 +147,8 @@ public static void addProtectionSpace(URL resourceUrl, String realm) throws Core
  * @see Platform
  */
 public static URL asLocalURL(URL url) throws IOException {
+	if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+		return url;
 	URLConnection connection = url.openConnection();
 	if (!(connection instanceof PlatformURLConnection))
 		return url;
@@ -772,6 +774,8 @@ public static void removeLogListener(ILogListener listener) {
  * @see Platform
  */
 public static URL resolve(URL url) throws IOException {
+	if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+		return url;
 	URLConnection connection = url.openConnection();
 	if (connection instanceof PlatformURLConnection)
 		return ((PlatformURLConnection) connection).getResolvedURL();

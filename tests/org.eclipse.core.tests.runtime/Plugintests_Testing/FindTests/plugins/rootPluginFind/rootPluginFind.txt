@@ -1,0 +1,1 @@
+Test string from rootPluginFind plugin root directory.

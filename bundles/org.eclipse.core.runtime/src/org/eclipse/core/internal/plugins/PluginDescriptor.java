@@ -761,4 +761,172 @@ public void activateDefaultPlugins(DelegatingURLClassLoader loader) {
 	Object[] result = getPluginClassLoaderPath(true);
 	loader.addURLs((URL[]) result[0], (URLContentFilter[]) result[1], (URL[]) result[2], (URLContentFilter[]) result[3]);
 }
+/**
+ * @see IPluginDescriptor
+ */
+public final URL find(IPath path) {
+	return find(path, null);
+}
+/**
+ * @see IPluginDescriptor
+ */
+public final URL find(IPath path, Map override) {
+	if (path == null) return null;
+	
+	URL install = getInstallURLInternal();
+	String first = path.segment(0);
+	if (first.charAt(0) != '$') {		
+		URL result = findInPlugin(install, path.toString());
+		if (result != null)
+			return result;	
+		return findInFragments(path.toString());
+	}
+	IPath rest = path.removeFirstSegments(1);
+	if (first.equalsIgnoreCase("$nl$"))
+		return findNL(install, rest, override);
+	if (first.equalsIgnoreCase("$os$"))
+		return findOS(install, rest, override);
+	if (first.equalsIgnoreCase("$ws$"))
+		return findWS(install, rest, override);
+	if (first.equalsIgnoreCase("$files$"))
+		return null;
+	return null;
+}
+
+private URL findOS(URL install, IPath path, Map override) {
+	String os = null;
+	if (override != null)
+		try {
+			// check for override
+			os = (String) override.get("$os$");
+		} catch (ClassCastException e) {
+		}
+	if (os == null)
+		// use default
+		os = BootLoader.getOS();
+	if (os.length() == 0)
+		return null;
+	boolean done = false;
+	URL result = null;
+	while (!done) {
+		String filePath = "os/" + os + "/" + path.toString();	
+		result = findInPlugin(install, filePath);
+		if (result != null)
+			return result;	
+		result = findInFragments(filePath);
+		if (result != null)
+			return result;
+		int i = os.lastIndexOf('/');
+		if (i < 0) 
+			done = true;
+		else
+			os = os.substring(0, i);
+	}
+	// If we get to this point, we haven't found it yet.
+	// Look in the plugin and fragment root directories
+	result = findInPlugin(install, path.toString());
+	if (result != null)
+		return result;
+	return findInFragments(path.toString());
+}
+
+private URL findWS(URL install, IPath path, Map override) {
+	String ws = null;
+	if (override != null)
+		try {
+			// check for override
+			ws = (String) override.get("$ws$");
+		} catch (ClassCastException e) {
+		}
+	if (ws == null)
+		// use default
+		ws = BootLoader.getWS();
+	String filePath = "ws/" + ws + "/" + path.toString();
+	// We know that there is only one segment to the ws path
+	// e.g. ws/win32	
+	URL result = findInPlugin(install, filePath);
+	if (result != null)
+		return result;	
+	result = findInFragments(filePath);
+	if (result != null)
+		return result;
+	// If we get to this point, we haven't found it yet.
+	// Look in the plugin and fragment root directories
+	result = findInPlugin(install, path.toString());
+	if (result != null)
+		return result;
+	return findInFragments(path.toString());
+}
+
+private URL findNL(URL install, IPath path, Map override) {
+	String nl = null;
+	if (override != null)
+		try {
+			// check for override
+			nl = (String) override.get("$nl$");
+		} catch (ClassCastException e) {
+		}
+	if (nl == null)
+		// use default
+		nl = BootLoader.getNL();
+	if (nl.length() == 0)
+		return null;
+	nl = nl.replace('_', '/');
+	URL result = null;
+	boolean done = false;
+	
+	while (!done) {		
+		String filePath = "nl/" + nl + "/" + path.toString();
+		result = findInPlugin(install, filePath);
+		if (result != null)
+			return result;
+		result = findInFragments(filePath);
+		if (result != null)
+			return result;
+		else {
+			int i = nl.lastIndexOf('/');
+			if (i < 0)
+				done = true;
+			else
+				nl = nl.substring(0, i);
+		}
+	}
+	// If we get to this point, we haven't found it yet.
+	// Look in the plugin and fragment root directories
+	result = findInPlugin(install, path.toString());
+	if (result != null)
+		return result;
+	return findInFragments(path.toString());
+}
+
+private URL findInPlugin(URL install, String filePath) {
+	try {
+		URL location = new URL(install, filePath);
+		String file = getFileFromURL(location);
+		if (file != null && new File(file).exists())
+			return location;						
+	} catch (IOException e) {
+	}
+	return null;
+}
+
+private URL findInFragments(String path) {
+	// This method will return a 'real' URL (as opposed to a platform
+	// URL).
+	PluginFragmentModel[] fragments = getFragments();
+	if (fragments == null)
+		return null;
+		
+	for (int i = 0; i < fragments.length; i++) {
+		try {
+			URL location = new URL(fragments[i].getLocation() + path);
+			String file = getFileFromURL(location);
+			if (file != null && new File(file).exists())
+				return location;
+		} catch (IOException e) {
+			// skip malformed url and urls that cannot be resolved
+		}
+	}
+	return null;
+}
 }

@@ -1,0 +1,1 @@
+Test string from wsPluginFind2 plugin ws directory.

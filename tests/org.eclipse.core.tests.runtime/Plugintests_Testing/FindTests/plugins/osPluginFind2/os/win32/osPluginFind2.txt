@@ -1,0 +1,1 @@
+Test string from osPluginFind2 plugin os/win32 directory.

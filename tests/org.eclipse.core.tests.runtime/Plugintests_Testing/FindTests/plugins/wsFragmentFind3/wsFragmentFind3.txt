@@ -1,0 +1,1 @@
+Test string from wsFragmentFind3 fragment root directory.

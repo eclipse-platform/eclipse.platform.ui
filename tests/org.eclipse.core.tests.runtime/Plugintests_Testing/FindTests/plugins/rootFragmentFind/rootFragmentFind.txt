@@ -1,0 +1,1 @@
+Test string from rootFragmentFind fragment root directory.

@@ -5,6 +5,7 @@ package org.eclipse.core.runtime;
  * All Rights Reserved.
  */
 
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.net.URL;
@@ -254,4 +255,32 @@ public PluginVersionIdentifier getVersionIdentifier();
  * @see #getPlugin
  */
 public boolean isPluginActivated();
+/**
+ * Returns a URL for the given path.  Returns <code>null</code> if the URL
+ * could not be computed or created.
+ * 
+ * @param file path relative to plug-in installation location 
+ * @return a URL for the given path or <code>null</code>  It is not
+ * necessary to perform a 'resolve' on this URL.
+ * 
+ * @since 2.0
+ */
+public URL find(IPath path);
+/**
+ * Returns a URL for the given path.  Returns <code>null</code> if the URL
+ * could not be computed or created.
+ * 
+ * @param path file path relative to plug-in installation location
+ * @param override map of override substitution arguments to be used for
+ * any $arg$ path elements. The map keys correspond to the substitution
+ * arguments (eg. "$nl$" or "$os$"). The resulting
+ * values must be of type java.lang.String. If the map is <code>null</code>,
+ * or does not contain the required substitution argument, the default
+ * is used.
+ * @return a URL for the given path or <code>null</code>.  It is not
+ * necessary to perform a 'resolve' on this URL.
+ * 
+ * @since 2.0
+ */
+public URL find(IPath path, Map override);
 }

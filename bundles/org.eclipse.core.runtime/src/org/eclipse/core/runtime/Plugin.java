@@ -239,7 +239,7 @@ public Plugin(IPluginDescriptor descriptor) {
  * @return a URL for the given path or <code>null</code>
  */
 public final URL find(IPath path) {
-	return find(path, null);
+	return getDescriptor().find(path);
 }
 /**
  * Returns a URL for the given path.  Returns <code>null</code> if the URL
@@ -255,122 +255,8 @@ public final URL find(IPath path) {
  * @return a URL for the given path or <code>null</code>
  */
 public final URL find(IPath path, Map override) {
-	URL install = getDescriptor().getInstallURL();
-	String first = path.segment(0);
-	if (first.charAt(0) != '$') {		
-		URL result = findInPlugin(install, path.toString());
-		if (result != null)
-			return result;	
-		return findInFragments(path.toString());
-	}
-	IPath rest = path.removeFirstSegments(1);
-	if (first.equalsIgnoreCase("$nl$"))
-		return findNL(install, rest, override);
-	if (first.equalsIgnoreCase("$os$"))
-		return findOS(install, rest, override);
-	if (first.equalsIgnoreCase("$ws$"))
-		return findWS(install, rest, override);
-	if (first.equalsIgnoreCase("$files$"))
-		return null;
-	return null;
+	return getDescriptor().find(path,override);
 }
-
-private URL findOS(URL install, IPath path, Map override) {
-	String os = null;
-	if (override != null)
-		try { // check for override
-			os = (String) override.get("$os$");
-		} catch (ClassCastException e) {
-		}
-	if (os == null)
-		os = BootLoader.getOS(); // use default
-	String filePath = "os/" + os + "/" + path.toString();	
-	URL result = findInPlugin(install, filePath);
-	if (result != null)
-		return result;	
-	return findInFragments(filePath);
-}
-
-private URL findWS(URL install, IPath path, Map override) {
-	String ws = null;
-	if (override != null)
-		try { // check for override
-			ws = (String) override.get("$ws$");
-		} catch (ClassCastException e) {
-		}
-	if (ws == null)
-		ws = BootLoader.getWS(); // use default
-	String filePath = "ws/" + ws + "/" + path.toString();	
-	URL result = findInPlugin(install, filePath);
-	if (result != null)
-		return result;	
-	return findInFragments(filePath);
-}
-
-private URL findNL(URL install, IPath path, Map override) {
-	String nl = null;
-	if (override != null)
-		try { // check for override
-			nl = (String) override.get("$nl$");
-		} catch (ClassCastException e) {
-		}
-	if (nl == null)
-		nl = BootLoader.getNL(); // use default
-	nl = nl.replace('_', '/');
-	URL result = null;
-	boolean done = false;
-	
-	while (!done) {		
-		String filePath = "nl/" + (nl.equals("") ? nl : nl + "/") + path.toString();
-		result = findInPlugin(install, filePath);
-		if (result != null)
-			return result;
-		result = findInFragments(filePath);
-		if (result != null)
-			return result;
-		if (nl.length() == 0)
-			done = true;
-		else {
-			int i = nl.lastIndexOf('/');
-			if (i < 0)
-				nl = "";
-			else
-				nl = nl.substring(0, i);
-		}
-	}
-	return null;
-}
-
-private URL findInPlugin(URL install, String filePath) {
-	try {
-		URL result = new URL(install, filePath);
-		URL location = Platform.resolve(result);
-		String file = getFileFromURL(location);
-		if (file != null && new File(file).exists())
-			return result;						
-	} catch (IOException e) {
-	}
-	return null;
-}
-
-private URL findInFragments(String path) {
-	PluginFragmentModel[] fragments = ((PluginDescriptor)getDescriptor()).getFragments();
-	if (fragments == null)
-		return null;
-		
-	for (int i = 0; i < fragments.length; i++) {
-		try {
-			URL location = new URL(fragments[i].getLocation() + path);
-			String file = getFileFromURL(location);
-			if (file != null && new File(file).exists())
-				return location;
-		} catch (IOException e) {
-			// skip malformed url and urls that cannot be resolved
-		}
-	}
-	return null;
-}
-
 private String getFileFromURL(URL target) {
 	String protocol = target.getProtocol();
 	if (protocol.equals(PlatformURLHandler.FILE))

@@ -1,0 +1,1 @@
+Test string from nlPluginFind1 plugin nl/en/CA directory.
