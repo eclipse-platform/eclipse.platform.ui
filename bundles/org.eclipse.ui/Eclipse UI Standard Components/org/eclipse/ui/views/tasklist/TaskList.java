@@ -371,7 +371,7 @@ public void createPartControl(Composite parent) {
  * Creates the table control.
  */
 void createTable(Composite parent) {
-	table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+	table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 	table.setLinesVisible(true);
 	//table.setLayout(new TableLayout());
 	

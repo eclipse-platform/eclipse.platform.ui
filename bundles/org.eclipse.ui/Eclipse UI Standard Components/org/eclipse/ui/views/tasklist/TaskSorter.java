@@ -92,7 +92,8 @@ private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 }
 /**
  * Compares the line number and location of the two markers.
- * If line number is specified for both, this sorts first by line number (numerically), then by location (textually).
+ * If line number is specified for both, this sorts first by line number (numerically), 
+ * then by start offset (numerically), then by location (textually).
  * If line number is not specified for either, this sorts by location.
  * Otherwise, if only one has a line number, this sorts by the combined text for line number and location.
  */
@@ -103,11 +104,16 @@ private int compareLineAndLocation(IMarker m1, IMarker m2) {
 		if (line1 != line2) {
 			return line1 - line2;
 		}
-		else {
-			String loc1 = MarkerUtil.getLocation(m1);
-			String loc2 = MarkerUtil.getLocation(m2);
-			return collator.compare(loc1, loc2);
+		int start1 = MarkerUtil.getCharStart(m1);
+		int start2 = MarkerUtil.getCharStart(m2);
+		if (start1 != -1 && start2 != -1) {
+			if (start1 != start2) {
+				return start1 - start2;
+			}
 		}
+		String loc1 = MarkerUtil.getLocation(m1);
+		String loc2 = MarkerUtil.getLocation(m2);
+		return collator.compare(loc1, loc2);
 	}
 	if (line1 == -1 && line2 == -1) {
 		String loc1 = MarkerUtil.getLocation(m1);
