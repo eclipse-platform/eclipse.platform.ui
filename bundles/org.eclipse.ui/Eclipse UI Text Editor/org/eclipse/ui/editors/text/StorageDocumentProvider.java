@@ -217,15 +217,16 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		return super.isModifiable(element);
 	}
 	
+
 	/*
-	 * @see IDocumentProviderExtension#validateState(Object, Object)
+	 * @see AbstractDocumentProvider#doUpdateStateCache(Object)
 	 */
-	public void validateState(Object element, Object computationContext) throws CoreException {
+	protected void doUpdateStateCache(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
 			if (info != null)
 				info.fUpdateCache= true;
-		} else
-			super.validateState(element, computationContext);
+		}
+		super.doUpdateStateCache(element);
 	}
 }

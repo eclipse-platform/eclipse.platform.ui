@@ -160,7 +160,7 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 				break;
 			
 			TextAttribute attribute= getTokenTextAttribute(token);			
-			if (attribute == lastAttribute) {
+			if (lastAttribute != null && lastAttribute.equals(attribute)) {
 				length += fScanner.getTokenLength();			    
 			} else {
 				addRange(presentation, lastStart, length, lastAttribute);
@@ -171,8 +171,7 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 			}
 		}
 
-		if (!lastToken.isUndefined() && length != 0)
-			addRange(presentation, lastStart, length, lastAttribute);
+		addRange(presentation, lastStart, length, lastAttribute);
 	}
 	
 	/**

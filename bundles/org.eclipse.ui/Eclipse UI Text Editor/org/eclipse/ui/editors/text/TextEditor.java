@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -89,6 +90,9 @@ public class TextEditor extends AbstractTextEditor {
 		Shell shell= getSite().getShell();
 		
 		SaveAsDialog dialog= new SaveAsDialog(shell);
+		IEditorInput input = getEditorInput();
+		if (input instanceof IFileEditorInput)
+			dialog.setOriginalFile(((IFileEditorInput) input).getFile());
 		dialog.open();
 		IPath path= dialog.getResult();
 		

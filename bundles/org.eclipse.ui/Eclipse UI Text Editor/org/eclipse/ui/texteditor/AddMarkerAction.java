@@ -6,7 +6,8 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.HashMap;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
+import java.util.HashMap;import java.util.Map;import java.util.ResourceBundle;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.window.Window;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.PlatformUI;
 
 
 
@@ -133,7 +134,12 @@ public class AddMarkerAction extends TextEditorAction {
 			
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, null);
+		IInputValidator inputValidator = new IInputValidator() {
+			public String isValid(String newText) {
+				return  (newText == null || newText.length() == 0) ? " " : null;  //$NON-NLS-1$
+			}
+		};		
+		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, inputValidator);
 		
 		String label= null;
 		if (dialog.open() != Window.CANCEL)

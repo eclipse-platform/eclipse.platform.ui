@@ -96,8 +96,10 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 		Display display= Display.getDefault();
 		Color color= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, color.getRGB());
+		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
 		
 		color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, color.getRGB());
+		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 	}
 }

@@ -44,6 +44,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	
 	
 	static class ContextFrame {
+		public int fBeginOffset;
 		public int fOffset;
 		public int fVisibleOffset;
 		public IContextInformation fInformation;
@@ -124,9 +125,11 @@ class ContextInformationPopup implements IContentAssistListener {
 			if (validator != null) {
 				ContextFrame current= new ContextFrame();
 				current.fInformation= information;
+				current.fBeginOffset= (information instanceof IContextInformationExtension)
+					? ((IContextInformationExtension) information).getContextInformationPosition()
+					: offset;										
 				current.fOffset= offset;
-//				current.fVisibleOffset= offset - fViewer.getVisibleRegion().getOffset();
-				current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x;
+				current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);
 				current.fValidator= validator;
 				current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), offset);
 				
@@ -143,7 +146,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (frame.fPresenter != null) {
 			if (fTextPresentation == null)
 				fTextPresentation= new TextPresentation();
-			frame.fPresenter.install(frame.fInformation, fViewer, frame.fOffset);
+			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
 			frame.fPresenter.updatePresentation(frame.fOffset, fTextPresentation);
 		}
 		

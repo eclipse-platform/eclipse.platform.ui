@@ -270,7 +270,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
-			FileInfo info= (FileInfo) getElementInfo(element);
 			return computeModificationStamp(input.getFile());
 		}
 		
@@ -283,7 +282,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	public long getSynchronizationStamp(Object element) {
 		
 		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
 			FileInfo info= (FileInfo) getElementInfo(element);
 			return info.fModificationStamp;
 		}
@@ -472,31 +470,33 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	/*
-	 * @see IDocumentProviderExtension#validateState(Object, Object)
+	 * @see AbstractDocumentProvider#doValidateState(Object, Object)
 	 */
-	public void validateState(Object element, Object computationContext) throws CoreException {
+	protected void doValidateState(Object element, Object computationContext) throws CoreException {
 		
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			FileInfo info= (FileInfo) getElementInfo(input);
-			if (info != null && info.fIsReadOnly) {
+			if (info != null) {
 				IFile file= input.getFile();
-				IWorkspace workspace= file.getWorkspace();
-				workspace.validateEdit(new IFile[] { file }, computationContext);
-				if (false)
-					new MessageDialog((Shell) computationContext, "ReadOnly", null, "Is read only", 0, new String[] { "OK" }, 0).open();
+				if (file.isReadOnly()) { // do not use cached state here
+					IWorkspace workspace= file.getWorkspace();
+					workspace.validateEdit(new IFile[] { file }, computationContext);
+				}
 			}
 		}
 		
-		super.validateState(element, computationContext);
+		super.doValidateState(element, computationContext);
 	}
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
 	public boolean isModifiable(Object element) {
-		if (element instanceof IFileEditorInput)
-			return true;
+		if (!hasStateBeenValidated(element)) {
+			if (element instanceof IFileEditorInput)
+				return true;
+		}
 		return super.isModifiable(element);
 	}
 }

@@ -6,17 +6,95 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.ST;
-import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;
-import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.VerticalRuler;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -65,12 +143,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (element != null && element.equals(getEditorInput())) {
 				
 				if (isDirty) {
+					
 					validateState((IEditorInput) element);
 					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+					
+					if (!isEditable()) {
+						/* should be replaced with a key verify listener for better appearance */
+						Shell shell= getSite().getShell();
+						if (shell != null) {
+							shell.getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									doRevertToSaved();
+								}
+							});
+						}
+					}
 				}							
 				firePropertyChange(PROP_DIRTY);
-//				if (!isDirty && fSourceViewer != null)
-//					fSourceViewer.resetPlugins();
+				
+				/*
+				 * Revert should be undoable
+				 * 
+				if (!isDirty && fSourceViewer != null)
+					fSourceViewer.resetPlugins();
+				*/
 			}
 		}
 		
@@ -90,8 +186,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
 				firePropertyChange(PROP_DIRTY);
-//				if (fSourceViewer != null)
-//					fSourceViewer.resetPlugins();
+				/*
+				 * Revert should be undoable
+				 * 
+				if (!isDirty && fSourceViewer != null)
+					fSourceViewer.resetPlugins();
+				*/
 				restoreSelection();
 			}
 		}
@@ -249,7 +349,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fModificationStamp= stamp;
 					if (stamp != p.getSynchronizationStamp(getEditorInput()))
 						handleEditorInputChanged();
-				}
+				} 
+				
+				updateState(getEditorInput());
+				updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 			}
 		}
 	
@@ -294,6 +397,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public final static String PREFERENCE_COLOR_FOREGROUND= "AbstractTextEditor.Color.Foreground"; //$NON-NLS-1$
 	/** Key used to look up background color preference */
 	public final static String PREFERENCE_COLOR_BACKGROUND= "AbstractTextEditor.Color.Background"; //$NON-NLS-1$	
+	/** Key used to look up foreground color system default preference */
+	public final static String PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Foreground.SystemDefault"; //$NON-NLS-1$
+	/** Key used to look up background color system default preference */
+	public final static String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$	
 	
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
@@ -372,6 +479,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextSelection fRememberedSelection;
 	/** Indicates whether the editor runs in 1.0 context menu registration compatibility mode */
 	private boolean fCompatibilityMode= true;
+	/** The number of reentrances into error correction code while saving */
+	private int fErrorCorrectionOnSave;
 	
 	
 	/**
@@ -967,9 +1076,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			StyledText styledText= viewer.getTextWidget();
 			
 			// ----------- foreground color --------------------
-			Color color= createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
-			if (color != null)
-				styledText.setForeground(color);
+			Color color= store.getBoolean(PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
+				? null
+				: createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
+			styledText.setForeground(color);
 				
 			if (fForegroundColor != null)
 				fForegroundColor.dispose();
@@ -977,9 +1087,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fForegroundColor= color;
 			
 			// ---------- background color ----------------------
-			color= createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
-			if (color != null)
-				styledText.setBackground(color);
+			color= store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
+				? null
+				: createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+			styledText.setBackground(color);
 				
 			if (fBackgroundColor != null)
 				fBackgroundColor.dispose();
@@ -1231,8 +1342,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (PREFERENCE_FONT.equals(property))
 			initializeViewerFont(fSourceViewer);
 			
-		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_BACKGROUND.equals(property))
+		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
+			PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property))
+		{
 			initializeViewerColors(fSourceViewer);
+		}
 			
 		if (affectsTextPresentation(event))
 			fSourceViewer.invalidateTextPresentation();
@@ -1364,7 +1478,33 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (provider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			try {
+				
 				extension.validateState(input, getSite().getShell());
+				if (fSourceViewer != null)
+					fSourceViewer.setEditable(isEditable());
+				
+			} catch (CoreException x) {
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				log.log(x.getStatus());
+			}
+		}
+	}
+	
+	/**
+	 * Updates the state of the given editor input such as Read-only flag etc.
+	 * 
+	 * @param input the input to be validated
+	 */
+	protected void updateState(IEditorInput input) {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+			try {
+				
+				extension.updateStateCache(input);
+				if (fSourceViewer != null)
+					fSourceViewer.setEditable(isEditable());
+				
 			} catch (CoreException x) {
 				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 				log.log(x.getStatus());
@@ -1385,7 +1525,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
 				IEditorInput input= getEditorInput();
-				validateState(input);
 				getDocumentProvider().saveDocument(monitor, input, getDocumentProvider().getDocument(input), overwrite);
 			}
 		};
@@ -1434,20 +1573,36 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
 		
-		Shell shell= getSite().getShell();
-		
-		IDocumentProvider p= getDocumentProvider();
-		long modifiedStamp= p.getModificationStamp(getEditorInput());
-		long synchStamp= p.getSynchronizationStamp(getEditorInput());
-		
-		if (modifiedStamp != synchStamp) {
+		try {
+			++ fErrorCorrectionOnSave;
 			
-			String title= EditorMessages.getString("Editor.error.save.outofsync.title"); //$NON-NLS-1$
-			String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
+			Shell shell= getSite().getShell();
 			
-			if (MessageDialog.openQuestion(shell, title, msg))
-				performSaveOperation(createSaveOperation(true), progressMonitor);
-			else {
+			IDocumentProvider p= getDocumentProvider();
+			long modifiedStamp= p.getModificationStamp(getEditorInput());
+			long synchStamp= p.getSynchronizationStamp(getEditorInput());
+			
+			if (fErrorCorrectionOnSave == 1 && modifiedStamp != synchStamp) {
+				
+				String title= EditorMessages.getString("Editor.error.save.outofsync.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
+				
+				if (MessageDialog.openQuestion(shell, title, msg))
+					performSaveOperation(createSaveOperation(true), progressMonitor);
+				else {
+					/*
+					 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
+					 * Set progress monitor to canceled in order to report back 
+					 * to enclosing operations. 
+					 */
+					progressMonitor.setCanceled(true);
+				}
+			} else {
+				
+				String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
+				ErrorDialog.openError(shell, title, msg, exception.getStatus());
+				
 				/*
 				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
 				 * Set progress monitor to canceled in order to report back 
@@ -1455,18 +1610,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 */
 				progressMonitor.setCanceled(true);
 			}
-		} else {
 			
-			String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-			String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, msg, exception.getStatus());
-			
-			/*
-			 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
-			 * Set progress monitor to canceled in order to report back 
-			 * to enclosing operations. 
-			 */
-			progressMonitor.setCanceled(true);
+		} finally {
+			-- fErrorCorrectionOnSave;
 		}
 	}
 	

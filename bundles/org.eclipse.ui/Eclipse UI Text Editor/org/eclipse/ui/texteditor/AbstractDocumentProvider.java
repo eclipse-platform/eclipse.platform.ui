@@ -51,6 +51,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			public IDocument fDocument;
 			/** The element's annotation model */
 			public IAnnotationModel fModel;
+			/** Has element state been validated */
+			public boolean fHasStateBeenValidated;
 			
 			
 			/**
@@ -65,6 +67,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				fModel= model;
 				fCount= 0;
 				fCanBeSaved= false;
+				fHasStateBeenValidated= false;
 			}
 			
 			/**
@@ -509,9 +512,59 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		return false;
 	}
 	
+	/**
+	 * Returns whether <code>validateState</code> has been called for the given element.
+	 * @param element the element
+	 * @return whether <code>validateState</code> has been called for the given element
+	 */
+	protected boolean hasStateBeenValidated(Object element) {
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		if (info != null)
+			return info.fHasStateBeenValidated;
+		return false;
+	}
+	
+	/**
+	 * Hook method for validating the state of the given element. Must not take care of cache updating etc.
+	 * Default implementation is empty.
+	 * 
+	 * @param element the element
+	 * @param computationContext the context in which validation happens
+	 */
+	protected void doValidateState(Object  element, Object computationContext) throws CoreException {
+	}
+	
 	/*
 	 * @see IDocumentProviderExtension#validateState(Object, Object)
 	 */
-	public void validateState(Object element, Object computationContext) throws CoreException {
+	final public void validateState(Object element, Object computationContext) throws CoreException {
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		if (info != null) {
+			doValidateState(element, computationContext);
+			updateStateCache(element);
+			info.fHasStateBeenValidated= true;
+		}
+	}
+	
+	/**
+	 * Hook method for updating the state of the given element.
+	 * Default implementation is empty.
+	 * 
+	 * @param element the element
+	 */
+	protected void doUpdateStateCache(Object element) throws CoreException {
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#updateStateCache(Object)
+	 */
+	final public void updateStateCache(Object element) throws CoreException {
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		if (info != null) {
+			boolean wasReadOnly= isReadOnly(element);
+			doUpdateStateCache(element);
+			if (isReadOnly(element) != wasReadOnly)
+				info.fHasStateBeenValidated= false;
+		}
 	}
 }

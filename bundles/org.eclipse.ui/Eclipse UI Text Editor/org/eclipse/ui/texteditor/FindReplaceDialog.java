@@ -37,6 +37,7 @@ class FindReplaceDialog extends Dialog {
 	
 	private static final int HISTORY_SIZE= 5;
 
+	private Point fLocation;
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit;
 	private List fFindHistory;
 	private List fReplaceHistory;
@@ -108,6 +109,8 @@ class FindReplaceDialog extends Dialog {
 		
 		Shell shell= getShell();		
 		shell.addShellListener(fActivationListener);
+		if (fLocation != null)
+			shell.setLocation(fLocation);
 		
 		// set help context
 		WorkbenchHelp.setHelp(shell, new Object[] { IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG });
@@ -870,6 +873,15 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void readConfiguration() {
 		IDialogSettings s= getDialogSettings();
+
+		try {
+			int x= s.getInt("x");
+			int y= s.getInt("y");
+			fLocation= new Point(x, y);
+		} catch (NumberFormatException e) {
+			fLocation= null;
+		}
+			
 		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
 		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
@@ -894,6 +906,11 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void writeConfiguration() {
 		IDialogSettings s= getDialogSettings();
+
+		Point location= getShell().getLocation();
+		s.put("x", location.x);
+		s.put("y", location.y);
+		
 		s.put("wrap", fWrapInit); //$NON-NLS-1$
 		s.put("casesensitive", fCaseInit); //$NON-NLS-1$
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$

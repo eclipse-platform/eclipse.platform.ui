@@ -49,7 +49,6 @@ public class TextAttribute {
 	}
 	
 	/**
-	 * 
 	 * @see Object#equals
 	 */
 	public boolean equals(Object object) {
@@ -60,8 +59,21 @@ public class TextAttribute {
 		if (!(object instanceof TextAttribute))
 			return false;
 		
-		TextAttribute a= (TextAttribute) object;			
-		return (a.style == style && a.foreground == foreground && a.background == background);
+		TextAttribute a= (TextAttribute) object;
+		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background));
+	}
+	
+	/**
+	 * Returns whether to given objects are equal.
+	 * 
+	 * @param o1 the first object, can be <code>null</code>
+	 * @param o2 the second object, can be <code>null</code>
+	 * @return <code>true</code> if the given objects are equals
+	 */
+	private boolean equals(Object o1, Object o2) {
+		if (o1 != null)
+			return o1.equals(o2);
+		return (o2 == null);
 	}
 	
 	/*
