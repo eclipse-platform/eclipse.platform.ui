@@ -15,7 +15,7 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.events.VerifyEvent;
 
 /**
- * Implementers can register with an text viewer and 
+ * Implementers can register with a text viewer and 
  * receive <code>VerifyEvent</code>s before the text viewer 
  * they are registered with. If the event consumer marks events
  * as processed by turning their <code>doit</code> field to 
