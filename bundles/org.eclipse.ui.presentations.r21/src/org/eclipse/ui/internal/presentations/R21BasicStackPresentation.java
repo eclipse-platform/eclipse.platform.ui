@@ -716,7 +716,7 @@ public class R21BasicStackPresentation extends StackPresentation {
         closeButton = new ToolItem(viewToolBar, SWT.PUSH);
         closeButton.setDisabledImage(null);
         closeButton.setImage(WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW));
         closeButton.setToolTipText(R21PresentationMessages
                 .getString("BasicStackPresentation.close")); //$NON-NLS-1$
         closeButton.addSelectionListener(new SelectionAdapter() {
