@@ -97,7 +97,8 @@ public abstract class WorkbenchAdviser {
 	 * Performs arbitrary initialization before the workbench starts running.
 	 * <p>
 	 * This method is called during workbench initialization prior to any
-	 * windows being opened. Clients must not call this method. 
+	 * windows being opened. 
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override. 
 	 * Typical clients will use the configurer passed in to tweak the
 	 * workbench, and hang on to the configurer if further tweaking may be
@@ -115,8 +116,8 @@ public abstract class WorkbenchAdviser {
 	 * opened (or restored).
 	 * <p>
 	 * This method is called after the workbench has been initialized and
-	 * just before the first window is about to be opened. Clients must not call
-	 * this method.
+	 * just before the first window is about to be opened.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * </p>
 	 */
@@ -129,7 +130,7 @@ public abstract class WorkbenchAdviser {
 	 * opened (or restored), but before the main event loop is run.
 	 * <p>
 	 * This method is called just after the windows have been opened.
-	 * Clients must not call this method.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * It is okay to <code>IWorkbench.close()</code> from this method.
 	 * </p>
@@ -145,7 +146,8 @@ public abstract class WorkbenchAdviser {
 	 * This method is called after previously-saved windows have been recreated,
 	 * and before <code>postStartup</code>. This method is not called when the
 	 * workbench is started for the very first time, or if workbench state is
-	 * not saved or restored. Clients must not call this method.
+	 * not saved or restored.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * It is okay to <code>IWorkbench.close()</code> from this method.
 	 * </p>
@@ -159,7 +161,8 @@ public abstract class WorkbenchAdviser {
 	 * shut down.
 	 * <p>
 	 * This method is called immediately prior to workbench shutdown before any
-	 * windows have been closed. Clients must not call this method. 
+	 * windows have been closed.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * </p>
 	 * 
@@ -174,7 +177,8 @@ public abstract class WorkbenchAdviser {
 	 * Performs arbitrary finalization after the workbench stops running.
 	 * <p>
 	 * This method is called during workbench shutdown after all windows
-	 * have been closed. Clients must not call this method. 
+	 * have been closed.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * </p>
 	 */
@@ -193,11 +197,13 @@ public abstract class WorkbenchAdviser {
 	 * activated when the system runs short of memory, etc. 
 	 * Fatal errors (ThreadDeath) are not passed on to this method, as there
 	 * is nothing that could be done.
-	 * 
-	 * Clients must not call this method.
-	 * The default implementation makes an emergency exit from the workbench
-	 * after logging the problem. Subclasses may override or extend
-	 * this method, but must be especially careful when handling Errors.
+	 * </p>
+	 * <p>
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation logs the problem so that it does not go
+	 * unnoticed. Subclasses may override or extend this method. It is generally
+	 * a bad idea to override with an empty method, and you should be
+	 * especially careful when handling Errors.
 	 * </p>
 	 * 
 	 * @param exception the uncaught exception that was thrown inside the UI
@@ -223,7 +229,7 @@ public abstract class WorkbenchAdviser {
 			Throwable nested = null;
 			if (exception instanceof SWTException) {
 				nested = ((SWTException)exception).throwable;
-			} else if(exception instanceof SWTError) {
+			} else if (exception instanceof SWTError) {
 				nested = ((SWTError)exception).throwable;
 			}
 			if (nested != null) {
@@ -241,7 +247,7 @@ public abstract class WorkbenchAdviser {
 				exception.printStackTrace();
 			}
 		} catch (Throwable e) {
-			// One of the log listener probably failed. Core should have logged the
+			// One of the log listeners probably failed. Core should have logged the
 			// exception since its the first listener.
 			System.err.println("Error while logging event loop exception:"); //$NON-NLS-1$
 			exception.printStackTrace();
@@ -255,7 +261,7 @@ public abstract class WorkbenchAdviser {
 	 * opened.
 	 * <p>
 	 * This method is called before the window's controls have been created.
-	 * Clients must not call this method.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * Typical clients will use the configurer passed in to tweak the
 	 * workbench window in an application-specific way.
@@ -276,7 +282,7 @@ public abstract class WorkbenchAdviser {
 	 * recreated. This method is not called when a new window is created from
 	 * scratch. This method is never called when a workbench is started for the
 	 * very first time, or when workbench state is not saved or restored.
-	 * Clients must not call this method.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * It is okay to <code>IWorkbench.close()</code> from this method.
 	 * </p>
@@ -293,7 +299,7 @@ public abstract class WorkbenchAdviser {
 	 * closed.
 	 * <p>
 	 * This method is called after the window's controls have been disposed.
-	 * Clients must not call this method.
+	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * Typical clients will use the configurer passed in to tweak the
 	 * workbench window in an application-specific way.
