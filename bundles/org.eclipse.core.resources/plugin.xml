@@ -75,13 +75,11 @@
       </antTask>
    </extension>
 
-   <!-- Objects -->
-   <extension point="org.eclipse.ant.core.antObjects">
-      <antObject
-         name="org.eclipse.core.resources.ant.EclipseFileUtils"
-         class="org.eclipse.core.resources.ant.EclipseFileUtils"
+   <!-- Extra Classpath -->
+   <extension point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
          library="lib/resources-ant.jar">
-      </antObject>
+      </extraClasspathEntry>
    </extension>
 
 </plugin>
