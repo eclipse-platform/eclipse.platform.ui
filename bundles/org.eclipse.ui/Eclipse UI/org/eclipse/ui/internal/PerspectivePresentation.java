@@ -908,6 +908,17 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
  * folder, the shortcut bar, or editor area.
  */
 private void onPartDragOver(PartDropEvent e) {
+	// If the drag source is the active fast view, minimize it when
+	// it is dragged. This is to allow it to be dropped somewhere in
+	// the page layout that it was covering.
+	if (e.dragSource instanceof ViewPane) {
+		IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
+		Perspective persp = page.getActivePerspective();
+		if (part == persp.getActiveFastView()) {
+			persp.setActiveFastView(null, 0);
+		}
+	}
+	
 	/*
 	 * Detached window no longer supported - remove when confirmed
 	 * 
@@ -934,6 +945,16 @@ private void onPartDragOver(PartDropEvent e) {
 
 	// If drop target is short cut bar force center.
 	if (e.dropTarget instanceof ShortcutBarPart) {
+		// If the drag source is a fast view, the shortcut bar is
+		// invalid drop target.
+		if (e.dragSource instanceof ViewPane) {
+			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
+			if (isFastView(part)) {
+				e.dropTarget = null;
+				e.relativePosition = PartDragDrop.INVALID;
+				return;
+			}
+		}
 		e.relativePosition = PartDragDrop.CENTER;
 		return;
 	}
@@ -1088,13 +1109,25 @@ private void onPartDragOver(PartDropEvent e) {
  */
 private void onPartDrop(PartDropEvent e) {
 	// If invalid drop position ignore.
-	if (e.relativePosition == PartDragDrop.INVALID)
+	if (e.relativePosition == PartDragDrop.INVALID) {
+		// If the drag source is a fast view, make it the active
+		// fast view when it is dropped somewhere valid. This is
+		// because it was minimized when it was dragged.
+		if (e.dragSource instanceof ViewPane) {
+			IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
+			if (isFastView(view)) {
+				Perspective persp = page.getActivePerspective();
+				persp.setActiveFastView(view);
+			}
+		}	
 		return;
+	}
 	
+	// If the drag source is a fast view, make it a regular view
+	// when it is dropped somewhere valid.
 	if (e.dragSource instanceof ViewPane) {
 		IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
 		if (isFastView(view)) {
-			WorkbenchPage page = (WorkbenchPage)view.getSite().getPage();
 			page.removeFastView(view);
 		}
 	}

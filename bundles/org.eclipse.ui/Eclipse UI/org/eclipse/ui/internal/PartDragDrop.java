@@ -260,6 +260,8 @@ public void mouseDown(MouseEvent e) {
 	// track left button only.
 	if (e.button != 1) 
 		return;
+	if (getSourceBounds().width == 0 || getSourceBounds().height == 0)
+		return;
 	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
 		return;
 	// remember anchor position for hysteresis in mouseMove
@@ -359,9 +361,16 @@ public void openTracker() {
 	event.cursorY = p1.y;
 	if (!dragControl.isDisposed())
 		dragControl.setCursor(null);
-	if (dropListeners != null && trackingOk) {
+	if (dropListeners != null) {
+		if (trackingOk) {
+			for(int i = 0, length = dropListeners.length; i < length; i++) {
+				dropListeners[i].dragOver(event);
+			}
+		} else {
+			event.relativePosition = INVALID;
+		}
+		
 		for(int i = 0, length = dropListeners.length; i < length; i++) {
-			dropListeners[i].dragOver(event);
 			dropListeners[i].drop(event);
 		}
 	}

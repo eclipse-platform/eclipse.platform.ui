@@ -47,6 +47,7 @@ public class Perspective
 	
 	// fields used by fast view resizing via a sash
 	private static final int SASH_SIZE = 3;
+	private static final int FAST_VIEW_HIDE_STEPS = 3;
 	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
 	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
 	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
@@ -417,22 +418,25 @@ protected void hideEditorArea() {
 		editorArea.getControl().setEnabled(false);
 }
 /**
- * Hides a fast view.
+ * Hides a fast view. The view shrinks equally <code>steps</code> times
+ * before disappearing completely.
  */
-private void hideFastView(IViewPart part) {
+private void hideFastView(IViewPart part, int steps) {
 	// Get pane.
 	ViewPane pane = getPane(part);
 	// Hide the right side sash first
 	if (fastViewSash != null)
 		fastViewSash.setBounds(0, 0, 0, 0);
-	
-	// Slide it off screen.
-	Rectangle bounds = pane.getBounds();
 	Control ctrl = pane.getControl();
-	int increment = bounds.width / 3;
-	for (int nX = 0; nX <= bounds.width - 2; nX += increment) {
-		ctrl.setLocation(-nX, bounds.y);
-		ctrl.getParent().update();
+	
+	if(steps != 0) {
+		// Slide it off screen.
+		Rectangle bounds = pane.getBounds();
+		int increment = bounds.width / steps;
+		for (int nX = 0; nX <= bounds.width - 2; nX += increment) {
+			ctrl.setLocation(-nX, bounds.y);
+			ctrl.getParent().update();
+		}
 	}
 	// Hide it completely.
 	pane.setBounds(0, 0, 0, 0);
@@ -1023,18 +1027,26 @@ public IViewPart getActiveFastView() {
 	return activeFastView;
 }
 /**
- * Sets the active fast view.
+ * Sets the active fast view. If a different fast view is already open,
+ * it shrinks equally <code>steps</code> times before disappearing
+ * completely. Then, <code>view</code> becomes active and is shown.
  */
-private void setActiveFastView(IViewPart view) {
+/*package*/ void setActiveFastView(IViewPart view, int steps) {
 	if (activeFastView == view)
 		return;
 	if (activeFastView != null) {
-		hideFastView(activeFastView);
+		hideFastView(activeFastView, steps);
 	}
 	activeFastView = view;
 	if (activeFastView != null) {
 		showFastView(activeFastView);
 	}
+}
+/**
+ * Sets the active fast view.
+ */
+/*package*/ void setActiveFastView(IViewPart view) {
+	setActiveFastView(view, FAST_VIEW_HIDE_STEPS);
 }
 /**
  * Sets the visibility of all fast view pins.
