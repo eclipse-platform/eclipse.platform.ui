@@ -81,7 +81,7 @@ public class CmdLineArgs {
 			|| cmd.equals("update")
 			|| cmd.equals("mirror")
 			|| cmd.equals("uninstall")
-			|| cmd.equals("configuredFeatures")
+			|| cmd.equals("listFeatures")
 			|| cmd.equals("addSite")
 			|| cmd.equals("removeSite");
 	}
@@ -127,7 +127,7 @@ public class CmdLineArgs {
 					(String) options.get("-version"),
 					(String) options.get("-to"),
 					(String) options.get("-verifyOnly"));
-			else if (cmd.equals("configuredFeatures"))
+			else if (cmd.equals("listFeatures"))
 				return new ListConfigFeaturesCommand((String) options.get("-from"));
 			else if (cmd.equals("addSite"))
 				return new AddSiteCommand((String) options.get("-from"));

@@ -29,7 +29,7 @@ import org.eclipse.update.internal.core.*;
  * @since 3.0
  */
 public class ListConfigFeaturesCommand extends ScriptedCommand {
-	private IConfiguredSite[] sites;
+	private IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 	
 	/**
 	 * @param fromSite if specified, list only the features from the specified local install site
@@ -51,9 +51,7 @@ public class ListConfigFeaturesCommand extends ScriptedCommand {
 				if (csite == null)
 					throw new Exception("Cannot find configured site: " + fromSite);
 				sites = new IConfiguredSite[] { csite };
-			} else {
-				sites = getConfiguration().getConfiguredSites();
-			}
+			} 
 		
 		} catch (Exception e) {
 			throw e;
@@ -67,9 +65,11 @@ public class ListConfigFeaturesCommand extends ScriptedCommand {
 				if (sites != null) {
 					for (int i=0; i<sites.length; i++) {
 						System.out.println("Site:" + sites[i].getSite().getURL());
-						IFeatureReference[] features = sites[i].getConfiguredFeatures();
-						for (int f=0; f<features.length; f++)
-							System.out.println("  Feature: " + features[f].getVersionedIdentifier());
+						IFeatureReference[] features = sites[i].getFeatureReferences();
+						for (int f=0; f<features.length; f++) {
+							boolean configured = sites[i].isConfigured(features[f].getFeature(null));
+							System.out.println("  Feature: " + features[f].getVersionedIdentifier() + "  " + (configured ? "configured" : "unconfigured"));
+						}
 					}
 				}
 				return true;
