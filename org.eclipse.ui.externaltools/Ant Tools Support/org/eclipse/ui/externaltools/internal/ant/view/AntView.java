@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -56,10 +57,10 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.AntViewOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
@@ -81,6 +82,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * user to run selected targets from those files.
  */
 public class AntView extends ViewPart implements IResourceChangeListener {
+
 	/**
 	 * The root node of the project viewer as restored during initialization
 	 */
@@ -159,6 +161,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
+	private AntViewOpenWithMenu openWithMenu;
 	// TargetsViewer actions
 	private RunActiveTargetsAction runActiveTargetsAction;
 	private DeactivateTargetAction deactivateTargetAction;
@@ -368,8 +371,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				if (buildFile != null && buildFile.exists()) {
 					menu.add(new Separator("group.open")); //$NON-NLS-1$
 					IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.Open_With_3"));  //$NON-NLS-1$
-					
-					submenu.add(new OpenWithMenu(getViewSite().getPage(), buildFile));
+					openWithMenu.setFile(buildFile);
+					submenu.add(openWithMenu);
 					menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
 				}
 			}
@@ -425,6 +428,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		updateActions.add(moveUpAction);
 		moveDownAction = new TargetMoveDownAction(this);
 		updateActions.add(moveDownAction);
+		openWithMenu= new AntViewOpenWithMenu(this.getViewSite().getPage());
 		horizontalOrientationAction= new SwitchAntViewOrientation(this, SWT.HORIZONTAL);
 		verticalOrientationAction= new SwitchAntViewOrientation(this, SWT.VERTICAL);
 	}
@@ -486,12 +490,17 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		projectViewer.setContentProvider(projectContentProvider);
 		projectViewer.setLabelProvider(new AntViewLabelProvider());
 		projectViewer.setInput(restoredRoot);
+		projectViewer.setSorter(new ViewerSorter() {
+			/**
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				return e1.toString().compareToIgnoreCase(e2.toString());
+			}
+		});
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				Iterator actionIter = updateActions.iterator();
-				while (actionIter.hasNext()) {
-					((IUpdate) actionIter.next()).update();
-				}
+				updateActions();
 				Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
 				Object selection = null;
 				if (selectionIter.hasNext()) {
@@ -844,6 +853,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	public void dispose() {
 		super.dispose();
+		if (openWithMenu != null) {
+			openWithMenu.dispose();
+		}
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
