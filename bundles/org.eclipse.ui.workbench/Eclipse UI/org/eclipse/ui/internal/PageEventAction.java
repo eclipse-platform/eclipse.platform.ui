@@ -45,6 +45,9 @@ import org.eclipse.ui.actions.*;
  *   <li><code>pageOpened</code></li>
  * </ul>
  * </p>
+ * @issue need to document the lifecycle - who (de)registers this action as a listener
+ * @issue could we remove the public methods of IPageListener on this class
+ * @issue could this be made API
  */
 public abstract class PageEventAction extends PartEventAction
 	implements IPageListener

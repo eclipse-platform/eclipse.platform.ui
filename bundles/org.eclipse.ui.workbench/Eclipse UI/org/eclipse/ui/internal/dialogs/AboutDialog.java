@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
@@ -70,6 +71,7 @@ public class AboutDialog extends ProductInfoDialog {
 			case INFO_ID :
 				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 					public void run() {
+						// @issue replace system editor with dialog with text widget (can't depend on text editor plugins) 
 						workbench.getConfigurationInfo().openSystemSummaryEditor(window);
 					}
 				});

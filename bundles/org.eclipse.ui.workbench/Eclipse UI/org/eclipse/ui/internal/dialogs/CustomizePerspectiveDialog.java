@@ -48,6 +48,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+// @issue add class doc
+// @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends Dialog {
 	private Perspective perspective;
 	private WorkbenchWindow window;

@@ -43,6 +43,8 @@ import org.eclipse.ui.*;
  *   <li><code>pageOpened</code></li>
  * </ul>
  * </p>
+ * @issue need to document the lifecycle - who (de)registers this action as a listener
+ * @issue could this be made API
  */
 public abstract class ActiveEditorAction extends PageEventAction {
 	private IEditorPart activeEditor;

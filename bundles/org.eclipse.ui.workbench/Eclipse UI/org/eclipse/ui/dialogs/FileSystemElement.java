@@ -130,6 +130,7 @@ public String getFileNameExtension() {
  *  files property is null. 
  *  This method should not be used to add children
  *  to the receiver. Use addChild(FileSystemElement) instead.
+ * @issue AdaptableList is not API
  */
 public AdaptableList getFiles() {
 	
@@ -149,6 +150,7 @@ public Object getFileSystemObject() {
  * of this folder.  Answer an empty list if the folders property is null.
  * This method should not be used to add children
  * to the receiver. Use addChild(FileSystemElement) instead.
+ * @issue AdaptableList is not API
  */
 public AdaptableList getFolders() {
 	if (folders == null) return EMPTY_LIST;

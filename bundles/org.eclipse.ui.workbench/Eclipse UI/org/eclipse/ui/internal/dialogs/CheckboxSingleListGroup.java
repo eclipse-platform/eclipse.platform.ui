@@ -24,7 +24,9 @@ import java.util.*;
 import java.util.List;
 /**
  *	This class implements the identical API to CheckboxDoubleListGroup, but
- *	only displays a single checkbox list. 
+ *	only displays a single checkbox list.
+ *
+ * @issue appears to be garbage - no one using this 
  */
 class CheckboxSingleListGroup extends Composite implements ICheckStateListener, ISelectionChangedListener {
 	private	Object			root;

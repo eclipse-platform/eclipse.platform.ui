@@ -26,6 +26,7 @@ public class ExternalEditor {
 	private EditorDescriptor descriptor;
 /**
  * Create an external editor.
+ * @issue this should use IPath instead of IFile
  */
 public ExternalEditor(IFile newFile, EditorDescriptor editorDescriptor) {
 	this.file = newFile;

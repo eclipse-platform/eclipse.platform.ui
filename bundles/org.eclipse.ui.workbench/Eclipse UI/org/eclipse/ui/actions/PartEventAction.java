@@ -35,6 +35,8 @@ import org.eclipse.jface.action.Action;
  *   <li><code>partBroughtToTop</code></li>
  * </ul>
  * </p>
+ * @issue need to document the lifecycle - who (de)registers this action as a listener
+ * @issue could we remove the public methods of IPartListener on this class
  */
 public abstract class PartEventAction extends Action implements IPartListener {
 

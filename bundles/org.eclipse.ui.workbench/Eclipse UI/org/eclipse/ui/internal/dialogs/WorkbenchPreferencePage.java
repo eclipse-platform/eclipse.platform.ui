@@ -90,6 +90,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// set initial values
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		// @issue auto build pref is IDE specific
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
@@ -196,6 +197,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		saveInterval.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		saveInterval.setValidRange(1, IPreferenceConstants.MAX_SAVE_INTERVAL);
 
+		// @issue save interval pref is IDE specific
 		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
 		long interval = description.getSnapshotInterval() / 60000;
 		saveInterval.setStringValue(Long.toString(interval));
