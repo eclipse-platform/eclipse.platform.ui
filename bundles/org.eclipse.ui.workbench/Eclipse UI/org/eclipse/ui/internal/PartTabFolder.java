@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -846,18 +847,15 @@ private void setSelection(LayoutPart part) {
 		current.setVisible(true);
 	}
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // set the title of the detached window to reflact the active tab
-	 * Window window = getWindow();
-	 * if (window instanceof DetachedWindow) {
-	 * 	if (current == null || !(current instanceof PartPane))
-	 * 		window.getShell().setText("");//$NON-NLS-1$
-	 * 	else
-	 * 		window.getShell().setText(((PartPane)current).getPart().getTitle());
-	 * }
-	 */
+	
+	  // set the title of the detached window to reflact the active tab
+	  Window window = getWindow();
+	  if (window instanceof DetachedWindow) {
+	  	if (current == null || !(current instanceof PartPane))
+	  		window.getShell().setText("");//$NON-NLS-1$
+	  	else
+	  		window.getShell().setText(((PartPane)current).getPartReference().getTitle());
+	 }
 }
 /**
  * @see IPartDropTarget::targetPartFor

@@ -1461,12 +1461,9 @@ public IViewPart showView(String viewID)
 		presentation.addPart(pane);
 	} else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
 		presentation.addPart(pane);
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * } else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
-	 * 	   presentation.addDetachedPart(pane);
-	 */
+	
+	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
+		presentation.addDetachedPart(pane);
 	} else {
 		showFastView(ref);
 		addFastView(ref);

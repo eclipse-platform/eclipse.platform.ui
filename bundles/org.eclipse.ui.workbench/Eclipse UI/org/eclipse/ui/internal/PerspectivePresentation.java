@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -36,13 +37,11 @@ public class PerspectivePresentation {
 	private Composite parentWidget;
 	private RootLayoutContainer mainLayout;
 	private IWorkbenchPartReference zoomPart;
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * private ArrayList detachedWindowList = new ArrayList(1);
-	 * private ArrayList detachedPlaceHolderList = new ArrayList(1);
-	 * private boolean detachable = false;
-	 */
+
+	private ArrayList detachedWindowList = new ArrayList(1);
+	private ArrayList detachedPlaceHolderList = new ArrayList(1);
+	private boolean detachable = false;
+	
 	private boolean active = false;
 	// Flag used during drag and drop to specify if a fast
 	// view was active when the drag started.
@@ -51,6 +50,9 @@ public class PerspectivePresentation {
 	private Map dragParts = new HashMap();  // key is the LayoutPart object, value is the PartDragDrop object
 	private IPartDropListener partDropListener;
 
+  	private static final int MIN_DETACH_WIDTH = 150;
+  	private static final int MIN_DETACH_HEIGHT = 250;	
+
 /**
  * Constructs a new object.
  */
@@ -58,13 +60,10 @@ public PerspectivePresentation(WorkbenchPage workbenchPage, RootLayoutContainer 
 	this.page = workbenchPage;
 	this.mainLayout = mainLayout;
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // Should ask the actual control
-	 * this.detachable = workbenchPage.getWorkbenchWindow().getShell().isReparentable();
-	 */
-	
+	// Should ask the actual control
+	this.detachable = workbenchPage.getWorkbenchWindow().getShell().isReparentable();
+	initDETACHABLE();
+	  	
 	this.partDropListener = new IPartDropListener() {
 		public void dragOver(PartDropEvent e) {
 			onPartDragOver(e);
@@ -73,6 +72,16 @@ public PerspectivePresentation(WorkbenchPage workbenchPage, RootLayoutContainer 
 			onPartDrop(e);
 		};
 	};
+}
+/* temp method. Should be deleted it */
+private void initDETACHABLE() {
+	String commandLineArgs[] = ((Workbench)PlatformUI.getWorkbench()).getCommandLineArgs();
+	for (int i = 0; i < commandLineArgs.length; i++) {
+		if (commandLineArgs[i].equalsIgnoreCase("-detach")) { //$NON-NLS-1$
+			return;
+		}
+	}
+	this.detachable = false;
 }
 /**
  * Show the presentation.
@@ -95,15 +104,11 @@ public void activate(Composite parent) {
 	}
 	mainLayout.createControl(parent);
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // Open the detached windows.
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow dwindow = (DetachedWindow)detachedWindowList.get(i);
-	 * 	dwindow.open();
-	 * }
-	 */
+	// Open the detached windows.
+	for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+		DetachedWindow dwindow = (DetachedWindow)detachedWindowList.get(i);
+		dwindow.open();
+	}
 
 	enableAllDrag();
 	enableAllDrop();
@@ -128,11 +133,7 @@ public void addPart(LayoutPart part) {
 
 	// If there is no placeholder do a simple add. Otherwise, replace the placeholder.
 	if (placeholder == null) {
-		/*
-		 * Detached window no longer supported - remove when confirmed
-		 * 
-		 * part.reparent(mainLayout.getParent());
-		 */
+		part.reparent(mainLayout.getParent());
 		LayoutPart relative = mainLayout.findBottomRight();
 		if(relative != null && !(relative instanceof EditorArea)) {
 			stack(part,relative);
@@ -142,30 +143,29 @@ public void addPart(LayoutPart part) {
 	} else {
 		ILayoutContainer container = placeholder.getContainer();
 		if (container != null) {
-			/*
-			 * Detached window no longer supported - remove when confirmed
-			 * 
-			 * if (container instanceof DetachedPlaceHolder) {
-			 * 	//Create a detached window add the part on it.
-			 * 	DetachedPlaceHolder holder = (DetachedPlaceHolder)container;
-			 * 	detachedPlaceHolderList.remove(holder);
-			 * 	container.remove(testPart);
-			 * 	DetachedWindow window = new DetachedWindow(page);
-			 * 	detachedWindowList.add(window);
-			 * 	window.create();
-			 * 	part.createControl(window.getShell());
-			 * 	// Open window.
-			 * 	window.getShell().setBounds(holder.getBounds());
-			 * 	window.open();
-			 * 	// add part to detached window.
-			 * 	ViewPane pane = (ViewPane) part;
-			 * 	window.getShell().setText(pane.getPart().getTitle());
-			 * 	window.add(pane, partDropListener);
-			 * 	LayoutPart otherChildren[] = holder.getChildren();
-			 * 	for (int i = 0; i < otherChildren.length; i++)
-			 * 		part.getContainer().add(otherChildren[i]);
-			 * } else {
-			 */
+			
+			  
+			  if (container instanceof DetachedPlaceHolder) {
+			  	//Create a detached window add the part on it.
+			  	DetachedPlaceHolder holder = (DetachedPlaceHolder)container;
+			  	detachedPlaceHolderList.remove(holder);
+			  	container.remove(testPart);
+			  	DetachedWindow window = new DetachedWindow(page);
+			  	detachedWindowList.add(window);
+			  	window.create();
+			  	part.createControl(window.getShell());
+			  	// Open window.
+			  	window.getShell().setBounds(holder.getBounds());
+			  	window.open();
+			  	// add part to detached window.
+			  	ViewPane pane = (ViewPane) part;
+			  	window.getShell().setText(pane.getPartReference().getTitle());
+			  	window.add(pane, partDropListener);
+			  	LayoutPart otherChildren[] = holder.getChildren();
+			  	for (int i = 0; i < otherChildren.length; i++)
+			  		part.getContainer().add(otherChildren[i]);
+			  } else {
+			 
 				// reconsistute parent if necessary
 				if (container instanceof ContainerPlaceholder) {
 					ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder)container;
@@ -187,11 +187,7 @@ public void addPart(LayoutPart part) {
 				
 				// replace placeholder with real part
 				container.replace(placeholder, part);
-			/*
-			 * Detached window no longer supported - remove when confirmed
-			 * 
-			 * }
-			 */
+			 }
 		}
 	}	
 	
@@ -203,13 +199,9 @@ public void addPart(LayoutPart part) {
 /**
  * Return whether detachable parts can be supported.
  */
-/*
- * Detached window no longer supported - remove when confirmed
- *
- * public boolean canDetach() {
- * 	return detachable;
- * }
- */
+public boolean canDetach() {
+	return detachable;
+}
  
 /**
  * Bring a part forward so it is visible.
@@ -275,22 +267,18 @@ public boolean willPartBeVisible(String partId) {
 /**
  * Answer a list of the view panes.
  */
-/*
- * Detached window no longer supported - remove when confirmed
- *
- * private DetachedWindow[] collectDetachedWindows(Window[] windows) {
- * 	DetachedWindow[] result = new DetachedWindow[0];
- * 	for (int i = 0, length = windows.length; i < length; i++) {
- * 		if (windows[i] instanceof DetachedWindow && ((DetachedWindow)windows[i]).belongsToWorkbenchPage(page)) {
- * 			DetachedWindow[] newResult = new DetachedWindow[result.length + 1];
- * 			System.arraycopy(result, 0, newResult, 0, result.length);
- * 			newResult[result.length] = (DetachedWindow)windows[i];
- * 			result = newResult;
- * 		}
- * 	}
- * 	return result;
- * }
- */
+private DetachedWindow[] collectDetachedWindows(Window[] windows) {
+ 	DetachedWindow[] result = new DetachedWindow[0];
+  	for (int i = 0, length = windows.length; i < length; i++) {
+  		if (windows[i] instanceof DetachedWindow && ((DetachedWindow)windows[i]).belongsToWorkbenchPage(page)) {
+  			DetachedWindow[] newResult = new DetachedWindow[result.length + 1];
+  			System.arraycopy(result, 0, newResult, 0, result.length);
+  			newResult[result.length] = (DetachedWindow)windows[i];
+  			result = newResult;
+  		}
+  	}
+  	return result;
+}
 
 /**
  * Open the tracker to allow the user to move
@@ -335,25 +323,20 @@ private PartPlaceholder[] collectPlaceholders() {
 	// Scan the main window.
 	PartPlaceholder[] results = collectPlaceholders(mainLayout.getChildren());
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // Scan each detached window.
-	 * if (detachable) {
-	 * 	for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-	 * 		DetachedWindow win = (DetachedWindow)detachedWindowList.get(i);
-	 * 		PartPlaceholder [] moreResults = collectPlaceholders(win.getChildren());
-	 * 		if (moreResults.length > 0) {
-	 * 			int newLength = results.length + moreResults.length;
-	 * 			PartPlaceholder [] newResults = new PartPlaceholder[newLength];
-	 * 			System.arraycopy(results, 0, newResults, 0, results.length);
-	 * 			System.arraycopy(moreResults, 0, newResults, results.length, moreResults.length);
-	 * 			results = newResults;
-	 * 		}
-	 * 	}		
-	 * }
-	 */
-	 
+	// Scan each detached window.
+	  if (detachable) {
+	  	for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
+	  		DetachedWindow win = (DetachedWindow)detachedWindowList.get(i);
+	  		PartPlaceholder [] moreResults = collectPlaceholders(win.getChildren());
+	  		if (moreResults.length > 0) {
+	  			int newLength = results.length + moreResults.length;
+	  			PartPlaceholder [] newResults = new PartPlaceholder[newLength];
+	  			System.arraycopy(results, 0, newResults, 0, results.length);
+	  			System.arraycopy(moreResults, 0, newResults, results.length, moreResults.length);
+	  			results = newResults;
+	  		}
+	  	}		
+	  }
 	return results;
 }
 /**
@@ -388,17 +371,13 @@ public void collectViewPanes(List result) {
 	// Scan the main window.
 	collectViewPanes(result, mainLayout.getChildren());
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // Scan each detached window.
-	 * if (detachable) {
-	 * 	for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-	 * 		DetachedWindow win = (DetachedWindow)detachedWindowList.get(i);
-	 * 		collectViewPanes(result, win.getChildren());
-	 * 	}		
-	 * }
-	 */
+	  // Scan each detached window.
+	  if (detachable) {
+	  	for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
+	  		DetachedWindow win = (DetachedWindow)detachedWindowList.get(i);
+	  		collectViewPanes(result, win.getChildren());
+	  	}		
+	  }
 }
 /**
  * Answer a list of the view panes.
@@ -426,14 +405,11 @@ public void deactivate() {
 	Vector children = new Vector();
 	collectViewPanes(children, mainLayout.getChildren());
 	
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 	collectViewPanes(children, window.getChildren());
-	 * }
-	 */
+	
+	  for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+	  	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	  	collectViewPanes(children, window.getChildren());
+	  }
 
 	// *** Do we even need to do this if detached windows not supported?	 
 	Enumeration enum = children.elements();
@@ -445,16 +421,12 @@ public void deactivate() {
 	// Dispose main layout.	
 	mainLayout.dispose();
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * // Dispose the detached windows
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 	window.close();
-	 * }
-	 */
-
+	 // Dispose the detached windows
+	 for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+	  	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	  	window.close();
+	 }
+	 
 	active = false;
 }
 /**
@@ -466,13 +438,9 @@ private void derefPart(LayoutPart part) {
 	Window oldWindow = part.getWindow();
 	ILayoutContainer oldContainer = part.getContainer();
 	
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * // Reparent the part back to the main window
-	 * part.reparent((Composite)mainLayout.getParent());
-	 */
-
+	// Reparent the part back to the main window
+	part.reparent((Composite)mainLayout.getParent());
+	
 	// Update container.
 	if (oldContainer == null) 
 		return;
@@ -520,149 +488,140 @@ private void derefPart(LayoutPart part) {
 			}
 		}
 	}
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * else if (oldWindow instanceof DetachedWindow) {
-	 * 	if (children == null || children.length == 0) {
-	 * 		// There are no more children in this container, so get rid of it
-	 * 		// Turn on redraw again just in case it was off.
-	 * 		oldWindow.getShell().setRedraw(true);
-	 * 		oldWindow.close();
-	 * 		detachedWindowList.remove(oldWindow);
-	 * 	} else {
-	 * 		// There are children.  If none are visible hide detached window.
-	 * 		boolean allInvisible = true;
-	 * 		for (int i = 0, length = children.length; i < length; i++){
-	 * 			if (!(children[i] instanceof PartPlaceholder)) {
-	 * 				allInvisible = false;
-	 * 				break;
-	 * 			}
-	 * 		}
-	 * 		if (allInvisible) {
-	 * 			DetachedPlaceHolder placeholder = new DetachedPlaceHolder("", //$NON-NLS-1$
-	 * 				oldWindow.getShell().getBounds());
-	 * 			for (int i = 0, length = children.length; i < length; i++){
-	 * 				oldContainer.remove(children[i]);
-	 * 				children[i].setContainer(placeholder);
-	 * 				placeholder.add(children[i]);
-	 * 			}
-	 * 			detachedPlaceHolderList.add(placeholder);
-	 * 			oldWindow.close();
-	 * 			detachedWindowList.remove(oldWindow);
-	 * 		}
-	 * 	}
-	 * }
-	 */
+	else if (oldWindow instanceof DetachedWindow) {
+	 	if (children == null || children.length == 0) {
+	 		// There are no more children in this container, so get rid of it
+	 		// Turn on redraw again just in case it was off.
+	 		oldWindow.getShell().setRedraw(true);
+	 		oldWindow.close();
+	 		detachedWindowList.remove(oldWindow);
+	 	} else {
+	 		// There are children.  If none are visible hide detached window.
+	 		boolean allInvisible = true;
+	 		for (int i = 0, length = children.length; i < length; i++){
+	 			if (!(children[i] instanceof PartPlaceholder)) {
+	 				allInvisible = false;
+	 				break;
+	 			}
+	 		}
+	 		if (allInvisible) {
+	 			DetachedPlaceHolder placeholder = new DetachedPlaceHolder("", //$NON-NLS-1$
+	 				oldWindow.getShell().getBounds());
+	 			for (int i = 0, length = children.length; i < length; i++){
+	 				oldContainer.remove(children[i]);
+	 				children[i].setContainer(placeholder);
+	 				placeholder.add(children[i]);
+				}
+	 			detachedPlaceHolderList.add(placeholder);
+	 			oldWindow.close();
+	 			detachedWindowList.remove(oldWindow);
+	 		}
+	 	}
+	  }
+	 
 }
 /**
  * Create a detached window containing a part.
  */
-/*
- * Detached window no longer supported - remove when confirmed
- * 
- * private void detach(LayoutPart part, int x, int y) {
- * 	// Detaching is disabled on some platforms ..
- * 	if (!detachable) 
- * 		return;
- * 		
- * 	// Calculate detached window size.
- * 	Point size = part.getSize();
- * 	if (size.x == 0 || size.y == 0) {
- * 		ILayoutContainer container = part.getContainer();
- * 		if (container instanceof LayoutPart) {
- * 			size = ((LayoutPart)container).getSize();
- * 		}
- * 	}
- * 	int width = Math.max(size.x, MIN_DETACH_WIDTH);
- * 	int height = Math.max(size.y, MIN_DETACH_HEIGHT);
- * 	
- * 	// Create detached window.
- * 	DetachedWindow window = new DetachedWindow(page);
- * 	detachedWindowList.add(window);
- * 	
- * 	// Open window.
- * 	window.create();
- * 	window.getShell().setBounds(x, y, width, height);
- * 	window.open();
- * 
- * 	if (part instanceof PartTabFolder) {
- * 		window.getShell().setRedraw(false);
- * 		parentWidget.setRedraw(false);
- * 		LayoutPart visiblePart = ((PartTabFolder)part).getVisiblePart();
- * 		LayoutPart children[] = ((PartTabFolder)part).getChildren();
- * 		for (int i = 0; i < children.length; i++) {
- * 			if (children[i] instanceof ViewPane) {
- * 				// remove the part from its current container
- * 				derefPart(children[i]);
- * 				// add part to detached window.
- * 				ViewPane pane = (ViewPane) children[i];
- * 				window.getShell().setText(pane.getPart().getTitle());
- * 				window.add(pane, partDropListener);
- * 			}
- * 		}
- * 		if (visiblePart != null) {
- * 			bringPartToTop(visiblePart);
- * 			visiblePart.setFocus();
- * 		}
- * 		window.getShell().setRedraw(true);
- * 		parentWidget.setRedraw(true);
- * 	}
- * 	else {
- * 		// remove the part from its current container
- * 		derefPart(part);
- * 		// add part to detached window.
- * 		ViewPane pane = (ViewPane) part;
- * 		window.getShell().setText(pane.getPart().getTitle());
- * 		window.add(pane, partDropListener);
- * 		part.setFocus();
- * 	}
- * 
- * }
- */
+  private void detach(LayoutPart part, int x, int y) {
+  	// Detaching is disabled on some platforms ..
+  	if (!detachable) 
+  		return;
+  		
+  	// Calculate detached window size.
+  	Point size = part.getSize();
+  	if (size.x == 0 || size.y == 0) {
+  		ILayoutContainer container = part.getContainer();
+  		if (container instanceof LayoutPart) {
+  			size = ((LayoutPart)container).getSize();
+  		}
+  	}
+  	int width = Math.max(size.x, MIN_DETACH_WIDTH);
+  	int height = Math.max(size.y, MIN_DETACH_HEIGHT);
+ 
+ 	// Create detached window.
+  	DetachedWindow window = new DetachedWindow(page);
+  	detachedWindowList.add(window);
+  	
+  	// Open window.
+  	window.create();
+  	window.getShell().setBounds(x, y, width, height);
+  	window.open();
+  
+  	if (part instanceof PartTabFolder) {
+  		window.getShell().setRedraw(false);
+  		parentWidget.setRedraw(false);
+  		LayoutPart visiblePart = ((PartTabFolder)part).getVisiblePart();
+  		LayoutPart children[] = ((PartTabFolder)part).getChildren();
+  		for (int i = 0; i < children.length; i++) {
+  			if (children[i] instanceof ViewPane) {
+  				// remove the part from its current container
+  				derefPart(children[i]);
+  				// add part to detached window.
+  				ViewPane pane = (ViewPane) children[i];
+  				window.getShell().setText(pane.getPartReference().getTitle());
+  				window.add(pane, partDropListener);
+  			}
+  		}
+  		if (visiblePart != null) {
+  			bringPartToTop(visiblePart);
+  			visiblePart.setFocus();
+  		}
+  		window.getShell().setRedraw(true);
+  		parentWidget.setRedraw(true);
+  	}
+  	else {
+  		// remove the part from its current container
+  		derefPart(part);
+  		// add part to detached window.
+  		ViewPane pane = (ViewPane) part;
+  		window.getShell().setText(pane.getPartReference().getTitle());
+  		window.add(pane, partDropListener);
+  		part.setFocus();
+  	}
+  
+  }
+ 
  
 /**
  * Create a detached window containing a part.
  */
-/*
- * Detached window no longer supported - remove when confirmed
- * 
- * public void addDetachedPart(LayoutPart part) {
- * 	// Detaching is disabled on some platforms ..
- * 	if (!detachable) {
- * 		addPart(part);
- * 		return;
- * 	}
- * 		
- * 	// Calculate detached window size.
- * 	int width = 300;
- * 	int height = 300;
- * 	Rectangle bounds = parentWidget.getShell().getBounds();
- * 	int x = bounds.x + (bounds.width - width) / 2;
- * 	int y = bounds.y + (bounds.height - height) / 2;
- * 	
- * 	// Create detached window.
- * 	DetachedWindow window = new DetachedWindow(page);
- * 	detachedWindowList.add(window);
- * 	window.create();
- * 
- * 	// add part to detached window.
- * 	part.createControl(window.getShell());
- * 	ViewPane pane = (ViewPane) part;
- * 	window.getShell().setText(pane.getPart().getTitle());
- * 	window.add(pane, partDropListener);
- * 
- * 	// Open window.
- * 	window.getShell().setBounds(x, y, width, height);
- * 	window.open();
- * 
- * 	part.setFocus();
- * 
- * 	// enable direct manipulation
- * 	enableDrag(pane);
- * 	enableDrop(part);
- * }
- */
+  public void addDetachedPart(LayoutPart part) {
+  	// Detaching is disabled on some platforms ..
+  	if (!detachable) {
+  		addPart(part);
+  		return;
+  	}
+  		
+  	// Calculate detached window size.
+  	int width = 300;
+  	int height = 300;
+  	Rectangle bounds = parentWidget.getShell().getBounds();
+  	int x = bounds.x + (bounds.width - width) / 2;
+  	int y = bounds.y + (bounds.height - height) / 2;
+  	
+  	// Create detached window.
+  	DetachedWindow window = new DetachedWindow(page);
+  	detachedWindowList.add(window);
+  	window.create();
+  
+  	// add part to detached window.
+  	part.createControl(window.getShell());
+  	ViewPane pane = (ViewPane) part;
+  	window.getShell().setText(pane.getPartReference().getTitle());
+  	window.add(pane, partDropListener);
+  
+  	// Open window.
+  	window.getShell().setBounds(x, y, width, height);
+  	window.open();
+  
+  	part.setFocus();
+  
+  	// enable direct manipulation
+  	enableDrag(pane);
+  	enableDrop(part);
+  }
+ 
  
 /**
  * disableDragging.
@@ -714,14 +673,11 @@ private void enableAllDrag() {
 	Vector draggableParts = new Vector();
 	collectDragParts(draggableParts, mainLayout.getChildren());
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 	collectDragParts(draggableParts, window.getChildren());
-	 * }
-	 */
+	for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+		DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	 	collectDragParts(draggableParts, window.getChildren());
+	}
+	
 
 	Enumeration enum = draggableParts.elements();
 	while (enum.hasMoreElements()) {
@@ -740,14 +696,12 @@ private void enableAllDrop() {
 	Vector dropTargets = new Vector();
 	collectDropTargets(dropTargets, mainLayout.getChildren());
 	
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 *
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 	collectDropTargets(dropTargets, window.getChildren());
-	 * }
-	 */
+	
+	for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+	 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	 	collectDropTargets(dropTargets, window.getChildren());
+	}
+	
 
 	Enumeration enum = dropTargets.elements();
 	while (enum.hasMoreElements()) {
@@ -786,23 +740,19 @@ private LayoutPart findPart(String id) {
 	if (part != null)
 		return part;
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * // Check each detached windows
-	 * for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 	part = findPart(id, window.getChildren());
-	 * 	if (part != null)
-	 * 		return part;
-	 * }
-	 * for (int i = 0; i < detachedPlaceHolderList.size(); i++){
-	 * 	DetachedPlaceHolder holder = (DetachedPlaceHolder)detachedPlaceHolderList.get(i);
-	 * 	part = findPart(id,holder.getChildren());
-	 * 	if(part != null)
-	 * 		return part;
-	 * }
-	 */
+	 // Check each detached windows
+	 for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+	 	DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	  	part = findPart(id, window.getChildren());
+	  	if (part != null)
+	  		return part;
+	 }
+	 for (int i = 0; i < detachedPlaceHolderList.size(); i++){
+	  	DetachedPlaceHolder holder = (DetachedPlaceHolder)detachedPlaceHolderList.get(i);
+	  	part = findPart(id,holder.getChildren());
+	  	if(part != null)
+	  		return part;
+	 }
 	 
 	// Not found.
 	return null;
@@ -907,38 +857,35 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		else if (position == PartDragDrop.BOTTOM)
 			relativePosition = IPageLayout.BOTTOM;
 
-		/*
-		 * Detached window no longer supported - remove when confirmed
-		 *
-		 * // folder part from detach window is special
-		 * if (part instanceof PartTabFolder) {
-		 * 	Window window = part.getWindow();
-		 * 	if (window instanceof DetachedWindow) {
-		 * 		window.getShell().setRedraw(false);
-		 * 		parentWidget.setRedraw(false);
-		 * 		LayoutPart visiblePart = ((PartTabFolder)part).getVisiblePart();
-		 * 		// create a new folder and add the children to it
-		 * 		PartTabFolder folder = new PartTabFolder();
-		 * 		sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
-		 * 		LayoutPart[] children = ((PartTabFolder)part).getChildren();
-		 * 		for (int i = 0; i < children.length; i++) {
-		 * 			derefPart(children[i]);
-		 * 			folder.add(children[i]);
-		 * 			if (children[i] instanceof ViewPane)
-		 * 				folder.enableDrag((ViewPane)children[i], partDropListener);
-		 * 		}
-		 * 		if (visiblePart != null) {
-		 * 			bringPartToTop(visiblePart);
-		 * 			visiblePart.setFocus();
-		 * 		}
-		 * 		// No need to set redraw on detach window as it should
-		 * 		// be closed now.
-		 * 		parentWidget.setRedraw(true);
-		 * 		// return so not to add folder from detach window
-		 * 		return;
-		 * 	}
-		 * }
-		 */
+		 // folder part from detach window is special
+		  if (part instanceof PartTabFolder) {
+		  	Window window = part.getWindow();
+		  	if (window instanceof DetachedWindow) {
+		  		window.getShell().setRedraw(false);
+		  		parentWidget.setRedraw(false);
+		  		LayoutPart visiblePart = ((PartTabFolder)part).getVisiblePart();
+		  		// create a new folder and add the children to it
+		  		PartTabFolder folder = new PartTabFolder();
+		  		sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
+		  		LayoutPart[] children = ((PartTabFolder)part).getChildren();
+		  		for (int i = 0; i < children.length; i++) {
+		  			derefPart(children[i]);
+		  			folder.add(children[i]);
+		  			if (children[i] instanceof ViewPane)
+		  				folder.enableDrag((ViewPane)children[i], partDropListener);
+		  		}
+		  		if (visiblePart != null) {
+		  			bringPartToTop(visiblePart);
+		  			visiblePart.setFocus();
+		  		}
+		  		// No need to set redraw on detach window as it should
+		  		// be closed now.
+		  		parentWidget.setRedraw(true);
+		  		// return so not to add folder from detach window
+		  		return;
+		  	}
+		  }
+		 
 
 		ILayoutContainer oldContainer = part.getContainer();
 		if(oldContainer != sashContainer) {
@@ -1005,21 +952,15 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		return;		
 	}
 	
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * Note, any drop that is considered invalid for
+    /* Note, any drop that is considered invalid for
 	 * stack or move, will be set as OFF_SCREEN causing
 	 * either a new detach window to be created or
 	 * it the source was a detach window, a location move.
-	 * 
-	 * int offScreenPosition = PartDragDrop.OFFSCREEN;
-	 * if (!detachable)
-	 * 	offScreenPosition = PartDragDrop.INVALID;
-	 */
-	
-	int offScreenPosition = PartDragDrop.INVALID;
-	
+	 */ 
+	  int offScreenPosition = PartDragDrop.OFFSCREEN;
+	  if (!detachable)
+	  	offScreenPosition = PartDragDrop.INVALID;
+	 
 	// If source and target are in different windows reject.
 	if (e.dragSource != null && e.dropTarget != null) {
 		if (e.dragSource.getWorkbenchWindow() != e.dropTarget.getWorkbenchWindow()) {
@@ -1057,19 +998,16 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 
 	// If drop target is offscreen ..
 	if (e.relativePosition == PartDragDrop.OFFSCREEN) {
-		/*
-		 * Detached window no longer supported - remove when confirmed
-		 * 
-		 * // If detaching is not supported then exclude.
-		 * if (!detachable) {
-		 * 	e.relativePosition = PartDragDrop.INVALID;
-		 * 	return;
-		 * }
-		 */
-		 e.relativePosition = PartDragDrop.INVALID;
+		// If detaching is not supported then exclude.
+		 if (!detachable) {
+		 	e.relativePosition = PartDragDrop.INVALID;
+		 	return;
+		 }
+		
+		// e.relativePosition = PartDragDrop.INVALID;
 
 		// If source is in detach window by itself then allow as window move.
-/*		Window window = e.dragSource.getWindow();
+		Window window = e.dragSource.getWindow();
 		if (window instanceof DetachedWindow) {
 			if (e.dragSource instanceof PartTabFolder) {
 				// there is only one tab folder in a detach window
@@ -1085,7 +1023,7 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 				}
 			}
 		}
-*/
+
 		// All seems well
 		return;
 	}
@@ -1137,17 +1075,13 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 			}
 		}
 		
-		/*
-		 * Detached window no longer supported - remove when confirmed
-		 * 
-		 * // If target is detached window force stacking.
-		 * Window window = e.dropTarget.getWindow();
-		 * if (window instanceof DetachedWindow) {
-		 * 	e.relativePosition = PartDragDrop.CENTER;
-		 * 	return;
-		 * }
-		 */
-	
+		// If target is detached window force stacking.
+		  Window window = e.dropTarget.getWindow();
+		  if (window instanceof DetachedWindow) {
+		  	e.relativePosition = PartDragDrop.CENTER;
+		  	return;
+		 }
+		 	
 		// All seems well
 		return;
 	}
@@ -1170,16 +1104,12 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 			}
 		}
 		
-		/*
-		 * Detached window no longer supported - remove when confirmed
-		 * 
-		 * // If target is detached window force stacking.
-		 * Window window = e.dropTarget.getWindow();
-		 * if (window instanceof DetachedWindow) {
-		 * 	e.relativePosition = PartDragDrop.CENTER;
-		 * 	return;
-		 * }
-		 */
+		// If target is detached window force stacking.
+		 Window window = e.dropTarget.getWindow();
+		 if (window instanceof DetachedWindow) {
+		 	e.relativePosition = PartDragDrop.CENTER;
+		 	return;
+		}
 		
 		// All seems well
 		return;
@@ -1274,35 +1204,31 @@ private void onFastViewIconDrag(PartDropEvent e) {
 		
 	switch (e.relativePosition) {
 		case PartDragDrop.OFFSCREEN:
-			/*
-			 * Detached window no longer supported - remove when confirmed
-			 * 
-			 * We should not get this case anymore...
-			 * 
-			 * Window window = e.dragSource.getWindow();
-			 * if (window instanceof DetachedWindow) {
-			 * 	// only one tab folder in a detach window, so do window move
-			 * 	if (e.dragSource instanceof PartTabFolder) {
-			 * 		window.getShell().setLocation(e.x, e.y);
-			 * 		break;
-			 * 	}
-			 * 	// if only one view in tab folder then do a window move
-			 * 	ILayoutContainer container = e.dragSource.getContainer();
-			 * 	if (container instanceof PartTabFolder) {
-			 * 		if (((PartTabFolder)container).getItemCount() == 1) {
-			 * 			window.getShell().setLocation(e.x, e.y);
-			 * 			break;
-			 * 		}
-			 * 	}
-			 * }
-			 * 
-			 * // If layout is modified always zoom out.
-			 * if (isZoomed())
-			 * 	zoomOut();
-			 * // do a normal part detach
-			 * detach(e.dragSource, e.x, e.y);
-			 */
-			break;
+			
+			  
+			  Window window = e.dragSource.getWindow();
+			  if (window instanceof DetachedWindow) {
+			  	// only one tab folder in a detach window, so do window move
+			  	if (e.dragSource instanceof PartTabFolder) {
+			  		window.getShell().setLocation(e.x, e.y);
+			  		break;
+			  	}
+			  	// if only one view in tab folder then do a window move
+			  	ILayoutContainer container = e.dragSource.getContainer();
+			  	if (container instanceof PartTabFolder) {
+			  		if (((PartTabFolder)container).getItemCount() == 1) {
+			  			window.getShell().setLocation(e.x, e.y);
+			  			break;
+			  		}
+			  	}
+			  }
+			  
+			  // If layout is modified always zoom out.
+			  if (isZoomed())
+			  	zoomOut();
+			  // do a normal part detach
+			  detach(e.dragSource, e.x, e.y);
+			 			break;
 		case PartDragDrop.CENTER:
 			// If layout is modified always zoom out.
 			if (isZoomed())
@@ -1473,21 +1399,17 @@ public void removePart(LayoutPart part) {
 					placeholder.setRealContainer(container);
 					parentContainer.replace(cPart, placeholder);
 				}
-				/*
-				 * Detached window no longer supported - remove when confirmed
-				 * 
-				 * else if (oldWindow instanceof DetachedWindow) {
-				 * 	DetachedPlaceHolder placeholder = new DetachedPlaceHolder("",oldWindow.getShell().getBounds());//$NON-NLS-1$
-				 * 	for (int i = 0, length = children.length; i < length; i++){
-				 * 		children[i].getContainer().remove(children[i]);
-				 * 		children[i].setContainer(placeholder);
-				 * 		placeholder.add(children[i]);
-				 * 	}
-				 * 	detachedPlaceHolderList.add(placeholder);
-				 * 	oldWindow.close();
-				 * 	detachedWindowList.remove(oldWindow);
-				 * }
-				 */
+				else if (oldWindow instanceof DetachedWindow) {
+				  	DetachedPlaceHolder placeholder = new DetachedPlaceHolder("",oldWindow.getShell().getBounds());//$NON-NLS-1$
+				  	for (int i = 0, length = children.length; i < length; i++){
+				  		children[i].getContainer().remove(children[i]);
+				  		children[i].setContainer(placeholder);
+				  		placeholder.add(children[i]);
+				  	}
+				  	detachedPlaceHolderList.add(placeholder);
+				  	oldWindow.close();
+				  	detachedWindowList.remove(oldWindow);
+				 }
 			}
 		}
 	}
@@ -1535,27 +1457,25 @@ public void replacePlaceholderWithPart(LayoutPart part) {
 public IStatus restoreState(IMemento memento) {
 	// Restore main window.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_MAIN_WINDOW);
-	return mainLayout.restoreState(childMem);
+	IStatus r = mainLayout.restoreState(childMem);
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * // Restore each floating window.
-	 * if (detachable) {
-	 * 	IMemento detachedWindows[] = memento.getChildren(IWorkbenchConstants.TAG_DETACHED_WINDOW);
-	 * 	for (int nX = 0; nX < detachedWindows.length; nX ++) {
-	 * 		DetachedWindow win = new DetachedWindow(page);
-	 * 		detachedWindowList.add(win);
-	 * 		win.restoreState(detachedWindows[nX]);
-	 * 	}
-	 * 	IMemento childrenMem[] = memento.getChildren(IWorkbenchConstants.TAG_HIDDEN_WINDOW);
-	 * 	for (int i = 0, length = childrenMem.length; i < length; i++){
-	 * 		DetachedPlaceHolder holder = new DetachedPlaceHolder("",new Rectangle(0,0,0,0));//$NON-NLS-1$
-	 * 		holder.restoreState(childrenMem[i]);
-	 * 		detachedPlaceHolderList.add(holder);
-	 * 	}
-	 * }
-	 */
+	 // Restore each floating window.
+	  if (detachable) {
+	  	IMemento detachedWindows[] = memento.getChildren(IWorkbenchConstants.TAG_DETACHED_WINDOW);
+	  	for (int nX = 0; nX < detachedWindows.length; nX ++) {
+	  		DetachedWindow win = new DetachedWindow(page);
+	  		detachedWindowList.add(win);
+	  		win.restoreState(detachedWindows[nX]);
+	  	}
+	  	IMemento childrenMem[] = memento.getChildren(IWorkbenchConstants.TAG_HIDDEN_WINDOW);
+	  	for (int i = 0, length = childrenMem.length; i < length; i++){
+	  		DetachedPlaceHolder holder = new DetachedPlaceHolder("",new Rectangle(0,0,0,0));//$NON-NLS-1$
+	  		holder.restoreState(childrenMem[i]);
+	  		detachedPlaceHolderList.add(holder);
+	  	}
+	  }
+	  return r;
+	 
 }
 /**
  * @see IPersistablePart
@@ -1563,25 +1483,22 @@ public IStatus restoreState(IMemento memento) {
 public IStatus saveState(IMemento memento) {
 	// Persist main window.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_MAIN_WINDOW);
-	return mainLayout.saveState(childMem);
+	IStatus r = mainLayout.saveState(childMem);
 
-	/*
-	 * Detached window no longer supported - remove when confirmed
-	 * 
-	 * if (detachable) {	
-	 * 	// Persist each detached window.
-	 * 	for (int i = 0, length = detachedWindowList.size(); i < length; i++){
-	 * 		DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
-	 * 		childMem = memento.createChild(IWorkbenchConstants.TAG_DETACHED_WINDOW);
-	 * 		window.saveState(childMem);
-	 * 	}
-	 * 	for (int i = 0, length = detachedPlaceHolderList.size(); i < length; i++){
-	 * 		DetachedPlaceHolder holder = (DetachedPlaceHolder)detachedPlaceHolderList.get(i);
-	 * 		childMem = memento.createChild(IWorkbenchConstants.TAG_HIDDEN_WINDOW);
-	 * 		holder.saveState(childMem);
-	 * 	}
-	 * }
-	 */
+	  if (detachable) {	
+	  	// Persist each detached window.
+	  	for (int i = 0, length = detachedWindowList.size(); i < length; i++){
+	  		DetachedWindow window = (DetachedWindow)detachedWindowList.get(i);
+	  		childMem = memento.createChild(IWorkbenchConstants.TAG_DETACHED_WINDOW);
+	  		window.saveState(childMem);
+	  	}
+	  	for (int i = 0, length = detachedPlaceHolderList.size(); i < length; i++){
+	  		DetachedPlaceHolder holder = (DetachedPlaceHolder)detachedPlaceHolderList.get(i);
+	  		childMem = memento.createChild(IWorkbenchConstants.TAG_HIDDEN_WINDOW);
+	  		holder.saveState(childMem);
+	  	}
+	  }
+	  return r;
 }
 /**
  * Stack a layout part on the reference part
