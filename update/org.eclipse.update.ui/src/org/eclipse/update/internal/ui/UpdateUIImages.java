@@ -45,27 +45,18 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_APP_OBJ = create(PATH_OBJ, "app_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BFOLDER_OBJ = create(PATH_OBJ, "bfolder_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CATEGORY_OBJ = create(PATH_OBJ, "category_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CD_OBJ = create(PATH_OBJ, "cd_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_COMPUTER_OBJ = create(PATH_OBJ, "computer_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CONFIG_OBJ = create(PATH_OBJ, "config_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EFIX_OBJ = create(PATH_OBJ, "efix2_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FLOPPY_OBJ = create(PATH_OBJ, "floppy_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HISTORY_OBJ = create(PATH_OBJ, "history_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_LSITE_OBJ = create(PATH_OBJ, "lsite_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PSITE_OBJ = create(PATH_OBJ, "psite_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ESITE_OBJ = create(PATH_OBJ, "esite_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WEB_SITE_OBJ = create(PATH_OBJ, "web_bkmrk_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLACES_OBJ = create(PATH_OBJ, "places_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SAVED_OBJ = create(PATH_OBJ, "saved_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_UNCONF_FEATURE_OBJ = create(PATH_OBJ, "unconf_feature_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_VFIXED_OBJ = create(PATH_OBJ, "vfixed_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_VREMOTE_OBJ = create(PATH_OBJ, "vremote_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_VREMOVABLE_OBJ = create(PATH_OBJ, "vremovable_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NOTINST_FEATURE_OBJ = create(PATH_OBJ, "notinstalled_feature_obj.gif");	 //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SHOW_SEARCH = create(PATH_OBJ, "tsearch_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ERR_ST_OBJ = create(PATH_OBJ, "error_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OK_ST_OBJ = create(PATH_OBJ, "ok_st_obj.gif"); //$NON-NLS-1$
 
@@ -89,33 +80,14 @@ public class UpdateUIImages {
 	 */
 
 	public static final ImageDescriptor DESC_CONFIGS_VIEW = create(PATH_VIEW, "configs.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SITES_VIEW = create(PATH_VIEW, "updates.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SELECTED_UPDATES_VIEW = create(PATH_VIEW, "selected_updates.gif"); //$NON-NLS-1$
 
 	/**
 	 * LCL
 	 */
-	public static final ImageDescriptor DESC_BACKWARD_NAV = create(PATH_LCL, "backward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BACKWARD_NAV_H = create(PATH_LCL_HOVER, "backward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BACKWARD_NAV_D = create(PATH_LCL_DISABLED, "backward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORWARD_NAV = create(PATH_LCL, "forward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORWARD_NAV_H = create(PATH_LCL_HOVER, "forward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORWARD_NAV_D = create(PATH_LCL_DISABLED, "forward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HOME_NAV = create(PATH_LCL, "home_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HOME_NAV_H = create(PATH_LCL_HOVER, "home_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HOME_NAV_D = create(PATH_LCL_DISABLED, "home_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH_NAV = create(PATH_LCL, "refresh_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH_NAV_H = create(PATH_LCL_HOVER, "refresh_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH_NAV_D = create(PATH_LCL_DISABLED, "refresh_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_STOP_NAV = create(PATH_LCL, "stop_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_STOP_NAV_H = create(PATH_LCL_HOVER, "stop_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_STOP_NAV_D = create(PATH_LCL_DISABLED, "stop_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GO_NAV = create(PATH_LCL, "go_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GO_NAV_H = create(PATH_LCL_HOVER, "go_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GO_NAV_D = create(PATH_LCL_DISABLED, "go_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SHOW_UNCONF = create(PATH_LCL, "show_unconf.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SHOW_UNCONF_H = create(PATH_LCL_HOVER, "show_unconf.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SHOW_UNCONF_D = create(PATH_LCL_DISABLED, "show_unconf.gif"); //$NON-NLS-1$
+
+//	public static final ImageDescriptor DESC_SHOW_UNCONF = create(PATH_LCL, "show_unconf.gif"); //$NON-NLS-1$
+//	public static final ImageDescriptor DESC_SHOW_UNCONF_H = create(PATH_LCL_HOVER, "show_unconf.gif"); //$NON-NLS-1$
+//	public static final ImageDescriptor DESC_SHOW_UNCONF_D = create(PATH_LCL_DISABLED, "show_unconf.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SHOW_HIERARCHY = create(PATH_LCL, "hierarchicalLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SHOW_HIERARCHY_H = create(PATH_LCL_HOVER, "hierarchicalLayout.gif"); //$NON-NLS-1$
@@ -131,8 +103,6 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEW_BOOKMARK  = create(PATH_WIZBAN, "new_bookmark_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEW_FOLDER  = create(PATH_WIZBAN, "new_folder_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEW_SEARCH  = create(PATH_WIZBAN, "new_search_wiz.gif"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
