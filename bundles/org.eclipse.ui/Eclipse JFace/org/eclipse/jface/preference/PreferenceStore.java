@@ -41,9 +41,9 @@ public class PreferenceStore implements IPreferenceStore {
 	
 	/**
 	 * Indicates whether a value as been changed by <code>setToDefault</code>
-	 * or <code>setValue</code>; initially <code>true</code>.
+	 * or <code>setValue</code>; initially <code>false</code>.
 	 */
-	private boolean dirty = true;
+	private boolean dirty = false;
 	
 	/**
 	 * The file name used by the <code>load</code> method to load a property 

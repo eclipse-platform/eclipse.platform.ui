@@ -421,7 +421,8 @@ protected void savePreferenceStore() {
 		return;
 	}
 	try {
-		preferenceStore.save(); // the store knows its filename - no need to pass it
+		if (preferenceStore.needsSaving())
+			preferenceStore.save(); // the store knows its filename - no need to pass it
 	}
 	catch (IOException e) {
 	}

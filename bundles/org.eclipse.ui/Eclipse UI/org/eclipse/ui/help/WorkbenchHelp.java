@@ -295,7 +295,7 @@ public static void setHelp(Control control, Object[] contexts) {
 	// ensure that the listener is only registered once
 	control.removeHelpListener(getHelpListener());
 	control.addHelpListener(getHelpListener());
-}
+} 
 /**
  * Sets the given help context computer on the given control.
  * <p>
