@@ -6,6 +6,7 @@ package org.eclipse.core.resources;
  * (c) Copyright IBM Corp 2000
  */
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.internal.resources.WorkManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -25,10 +26,12 @@ public boolean acquire() throws InterruptedException {
 	if (semaphore == null)
 		return true;
 	// XXX: remove println hacks -- ask people first
-	System.out.println("Operation waiting to be executed... :-/");
+	if (ResourcesPlugin.getPlugin().isDebugging())
+		System.out.println("Operation waiting to be executed... :-/");
 	semaphore.acquire();
 	workManager.updateCurrentOperation();
-	System.out.println("Operation started... :-)");
+	if (ResourcesPlugin.getPlugin().isDebugging())
+		System.out.println("Operation started... :-)");
 	return true;
 }
 protected Thread getCurrentOperationThread() {
