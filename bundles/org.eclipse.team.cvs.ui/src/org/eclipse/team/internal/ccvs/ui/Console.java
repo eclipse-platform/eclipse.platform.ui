@@ -194,7 +194,7 @@ public class Console extends ViewPart {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 	
-		viewer = new TextViewer(composite, SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+		viewer = new TextViewer(composite, SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.setEditable(false);
 		viewer.getControl().setLayoutData(data);
