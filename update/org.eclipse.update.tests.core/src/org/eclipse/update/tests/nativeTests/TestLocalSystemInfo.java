@@ -1,7 +1,7 @@
 package org.eclipse.update.tests.nativeTests;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
+ * All Rights Reserved. 
  */
 import java.io.File;
 
