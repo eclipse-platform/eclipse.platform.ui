@@ -72,11 +72,13 @@ public interface IWorkingSetManager {
 	 * <code>IWorkingSetSelectionDialog#getSelection</code>.
 	 * 
 	 * @param shell the parent of the working set selection dialog
-	 * @param multiSelect true=more than one working set can be selected 
-	 * 	in the dialog. false=only one working set can be selected
+	 * @param multi true=more than one working set can be chosen 
+	 * 	in the dialog. false=only one working set can be chosen. Multiple
+	 * 	working sets can still be selected and removed from the list but
+	 * 	the dialog can only be closed when a single working set is selected.
 	 * @return a working set selection dialog
 	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multiSelect);
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi);
 	/**
 	 * Returns the working set with the specified name.
 	 * Returns null if there is no working set with that name.

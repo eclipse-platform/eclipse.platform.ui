@@ -59,14 +59,16 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 * Creates a working set selection dialog.
 	 *
 	 * @param parentShell the parent shell
-	 * @param multiSelect true=more than one working set can be selected 
-	 * 	in the dialog. false=only one working set can be selected
+	 * @param multi true=more than one working set can be chosen 
+	 * 	in the dialog. false=only one working set can be chosen. Multiple
+	 * 	working sets can still be selected and removed from the list but
+	 * 	the dialog can only be closed when a single working set is selected.
 	 */
-	public WorkingSetSelectionDialog(Shell parentShell, boolean multiSelect) {
+	public WorkingSetSelectionDialog(Shell parentShell, boolean multi) {
 		super(parentShell);
 		contentProvider = new ListContentProvider();
 		labelProvider = new WorkingSetLabelProvider();
-		this.multiSelect = multiSelect;		
+		multiSelect = multi;		
 		if (multiSelect) {
 			setTitle(WorkbenchMessages.getString("WorkingSetSelectionDialog.title.multiSelect")); //$NON-NLS-1$;
 			setMessage(WorkbenchMessages.getString("WorkingSetSelectionDialog.message.multiSelect")); //$NON-NLS-1$

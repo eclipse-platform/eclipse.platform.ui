@@ -77,8 +77,8 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(Shell)
 	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multiSelect) {
-		return new WorkingSetSelectionDialog(parent, multiSelect);
+	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi) {
+		return new WorkingSetSelectionDialog(parent, multi);
 	}
 	/**
 	 * Tests the receiver and the object for equality
