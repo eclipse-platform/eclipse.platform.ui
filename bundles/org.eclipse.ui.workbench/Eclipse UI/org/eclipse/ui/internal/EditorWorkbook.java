@@ -211,6 +211,7 @@ public abstract class EditorWorkbook
 		switch (activeState) {
 			case ACTIVE_FOCUS :
 				if (getShellActivated()) {
+					
 					fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 					bgColors[0] =
 						getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
@@ -235,10 +236,10 @@ public abstract class EditorWorkbook
 				bgPercents = null;
 				break;
 		}
-		drawGradient(fgColor, bgColors, bgPercents);
+		drawGradient(fgColor, bgColors, bgPercents,activeState == ACTIVE_FOCUS);
 	}
 
-	protected abstract void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents);
+	protected abstract void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean activeState);
 
 	/**
 	 * enableDrop

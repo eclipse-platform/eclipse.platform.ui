@@ -115,11 +115,17 @@ public class ColorThemeDemo {
 	}
 
 	/**
+	 * Redraw the receiver.
+	 */
+	void redraw() {
+		sampleTabFolder.redraw();
+	}
+	
+	/**
 	 * @param color
 	 */
 	public void setTabSelectionBGColor(Color color) {
 		sampleTabFolder.setSelectionBackground(color);
-		sampleTabFolder.redraw();
 	}
 	
 	/**
@@ -127,10 +133,21 @@ public class ColorThemeDemo {
 	 */
 	public void setTabSelectionFGColor(Color color) {
 		sampleTabFolder.setSelectionForeground(color);
-		sampleTabFolder.redraw();	
 	}
 	
-	
+	/**
+	 * @param color
+	 */
+	public void setTabBGColor(Color color) {
+		sampleTabFolder.setBackground(color);	
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setTabFGColor(Color color) {
+		sampleTabFolder.setForeground(color);	
+	}
 	
 
 }

@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -118,6 +119,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private ToolBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
+	
+	private static final int MAX_PERSPECTIVES = 4;
+	private LinkedList mostRecentDescriptors = new LinkedList();
 
 	private MenuItem restoreItem;
 	AnimationItem animationItem;
@@ -339,10 +343,29 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	/* package */
 	void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
+		
+//		if(mostRecentDescriptors.size() == MAX_PERSPECTIVES){
+//			IPerspectiveDescriptor last = (IPerspectiveDescriptor) mostRecentDescriptors.get(MAX_PERSPECTIVES - 1);
+//			removePerspectiveShortcut(last,page);
+//			mostRecentDescriptors.remove(3);			
+//		}
+//		
+//		mostRecentDescriptors.add(0,perspective);
 		SetPagePerspectiveAction action = new SetPagePerspectiveAction(perspective, page);
 		perspectiveBar.add(action);
 		perspectiveBar.update(false);
 		topBar.layout(true);
+	}
+	
+	/**
+	 * Promote the perspective to the top of the MRU list.
+	 * @param perspective
+	 */
+	void perspectiveSelected(IPerspectiveDescriptor perspective){
+//		if(perspective == null)
+//			return;
+//		mostRecentDescriptors.remove(perspective);
+//		mostRecentDescriptors.add(perspective);
 	}
 	/**
 	 * Configures this window to have a fast view bar.
@@ -619,7 +642,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		topBar.setLeft(getToolBarControl());		
 		topBar.setRight(perspectiveBar.getControl());
 
-		ColorSchemeService.setCBannerColors(topBar);
+		//ColorSchemeService.setCBannerColors(topBar);
 		ColorSchemeService.setCoolBarColors(getToolBarControl());
 		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
 		
@@ -630,6 +653,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		perspectiveData.right = new FormAttachment(100, 0);
 
 		perspectiveBar.getControl().setLayoutData(perspectiveData);
+		
+		FormLayout perspectiveLayout = new FormLayout();
+		perspectiveLayout.marginWidth = 10;
 
 		FormData toolBarData = new FormData();
 		toolBarData.top = new FormAttachment(0);

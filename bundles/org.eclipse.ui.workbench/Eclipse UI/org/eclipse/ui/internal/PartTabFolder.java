@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderExpandListener;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -221,6 +222,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		// Create control.	
 		this.parent = parent;
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
+		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
 
 		// listener to switch between visible tabItems
@@ -268,6 +270,24 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				if(item instanceof ViewPane)
 					((ViewPane ) item).doHide();
 				//remove(item);
+			}
+		});
+		
+		tabFolder.addCTabFolderExpandListener(new CTabFolderExpandListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#collapse(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void collapse(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#expand(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void expand(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 
@@ -974,5 +994,13 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 */
 	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
 		return this;
+	}
+	
+	/**
+	 * Set the border visibility on the tab folder.
+	 * @param visible
+	 */
+	public void setBorderVisible(boolean visible){
+		tabFolder.setBorderVisible(visible);
 	}
 }

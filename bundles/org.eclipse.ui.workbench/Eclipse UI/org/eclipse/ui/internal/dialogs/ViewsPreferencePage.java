@@ -54,10 +54,8 @@ public class ViewsPreferencePage
 	BooleanFieldEditor useDefault;	
 	private ColorFieldEditor colorSchemeTabBGColorEditor;
 	private ColorFieldEditor colorSchemeTabFGColorEditor;
-//	ColorFieldEditor colorSchemeBGColorEditor;
-//	ColorFieldEditor colorSchemeFGColorEditor;
-//	ColorFieldEditor colorSchemeSelBGColorEditor;
-//	ColorFieldEditor colorSchemeSelFGColorEditor;
+	private ColorFieldEditor colorSchemeSelectedTabBGColorEditor;
+	private ColorFieldEditor colorSchemeSelectedTabFGColorEditor;
 	
 	/*
 	 * No longer supported - removed when confirmed!
@@ -171,20 +169,17 @@ public class ViewsPreferencePage
 		spacingComposite.setLayout(spacingLayout);
 		spacingComposite.setFont(font);
 
-		errorColorEditor = new ColorFieldEditor(JFacePreferences.ERROR_COLOR, WorkbenchMessages.getString("ViewsPreference.ErrorText"), //$NON-NLS-1$,
-	spacingComposite);
+		errorColorEditor = new ColorFieldEditor(JFacePreferences.ERROR_COLOR, WorkbenchMessages.getString("ViewsPreference.ErrorText"), spacingComposite); //$NON-NLS-1$,
 
 		errorColorEditor.setPreferenceStore(doGetPreferenceStore());
 		errorColorEditor.load();
 
-		hyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), //$NON-NLS-1$
-	spacingComposite);
+		hyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), spacingComposite); //$NON-NLS-1$
 
 		hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		hyperlinkColorEditor.load();
 
-		activeHyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.ACTIVE_HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"), //$NON-NLS-1$
-	spacingComposite);
+		activeHyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.ACTIVE_HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"),spacingComposite); //$NON-NLS-1$
 
 		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		activeHyperlinkColorEditor.load();
@@ -217,22 +212,42 @@ public class ViewsPreferencePage
 		spacingComposite2.setLayout(spacingLayout2);
 		spacingComposite2.setFont(font);
 
-		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, "Color Scheme Tab Background", spacingComposite2);
-		colorSchemeTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeSelectedTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, "Selected Tab Background", spacingComposite2);
+		colorSchemeSelectedTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		// If the value is still the default, this means the use has been using system colors
 		// Or has not set this particular color from the default.
 		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND)) {
 			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
 		}
-		colorSchemeTabBGColorEditor.load();
+		colorSchemeSelectedTabBGColorEditor.load();
 		
-		// it is not possible to set the default value in workbench start up so it may need to happen now
+		colorSchemeSelectedTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, "Selected Tab Foreground", spacingComposite2);
+		colorSchemeSelectedTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		// If the value is still the default, this means the use has been using system colors
+		// Or has not set this particular color from the default.
 		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND)) {
 			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, JFaceColors.getTabFolderSelectionForeground(composite.getDisplay()).getRGB());
-		}		
-		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, "Color Scheme Tab Foreground", spacingComposite2);
+		}	
+		colorSchemeSelectedTabFGColorEditor.load();
+		
+		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_BACKGROUND, "Tab Background", spacingComposite2);
+		colorSchemeTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		// If the value is still the default, this means the use has been using system colors
+		// Or has not set this particular color from the default.
+		if (store.isDefault(JFacePreferences.SCHEME_TAB_BACKGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_BACKGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
+		}
+		colorSchemeTabBGColorEditor.load();
+		
+		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_FOREGROUND, "Tab Foreground", spacingComposite2);
 		colorSchemeTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		// If the value is still the default, this means the use has been using system colors
+		// Or has not set this particular color from the default.
+		if (store.isDefault(JFacePreferences.SCHEME_TAB_FOREGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_FOREGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
+		}
 		colorSchemeTabFGColorEditor.load();
+		
 		
 		IPropertyChangeListener colorSettingsListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -241,6 +256,8 @@ public class ViewsPreferencePage
 		};
 
 		useDefault.setPropertyChangeListener(colorSettingsListener);
+		colorSchemeSelectedTabBGColorEditor.setPropertyChangeListener(colorSettingsListener);
+		colorSchemeSelectedTabFGColorEditor.setPropertyChangeListener(colorSettingsListener);
 		colorSchemeTabBGColorEditor.setPropertyChangeListener(colorSettingsListener);
 		colorSchemeTabFGColorEditor.setPropertyChangeListener(colorSettingsListener);
 		//initialize
@@ -255,12 +272,21 @@ public class ViewsPreferencePage
 		parentComposite.setEnabled(!defaultColor);
 		colorSchemeTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
 		colorSchemeTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
+		colorSchemeSelectedTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
+		colorSchemeSelectedTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
+		
 		if (!defaultColor) {
-			colorThemeDemo.setTabSelectionBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
-			colorThemeDemo.setTabSelectionFGColor(new Color(parentComposite.getDisplay(), colorSchemeTabFGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.setTabBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.setTabFGColor(new Color(parentComposite.getDisplay(), colorSchemeTabFGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.setTabSelectionBGColor(new Color(parentComposite.getDisplay(), colorSchemeSelectedTabBGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.setTabSelectionFGColor(new Color(parentComposite.getDisplay(), colorSchemeSelectedTabFGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.redraw();
 		} else {
+			colorThemeDemo.setTabBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_BACKGROUND));
+			colorThemeDemo.setTabFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_FOREGROUND));
 			colorThemeDemo.setTabSelectionBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND));
 			colorThemeDemo.setTabSelectionFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND));
+				colorThemeDemo.redraw();
 		}
 	}
 	
@@ -409,10 +435,8 @@ public class ViewsPreferencePage
 		activeHyperlinkColorEditor.loadDefault();
 		colorSchemeTabBGColorEditor.loadDefault();
 		colorSchemeTabFGColorEditor.loadDefault();
-//		colorSchemeBGColorEditor.loadDefault();
-//		colorSchemeFGColorEditor.loadDefault();
-//		colorSchemeSelBGColorEditor.loadDefault();
-//		colorSchemeSelFGColorEditor.loadDefault();
+		colorSchemeSelectedTabBGColorEditor.loadDefault();
+		colorSchemeSelectedTabFGColorEditor.loadDefault();
 		
 		/*
 		 * No longer supported - remove when confirmed!
@@ -444,6 +468,9 @@ public class ViewsPreferencePage
 		useDefault.store();
 		colorSchemeTabBGColorEditor.store();
 		colorSchemeTabFGColorEditor.store();
+		colorSchemeSelectedTabBGColorEditor.store();
+		colorSchemeSelectedTabFGColorEditor.store();
+		
 		return true;
 	}
 }

@@ -2463,6 +2463,7 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the window
 	window.updateActionSets();
+	window.perspectiveSelected(newPersp.getDesc());
 	window.getPerspectiveBar().update(true);
 	
 	updateVisibility(oldPersp, newPersp);
@@ -2560,6 +2561,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 	// and its adjacent views appear jumpy as perspectives are
 	// switched.  Turn off redraw to help with this.
 	CoolBarManager mgr = window.getCoolBarManager();
+
 	try {
 		mgr.getControl().setRedraw(false);
 		getClientComposite().setRedraw(false);

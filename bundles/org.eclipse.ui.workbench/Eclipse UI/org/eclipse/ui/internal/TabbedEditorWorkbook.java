@@ -20,11 +20,11 @@ import java.util.Map;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ColorSchemeService;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderExpandListener;
 import org.eclipse.swt.custom.CTabFolderListListener;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.custom.ViewForm;
@@ -122,6 +122,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
 		tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
+		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
 
 		// prevent close button and scroll buttons from taking focus
@@ -309,6 +310,25 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				}
 			}
 		});
+		
+		tabFolder.addCTabFolderExpandListener(new CTabFolderExpandListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#collapse(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void collapse(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#expand(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void expand(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		
 
 		// Listen for popup menu mouse event
 		tabFolder.addListener(SWT.MenuDetect, new Listener() {
@@ -530,13 +550,16 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		mapTabToEditor.clear();
 	}
 
-	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents) {
+	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {
 		tabFolder.setSelectionForeground(fgColor);
+		tabFolder.setBorderVisible(active);
 		if (bgPercents == null)
 			tabFolder.setSelectionBackground(bgColors[0]);
 		else
 			tabFolder.setSelectionBackground(bgColors, bgPercents);
 		tabFolder.update();
+		
+		
 	}
 
 	// getMinimumHeight() added by cagatayk@acm.org 

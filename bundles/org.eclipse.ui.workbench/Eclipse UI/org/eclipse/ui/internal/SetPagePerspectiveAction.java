@@ -98,4 +98,5 @@ public class SetPagePerspectiveAction extends Action {
 	public boolean showTextInToolBar(){
 		return true;
 	}
+	
 }
