@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -122,11 +124,18 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 				}
 			} else
 				if (item instanceof ILaunch) {
-					String mode= ((ILaunch) item).getLaunchMode();
-					if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-						return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
+					ILaunch launch = (ILaunch) item;
+					Image image = getLaunchImage(launch);
+					if (image == null) {
+						// return default image
+						String mode= launch.getLaunchMode();
+						if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+							return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
+						} else {
+							return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
+						}
 					} else {
-						return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
+						return image;
 					}
 				} else
 					if (item instanceof InspectItem) {
@@ -147,6 +156,30 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		}
 	}
 
+	protected Image getLaunchImage(ILaunch launch) {
+		ILauncher launcher = launch.getLauncher();
+		String iconPath = launcher.getIconPath();
+		if (iconPath != null) {
+			// return custom image
+			ImageRegistry registry = DebugPluginImages.getImageRegistry();
+			Image image = registry.get(launcher.getIdentifier());
+			if (image == null) {
+				URL iconURL = launcher.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+				ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+				try {
+					iconURL = new URL(iconURL, iconPath);			
+					desc= ImageDescriptor.createFromURL(iconURL);
+				} catch (MalformedURLException e) {
+				} 
+				DebugPluginImages.getImageRegistry().put(launcher.getIdentifier(), desc);				
+				return registry.get(launcher.getIdentifier());
+			} else {
+				return image;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @see IDebugModelPresentation
 	 */
