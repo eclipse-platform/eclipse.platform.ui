@@ -175,10 +175,19 @@ public class DiffTreeViewer extends TreeViewer {
 		
 		INavigatable nav= new INavigatable() {
 			public boolean gotoDifference(boolean next) {
-				return internalNavigate(next);
+				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+				return internalNavigate(next, true);
 			}
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
+		
+		// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+		IOpenable openable= new IOpenable() {
+			public void openSelected() {
+				internalOpen();
+			}
+		};
+		tree.setData(IOpenable.OPENABLE_PROPERTY, openable);
 		
 		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 
@@ -498,7 +507,8 @@ public class DiffTreeViewer extends TreeViewer {
 	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
 	 */
 	protected void navigate(boolean next) {	
-		internalNavigate(next);
+		// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+		internalNavigate(next, false);
 	}
 	
 	//---- private
@@ -512,7 +522,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
 	 * @return <code>true</code> if at end (or beginning)
 	 */
-	private boolean internalNavigate(boolean next) {
+	private boolean internalNavigate(boolean next, boolean fireOpen) {
 		
 		Control c= getControl();
 		if (!(c instanceof Tree))
@@ -528,7 +538,7 @@ public class DiffTreeViewer extends TreeViewer {
 			if (children != null && children.length > 0) {
 				item= children[0];
 				if (item != null && item.getItemCount() <= 0) {
-					internalSetSelection(item);
+					internalSetSelection(item, fireOpen);				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
 					return false;
 				}
 			}
@@ -543,7 +553,7 @@ public class DiffTreeViewer extends TreeViewer {
 		}
 		
 		if (item != null) {
-			internalSetSelection(item);
+			internalSetSelection(item, fireOpen);	// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
 			return false;
 		}
 		return true;
@@ -632,11 +642,18 @@ public class DiffTreeViewer extends TreeViewer {
 		return item;
 	}
 	
-	private void internalSetSelection(TreeItem ti) {
+	private void internalSetSelection(TreeItem ti, boolean fireOpen) {
 		if (ti != null) {
 			Object data= ti.getData();
-			if (data != null)
-				setSelection(new StructuredSelection(data), true);
+			if (data != null) {
+				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+				ISelection selection= new StructuredSelection(data);
+				setSelection(selection, true);
+				ISelection currentSelection= getSelection();
+				if (fireOpen && currentSelection != null && selection.equals(currentSelection)) {
+					fireOpen(new OpenEvent(this, selection));
+				}
+			}
 		}
 	}
 	
@@ -703,6 +720,16 @@ public class DiffTreeViewer extends TreeViewer {
 			fCopyLeftToRightAction.setEnabled(leftToRight > 0);
 		if (fCopyRightToLeftAction != null)
 			fCopyRightToLeftAction.setEnabled(rightToLeft > 0);
+	}
+	
+	/*
+	 * Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+	 */ 
+	private void internalOpen()  {
+		ISelection selection= getSelection();
+		if (selection != null && !selection.isEmpty()) {
+			fireOpen(new OpenEvent(this, selection));
+		}
 	}
 }
 

@@ -24,6 +24,8 @@ public class CompareNavigator {
 	
 	private boolean fLastDirection= true;
 	private CompareViewerSwitchingPane[] fPanes;
+	// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+	private boolean fNextFirstTime= true;
 	
 	public CompareNavigator(CompareViewerSwitchingPane[] panes) {
 		fPanes= panes;
@@ -36,6 +38,12 @@ public class CompareNavigator {
 	public void selectChange(boolean next) {
 		
 		fLastDirection= next;
+
+		// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+		if (next && fNextFirstTime && mustOpen()) {
+			fNextFirstTime= false;
+			openElement();
+		}
 		
 		// find most down stream CompareViewerPane
 		int n= 0;
@@ -119,4 +127,50 @@ public class CompareNavigator {
 			return nav.resetDirection();
 		return true;
 	}
+	
+	/*
+	 * Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+	 */
+	private boolean mustOpen() {
+		if (fPanes == null || fPanes.length == 0)
+			return false;
+		for (int i= 1; i < fPanes.length; i++) {
+			CompareViewerSwitchingPane pane= fPanes[i];
+			if (pane != null && pane.getInput() != null)
+				return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+	 */
+	private void openElement() {
+		if (fPanes == null || fPanes.length == 0)
+			return;
+		IOpenable openable= getOpenable(fPanes[0]);
+		if (openable != null) {
+			openable.openSelected();
+		}
+	}
+	
+	/*
+	 * Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+	 */
+	private static IOpenable getOpenable(CompareViewerSwitchingPane pane) {
+		if (pane == null)
+			return null;
+		if (pane.isEmpty())
+			return null;
+		Viewer viewer= pane.getViewer();
+		if (viewer == null)
+			return null;
+		Control control= viewer.getControl();
+		if (control == null)
+			return null;
+		Object data= control.getData(IOpenable.OPENABLE_PROPERTY);
+		if (data instanceof IOpenable)
+			return (IOpenable) data;
+		return null;
+	}	
 }
