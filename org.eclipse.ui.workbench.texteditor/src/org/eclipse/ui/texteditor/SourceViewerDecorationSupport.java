@@ -196,10 +196,16 @@ public class SourceViewerDecorationSupport {
 	 * effect.
 	 */
 	public void uninstall() {
+		
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 			fPropertyChangeListener= null;
 			fPreferenceStore= null;
+		}
+		
+		if (fFontPropertyChangeListener != null) {		
+			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+			fFontPropertyChangeListener= null;
 		}
 	}
 	
