@@ -16,6 +16,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +189,11 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param properties a Map of user-defined properties
 	 */
 	public void addUserProperties(Map properties) {
-		userProperties = properties;
+		if (userProperties == null) {
+			userProperties= new HashMap(properties);
+		} else {
+			userProperties.putAll(properties);
+		}
 	}
 
 	/**
