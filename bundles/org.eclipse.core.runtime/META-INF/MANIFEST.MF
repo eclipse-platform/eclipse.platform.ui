@@ -20,7 +20,6 @@ Provide-Package:
  org.eclipse.core.internal.jobs,
  org.eclipse.core.runtime.jobs,
  org.eclipse.core.runtime.content,
- org.eclipse.core.runtime,
- org.eclipse.core.boot
+ org.eclipse.core.runtime
 Require-Bundle: 
  org.eclipse.osgi; reprovide=true
