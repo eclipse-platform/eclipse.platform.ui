@@ -185,4 +185,10 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 	public void setSelectedProjects(IProject[] selectedProjects) {
 		this.selectedProjects.addAll(Arrays.asList(selectedProjects));
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			fileText.setFocus();
+		}
+	}
 }

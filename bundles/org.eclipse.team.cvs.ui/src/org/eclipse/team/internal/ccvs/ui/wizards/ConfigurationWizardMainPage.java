@@ -476,4 +476,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	public boolean getValidate() {
 		return validate;
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			hostCombo.setFocus();
+		}
+	}
 }

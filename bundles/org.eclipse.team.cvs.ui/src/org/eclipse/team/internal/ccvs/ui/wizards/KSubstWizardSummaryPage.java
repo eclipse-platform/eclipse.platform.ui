@@ -274,4 +274,10 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 	private String getModeDisplayText(KSubstOption option) {
 		return option.getLongDisplayText();
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			showUnaffectedFilesButton.setFocus();
+		}
+	}
 }

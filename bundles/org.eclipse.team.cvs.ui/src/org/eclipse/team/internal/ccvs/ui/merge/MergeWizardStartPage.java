@@ -139,4 +139,10 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	public CVSTag getTag() {
 		return result;
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			table.getControl().setFocus();
+		}
+	}
 }

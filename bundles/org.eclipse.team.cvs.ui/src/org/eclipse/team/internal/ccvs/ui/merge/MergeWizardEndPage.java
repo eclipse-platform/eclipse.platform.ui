@@ -110,8 +110,10 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		// refresh the tree because tags may of been added in the previous page
+		// refresh the tree because tags may have been added in the previous page
 		tree.refresh();
+		if (visible) {
+			tree.getControl().setFocus();
+		}
 	}
-
 }

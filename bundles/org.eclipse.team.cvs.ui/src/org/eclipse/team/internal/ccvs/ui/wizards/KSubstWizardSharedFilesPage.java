@@ -78,4 +78,10 @@ public class KSubstWizardSharedFilesPage extends CVSWizardPage {
 		// returns true iff the list is empty after filtering
 		return listViewer.getList().getItemCount() == 0;
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			includeSharedFilesButton.setFocus();
+		}
+	}
 }

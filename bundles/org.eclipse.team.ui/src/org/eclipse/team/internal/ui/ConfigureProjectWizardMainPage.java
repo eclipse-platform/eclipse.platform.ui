@@ -156,4 +156,10 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	public void setProject(IProject project) {
 		this.project = project;
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			table.setFocus();
+		}
+	}
 }

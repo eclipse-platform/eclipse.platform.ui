@@ -120,4 +120,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			this.file = file;
 		}
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			fileText.setFocus();
+		}
+	}
 }

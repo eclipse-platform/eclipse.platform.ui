@@ -130,4 +130,10 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	public ICVSRepositoryLocation getLocation() {
 		return result;
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			useExistingRepo.setFocus();
+		}
+	}
 }
