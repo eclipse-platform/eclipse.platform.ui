@@ -61,7 +61,8 @@ public class WelcomeEditor extends EditorPart {
 	private ScrolledComposite scrolledComposite;
 	
 	private IPropertyChangeListener colorListener;
-		
+	private boolean mouseDown = false;
+	private boolean dragEvent = false;
 	
 	/**
 	 * The keyListener innerClass for the welcome editor
@@ -201,11 +202,23 @@ public WelcomeEditor() {
  */
 private void addListeners(StyledText styledText) {
 	styledText.addMouseListener(new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			if (e.button != 1) {
+				return;
+			}
+			mouseDown = true;
+		}
 		public void mouseUp(MouseEvent e) {
+			mouseDown = false;
 			StyledText text = (StyledText)e.widget;
 			WelcomeItem item = (WelcomeItem)e.widget.getData();
 			int offset = text.getCaretOffset();
-			if (item.isLinkAt(offset)) {	
+			if (dragEvent) {
+				dragEvent = false;
+				if (item.isLinkAt(offset)) {
+					text.setCursor(handCursor);
+				}
+			} else if (item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
 				item.triggerLinkAt(offset);
 				text.setCursor(null);
@@ -214,6 +227,15 @@ private void addListeners(StyledText styledText) {
 	});
 	styledText.addMouseMoveListener(new MouseMoveListener() {
 		public void mouseMove(MouseEvent e) {
+			// Do not change cursor on drag events
+			if (mouseDown) {
+				if (!dragEvent) {
+					StyledText text = (StyledText)e.widget;
+					text.setCursor(null);
+				}
+				dragEvent = true;
+				return;
+			}
 			StyledText text = (StyledText)e.widget;
 			WelcomeItem item = (WelcomeItem)e.widget.getData();
 			int offset = getOffsetAtLocation(text, e.x, e.y);
