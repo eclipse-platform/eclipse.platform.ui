@@ -2,7 +2,7 @@
 <!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.debug.ui"
-   name="DebugToolsUI"
+   name="%pluginName"
    version="0.9"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.debug.internal.ui.DebugUIPlugin">

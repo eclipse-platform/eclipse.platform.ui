@@ -2,7 +2,7 @@
 <!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.debug.core"
-   name="DebugTools"
+   name="%pluginName"
    version="0.9"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.debug.core.DebugPlugin">
@@ -20,8 +20,8 @@
 </runtime>
 
 <!-- Extension points -->
-<extension-point id="launchers" name="Launcher"/>
-<extension-point id="breakpoints" name="Breakpoint"/>
+<extension-point id="launchers" name="%launcherExtensionPointName"/>
+<extension-point id="breakpoints" name="%breakpointExtensionPointName"/>
 
 <!-- Extensions -->
 <extension
