@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="watchExpressionDelegates" name="watchExpressionDelegates"/>
+      </appInfo>
+      <documentation>
+         This extension provides a mechanism for providing delegates to evaluate watch expressions on a per debug model basis. Watch expression delegates perform evaluations for watch expressions and report the results asynchronously.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="watchExpressionDelegate" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="watchExpressionDelegate">
+      <complexType>
+         <attribute name="debugModel" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the id of the debug model that this delegate provides evaluations for
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="delegateClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/samp&gt;, which is used to evaluate the value of an expression.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+&lt;pre&gt;
+The following is the definition of a watch expression delegate for the com.example.foo plug-in:
+ &lt;extension point="org.eclipse.debug.core.watchExpressionDelegates"&gt;
+   &lt;watchExpressionDelegate
+     debugModel="org.eclipse.jdt.debug"
+     delegateClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpressionDelegate"/&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;         
+      </documentation>
+   </annotation>
+
+</schema>

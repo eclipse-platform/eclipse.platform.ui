@@ -30,7 +30,7 @@
    <extension-point id="simpleLaunchVariables" name="%simpleLaunchVariablesName" schema="schema/simpleLaunchVariables.exsd"/>
    <extension-point id="contextLaunchVariables" name="%contextLaunchVariablesName" schema="schema/contextLaunchVariables.exsd"/>
    <extension-point id="refreshLaunchVariables" name="%refreshLaunchVariablesName" schema="schema/refreshLaunchVariables.exsd"/>
-   <extension-point id="watchExpressionDelegates" name="%watchExpressionDelegatesName"/>
+   <extension-point id="watchExpressionDelegates" name="%watchExpressionDelegatesName" schema="schema/watchExpressionDelegates.exsd"/>
 <!-- Extensions -->
    <extension
          id="breakpointMarker"
