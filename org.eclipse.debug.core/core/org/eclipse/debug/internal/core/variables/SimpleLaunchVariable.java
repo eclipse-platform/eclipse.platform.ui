@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.variables;
 
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
@@ -23,24 +28,25 @@ import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
 public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	
-	protected ILaunchVariableInitializer fVariableInitializer= null;
-	protected String fName= null;
-	protected String fValue= null;
-	protected String fDescription= null;
+	private IConfigurationElement fElement = null;
+	private ILaunchVariableInitializer fVariableInitializer= null;
+	private String fName= null;
+	private String fValue= null;
+	private String fDescription= null;
 	
 	/**
 	 * Creates a new launch configuration variable with the given initializer or <code>null</code>
 	 * if none is available.
-	 * @param initializer the initializer that should be used to calculate this variable's
-	 * value if no value is set or <code>null</code> if no initializer is defined.
 	 * @param initialValue the variable's initial value or <code>null</code> if no initial value
 	 * should be set.
 	 * @param description the variable's description or <code>null</code> if no
 	 * description is specified.
+	 * @param element configuration element if this variable was defined by an extension point,
+	 * 	otherwise <code>null</code>
 	 */
-	public SimpleLaunchVariable(String name, ILaunchVariableInitializer initializer, String initialValue, String description) {
+	public SimpleLaunchVariable(String name, String initialValue, String description, IConfigurationElement element) {
 		this(name);
-		fVariableInitializer= initializer;
+		fElement = element;
 		fValue= initialValue;
 		fDescription= description;
 	}
@@ -60,10 +66,30 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	}
 
 	/**
-	 * @see ISimpleLaunchVariable#getInitializer()
+	 * Instantiates and returns this variable's initializer, if any.
+	 * 
+	 * @return variable initializer or <code>null</code> if none.
 	 */
 	public ILaunchVariableInitializer getInitializer() {
+		if (hasInitializer()) {
+			if (fVariableInitializer == null) {
+				try {
+					fVariableInitializer = (ILaunchVariableInitializer) fElement.createExecutableExtension(SimpleLaunchVariableRegistry.ATTR_INITIALIZER_CLASS);
+				} catch (CoreException e) {
+					DebugPlugin.logMessage(MessageFormat.format("Failed to load launch variable initializer: {0}", new String[] {fElement.getAttribute(SimpleLaunchVariableRegistry.ATTR_INITIALIZER_CLASS)}), e); //$NON-NLS-1$
+				}
+			}
+		}
 		return fVariableInitializer;
+	}
+	
+	/**
+	 * Returns whehter this variable has an initializer.
+	 * 
+	 * @return whehter this variable has an initializer
+	 */
+	protected boolean hasInitializer() {
+		return fElement != null && fElement.getAttribute(SimpleLaunchVariableRegistry.ATTR_INITIALIZER_CLASS) != null;	
 	}
 	
 	/**
@@ -84,7 +110,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	 * @see ISimpleLaunchVariable#getText()
 	 */
 	public String getValue() {
-		if (fValue == null && getInitializer() != null) {
+		if (fValue == null && hasInitializer()) {
 			fValue= getInitializer().getText();
 		}
 		return fValue;
@@ -97,4 +123,12 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 		fValue= value;
 	}
 
+	/**
+	 * Sets this variable's configuration elemnet
+	 * 
+	 * @param element configuration element
+	 */
+	protected void setConfigurationElement(IConfigurationElement element) {
+		fElement = element;
+	}
 }
