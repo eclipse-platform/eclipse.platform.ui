@@ -5,6 +5,8 @@ package org.eclipse.core.resources;
  * All Rights Reserved.
  */
 
+import java.util.Map;
+
 /**
  * A marker delta describes the change to a single marker.
  * A marker can either be added, removed or changed.
@@ -15,7 +17,6 @@ package org.eclipse.core.resources;
  * This interface is not intended to be implemented by clients.
  * </p>
  */
-import java.util.Map;
 public interface IMarkerDelta {
 /**
  * Returns the object attribute with the given name.  The result is an instance of one
