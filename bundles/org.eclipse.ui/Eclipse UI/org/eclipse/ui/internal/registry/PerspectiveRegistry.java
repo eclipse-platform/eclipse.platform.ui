@@ -149,6 +149,7 @@ private void loadCustom() {
 					if (oldPersp == null)
 						children.add(newPersp);
 				} catch (IOException e) {
+				} catch (WorkbenchException e) {
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Display;
@@ -239,8 +240,16 @@ public class WorkingSetManager implements IWorkingSetManager {
 				restoreMruList(memento);
 				reader.close();
 			} catch (IOException e) {
-				MessageDialog.openError((Shell) null, WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
+				MessageDialog.openError(
+					(Shell) null,
+					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
+					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
+			} catch (WorkbenchException e) {
+				ErrorDialog.openError(
+					(Shell) null, 
+					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"),//$NON-NLS-1$
+					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message"), //$NON-NLS-1$
+					e.getStatus());
 			}
 		}
 	}

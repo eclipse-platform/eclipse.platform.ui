@@ -46,7 +46,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
  * Create a descriptor from a file.
  */
 public PerspectiveDescriptor(File file)
-	throws IOException
+	throws IOException, WorkbenchException
 {
 	super();
 	InputStream stream = null;
@@ -57,11 +57,11 @@ public PerspectiveDescriptor(File file)
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		restoreState(memento);
 		reader.close();
+		stream = null;
 		customFile = file;
-	} catch (IOException e) {
+	} finally {
 		if (stream != null)
 			stream.close();
-		throw e;
 	}
 }
 /**

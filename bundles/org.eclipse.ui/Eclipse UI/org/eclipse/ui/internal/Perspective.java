@@ -572,6 +572,14 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 			WorkbenchMessages.getString("Perspective.problemRestoringTitle"),  //$NON-NLS-1$
 			WorkbenchMessages.getString("Perspective.errorReadingState")); //$NON-NLS-1$
 		return;
+	} catch (WorkbenchException e) {
+		persp.deleteCustomFile();
+		ErrorDialog.openError(
+			(Shell) null, 
+			WorkbenchMessages.getString("Perspective.problemRestoringTitle"),//$NON-NLS-1$
+			WorkbenchMessages.getString("Perspective.errorReadingState"), //$NON-NLS-1$
+			e.getStatus());
+		return;
 	}
 }
 /**

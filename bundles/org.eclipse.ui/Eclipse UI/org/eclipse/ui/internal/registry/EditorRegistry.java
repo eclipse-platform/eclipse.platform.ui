@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -523,6 +524,13 @@ private boolean loadAssociations() {
 		}
 		//Ignore this as the workbench may not yet have saved any state
 		return false;
+	} catch (WorkbenchException e) {
+		ErrorDialog.openError(
+			(Shell) null, 
+			WorkbenchMessages.getString("EditorRegistry.errorTitle"),//$NON-NLS-1$
+			WorkbenchMessages.getString("EditorRegistry.errorMessage"), //$NON-NLS-1$
+			e.getStatus());
+		return false;
 	}
 
 	//Get the resource types
@@ -596,8 +604,15 @@ private boolean loadAssociations() {
 		}
 		MessageDialog.openError(
 			(Shell) null,
-			"Error",//$NON-NLS-1$
-			"Unable to load resource associations.");//$NON-NLS-1$
+			WorkbenchMessages.getString("EditorRegistry.errorTitle"),//$NON-NLS-1$
+			WorkbenchMessages.getString("EditorRegistry.errorMessage")); //$NON-NLS-1$
+		return false;
+	} catch (WorkbenchException e) {
+		ErrorDialog.openError(
+			(Shell) null, 
+			WorkbenchMessages.getString("EditorRegistry.errorTitle"),//$NON-NLS-1$
+			WorkbenchMessages.getString("EditorRegistry.errorMessage"), //$NON-NLS-1$
+			e.getStatus());
 		return false;
 	}
 	return true;

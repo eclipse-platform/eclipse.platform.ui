@@ -22,6 +22,7 @@ import org.apache.xerces.dom.TextImpl;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -48,25 +49,44 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Creates a <code>Document</code> from the <code>Reader</code>
-	 * and returns a root memento for reading the document.
+	 * and returns a memento on the first <code>Element</code> for reading
+	 * the document.
 	 * 
-	 * @param reader the reader used to create the memento's document
-	 * @return the root memento for reading the document
+	 * @param reader the <code>Reader</code> used to create the memento's document
+	 * @return a memento on the first <code>Element</code> for reading the document
+	 * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
 	 */
-	public static XMLMemento createReadRoot(Reader reader) {
-		Document document = null;
+	public static XMLMemento createReadRoot(Reader reader) throws WorkbenchException {
+		String messageKey = "XMLMemento.noElement"; //$NON-NLS-1$
+		Exception exception = null;
+		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser = factory.newDocumentBuilder();
-			document = parser.parse(new InputSource(reader));
-			Node node = document.getFirstChild();
-			if (node instanceof Element)
-				return new XMLMemento(document, (Element) node);
+			Document document = parser.parse(new InputSource(reader));
+			NodeList list = document.getChildNodes();
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				if (node instanceof Element)
+					return new XMLMemento(document, (Element) node);
+			}
 		} catch (ParserConfigurationException e) {
+			exception = e;
+			messageKey = "XMLMemento.parserConfigError"; //$NON-NLS-1$
 		} catch (IOException e) {
+			exception = e;
+			messageKey = "XMLMemento.ioError"; //$NON-NLS-1$
 		} catch (SAXException e) {
+			exception = e;
+			messageKey = "XMLMemento.formatError"; //$NON-NLS-1$
 		}
-		return null;
+		
+		String problemText = null;
+		if (exception != null)
+			problemText = exception.getMessage();
+		if (problemText == null || problemText.length() == 0)
+			problemText = WorkbenchMessages.getString(messageKey);
+		throw new WorkbenchException(problemText, exception);
 	}
 	
 	/**
