@@ -5,7 +5,6 @@ package org.eclipse.core.internal.localstore;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
