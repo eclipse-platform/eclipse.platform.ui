@@ -181,10 +181,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					String label= ((SearchPageDescriptor)element).getLabel();
 					int i= label.indexOf('&');
 					while (i >= 0) {
-						if (i < label.length())
-							label= label.substring(0, i) + label.substring(i+1);
-						else
-							label.substring(0, i);
+						label= label.substring(0, i) + label.substring(i+1);
 						i= label.indexOf('&');
 					}
 					return label;
