@@ -232,31 +232,23 @@ public class WorkbenchSiteProgressService
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#useHalfBusyCursor(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void useHalfBusyCursor(Job job) {
-		//Do nothing as this is deprecated
-	}
-
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	public void addPropertyChangeListener(IPropertyChangeListener propertyChangeListener) {
 		IPropertyChangeListener[] newListeners = new IPropertyChangeListener[changeListeners.length +1];
 		System.arraycopy(changeListeners,0,newListeners,0,changeListeners.length);
-		newListeners[changeListeners.length] = listener;
+		newListeners[changeListeners.length] = propertyChangeListener;
 		changeListeners = newListeners;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	public void removePropertyChangeListener(IPropertyChangeListener propertyChangeListener) {
 		Collection remainingListeners = new ArrayList();
 		for (int i = 0; i < changeListeners.length; i++) {
-			if(!changeListeners[i].equals(listener))
-				remainingListeners.add(listener);
+			if(!changeListeners[i].equals(propertyChangeListener))
+				remainingListeners.add(propertyChangeListener);
 			
 		}
 		
