@@ -7,7 +7,9 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
- **********************************************************************/
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
+ * *********************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
 
@@ -234,6 +236,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		data.width = convertWidthInCharsToPixels(50);
 		data.left = new FormAttachment(largerLabel, convertHorizontalDLUsToPixels(5));
 		variableNameField.setLayoutData(data);
+		variableNameField.setFont(font);
 		variableNameField.setFocus();
 
 		variableNameField.addModifyListener(new ModifyListener() {
@@ -251,7 +254,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 		data.left = new FormAttachment(largerLabel, convertHorizontalDLUsToPixels(5));
 		data.top = new FormAttachment(variableNameLabel, convertVerticalDLUsToPixels(10));
 		variableValueField.setLayoutData(data);
-
+		variableValueField.setFont(font);
+		
 		variableValueField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
 				variableValueModified();
@@ -269,6 +273,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		data.left = new FormAttachment(variableValueField, convertHorizontalDLUsToPixels(10));
 		data.right = new FormAttachment(100, -5);
 		fileButton.setLayoutData(data);
+		fileButton.setFont(font);
 
 		fileButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -287,6 +292,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		data.left = new FormAttachment(variableValueField, convertHorizontalDLUsToPixels(10));
 		data.right = new FormAttachment(100, -5);
 		folderButton.setLayoutData(data);
+		folderButton.setFont(font);
 
 		folderButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

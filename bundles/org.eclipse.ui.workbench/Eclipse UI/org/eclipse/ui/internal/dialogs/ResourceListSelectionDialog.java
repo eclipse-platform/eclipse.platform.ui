@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 import java.text.Collator;
 import java.util.ArrayList;
@@ -138,7 +139,8 @@ protected void cancelPressed() {
 	super.cancelPressed();
 }
 /**
- * Dispose of resources. */
+ * Dispose of resources.
+ */
 public boolean close() {
 	boolean result = super.close();
 	labelProvider.dispose();

@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
@@ -17,6 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -60,6 +63,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 	 * Method declared on IDialogPage
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite topContainer = new Composite(parent, SWT.NONE);
 		topContainer.setLayout(new GridLayout());
 		topContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -69,9 +73,11 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		viewer = new TreeViewer(topContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.getTree().setFont(font);
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setContentProvider(getContentProvider());
 		viewer.setInput(reg);

@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -61,6 +64,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 	 * Method declared on PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
 		reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
@@ -78,6 +82,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		else
 			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
 		Label label = new Label(topComposite, SWT.LEFT);
+		label.setFont(font);
 		label.setText(instructions);
 
 		Capability[] caps = reg.getProjectDisabledCapabilities(getProject());
@@ -99,10 +104,12 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		capComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		label = new Label(capComposite, SWT.LEFT);
+		label.setFont(font);
 		label.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
 		
 		table = new TableViewer(capComposite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.getTable().setFont(font);
 		table.setLabelProvider(new CapabilityLabelProvider());
 		table.setContentProvider(getContentProvider());
 		table.setInput(getProject());
@@ -115,6 +122,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		label = new Label(buttonComposite, SWT.LEFT);
+		label.setFont(font);
 		label.setText(""); //$NON-NLS-1$
 		
 		addButton = new Button(buttonComposite, SWT.PUSH);
@@ -133,6 +141,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		addButton.setLayoutData(data);
+		addButton.setFont(font);
 		
 		removeButton = new Button(buttonComposite, SWT.PUSH);
 		removeButton.setText(WorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
@@ -150,6 +159,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		removeButton.setLayoutData(data);
+		removeButton.setFont(font);
 
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

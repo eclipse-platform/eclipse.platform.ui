@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 
 import org.eclipse.ui.internal.registry.*;
@@ -103,6 +104,7 @@ protected void configureShell(Shell shell) {
  * @return the dialog area control
  */
 protected Control createDialogArea(Composite parent) {
+	Font font = parent.getFont();
 	// create main group
 	Composite contents = (Composite)super.createDialogArea(parent);
 	((GridLayout)contents.getLayout()).numColumns = 2;
@@ -113,7 +115,7 @@ protected Control createDialogArea(Composite parent) {
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	textLabel.setLayoutData(data);
-	textLabel.setFont(parent.getFont());
+	textLabel.setFont(font);
 
 	internalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
 	internalButton.setText(WorkbenchMessages.getString("EditorSelection.internal")); //$NON-NLS-1$
@@ -121,7 +123,7 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalSpan = 1;
 	internalButton.setLayoutData(data);
-	internalButton.setFont(parent.getFont());
+	internalButton.setFont(font);
 
 	externalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
 	externalButton.setText(WorkbenchMessages.getString("EditorSelection.external")); //$NON-NLS-1$
@@ -129,7 +131,7 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalSpan = 1;
 	externalButton.setLayoutData(data);
-	externalButton.setFont(parent.getFont());
+	externalButton.setFont(font);
 		
 	editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
@@ -143,6 +145,7 @@ protected Control createDialogArea(Composite parent) {
 	data.grabExcessVerticalSpace= true;
 	data.horizontalSpan = 2;
 	editorTable.setLayoutData(data);
+	editorTable.setFont(font);
 	data.heightHint = editorTable.getItemHeight()*12;
 	
 	browseExternalEditorsButton = new Button(contents, SWT.PUSH);
@@ -153,7 +156,7 @@ protected Control createDialogArea(Composite parent) {
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 	data.widthHint = Math.max(widthHint, browseExternalEditorsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	browseExternalEditorsButton.setLayoutData(data);
-	browseExternalEditorsButton.setFont(parent.getFont());
+	browseExternalEditorsButton.setFont(font);
 	
 	restoreWidgetValues();  // Place buttons to the appropriate state
 	

@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 
 import java.net.URL;
@@ -156,6 +157,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		if (message != null) {
 			Label label = new Label(outer, SWT.NONE);
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			label.setFont(parent.getFont());
 			label.setText(message);
 		}
 
@@ -185,7 +187,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 		vendorInfo.setHeaderVisible(true);
 		vendorInfo.setLinesVisible(true);
-
+		vendorInfo.setFont(parent.getFont());
+		
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setMoreButtonEnablement(e.item != null);

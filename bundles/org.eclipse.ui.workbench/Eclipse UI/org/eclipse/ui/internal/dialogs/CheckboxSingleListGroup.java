@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
@@ -120,6 +121,7 @@ public Point computeSize(int wHint,int hHint,boolean changed) {
  *	@param height int
  */
 protected void createContents(Composite parent,int width,int height) {
+	Font font = parent.getFont();
 	// group pane
 	Composite composite = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
@@ -131,6 +133,7 @@ protected void createContents(Composite parent,int width,int height) {
 	spec.verticalAlignment = GridData.FILL;
 	composite.setLayout(layout);
 	composite.setLayoutData(spec);
+	composite.setFont(font);
 	
 	// list 1 view pane.  Add a border to the pane.
 	Composite pane = createViewPane(composite, width/2, height/2);
@@ -141,6 +144,7 @@ protected void createContents(Composite parent,int width,int height) {
 	list1Viewer.setLabelProvider(list1LabelProvider);
 	list1Viewer.addCheckStateListener(this);
 	list1Viewer.addSelectionChangedListener(this);
+	list1Viewer.getTable().setFont(font);
 
 	// this has to be done after the viewers have been laid out
 	list1Viewer.setInput(root);

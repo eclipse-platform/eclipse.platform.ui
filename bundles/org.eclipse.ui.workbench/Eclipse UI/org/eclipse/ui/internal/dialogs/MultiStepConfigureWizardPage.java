@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -69,6 +71,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
 
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_CONFIGURE_WIZARD_PAGE);
 

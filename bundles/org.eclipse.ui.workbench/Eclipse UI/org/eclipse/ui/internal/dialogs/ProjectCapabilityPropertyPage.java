@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
@@ -63,6 +65,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		else
 			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
 		Label label = new Label(parent, SWT.LEFT);
+		label.setFont(parent.getFont());
 		label.setText(instructions);
 		
 		Capability[] caps = reg.getProjectCapabilities(getProject());

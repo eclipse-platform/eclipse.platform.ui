@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.text.Collator;
 import java.util.*;
 
@@ -20,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -120,9 +123,10 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 	 * @param parent the parent composite
 	 */
 	private void createPerspectiveGroup(Composite parent) {
-
+		Font font = parent.getFont();
 		// Label for choosing perspective
 		Label label = new Label(parent, SWT.NONE);
+		label.setFont(font);
 		label.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.choosePerspective")); //$NON-NLS-1$
 		
 		// Add perspective list.
@@ -132,6 +136,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		list.setInput(persps);
 		list.addSelectionChangedListener(new SelectionListener());
 		list.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		list.getTable().setFont(font);
 	}
 	
 	/**
@@ -140,13 +145,14 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 	 * @param parent the parent composite
 	 */
 	private void createOptionGroup(Composite parent) {
-
+		Font font = parent.getFont();
 		// Create the option group
 		Group optionGroup = new Group(parent, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		optionGroup.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		optionGroup.setLayoutData(data);
+		optionGroup.setFont(font);
 		optionGroup.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.options")); //$NON-NLS-1$
 
 		// Same window option
@@ -154,6 +160,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		button.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.sameWindow")); //$NON-NLS-1$
 		data = new GridData();
 		button.setLayoutData(data);
+		button.setFont(font);
 		button.setSelection(sameWindow);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -166,6 +173,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		button.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.newWindow")); //$NON-NLS-1$
 		data = new GridData();
 		button.setLayoutData(data);
+		button.setFont(font);
 		button.setSelection(!sameWindow);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

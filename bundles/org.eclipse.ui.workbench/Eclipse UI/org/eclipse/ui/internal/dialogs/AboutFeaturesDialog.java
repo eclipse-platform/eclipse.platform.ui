@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 
 import java.text.Collator;
@@ -17,6 +18,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -210,6 +212,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 * Create the info area containing the image and text
 	 */
 	protected void createInfoArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		infoArea = new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns = 2; 
@@ -225,6 +229,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.heightHint = 32;
 		data.widthHint = 32;
 		imageLabel.setLayoutData(data);
+		imageLabel.setFont(font);
 		
 		// text on the right
 		text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
@@ -235,6 +240,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
 		text.setLayoutData(data);
+		text.setFont(font);
 		text.setCursor(null);
 		text.setBackground(infoArea.getBackground());
 		addListeners(text);
@@ -256,7 +262,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-
+		table.setFont(parent.getFont());
+		
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AboutInfo info = (AboutInfo)e.item.getData();

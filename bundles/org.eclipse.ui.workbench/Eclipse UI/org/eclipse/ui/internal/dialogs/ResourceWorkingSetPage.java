@@ -7,7 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
+ * *****************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -65,6 +68,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -75,9 +79,11 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.message")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		text = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		text.setFont(font);
 		text.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -91,6 +97,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.label.tree")); //$NON-NLS-1$
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		tree = new CheckboxTreeViewer(composite);
 		tree.setUseHashlookup(true);
@@ -106,6 +113,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		tree.getControl().setLayoutData(data);
+		tree.getControl().setFont(font);
 
 		tree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {

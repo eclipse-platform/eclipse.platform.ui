@@ -9,13 +9,16 @@ package org.eclipse.ui.internal.dialogs;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
+ * *****************************************************************************/
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -99,6 +102,7 @@ public class FilterDialog extends ListSelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */	
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = (Composite) super.createDialogArea(parent);
 		Composite group = new Composite(composite, SWT.NONE);
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
@@ -117,6 +121,7 @@ public class FilterDialog extends ListSelectionDialog {
 		data = new GridData();
 		data.horizontalSpan = 2;
 		workingSetButton.setLayoutData(data);
+		workingSetButton.setFont(font);
 
 		group = new Composite(group, SWT.NONE);
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
@@ -124,10 +129,12 @@ public class FilterDialog extends ListSelectionDialog {
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		group.setLayout(layout);
+		group.setFont(font);
 
 		mruList = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		mruList.setLayoutData(data);
+		mruList.setFont(font);
 		selectButton = createButton(group, SELECT_ID, WorkbenchMessages.getString("FilterDialog.workingSetOther"), false); //$NON-NLS-1$
 
 		initializeMru();

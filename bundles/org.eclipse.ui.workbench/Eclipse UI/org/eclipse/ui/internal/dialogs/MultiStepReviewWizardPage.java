@@ -8,10 +8,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -78,6 +81,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 * Creates the control for the details
 	 */
 	private void createDetailsGroup(Composite parent) {
+		Font font = parent.getFont();
 		// Create a composite to hold everything together
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
@@ -89,12 +93,14 @@ public class MultiStepReviewWizardPage extends WizardPage {
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		// Text field to display the step's details
 		detailsField = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		detailsField.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // prefill to show 15 lines //$NON-NLS-1$
 		detailsField.setEditable(false);
 		detailsField.setLayoutData(new GridData(GridData.FILL_BOTH));
+		detailsField.setFont(font);
 	}
 	
 	/**
@@ -107,6 +113,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
 		instructionLabel.setLayoutData(data);
+		instructionLabel.setFont(parent.getFont());
 	}
 	
 	/**

@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -133,7 +134,7 @@ protected Control createDialogArea(Composite parent) {
 	// ...second the label
 	Label selectionLabel = new Label(actionSetGroup,SWT.NONE);
 	selectionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.available")); //$NON-NLS-1$
-	selectionLabel.setFont(parent.getFont());
+	selectionLabel.setFont(font);
 
 	// ...third the checkbox list
 	actionSetViewer = new CheckboxTreeViewer(actionSetGroup, SWT.BORDER);
