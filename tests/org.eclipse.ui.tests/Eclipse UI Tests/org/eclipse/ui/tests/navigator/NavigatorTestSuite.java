@@ -18,6 +18,8 @@ public class NavigatorTestSuite extends TestSuite {
 	 */
 	public NavigatorTestSuite() {
 		addTest(new TestSuite(ResourceNavigatorTest.class));
+		addTest(new TestSuite(NavigatorTest.class));
+		addTest(new TestSuite(DecoratorTestCase.class));
 	}
 
 }
