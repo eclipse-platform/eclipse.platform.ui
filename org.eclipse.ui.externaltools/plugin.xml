@@ -81,7 +81,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePage.externalToolsPreferences"
-            category="org.eclipse.ui.preferencePages.Workbench"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsPreferencePage"
             id="org.eclipse.ui.externaltools.ExternalToolsPreferencePage">
       </page>
