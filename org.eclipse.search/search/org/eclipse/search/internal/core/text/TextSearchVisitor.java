@@ -217,6 +217,10 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
 					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+				} catch (CoreException e) {
+					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
+					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} finally {
 					if (stream != null) {
 						try { stream.close();	} catch (IOException ignored) {}
