@@ -55,27 +55,6 @@ public class InstancePreferences extends EclipsePreferences {
 		loadedNodes.add(name());
 	}
 
-	/*
-	 * @see org.osgi.service.prefs.Preferences#sync()
-	 */
-	public void sync() throws BackingStoreException {
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		IEclipsePreferences node = getLoadLevel();
-		if (node == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		if (node instanceof EclipsePreferences) {
-			((EclipsePreferences) node).load(location);
-			node.flush();
-		}
-	}
-
 	/**
 	 * Load the Eclipse 2.1 preferences for the given bundle. If a file
 	 * doesn't exist then assume that conversion has already occurred

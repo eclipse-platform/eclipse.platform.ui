@@ -517,7 +517,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
-	public void load(IPath location) throws BackingStoreException {
+	protected void load(IPath location) throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
@@ -777,7 +777,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Added so the backwards compatibility layer (PreferenceForwarder)
 	 * gets preference change events of the correct types.
 	 */
-	public void removeBoolean(String key) {
+	void removeBoolean(String key) {
 		String oldValue = internalGet(key);
 		if (oldValue != null)
 			internalRemove(key, Boolean.valueOf(oldValue));
@@ -787,7 +787,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Added so the backwards compatibility layer (PreferenceForwarder)
 	 * gets preference change events of the correct types.
 	 */
-	public void removeDouble(String key) {
+	void removeDouble(String key) {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
@@ -803,7 +803,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Added so the backwards compatibility layer (PreferenceForwarder)
 	 * gets preference change events of the correct types.
 	 */
-	public void removeFloat(String key) {
+	void removeFloat(String key) {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
@@ -819,7 +819,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Added so the backwards compatibility layer (PreferenceForwarder)
 	 * gets preference change events of the correct types.
 	 */
-	public void removeInt(String key) {
+	void removeInt(String key) {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
@@ -835,7 +835,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Added so the backwards compatibility layer (PreferenceForwarder)
 	 * gets preference change events of the correct types.
 	 */
-	public void removeLong(String key) {
+	void removeLong(String key) {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
@@ -922,7 +922,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void save(IPath location) throws BackingStoreException {
+	protected void save(IPath location) throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
@@ -970,7 +970,23 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void sync() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
+		IPath location = getLocation();
 		// do nothing...subclasses to provide implementation
+		if (location == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		IEclipsePreferences node = getLoadLevel();
+		if (node == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		if (node instanceof EclipsePreferences) {
+			((EclipsePreferences) node).load(location);
+			node.flush();
+		}
 	}
 
 	public String toDeepDebugString() {

@@ -14,12 +14,10 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.0
@@ -80,27 +78,6 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		URL url = InternalPlatform.getDefault().getConfigurationLocation().getURL();
 		if (url != null)
 			location = computeLocation(new Path(url.getFile()), qualifier);
-	}
-
-	/*
-	 * @see org.osgi.service.prefs.Preferences#sync()
-	 */
-	public void sync() throws BackingStoreException {
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		IEclipsePreferences node = getLoadLevel();
-		if (node == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		if (node instanceof EclipsePreferences) {
-			((EclipsePreferences) node).load(location);
-			node.flush();
-		}
 	}
 
 	/*
