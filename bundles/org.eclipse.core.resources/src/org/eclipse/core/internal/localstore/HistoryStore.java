@@ -206,6 +206,10 @@ public void copyHistory(final IPath source, final IPath destination) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
 	}
+	//FIXME: due to bug 28330 we collect a set of entries to copy
+	// and then copy the entries outside the visitor. Once this referenced
+	// bug is fixed we can change this code to add the states within
+	// the visit() method.
 	final List matches = new LinkedList();
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
