@@ -338,9 +338,14 @@ public class AntRunner implements IPlatformRunnable {
 	 * Handles exceptions that are loaded by the Ant Class Loader by
 	 * asking the Internal Ant Runner class for the correct error message.
 	 * 
-	 * Handles nested NoClassDefFoundError and nested ClassNotFoundException	 */
+	 * Handles OperationCanceledExceptions, nested NoClassDefFoundError and
+	 * nested ClassNotFoundException
+	 */
 	protected void handleInvocationTargetException(Object runner, Class classInternalAntRunner, InvocationTargetException e) throws CoreException {
 		Throwable realException = e.getTargetException();
+		if (realException instanceof OperationCanceledException) {
+			return;
+		}
 		String message= null;
 		if (runner != null) {
 			try {
