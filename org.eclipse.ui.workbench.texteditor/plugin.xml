@@ -21,7 +21,7 @@
    </requires>
 
 
-   <extension-point id="markerAnnotationSpecification" name="Marker Annotation Specification" schema="schema/markerAnnotationSpecification.exsd"/>
+   <extension-point id="markerAnnotationSpecification" name="%markerAnnotationSpecification.label" schema="schema/markerAnnotationSpecification.exsd"/>
 
 <!-- action definitions -->
    <extension
