@@ -1220,7 +1220,8 @@ public final class BindingManager implements IContextManagerListener,
 		commandIdsByTrigger = new HashMap();
 		computeBindings(activeContextTree, commandIdsByTrigger);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
-		setActiveBindings(commandIdsByTrigger, buildPrefixTable(activeBindings));
+		setActiveBindings(commandIdsByTrigger,
+				buildPrefixTable(commandIdsByTrigger));
 		existingCache.setPrefixTable(prefixTable);
 	}
 

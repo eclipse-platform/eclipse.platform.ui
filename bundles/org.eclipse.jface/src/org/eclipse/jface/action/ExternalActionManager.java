@@ -77,7 +77,7 @@ public final class ExternalActionManager {
 		 * The internationalization bundle for text produced by this class.
 		 */
 		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-				.getBundle("CommandCallback"); //$NON-NLS-1$
+				.getBundle(ExternalActionManager.class.getName()); //$NON-NLS-1$
 
 		/**
 		 * The callback capable of responding to whether a command is active.
@@ -200,8 +200,8 @@ public final class ExternalActionManager {
 				while (listenerItr.hasNext()) {
 					final IPropertyChangeListener listener = (IPropertyChangeListener) listenerItr
 							.next();
-					listener.propertyChange(new PropertyChangeEvent(null,
-							IAction.TEXT, null, null));
+					listener.propertyChange(new PropertyChangeEvent(event
+							.getManager(), IAction.TEXT, null, null));
 				}
 			}
 		}
