@@ -175,8 +175,12 @@ public class UpdatesView
 	class SiteProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput==null) return;
+		public void inputChanged(
+			Viewer viewer,
+			Object oldInput,
+			Object newInput) {
+			if (newInput == null)
+				return;
 			updateTitle(newInput);
 		}
 
@@ -498,8 +502,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			newFolderAction,
 			"org.eclipse.update.ui.UpdatesView_newFolderAction");
-		newFolderAction.setText(
-			UpdateUI.getString(KEY_NEW_FOLDER));
+		newFolderAction.setText(UpdateUI.getString(KEY_NEW_FOLDER));
 
 		newSearchAction = new Action("newSearch") {
 			public void run() {
@@ -509,8 +512,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			newSearchAction,
 			"org.eclipse.update.ui.UpdatesView_newSearchAction");
-		newSearchAction.setText(
-			UpdateUI.getString(KEY_NEW_SEARCH));
+		newSearchAction.setText(UpdateUI.getString(KEY_NEW_SEARCH));
 
 		newLocalAction = new Action("newLocal") {
 			public void run() {
@@ -521,8 +523,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			newLocalAction,
 			"org.eclipse.update.ui.UpdatesView_newLocalAction");
-		newLocalAction.setText(
-			UpdateUI.getString(KEY_NEW_LOCAL_SITE));
+		newLocalAction.setText(UpdateUI.getString(KEY_NEW_LOCAL_SITE));
 
 		showSearchResultAction = new Action("showSearch") {
 			public void run() {
@@ -578,8 +579,7 @@ public class UpdatesView
 			refreshAction,
 			"org.eclipse.update.ui.UpdatesView_refreshAction");
 		refreshAction.setText(UpdateUI.getString(KEY_REFRESH));
-		refreshAction.setToolTipText(
-			UpdateUI.getString(KEY_REFRESH_TOOLTIP));
+		refreshAction.setToolTipText(UpdateUI.getString(KEY_REFRESH_TOOLTIP));
 		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_REFRESH_NAV_D);
@@ -597,8 +597,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			fileFilterAction,
 			"org.eclipse.update.ui.UpdatesView_fileFilterAction");
-		fileFilterAction.setText(
-			UpdateUI.getString(KEY_FILTER_FILES));
+		fileFilterAction.setText(UpdateUI.getString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
 
 		getTreeViewer().addFilter(fileFilter);
@@ -632,8 +631,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			showCategoriesAction,
 			"org.eclipse.update.ui.UpdatesView_showCategoriesAction");
-		showCategoriesAction.setText(
-			UpdateUI.getString(KEY_SHOW_CATEGORIES));
+		showCategoriesAction.setText(UpdateUI.getString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
 
 		linkExtensionAction = new Action("link") {
@@ -644,8 +642,7 @@ public class UpdatesView
 		WorkbenchHelp.setHelp(
 			linkExtensionAction,
 			"org.eclipse.update.ui.UpdatesView_linkExtensionAction");
-		linkExtensionAction.setText(
-			UpdateUI.getString(KEY_LINK_EXTENSION));
+		linkExtensionAction.setText(UpdateUI.getString(KEY_LINK_EXTENSION));
 
 		getTreeViewer().addSelectionChangedListener(selectionListener);
 		hookGlobalActions();
@@ -662,14 +659,12 @@ public class UpdatesView
 	}
 
 	private boolean getStoredEnvironmentValue() {
-		IDialogSettings settings =
-			UpdateUI.getDefault().getDialogSettings();
+		IDialogSettings settings = UpdateUI.getDefault().getDialogSettings();
 		return !settings.getBoolean(P_FILTER);
 	}
 
 	private void setStoredEnvironmentValue(boolean value) {
-		IDialogSettings settings =
-			UpdateUI.getDefault().getDialogSettings();
+		IDialogSettings settings = UpdateUI.getDefault().getDialogSettings();
 		settings.put(P_FILTER, !value);
 	}
 
@@ -703,8 +698,7 @@ public class UpdatesView
 		}
 		manager.add(refreshAction);
 		manager.add(new Separator());
-		MenuManager newMenu =
-			new MenuManager(UpdateUI.getString(KEY_NEW));
+		MenuManager newMenu = new MenuManager(UpdateUI.getString(KEY_NEW));
 		newMenu.add(newAction);
 		newMenu.add(newFolderAction);
 		newMenu.add(newSearchAction);
@@ -785,8 +779,7 @@ public class UpdatesView
 			new NewWizard(page, UpdateUIImages.DESC_NEW_BOOKMARK);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
-		dialog.getShell().setText(
-			UpdateUI.getString(KEY_NEW_BOOKMARK_TITLE));
+		dialog.getShell().setText(UpdateUI.getString(KEY_NEW_BOOKMARK_TITLE));
 		//dialog.getShell().setSize(400, 400);
 		dialog.open();
 	}
@@ -805,12 +798,10 @@ public class UpdatesView
 		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		Shell shell = UpdateUI.getActiveWorkbenchShell();
 		NewFolderWizardPage page = new NewFolderWizardPage(getSelectedFolder());
-		NewWizard wizard =
-			new NewWizard(page, UpdateUIImages.DESC_NEW_FOLDER);
+		NewWizard wizard = new NewWizard(page, UpdateUIImages.DESC_NEW_FOLDER);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
-		dialog.getShell().setText(
-			UpdateUI.getString(KEY_NEW_FOLDER_TITLE));
+		dialog.getShell().setText(UpdateUI.getString(KEY_NEW_FOLDER_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -819,12 +810,10 @@ public class UpdatesView
 		//UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		Shell shell = UpdateUI.getActiveWorkbenchShell();
 		NewSearchWizardPage page = new NewSearchWizardPage(getSelectedFolder());
-		NewWizard wizard =
-			new NewWizard(page, UpdateUIImages.DESC_NEW_SEARCH);
+		NewWizard wizard = new NewWizard(page, UpdateUIImages.DESC_NEW_SEARCH);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
-		dialog.getShell().setText(
-			UpdateUI.getString(KEY_NEW_SEARCH_TITLE));
+		dialog.getShell().setText(UpdateUI.getString(KEY_NEW_SEARCH_TITLE));
 		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
@@ -845,14 +834,11 @@ public class UpdatesView
 							getSelectedFolder(),
 							bookmark);
 					NewWizard wizard =
-						new NewWizard(
-							page,
-							UpdateUIImages.DESC_NEW_BOOKMARK);
+						new NewWizard(page, UpdateUIImages.DESC_NEW_BOOKMARK);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
 					dialog.getShell().setText(
-						UpdateUI.getString(
-							KEY_NEW_BOOKMARK_TITLE));
+						UpdateUI.getString(KEY_NEW_BOOKMARK_TITLE));
 					dialog.open();
 				}
 			}
@@ -1030,12 +1016,17 @@ public class UpdatesView
 							auth.reset();
 						monitor.worked(1);
 						if (obj instanceof SiteBookmark) {
-							((SiteBookmark) obj).connect(
-								false,
-								new SubProgressMonitor(monitor, 1));
+							SiteBookmark bookmark = (SiteBookmark) obj;
+							if (bookmark.isWebBookmark())
+								monitor.worked(1);
+							else
+								bookmark.connect(
+									false,
+									new SubProgressMonitor(monitor, 1));
 						} else
 							monitor.worked(1);
-						monitor.setTaskName(UpdateUI.getString("UpdatesView.updating"));
+						monitor.setTaskName(
+							UpdateUI.getString("UpdatesView.updating"));
 						getControl().getDisplay().syncExec(new Runnable() {
 							public void run() {
 								getViewer().refresh(obj);
@@ -1066,11 +1057,8 @@ public class UpdatesView
 			IInstallConfiguration config =
 				InstallWizard.createInstallConfiguration();
 			if (TargetPage
-				.addConfiguredSite(
-					getControl().getShell(),
-					config,
-					dir,
-					true)!=null) {
+				.addConfiguredSite(getControl().getShell(), config, dir, true)
+				!= null) {
 				InstallWizard.makeConfigurationCurrent(config, null);
 				InstallWizard.saveLocalSite();
 				UpdateUI.informRestartNeeded();
@@ -1122,7 +1110,9 @@ public class UpdatesView
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					monitor.beginTask(UpdateUI.getString("UpdatesView.connecting"), 3);
+					monitor.beginTask(
+						UpdateUI.getString("UpdatesView.connecting"),
+						3);
 					monitor.worked(1);
 
 					if (connect)
@@ -1238,7 +1228,7 @@ public class UpdatesView
 		}
 		return adapter.getIncludedFeatures(null);
 	}
-	
+
 	protected Object getRootObject() {
 		return UpdateUI.getDefault().getUpdateModel();
 	}

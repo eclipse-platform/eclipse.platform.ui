@@ -882,7 +882,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setOS(String os) {
 		if (os == null)
-			osLabel.setText(""); //$NON-NLS-1$
+			osLabel.setText(UpdateUI.getString("FeaturePage.all")); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(os);
 			StringBuffer buf = new StringBuffer();
@@ -924,7 +924,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setWS(String ws) {
 		if (ws == null)
-			wsLabel.setText(""); //$NON-NLS-1$
+			wsLabel.setText(UpdateUI.getString("FeaturePage.all")); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(ws);
 			StringBuffer buf = new StringBuffer();
@@ -939,7 +939,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setArch(String arch) {
 		if (arch == null)
-			archLabel.setText(""); //$NON-NLS-1$
+			archLabel.setText(UpdateUI.getString("FeaturePage.all")); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(arch);
 			StringBuffer buf = new StringBuffer();
@@ -954,7 +954,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setNL(String nl) {
 		if (nl == null)
-			nlLabel.setText(""); //$NON-NLS-1$
+			nlLabel.setText(UpdateUI.getString("FeaturePage.all")); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(nl);
 			StringBuffer buf = new StringBuffer();

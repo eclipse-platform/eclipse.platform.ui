@@ -89,6 +89,7 @@ public class SiteBookmark extends NamedModelObject
 	}
 	
 	public void connect(boolean useCache, IProgressMonitor monitor) throws CoreException {
+		if (monitor==null) monitor = new NullProgressMonitor();
 		monitor.beginTask("", 2);
 		monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString()));
 		site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
