@@ -90,6 +90,8 @@ public class Perspective
 	private ArrayList showViewActionIds;
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
+	private ArrayList fixedViews;
+	private boolean fixed;
 	private ArrayList showInPartIds;
 	private HashMap showInTimes = new HashMap();
 	private IViewReference activeFastView;
@@ -193,6 +195,7 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	alwaysOnActionSets = new ArrayList(2);
 	alwaysOffActionSets = new ArrayList(2);
 	fastViews = new ArrayList(2);
+	fixedViews = new ArrayList(2);
 }
 
 private final ICompoundCommandHandlerService compoundCommandHandlerService = CommandHandlerServiceFactory.getCompoundCommandHandlerService();
@@ -631,6 +634,25 @@ public boolean isFastView(IViewReference ref) {
 	return fastViews.contains(ref);
 }
 /**
+ * Returns true if a view is fixed.
+ */
+public boolean isFixedView(IViewReference ref) {
+	return fixedViews.contains(ref);
+}
+/**
+ * Returns true if a layout or perspective is fixed.
+ */
+public boolean isFixedLayout() {
+	//@issue is there a difference between a fixed
+	//layout and a fixed perspective?? If not the API
+	//may need some polish, WorkbenchPage, PageLayout
+	//and Perspective all have isFixed methods.  
+	//PageLayout and Perspective have their own fixed
+	//attribute, we are assuming they are always in sync.
+	//WorkbenchPage delegates to the perspective.
+	return fixed;
+}
+/**
  * Creates a new presentation from a persistence file.
  * Note: This method should not modify the current state of the perspective.
  */
@@ -688,6 +710,7 @@ private void loadPredefinedPersp(
 	RootLayoutContainer container = new RootLayoutContainer(page);
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 	layout.setTheme(getDesc().getTheme());
+	layout.setFixed(descriptor.getFixed());
 
 	// add the placeholder for the intro view
 	layout.addPlaceholder(IIntroConstants.INTRO_VIEW_ID, IPageLayout.RIGHT, .75f, IPageLayout.ID_EDITOR_AREA);
@@ -709,7 +732,13 @@ private void loadPredefinedPersp(
 	
 	// Create fast views
 	fastViews = layout.getFastViews();
-		
+	
+	// Create fixed views
+	fixedViews = layout.getFixedViews();
+	
+	// Is the layout fixed
+	fixed = layout.isFixed();
+				
 	// Create presentation.	
 	presentation = new PerspectivePresentation(page, container);
 
@@ -988,6 +1017,39 @@ public IStatus restoreState() {
 			page.addPart(ref);
 		}
 	}
+	
+	// Load the fixed views
+	IMemento fixedViewsMem = memento.getChild(IWorkbenchConstants.TAG_FIXED_VIEWS);
+	if(fixedViewsMem != null) {
+		views = fixedViewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
+		for (int x = 0; x < views.length; x ++) {
+			// Get the view details.
+			IMemento childMem = views[x];
+			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
+			
+			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID);
+			if(ref == null) {
+				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+				result.add(new Status(
+						Status.ERROR,PlatformUI.PLUGIN_ID,0,
+						WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
+						null));
+				continue;
+			}
+			// Add to fixed view list because creating a view pane
+			// will come back to check if its a fast view. We really
+			// need to clean up this code.
+			
+			//@issue see directly above, also I don't think we need
+			// to actually restore the view bleow, probably shouldn't
+			// throw the error above either
+			fixedViews.add(ref);
+//			if(ref.getPane() == null) {
+//				ref.setPane(new ViewPane((IViewReference)ref,page));
+//			}
+//			page.addPart(ref);
+		}
+	}
 		
 	// Load the action sets.
 	IMemento [] actions = memento.getChildren(IWorkbenchConstants.TAG_ACTION_SET);
@@ -1071,6 +1133,11 @@ public IStatus restoreState() {
 	// are created. This ensures that if an editor is instantiated, createPartControl
 	// is also called. See bug 20166.
 	shouldHideEditorsOnActivate = (areaVisible != null && areaVisible.intValue() == 0);
+	
+	// restore the fixed state
+	Integer isFixed = memento.getInteger(IWorkbenchConstants.TAG_FIXED);
+	fixed = (isFixed != null && isFixed.intValue() == 1);
+	
 	return result;
 }
 
@@ -1242,6 +1309,16 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
 		}
 	}
+	if(fixedViews.size() > 0) {
+		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FIXED_VIEWS);
+		enum = fixedViews.iterator();
+		while (enum.hasNext()) {
+			IViewReference ref = (IViewReference)enum.next();
+			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
+			String id = ref.getId();
+			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
+		}
+	}
 	if(errors > 0) {
 		String message = WorkbenchMessages.getString("Perspective.multipleErrors"); //$NON-NLS-1$
 		if(errors == 1)
@@ -1258,6 +1335,13 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 	else
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+	
+	// Save the fixed state
+	if (fixed)
+		memento.putInteger(IWorkbenchConstants.TAG_FIXED, 1);
+	else
+		memento.putInteger(IWorkbenchConstants.TAG_FIXED, 0);
+	
 	return result;
 }
 /**

@@ -48,6 +48,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	private String className;
 	private String description;
 	private boolean singleton;
+	private boolean fixed;
 	private String theme;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;
@@ -59,6 +60,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private static final String ATT_SINGLETON="singleton";//$NON-NLS-1$
 	private static final String ATT_THEME="theme";//$NON-NLS-1$
+	private static final String ATT_FIXED="fixed";//$NON-NLS-1$
 	
 /**
  * Create a new empty descriptor.
@@ -85,6 +87,11 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
+	
+	String str = configElement.getAttribute(ATT_FIXED);
+	if (str != null && str.equalsIgnoreCase("true"))//$NON-NLS-1$
+		fixed = true;
+		
 	theme = configElement.getAttribute(ATT_THEME);
 	description = desc;
 
@@ -133,6 +140,13 @@ public void deleteCustomDefinition() {
  */
 public String getDescription() {
 	return description;
+}
+/**
+ * Returns whether or not this perspective
+ * is fixed.
+ */
+public boolean getFixed() {
+	return fixed;
 }
 /**
  * Returns the ID.

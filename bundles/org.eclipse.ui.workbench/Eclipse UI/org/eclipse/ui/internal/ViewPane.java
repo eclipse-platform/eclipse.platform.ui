@@ -187,24 +187,24 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				});
 			}
 
-			ToolItem closeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-			//			Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-			Image hoverImage =
-				WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
-			closeButton.setDisabledImage(hoverImage);
-			// PR#1GE56QT - Avoid creation of unnecessary image.
-			closeButton.setImage(hoverImage);
-			//			closeButton.setHotImage(hoverImage);
-			closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
-			closeButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					doHide();
-				}
-			});
+			if (isCloseable()) {
+				ToolItem closeButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				// Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+				Image hoverImage =
+					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
+				closeButton.setDisabledImage(hoverImage);
+				// PR#1GE56QT - Avoid creation of unnecessary image.
+				closeButton.setImage(hoverImage);
+				// closeButton.setHotImage(hoverImage);
+				closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
+				closeButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doHide();
+					}
+				});
+			}
 		}
 	}
-
-	private SystemContribution systemContribution = new SystemContribution();
 
 	/**
 	 * Constructs a view pane for a view part.
@@ -321,7 +321,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// See also similar restrictions in addMoveItems method
 		// No need to worry about fast views as they do not
 		// register for D&D operations
-		return !overImage(p.x) && !isZoomed();
+		return isMoveable() && !overImage(p.x) && !isZoomed();
 	}
 	/*
 	 * Return true if <code>x</code> is over the label image.
@@ -387,7 +387,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 		});
 		viewToolBarMgr = new PaneToolBarManager(viewToolBar);
-		viewToolBarMgr.add(systemContribution);
+		viewToolBarMgr.add(new SystemContribution());
 
 		// ISV toolbar.
 		isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
@@ -593,6 +593,18 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		return page.isFastView(getViewReference());
 	}
 	/**
+	 * Return true if this view can be closed or is fixed.
+	 */
+	boolean isCloseable() {
+		return !page.isFixedView(getViewReference());
+	}
+	/**
+	 * Return true if the view may be moved.
+	 */
+	boolean isMoveable() {
+		return !page.isFixedLayout();
+	}
+	/**
 	 * Finds and return the sashes around this part.
 	 */
 	protected Sashes findSashes() {
@@ -615,28 +627,30 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Add the Fast View menu item to the view title menu.
 	 */
 	protected void addFastViewMenuItem(Menu parent, boolean isFastView) {
-		// add fast view item
-		MenuItem item = new MenuItem(parent, SWT.CHECK);
-		item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (isFastView())
-					doDock();
-				else
-					doMakeFast();
-			}
-		});
-		item.setSelection(isFastView);
-
-		if (isFastView) {
-			item = new MenuItem(parent, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
+		if (isMoveable() && isCloseable()) {
+			// add fast view item
+			MenuItem item = new MenuItem(parent, SWT.CHECK);
+			item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 			item.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					doMinimize();
+					if (isFastView())
+						doDock();
+					else
+						doMakeFast();
 				}
 			});
-			item.setEnabled(true);
+			item.setSelection(isFastView);
+	
+			if (isFastView) {
+				item = new MenuItem(parent, SWT.NONE);
+				item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
+				item.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doMinimize();
+					}
+				});
+				item.setEnabled(true);
+			}
 		}
 	}
 	/**
@@ -914,6 +928,62 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	void setImage(CTabItem item, Image image) {
 		titleLabel.setImage(image);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addCloseMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addCloseMenuItem(Menu menu) {
+		if(isCloseable())
+			super.addCloseMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addMaximizeMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addMaximizeMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addMaximizeMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addMoveMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addMoveMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addMoveMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addPinEditorItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addPinEditorItem(Menu parent) {
+		if(isMoveable() && isCloseable())
+			super.addPinEditorItem(parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addRestoreMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addRestoreMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addRestoreMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addSizeMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addSizeMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addSizeMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#doZoom()
+	 */
+	protected void doZoom() {
+		if (isMoveable())
+			super.doZoom();
 	}
 
 }

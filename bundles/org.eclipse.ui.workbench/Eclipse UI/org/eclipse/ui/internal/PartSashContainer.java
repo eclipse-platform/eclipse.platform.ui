@@ -34,6 +34,7 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 	protected LayoutTree root;
 	protected LayoutTree unzoomRoot;
 	protected Listener mouseDownListener;
+	protected WorkbenchPage page;
 	boolean active = false;
 	
 	/* Array of LayoutPart */
@@ -48,6 +49,7 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 	
 public PartSashContainer(String id,final WorkbenchPage page) {
 	super(id);
+	this.page = page;
 	resizeListener = new ControlAdapter() {
 		public void controlResized(ControlEvent e) {
 			resizeSashes(parent.getClientArea());

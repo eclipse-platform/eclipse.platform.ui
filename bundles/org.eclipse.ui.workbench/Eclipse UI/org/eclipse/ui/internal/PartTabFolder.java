@@ -64,6 +64,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	private LayoutPart current;
 	private Map mapPartToDragMonitor = new HashMap();
 	private boolean assignFocusOnSelection = true;
+	private WorkbenchPage page;
 
 	// inactiveCurrent is only used when restoring the persisted state of
 	// perspective on startup.
@@ -91,6 +92,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		private String tabText;
 		private LayoutPart part;
 		private Image partImage;
+		private boolean fixed;
 	}
 
 	private TabInfo[] invisibleChildren;
@@ -103,10 +105,16 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	/**
 	 * PartTabFolder constructor comment.
 	 */
-	public PartTabFolder() {
+	public PartTabFolder(WorkbenchPage page) {
 		super("PartTabFolder"); //$NON-NLS-1$
 		setID(this.toString());
 		// Each folder has a unique ID so relative positioning is unambiguous.
+		
+		// save off a ref to the page
+		//@issue is it okay to do this??
+		//I think so since a PartTabFolder is
+		//not used on more than one page.
+		this.page = page;
 
 		// Get the location of the tabs from the preferences
 		if (tabLocation == -1)
@@ -115,6 +123,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 					IPreferenceConstants.VIEW_TAB_POSITION);
 
 	}
+	
 	/**
 	 * Add a part at an index.
 	 */
@@ -360,6 +369,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				tabItem.setImage(tabImage);
 			if (showInTab != TabThemeDescriptor.TABLOOKSHOWICONSONLY)
 				tabItem.setText(tabName);
+			
+			// @issue not sure of exact API on CTabItem
+			//if (part instanceof ViewPane) {
+			//	tabItem.setShowClose(!((ViewPane)part).isFixedView());
+			//}
+			
 		} else {
 			tabItem.setText(tabName);
 		}
@@ -468,7 +483,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			return;
 
 		CTabItem tab = getTab(pane);
-		if (tab == null)
+		if (tab == null || page.isFixedLayout() || !pane.isMoveable())
 			return;
 
 		CTabPartDragDrop dragSource = new CTabPartDragDrop(pane, this.tabFolder, tab);
@@ -476,7 +491,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		dragSource.addDropListener(listener);
 
 		// register d&d on empty tab area the first time thru
-		if (mapPartToDragMonitor.size() == 1) {
+		if (!page.isFixedLayout() && mapPartToDragMonitor.size() == 1) {
 			dragSource = new CTabPartDragDrop(this, this.tabFolder, null);
 			mapPartToDragMonitor.put(this, dragSource);
 			dragSource.addDropListener(listener);
@@ -1211,6 +1226,5 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	public void clearBusy(PartPane partPane) {
 		updateImage(partPane,partPane.getPartReference().getTitleImage());
 	}
-	
 
 }

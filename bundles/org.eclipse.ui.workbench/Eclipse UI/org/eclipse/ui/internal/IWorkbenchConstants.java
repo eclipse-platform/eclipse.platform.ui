@@ -139,6 +139,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
+	public static final String TAG_FIXED_VIEWS = "fixedViews"; //$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
 	public static final String TAG_SINGLETON="singleton"; //$NON-NLS-1$
 	public static final String TAG_EDITOR_REUSE_THRESHOLD="editorReuseThreshold"; //$NON-NLS-1$
@@ -174,4 +175,5 @@ public interface IWorkbenchConstants {
 	public static final String TAG_OPEN_MODE = "openMode"; //$NON-NLS-1$
 	public static final String TAG_STARTUP = "startup";//$NON-NLS-1$
 	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
+	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$	
 }

@@ -103,7 +103,7 @@ public IStatus restoreState(IMemento memento)
 		if (strFolder == null)
 			part = new PartPlaceholder(partID);
 		else {
-			PartTabFolder folder = new PartTabFolder();
+			PartTabFolder folder = new PartTabFolder(page);
 			folder.setID(partID);
 			result.add(folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
 			ContainerPlaceholder placeholder = new ContainerPlaceholder(partID);

@@ -890,7 +890,7 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		  		parentWidget.setRedraw(false);
 		  		LayoutPart visiblePart = ((PartTabFolder)part).getVisiblePart();
 		  		// create a new folder and add the children to it
-		  		PartTabFolder folder = new PartTabFolder();
+		  		PartTabFolder folder = new PartTabFolder(page);
 		  		sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
 		  		LayoutPart[] children = ((PartTabFolder)part).getChildren();
 		  		for (int i = 0; i < children.length; i++) {
@@ -1575,7 +1575,7 @@ private void stackView(ViewPane newPart, LayoutPart refPart) {
 	} 
 	else if (newContainer instanceof RootLayoutContainer) {
 		// Create a new folder and add both items
-		PartTabFolder folder = new PartTabFolder();
+		PartTabFolder folder = new PartTabFolder(page);
 		((RootLayoutContainer)newContainer).replace(refPart, folder);
 		folder.add(refPart);
 		folder.add(newPart);
