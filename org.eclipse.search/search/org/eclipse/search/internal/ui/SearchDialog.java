@@ -333,6 +333,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		
 		Control result= super.createButtonBar(composite);
 		getButton(IDialogConstants.FINISH_ID).setEnabled(fDescriptors.size() > 0);
+		applyDialogFont(result);
 		return result;
 	}
 
@@ -522,7 +523,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				c.setLayout(layout);
 				fScopeParts[index]= new ScopePart(this);
-				fScopeParts[index].createPart(c);
+				Control part= fScopeParts[index].createPart(c);
+				applyDialogFont(part);
 				fScopeParts[index].setVisible(true);
 			}
 		}

@@ -186,6 +186,7 @@ public class ReplaceDialog extends Dialog {
 		gd.horizontalSpan= 2;
 		fSaveButton.setLayoutData(gd);
 		
+		applyDialogFont(result);
 		return result;
 	}
 

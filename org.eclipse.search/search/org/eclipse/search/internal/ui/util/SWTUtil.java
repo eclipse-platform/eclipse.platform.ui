@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -111,6 +112,8 @@ public class SWTUtil {
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
 		if (fgHorizontalDialogUnitSize == 0.0) {
 			initializeDialogUnits(button);
 		}
@@ -122,6 +125,8 @@ public class SWTUtil {
 	 * Returns a height hint for a button control.
 	 */		
 	public static int getButtonHeigthHint(Button button) {
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
 		if (fgHorizontalDialogUnitSize == 0.0) {
 			initializeDialogUnits(button);
 		}

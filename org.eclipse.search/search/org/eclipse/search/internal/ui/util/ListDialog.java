@@ -67,6 +67,7 @@ public class ListDialog extends SelectionDialog {
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		label.setLayoutData(gd);
+		applyDialogFont(label);
 		return label;
 	}
 	
@@ -95,6 +96,7 @@ public class ListDialog extends SelectionDialog {
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		table.setLayoutData(gd);
+		applyDialogFont(table);
 		return table;
 	}
 	

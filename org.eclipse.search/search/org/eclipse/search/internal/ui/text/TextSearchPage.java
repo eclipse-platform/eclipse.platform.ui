@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -296,7 +297,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		layouter.perform(createFileNamePatternComposite(result));
 
 		setControl(result);
-		
+		Dialog.applyDialogFont(result);
 		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 	}
 

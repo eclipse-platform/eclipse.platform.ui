@@ -130,6 +130,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		Label separator= new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		applyDialogFont(result);
 		return result;
 	}
 	

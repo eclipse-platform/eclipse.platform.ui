@@ -205,6 +205,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 		if (fInitialSelections != null && !fInitialSelections.isEmpty())
 			checkInitialSelections();
 
+		applyDialogFont(composite);
 		return composite;
 	}
 
