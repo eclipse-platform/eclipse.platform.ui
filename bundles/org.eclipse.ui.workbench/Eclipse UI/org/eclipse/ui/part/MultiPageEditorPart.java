@@ -95,8 +95,24 @@ public abstract class MultiPageEditorPart extends EditorPart {
      * @see MultiPageEditorPart#setControl(int, Control)
      */
     public int addPage(Control control) {
-        createItem(control);
-        return getPageCount() - 1;
+        int index = getPageCount();
+        addPage(index, control);
+        return index;
+    }
+
+    /**
+     * Creates and adds a new page containing the given control to this multi-page 
+     * editor.  The page is added at the given index.
+     * The control may be <code>null</code>, allowing it to be created
+     * and set later using <code>setControl</code>.
+     *
+     * @param index the index at which to add the page (0-based)
+     * @param control the control, or <code>null</code>
+     *
+     * @see MultiPageEditorPart#setControl(int, Control)
+     */
+    public void addPage(int index, Control control) {
+        createItem(index, control);
     }
 
     /**
@@ -112,6 +128,25 @@ public abstract class MultiPageEditorPart extends EditorPart {
      */
     public int addPage(IEditorPart editor, IEditorInput input)
             throws PartInitException {
+        int index = getPageCount();
+        addPage(index, editor, input);
+        return index;
+    }
+
+    /**
+     * Creates and adds a new page containing the given editor to this multi-page 
+     * editor. The page is added at the given index. 
+     * This also hooks a property change listener on the nested editor.
+     *
+     * @param index the index at which to add the page (0-based)
+     * @param editor the nested editor
+     * @param input the input for the nested editor
+     * @exception PartInitException if a new page could not be created
+     *
+     * @see MultiPageEditorPart#handlePropertyChange(int) the handler for property change events from the nested editor
+     */
+    public void addPage(int index, IEditorPart editor, IEditorInput input)
+            throws PartInitException {
         IEditorSite site = createSite(editor);
         // call init first so that if an exception is thrown, we have created no new widgets
         editor.init(site, input);
@@ -124,11 +159,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
             }
         });
         // create item for page only after createPartControl has succeeded
-        Item item = createItem(parent2);
+        Item item = createItem(index, parent2);
         // remember the editor, as both data on the item, and in the list of editors (see field comment)
         item.setData(editor);
         nestedEditors.add(editor);
-        return getPageCount() - 1;
     }
 
     /**
@@ -156,14 +190,16 @@ public abstract class MultiPageEditorPart extends EditorPart {
     }
 
     /**
-     * Creates a tab item and places control in the new item.
+     * Creates a tab item at the given index and places 
+     * the given control in the new item.
      * The item is a CTabItem with no style bits set.
      *
+     * @param index the index at which to add the control
      * @param control is the control to be placed in an item
      * @return a new item
      */
-    private CTabItem createItem(Control control) {
-        CTabItem item = new CTabItem(getTabFolder(), SWT.NONE);
+    private CTabItem createItem(int index, Control control) {
+        CTabItem item = new CTabItem(getTabFolder(), SWT.NONE, index);
         item.setControl(control);
         return item;
     }
