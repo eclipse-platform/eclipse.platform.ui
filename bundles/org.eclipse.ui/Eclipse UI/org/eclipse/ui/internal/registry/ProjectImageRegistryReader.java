@@ -10,6 +10,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A strategy to project nature image extensions from the registry.
+ * 
+ * @deprecated Extension point no longer applicable with new project capability
  */
 public class ProjectImageRegistryReader extends RegistryReader {
 	private static final String TAG_IMAGE="image";//$NON-NLS-1$

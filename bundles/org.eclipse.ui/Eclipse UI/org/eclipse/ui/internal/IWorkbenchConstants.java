@@ -18,7 +18,6 @@ public interface IWorkbenchConstants {
 	public static final String PL_VIEW_ACTIONS = "viewActions"; //$NON-NLS-1$
 	public static final String PL_EDITOR_ACTIONS = "editorActions"; //$NON-NLS-1$
 	public static final String PL_PERSPECTIVES ="perspectives"; //$NON-NLS-1$
-	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 	public static final String PL_PERSPECTIVE_EXTENSIONS ="perspectiveExtensions"; //$NON-NLS-1$
 	public static final String PL_ACTION_SET_PART_ASSOCIATIONS ="actionSetPartAssociations"; //$NON-NLS-1$
 	public static final String PL_PREFERENCES ="preferencePages"; //$NON-NLS-1$
@@ -39,10 +38,14 @@ public interface IWorkbenchConstants {
 	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
 	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
 	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
-	
-	public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
-	
+
+	/**
+	 * @deprecated Extension point no longer applicable with new project capability
+	 */
+	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
+		
 	// Key binding service defaults
+	public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
 	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 	

@@ -1,0 +1,144 @@
+<!doctype html public "-//w3c//dtd html 4.0//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Eclipse Workbench Extension Point: Capabilities</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Capabilities</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.capabilities
+<p><b><i>Description: </i></b>This extension point is used to register capability
+extensions. Capabilities are the UI equivalent of project natures, and have a
+one-to-one relationship with project natures. The workbench allows the user to
+add and remove capabilities from a project at any time.</p>
+
+<p>Capabilities represent particular abilities of a project. For example, a
+project may have a &#8220;Java&#8221; capability (which allows the project to be compiled using
+a Java compiler) and/or other capabilities, depending on what is appropriate
+for the role of the project. If the role of the project changes over time, the
+project&#8217;s capabilities can be modified to suit the change. For example, a
+project may start as a simple Java project, but may later gain a new
+requirement to use JNI to some legacy library. The user
+may then add a &#8220;C Development&#8221; capability (if one exists) to the project so it
+can meet this new requirement.</p>
+
+<p>Some capabilities may wish to handle the user interface for other
+capabilities. This generally occurs when one capability&#8217;s corresponding nature
+is dependant on the other capability&#8217;s corresponding nature.</p>
+
+<p> The categories defined by one plug-in
+can be referenced by other plug-ins using the
+<tt>category</tt> attribute.</p>
+
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT category EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST category</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id -</b> a unique name that can be used to identify this category.</li>
+
+<li>
+<b>name</b> - a translatable name of the category.</li>
+
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT capability (handleUI)?></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST capability</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installWizard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installDetails&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - a unique name that can be used to identify this wizard.</li>
+
+<li>
+<b>natureId</b> - a unique identifier of the project nature associated with this project capability.</li>
+
+<li>
+<b>category</b> - an optional attribute which defines a slash-delimited path ('/') of category IDs. Each token
+in the path must represent a valid category ID previously defined by this
+or some other plug-in. If omitted, the capability will be added to the "Other"
+category.</li>
+
+<li>
+<b>icon</b> - an optional attribute which defines a relative path of the icon that may be used to represent the capability.</li>
+
+<li>
+<b>installWizard</b> - a fully qualified name of the Java class implementing <tt>org.eclipse.ui.ICapabilityWizard</tt>.</li>
+
+<li>
+<b>installDetails</b> - an optional attribute which decribes briefly to the user what will eb required of them by the 
+install wizard for the capability.</li>
+
+<li>
+<b>description</b> - an optional attribute which consists of a short description of what functionality or ability the capability 
+adds to a project.</li>
+
+<li>
+<b>handleUI</b> - an optional subelement whose body contains a unique identifier for another capability whose UI will be 
+controlled by the UI of this capability.</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT handleUI EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST handleUI</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - the unique identifier of another capability for which the capability which is the parent 
+of this element controls the UI.</li>
+</ul>
+<b><i>Examples:</i></b>
+<p>Following is an example of capability configuration:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.capabilities"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;category</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.weather"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name="Weather Elements"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/category></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;capability</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.snowCapability"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureId="com.xyz.snowNature"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category="com.xyz.weather"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="./icons/snowCapability1.gif"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installWizard="com.xyz.snowCapabilityWizard"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installDetails="You will be asked to supply a locale id."></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description="Turn your project into a winter wonderland!"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;handleUI</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.waterCapability"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/handleUI></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/capability></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;capability</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.waterCapability"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureId="com.xyz.waterNature"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category="com.xyz.weather"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="./icons/waterCapability1.gif"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installWizard="com.xyz.waterCapabilityWizard"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installDetails="You will be asked to supply a locale id."></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description="Turn your project into a watery wonderland!"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/capability></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><b><i>API Information</i>: </b>The value of the <tt>installWizard</tt> attribute
+must represent a class that implements <tt>org.eclipse.ui.ICapabilityWizard</tt>.
+
+<p><b><i>Supplied Implementation: </i></b>The workbench comes with Java and PDE capabilities, and install wizards for these capabilities.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>

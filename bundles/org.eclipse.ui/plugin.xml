@@ -52,11 +52,16 @@
 <extension-point name="%ExtPoint.dropActions" id="dropActions"/>
 <extension-point name="%ExtPoint.resourceFilters" id="resourceFilters"/>
 <extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
-<extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
 <extension-point name="%ExtPoint.decorators" id="decorators"/>
 <extension-point name="%ExtPoint.markerHelp" id="markerHelp"/>
 <extension-point name="%ExtPoint.markerResolution" id="markerResolution"/>
 <extension-point name="%ExtPoint.capabilities" id="capabilities"/>
+
+<!-- Workbench *DEPRECATED* extension point definitions -->
+<!-- See extension point documentation for further information -->
+
+<extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
+
 
 <!-- Extensions -->
 
@@ -386,16 +391,6 @@
 	   id="org.eclipse.ui.Basic"
 	   name="%NewWizards.Category.Basic">
 	</category>
-	<wizard 
-	   id="org.eclipse.ui.wizards.new.project"
-	   name="%NewWizards.project"
-	   class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
-	   category="org.eclipse.ui.Basic"
-	   project="true"
-	   finalPerspective="org.eclipse.ui.resourcePerspective"
-	   icon="icons/full/ctool16/newprj_wiz.gif">
-       <description>%NewWizards.project.description</description>
-    </wizard>
 	<wizard
 	   id="org.eclipse.ui.wizards.new.folder"
 	   name="%NewWizards.folder"

@@ -29,6 +29,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @deprecated Multiple project type creation wizards are no longer recommended.
+ * 		The workbench provides one wizard to the user to create a project resource.
+ * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
+ * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public class NewProjectAction extends Action {
 
@@ -53,6 +57,11 @@ public class NewProjectAction extends Action {
  *
  * @param window the workbench window to query the current
  * 		selection and shell for opening the wizard.
+ * 
+ * @deprecated Multiple project type creation wizards are no longer recommended.
+ * 		The workbench provides one wizard to the user to create a project resource.
+ * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
+ * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public NewProjectAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("NewProjectAction.text")); //$NON-NLS-1$

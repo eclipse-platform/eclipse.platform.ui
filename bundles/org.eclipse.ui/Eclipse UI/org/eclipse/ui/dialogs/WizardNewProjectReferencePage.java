@@ -32,6 +32,10 @@ import org.eclipse.ui.internal.*;
  * referencePage.setDescription("Select referenced projects.");
  * </pre>
  * </p>
+ * @deprecated Multiple project type creation wizards are no longer recommended.
+ * 		The workbench provides one wizard to the user to create a project resource.
+ * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
+ * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public class WizardNewProjectReferencePage extends WizardPage {
 	// widgets
@@ -43,6 +47,11 @@ public class WizardNewProjectReferencePage extends WizardPage {
  * Creates a new project reference wizard page.
  *
  * @param pageName the name of this page
+ * 
+ * @deprecated Multiple project type creation wizards are no longer recommended.
+ * 		The workbench provides one wizard to the user to create a project resource.
+ * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
+ * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public WizardNewProjectReferencePage(String pageName) {
 	super(pageName);
