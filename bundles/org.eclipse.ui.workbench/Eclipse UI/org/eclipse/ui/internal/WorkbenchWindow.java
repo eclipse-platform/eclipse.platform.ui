@@ -1177,6 +1177,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * flags have been set correctly (e.i. closing and updateDisabled)
 	 */
 	private boolean hardClose() {
+		boolean result;
 		try {
 			// Clear the action sets, fix for bug 27416.
 			actionPresentation.clearActionSets();
@@ -1185,8 +1186,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			getAdvisor().postWindowClose(getWindowConfigurer());
 			getWorkbenchImpl().fireWindowClosed(this);
 		} finally {
-			return super.close();
+			result = super.close();
 		}
+		return result;
 	}
 	/**
 	 * @see IWorkbenchWindow
