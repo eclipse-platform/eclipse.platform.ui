@@ -12,46 +12,23 @@
 package org.eclipse.ui.views.internal.markers.problems;
 
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * Utility class which helps manage messages.
- */
+import org.eclipse.ui.views.internal.markers.Util;
+
 class Messages {
 
-	protected static final String RESOURCE_BUNDLE = Messages.class.getName();
-	protected static ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private final static ResourceBundle bundle = ResourceBundle.getBundle(Messages.class.getName());
 	
-	private Messages(){
-		// prevent instantiation of class
+	private Messages() {
+		super();
 	}
 
-	/**
-	 * Returns the formatted message for the given key in
-	 * the resource bundle. 
-	 *
-	 * @param key the resource name
-	 * @param args the message arguments
-	 * @return the string
-	 */	
-	public static String format(String key, Object[] args) {
-		return MessageFormat.format(getString(key),args);
+	static String format(String key, Object[] args) {
+		return MessageFormat.format(getString(key), args);
 	}
 
-	/**
-	 * Returns the resource object with the given key in
-	 * the resource bundle. If there isn't any value under
-	 * the given key, the key is returned.
-	 *
-	 * @param key the resource name
-	 * @return the string
-	 */	
-	public static String getString(String key) {
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
+	static String getString(String key) {
+		return Util.getString(bundle, key);
 	}
 }

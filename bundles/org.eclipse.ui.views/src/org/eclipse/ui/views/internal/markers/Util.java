@@ -9,26 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers.tasks;
+package org.eclipse.ui.views.internal.markers;
 
-import java.text.MessageFormat;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.ui.views.internal.markers.Util;
+public final class Util {
 
-class Messages {
+	public static String getString(ResourceBundle resourceBundle, String key)
+		throws IllegalArgumentException {
+		if (resourceBundle == null || key == null)
+			throw new IllegalArgumentException();
 
-	private final static ResourceBundle bundle = ResourceBundle.getBundle(Messages.class.getName());
-	
-	private Messages() {
+		String value = key;
+
+		try {
+			value = resourceBundle.getString(key);
+		} catch (MissingResourceException eMissingResource) {
+			System.err.println(eMissingResource);
+		}
+		
+		return value != null ? value.trim() : null;
+	}
+
+	private Util() {
 		super();
-	}
-
-	static String format(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
-	}
-
-	static String getString(String key) {
-		return Util.getString(bundle, key);
 	}
 }

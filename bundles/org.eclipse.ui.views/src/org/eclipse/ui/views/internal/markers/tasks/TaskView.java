@@ -73,7 +73,7 @@ public class TaskView extends MarkerView {
 	};
 
 	private final static String[] TABLE_COLUMN_PROPERTIES = {
-		TaskViewConstants.COMPLETION,
+		Completion.COMPLETION,
 		IMarker.PRIORITY,
 		IMarker.MESSAGE,
 		"", //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class TaskView extends MarkerView {
 			if (element instanceof IMarker) {
 				IMarker marker = (IMarker) element;
 				
-				if (TaskViewConstants.COMPLETION.equals(property))
+				if (Completion.COMPLETION.equals(property))
 					return new Boolean(marker.getAttribute(IMarker.DONE, false));
 
 				if (IMarker.PRIORITY.equals(property))
@@ -124,7 +124,7 @@ public class TaskView extends MarkerView {
 					
 					try {
 						if (!getValue(marker, property).equals(value)) {
-							if (TaskViewConstants.COMPLETION.equals(property))
+							if (Completion.COMPLETION.equals(property))
 								marker.setAttribute(IMarker.DONE, value);
 							else if (IMarker.PRIORITY.equals(property))
 								marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH - ((Integer) value).intValue());
@@ -144,7 +144,7 @@ public class TaskView extends MarkerView {
 
 	private CellEditorActionHandler cellEditorActionHandler;	
 	private TaskFilter taskFilter;
-	private TaskRegistry taskRegistry;
+	private MarkerRegistry markerRegistry;
 	private AddGlobalTaskAction addGlobalTaskAction;
 	private DeleteCompletedAction deleteCompletedAction;
 	private MarkCompletedAction markCompletedAction;
@@ -195,9 +195,10 @@ public class TaskView extends MarkerView {
 		if (taskFilter != null)
 			taskFilter.restoreState(dialogSettings);
 			
-		taskRegistry = TaskRegistry.getInstance();
-		taskRegistry.setFilter(taskFilter);
-		taskRegistry.setInput((IResource) getViewerInput());
+		markerRegistry = new MarkerRegistry();
+		markerRegistry.setType(IMarker.TASK); 	
+		markerRegistry.setFilter(taskFilter);
+		markerRegistry.setInput((IResource) getViewerInput());
 	}
 
 	public void saveState(IMemento memento) {
@@ -269,7 +270,7 @@ public class TaskView extends MarkerView {
 	}
 
 	protected MarkerRegistry getRegistry() {
-		return taskRegistry;
+		return markerRegistry;
 	}
 
 	protected String[] getRootTypes() {

@@ -19,6 +19,8 @@ import org.eclipse.ui.views.internal.markers.IField;
 
 class ProblemSeverity implements IField {
 	
+	final static String PROBLEM_SEVERITY = "problemSeverity"; //$NON-NLS-1$
+	
 	private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
 	private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
 	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
@@ -28,7 +30,7 @@ class ProblemSeverity implements IField {
 	private Image image;
 	
 	public ProblemSeverity() {
-		name = ProblemViewConstants.PROBLEM_SEVERITY;
+		name = PROBLEM_SEVERITY;
 		description = Messages.getString(name + ".description"); //$NON-NLS-1$
 		image = null;
 	}

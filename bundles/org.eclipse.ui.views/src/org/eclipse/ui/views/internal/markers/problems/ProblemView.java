@@ -68,8 +68,8 @@ public class ProblemView extends MarkerView {
 		new LineNumber() 
 	};
 	
+	private MarkerRegistry markerRegistry;
 	private ProblemFilter problemFilter;
-	private ProblemRegistry problemRegistry;
 	private ResolveMarkerAction resolveMarkerAction;
 
 	public void dispose() {
@@ -87,9 +87,10 @@ public class ProblemView extends MarkerView {
 		if (problemFilter != null)
 			problemFilter.restoreState(dialogSettings);
 			
-		problemRegistry = ProblemRegistry.getInstance();
-		problemRegistry.setFilter(problemFilter);
-		problemRegistry.setInput((IResource) getViewerInput());
+		markerRegistry = new MarkerRegistry();
+		markerRegistry.setType(IMarker.PROBLEM); 		
+		markerRegistry.setFilter(problemFilter);
+		markerRegistry.setInput((IResource) getViewerInput());
 	}
 
 	public void saveState(IMemento memento) {
@@ -148,7 +149,7 @@ public class ProblemView extends MarkerView {
 	}
 
 	protected MarkerRegistry getRegistry() {
-		return problemRegistry;
+		return markerRegistry;
 	}
 
 	protected String[] getRootTypes() {

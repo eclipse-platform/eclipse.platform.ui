@@ -38,7 +38,7 @@ public class MarkerRegistry implements IResourceChangeListener, ITableViewConten
 	
 	private List listeners;
 	
-	protected MarkerRegistry() {
+	public MarkerRegistry() {
 		listeners = new ArrayList();
 		types = new String[0];
 	}

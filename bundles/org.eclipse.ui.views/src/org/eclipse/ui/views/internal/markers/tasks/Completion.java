@@ -19,6 +19,8 @@ import org.eclipse.ui.views.internal.markers.IField;
 
 class Completion implements IField {
 	
+	static final String COMPLETION = "completion"; //$NON-NLS-1$
+	
 	static final String DESCRIPTION_IMAGE_PATH = "obj16/header_complete.gif"; //$NON-NLS-1$
 	static final String COMPLETE_IMAGE_PATH = "obj16/complete_tsk.gif"; //$NON-NLS-1$
 	static final String INCOMPLETE_IMAGE_PATH = "obj16/incomplete_tsk.gif"; //$NON-NLS-1$
@@ -28,7 +30,7 @@ class Completion implements IField {
 	private Image image;
 	
 	public Completion() {
-		name = TaskViewConstants.COMPLETION;
+		name = COMPLETION;
 		description = Messages.getString(name + ".description"); //$NON-NLS-1$
 		image = ImageFactory.getImage(DESCRIPTION_IMAGE_PATH);
 	}

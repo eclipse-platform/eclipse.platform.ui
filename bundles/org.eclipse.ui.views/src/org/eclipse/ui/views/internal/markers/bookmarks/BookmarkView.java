@@ -114,7 +114,7 @@ public class BookmarkView extends MarkerView {
 
 	private CellEditorActionHandler cellEditorActionHandler;
 	private BookmarkFilter bookmarkFilter;
-	private BookmarkRegistry bookmarkRegistry;
+	private MarkerRegistry markerRegistry;
 
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -150,9 +150,10 @@ public class BookmarkView extends MarkerView {
 		if (bookmarkFilter != null)
 			bookmarkFilter.restoreState(dialogSettings);
 			
-		bookmarkRegistry = BookmarkRegistry.getInstance();
-		bookmarkRegistry.setFilter(bookmarkFilter);
-		bookmarkRegistry.setInput((IResource) getViewerInput());
+		markerRegistry = new MarkerRegistry();
+		markerRegistry.setType(IMarker.BOOKMARK); 	
+		markerRegistry.setFilter(bookmarkFilter);
+		markerRegistry.setInput((IResource) getViewerInput());
 	}
 
 	public void saveState(IMemento memento) {
@@ -192,7 +193,7 @@ public class BookmarkView extends MarkerView {
 	}
 
 	protected MarkerRegistry getRegistry() {
-		return bookmarkRegistry;
+		return markerRegistry;
 	}
 
 	protected String[] getRootTypes() {
