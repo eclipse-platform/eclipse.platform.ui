@@ -157,7 +157,7 @@ protected void doUpdateItem(Item item, Object element) {
 	    }
 		ti.setText(column, text);
 		// Apparently a problem to setImage to null if already null
-		if (image != null || ti.getImage(column) != null)
+		if (ti.getImage(column) != image)
 			ti.setImage(column, image);
 	}
 	if (prov instanceof IColorProvider) {

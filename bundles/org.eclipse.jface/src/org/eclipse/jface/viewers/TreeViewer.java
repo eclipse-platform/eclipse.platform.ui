@@ -95,7 +95,7 @@ protected void doUpdateItem(Item item, Object element) {
 	ILabelProvider provider = (ILabelProvider) getLabelProvider();
 	item.setText(provider.getText(element));
 	Image image = provider.getImage(element);
-	if (image != null || item.getImage() != null) {
+	if (item.getImage() != image) {
 		item.setImage(image);
 	}
 	if (provider instanceof IColorProvider) {

@@ -227,6 +227,25 @@ public void addTreeListener(ITreeViewerListener listener) {
  * @param listener the SWT tree listener
  */
 protected abstract void addTreeListener(Control control, TreeListener listener);
+
+/* (non-Javadoc)
+ * @see StructuredViewer#associate(Object, Item)
+ */
+protected void associate(Object element, Item item) {
+	Object data = item.getData();
+	if (data != null && data != element && equals(data, element)) {
+		// workaround for PR 1FV62BT
+		// assumption: elements are equal but not identical
+		// -> remove from map but don't touch children
+		unmapElement(data, item);
+		item.setData(element);
+		mapElement(element, item);
+	} else {
+		// recursively disassociate all
+		super.associate(element, item);
+	}
+}
+
 /**
  * Collapses all nodes of the viewer's tree, starting with the root.
  * This method is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
@@ -372,20 +391,7 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 
 		// ensure that backpointer is correct
 		if (fullMap) {
-
-			Object data = widget.getData();
-			if (data != null && data != element && equals(data, element)) {
-				// workaround for PR 1FV62BT
-				// assumption: elements are equal but not identical
-				// -> remove from map but don't touch children
-				unmapElement(data, item);
-				item.setData(element);
-				mapElement(element, item);
-			} else {
-				// recursively disassociate all
-				associate(element, item);
-			}
-
+			associate(element, item);
 		} else {
 			item.setData(element);
 			mapElement(element, item);
@@ -872,15 +878,21 @@ private Widget internalFindItem(Item parent, Object element) {
  * Method declared on StructuredViewer.
  */
 protected void internalRefresh(Object element) {
+	internalRefresh(element, true);
+}
+/* (non-Javadoc)
+ * Method declared on StructuredViewer.
+ */
+protected void internalRefresh(Object element, boolean updateLabels) {
 	// If element is null, do a full refresh.
 	if (element == null) {
-		internalRefresh(getControl(), getRoot(), true);
+		internalRefresh(getControl(), getRoot(), true, updateLabels);
 		return;
 	}
 	Widget item = findItem(element);
 	if (item != null) {
 		// pick up structure changes too
-		internalRefresh(item, element, true);
+		internalRefresh(item, element, true, updateLabels);
 	}
 }
 /**
@@ -890,14 +902,22 @@ protected void internalRefresh(Object element) {
  * @param element the element
  * @param doStruct <code>true</code> if structural changes are to be picked up,
  *   and <code>false</code> if only label provider changes are of interest
+ * @param updateLabels <code>true</code> to update labels for existing elements,
+ * <code>false</code> to only update labels as needed, assuming that labels
+ * for existing elements are unchanged.
  */
-private void internalRefresh(Widget widget, Object element, boolean doStruct) {
+private void internalRefresh(Widget widget, Object element, boolean doStruct, boolean updateLabels) {
 	
 	if (widget instanceof Item) {
 		if (doStruct) {
 			updatePlus((Item)widget, element);
 		}	
-		updateItem(widget, element);
+		if (updateLabels) {
+			doUpdateItem(widget, element, true);
+		}
+		else {
+			associate(element, (Item) widget);
+		}
 	}
 
 	if (doStruct) {
@@ -911,7 +931,7 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct) {
 			Widget item= children[i];
 			Object data= item.getData();
 			if (data != null)
-				internalRefresh(item, data, doStruct);
+				internalRefresh(item, data, doStruct, updateLabels);
 		}
 	}
 }
@@ -1000,8 +1020,8 @@ protected void labelProviderChanged() {
 	// we have to walk the (visible) tree and update every item
 	Control tree= getControl();
 	tree.setRedraw(false);
-	// don't pick up structure changes
-	internalRefresh(tree, getRoot(), false);
+	// don't pick up structure changes, but do force label updates
+	internalRefresh(tree, getRoot(), false, true);
 	tree.setRedraw(true);
 }
 /**
