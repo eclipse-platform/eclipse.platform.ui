@@ -4,7 +4,8 @@
  */
 package org.eclipse.help.servlet;
 import java.io.*;
-import java.net.*;
+import java.net.InetAddress;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -121,7 +122,7 @@ public class UrlUtil {
 		}
 		return buf.toString();
 	}
-		/**
+	/**
 	 * Obtains parameter from request.
 	 * request.getParameter() returns incorrect string
 	 * for non ASCII queries encoded from UTF-8 bytes
@@ -139,21 +140,43 @@ public class UrlUtil {
 	public static String getRequestParameter(
 		String query,
 		String parameterName) {
-		if (query == null)
-			return null;
-		int start = query.indexOf(parameterName + "=");
-		if (start < 0) {
-			return null;
-		} else {
-			start += parameterName.length() + 1;
-			if (start >= query.length()) {
-				return "";
+		String[]values=getRequestParameters(query, parameterName);
+		if(values.length>0){
+			return values[0];
+		}
+		return null;
+	}
+	/**
+	 * Obtains values of a parameter from request.
+	 * request.getParameter() returns incorrect string
+	 * for non ASCII queries encoded from UTF-8 bytes
+	 */
+	public static String[] getRequestParameters(
+		HttpServletRequest request,
+		String parameterName) {
+		return getRequestParameters(request.getQueryString(), parameterName);
+	}
+	/**
+	 * Obtains values of a parameter from request query string.
+	 * @return String[]
+	 */
+	public static String[] getRequestParameters(
+		String query,
+		String parameterName) {
+		if (query == null || "".equals(query)) {
+			return new String[0];
+		}
+		List values=new ArrayList();
+		StringTokenizer stok = new StringTokenizer(query, "&");
+		while (stok.hasMoreTokens()) {
+			String nameEqValue = stok.nextToken();
+			int equalsPosition = nameEqValue.indexOf("=");
+			if (equalsPosition >=0 && parameterName.equals(nameEqValue.substring(0, equalsPosition))) {
+				String val = nameEqValue.substring(equalsPosition + 1);
+				values.add(decode(val));
 			}
 		}
-		int end = query.indexOf("&", start);
-		if (end <= 0)
-			end = query.length();
-		return decode(query.substring(start, end));
+		return (String[])values.toArray(new String[values.size()]);
 	}
 	/**
 	 * Changes encoding of parameter in the URL query

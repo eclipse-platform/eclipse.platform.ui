@@ -13,6 +13,18 @@
 	if(!mozilla){
 		searchWordParName = "searchWordJS13";
 	}	
+
+	// create list of books initilize selectedBooks variable used by advances search
+	// when no filtering, selectedBooks needs to be null
+	String[] books = UrlUtil.getRequestParameters(request, "scope");
+	String booksArrayInit = "null";
+	if (books.length > 0) {
+		booksArrayInit = "new Array (\"" + UrlUtil.JavaScriptEncode(books[0]) + "\"";
+		for (int i = 1; i < books.length; i++) {
+			booksArrayInit += ", \"" + UrlUtil.JavaScriptEncode(books[i]) + "\"";
+		}
+		booksArrayInit += ")";
+	}
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -104,8 +116,8 @@ if (isIE)
 else
  	 extraStyle = "<style type='text/css'>body {border-right:1px solid WindowText;}</style>";
 document.write(extraStyle);
-	
-var selectedBooks;
+
+var selectedBooks=<%=booksArrayInit%>;
 var advancedDialog;
 var w = 400;
 var h = 400;
