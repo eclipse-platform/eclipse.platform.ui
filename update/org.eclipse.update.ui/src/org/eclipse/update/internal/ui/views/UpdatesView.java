@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -43,9 +45,12 @@ public class UpdatesView
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
 	private static final String KEY_SHOW_CATEGORIES =
 		"UpdatesView.menu.showCategories";
-	private static final String KEY_NEW_SEARCH_TITLE = "UpdatesView.newSearch.title";
-	private static final String KEY_NEW_BOOKMARK_TITLE = "UpdatesView.newBookmark.title";
-	private static final String KEY_NEW_FOLDER_TITLE = "UpdatesView.newFolder.title";
+	private static final String KEY_NEW_SEARCH_TITLE =
+		"UpdatesView.newSearch.title";
+	private static final String KEY_NEW_BOOKMARK_TITLE =
+		"UpdatesView.newBookmark.title";
+	private static final String KEY_NEW_FOLDER_TITLE =
+		"UpdatesView.newFolder.title";
 	private Action propertiesAction;
 	private Action newAction;
 	private Action newFolderAction;
@@ -57,6 +62,11 @@ public class UpdatesView
 	private Image siteImage;
 	private Image featureImage;
 	private Image computerImage;
+	private Image floppyImage;
+	private Image cdImage;
+	private Image vfixedImage;
+	private Image vremoteImage;
+	private Image vremovableImage;
 	private Action refreshAction;
 	private SearchObject updateSearchObject;
 	private SelectionChangedListener selectionListener;
@@ -129,7 +139,8 @@ public class UpdatesView
 			}
 			if (parent instanceof SiteCategory) {
 				final SiteCategory category = (SiteCategory) parent;
-				BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+				BusyIndicator
+					.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 					public void run() {
 						try {
 							category.touchFeatures();
@@ -141,7 +152,7 @@ public class UpdatesView
 				return category.getChildren();
 			}
 			if (parent instanceof IFeatureAdapter) {
-				return ((IFeatureAdapter)parent).getIncludedFeatures();
+				return ((IFeatureAdapter) parent).getIncludedFeatures();
 			}
 			return new Object[0];
 		}
@@ -175,7 +186,7 @@ public class UpdatesView
 				return ((SearchResultSite) parent).getChildCount() > 0;
 			}
 			if (parent instanceof IFeatureAdapter) {
-				return ((IFeatureAdapter)parent).hasIncludedFeatures();
+				return ((IFeatureAdapter) parent).hasIncludedFeatures();
 			}
 			return false;
 		}
@@ -195,7 +206,9 @@ public class UpdatesView
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
 					VersionedIdentifier versionedIdentifier =
-						(feature != null) ? feature.getVersionedIdentifier() : null;
+						(feature != null)
+							? feature.getVersionedIdentifier()
+							: null;
 					String version = "";
 					if (versionedIdentifier != null)
 						version = versionedIdentifier.getVersion().toString();
@@ -208,17 +221,25 @@ public class UpdatesView
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof SiteBookmark || obj instanceof SearchResultSite) {
+			if (obj instanceof SiteBookmark
+				|| obj instanceof SearchResultSite) {
 				return siteImage;
 			}
 			if (obj instanceof MyComputer) {
 				return computerImage;
 			}
 			if (obj instanceof MyComputerDirectory) {
+				IVolume volume = ((MyComputerDirectory) obj).getVolume();
+				if (volume != null) {
+					Image image = getVolumeImage(volume);
+					if (image != null)
+						return image;
+				}
 				return ((MyComputerDirectory) obj).getImage(obj);
 			}
 			if (obj instanceof MyComputerFile) {
-				ImageDescriptor desc = ((MyComputerFile) obj).getImageDescriptor(obj);
+				ImageDescriptor desc =
+					((MyComputerFile) obj).getImageDescriptor(obj);
 				Image image = (Image) fileImages.get(desc);
 				if (image == null) {
 					image = desc.createImage();
@@ -241,7 +262,8 @@ public class UpdatesView
 		private Image getSearchObjectImage(SearchObject obj) {
 			String categoryId = obj.getCategoryId();
 			SearchCategoryDescriptor desc =
-				SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
+				SearchCategoryRegistryReader.getDefault().getDescriptor(
+					categoryId);
 			if (desc != null) {
 				return desc.getImage();
 			}
@@ -255,22 +277,15 @@ public class UpdatesView
 	public UpdatesView() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(this);
-		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
 		selectionListener = new SelectionChangedListener();
 		updateSearchObject = new DefaultUpdatesSearchObject();
+		initializeImages();
 	}
 
 	public void dispose() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
-		siteImage.dispose();
-		featureImage.dispose();
-		computerImage.dispose();
-		for (Enumeration enum = fileImages.elements(); enum.hasMoreElements();) {
-			((Image) enum.nextElement()).dispose();
-		}
+		disposeImages();
 		super.dispose();
 	}
 
@@ -283,7 +298,9 @@ public class UpdatesView
 	public void makeActions() {
 		super.makeActions();
 		propertiesAction =
-			new PropertyDialogAction(UpdateUIPlugin.getActiveWorkbenchShell(), viewer);
+			new PropertyDialogAction(
+				UpdateUIPlugin.getActiveWorkbenchShell(),
+				viewer);
 		newAction = new Action() {
 			public void run() {
 				performNewBookmark();
@@ -296,21 +313,24 @@ public class UpdatesView
 				performNewBookmarkFolder();
 			}
 		};
-		newFolderAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
+		newFolderAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
 
 		newSearchAction = new Action() {
 			public void run() {
 				performNewSearch();
 			}
 		};
-		newSearchAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
+		newSearchAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
 
 		newLocalAction = new Action() {
 			public void run() {
 				performNewLocal();
 			}
 		};
-		newLocalAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
+		newLocalAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
 
 		deleteAction = new DeleteAction();
 		deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
@@ -330,7 +350,8 @@ public class UpdatesView
 					viewer.addFilter(fileFilter);
 			}
 		};
-		fileFilterAction.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
+		fileFilterAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
 
 		viewer.addFilter(fileFilter);
@@ -356,7 +377,9 @@ public class UpdatesView
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());
 		menuManager.add(showCategoriesAction);
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteAction);
+		bars.setGlobalActionHandler(
+			IWorkbenchActionConstants.DELETE,
+			deleteAction);
 	}
 
 	public void fillContextMenu(IMenuManager manager) {
@@ -387,7 +410,8 @@ public class UpdatesView
 			SiteBookmark site = (SiteBookmark) obj;
 			return (site.getType() != SiteBookmark.LOCAL);
 		}
-		if (obj instanceof BookmarkFolder && !(obj instanceof DiscoveryFolder)) {
+		if (obj instanceof BookmarkFolder
+			&& !(obj instanceof DiscoveryFolder)) {
 			return true;
 		}
 		if (obj instanceof SearchObject
@@ -407,7 +431,8 @@ public class UpdatesView
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewSiteBookmarkWizardPage page =
 			new NewSiteBookmarkWizardPage(getSelectedFolder());
-		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+		NewWizard wizard =
+			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
@@ -418,7 +443,8 @@ public class UpdatesView
 
 	private BookmarkFolder getSelectedFolder() {
 		Object sel = getSelectedObject();
-		if (sel instanceof BookmarkFolder && !(sel instanceof DiscoveryFolder)) {
+		if (sel instanceof BookmarkFolder
+			&& !(sel instanceof DiscoveryFolder)) {
 			BookmarkFolder folder = (BookmarkFolder) sel;
 			return folder;
 		}
@@ -429,7 +455,8 @@ public class UpdatesView
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewFolderWizardPage page = new NewFolderWizardPage(getSelectedFolder());
-		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_FOLDER);
+		NewWizard wizard =
+			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_FOLDER);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
@@ -442,7 +469,8 @@ public class UpdatesView
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewSearchWizardPage page = new NewSearchWizardPage(getSelectedFolder());
-		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_SEARCH);
+		NewWizard wizard =
+			new NewWizard(page, UpdateUIPluginImages.DESC_NEW_SEARCH);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
@@ -459,11 +487,17 @@ public class UpdatesView
 			if (obj instanceof SiteBookmark) {
 				SiteBookmark bookmark = (SiteBookmark) obj;
 				if (bookmark.getType() == SiteBookmark.LOCAL) {
-					UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+					UpdateModel model =
+						UpdateUIPlugin.getDefault().getUpdateModel();
 					Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 					NewSiteBookmarkWizardPage page =
-						new NewSiteBookmarkWizardPage(getSelectedFolder(), bookmark);
-					NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
+						new NewSiteBookmarkWizardPage(
+							getSelectedFolder(),
+							bookmark);
+					NewWizard wizard =
+						new NewWizard(
+							page,
+							UpdateUIPluginImages.DESC_NEW_BOOKMARK);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.create();
 					dialog.getShell().setText("New Site Bookmark");
@@ -484,7 +518,8 @@ public class UpdatesView
 				Object obj = iter.next();
 				if (obj instanceof NamedModelObject) {
 					NamedModelObject child = (NamedModelObject) obj;
-					BookmarkFolder folder = (BookmarkFolder) child.getParent(child);
+					BookmarkFolder folder =
+						(BookmarkFolder) child.getParent(child);
 					if (folder != null)
 						folder.removeChildren(new NamedModelObject[] { child });
 					else
@@ -499,11 +534,13 @@ public class UpdatesView
 		final Object obj = sel.getFirstElement();
 
 		if (obj != null) {
-			BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 				public void run() {
 					try {
 						// reinitialize the authenticator 
-						AuthorizationDatabase auth = UpdateUIPlugin.getDefault().getDatabase();
+						AuthorizationDatabase auth =
+							UpdateUIPlugin.getDefault().getDatabase();
 						if (auth != null)
 							auth.reset();
 						if (obj instanceof SiteBookmark)
@@ -522,10 +559,14 @@ public class UpdatesView
 		String message;
 
 		if (ssel.size() > 1) {
-			message = "Are you sure you want to delete these " + ssel.size() + " items?";
+			message =
+				"Are you sure you want to delete these "
+					+ ssel.size()
+					+ " items?";
 		} else {
 			Object obj = ssel.getFirstElement().toString();
-			message = "Are you sure you want to delete \"" + obj.toString() + "\"?";
+			message =
+				"Are you sure you want to delete \"" + obj.toString() + "\"?";
 		}
 		return MessageDialog.openConfirm(
 			viewer.getControl().getShell(),
@@ -555,11 +596,14 @@ public class UpdatesView
 	private Object[] getSiteCatalog(final SiteBookmark bookmark) {
 		if (!bookmark.isSiteConnected()) {
 			final CatalogBag bag = new CatalogBag();
-			BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 				public void run() {
 					try {
 						bookmark.connect();
-						bag.catalog = bookmark.getCatalog(showCategoriesAction.isChecked());
+						bag.catalog =
+							bookmark.getCatalog(
+								showCategoriesAction.isChecked());
 					} catch (CoreException e) {
 						// FIXME
 					}
@@ -630,5 +674,50 @@ public class UpdatesView
 
 	public void setSelection(IStructuredSelection selection) {
 		viewer.setSelection(selection, true);
+	}
+
+	private void initializeImages() {
+		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
+		floppyImage = UpdateUIPluginImages.DESC_FLOPPY_OBJ.createImage();
+		cdImage = UpdateUIPluginImages.DESC_CD_OBJ.createImage();
+		vfixedImage = UpdateUIPluginImages.DESC_VFIXED_OBJ.createImage();
+		vremoteImage = UpdateUIPluginImages.DESC_VREMOTE_OBJ.createImage();
+		vremovableImage =
+			UpdateUIPluginImages.DESC_VREMOVABLE_OBJ.createImage();
+	}
+	private void disposeImages() {
+		siteImage.dispose();
+		featureImage.dispose();
+		computerImage.dispose();
+		floppyImage.dispose();
+		cdImage.dispose();
+		vfixedImage.dispose();
+		vremoteImage.dispose();
+		vremovableImage.dispose();
+		for (Enumeration enum = fileImages.elements();
+			enum.hasMoreElements();
+			) {
+			((Image) enum.nextElement()).dispose();
+		}
+	}
+
+	private Image getVolumeImage(IVolume volume) {
+		switch (volume.getType()) {
+			case LocalSystemInfo.VOLUME_CDROM :
+				return cdImage;
+			case LocalSystemInfo.VOLUME_FIXED :
+				return vfixedImage;
+			case LocalSystemInfo.VOLUME_FLOPPY_3 :
+			case LocalSystemInfo.VOLUME_FLOPPY_5 :
+				return floppyImage;
+			case LocalSystemInfo.VOLUME_RAMDISK :
+			case LocalSystemInfo.VOLUME_REMOVABLE :
+				return vremovableImage;
+			case LocalSystemInfo.VOLUME_REMOTE :
+				return vremoteImage;
+		}
+		return null;
 	}
 }

@@ -45,13 +45,20 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
 	public Object[] getChildren(Object parent) {
-		BusyIndicator.showWhile(UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(
+				UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(),
+				new Runnable() {
 			public void run() {
-				IVolume [] volumes = LocalSystemInfo.getVolumes();
-				if (volumes!=null && volumes.length > 0) {
+				IVolume[] volumes = LocalSystemInfo.getVolumes();
+				if (volumes != null && volumes.length > 0) {
 					children = new MyComputerDirectory[volumes.length];
 					for (int i = 0; i < children.length; i++) {
-						children[i] = new MyComputerDirectory(MyComputer.this, volumes[i].getFile(), true);
+						children[i] =
+							new MyComputerDirectory(
+								MyComputer.this,
+								volumes[i].getFile(),
+								volumes[i]);
 					}
 				} else
 					children = new Object[0];
@@ -59,7 +66,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 		});
 		return children;
 	}
-	
+
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
@@ -80,34 +87,44 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	public Object getParent(Object arg0) {
 		return null;
 	}
-	
-	public void collectSites(Vector sites, MyComputerSearchSettings settings, IProgressMonitor monitor) {
-		IVolume [] volumes = LocalSystemInfo.getVolumes();
-		for (int i=0; i<volumes.length; i++) {
+
+	public void collectSites(
+		Vector sites,
+		MyComputerSearchSettings settings,
+		IProgressMonitor monitor) {
+		IVolume[] volumes = LocalSystemInfo.getVolumes();
+		for (int i = 0; i < volumes.length; i++) {
 			File drive = volumes[i].getFile();
-			if (monitor.isCanceled()) return;
+			if (monitor.isCanceled())
+				return;
 			DriveSearchSettings ds = settings.getDriveSettings(drive.getPath());
 			if (ds.isChecked()) {
 				collectSites(drive, sites, ds, monitor);
 			}
 		}
 	}
-	
-	private void collectSites(File dir, Vector sites, DriveSearchSettings driveSettings, IProgressMonitor monitor) {
-		File [] children = dir.listFiles();
-		if (children==null) return;
-		
-		for (int i=0; i<children.length; i++) {
+
+	private void collectSites(
+		File dir,
+		Vector sites,
+		DriveSearchSettings driveSettings,
+		IProgressMonitor monitor) {
+		File[] children = dir.listFiles();
+		if (children == null)
+			return;
+
+		for (int i = 0; i < children.length; i++) {
 			File child = children[i];
-			if (monitor.isCanceled()) return;
+			if (monitor.isCanceled())
+				return;
 			if (child.isDirectory()) {
-				monitor.subTask(child.getPath());				
+				monitor.subTask(child.getPath());
 				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
-				if (bookmark!=null) {
+				if (bookmark != null) {
 					ISite site = bookmark.getSite(false);
-					if (site!=null) sites.add(bookmark);
-				}
-				else 
+					if (site != null)
+						sites.add(bookmark);
+				} else
 					collectSites(child, sites, driveSettings, monitor);
 			}
 		}
