@@ -42,8 +42,57 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private static final String PLUGIN_JARS = "plugin.jars";
 	private static final String VA_PROPERTIES = ".va.properties";
 	private static final String KEY_PROJECT = "projects";
+	
+	// Places to look for library files 
+	private static String[] WS_JAR_VARIANTS = buildWSVariants();
+	private static String[] OS_JAR_VARIANTS = buildOSVariants();
+	private static String[] NL_JAR_VARIANTS = buildNLVariants();
+	private static String[] JAR_VARIANTS = buildVanillaVariants();
+
 public PluginDescriptor() {
 	super();
+}
+private static String[] buildWSVariants() {
+	ArrayList result = new ArrayList();
+	result.add("ws/" + BootLoader.getWS());
+	result.add("");
+	return (String[])result.toArray(new String[result.size()]);
+}
+private static String[] buildOSVariants() {
+	ArrayList result = new ArrayList();
+	result.add("os/" + BootLoader.getOS() + "/" + System.getProperty("os.arch"));
+	result.add("os/" + BootLoader.getOS());
+	result.add("");
+	return (String[])result.toArray(new String[result.size()]);
+}
+private static String[] buildNLVariants() {
+	ArrayList result = new ArrayList();
+	String nl = BootLoader.getNL();
+	nl = nl.replace('_', '/');
+	while (nl.length() > 0) {
+		result.add("nl/" + nl);
+		int i = nl.lastIndexOf('/');
+		nl = (i < 0) ? "" : nl.substring(0, i);
+	}
+	result.add("");
+	return (String[])result.toArray(new String[result.size()]);
+}
+private static String[] buildVanillaVariants() {
+	ArrayList result = new ArrayList();
+	result.add("");
+	return (String[])result.toArray(new String[result.size()]);
+}
+private String[] buildBasePaths(String pluginBase) {
+	// Now build a list of all the bases to use
+	ArrayList result = new ArrayList();
+	result.add(pluginBase);
+	PluginFragmentModel[] fragments = getFragments();
+	int fragmentLength = (fragments == null) ? 0 : fragments.length;
+	for (int i = 0; i < fragmentLength; i++) {
+		FragmentDescriptor fragment = (FragmentDescriptor)fragments[i];
+		result.add(fragment.getInstallURL().toString());
+	}
+	return (String[])result.toArray(new String[result.size()]);
 }
 /**
  * concatenates start and end.  If end has a '.' construct at the beginning
@@ -299,10 +348,15 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	URL install = usePlatformURLs ? getInstallURL() : getInstallURLInternal();
 	String execBase = install.toExternalForm();
 	String devBase = null;
-	if (useDevURLs)
-		devBase = PlatformURLBaseConnection.PLATFORM_URL_STRING;
-	else
+	// useDevURLs should always be false now as 
+	//		InternalPlatform.inVAJ() || InternalPlatform.inVAME()
+	// should never be true anymore
+	//if (useDevURLs)
+		//devBase = PlatformURLBaseConnection.PLATFORM_URL_STRING;
+	//else
 		devBase = execBase;
+	
+	String[] basePaths = buildBasePaths(devBase);
 
 	String[] exportAll = new String[] { "*" };
 	ArrayList[] result = new ArrayList[4];
@@ -322,13 +376,7 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 			if (!(spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
 				spec = spec + "/";
 			// add the dev path for the plugin itself
-			addLibrary(devBase, spec, exportAll, ILibrary.CODE, false, result);
-			// add the dev path for all of the fragments
-			PluginFragmentModel[] fragments = getFragments();
-			for (int i = 0; fragments != null && i < fragments.length; i++) {
-				String subBase = getFragmentLocation(fragments[i]);
-				addLibrary(subBase, spec, exportAll, ILibrary.CODE, false, result);
-			}
+			addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, exportAll, ILibrary.CODE, false, result);
 		}
 	}
 
@@ -349,10 +397,9 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 			String[] specs = getArrayFromList(jarDefinition);
 			// convert jar spec into url strings
 			for (int j = 0; j < specs.length; j++)
-				resolveAndAddLibrary(devBase, specs[j] + "/", filters, library.getType(), true, result);
+				resolveAndAddLibrary(specs[j] + "/", filters, basePaths, library.getType(), true, result);
 		}
-
-		resolveAndAddLibrary(execBase, libSpec, filters, library.getType(), jarDefinition != null, result);
+		resolveAndAddLibrary(libSpec, filters, basePaths, library.getType(), jarDefinition != null, result);
 	}
 
 	Object[] array = new Object[4];
@@ -363,38 +410,44 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	return array;
 }
 
-private boolean resolveAndAddLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean resolveAndAddLibrary(String spec, String[] filters, String[] basePaths, String type, boolean hasJarSpec, ArrayList[] result) {
 	if (spec.charAt(0) == '$') {
 		IPath path = new Path(spec);
 		String first = path.segment(0);
+		String remainder = path.removeFirstSegments(1).toString();
 		if (first.equalsIgnoreCase("$ws$"))
-			return resolveAndAddWSLibrary(base, spec, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, WS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
 		if (first.equalsIgnoreCase("$os$"))
-			return resolveAndAddOSLibrary(base, spec, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, OS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
 		if (first.equalsIgnoreCase("$nl$"))
-			return resolveAndAddNLLibrary(base, spec, filters, type, hasJarSpec, result);
+			return addLibraryWithFragments(basePaths, NL_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, result);
 	}
-	return addLibraryWithFragments(base, spec, filters, type, hasJarSpec, result);
+	return addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, filters, type, hasJarSpec, result);
 }
 
-private boolean addLibraryWithFragments(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	boolean added = addLibrary(base, spec, filters, type, hasJarSpec, result);
-	if (added)
-		return true;
-	PluginFragmentModel[] fragments = getFragments();
-	if (fragments == null)
-		return false;
-	for (int i = 0; !added && i < fragments.length; i++) {
-		String subBase = getFragmentLocation (fragments[i]);
-		added = addLibrary(subBase, spec, filters, type, hasJarSpec, result);
+private boolean addLibraryWithFragments(String[] basePaths, String[] variants, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+	boolean added = false;
+	for (int j = 0; j < variants.length && !added; j++) {
+		for (int i = 0; i < basePaths.length && !added; i++) {
+			added = addLibrary(basePaths[i], spec, variants[j], filters, type, hasJarSpec, result);
+		}
 	}
 	return added;
 }
 
-private boolean addLibrary(String base, String libSpec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean addLibrary(String base, String libSpec, String variant, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
 	// create path entries for all libraries except those which are files
 	// and do not exist.
-	String spec = concat(base, libSpec);
+	String spec = null;
+	// Make sure you get only one separator between each segment
+	if ((variant.length() == 0) && (libSpec.startsWith("/")) &&
+	     (base.endsWith("/"))) {
+		spec = concat(base, libSpec.substring(1));
+	} else {
+		spec = concat(concat(base, variant), libSpec);
+	}
+	// spec is now something of the form:
+	// <base><variant><libSpec>
 	if (spec == null)
 		return false;
 
@@ -717,33 +770,33 @@ private void pluginActivationExit(boolean errorExit) {
 	} else
 		active = true;
 }
-private boolean resolveAndAddOSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	IPath path = new Path(spec).removeFirstSegments(1);
-	String location = new Path("os/" + BootLoader.getOS()).append(path).toString();
-	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
-}
-
-private boolean resolveAndAddWSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	IPath path = new Path(spec).removeFirstSegments(1);
-	String location = new Path("ws/" + BootLoader.getWS()).append(path).toString();
-	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
-}
-
-private boolean resolveAndAddNLLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	String path = new Path(spec).removeFirstSegments(1).toString();
-	boolean added = addLibraryNL(base, path, filters, type, hasJarSpec, result);
-	if (added) 
-		return true;
-	PluginFragmentModel[] fragments = getFragments();
-	if (fragments == null)
-		return false;
-	for (int i = 0; !added && i < fragments.length; i++) {
-		String subBase = getFragmentLocation (fragments[i]);
-		added = addLibraryNL(subBase, path, filters, type, hasJarSpec, result);
-	}
-	return added;
-}
-
+//private boolean resolveAndAddOSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+//	IPath path = new Path(spec).removeFirstSegments(1);
+//	String location = new Path("os/" + BootLoader.getOS()).append(path).toString();
+//	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
+//}
+//
+//private boolean resolveAndAddWSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+//	IPath path = new Path(spec).removeFirstSegments(1);
+//	String location = new Path("ws/" + BootLoader.getWS()).append(path).toString();
+//	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
+//}
+//
+//private boolean resolveAndAddNLLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+//	String path = new Path(spec).removeFirstSegments(1).toString();
+//	boolean added = addLibraryNL(base, path, filters, type, hasJarSpec, result);
+//	if (added) 
+//		return true;
+//	PluginFragmentModel[] fragments = getFragments();
+//	if (fragments == null)
+//		return false;
+//	for (int i = 0; !added && i < fragments.length; i++) {
+//		String subBase = getFragmentLocation (fragments[i]);
+//		added = addLibraryNL(subBase, path, filters, type, hasJarSpec, result);
+//	}
+//	return added;
+//}
+//
 private String getFragmentLocation(PluginFragmentModel fragment) {
 	if (useDevURLs) 
 		return PlatformURLBaseConnection.PLATFORM_URL_STRING;
@@ -752,20 +805,20 @@ private String getFragmentLocation(PluginFragmentModel fragment) {
 	return fragment.getLocation();
 }
 
-private boolean addLibraryNL(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	String nl = BootLoader.getNL();
-	boolean added = false;
-	while (!added && nl.length() > 0) {
-		String location = new Path("nl/" + nl).append(spec).addTrailingSeparator().toString();
-		added = addLibrary(base, location, filters, type, hasJarSpec, result);
-		int i = nl.lastIndexOf('_');
-		if (i < 0)
-			nl = "";
-		else
-			nl = nl.substring(0, i);
-	}
-	return added;
-}
+//private boolean addLibraryNL(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+//	String nl = BootLoader.getNL();
+//	boolean added = false;
+//	while (!added && nl.length() > 0) {
+//		String location = new Path("nl/" + nl).append(spec).addTrailingSeparator().toString();
+//		added = addLibrary(base, location, filters, type, hasJarSpec, result);
+//		int i = nl.lastIndexOf('_');
+//		if (i < 0)
+//			nl = "";
+//		else
+//			nl = nl.substring(0, i);
+//	}
+//	return added;
+//}
 
 
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
