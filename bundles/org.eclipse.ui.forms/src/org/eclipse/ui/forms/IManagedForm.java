@@ -27,6 +27,11 @@ public interface IManagedForm {
 	public ScrolledForm getForm();
 
 /**
+ * Reflows the form as a result of the layout change.
+ * @param changed if <code>true</code>, discard cached layout information
+ */
+	public void reflow(boolean changed);
+/**
  * A part can use this method to notify other parts that
  * implement IPartSelectionListener about selection changes.
  * @param part the part that broadcasts the selection
@@ -45,4 +50,9 @@ public interface IManagedForm {
  * @param input the new page input
  */
 	void setInput(Object input);
+/**
+ * Returns the current page input.
+ * @return page input object or <code>null</code> if not applicable.
+ */
+	Object getInput();
 }

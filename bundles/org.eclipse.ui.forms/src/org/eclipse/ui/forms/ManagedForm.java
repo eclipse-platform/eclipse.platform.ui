@@ -18,6 +18,7 @@ import org.eclipse.ui.forms.widgets.*;
  * @since 3.0
  */
 public class ManagedForm implements IManagedForm {
+	private Object input;
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private boolean ownsToolkit;
@@ -88,6 +89,12 @@ public class ManagedForm implements IManagedForm {
 	 */
 	public ScrolledForm getForm() {
 		return form;
+	}
+/**
+ * Reflows the form as a result of a layout change.
+ */	
+	public void reflow(boolean changed) {
+		form.reflow(changed);
 	}
 
 	/**
@@ -167,10 +174,14 @@ public class ManagedForm implements IManagedForm {
 	 *            the input object
 	 */
 	public void setInput(Object input) {
+		this.input = input;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
 			part.setFormInput(input);
 		}
+	}
+	public Object getInput() {
+		return input;
 	}
 	/**
 	 * Transfers the focus to the first form part.
