@@ -485,8 +485,8 @@ abstract public class AbstractReconciler implements IReconciler {
 			
 		if (!fThread.isAlive())
 			fThread.start();
-
-		fThread.reset();
+		else
+			fThread.reset();
 	}
     
     /**
