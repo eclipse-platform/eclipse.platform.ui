@@ -76,7 +76,7 @@ public class AntCorePlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String ANT_BUILDFILE_CONTENT_TYPE = "contentTypes.antBuildFile"; //$NON-NLS-1$
+	public static final String ANT_BUILDFILE_CONTENT_TYPE = PI_ANTCORE + ".contentTypes.antBuildFile"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"class"</code>)
