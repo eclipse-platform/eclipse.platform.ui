@@ -331,7 +331,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * 		if this formatter can not compute the partition managing position categories.
 	 */
 	public void setPartitionManagingPositionCategories(String[] categories) {
-		fExternalPartitonManagingCategories= categories;
+		fExternalPartitonManagingCategories= TextUtilities.copy(categories);
 	}
 	
 	/**

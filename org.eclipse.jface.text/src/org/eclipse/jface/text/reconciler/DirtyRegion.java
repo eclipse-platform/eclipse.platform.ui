@@ -47,10 +47,26 @@ public class DirtyRegion implements ITypedRegion {
 	public DirtyRegion(int offset, int length, String type, String text) {
 		fOffset= offset;
 		fLength= length;
-		fType= type;
+		fType= normalizeTypeValue(type);
 		fText= text;
 	}
-
+	
+	/**
+	 * Computes the normalized type value to ensure that the implementation can use object identity rather
+	 * than equality.
+	 * 
+	 * @param type the type value
+	 * @return the normalized type value or <code>null</code>
+	 * @since 3.1
+	 */
+	private String normalizeTypeValue(String type) {
+		if (INSERT.equals(type))
+			return INSERT;
+		if (REMOVE.equals(type))
+			return REMOVE;
+		return null;
+	}
+	
 	/*
 	 * @see ITypedRegion#getOffset()
 	 */

@@ -41,7 +41,7 @@ public class ProposalPosition extends LinkedPosition {
 	 */
 	public ProposalPosition(IDocument document, int offset, int length, int sequence, ICompletionProposal[] proposals) {
 		super(document, offset, length, sequence);
-		fProposals= proposals;
+		fProposals= copy(proposals);
 	}
 	
 	/**
@@ -54,7 +54,16 @@ public class ProposalPosition extends LinkedPosition {
 	 */
 	public ProposalPosition(IDocument document, int offset, int length, ICompletionProposal[] proposals) {
 		super(document, offset, length, LinkedPositionGroup.NO_STOP);
-		fProposals= proposals;
+		fProposals= copy(proposals);
+	}
+	
+	private ICompletionProposal[] copy(ICompletionProposal[] proposals) {
+		if (proposals != null) {
+			ICompletionProposal[] copy= new ICompletionProposal[proposals.length];
+			System.arraycopy(proposals, 0, copy, 0, proposals.length);
+			return copy;
+		}
+		return null;
 	}
 	
 	/*
@@ -70,7 +79,8 @@ public class ProposalPosition extends LinkedPosition {
 	}
 
 	/**
-	 * Returns the proposals attached to this position.
+	 * Returns the proposals attached to this position. The returned array is owned by
+	 * this <code>ProposalPosition</code> and may not be modified by clients.
 	 * 
 	 * @return an array of choices, including the initial one. Callers must not
 	 *         modify it.
