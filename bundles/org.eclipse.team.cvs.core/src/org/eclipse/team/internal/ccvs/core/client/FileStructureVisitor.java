@@ -30,17 +30,14 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 class FileStructureVisitor extends AbstractStructureVisitor {
 
-	private final boolean sendEmptyFolders;
+	private boolean sendEmptyFolders;
 
-	/**
-	 * Constructor for the visitor
-	 * 
-	 * @param modifiedOnly sends files that are modified only to the server
-	 * @param emptyFolders sends the folder-entrie even if there is no file to send in it
-	 */
 	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, IProgressMonitor monitor) {
-			
-		super(session, true, sendModifiedContents, monitor);
+		this(session, true, sendModifiedContents, true, monitor);
+	}
+
+	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary, IProgressMonitor monitor) {
+		super(session, true, sendModifiedContents, sendBinary, monitor);
 		this.sendEmptyFolders = sendEmptyFolders;
 	}
 

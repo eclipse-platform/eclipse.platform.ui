@@ -44,14 +44,20 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	protected IProgressMonitor monitor;
 	protected boolean sendQuestionable;
 	protected boolean sendModifiedContents;
+	private boolean sendBinary;
 
 	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, IProgressMonitor monitor) {
+		this(session, sendQuestionable, sendModifiedContents, true, monitor);
+	}
+
+	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, boolean sendBinary, IProgressMonitor monitor) {
 		this.session = session;
 		this.sendQuestionable = sendQuestionable;
 		this.sendModifiedContents = sendModifiedContents;
+		this.sendBinary = sendBinary;
 		this.monitor = Policy.infiniteSubMonitorFor(monitor, 256);
 	}
-
+		
 	/** 
 	 * Helper method to indicate if a directory has already been sent to the server
 	 */
@@ -175,7 +181,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			if (mFile.isModified(null)) {
 				boolean binary = ResourceSyncInfo.isBinary(syncBytes);
 				if (sendModifiedContents) {
-					session.sendModified(mFile, binary, monitor);
+					session.sendModified(mFile, binary, sendBinary, monitor);
 				} else {
 					session.sendIsModified(mFile, binary, monitor);
 				}

@@ -575,7 +575,7 @@ public class RemoteFolderTreeBuilder {
 		// Perform a "cvs -n update -d [-r tag] ." in order to get the
 		// messages from the server that will indicate what has changed on the 
 		// server.
-		IStatus status = Command.UPDATE.execute(session,
+		IStatus status = Command.SYNCUPDATE.execute(session,
 			new GlobalOption[] { Command.DO_NOT_CHANGE },
 			updateLocalOptions,
 			arguments,

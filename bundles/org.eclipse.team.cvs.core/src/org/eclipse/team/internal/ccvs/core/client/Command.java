@@ -58,6 +58,7 @@ public abstract class Command extends Request {
 	public final static Tag CUSTOM_TAG = new Tag(true);
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
+	public final static SyncUpdate SYNCUPDATE = new SyncUpdate();
 	public final static Version VERSION = new Version();
 	public final static NOOPCommand NOOP = new NOOPCommand();
 	

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -880,12 +881,17 @@ public class Session {
 	 */
 	public void sendModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
+			sendModified(file, isBinary, true, monitor);
+	}
+
+	public void sendModified(ICVSFile file, boolean isBinary, boolean sendBinary, IProgressMonitor monitor)
+				throws CVSException {
 		
 		String filename = file.getName();
 		connection.writeLine("Modified " + filename); //$NON-NLS-1$
 		// send the default permissions for now
 		connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
-		sendFile(file, isBinary, monitor);
+		sendFile(file, isBinary, sendBinary, monitor);
 	}
 	
 		/**
@@ -902,6 +908,10 @@ public class Session {
 		 * @param monitor the progress monitor
 		 */
 		public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor) throws CVSException {
+			sendFile(file, isBinary, true, monitor);
+		}
+		
+		public void sendFile(ICVSFile file, boolean isBinary, boolean sendBinary, IProgressMonitor monitor) throws CVSException {
 			// check overrides
 			if (textTransferOverrideSet != null &&
 				textTransferOverrideSet.contains(file)) isBinary = false;
@@ -913,6 +923,12 @@ public class Session {
 				InputStream in = null;
 				long length;
 				try {
+					if (isBinary && !sendBinary)  {
+						byte[] bytes = "hello".getBytes();  //$NON-NLS-1$
+						sendUncompressedBytes(new ByteArrayInputStream(bytes), bytes.length);
+						return;
+					}
+					
 					if (compressionLevel == 0) {
 						in = file.getContents();
 						if (!isBinary && IS_CRLF_PLATFORM){
