@@ -206,27 +206,10 @@ public abstract class WorkbenchAdvisor {
 	 * This method is called just after the windows have been opened.
 	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
-	 * It is okay to <code>IWorkbench.close()</code> from this method.
+	 * It is okay to call <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 */
 	public void postStartup() {
-		// do nothing
-	}
-
-	/**
-	 * Performs arbitrary actions after the workbench and its windows have been
-	 * restored, but before the main event loop is run.
-	 * <p>
-	 * This method is called after previously-saved windows have been recreated,
-	 * and before <code>postStartup</code>. This method is not called when the
-	 * workbench is started for the very first time, or if workbench state is
-	 * not saved or restored.
-	 * Clients must not call this method directly (although super calls are okay).
-	 * The default implementation does nothing. Subclasses may override.
-	 * It is okay to <code>IWorkbench.close()</code> from this method.
-	 * </p>
-	 */
-	public void postRestore() {
 		// do nothing
 	}
 
@@ -426,7 +409,7 @@ public abstract class WorkbenchAdvisor {
 	 * very first time, or when workbench state is not saved or restored.
 	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
-	 * It is okay to <code>IWorkbench.close()</code> from this method.
+	 * It is okay to call <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench

@@ -27,8 +27,6 @@ import org.eclipse.ui.rcp.tests.util.WorkbenchAdvisorObserver;
 
 public class WorkbenchAdvisorTest extends TestCase {
 
-    private static final boolean Bug51282Fixed = false;
-
     public WorkbenchAdvisorTest(String name) {
         super(name);
     }
@@ -192,9 +190,6 @@ public class WorkbenchAdvisorTest extends TestCase {
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        if (Bug51282Fixed) {
-            wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_RESTORE);
-        }
         wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
         wa2.assertAllOperationsExamined();

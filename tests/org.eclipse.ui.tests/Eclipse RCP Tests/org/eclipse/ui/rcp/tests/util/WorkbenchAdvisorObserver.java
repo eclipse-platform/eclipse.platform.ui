@@ -48,7 +48,6 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     public final static String INITIALIZE = "initialize"; //$NON-NLS-1$
     public final static String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
     public final static String POST_STARTUP = "postStartup"; //$NON-NLS-1$
-    public final static String POST_RESTORE = "postRestore"; //$NON-NLS-1$
     public final static String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
     public final static String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
     public final static String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
@@ -122,11 +121,6 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
         super.postWindowOpen(configurer);
         addOperation(POST_WINDOW_OPEN);
-    }
-
-    public void postRestore() {
-        super.postRestore();
-        addOperation(POST_RESTORE);
     }
 
     public void postStartup() {
