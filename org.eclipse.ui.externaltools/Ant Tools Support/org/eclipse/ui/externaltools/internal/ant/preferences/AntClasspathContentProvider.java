@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 /**
@@ -19,6 +20,10 @@ import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
  * viewer.
  */
 public class AntClasspathContentProvider extends ExternalToolsContentProvider {
+	
+	/**
+	 * @see org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider#add(java.lang.Object)
+	 */
 	public void add(Object o) {
 		URL newURL = (URL) o;
 		File newFile= new File(newURL.getFile());
@@ -40,5 +45,11 @@ public class AntClasspathContentProvider extends ExternalToolsContentProvider {
 			viewer.remove(elements.toArray());
 		}
 		elements = new ArrayList(5);
+	}
+	/**
+	 * @see org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider#getSorter()
+	 */
+	protected ViewerSorter getSorter() {
+		return null;
 	}
 }

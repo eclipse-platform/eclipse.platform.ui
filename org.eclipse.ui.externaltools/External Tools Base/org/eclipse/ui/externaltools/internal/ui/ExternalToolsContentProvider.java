@@ -24,14 +24,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 public class ExternalToolsContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
 	protected TableViewer viewer;
-	private ViewerSorter sorter= new ViewerSorter() {
-		/**
-		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			return e1.toString().compareToIgnoreCase(e2.toString());
-		}
-	};
+	private ViewerSorter sorter= null;
 
 	public void add(Object o) {
 		if (elements.contains(o)) {
@@ -50,7 +43,7 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer) viewer;
-		this.viewer.setSorter(sorter);
+		this.viewer.setSorter(getSorter());
 		elements.clear();
 		if (newInput != null) {
 			List list;
@@ -72,5 +65,19 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 		Object[] array= selection.toArray();
 		elements.removeAll(Arrays.asList(array));
 		viewer.remove(array);
+	}
+	
+	protected ViewerSorter getSorter() {
+		if (sorter == null) {
+			sorter= new ViewerSorter() {
+				/**
+				 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+				 */
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					return e1.toString().compareToIgnoreCase(e2.toString());
+				}
+			};
+		}
+		return sorter;
 	}
 }
