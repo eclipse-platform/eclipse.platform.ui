@@ -78,6 +78,7 @@ public PropertySheet() {
  */
 protected IPage createDefaultPage(PageBook book) { 
 	PropertySheetPage page = new PropertySheetPage();
+	initPage(page);
 	page.createControl(book);
 	return page;
 }
@@ -106,6 +107,8 @@ protected PageRec doCreatePage(IWorkbenchPart part) {
 	// Try to get a custom property sheet page.
 	IPropertySheetPage page = (IPropertySheetPage)part.getAdapter(IPropertySheetPage.class);
 	if (page != null) {
+		if (page instanceof IPageBookViewPage) 
+			initPage((IPageBookViewPage) page);
 		page.createControl(getPageBook());
 		return new PageRec(part, page);
 	}

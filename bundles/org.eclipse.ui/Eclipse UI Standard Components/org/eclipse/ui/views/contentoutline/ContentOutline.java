@@ -78,6 +78,7 @@ public void addSelectionChangedListener(ISelectionChangedListener listener) {
  */
 protected IPage createDefaultPage(PageBook book) {
 	MessagePage page = new MessagePage();
+	initPage(page);
 	page.createControl(book);
 	page.setMessage(defaultText);
 	return page;
@@ -99,6 +100,8 @@ protected PageRec doCreatePage(IWorkbenchPart part)
 	Object obj = part.getAdapter(IContentOutlinePage.class);
 	if (obj instanceof IContentOutlinePage) {
 		IContentOutlinePage page = (IContentOutlinePage)obj;
+		if (page instanceof IPageBookViewPage) 
+			initPage((IPageBookViewPage)page);
 		page.createControl(getPageBook());
 		return new PageRec(part, page);
 	}

@@ -253,27 +253,47 @@ private PageRec createPage(IWorkbenchPart part) {
 	PageRec rec = doCreatePage(part);
 	if (rec != null) {
 		mapPartToRec.put(part, rec);
-		initPage(rec);
+		preparePage(rec);
 	}
 	return rec;
 }
 /**
- * Initializes the page in the given page rec
+ * Prepares the page in the given page rec for use
+ * in this view.
  */
-private void initPage(PageRec rec) {
-	PageSite site = new PageSite(getViewSite()); 
+private void preparePage(PageRec rec) {
+	IPageSite site = null;
+	if (rec.page instanceof IPageBookViewPage) {
+		site = ((IPageBookViewPage)rec.page).getSite();
+	}
+	if (site == null) {
+		// We will create a site for our use
+		site = new PageSite(getViewSite());
+	}
 	mapPageToSite.put(rec.page, site);
 	rec.subActionBars = (SubActionBars)site.getActionBars();
 	rec.subActionBars.addPropertyChangeListener(actionBarPropListener);
-	if (rec.page instanceof IPageBookViewPage) {
-		try {
-			((IPageBookViewPage)rec.page).init(site);
-		} catch (PartInitException e) {
-			WorkbenchPlugin.log(e.getMessage());
-		}
-	}
 	// for backward compability with IPage
 	rec.page.setActionBars(rec.subActionBars);
+}
+/**
+ * Initializes the given page with a page site.
+ * <p>
+ * Subclasses should call this method after
+ * the page is created but before creating its
+ * controls.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @param the page to initialize
+ */
+protected void initPage(IPageBookViewPage page) {
+	try {
+		page.init(new PageSite(getViewSite()));
+	} catch (PartInitException e) {
+		WorkbenchPlugin.log(e.getMessage());
+	}
 }
 /**
  * The <code>PageBookView</code> implementation of this <code>IWorkbenchPart</code>
@@ -288,7 +308,7 @@ public void createPartControl(Composite parent) {
 	// Create the default page rec.
 	IPage defaultPage = createDefaultPage(book);
 	defaultPageRec = new PageRec(null, defaultPage);
-	initPage(defaultPageRec);
+	preparePage(defaultPageRec);
 
 	// Show the default page	
 	showPageRec(defaultPageRec);
@@ -389,6 +409,15 @@ public IPage getCurrentPage() {
 	return activeRec.page;
 }
 /**
+ * Returns the view site for the given page of this view.
+ *
+ * @param page the page
+ * @return the corresponding site, or <code>null</code> if not found
+ */
+protected PageSite getPageSite(IPage page) {
+	return (PageSite)mapPageToSite.get(page);
+}
+/**
  * Returns the default page for this view.
  *
  * @return the default page
@@ -427,15 +456,6 @@ protected PageRec getPageRec(IPage page) {
 			return rec;
 	}
 	return null;
-}
-/**
- * Returns the view site for the given page of this view.
- *
- * @param page the page
- * @return the corresponding site, or <code>null</code> if not found
- */
-protected PageSite getPageSite(IPage page) {
-	return (PageSite)mapPageToSite.get(page);
 }
 /**
  * Returns whether the given part should be added to this view.
