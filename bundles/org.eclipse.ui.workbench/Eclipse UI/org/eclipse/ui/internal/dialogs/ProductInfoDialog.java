@@ -1,9 +1,14 @@
-package org.eclipse.ui.internal.dialogs;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ public abstract class ProductInfoDialog extends Dialog{
 	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 	private AboutItem item;
 	private boolean webBrowserOpened;
+	private String webBrowser = null;
 	private Cursor handCursor;
 	private Cursor busyCursor;
 	private boolean mouseDown = false;
@@ -269,6 +275,30 @@ protected StyleRange findPreviousRange(StyledText text){
 	return null;
 }
 
+//TODO: Move browser support from Help system, remove this method
+private Process openWebBrowser(String href) throws IOException{
+	Process p = null;
+	if (webBrowser == null) {
+		try {
+			webBrowser = "netscape"; //$NON-NLS-1$
+			p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$;
+		} catch (IOException e) {
+			p = null;
+			webBrowser = "mozilla"; //$NON-NLS-1$
+		}
+	}
+	 
+	if (p==null) {
+		try {
+			p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
+		} catch (IOException e) {
+			p = null;
+			throw e;
+		}
+	}
+	return p;
+}
+
 /**
  * Open a link
  */
@@ -281,9 +311,9 @@ protected void openLink(final String href) {
 			public void run() {
 				try {
 					if (webBrowserOpened) {
-						Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						Process p = Runtime.getRuntime().exec("netscape " + href); //$NON-NLS-1$
+						Process p = openWebBrowser(href);
 						webBrowserOpened = true;
 						try {
 							if (p != null)
