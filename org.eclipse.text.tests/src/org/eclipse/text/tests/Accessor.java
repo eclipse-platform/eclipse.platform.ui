@@ -47,16 +47,39 @@ public class Accessor extends Assert {
 	}
 	
 	/**
+	 * Creates an accessor for the given <code>instance</code> and
+	 * <code>class</code>. Only non-inherited members that particular
+	 * <code>class</code> can be accessed.
+	 * 
+	 * @param instance the instance
+	 * @param className the name of the class
+	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 */
+	public Accessor(Object instance, String className, ClassLoader classLoader) {
+		assertNotNull(instance);
+		assertNotNull(className);
+		assertNotNull(classLoader);
+		fInstance= instance;
+		try {
+			fClass= Class.forName(className, true, classLoader);
+		} catch (ClassNotFoundException e) {
+			fail();
+		} catch (ExceptionInInitializerError e) {
+			fail();
+		}
+	}
+	
+	/**
 	 * Creates an accessor for the given class.
 	 * <p>
 	 * In order to get the type information from the given
-	 * arguments they must all be instanceof Object. Use
+	 * arguments they must all be instanc eof Object. Use
 	 * {@link #Accessor(String, ClassLoader, Class[], Object[])} if this
 	 * is not the case.</p>
 	 * 
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
-	 * @param constructorArgs the constructor arguments which must all be instanceof Object
+	 * @param constructorArgs the constructor arguments which must all be instance of Object
 	 */
 	public Accessor(String className, ClassLoader classLoader, Object[] constructorArgs) {
 		this(className, classLoader, getTypes(constructorArgs), constructorArgs);
@@ -105,12 +128,12 @@ public class Accessor extends Assert {
 	 * Invokes the method with the given method name and arguments.
 	 * <p>
 	 * In order to get the type information from the given
-	 * arguments all those arguments must be instanceof Object. Use
+	 * arguments all those arguments must be instance of Object. Use
 	 * {@link #invoke(String, Class[], Object[])} if this
 	 * is not the case.</p>
 	 * 
 	 * @param methodName the method name
-	 * @param arguments the method arguments which must all be instanceof Object
+	 * @param arguments the method arguments which must all be instance of Object
 	 * @return the method return value
 	 */
 	public Object invoke(String methodName, Object[] arguments) {
