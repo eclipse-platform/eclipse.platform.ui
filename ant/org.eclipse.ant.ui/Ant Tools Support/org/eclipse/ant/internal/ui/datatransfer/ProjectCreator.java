@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -37,21 +38,21 @@ import org.eclipse.jdt.launching.JavaRuntime;
 
 public class ProjectCreator {
 		
-	public IJavaProject createJavaProjectFromJavacNode(String projectName, Javac javacTask) throws CoreException {
+	public IJavaProject createJavaProjectFromJavacNode(String projectName, Javac javacTask, IProgressMonitor monitor) throws CoreException {
 		try {
-			IJavaProject javaProject = createJavaProject(projectName);
+			IJavaProject javaProject = createJavaProject(projectName, monitor);
 			
 			File destDir= javacTask.getDestdir();
 			String destDirName= destDir == null ? null : destDir.getName();
 			org.apache.tools.ant.types.Path sourceDirs= javacTask.getSrcdir();
-			createSourceDirectories(destDir, destDirName, sourceDirs, javaProject);
+			createSourceDirectories(destDir, destDirName, sourceDirs, javaProject, monitor);
 			
 			// add rt.jar
-			addVariableEntry(javaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+			addVariableEntry(javaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE), monitor);
 			
-			setClasspath(javacTask, javaProject);
+			setClasspath(javacTask, javaProject, monitor);
 			
-			javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+			javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return javaProject;
 		} catch (BuildException be) {
 			IStatus status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, be.getLocalizedMessage(), be);
@@ -59,7 +60,7 @@ public class ProjectCreator {
 		}
 	}
 	
-	private void setClasspath(Javac javacTask, IJavaProject javaProject) throws CoreException {
+	private void setClasspath(Javac javacTask, IJavaProject javaProject, IProgressMonitor monitor) throws CoreException {
 		try {
 			org.apache.tools.ant.types.Path classpath= javacTask.getClasspath();
 			if (classpath == null) {
@@ -70,9 +71,9 @@ public class ProjectCreator {
 				String cp = classpaths[i];
 				File classpathEntry= new File(cp);
 				if (classpathEntry.isFile()) {
-					addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()));
+					addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()), monitor);
 				} else {
-					addContainer(javaProject, new Path(classpathEntry.getAbsolutePath()));
+					addContainer(javaProject, new Path(classpathEntry.getAbsolutePath()), monitor);
 				}
 			}
 		} catch (BuildException be) {
@@ -81,7 +82,7 @@ public class ProjectCreator {
 		}
 	}
 
-	private void createSourceDirectories(File destDir, String destDirName, org.apache.tools.ant.types.Path sourceDirs, IJavaProject javaProject) throws CoreException {
+	private void createSourceDirectories(File destDir, String destDirName, org.apache.tools.ant.types.Path sourceDirs, IJavaProject javaProject, IProgressMonitor monitor) throws CoreException {
 		String[] sourceDirectories= sourceDirs.list();
 		for (int i = 0; i < sourceDirectories.length; i++) {
 			String srcDir = sourceDirectories[i];
@@ -91,48 +92,48 @@ public class ProjectCreator {
 			if (destDirName == null) {
 			    destDirName= srcDirectoryName;
 			}
-			addSourceContainer(javaProject, srcDirectoryName, srcDir, destDirName, destDirPath);
+			addSourceContainer(javaProject, srcDirectoryName, srcDir, destDirName, destDirPath, monitor);
 		}
 	}
 
-	private IJavaProject createJavaProject(String projectName) throws CoreException {
+	private IJavaProject createJavaProject(String projectName, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (!project.exists()) {
-			project.create(null);
+			project.create(monitor);
 		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		}
 		
 		if (!project.isOpen()) {
-			project.open(null);
+			project.open(monitor);
 		}
 		
 		if (!project.hasNature(JavaCore.NATURE_ID)) {
-			addNatureToProject(project, JavaCore.NATURE_ID);
+			addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		}
 		
 		IJavaProject jproject= JavaCore.create(project);
 		
-		jproject.setRawClasspath(new IClasspathEntry[0], null);
+		jproject.setRawClasspath(new IClasspathEntry[0], monitor);
 		
 		return jproject;	
 	}
 	
-	private void addNatureToProject(IProject proj, String natureId) throws CoreException {
+	private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures= description.getNatureIds();
 		String[] newNatures= new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 		newNatures[prevNatures.length]= natureId;
 		description.setNatureIds(newNatures);
-		proj.setDescription(description, null);
+		proj.setDescription(description, monitor);
 	}
 	
 	/**
 	 * Adds a source container to a IJavaProject.
 	 */		
-	private IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String srcName, String srcPath, String outputName, String outputPath) throws CoreException {
+	private IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String srcName, String srcPath, String outputName, String outputPath, IProgressMonitor monitor) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;
 		if (srcName == null || srcName.length() == 0) {
@@ -140,7 +141,7 @@ public class ProjectCreator {
 		} else {
 			IFolder folder= project.getFolder(srcName);
 			if (!folder.exists()) {
-				folder.createLink(new Path(srcPath), IResource.ALLOW_MISSING_LOCAL, null);
+				folder.createLink(new Path(srcPath), IResource.ALLOW_MISSING_LOCAL, monitor);
 			}
 			container= folder;
 		}
@@ -150,18 +151,18 @@ public class ProjectCreator {
 		if (outputName!= null) {
 			IFolder outputFolder = project.getFolder(outputName);
 			if (!outputFolder.exists()) {
-			    outputFolder.createLink(new Path(outputPath), IResource.ALLOW_MISSING_LOCAL, null);
+			    outputFolder.createLink(new Path(outputPath), IResource.ALLOW_MISSING_LOCAL, monitor);
 			}
 			output= outputFolder.getFullPath();
 		}
 				
 		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output);
 		
-		addToClasspath(jproject, cpe);		
+		addToClasspath(jproject, cpe, monitor);		
 		return root;
 	}	
 	
-	private void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
+	private void addToClasspath(IJavaProject jproject, IClasspathEntry cpe, IProgressMonitor monitor) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		for (int i= 0; i < oldEntries.length; i++) {
 			if (oldEntries[i].equals(cpe)) {
@@ -172,30 +173,30 @@ public class ProjectCreator {
 		IClasspathEntry[] newEntries= new IClasspathEntry[nEntries + 1];
 		System.arraycopy(oldEntries, 0, newEntries, 0, nEntries);
 		newEntries[nEntries]= cpe;
-		jproject.setRawClasspath(newEntries, null);
+		jproject.setRawClasspath(newEntries, monitor);
 	}
 	
 	/**
 	 * Adds a variable entry with source attachment to a IJavaProject if the path can be resolved.
 	 */			
-	private void addVariableEntry(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
+	private void addVariableEntry(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot, IProgressMonitor monitor) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newVariableEntry(path, sourceAttachPath, sourceAttachRoot);
-		addToClasspath(jproject, cpe);
+		addToClasspath(jproject, cpe, monitor);
 	}
 	
 	/**
 	 * Adds a library entry to an IJavaProject.
 	 */			
-	private void addLibrary(IJavaProject jproject, IPath path) throws JavaModelException {
+	private void addLibrary(IJavaProject jproject, IPath path, IProgressMonitor monitor) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newLibraryEntry(path, null, null);
-		addToClasspath(jproject, cpe);
+		addToClasspath(jproject, cpe, monitor);
 	}
 	
 	/**
 	 * Adds a container entry to an IJavaProject.
 	 */			
-	private void addContainer(IJavaProject jproject, IPath path) throws JavaModelException {
+	private void addContainer(IJavaProject jproject, IPath path, IProgressMonitor monitor) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newContainerEntry(path);
-		addToClasspath(jproject, cpe);
+		addToClasspath(jproject, cpe, monitor);
 	}
 }

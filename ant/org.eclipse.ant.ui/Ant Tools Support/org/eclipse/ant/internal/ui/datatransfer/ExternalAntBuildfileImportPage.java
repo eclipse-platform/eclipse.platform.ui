@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
@@ -376,7 +375,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				Iterator iter= javacTasks.iterator();
 				while (iter.hasNext()) {
 					Javac javacTask = (Javac) iter.next();
-					IJavaProject javaProject= creator.createJavaProjectFromJavacNode(projectName, javacTask);
+					IJavaProject javaProject= creator.createJavaProjectFromJavacNode(projectName, javacTask, monitor);
 					importBuildFile(monitor, javaProject.getPath(), buildFile);
 					result[0]= javaProject;
 				}
