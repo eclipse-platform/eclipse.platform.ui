@@ -554,7 +554,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		return null;
 	}
 
-	public JobTargetSite[] getTargetSites() {
+	public JobTargetSite[] getJobTargetSites() {
 		JobTargetSite[] sites = new JobTargetSite[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);

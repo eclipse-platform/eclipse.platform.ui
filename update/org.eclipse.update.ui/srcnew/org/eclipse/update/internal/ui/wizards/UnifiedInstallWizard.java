@@ -61,7 +61,7 @@ public class UnifiedInstallWizard
 		// Check for duplication conflicts
 		ArrayList conflicts =
 			DuplicateConflictsValidator.computeDuplicateConflicts(
-				targetPage.getTargetSites(),
+				targetPage.getJobTargetSites(),
 				config);
 		if (conflicts != null) {
 			DuplicateConflictsDialog2 dialog =
