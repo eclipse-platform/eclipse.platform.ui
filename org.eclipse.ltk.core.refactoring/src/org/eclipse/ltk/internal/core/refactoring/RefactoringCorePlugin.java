@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -19,13 +17,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.osgi.framework.BundleContext;
 
 public class RefactoringCorePlugin extends Plugin {
 	
 	private static RefactoringCorePlugin fgDefault;
 	
-	public RefactoringCorePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public RefactoringCorePlugin() {
 		fgDefault= this;
 	}
 
@@ -34,7 +32,7 @@ public class RefactoringCorePlugin extends Plugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.ltk.core.refactoring"; //$NON-NLS-1$
 	}
 	
 	public static void log(IStatus status) {
@@ -77,16 +75,22 @@ public class RefactoringCorePlugin extends Plugin {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	/**
+	 * {@inheritDoc}
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		SaveListener.getInstance().startup();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void shutdown() throws CoreException {
+	/**
+	 * {@inheritDoc}
+	 */
+	public void stop(BundleContext context) throws Exception {
 		SaveListener.getInstance().shutdown();
-		super.shutdown();
+		super.stop(context);
 	}
 }

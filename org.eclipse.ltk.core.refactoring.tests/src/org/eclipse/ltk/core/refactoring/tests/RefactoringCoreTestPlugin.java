@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
 public class RefactoringCoreTestPlugin extends Plugin {
 	
 	private static RefactoringCoreTestPlugin fgDefault;
 	
-	public RefactoringCoreTestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public RefactoringCoreTestPlugin() {
 		fgDefault= this;
 	}
 
@@ -27,6 +25,6 @@ public class RefactoringCoreTestPlugin extends Plugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.ltk.core.refactoring.tests"; //$NON-NLS-1$
 	}	
 }

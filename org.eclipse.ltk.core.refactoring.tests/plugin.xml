@@ -20,7 +20,7 @@
       <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.text"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
    </requires>
 </plugin>

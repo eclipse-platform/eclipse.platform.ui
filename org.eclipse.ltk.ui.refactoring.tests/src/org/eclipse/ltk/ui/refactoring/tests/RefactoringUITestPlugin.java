@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.tests;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class RefactoringUITestPlugin extends AbstractUIPlugin {
 	
 	private static RefactoringUITestPlugin fgDefault;
 	
-	public RefactoringUITestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public RefactoringUITestPlugin() {
 		fgDefault= this;
 	}
 
@@ -28,6 +25,6 @@ public class RefactoringUITestPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.ltk.ui.refactoring.tests"; //$NON-NLS-1$
 	}	
 }

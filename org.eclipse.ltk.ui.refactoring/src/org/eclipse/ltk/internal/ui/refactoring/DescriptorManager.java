@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 
@@ -55,7 +55,7 @@ public abstract class DescriptorManager {
 	// ---- extension point reading -----------------------------------
 	
 	private void init() {
-		IPluginRegistry registry= Platform.getPluginRegistry();
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor(
 			RefactoringUIPlugin.getPluginId(), 
 			fExtensionPoint);

@@ -28,16 +28,10 @@ public class RefactoringPluginImages {
 
 	private static URL fgIconBaseURL= null;
 	
-	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
-	// images are used
 	static {
-		String pathSuffix= "icons/full/"; //$NON-NLS-1$
-		try {
-			fgIconBaseURL= new URL(RefactoringUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		fgIconBaseURL= RefactoringUIPlugin.getDefault().getBundle().getEntry("/icons/full/"); //$NON-NLS-1$
 	}
+	
 	
  	private static ImageRegistry fgImageRegistry= null;
  	private static HashMap fgAvoidSWTErrorMap= null;

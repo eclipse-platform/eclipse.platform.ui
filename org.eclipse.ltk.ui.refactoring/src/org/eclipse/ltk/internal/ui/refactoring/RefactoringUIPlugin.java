@@ -13,7 +13,6 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -34,14 +33,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 	
 	private static RefactoringUIPlugin fgDefault;
 	
-	/**
-	 * The id of the refactoring plug-in (value <code>"org.eclipse.ltk.ui.refactoring"</code>).
-	 * check if this isn't the same as getpluginId().
-	 */	
-	public static final String ID_PLUGIN= "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
-	
-	public RefactoringUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public RefactoringUIPlugin() {
 		fgDefault= this;
 	}
 
@@ -50,7 +42,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
 	}
 	
 	public static void log(IStatus status) {
