@@ -373,7 +373,13 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 */
 			if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
 				try {
-					contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
+					int n= 0;
+					do {
+						int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
+						if (bytes == -1)
+							throw new IOException();
+						n += bytes;
+					} while (n < IContentDescription.BOM_UTF_8.length);
 				} catch (IOException e) {
 					// ignore if we cannot remove BOM
 				}
