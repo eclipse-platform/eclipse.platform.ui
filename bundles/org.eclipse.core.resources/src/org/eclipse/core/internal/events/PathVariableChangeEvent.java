@@ -40,7 +40,7 @@ public class PathVariableChangeEvent extends EventObject implements IPathVariabl
 	public PathVariableChangeEvent(IPathVariableManager source, String variableName, IPath value, int type) {
 		super(source);
 		if (type < VARIABLE_CHANGED || type > VARIABLE_DELETED)
-			throw new IllegalArgumentException("type = " + type);
+			throw new IllegalArgumentException("Invalid event type: " + type); //$NON-NLS-1$
 		this.variableName = variableName;
 		this.value = value;
 		this.type = type;
@@ -69,17 +69,17 @@ public class PathVariableChangeEvent extends EventObject implements IPathVariabl
 	 * Return a string representation of this object.
 	 */
 	public String toString() {
-		String[] typeStrings = { "VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED" };
+		String[] typeStrings = { "VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		StringBuffer sb = new StringBuffer(getClass().getName());
-		sb.append("[variable = ");
+		sb.append("[variable = "); //$NON-NLS-1$
 		sb.append(variableName);
-		sb.append(", type = ");
+		sb.append(", type = "); //$NON-NLS-1$
 		sb.append(typeStrings[type - 1]);
 		if (type != VARIABLE_DELETED) {
-			sb.append(", value = ");
+			sb.append(", value = "); //$NON-NLS-1$
 			sb.append(value);
 		}
-		sb.append("]");
+		sb.append("]"); //$NON-NLS-1$
 		return sb.toString();
 	}
 
