@@ -86,7 +86,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 * if so specified.
 	 */
 	protected void setViewerInput(final IAdaptable element, final boolean determineCurrentProcess) {
-		if (fConsoleViewer == null || fConsoleViewer.getControl().isDisposed()) {
+		if (fConsoleViewer == null || fConsoleViewer.getControl() == null || fConsoleViewer.getControl().isDisposed()) {
 			return;
 		}
 		Display display= fConsoleViewer.getControl().getDisplay();
