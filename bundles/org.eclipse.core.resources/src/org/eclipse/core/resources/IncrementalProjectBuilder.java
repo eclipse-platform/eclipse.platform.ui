@@ -159,8 +159,8 @@ public final IProject getProject() {
 	return super.getProject();
 }
 /**
- * Returns true if the given project preceeds this builder's project on the
- * currently executing build order, and false otherwise.
+ * Returns true if the given project has already been built during this build
+ * iteration, and false otherwise.
  * <p>
  * When the entire workspace is being built, the projects are built in linear
  * sequence.  This method can be used to determine if another project preceeds
@@ -169,13 +169,13 @@ public final IProject getProject() {
  * false.
  * </p>
  * @param project the project to check against in the current build order
- * @return true if the given project preceeds this builder's project, and false
+ * @return true if the given project has been built in this iteration, and false
  * otherwise.
  * @see #needRebuild
  * @since 2.1
  */
-public final boolean isBeforeThisProject(IProject project) {
-	return super.isBeforeThisProject(project);
+public final boolean hasBeenBuilt(IProject project) {
+	return super.hasBeenBuilt(project);
 }
 /**
  * Indicates that this builder made changes that affect a project that preceeds
@@ -185,7 +185,7 @@ public final boolean isBeforeThisProject(IProject project) {
  * This is an advanced feature that builders should use with caution.  This can
  * cause workspace builds to iterate until no more builders require rebuilds.
  * </p>
- * @see #isBeforeThisProject
+ * @see #hasBeenBuilt
  * @since 2.1
  */
 public final void needRebuild() {

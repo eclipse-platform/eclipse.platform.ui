@@ -81,9 +81,9 @@ protected IProject getProject() {
 	return project;
 }
 /**
- * @see IncrementalProjectBuilder#isBeforeThisProject
+ * @see IncrementalProjectBuilder#hasBeenBuilt
  */
-protected boolean isBeforeThisProject(IProject project) {
+protected boolean hasBeenBuilt(IProject project) {
 	return ((Workspace) project.getWorkspace()).getBuildManager().hasBeenBuilt(project);
 }
 /**
