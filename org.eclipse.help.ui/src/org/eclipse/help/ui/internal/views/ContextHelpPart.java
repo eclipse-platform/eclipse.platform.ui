@@ -316,9 +316,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
-				sbuf.append("\" alt=\""); //$NON-NLS-1$
-				sbuf.append(getTopicCategory(link.getHref(), locale));
-				sbuf.append("\">"); //$NON-NLS-1$
+				String tcat = getTopicCategory(link.getHref(), locale);
+				if (tcat!=null) {
+					sbuf.append("\" alt=\""); //$NON-NLS-1$
+					sbuf.append(tcat);
+				}
+				sbuf.append("\">");	//$NON-NLS-1$	 		
 				sbuf.append(link.getLabel());
 				sbuf.append("</a>"); //$NON-NLS-1$
 				sbuf.append("</li>"); //$NON-NLS-1$
@@ -364,6 +367,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
+		// TODO by doing this we are also escaping bold tags
+		// We need to somehow let them through
+		decodedString = parent.escapeSpecialChars(decodedString);
 		return decodedString;
 	}
 

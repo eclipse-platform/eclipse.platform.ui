@@ -267,7 +267,7 @@ public class EngineResultSection {
 				if (cat.getHref() != null) {
 					buff.append("<a bold=\"true\" href=\""); //$NON-NLS-1$
 					String absoluteHref = hit.toAbsoluteHref(cat.getHref(), true); 
-					buff.append(escapeSpecialChars(absoluteHref));
+					buff.append(part.parent.escapeSpecialChars(absoluteHref));
 					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
 					buff.append("</a>"); //$NON-NLS-1$
@@ -288,7 +288,7 @@ public class EngineResultSection {
 			buff.append("<a href=\""); //$NON-NLS-1$
 			if (hit.getForceExternalWindow())
 				buff.append("nw:"); //$NON-NLS-1$
-			buff.append(escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false)));
+			buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false)));
 			buff.append("\""); //$NON-NLS-1$
 			if (hit.getCategory() != null) {
 				buff.append(" alt=\""); //$NON-NLS-1$
@@ -301,7 +301,7 @@ public class EngineResultSection {
 			if (!hit.getForceExternalWindow()) {
 				buff.append(" <a href=\""); //$NON-NLS-1$ 
 				buff.append("nw:");//$NON-NLS-1$ 
-				buff.append(escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true)));
+				buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true)));
 				buff.append("\"><img href=\""); //$NON-NLS-1$ 
 				buff.append(IHelpUIConstants.IMAGE_NW);
 				buff.append("\" alt=\""); //$NON-NLS-1$
@@ -338,12 +338,12 @@ public class EngineResultSection {
 		buff.append(ISharedImages.IMG_OBJS_ERROR_TSK);
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append("<b>"); //$NON-NLS-1$
-		buff.append(escapeSpecialChars(errorStatus.getMessage()));
+		buff.append(part.parent.escapeSpecialChars(errorStatus.getMessage()));
 		buff.append("</b>"); //$NON-NLS-1$
 		buff.append("<br/>"); //$NON-NLS-1$
 		Throwable t = errorStatus.getException();
 		if (t!=null)
-			buff.append(escapeSpecialChars(t.getMessage()));
+			buff.append(part.parent.escapeSpecialChars(t.getMessage()));
 		buff.append("</li>"); //$NON-NLS-1$
 	}
 
@@ -406,7 +406,7 @@ public class EngineResultSection {
 	private String getSummary(ISearchEngineResult hit) {
 		String desc = hit.getDescription();
 		if (desc != null) {
-			String edesc = escapeSpecialChars(desc);
+			String edesc = part.parent.escapeSpecialChars(desc);
 			if (!edesc.equals(hit.getLabel())) {
 				String label = hit.getLabel();
 				if (edesc.length() > label.length()) {
@@ -418,34 +418,6 @@ public class EngineResultSection {
 			}
 		}
 		return null;
-	}
-
-	private String escapeSpecialChars(String value) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < value.length(); i++) {
-			char c = value.charAt(i);
-			switch (c) {
-			case '&':
-				buf.append("&amp;"); //$NON-NLS-1$
-				break;
-			case '<':
-				buf.append("&lt;"); //$NON-NLS-1$
-				break;
-			case '>':
-				buf.append("&gt;"); //$NON-NLS-1$
-				break;
-			case '\'':
-				buf.append("&apos;"); //$NON-NLS-1$
-				break;
-			case '\"':
-				buf.append("&quot;"); //$NON-NLS-1$
-				break;
-			default:
-				buf.append(c);
-				break;
-			}
-		}
-		return buf.toString();
 	}
 
 	private void updateSectionTitle() {
