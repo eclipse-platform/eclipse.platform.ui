@@ -1656,9 +1656,6 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 	IProject[] projects = getRoot().getProjects();
 	for (int j = 0; j < projects.length; j++) {
 		IProject project = (IProject) projects[j];
-		// skip over the project that we are validating for 
-		if (project.equals(context))
-			continue;
 		// since we are iterating over the project in the workspace, we
 		// know that they have been created before and must have a description
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
@@ -1667,6 +1664,9 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 		if (definedLocalLocation == null)
 			continue;
 		if (definedLocalLocation != null && location != null)
+			//tolerate locations being the same if this is the project being tested
+			if (project.equals(context) && definedLocalLocation.equals(location))
+				continue;
 			if (location.isPrefixOf(definedLocalLocation) || definedLocalLocation.isPrefixOf(location)) {
 				message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
