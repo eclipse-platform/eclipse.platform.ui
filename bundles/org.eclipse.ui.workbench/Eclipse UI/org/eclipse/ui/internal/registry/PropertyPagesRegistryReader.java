@@ -12,8 +12,6 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,37 +25,60 @@ import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
  * This class loads property pages from the registry.
  */
 public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
+   
+	/**
+     * Value "<code>nameFilter</code>".
+     */
     public static final String ATT_NAME_FILTER = "nameFilter";//$NON-NLS-1$
 
+    /**
+     * Value "<code>name</code>".
+     */
     public static final String ATT_FILTER_NAME = "name";//$NON-NLS-1$
 
+    /**
+     * Value "<code>value</code>".
+     */
     public static final String ATT_FILTER_VALUE = "value";//$NON-NLS-1$
 
+    /**
+     * Value "<code>class</code>".
+     */
     public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
     private static final String TAG_PAGE = "page";//$NON-NLS-1$
 
+    /**
+     * Value "<code>filter</code>".
+     */
     public static final String TAG_FILTER = "filter";//$NON-NLS-1$
 
+    /**
+     * Value "<code>name</code>".
+     */
     public static final String ATT_NAME = "name";//$NON-NLS-1$
 
     private static final String ATT_ID = "id";//$NON-NLS-1$
 
+    /**
+     * Value "<code>icon</code>".
+     */
     public static final String ATT_ICON = "icon";//$NON-NLS-1$
 
+    /**
+     * Value "<code>objectClass</code>".
+     */
     public static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 
+    /**
+     * Value "<code>adaptable</code>".
+     */
     public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
-    
-	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
-
-    private static final String P_TRUE = "true";//$NON-NLS-1$
-
-    private HashMap filterProperties;
     
     private Collection pages = new ArrayList();
 
     private PropertyPageContributorManager manager;
+    
     
     class PropertyCategoryNode extends CategoryNode{
     	
@@ -97,6 +118,8 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
     /**
      * The constructor.
+     * 
+     * @param manager the manager
      */
     public PropertyPagesRegistryReader(PropertyPageContributorManager manager) {
         this.manager = manager;
@@ -108,8 +131,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     private void processPageElement(IConfigurationElement element) {
     	String pageId = element.getAttribute(ATT_ID);
         String pageClassName = element.getAttribute(ATT_CLASS);
-        String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-        Collection keywordReferences = readKeywordReferences(element); 
+        String objectClassName = element.getAttribute(ATT_OBJECTCLASS); 
 
         if (pageId == null) {
             logMissingAttribute(element, ATT_ID);
@@ -125,27 +147,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
         }
 
         RegistryPageContributor contributor = new RegistryPageContributor(
-                pageId, element, keywordReferences);
+                pageId, element);
         registerContributor(contributor, objectClassName);
     }
-
-    /**
-	 * Read the pages for the receiver from element.
-	 * @param element
-	 * @return Collection the ids of the children
-	 */
-	private static Collection readKeywordReferences(IConfigurationElement element) {
-		IConfigurationElement[] references = element.getChildren(TAG_KEYWORD_REFERENCE);
-		HashSet list = new HashSet();
-		for (int i = 0; i < references.length; i++) {
-			IConfigurationElement page = references[i];
-			String id = page.getAttribute(ATT_ID);
-			if (id != null)
-				list.add(id);
-		}
-
-		return list;
-	}
 
 	/**
      * Reads the next contribution element.
@@ -175,7 +179,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     }
 
     /**
-     *	Reads all occurances of propertyPages extension in the registry.
+     * Reads all occurances of propertyPages extension in the registry.
+     * 
+     * @param registry the registry
      */
     public void registerPropertyPages(IExtensionRegistry registry) {
         readRegistry(registry, PlatformUI.PLUGIN_ID,

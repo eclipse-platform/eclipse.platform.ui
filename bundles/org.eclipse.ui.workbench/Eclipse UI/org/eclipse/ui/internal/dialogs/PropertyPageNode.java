@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
@@ -28,8 +25,7 @@ import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
  * without loading the page itself, thus loading the contributing plugin.
  * Only when the user selects the page will it be loaded.
  */
-public class PropertyPageNode extends WorkbenchPreferenceExtensionNode implements
-        IPluginContribution {
+public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
     private RegistryPageContributor contributor;
 
     private IWorkbenchPropertyPage page;
@@ -42,15 +38,13 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode implement
      * Create a new instance of the receiver.
      * @param contributor
      * @param element
-     * @param keywordIds The ids of the keywords this page
      * supports.
      */
     public PropertyPageNode(RegistryPageContributor contributor,
-            IAdaptable element, Collection keywordIds) {
-        super(contributor.getPageId());
+            IAdaptable element) {
+        super(contributor.getPageId(), contributor.getConfigurationElement());
         this.contributor = contributor;
         this.element = element;
-        setKeywordBindings(keywordIds);
     }
 
     /**
@@ -107,19 +101,5 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode implement
      */
     public String getLabelText() {
         return contributor.getPageName();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-     */
-    public String getLocalId() {
-        return getId();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-     */
-    public String getPluginId() {
-        return contributor.getPluginId();
     }
 }

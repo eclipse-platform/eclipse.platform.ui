@@ -14,12 +14,16 @@ package org.eclipse.ui.internal.preferences;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.keywords.KeywordRegistry;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The WorkbenchPreferenceExtensionNode is the abstract class for all property
@@ -27,60 +31,61 @@ import org.eclipse.ui.internal.keywords.KeywordRegistry;
  * 
  * @since 3.1
  */
-public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode {
+public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode implements IPluginContribution {
+	
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+	
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	
+	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
 	private Collection keywordReferences;
+	
+	private IConfigurationElement configurationElement;
+
+	private ImageDescriptor imageDescriptor;
+
+	private Image image;
+
+	private Collection keywordLabelCache;
+	
 
 	/**
 	 * Create a new instance of the reciever.
 	 * 
 	 * @param id
+	 * @param configurationElement 
 	 */
-	public WorkbenchPreferenceExtensionNode(String id) {
+	public WorkbenchPreferenceExtensionNode(String id, IConfigurationElement configurationElement) {
 		super(id);
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param id
-	 * @param label
-	 * @param image
-	 * @param className
-	 */
-	public WorkbenchPreferenceExtensionNode(String id, String label,
-			ImageDescriptor image, String className) {
-		super(id, label, image, className);
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param id
-	 * @param preferencePage
-	 */
-	public WorkbenchPreferenceExtensionNode(String id,
-			IPreferencePage preferencePage) {
-		super(id, preferencePage);
-	}
-
-	/**
-	 * Set the keyword references to the collection of ids if there are any.
-	 * 
-	 * @param keywordBindings
-	 *            Collection of String representing references to keywords.
-	 */
-	protected void setKeywordBindings(Collection keywordBindings) {
-		if (keywordBindings.size() > 0)
-			keywordReferences = keywordBindings;
+		this.configurationElement = configurationElement;
 	}
 
 	/**
 	 * Get the ids of the keywords the receiver is bound to.
 	 * 
-	 * @return Collection of String or <code>null</code> if there are none.
+	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordReferences() {
+		if (keywordReferences == null) {
+			IConfigurationElement[] references = getConfigurationElement()
+					.getChildren(TAG_KEYWORD_REFERENCE);
+			HashSet list = new HashSet(references.length);
+			for (int i = 0; i < references.length; i++) {
+				IConfigurationElement page = references[i];
+				String id = page.getAttribute(ATT_ID);
+				if (id != null)
+					list.add(id);
+			}
+
+			if (!list.isEmpty())
+				keywordReferences = list;
+			else
+				keywordReferences = Collections.EMPTY_SET;
+			
+		}
 		return keywordReferences;
 	}
 
@@ -90,21 +95,103 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode {
 	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordLabels() {
-		if(keywordReferences == null)
-			return Collections.EMPTY_LIST;
+		if (keywordLabelCache != null)
+			return keywordLabelCache;
 		
-		// TODO: this value should be cached and the keywords extension point
-		// should be monitored for changes. Doing this will require adding
-		// lifecycle to this class so that listeners can be cleaned up.
-		Collection keywordLabels = new ArrayList(keywordReferences.size());
-		Iterator referenceIterator = keywordReferences.iterator();
+		Collection refs = getKeywordReferences();
+		
+		if(refs == Collections.EMPTY_SET) {
+			keywordLabelCache = Collections.EMPTY_SET; 
+			return keywordLabelCache;
+		}
+		
+		keywordLabelCache = new ArrayList(refs.size());
+		Iterator referenceIterator = refs.iterator();
 		while(referenceIterator.hasNext()){
 			Object label = KeywordRegistry.getInstance().getKeywordLabel(
 					(String) referenceIterator.next());
 			if(label != null)
-				keywordLabels.add(label);
+				keywordLabelCache.add(label);
 		}
 		
-		return keywordLabels;
+		return keywordLabelCache;
+	}
+	
+	/**
+	 * Clear the keyword cache, if any.
+	 */
+	public void clearKeywords() {
+		keywordLabelCache = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferenceNode#disposeResources()
+	 */
+	public void disposeResources() {
+        if (image != null) {
+            image.dispose();
+            image = null;
+        }
+        super.disposeResources();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelImage()
+	 */
+	public Image getLabelImage() {		
+        if (image == null) {
+        	ImageDescriptor desc = getImageDescriptor();
+        	if (desc != null)
+        		image = imageDescriptor.createImage();
+        }
+        return image;
+    }
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
+	 */
+	public String getLabelText() {
+		return getConfigurationElement().getAttribute(ATT_NAME);
+	}
+
+    /**
+     * Returns the image descriptor for this node.
+     * 
+     * @return the image descriptor
+     */
+    public ImageDescriptor getImageDescriptor() {
+    	if (imageDescriptor != null) 
+    		return imageDescriptor;
+    	
+    	String imageName = getConfigurationElement().getAttribute(ATT_ICON);
+		if (imageName != null) {
+			String contributingPluginId = getConfigurationElement().getNamespace();
+			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
+		}
+		return imageDescriptor;
+    }
+    
+    /**
+     * Return the configuration element.
+     * 
+     * @return the configuration element
+     */
+	public IConfigurationElement getConfigurationElement() {
+		return configurationElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return getConfigurationElement().getNamespace();
 	}
 }

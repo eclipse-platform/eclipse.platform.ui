@@ -78,7 +78,7 @@ public class PreferencesTreeItem extends GenericListItem {
 		control.setBackground(color);
 
 		Image image;
-		ImageDescriptor desc = ((WorkbenchPreferenceNode) node).getDescriptor();
+		ImageDescriptor desc = ((WorkbenchPreferenceNode) node).getImageDescriptor();
 		if (desc == null)
 			image = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
 		else{

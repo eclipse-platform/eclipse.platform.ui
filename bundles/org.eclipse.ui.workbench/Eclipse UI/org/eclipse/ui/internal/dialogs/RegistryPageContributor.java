@@ -53,11 +53,12 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     private IConfigurationElement pageElement;
 
     private SoftReference filterProperties;
-    
-    private Collection keywordReferences;
 
     /**
      * PropertyPageContributor constructor.
+     * 
+     * @param pageId the id
+     * @param element the element
      */
     public RegistryPageContributor(String pageId, IConfigurationElement element) {
         this.pageId = pageId;
@@ -65,25 +66,13 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         adaptable = Boolean.valueOf(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE)).booleanValue();
     }
 
-    /**
-     * Create a new instance of the receiver with the 
-     * supported keywords.
-     * @param pageId
-     * @param element
-     * @param keywordIds
-     */
-	public RegistryPageContributor(String pageId, IConfigurationElement element, Collection keywordIds) {
-		this(pageId,element);
-		keywordReferences = keywordIds;
-	}
-
 	/**
      * Implements the interface by creating property page specified with
      * the configuration element.
      */
     public boolean contributePropertyPages(PropertyPageManager mng,
             IAdaptable element) {
-        PropertyPageNode node = new PropertyPageNode(this, element,keywordReferences);
+        PropertyPageNode node = new PropertyPageNode(this, element);
         
         if(getCategory() == null){
         	mng.addToRoot(node);
@@ -97,6 +86,10 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
     /**
      * Creates the page based on the information in the configuration element.
+     * 
+     * @param element the adaptable element
+     * @return the property page
+     * @throws CoreException thrown if there is a problem creating the apge
      */
     public IWorkbenchPropertyPage createPage(IAdaptable element)
             throws CoreException {
@@ -124,6 +117,8 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
     /**
      * Returns page icon as defined in the registry.
+     * 
+     * @return the page icon
      */
     public ImageDescriptor getPageIcon() {
     	String iconName = pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ICON);
@@ -135,6 +130,8 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
     /**
      * Returns page ID as defined in the registry.
+     * 
+     * @return the page id
      */
 
     public String getPageId() {
@@ -142,17 +139,10 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     }
 
     /**
-     * Returns plugin ID as defined in the registry.
-     */
-
-    public String getPluginId() {
-        return pageElement.getNamespace();
-    }
-
-    /**
      * Returns page name as defined in the registry.
+     * 
+     * @return the page name
      */
-
     public String getPageName() {
         return pageElement.getAttribute(PropertyPagesRegistryReader.ATT_NAME);
     }
@@ -231,6 +221,11 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         return adaptable;
     }
     
+	/**
+	 * Return the object class name
+	 * 
+	 * @return the object class name
+	 */
 	public String getObjectClass() {
 		return pageElement.getAttribute(PropertyPagesRegistryReader.ATT_OBJECTCLASS);
 	}
@@ -243,6 +238,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	public String getCategory() {
 		return pageElement.getAttribute(CategorizedPageRegistryReader.ATT_CATEGORY);
 	}
+	
 	/**
 	 * Return the children of the receiver.
 	 * @return Collection
@@ -250,7 +246,6 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	public Collection getSubPages() {
 		return subPages;
 	}
-	
 	
 	/**
 	 * Add child to the list of children.
@@ -274,6 +269,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     
 	/**
 	 * Get the child with the given id.
+	 * 
 	 * @param id
 	 * @return RegistryPageContributor
 	 */
@@ -288,7 +284,8 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	}
 	
     /**
-     * Parses child element and processes it 
+     * Parses child element and processes it.
+     * 
      * @since 3.1
      */
     private void processChildElement(Map map, IConfigurationElement element) {
@@ -318,7 +315,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * @return the configuration element
 	 * @since 3.1
 	 */
-	private IConfigurationElement getConfigurationElement() {
+	IConfigurationElement getConfigurationElement() {
 		return pageElement;
 	}
 }

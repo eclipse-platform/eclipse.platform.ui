@@ -30,7 +30,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -47,13 +46,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -188,10 +185,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             loadWorkingSets(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
-            loadPreferencePages(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_FONT_DEFINITIONS)) {
             loadFontDefinitions(ext);
             return;
@@ -248,40 +241,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
         Map data = reader.getData();
         registry.addData(data);
-    }
-
-    private void loadPreferencePages(IExtension ext) {
-        PreferenceManager manager = workbench.getPreferenceManager();
-        List nodes = manager.getElements(PreferenceManager.POST_ORDER);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            WorkbenchPreferenceNode node = PreferencePageRegistryReader
-                    .createNode(workbench, elements[i]);
-            if (node == null)
-                continue;
-            String category = node.getCategory();
-            if (category == null) {
-                manager.addToRoot(node);
-            } else {
-                WorkbenchPreferenceNode parent = null;
-                for (Iterator j = nodes.iterator(); j.hasNext();) {
-                    WorkbenchPreferenceNode element = (WorkbenchPreferenceNode) j
-                            .next();
-                    if (category.equals(element.getId())) {
-                        parent = element;
-                        break;
-                    }
-                }
-                if (parent == null) {
-                    //Could not find the parent - log
-                    WorkbenchPlugin
-                            .log("Invalid preference page path: " + category); //$NON-NLS-1$
-                    manager.addToRoot(node);
-                } else {
-                    parent.add(node);
-                }
-            }
-        }
     }
 
     private void revoke(IExtensionPoint extPt, IExtension ext) {

@@ -12,19 +12,16 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time in order
@@ -39,12 +36,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
-
-	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-
-	private final static String TRUE_STRING = "true";//$NON-NLS-1$
-	
-	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
 	private List nodes;
 
@@ -90,6 +81,8 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	/**
 	 * Create a new instance configured with the workbench
+	 * 
+	 * @param newWorkbench the workbench
 	 */
 	public PreferencePageRegistryReader(IWorkbench newWorkbench) {
 		workbench = newWorkbench;
@@ -156,6 +149,8 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * If no category has been specified or category information
 	 * is incorrect, page will appear at the root level. workbench
 	 * log entry will be created for incorrect category information.
+	 * 
+	 * @param registry the extension registry
 	 */
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
@@ -170,9 +165,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * Read preference page element.
 	 */
 	protected boolean readElement(IConfigurationElement element) {
-			if (element.getName().equals(TAG_PAGE) == false)
+		if (element.getName().equals(TAG_PAGE) == false)
 			return false;
-		WorkbenchPreferenceNode node = createNode(workbench, element);
+		WorkbenchPreferenceNode node = createNode(element);
 		if (node != null)
 			nodes.add(node);
 		return true;
@@ -180,16 +175,12 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	/**
 	 * Create a workbench preference node.
-	 * @param workbench
 	 * @param element
 	 * @return WorkbenchPreferenceNode
 	 */
-	public static WorkbenchPreferenceNode createNode(IWorkbench workbench,
-			IConfigurationElement element) {
+	public static WorkbenchPreferenceNode createNode(IConfigurationElement element) {
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
-		String category = element.getAttribute(ATT_CATEGORY);
-		String imageName = element.getAttribute(ATT_ICON);
 		String className = element.getAttribute(ATT_CLASS);
 
 		if (name == null) {
@@ -203,35 +194,10 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		}
 		if (name == null || id == null || className == null) {
 			return null;
-		}
-		
-		Collection keywordReferences = readKeywordReferences(element); 
-		ImageDescriptor image = null;
-		if (imageName != null) {
-			String contributingPluginId = element.getDeclaringExtension().getNamespace();
-			image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
-		}
-		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category, image,
-				element, keywordReferences, workbench);
-		return node;
-	}
-	
-	/**
-	 * Read the pages for the receiver from element.
-	 * @param element
-	 * @return Collection the ids of the children
-	 */
-	private static Collection readKeywordReferences(IConfigurationElement element) {
-		IConfigurationElement[] references = element.getChildren(TAG_KEYWORD_REFERENCE);
-		HashSet list = new HashSet();
-		for (int i = 0; i < references.length; i++) {
-			IConfigurationElement page = references[i];
-			String id = page.getAttribute(ATT_ID);
-			if (id != null)
-				list.add(id);
-		}
+		} 
 
-		return list;
+		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, element);
+		return node;
 	}
 
 	/**
@@ -248,6 +214,4 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	String getFavoriteNodeId() {
 		return ((Workbench) workbench).getMainPreferencePageId();
 	}
-
-	
 }
