@@ -146,4 +146,9 @@
   <!-- This target defines the tests that need to be run. -->
   <target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,OSGiPerformanceTests"/>
   <!--target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
+	
+  <!-- This target runs the performance test suites. -->
+  <target name="performance">
+  </target>
+	
  </project>
