@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
+import org.eclipse.team.internal.ccvs.core.util.OrphanedFolderListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -156,6 +157,7 @@ public class CVSProviderPlugin extends Plugin {
 
 		CVSProvider.startup();
 		ProjectDescriptionManager.initializeChangeListener();
+		new OrphanedFolderListener().register();
 	}
 	
 	/**

@@ -27,8 +27,8 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 
-	private static IResourceChangeListener listener;
-	private static ResourceDeltaVisitor visitor;
+	private IResourceChangeListener listener;
+	private ResourceDeltaVisitor visitor;
 	
 	private Map removals;
 	private Map additions;
@@ -65,7 +65,7 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 					}
 				}
 			};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, getEventMask());
 		return visitor;
 	}
 	
@@ -223,5 +223,13 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 	protected abstract void handleChanged(IResource[] resources);
 	
 	protected abstract void finished();
+	
+	/**
+	 * Return the event mask for determining when to receive delta notifications.
+	 * Subclasses can override this method to change from the default of IResourceChangeEvent.POST_CHANGE
+	 */
+	protected int getEventMask() {
+		return IResourceChangeEvent.POST_CHANGE;
+	}
 }
 
