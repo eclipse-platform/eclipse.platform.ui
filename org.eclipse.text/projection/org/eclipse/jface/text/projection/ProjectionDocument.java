@@ -666,9 +666,8 @@ public class ProjectionDocument extends AbstractDocument {
 				} catch (BadLocationException e) {
 					internalError();
 				}
-			} else {
-				ensureWellFormedSegmentation();
-			}
+			} else if (ensureWellFormedSegmentation())
+				fMapping.projectionChanged();
 		}
 	}
 	
@@ -706,7 +705,8 @@ public class ProjectionDocument extends AbstractDocument {
 		fMapping.projectionChanged();
 	}
 	
-	private void ensureWellFormedSegmentation() {
+	private boolean ensureWellFormedSegmentation() {
+		boolean changed= false;
 		Position[] segments= getSegments();
 		for (int i= 0; i < segments.length; i++) {
 			Segment segment= (Segment) segments[i];
@@ -714,6 +714,7 @@ public class ProjectionDocument extends AbstractDocument {
 				try {
 					removePosition(fSegmentsCategory, segment); 
 					fMasterDocument.removePosition(fFragmentsCategory, segment.fragment);
+					changed= true;
 				} catch (BadPositionCategoryException e) {
 					internalError();
 				}
@@ -730,6 +731,7 @@ public class ProjectionDocument extends AbstractDocument {
 				}
 			}
 		}
+		return changed;
 	}
 
 	/*
