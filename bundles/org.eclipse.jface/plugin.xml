@@ -9,7 +9,6 @@
    <runtime>
       <library name="jface.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.jface"/>
       </library>
    </runtime>
    <requires>

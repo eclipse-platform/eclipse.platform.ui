@@ -16,11 +16,9 @@
          since it redefines some classes found in workbench.jar. -->
       <library name="compatibility.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui.internal"/>
       </library>
       <library name="workbench.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui, org.eclipse.jface"/>
       </library>
    </runtime>
    <requires>
