@@ -765,6 +765,7 @@ public void setDefaultEditor(IFile file, String editorID) {
  * Each mapping goes from an extension to the collection of editors that work on it.
  */
 public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
+	typeEditorMappings = new EditorMap();
 	for (int i = 0;i < newResourceTypes.length;i++) {
 		FileEditorMapping mapping = newResourceTypes[i];
 		typeEditorMappings.put(mappingKeyFor(mapping), mapping);
