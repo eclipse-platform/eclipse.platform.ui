@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.subscribers.*;
@@ -33,6 +34,8 @@ import org.eclipse.ui.actions.BaseSelectionListenerAction;
 /**
  * This action group contributes actions that support the management
  * of Change sets to a synchronize page.
+ * 
+ * @since 3.1
  */
 public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 
@@ -128,6 +131,21 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         }
 	}
 	
+	private class RemoveChangeSetAction extends ChangeSetAction {
+
+        public RemoveChangeSetAction(ISynchronizePageConfiguration configuration) {
+            super("Remove Change Set", configuration); //$NON-NLS-1$
+        }
+        
+        public void run() {
+            ActiveChangeSet set = getSelectedSet();
+            if (set == null) return;
+            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), "Confirm Remove", "Are you sure you want to remove {0}" + set.getTitle())) {
+                getActiveChangeSetManager().remove(set);
+            }
+        }
+	}
+	
 	private class MakeDefaultChangeSetAction extends ChangeSetAction {
 
         public MakeDefaultChangeSetAction(ISynchronizePageConfiguration configuration) {
@@ -147,7 +165,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
-            super(set.getTitle(), configuration);
+            super(set == null ? "No Set" : set.getTitle(), configuration);
             this.set = set;
             selectionChanged(selection);
         }
@@ -170,7 +188,15 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
             return new SynchronizeModelOperation(configuration, elements) {
                 public void run(IProgressMonitor monitor)
                         throws InvocationTargetException, InterruptedException {
-                    set.add(getSyncInfoSet().getSyncInfos());
+                    if (set != null) {
+                        set.add(getSyncInfoSet().getSyncInfos());
+                    } else {
+                        ChangeSet[] sets = getActiveChangeSetManager().getSets();
+                        for (int i = 0; i < sets.length; i++) {
+                            ActiveChangeSet activeSet = (ActiveChangeSet)sets[i];
+                            activeSet.remove(getSyncInfoSet().getResources());
+                        }
+                    }
                 }
             };
         }
@@ -221,6 +247,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	private CreateChangeSetAction createChangeSet;
 	private MenuManager addToChangeSet;
     private EditChangeSetAction editChangeSet;
+    private RemoveChangeSetAction removeChangeSet;
     private MakeDefaultChangeSetAction makeDefault;
     
     private SynchronizePageActionGroup subActions;
@@ -280,6 +307,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 			addToChangeSet.add(new Separator());
 			editChangeSet = new EditChangeSetAction(configuration);
 			makeDefault = new MakeDefaultChangeSetAction(configuration);
+			removeChangeSet = new RemoveChangeSetAction(configuration);
 		}
 		
 		subActions = getChangeSetCapability().getActionGroup();
@@ -307,6 +335,10 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 			appendToGroup(
 					menu, 
 					CHANGE_SET_GROUP, 
+					removeChangeSet);
+			appendToGroup(
+					menu, 
+					CHANGE_SET_GROUP, 
 					makeDefault);
         }
 		if (subActions != null) {
@@ -325,6 +357,9 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
             AddToChangeSetAction action = new AddToChangeSetAction(getConfiguration(), set, selection);
             manager.add(action);
         }
+        addToChangeSet.add(new Separator());
+        // Action that removes change set resources
+        addToChangeSet.add(new AddToChangeSetAction(getConfiguration(), null, selection));
     }
 
     /**
@@ -357,6 +392,8 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
     public void updateActionBars() {
         if (editChangeSet != null)
 	        editChangeSet.selectionChanged((IStructuredSelection)getContext().getSelection());
+        if (removeChangeSet != null)
+            removeChangeSet.selectionChanged((IStructuredSelection)getContext().getSelection());
         if (makeDefault != null)
 	        makeDefault.selectionChanged((IStructuredSelection)getContext().getSelection());
         super.updateActionBars();

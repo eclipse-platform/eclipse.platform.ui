@@ -80,6 +80,9 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
             provider.performUpdate(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) {
                     remove(set);
+                    if (!set.isEmpty()) {
+                        add(set.getSyncInfoSet().getSyncInfos());
+                    }
                 }
             }, true, true);
         }
@@ -93,7 +96,25 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         }
 
         public void resourcesChanged(final ChangeSet set, final IResource[] resources) {
-            // Not used by the provider
+            // Look for any resources that were removed from the set but are still out-of sync.
+            // Re-add those resources
+            final List outOfSync = new ArrayList();
+            for (int i = 0; i < resources.length; i++) {
+                IResource resource = resources[i];
+                if (!set.contains(resource)) {
+                    SyncInfo info = provider.getSyncInfoSet().getSyncInfo(resource);
+                    if (info != null && info.getKind() != SyncInfo.IN_SYNC) {
+                        outOfSync.add(info);
+                    }
+                }   
+            }
+            if (!outOfSync.isEmpty()) {
+                provider.performUpdate(new IWorkspaceRunnable() {
+                    public void run(IProgressMonitor monitor) {
+                        add((SyncInfo[]) outOfSync.toArray(new SyncInfo[outOfSync.size()]));
+                    }
+                }, true, true);
+            }
         }
         
     };
