@@ -3,11 +3,6 @@
 	<name>org.eclipse.core.tests.resources</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.core.tests.harness</project>
-		<project>org.eclipse.osgi.services</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,8 +3,6 @@
 	<name>org.eclipse.core.resources</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.osgi.services</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

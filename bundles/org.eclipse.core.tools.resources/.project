@@ -3,12 +3,6 @@
 	<name>org.eclipse.core.tools.resources</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.resources.spysupport</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
