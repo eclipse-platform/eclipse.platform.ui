@@ -20,9 +20,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public abstract class CheckoutOperation extends RemoteOperation {
 
-	/**
-	 * @param shell
-	 */
 	public CheckoutOperation(Shell shell, ICVSRemoteFolder[] remoteFolders) {
 		super(shell, remoteFolders);
 	}
@@ -37,9 +34,6 @@ public abstract class CheckoutOperation extends RemoteOperation {
 		checkout(getRemoteFolders(), Policy.subMonitorFor(monitor, 100));
 	}
 
-	/**
-	 * @return
-	 */
 	protected ICVSRemoteFolder[] getRemoteFolders() {
 		return (ICVSRemoteFolder[])getRemoteResources();
 	}
@@ -50,4 +44,11 @@ public abstract class CheckoutOperation extends RemoteOperation {
 	 * @param monitor
 	 */
 	protected abstract void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor)  throws CVSException;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#canRunAsJob()
+	 */
+	public boolean canRunAsJob() {
+		return true;
+	}
 }

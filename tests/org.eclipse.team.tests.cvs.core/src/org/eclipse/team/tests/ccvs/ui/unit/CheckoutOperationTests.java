@@ -58,7 +58,7 @@ public class CheckoutOperationTests extends EclipseTest {
 			new CheckoutMultipleProjectsOperation(
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject) },
-				null /*target location*/).execute(DEFAULT_MONITOR);
+				null /*target location*/).runInContext(DEFAULT_MONITOR);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -74,7 +74,7 @@ public class CheckoutOperationTests extends EclipseTest {
 			new CheckoutMultipleProjectsOperation(
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder1")) },
-				null /*target location*/).execute(DEFAULT_MONITOR);
+				null /*target location*/).runInContext(DEFAULT_MONITOR);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -109,7 +109,7 @@ public class CheckoutOperationTests extends EclipseTest {
 					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject1),
 					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject2)
 				},
-				null /*target location*/).execute(DEFAULT_MONITOR);
+				null /*target location*/).runInContext(DEFAULT_MONITOR);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}

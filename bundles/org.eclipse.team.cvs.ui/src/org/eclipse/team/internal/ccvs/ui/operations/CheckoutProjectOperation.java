@@ -67,7 +67,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
+	public void runInContext(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		String taskName = getTaskName();
 		monitor.beginTask(taskName, 100);
 		monitor.setTaskName(taskName);

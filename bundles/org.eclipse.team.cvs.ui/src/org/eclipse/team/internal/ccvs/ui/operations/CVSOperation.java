@@ -76,20 +76,16 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws InterruptedException
 	 * @throws CVSException
 	 */
-	synchronized public void runInContext(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
-		if(areJobsEnabled()) {
-			runAsJob();
-		} else {
-			if (aRunnableContext == null) {
-				aRunnableContext = getRunnableContext();
-			}
-			try {
-				aRunnableContext.run(isInterruptable(), isInterruptable(), this);
-			} catch (InvocationTargetException e) {
-				throw CVSException.wrapException(e);
-			} catch (OperationCanceledException e) {
-				throw new InterruptedException();
-			}
+	public void runInContext(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
+		if (aRunnableContext == null) {
+			aRunnableContext = getRunnableContext();
+		}
+		try {
+			aRunnableContext.run(isInterruptable(), isInterruptable(), this);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (OperationCanceledException e) {
+			throw new InterruptedException();
 		}
 	}
 	
@@ -120,7 +116,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws CVSException
 	 * @throws InterruptedException
 	 */
-	public void run() throws CVSException, InterruptedException {
+	public synchronized void run() throws CVSException, InterruptedException {
 		if(canRunAsJob() && !hasRunnableContext() && areJobsEnabled()) {
 			runAsJob();
 		} else {

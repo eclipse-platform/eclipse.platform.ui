@@ -245,7 +245,7 @@ public class CVSUITestCase extends LoggingTestCase {
 		ITagOperation op = new TagOperation(null, resources);
 		op.setTag(new CVSTag(name, CVSTag.VERSION));
 		try {
-			op.executeWithProgress();
+			op.run();
 		} catch (InterruptedException e) {
 			printWarning("Tag interrupted", e, null);
 		} catch (CVSException e) {

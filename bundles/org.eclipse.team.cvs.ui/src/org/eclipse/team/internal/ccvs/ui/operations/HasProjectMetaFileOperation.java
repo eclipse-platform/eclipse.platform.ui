@@ -33,7 +33,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 		if (runnableContext != null) {
 			op.setRunnableContext(runnableContext);
 		}
-		op.execute();
+		op.run();
 		return op.metaFileExists();
 	}
 	

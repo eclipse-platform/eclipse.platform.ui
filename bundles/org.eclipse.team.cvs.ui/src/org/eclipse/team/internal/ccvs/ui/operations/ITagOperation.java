@@ -17,7 +17,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 public interface ITagOperation {
 	public abstract CVSTag getTag();
 	public abstract void setTag(CVSTag tag);
-	public abstract void executeWithProgress() throws CVSException, InterruptedException;
+	public abstract void run() throws CVSException, InterruptedException;
 	public abstract ICVSResource[] getCVSResources();
 	public abstract void moveTag();
 	public abstract void recurse();
