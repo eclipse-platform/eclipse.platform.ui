@@ -130,16 +130,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		coolItem.setControl(toolBar);
 		coolItem.setData(cbItem);
-		int minWidth = toolBar.getItems()[0].getWidth();
-		Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		Point coolSize = coolItem.computeSize(size.x, size.y);
-		// note setMinimumSize must be called before setSize, see PR 15565
-		coolItem.setMinimumSize(minWidth, coolSize.y);
-		coolItem.setPreferredSize(coolSize);
-		coolItem.setSize(coolSize);
-
-						
-			
+		setSizeFor(coolItem);
+					
 		coolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				if (event.detail == SWT.ARROW) {
@@ -493,8 +485,55 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolBarMenu.setVisible(true);
 	}
 	/**
+	 * Layout out the coolbar items so that each one is completely visible, 
+	 * wrapping when necessary.
 	 */
-	public void resetLayout() {
+	protected void redoLayout() {
+		coolBar.setRedraw(false);
+		
+		// We must reset the wrap indices, otherwise coolItem.setSize(int)
+		// may not work as expected.  The coolbar sets the size of the last 
+		// item on each row to the size of the item plus any remaining  
+		// area to the right of the item and you cannot set this size any 
+		// smaller.  For reset/auto-wrapping purposes we only want the last
+		// item in the coolbar to have extra space associated to it, so make
+		// the coolbar one row.
+		coolBar.setWrapIndices(new int[0]);
+		
+		// Reset the item sizes, necessary to do so before we wrap the items.
+		CoolItem[] coolItems = coolBar.getItems();
+		for (int i = 0; i < coolItems.length; i++) {
+			CoolItem coolItem = coolItems[i];
+			setSizeFor(coolItem);
+		}
+		
+		// Wrap the items
+		int coolBarWidth = coolBar.getClientArea().width;
+		int spaceLeft = coolBarWidth;
+		ArrayList wrapIndices = new ArrayList();
+		for (int i=0; i<coolItems.length; i++) {
+			CoolItem coolItem = coolItems[i];
+			int preferredWidth = coolItem.getPreferredSize().x;
+			if (preferredWidth < spaceLeft) {
+				// item fits, continue
+				spaceLeft -= preferredWidth;
+			} else {
+				// item doesn't fit
+				wrapIndices.add(new Integer(i));
+				spaceLeft = coolBarWidth - preferredWidth;
+			}
+		}
+		int[] wraps = new int[wrapIndices.size()];
+		for (int i=0; i<wrapIndices.size(); i++) {
+			wraps[i] = ((Integer)wrapIndices.get(i)).intValue();
+		}
+		coolBar.setWrapIndices(wraps);
+		
+		coolBar.setRedraw(true);
+	}
+	/**
+	 */
+	protected void resetLayout() {
 		coolBar.setRedraw(false);
 		CoolItem[] coolItems = coolBar.getItems();
 		for (int i = 0; i < coolItems.length; i++) {
@@ -539,32 +578,25 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	protected void setLayoutTo(CoolBarLayout layout) {
+		// This method is called after update.  All of the coolbar items have
+		// been created, now apply the layout to the coolbar. 
+
 		if (layout == null) {
 			coolBar.setRedraw(false);
 			CoolItem[] coolItems = coolBar.getItems();
 			int[] newItemOrder = new int[coolItems.length];
-			// reset the coolitem order to the creation order
+			// Reset the coolitem order to the creation order.  CoolItems are
+			// created in contribution item order.  Only way to reset item 
+			// order is to setItemLayout (no setItemOrder API).
 			for (int i = 0; i < coolItems.length; i++) {
 				newItemOrder[i]=i;
 			}
-			coolBar.setItemLayout(newItemOrder, new int[] {}, coolBar.getItemSizes());
-			// after the order and rows have been set, reset the item sizes
-			for (int i = 0; i < coolItems.length; i++) {
-				CoolItem coolItem = coolItems[i];
-				ToolBar toolBar = (ToolBar) coolItem.getControl();
-				int minWidth = toolBar.getItems()[0].getWidth();
-				Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point coolSize = coolItem.computeSize(size.x, size.y);
-				coolItem.setSize(coolSize);
-				coolItem.setPreferredSize(coolSize);
-				coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
-			}
+			coolBar.setItemLayout(newItemOrder, coolBar.getWrapIndices(), coolBar.getItemSizes());
+			redoLayout();
 			coolBar.setRedraw(true);
 			return;
 		}
 
-		// This method is called after update.  All of the coolbar items have
-		// been created, now apply the layout to the coolbar. 
 		int maxItemCount = coolBar.getItemCount();
 		int[] itemOrder = new int[maxItemCount];
 		Point[] itemSizes = new Point[maxItemCount];
@@ -651,6 +683,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolBar.setRedraw(true);
 
 	}
+	private void setSizeFor(CoolItem coolItem) {
+		ToolBar toolBar = (ToolBar) coolItem.getControl();
+		int minWidth = toolBar.getItems()[0].getWidth();
+		Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point coolSize = coolItem.computeSize(size.x, size.y);
+		// note setMinimumSize must be called before setSize, see PR 15565
+		coolItem.setMinimumSize(minWidth, coolSize.y);
+		coolItem.setSize(coolSize);
+		coolItem.setPreferredSize(coolSize);
+	}
 	/**
 	 */
 	public void update(boolean force) {
@@ -727,5 +769,5 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				if (useRedraw) coolBar.setRedraw(true);
 			}
 		}
-	}	
+	}
 }

@@ -958,6 +958,17 @@ public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 	}
 }
 /**
+ * Relayout the CoolBar for the workbench so that all items
+ * are visible, wrapping items when necessary.
+ */
+protected void resetToolBar() {
+	IToolBarManager toolsMgr = getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		coolBarMgr.redoLayout();
+	}
+}
+/**
  * @see IPersistable.
  */
 public void restoreState(IMemento memento) {
