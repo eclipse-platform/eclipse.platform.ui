@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.debug.core.IBreakpointManager;
@@ -21,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 public class BreakpointsViewContentProvider
 	implements IStructuredContentProvider {
@@ -30,9 +29,14 @@ public class BreakpointsViewContentProvider
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object parent) {
-		List filteredBreakpoints= new ArrayList();
-		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
 		IBreakpoint[] breakpoints= ((IBreakpointManager) parent).getBreakpoints();
+		IWorkbenchActivitySupport support = ((IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class));
+		if (support == null)  {
+			return breakpoints;
+		}
+		
+		List filteredBreakpoints= new ArrayList();
+		IActivityManager activityManager = support.getActivityManager();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (activityManager.getIdentifier(breakpoint.getModelIdentifier()).isEnabled()) {

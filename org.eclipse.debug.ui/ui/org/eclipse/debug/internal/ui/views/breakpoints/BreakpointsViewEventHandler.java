@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Handles breakpoint events and activity manager events (which can affect filtering),
@@ -42,11 +42,21 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	public BreakpointsViewEventHandler(BreakpointsView view) {
 		fView= view;
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
-		((Workbench) PlatformUI.getWorkbench()).getActivityManager().addActivityManagerListener(this);
+		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		if (activitySupport != null) {
+			activitySupport.getActivityManager().addActivityManagerListener(this);
+		}
 	}
 	
+	/**
+	 * When this event handler is disposed, remove it as a listener.
+	 */
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		if (activitySupport != null) {
+			activitySupport.getActivityManager().removeActivityManagerListener(this);
+		}
 	}
 
 	/**

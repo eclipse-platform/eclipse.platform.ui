@@ -53,7 +53,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -149,17 +149,22 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * @return the given collection minus any configurations from disabled activities
 	 */
 	public static ILaunchConfiguration[] filterConfigs(ILaunchConfiguration[] configurations) {
+		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		if (activitySupport == null) {
+			return configurations;
+		}
+
 		List filteredConfigs= new ArrayList();
-		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		IActivityManager activityManager= activitySupport.getActivityManager();
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration= configurations[i];
 			ILaunchConfigurationType type= null;
 			try {
-				type = configuration.getType();
+				type= configuration.getType();
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e.getStatus());
 			}
-			if (type != null && !activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
+			if (type != null && activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
 				filteredConfigs.add(configuration);
 			}
 		}

@@ -11,7 +11,6 @@
 package org.eclipse.debug.ui.actions;
 
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,10 +37,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.Workbench;
-//import org.eclipse.ui.internal.WWinKeyBindingService;
-//import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -50,8 +48,6 @@ import org.eclipse.ui.internal.Workbench;
  * @since 2.1
  */
 public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
-	
-//	WWinKeyBindingService fKeyBindingService;
 	
 	/**
 	 * Cascading menu 
@@ -159,18 +155,24 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 }
 
 		 int menuCount = 1;
-		 IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
-		 HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
-		 disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
+		 IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		 IActivityManager activityManager = null;
+		 if (activitySupport != null) {
+		 	activityManager = activitySupport.getActivityManager();
+		 }
+		 
 		 Iterator iter = shortcuts.iterator();
 		 while (iter.hasNext()) {
 			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			 if (ext.getModes().contains(getMode())) {
-					if (!activityManager.isMatch(ext.getId(), disabledActivityIds)) {
-						// Don't add config types that match disabled activities.
-						populateMenu(ext, getCreatedMenu(), menuCount);
-						menuCount++;
-					}
+			 	if (activityManager != null) {
+			 		IIdentifier identifier = activityManager.getIdentifier(ext.getId());
+			 		if (!identifier.isEnabled()) {
+			 			continue;
+			 		}
+			 	}
+				populateMenu(ext, getCreatedMenu(), menuCount);
+				menuCount++;
 			 }
 		 }
 	}

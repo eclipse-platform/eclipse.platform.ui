@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Content provider for representing launch configuration types & launch configurations in a tree.
@@ -127,16 +127,21 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	}
 
 	/**
-	 * @param allTypes
-	 * @return
+	 * Returns a list containing the given types minus any types that
+	 * should not be visible. A type should not be visible if it doesn't match
+	 * the current mode or if it matches a disabled activity.
+	 * 
+	 * @param allTypes the types
+	 * @return the given types minus any types that should not be visible.
 	 */
 	private List filterTypes(ILaunchConfigurationType[] allTypes) {
 		List filteredTypes= new ArrayList();
 		String mode = getMode();
-		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IActivityManager activityManager = activitySupport.getActivityManager();
 		for (int i = 0; i < allTypes.length; i++) {
 			ILaunchConfigurationType type = allTypes[i];
-			if (isVisible(type, mode) && activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
+			if (isVisible(type, mode) && (activityManager == null || activityManager.getIdentifier(type.getIdentifier()).isEnabled())) {
 				filteredTypes.add(type);
 			}
 		}
