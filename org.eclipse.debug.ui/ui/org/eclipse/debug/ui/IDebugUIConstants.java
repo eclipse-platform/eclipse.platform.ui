@@ -523,8 +523,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
 	 * is 'private'.  A private configuration is one that does not appear to the user in the launch
-	 * history or the launch configuration dialog. Also, the debug view does not automatically select
-	 * and reveal threads that suspend for private launches.
+	 * history or the launch configuration dialog.
 	 * 
 	 * @since 2.0
 	 */
