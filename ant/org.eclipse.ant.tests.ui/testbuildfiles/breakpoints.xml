@@ -25,4 +25,11 @@
 		<echo>1</echo>
 		<echo>2</echo>
 	</target>
+	
+	<target name="properties">
+		<property name="AAA" value="aaa" />
+		<property name="BBB" value="bbb" />
+		<property name="CCC" value="ccc" />
+		<echo>all done</echo>
+	</target>
 </project>

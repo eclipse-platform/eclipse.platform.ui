@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ant.tests.ui.AntUtilTests;
 import org.eclipse.ant.tests.ui.BuildTests;
 import org.eclipse.ant.tests.ui.debug.DeferredBreakpointTests;
+import org.eclipse.ant.tests.ui.debug.PropertyTests;
 import org.eclipse.ant.tests.ui.debug.RunToLineTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorTests;
@@ -56,6 +57,7 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(AntUtilTests.class));
 		suite.addTest(new TestSuite(DeferredBreakpointTests.class));
 		suite.addTest(new TestSuite(RunToLineTests.class));
+		suite.addTest(new TestSuite(PropertyTests.class));
         return suite;
     }
 }

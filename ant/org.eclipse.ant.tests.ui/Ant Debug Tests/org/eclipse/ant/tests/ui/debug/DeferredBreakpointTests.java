@@ -17,6 +17,8 @@ import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -32,14 +34,22 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 	}
 
 	public void testDeferredBreakpoints() throws Exception {
+		deferredBreakpoints(false);		
+	}
+
+	public void testDeferredBreakpointsSepVM() throws Exception {
+		deferredBreakpoints(true);		
+	}
+
+	private void deferredBreakpoints(boolean sepVM) throws Exception, CoreException, DebugException {
 		String fileName = "breakpoints";
-        IFile file= getIFile(fileName + ".xml");
+		IFile file= getIFile(fileName + ".xml");
 		List bps = new ArrayList();
 		bps.add(createLineBreakpoint(5, file));
 		bps.add(createLineBreakpoint(14, file));
 		AntThread thread= null;
 		try {
-			thread= launchToBreakpoint(fileName);
+			thread= launchToBreakpoint(fileName, true, sepVM);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			while (!bps.isEmpty()) {
 				IBreakpoint hit = getBreakpoint(thread);
@@ -59,30 +69,48 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	public void testDisabledBreakpoint() throws Exception {
-        String fileName = "breakpoints";
+        disabledBreakpoint(false);				
+	}
+
+	public void testDisabledBreakpointSepVM() throws Exception {
+        disabledBreakpoint(true);				
+	}
+
+	private void disabledBreakpoint(boolean separateVM) throws Exception, CoreException {
+		String fileName = "breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
 		bp.setEnabled(false);
-		
 		AntDebugTarget debugTarget = null;
 		try {
-			debugTarget= launchAndTerminate(fileName);
+			debugTarget= launchAndTerminate(fileName, separateVM);
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
-		}				
+		}
 	}
 
 	public void testEnableDisableBreakpoint() throws Exception {
-        String fileName = "breakpoints";
+        enableDisableBreapoint(false);				
+	}
+
+	public void testEnableDisableBreakpointSepVM() throws Exception {
+        enableDisableBreapoint(true);				
+	}
+
+	private void enableDisableBreapoint(boolean sepVM) throws Exception, CoreException {
+		
+		String fileName = "breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
 		bp.setEnabled(true);
-		
 		AntThread thread = null;
 		try {
+			if (sepVM) {
+				fileName+= "SepVM";
+			}
             ILaunchConfiguration config= getLaunchConfiguration(fileName);
             ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
             copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "entry1,entry2");
@@ -92,17 +120,27 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
 	
 	public void testSkipLineBreakpoint() throws Exception {
-        String fileName = "breakpoints";
-        IFile file= getIFile(fileName + ".xml");
+        skipLineBreakpoint(false);			    
+	}
+	
+	public void testSkipLineBreakpointSepVM() throws Exception {
+        skipLineBreakpoint(true);			    
+	}
+
+	private void skipLineBreakpoint(boolean sepVM) throws Exception {
+		String fileName = "breakpoints";
+		IFile file= getIFile(fileName + ".xml");
 		ILineBreakpoint bp = createLineBreakpoint(5, file);
 		createLineBreakpoint(15, file);
-		
 		AntThread thread = null;
 		try {
+			if (sepVM) {
+				fileName+= "SepVM";
+			}
 		    thread= launchToLineBreakpoint(fileName, bp);
 		    getBreakpointManager().setEnabled(false);
 		    resumeAndExit(thread);
@@ -110,6 +148,6 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
-		}			    
+		}
 	}
 }

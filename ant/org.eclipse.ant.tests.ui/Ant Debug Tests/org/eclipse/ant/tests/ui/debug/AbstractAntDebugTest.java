@@ -208,7 +208,19 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected AntThread launchToBreakpoint(String buildFileName) throws Exception {
-		return launchToBreakpoint(buildFileName, true);
+		return launchToBreakpoint(buildFileName, true, false);
+	}
+	
+	/**
+	 * Launches the buildfile with the given name in a separate VM, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param buildFileName the buildfile to launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected AntThread launchToBreakpointSepVM(String buildFileName) throws Exception {
+		return launchToBreakpoint(buildFileName, true, true);
 	}
 	
 	/**
@@ -220,7 +232,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @param register whether to register the launch
 	 * @return thread in which the first suspend event occurred
 	 */
-	protected AntThread launchToBreakpoint(String buildFileName, boolean register) throws Exception {
+	protected AntThread launchToBreakpoint(String buildFileName, boolean register, boolean sepVM) throws Exception {
+		if (sepVM) {
+			buildFileName+="SepVM";
+		}
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		return launchToBreakpoint(config, register);
@@ -262,10 +277,16 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * event occurred.
 	 * 
 	 * @param buildFileName the buildfile to execute
-	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return debug target in which the terminate event occurred
 	 */
 	protected AntDebugTarget launchAndTerminate(String buildFileName) throws Exception {
+		return launchAndTerminate(buildFileName, false);
+	}
+	
+	protected AntDebugTarget launchAndTerminate(String buildFileName, boolean sepVM) throws Exception {
+		if (sepVM) {
+			buildFileName+= "SepVM";
+		}
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		return debugLaunchAndTerminate(config, DEFAULT_TIMEOUT);

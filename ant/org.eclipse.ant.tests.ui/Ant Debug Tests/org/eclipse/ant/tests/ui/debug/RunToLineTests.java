@@ -79,7 +79,16 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLine() throws Exception {
-	    runToLine(14, 14, true);
+	    runToLine(14, 14, true, false);
+	}
+	
+	/**
+	 * Test a run to line, with no extra breakpoints in seperate VM.
+	 * 
+	 * @throws Exception
+	 */
+	public void testRunToLineSepVM() throws Exception {
+	    runToLine(14, 14, true, true);
 	}
 	
 	/**
@@ -89,9 +98,20 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 */
 	public void testRunToLineSkipBreakpoint() throws Exception {
 	    createLineBreakpoint(6, "breakpoints.xml");
-	    runToLine(14, 14, true);
+	    runToLine(14, 14, true, false);
 	}	
 	
+	/**
+	 * Test a run to line, with an extra breakpoint, and preference to skip in a 
+	 * seperate VM
+	 * 
+	 * @throws Exception
+	 */
+	public void testRunToLineSkipBreakpointSepVM() throws Exception {
+	    createLineBreakpoint(6, "breakpoints.xml");
+	    runToLine(14, 14, true, true);
+	}	
+
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to *not* skip
 	 * 
@@ -99,8 +119,18 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 */
 	public void testRunToLineHitBreakpoint() throws Exception {
 	    createLineBreakpoint(6, "breakpoints.xml");
-	    runToLine(14, 6, false);
-	}	
+	    runToLine(14, 6, false, false);
+	}
+	
+	/**
+	 * Test a run to line, with an extra breakpoint, and preference to *not* skip
+	 * 
+	 * @throws Exception
+	 */
+	public void testRunToLineHitBreakpointSepVM() throws Exception {
+	    createLineBreakpoint(6, "breakpoints.xml");
+	    runToLine(14, 6, false, true);
+	}
 
 	/**
 	 * Runs to the given line number in the 'breakpoints.xml' buildfile, after stopping at the
@@ -112,7 +142,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @param skipBreakpoints preference value for "skip breakpoints during run to line"
 	 * @throws Exception
 	 */
-	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints) throws Exception {
+	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints, boolean sepVM) throws Exception {
 		String fileName = "breakpoints";
 		AntLineBreakpoint breakpoint = createLineBreakpoint(5, fileName + ".xml");
 		
@@ -132,6 +162,9 @@ public class RunToLineTests extends AbstractAntDebugTest {
             Display display = DebugUIPlugin.getStandardDisplay();
             display.syncExec(closeAll);
             
+			if (sepVM) {
+				fileName+= "SepVM";
+			}
 			thread= launchToLineBreakpoint(fileName, breakpoint);
 			// wait for editor to open
 			synchronized (fLock) {
@@ -144,7 +177,9 @@ public class RunToLineTests extends AbstractAntDebugTest {
 					public void run() {
 						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
-	                    System.out.println("ACTIVE: " + activeEditor.getTitle());
+						if (activeEditor != null) {
+							System.out.println("ACTIVE: " + activeEditor.getTitle());
+						}
 					}
 				};
 				display.syncExec(r);
