@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -127,7 +128,17 @@ public class CheckoutAction extends CVSAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		return getSelectedRemoteFolders().length > 0;
+		ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
+		if (folders.length == 0) return false;
+		// only enabled when all folders are in the same repository
+		ICVSRepositoryLocation location = folders[0].getRepository();
+		for (int i = 1; i < folders.length; i++) {
+			ICVSRemoteFolder folder = folders[i];
+			if (!folder.getRepository().equals(location)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	protected static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
