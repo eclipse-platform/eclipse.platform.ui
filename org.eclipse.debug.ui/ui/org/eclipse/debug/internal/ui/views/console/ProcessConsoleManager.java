@@ -294,13 +294,15 @@ public class ProcessConsoleManager implements ILaunchListener {
 		}
 		
 		ArrayList trackers = new ArrayList();
-		for(Iterator i = ((List)fLineTrackers.get(type)).iterator(); i.hasNext(); ) {
-		    IConfigurationElement element = (IConfigurationElement) i.next();
-		    try {
-                trackers.add(element.createExecutableExtension("class")); //$NON-NLS-1$
-            } catch (CoreException e) {
-                DebugUIPlugin.log(e);
-            }
+		if (type != null) {
+			for(Iterator i = ((List)fLineTrackers.get(type)).iterator(); i.hasNext(); ) {
+			    IConfigurationElement element = (IConfigurationElement) i.next();
+			    try {
+	                trackers.add(element.createExecutableExtension("class")); //$NON-NLS-1$
+	            } catch (CoreException e) {
+	                DebugUIPlugin.log(e);
+	            }
+			}
 		}
 		return (IConsoleLineTracker[]) trackers.toArray(new IConsoleLineTracker[0]);
 	}
