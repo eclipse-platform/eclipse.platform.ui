@@ -9,7 +9,7 @@ var args = parent.parent.parseQueryString();
 
 function onloadHandler()
 {
-	// load the results frame
+	// load frames
 	frames["QueryFrame"].location = "search_query.jsp" + getFrameInputParameters();
 	frames["ResultsFrame"].location = "search_results.jsp" + getFrameInputParameters();
 }
