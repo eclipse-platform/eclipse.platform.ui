@@ -410,36 +410,36 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setDetailPaneOrientation(orientString);
 		
 		// add tree viewer
-		final TreeViewer vv = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		vv.setContentProvider(createContentProvider());
-		vv.setLabelProvider(getModelPresentation());
-		vv.setUseHashlookup(true);
-		vv.getControl().addFocusListener(new FocusAdapter() {
+		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		variablesViewer.setContentProvider(createContentProvider());
+		variablesViewer.setLabelProvider(getModelPresentation());
+		variablesViewer.setUseHashlookup(true);
+		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/**
 			 * @see FocusListener#focusGained(FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
-				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
+				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(variablesViewer);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
-		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
-		getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
+		variablesViewer.addSelectionChangedListener(getTreeSelectionChangedListener());
+		getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(variablesViewer);
 		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
 		
 		// add text viewer
-		SourceViewer dv= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
-		setDetailViewer(dv);
-		dv.setDocument(getDetailDocument());
+		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
+		setDetailViewer(detailsViewer);
+		detailsViewer.setDocument(getDetailDocument());
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
-		dv.setEditable(false);
-		getSashForm().setMaximizedControl(vv.getControl());
+		detailsViewer.setEditable(false);
+		getSashForm().setMaximizedControl(variablesViewer.getControl());
 		
-		dv.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
+		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 
-		dv.getControl().addFocusListener(new FocusAdapter() {
+		detailsViewer.getControl().addFocusListener(new FocusAdapter() {
 			/**
 			 * @see FocusListener#focusGained(FocusEvent)
 			 */
@@ -451,13 +451,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 		});
 		// add a context menu to the detail area
-		createDetailContextMenu(dv.getTextWidget());
+		createDetailContextMenu(detailsViewer.getTextWidget());
 		
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		setEventHandler(createEventHandler(vv));
+		setEventHandler(createEventHandler(variablesViewer));
 		
-		return vv;
+		return variablesViewer;
 	}
 		
 	protected void addVerifyKeyListener() {
