@@ -1018,6 +1018,19 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertEquals("4.2", value, actual);
 	}
 
+	/*
+	 * Bug 60590 - Flush on dirty child settings node fails if parent clean.
+	 * 
+	 * After changing a preference value, we call #makeDirty which does a 
+	 * recursive call marking itself dirty as well as all its parents. As a short
+	 * circuit, if a parent was already dirty then it stopped the recursion.
+	 * 
+	 * Unfortuanatly the #makeClean method only marks the load level as
+	 * clean and not all children since it doesn't know which child triggered
+	 * the dirtiness.
+	 * 
+	 * Changed the makeDirty call to mark all parent nodes as dirty.
+	 */
 	public void test60590() {
 		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
 		String one = getUniqueString();
