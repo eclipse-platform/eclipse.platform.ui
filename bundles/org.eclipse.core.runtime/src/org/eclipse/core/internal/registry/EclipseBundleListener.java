@@ -88,7 +88,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	private void addBundle(Bundle bundle) {
 		// if the given bundle already exists in the registry then return.
 		// note that this does not work for update cases.
-		if (registry.getElement(bundle.getSymbolicName()) != null)
+		if (registry.getNamespace(bundle.getSymbolicName()) != null)
 			return;
 		Namespace bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)

@@ -12,8 +12,8 @@ package org.eclipse.core.internal.registry;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import org.eclipse.core.internal.runtime.*;
+import java.util.Collection;
+import org.eclipse.core.internal.runtime.CompatibilityHelper;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -28,14 +28,14 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 	// DTD properties (included in plug-in manifest)
 	private String id = null;
 	// transient properties (not included in plug-in manifest)
-	// TODO should these be transient variables?
 	private IExtension[] extensions = null; // configured extensions
 	private String schemaReference;
 
 	public IExtension[] getExtensions() {
-		if (extensions == null)
+		IExtension[] tmpExtensions = extensions;
+		if (tmpExtensions == null)
 			return new IExtension[0];
-		return extensions;
+		return tmpExtensions;
 	}
 
 	public String getSchemaReference() {
@@ -53,12 +53,12 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 	public IExtension getExtension(String id) {
 		if (id == null)
 			return null;
-		if (extensions == null)
+		IExtension[] tmpExtensions = extensions;
+		if (tmpExtensions == null)
 			return null;
-		for (int i = 0; i < extensions.length; i++) {
-			if (id.equals(extensions[i].getUniqueIdentifier()))
-				return extensions[i];
-		}
+		for (int i = 0; i < tmpExtensions.length; i++)
+			if (id.equals(tmpExtensions[i].getUniqueIdentifier()))
+				return tmpExtensions[i];
 		return null;
 	}
 
@@ -98,15 +98,16 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 	}
 
 	public IConfigurationElement[] getConfigurationElements() {
-		IExtension[] exts = getExtensions();
-		ArrayList allConfigElts = new ArrayList();
-
-		for (int i = 0; i < exts.length; i++)
-			allConfigElts.addAll(Arrays.asList(exts[i].getConfigurationElements()));
-
-		IConfigurationElement[] value = new IConfigurationElement[allConfigElts.size()];
-		allConfigElts.toArray(value);
-		return value;
+		IExtension[] tmpExtensions = extensions;		
+		if (tmpExtensions == null || tmpExtensions.length == 0)
+			return new IConfigurationElement[0];
+		Collection result = new ArrayList();
+		for (int i = 0; i < tmpExtensions.length; i++) {
+			IConfigurationElement[] toAdd = tmpExtensions[i].getConfigurationElements();
+			for (int j = 0; j < toAdd.length; j++)
+				result.add(toAdd[j]);
+		}
+		return (IConfigurationElement[]) result.toArray(new IConfigurationElement[result.size()]);
 	}
 
 	/**
