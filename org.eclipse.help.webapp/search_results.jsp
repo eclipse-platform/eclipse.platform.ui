@@ -59,6 +59,7 @@ TABLE {
 
 
 .list {
+	background-color: Window;
 	padding:2px;
 }
      

@@ -26,7 +26,7 @@ public class Links {
 		this.context = context;
 		this.connector = new EclipseConnector(context);
 	}
-
+	
 	/**
 	 * Generates the html for the links based on input xml data
 	 */
@@ -41,7 +41,7 @@ public class Links {
 			String urlString = "links:/";
 			if (query != null && query.length() >= 0)
 				urlString += "?" + query;
-
+				
 			//System.out.println("links:"+query);
 			InputSource xmlSource =
 				new InputSource(connector.openStream(urlString, request));
@@ -70,7 +70,7 @@ public class Links {
 	}
 	private void genTopic(Element topic, Writer out) throws IOException {
 		out.write("<tr class='list'>");
-		out.write("<td class='icon'></td>");
+		out.write("<td class='icon'>&nbsp;</td>");
 		out.write("<td align='left' class='label' nowrap>");
 		out.write("<a href=");
 		String href = topic.getAttribute("href");
@@ -81,7 +81,7 @@ public class Links {
 		} else
 			href = "javascript:void 0";
 		out.write("'" + href + "'>");
-
+				
 		out.write(topic.getAttribute("label"));
 
 		out.write("</a></td></tr>");

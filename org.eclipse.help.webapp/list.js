@@ -60,7 +60,7 @@ function mouseClickHandler(e) {
   else 
   	return;
 
-  if (clickedNode)	
+  if (isIE && clickedNode)	
   	clickedNode.blur();
   	
   highlightTopic(clickedNode);
@@ -76,16 +76,14 @@ function mouseClickHandler(e) {
 function highlightTopic(topic)
 {
   var a = getTRNode(topic); 
-
   if (a != null)
   {
-  	   if (oldActive && oldActive != a) 
+  	   	if (oldActive && oldActive != a) 
     		oldActive.className="list";
-    		
+    
+		oldActive = a;		
   		a.className = "active";
-  		a.firstChild.blur();
-
-  		oldActive = a;
+  		a.lastChild.firstChild.blur();
   }
 }
 

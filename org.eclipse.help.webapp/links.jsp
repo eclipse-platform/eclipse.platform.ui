@@ -59,11 +59,13 @@ TABLE {
 }
 
 .list {
+	background-color: Window;
 	padding:2px;
 }
      
 .active { 
 	background:ActiveBorder;
+	padding:2px;
 }
 
 .label {
