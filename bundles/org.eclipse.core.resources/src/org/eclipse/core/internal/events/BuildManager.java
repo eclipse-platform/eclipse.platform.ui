@@ -23,6 +23,8 @@ import org.osgi.framework.Bundle;
 
 public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {
 
+	private static final int TOTAL_BUILD_WORK = Policy.totalWork * 1000;
+
 	/**
 	 * Cache used to optimize the common case of an autobuild against
 	 * a workspace where only a single project has changed (and hence
@@ -255,7 +257,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected void basicBuildLoop(IProject[] ordered, IProject[] unordered, int trigger, MultiStatus status, IProgressMonitor monitor) {
 		int projectWork = ordered.length + unordered.length;
 		if (projectWork > 0)
-			projectWork = Policy.totalWork / projectWork;
+			projectWork = TOTAL_BUILD_WORK / projectWork;
 		int maxIterations = workspace.getDescription().getMaxBuildIterations();
 		if (maxIterations <= 0)
 			maxIterations = 1;
@@ -283,7 +285,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(ICoreConstants.MSG_EVENTS_BUILDING_0, Policy.totalWork);
+			monitor.beginTask(ICoreConstants.MSG_EVENTS_BUILDING_0, TOTAL_BUILD_WORK);
 			if (!canRun(trigger))
 				return;
 			try {
