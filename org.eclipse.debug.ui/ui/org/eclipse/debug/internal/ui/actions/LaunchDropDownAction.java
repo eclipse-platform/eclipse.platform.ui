@@ -47,11 +47,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 */
 	private String fOriginalTooltip;
 	
-	/**
-	 * Flag indicating if this action delegate has identified its proxy action yet.
-	 */
-	private boolean isInitialized = false;
-	
 	protected void setActionProxy(IAction action) {
 		fActionProxy = action;
 	}
@@ -88,7 +83,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		fOriginalTooltip = action.getToolTipText();
 		setActionProxy(action);
 		updateTooltip();		
-		isInitialized = true;
 	}
 	
 	/**
@@ -216,7 +210,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
-		if (!isInitialized) {
+		if (fActionProxy == null) {
 			initialize(action);
 		} 
 	}
@@ -288,6 +282,4 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			}
 		};
 	}
-	
 }
-
