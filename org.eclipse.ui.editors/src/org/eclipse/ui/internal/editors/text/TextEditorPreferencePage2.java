@@ -118,7 +118,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	 * 
 	 * @since 3.0
 	 */
-	private QuickdiffConfigurationBlock fQuickDiffBlock;
+	private QuickDiffConfigurationBlock fQuickDiffBlock;
 	
 	public TextEditorPreferencePage2() {
 		setDescription(TextEditorMessages.getString("TextEditorPreferencePage.description")); //$NON-NLS-1$
@@ -322,7 +322,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		initializeDefaultColors();
 
-		fQuickDiffBlock= new QuickdiffConfigurationBlock(fOverlayStore);
+		fQuickDiffBlock= new QuickDiffConfigurationBlock(fOverlayStore);
 
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -336,7 +336,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		item.setControl(createAppearancePage(folder));
 		
 		item= new TabItem(folder, SWT.NONE);
-		item.setText(TextEditorMessages.getString("QuickdiffConfigurationBlock.title")); //$NON-NLS-1$
+		item.setText(TextEditorMessages.getString("QuickDiffConfigurationBlock.title")); //$NON-NLS-1$
 		item.setControl(fQuickDiffBlock.createControl(folder));
 
 		initialize();
@@ -387,8 +387,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        
-        fQuickDiffBlock.initializeFields();
 	}
 	
 	private void initializeDefaultColors() {	
