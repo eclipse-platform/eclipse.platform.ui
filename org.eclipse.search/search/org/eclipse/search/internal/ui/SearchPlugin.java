@@ -190,7 +190,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 
 		try {
-			return (getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
+			IViewPart viewPart= getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
+			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
+				return (getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
+			}
+			return true;
 		} catch (PartInitException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return false;

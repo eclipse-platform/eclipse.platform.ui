@@ -44,7 +44,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
 	public static final String DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective"; //$NON-NLS-1$
 	private static final String NO_DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective.none"; //$NON-NLS-1$
-
+	public static final String BRING_VIEW_TO_FRONT= "org.eclipse.search.bringToFront"; //$NON-NLS-1$
+	
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
@@ -77,12 +78,19 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(IGNORE_POTENTIAL_MATCHES, false);
 		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
 		store.setDefault(REUSE_EDITOR, false);
+		store.setDefault(BRING_VIEW_TO_FRONT, true);
 		store.setDefault(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
 	}
 
 	public static boolean isEditorReused() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(REUSE_EDITOR);
+	}
+	
+	public static boolean isViewBroughtToFront() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(BRING_VIEW_TO_FRONT);
+		
 	}
 
 	public static String getDefaultPerspectiveId() {
@@ -126,6 +134,13 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         );
 		addField(boolEditor);
 
+		boolEditor= new BooleanFieldEditor(
+				BRING_VIEW_TO_FRONT,
+				SearchMessages.getString("SearchPreferencePage.bringToFront"), //$NON-NLS-1$
+				getFieldEditorParent()
+				);
+		addField(boolEditor);
+		
 		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.ignorePotentialMatches"), //$NON-NLS-1$
