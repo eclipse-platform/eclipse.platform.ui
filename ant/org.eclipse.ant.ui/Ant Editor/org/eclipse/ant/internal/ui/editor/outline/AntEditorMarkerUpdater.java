@@ -16,11 +16,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class AntEditorMarkerUpdater {
@@ -63,17 +66,18 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	public void updateMarkers() {
-		IFile file= getFile();
-		if (file != null && file.exists()) {
-			removeProblems();
-			if (fCollectedProblems.size() > 0) {
-				Iterator e= fCollectedProblems.iterator();
-				while (e.hasNext()) {
-					IProblem problem= (IProblem) e.next();
-					createMarker(problem);
-				}
-				fCollectedProblems.clear();
+		if (!shouldAddMarkers()) {
+			return;
+		}
+
+		removeProblems();
+		if (fCollectedProblems.size() > 0) {
+			Iterator e= fCollectedProblems.iterator();
+			while (e.hasNext()) {
+				IProblem problem= (IProblem) e.next();
+				createMarker(problem);
 			}
+			fCollectedProblems.clear();
 		}
 	}
 	
@@ -104,5 +108,31 @@ public class AntEditorMarkerUpdater {
 		MarkerUtilities.setCharEnd(attributes, problem.getOffset() + problem.getLength());
 		attributes.put(IMarker.SEVERITY, new Integer(severity));
 		return attributes;
+	}
+	
+	/**
+	 * Returns whether or not to add markers to the file based on the file's content type.
+	 * The content type is considered an Ant buildfile if the XML has a root &quot;project&quot; element.
+	 * Content type is defined in the org.eclipse.ant.core plugin.xml.
+	 * @return whether or not to add markers to the file based on the files content type
+	 */
+	private boolean shouldAddMarkers() {
+		IFile file= getFile();
+		if (file == null || !file.exists()) {
+			return false;
+		}
+		IContentDescription description;
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			return false;
+		}
+		if (description != null) {
+			IContentType type= description.getContentType();
+			if (AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE.equals(type.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
