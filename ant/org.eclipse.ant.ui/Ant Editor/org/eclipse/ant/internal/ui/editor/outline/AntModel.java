@@ -1122,9 +1122,15 @@ public class AntModel {
 		return null;
 	}
 	
-	public AntProjectNode getProjectNode() {
-		possiblyWaitForReconcile();
+	public AntProjectNode getProjectNode(boolean waitForReconcile) {
+		if (waitForReconcile) {
+			possiblyWaitForReconcile();
+		}
 		return fProjectNode;
+	}
+	
+	public AntProjectNode getProjectNode() {
+		return getProjectNode(true);
 	}
 	
 	private void possiblyWaitForReconcile() {
@@ -1152,9 +1158,9 @@ public class AntModel {
 		fMarkerUpdater.updateMarkers();
 	}
 	
-	public AntElementNode getNode(int offset) {
-		if (getProjectNode() != null) {
-			return getProjectNode().getNode(offset);
+	public AntElementNode getNode(int offset, boolean waitForReconcile) {
+		if (getProjectNode(waitForReconcile) != null) {
+			return getProjectNode(waitForReconcile).getNode(offset);
 		}
 		return null;
 	}

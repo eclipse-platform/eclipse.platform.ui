@@ -12,7 +12,6 @@
 package org.eclipse.ant.internal.ui.editor.text;
 
 
-import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.IDocument;
@@ -63,9 +62,6 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy {
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		internalReconcile(dirtyRegion);
-		if (fEditor instanceof AntEditor) {
-			((AntEditor)fEditor).reconciled();
-		}
 	}
 
 	/* (non-Javadoc)
