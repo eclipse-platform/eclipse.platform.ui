@@ -24,6 +24,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -628,8 +630,15 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			
 		
 		int firstLine= 0;
-			
-		int topLine= fCachedTextViewer.getTopIndex() -1;
+
+		int topLine= fCachedTextWidget.getTopIndex();
+		fScrollPos= fCachedTextWidget.getTopPixel();
+		int lineheight= fCachedTextWidget.getLineHeight();
+		int partialLineHidden= fScrollPos % lineheight;
+		
+		if (partialLineHidden > 0 && topLine > 0) // widgetTopLine shows the first fully visible line
+			-- topLine;
+
 		int bottomLine= fCachedTextViewer.getBottomIndex() + 1;
 		
 		try {
@@ -653,12 +662,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 		
 		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
-		
-		int lineheight= fCachedTextWidget.getLineHeight();
-		fScrollPos= fCachedTextWidget.getTopPixel();
+
+		int baselineBias= getBaselineBias(gc);
+
+		int topInset= fCachedTextViewer.getTopInset();
+		int y= topInset - partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 
-		int y= ((topLine - firstLine) * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
 		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
 			
 			if (y >= canvasheight)
@@ -668,7 +678,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				
 			String s= createDisplayString(line);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(s, indentation, y, true);
+			gc.drawString(s, indentation, y + baselineBias, true);
 		}
 	}
 	
@@ -697,17 +707,18 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
 
-		int firstLine= 0;
-
-
 		int widgetTopLine= fCachedTextWidget.getTopIndex();
-		if (widgetTopLine > 0)
+		fScrollPos= fCachedTextWidget.getTopPixel();
+		int lineheight= fCachedTextWidget.getLineHeight();
+		int partialLineHidden= fScrollPos % lineheight;
+		
+		if (partialLineHidden > 0 && widgetTopLine > 0) // widgetTopLine shows the first fully visible line
 			-- widgetTopLine;
 
-		int topLine= extension.widgetLine2ModelLine(widgetTopLine);
-		int bottomLine= fCachedTextViewer.getBottomIndex();
-		if (bottomLine >= 0)
-			++ bottomLine;
+		int modelTopLine= extension.widgetLine2ModelLine(widgetTopLine);
+		int modelBottomLine= fCachedTextViewer.getBottomIndex();
+		if (modelBottomLine >= 0)
+			++ modelBottomLine;
 
 		try {
 
@@ -717,30 +728,32 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			if (doc == null)
 				 return;
 
-			firstLine= doc.getLineOfOffset(region.getOffset());
-			if (firstLine > topLine || topLine == -1)
-				topLine= firstLine;
+			int coverageTopLine= doc.getLineOfOffset(region.getOffset());
+			if (coverageTopLine > modelTopLine || modelTopLine == -1)
+				modelTopLine= coverageTopLine;
 
-			int lastLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
-			if (lastLine < bottomLine || bottomLine == -1)
-				bottomLine= lastLine;
+			int coverageBottomLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			if (coverageBottomLine < modelBottomLine || modelBottomLine == -1)
+				modelBottomLine= coverageBottomLine;
 
 		} catch (BadLocationException x) {
 			return;
 		}
 
-		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
+		fSensitiveToTextChanges= modelBottomLine - modelTopLine < getVisibleLinesInViewport();
 
-		int lineheight= fCachedTextWidget.getLineHeight();
-		fScrollPos= fCachedTextWidget.getTopPixel();
+		int baselineBias= getBaselineBias(gc);
+
+		int topInset= fCachedTextViewer.getTopInset();
+		int y= topInset - partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
-
-		int y= (widgetTopLine * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
-		for (int modelLine= topLine; modelLine <= bottomLine; modelLine++) {
+		
+		for (int modelLine= modelTopLine; modelLine <= modelBottomLine; modelLine++) {
 
 			if (y >= canvasheight)
 				break;
 
+			// don't draw hidden (e.g. folded) lines
 			int widgetLine= extension.modelLine2WidgetLine(modelLine);
 			if (widgetLine == -1)
 				continue;
@@ -749,11 +762,36 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			String s= createDisplayString(modelLine);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(s, indentation, y, true);
+			gc.drawString(s, indentation, y + baselineBias, true);
 			y+= lineheight;
 		}
 	}
 	
+	/**
+	 * Returns the difference between the baseline of the widget and the
+	 * baseline as specified by the font for <code>gc</code>. When drawing
+	 * line numbers, the returned bias should be added to obtain text line up on
+	 * the correct base line of the text widget.
+	 * 
+	 * @param gc the <code>GC</code> to get the font metrics from
+	 * @return the baseline bias to use when drawing text that is line up with
+	 *         <code>fCachedTextWidget</code>
+	 */
+	private int getBaselineBias(GC gc) {
+		/* 
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=62951
+		 * widget line height may be more than the font height used for the
+		 * linenumbers, since font styles (bold, italics...) can have larger
+		 * font metrics than the simple font used for the numbers.
+		 */ 
+		int widgetBaseline= fCachedTextWidget.getBaseline();
+		FontMetrics fm = gc.getFontMetrics();
+		int fontBaseline = fm.getAscent() + fm.getLeading();
+		Assert.isTrue(widgetBaseline >= fontBaseline);
+		int baselineBias= widgetBaseline - fontBaseline;
+		return baselineBias;
+	}
+
 	/**
 	 * Paints the line. After this method is called the line numbers are painted on top
 	 * of the result of this method.

@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
@@ -126,12 +127,24 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		int length= fPairPosition.getLength();
 		if (length < 1)
 			return;
-			
+		
 		if (fSourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			IRegion widgetRange= extension.modelRange2WidgetRange(new Region(offset, length));
 			if (widgetRange == null)
 				return;
+			
+			try {
+				// don't draw if the pair position is really hidden and widgetRange just
+				// marks the coverage around it.
+				IDocument doc= fSourceViewer.getDocument();
+				int startLine= doc.getLineOfOffset(offset);
+				int endLine= doc.getLineOfOffset(offset + length);
+				if (extension.modelLine2WidgetLine(startLine) == -1 || extension.modelLine2WidgetLine(endLine) == -1)
+					return;
+			} catch (BadLocationException e) {
+				return;
+			}
 				
 			offset= widgetRange.getOffset();
 			length= widgetRange.getLength();
@@ -160,9 +173,18 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		if (gc != null) {
 			Point left= fTextWidget.getLocationAtOffset(offset);
 			Point right= fTextWidget.getLocationAtOffset(offset + length);
-			
 			gc.setForeground(fColor);
-			gc.drawRectangle(left.x, left.y, right.x - left.x - 1, gc.getFontMetrics().getHeight() - 1);
+			
+			// draw box around line segment
+			gc.drawRectangle(left.x, left.y, right.x - left.x - 1, fTextWidget.getLineHeight() - 1);
+			
+			// draw box around character area
+//			int widgetBaseline= fTextWidget.getBaseline();
+//			FontMetrics fm= gc.getFontMetrics();
+//			int fontBaseline= fm.getAscent() + fm.getLeading();
+//			int fontBias= widgetBaseline - fontBaseline;
+			
+//			gc.drawRectangle(left.x, left.y + fontBias, right.x - left.x - 1, fm.getHeight() - 1);
 								
 		} else {
 			fTextWidget.redrawRange(offset, length, true);
