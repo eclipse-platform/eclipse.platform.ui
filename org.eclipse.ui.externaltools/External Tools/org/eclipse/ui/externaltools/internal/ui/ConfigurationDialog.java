@@ -77,7 +77,8 @@ public class ConfigurationDialog extends TitleAreaDialog {
 		// Set title and message now that the controls exist
 		setTitle(ToolMessages.getString("ConfigurationDialog.dialogTitle")); //$NON-NLS-1$
 		setMessage(ToolMessages.getString("ConfigurationDialog.dialogMessage")); //$NON-NLS-1$
-		
+		setTitleImage(ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_WIZBAN_EXTERNAL_TOOLS).createImage());
+			
 		// Build the top container
 		Composite topComp = new Composite(dialogComp, SWT.NONE);
 		GridLayout layout = new GridLayout();

@@ -130,6 +130,7 @@ public class EditDialog extends TitleAreaDialog {
 			setMessage(ToolMessages.getString("EditDialog.editDialogMessage")); //$NON-NLS-1$
 		else
 			setMessage(ToolMessages.getString("EditDialog.newDialogMessage")); //$NON-NLS-1$
+		setTitleImage(ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_WIZBAN_EXTERNAL_TOOLS).createImage());
 		
 		// Build the top container
 		Composite topComp = new Composite(dialogComp, SWT.NONE);

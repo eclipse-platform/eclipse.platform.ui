@@ -31,6 +31,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public static final String IMG_TYPE = "icons/full/obj16/type.gif"; //$NON-NLS-1$;
 	public static final String IMG_EXTERNAL_TOOL = "icons/full/obj16/external_tools.gif"; //$NON-NLS-1$
 	public static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
+	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = "icons/full/wizban/ext_tools_wiz.gif"; //$NON-NLS-1$
 	
 	private static ExternalToolsPlugin plugin;
 	private ExternalToolsRegistry registry;
