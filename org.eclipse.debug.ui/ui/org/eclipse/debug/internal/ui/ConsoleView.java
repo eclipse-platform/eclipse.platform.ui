@@ -17,7 +17,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	protected ClearOutputAction fClearOutputAction= null;
 
 	protected Map fGlobalActions= new HashMap(10);
-	protected List fSelectionActions = new ArrayList(3);
+	protected List fSelectionActions = new ArrayList(3);
+	
+	protected IDocument fCurrentDocument= null;
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
@@ -177,6 +179,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 					if (old != null) {
 						old.removeDocumentListener(ConsoleView.this);
 					}
+					fCurrentDocument = nw;
 					if (nw != null) {
 						nw.addDocumentListener(ConsoleView.this);
 					}
@@ -203,6 +206,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		if (fConsoleViewer != null) {
 			fConsoleViewer.dispose();
 			fConsoleViewer= null;
+		}
+		if (fCurrentDocument != null) {
+			fCurrentDocument.removeDocumentListener(this);
 		}
 		super.dispose();
 	}
