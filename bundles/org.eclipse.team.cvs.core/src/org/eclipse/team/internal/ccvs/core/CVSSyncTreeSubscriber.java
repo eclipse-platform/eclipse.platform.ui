@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.core.synchronize.IResourceVariantComparator;
@@ -294,5 +295,12 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 			throw e;
 		}
 		return members;
+	}
+	
+	protected boolean rootsEqual(Subscriber other) {
+		Set roots1 = new HashSet(Arrays.asList(other.roots()));
+		Set roots2 = new HashSet(Arrays.asList(roots()));
+		if(roots1.size() != roots2.size()) return false;
+		return roots2.containsAll(roots1);
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.team.internal.core.subscribers.caches.SessionResourceVariantB
  */
 public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubscriberChangeListener {
 
+	public static final String ID = "org.eclipse.team.cvs.ui.compare-participant";
 	public static final String QUALIFIED_NAME = CVSProviderPlugin.ID + ".compare"; //$NON-NLS-1$
 	private static final String UNIQUE_ID_PREFIX = "compare-"; //$NON-NLS-1$
 	
@@ -181,5 +182,15 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	 */
 	protected boolean getCacheFileContentsHint() {
 		return true;
+	}
+		
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if(this == other) return true;
+		if(! (other instanceof CVSCompareSubscriber)) return false;
+		CVSCompareSubscriber s = (CVSCompareSubscriber)other;
+		return getRemoteTag().equals(s.getRemoteTag()) && rootsEqual(s);		
 	}
 }
