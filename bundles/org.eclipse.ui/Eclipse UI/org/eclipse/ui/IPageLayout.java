@@ -242,6 +242,8 @@ public void setEditorAreaVisible(boolean showEditorArea);
  * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
  *
  * @return a int
+ * 
+ * @deprecated
  */
 public int getEditorReuseThreshold();
 /**
@@ -251,6 +253,8 @@ public int getEditorReuseThreshold();
  * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
  * 
  * @param openEditors the number of open editors.
+ * 
+ * @deprecated
  */
 public void setEditorReuseThreshold(int openEditors);
 }

@@ -38,6 +38,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private IWorkbenchPart activePart; //Could be delete. This information is in the active part list;
 	private ActivationList activationList = new ActivationList();
 	private IEditorPart lastActiveEditor;
+	private IEditorPart reusableEditor;
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
@@ -396,6 +397,8 @@ public boolean closeAllEditors(boolean save) {
 		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+	
+	setReusableEditor(null);
 
 	// Return true on success.
 	return true;
@@ -441,6 +444,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	getEditorManager().closeEditor(editor);
 	firePartClosed(editor);
 	editor.dispose();
+	if(editor == getReusableEditor())
+		setReusableEditor(null);
 
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
@@ -1699,20 +1704,24 @@ private void zoomOut() {
  * @see IPageLayout.
  */
 public int getEditorReuseThreshold() {
-	if (activePersp != null) {
-		int result = activePersp.getEditorReuseThreshold();
-		if(result > 0)
-			return result;
-	}
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
-	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
+	return 0;
 }
 /**
  * @see IPageLayout.
  */
 public void setEditorReuseThreshold(int openEditors) {
-	if (activePersp != null)
-		activePersp.setEditorReuseThreshold(openEditors);
+}
+/*
+ * Return the editor specified by the user as reusable.
+ */
+protected IEditorPart getReusableEditor() {
+	return reusableEditor;
+}
+/*
+ * Set <code>editor</code> as the reusable editor.
+ */
+protected void setReusableEditor(IEditorPart editor) {
+	reusableEditor = editor;
 }
 /*
  * Returns the editors in activation order (oldest first).

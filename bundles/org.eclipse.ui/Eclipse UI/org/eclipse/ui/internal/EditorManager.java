@@ -288,43 +288,15 @@ public IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	return openEditor(desc, input);
 }
 /*
- * Find an editor to be reused or return null if a new one should
- * be opened.
+ * Prompt the user to save the reusable editor.
+ * Return false if a new editor should be opened.
  */
-private IEditorPart findReusableEditor(EditorDescriptor desc) {
-	
-	IEditorPart editors[] = page.getSortedEditors();
-	if(editors.length < page.getEditorReuseThreshold())
-		return null;
-	
-	
-	IEditorPart dirtyEditor = null;
-//	IWorkbenchPart activePart = page.getActivePart();
-	//Find a editor to be reused
-	for(int i = 0;i < editors.length;i++) {
-		IEditorPart editor = editors[i];
-//		if(editor == activePart)
-//			continue;
-		EditorSite site = (EditorSite)editor.getEditorSite();
-		if(!site.getReuseEditor())
-			continue;
-		if(editor.isDirty()) {
-			dirtyEditor = editor;
-			continue;
-		}
-		return editor;
-	}
-	if(dirtyEditor == null)
-		return null;
-	
-	//Should we have a global preference "Allways open new Editor when dirty"?
-	//if(openNewWhenDirty)
-	//	return null;
+private boolean saveReusableEditor(IEditorPart reusableEditor) {	
 	MessageDialog dialog = new MessageDialog(
 		window.getShell(),
 		WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"),
 		null,	// accept the default window icon
-		WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[]{dirtyEditor.getEditorInput().getName()}),
+		WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[]{reusableEditor.getEditorInput().getName()}),
 		MessageDialog.QUESTION, 
 		new String[] {
 			IDialogConstants.YES_LABEL,
@@ -335,41 +307,62 @@ private IEditorPart findReusableEditor(EditorDescriptor desc) {
 	if(result == 0) { //YES
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
 		pmd.open();
-		dirtyEditor.doSave(pmd.getProgressMonitor());
+		reusableEditor.doSave(pmd.getProgressMonitor());
 		pmd.close();
 	} else if(result == 2) {
-		return null;
+		return false;
 	}
-	return dirtyEditor;
+	return true;
 }
 /*
  * See IWorkbenchPage.
  */
-private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
-	throws PartInitException {
+private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
 	if (desc.isInternal()) {
-		IEditorPart reusableEditor = findReusableEditor(desc);
-		if(reusableEditor != null) {
-			EditorSite site = (EditorSite)reusableEditor.getEditorSite();
-			IEditorInput editorInput = reusableEditor.getEditorInput(); 
-			EditorDescriptor oldDesc = site.getEditorDescriptor();
-			if(oldDesc == null)
-				oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
-			if((desc.getId().equals(oldDesc.getId())) &&
-				(reusableEditor instanceof IReusableEditor)) {
-					Workbench wb = (Workbench)window.getWorkbench();
-					editorPresentation.moveEditor(reusableEditor,-1);
-					wb.getEditorHistory().add(reusableEditor.getEditorInput(),site.getEditorDescriptor());
-					((IReusableEditor)reusableEditor).setInput(input);
-					return reusableEditor;
-			} else {
-				//findReusableEditor(...) makes sure its neither pinned nor dirty
+		IEditorPart reusableEditor = page.getReusableEditor();
+		if(reusableEditor == null)
+			return openInternalEditor(desc, input, true);
+		
+		EditorSite site = (EditorSite)reusableEditor.getEditorSite();
+		if(reusableEditor.isDirty()) {
+			if(!saveReusableEditor(reusableEditor)) {
 				IEditorPart result = openInternalEditor(desc, input, true);
-				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor,true);				
+				page.setReusableEditor(result);
+				
+				EditorPane pane = (EditorPane)site.getPane();
+				pane.updateTitles();
+				
+				site = (EditorSite)result.getEditorSite(); 
+				pane = (EditorPane)site.getPane();
+				pane.updateTitles();
+				
 				return result;
 			}
 		}
-		return openInternalEditor(desc, input, true);
+		 
+		IEditorInput editorInput = reusableEditor.getEditorInput(); 
+		EditorDescriptor oldDesc = site.getEditorDescriptor();
+		
+		if(oldDesc == null)
+			oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
+			
+		if((desc.getId().equals(oldDesc.getId())) &&
+			(reusableEditor instanceof IReusableEditor)) {
+				Workbench wb = (Workbench)window.getWorkbench();
+				wb.getEditorHistory().add(reusableEditor.getEditorInput(),site.getEditorDescriptor());
+				((IReusableEditor)reusableEditor).setInput(input);
+				return reusableEditor;
+		} else {
+			//ISSUE: Must open it in the same position.
+			IEditorPart result = openInternalEditor(desc, input, true);
+			page.setReusableEditor(result);
+			reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor,true);				
+			site = (EditorSite)result.getEditorSite();
+			EditorPane pane = (EditorPane)site.getPane();
+			pane.updateTitles();
+			return result;
+		}
+		
 	} else
 		if (desc.isOpenInPlace()) {
 			IEditorPart editor = ComponentSupport.getComponentEditor();
@@ -595,6 +588,11 @@ public void restoreState(IMemento memento) {
 					String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
 					if ("true".equals(strActivePart))//$NON-NLS-1$
 						activeEditor[0] = part;
+						
+					String strReusableEditor = editorMem.getString(IWorkbenchConstants.TAG_REUSABLE_EDITOR);						
+					if ("true".equals(strReusableEditor))//$NON-NLS-1$
+						page.setReusableEditor(part);
+					
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage());//$NON-NLS-1$
 					errors[0]++;
@@ -822,6 +820,9 @@ public void saveState(final IMemento memento) {
 				if (editorPane == editorPane.getWorkbook().getVisibleEditor())
 					editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");//$NON-NLS-1$
 
+				if (editor == page.getReusableEditor())
+					editorMem.putString(IWorkbenchConstants.TAG_REUSABLE_EDITOR, "true");//$NON-NLS-1$
+				
 				// Save input.
 				IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
 				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());

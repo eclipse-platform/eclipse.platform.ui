@@ -779,7 +779,15 @@ public void updateEditorTab(IEditorPart editor) {
 	tab.setText(title);
 
 	// Update the tab image
-	Image image = editor.getTitleImage();
+	EditorSite site = (EditorSite)editor.getEditorSite();
+	WorkbenchPage page = (WorkbenchPage)site.getPage();
+	
+	Image image;
+	if(editor == page.getReusableEditor())
+		image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR_HOVER);
+	else
+		image = editor.getTitleImage();
+		
 	if (image == null) {
 		// Normal image.
 		tab.setImage(null);

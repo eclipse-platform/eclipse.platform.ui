@@ -139,16 +139,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);
 
-		reuseEditors = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditors"), groupComposite);
-
-		reuseEditors.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		reuseEditors.setPreferencePage(this);
-		reuseEditors.setTextLimit(2);
-		reuseEditors.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsError"));
-		reuseEditors.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		reuseEditors.setValidRange(1, 99);
-		reuseEditors.load();
-
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite);
 
 		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;

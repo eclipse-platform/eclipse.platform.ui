@@ -103,9 +103,9 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER, PATH_CTOOL+"new_wiz.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED, PATH_DTOOL+"new_wiz.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR, PATH_ETOOL+"pin_editor.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER, PATH_CTOOL+"pin_editor.gif");//$NON-NLS-1$
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED, PATH_DTOOL+"pin_editor.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR, PATH_ETOOL+"reuse_editor.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR_HOVER, PATH_CTOOL+"reuse_editor.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR_DISABLED, PATH_DTOOL+"reuse_editor.gif");//$NON-NLS-1$
 
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER, PATH_CTOOL+"import_wiz.gif");

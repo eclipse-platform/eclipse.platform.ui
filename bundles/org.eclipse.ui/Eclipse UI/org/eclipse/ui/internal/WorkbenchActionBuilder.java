@@ -48,7 +48,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
-	private PinEditorAction pinEditorAction;
+	private ReuseEditorAction reuseEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
 	private ShowPartPaneMenuAction showPartPaneMenuAction;
 	private CyclePartAction nextPartAction;
@@ -82,7 +82,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	public WorkbenchActionBuilder() {
 	}
-	
 	/**
 	 * Add the manual incremental build action
 	 * to both the menu bar and the tool bar.
@@ -150,7 +149,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			}
 		});
 	}
-	
 	/**
 	 * Creates the menu bar.
 	 */
@@ -332,7 +330,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(aboutAction);
 		return menu;
 	}
-	
 	/**
 	 * Fills the shortcut bar
 	 */
@@ -364,7 +361,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		toolbar.add(new PerspectiveComboBox(window));
 		toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		toolbar.add(pinEditorAction);
+		toolbar.add(reuseEditorAction);
 	}
 	/**
 	 * Remove the property change listener
@@ -519,11 +516,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		closeAllAction = new CloseAllAction(window);
 		partService.addPartListener(closeAllAction);
 
-		pinEditorAction = new PinEditorAction(window);
-		partService.addPartListener(pinEditorAction);
-		pinEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
-		pinEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
-		pinEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
+		reuseEditorAction = new ReuseEditorAction(window);
+		partService.addPartListener(reuseEditorAction);
+		reuseEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR));
+		reuseEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR_HOVER));
+		reuseEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REUSE_EDITOR_DISABLED));
 
 		aboutAction = new AboutAction(window);
 		aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
@@ -572,8 +569,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				removeManualIncrementalBuildAction();
 			else
 				addManualIncrementalBuildAction();
-		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
-			pinEditorAction.updateState();
 		} else if (event.getProperty() == IPreferenceConstants.RECENT_FILES) {
 			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
 			// work around the fact that the property change event values come as 

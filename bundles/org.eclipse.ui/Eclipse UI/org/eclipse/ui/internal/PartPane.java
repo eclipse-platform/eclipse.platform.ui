@@ -329,7 +329,7 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	});
 	item.setEnabled(!isZoomed && !isFastView && canZoom);
 
-	addPinEditorItem(aMenu);
+	addReuseEditorItem(aMenu);
 	
 	new MenuItem(aMenu, SWT.SEPARATOR);
 	
@@ -410,7 +410,7 @@ protected void addSizeItems(Menu sizeMenu) {
 /**
  * Add the pin menu item on the editor system menu
  */
-protected void addPinEditorItem(Menu parent) {}
+protected void addReuseEditorItem(Menu parent) {}
 /**
  * Add the move items to the Move menu.
  */

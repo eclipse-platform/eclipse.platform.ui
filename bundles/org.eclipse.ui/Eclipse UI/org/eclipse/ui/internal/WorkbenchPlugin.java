@@ -318,7 +318,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
-		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 10);
 		store.setDefault(IPreferenceConstants.RECENT_FILES, IPreferenceConstants.MAX_RECENT_FILES_SIZE);
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
