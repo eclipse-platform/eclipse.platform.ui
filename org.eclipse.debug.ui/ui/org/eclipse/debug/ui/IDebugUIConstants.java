@@ -651,6 +651,27 @@ public interface IDebugUIConstants {
 	 */
 	public static final String BREAKPOINT_GROUP = "breakpointGroup"; //$NON-NLS-1$
 	
+	/**
+	 * Identifier for a selection group in a menu (value <code>"selectGroup"</code>).
+	 * 
+	 * @since 3.1
+	 */
+	public static final String SELECT_GROUP = "selectGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a "breakpoint group" group in a menu (value <code>"breakpointGroupGroup"</code>).
+	 * 
+	 * @since 3.1
+	 */
+	public static final String BREAKPOINT_GROUP_GROUP = "breakpointGroupGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a remove group in a menu (value <code>"removeGroup"</code>).
+	 * 
+	 * @since 3.1
+	 */
+	public static final String REMOVE_GROUP = "removeGroup"; //$NON-NLS-1$
+	
 	/** 
 	 * Identifier for an empty group preceding an
 	 * expression group in a menu (value <code>"emptyExpressionGroup"</code>).
