@@ -48,7 +48,7 @@ public class MessageConsoleStream {
 	 * Appends a line separator string to this stream.
 	 */
 	public void println() {
-		print("\n");
+		print("\n"); //$NON-NLS-1$
 	}	
 	
 	/**
