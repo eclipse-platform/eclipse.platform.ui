@@ -13,7 +13,7 @@ package org.eclipse.ui.console;
 /**
  * Handles notification that a pattern has been matched to the contents in a console.
  */
-public interface IPatternMatchHandler {
+public interface IPatternMatchListener {
     /**
      * Returns the pattern to be used for matching.
      * @return The pattern to be used for matching.
@@ -26,6 +26,6 @@ public interface IPatternMatchHandler {
      * @param offset The offset with the console's document at which the match 
      * was found.
      */
-    public void matchFound(String text, int offset);
+    public void matchFound(PatternMatchEvent event);
     
 }

@@ -12,18 +12,23 @@
 package org.eclipse.ui.console;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
-import org.eclipse.ui.internal.console.IOConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -36,7 +41,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.1
  *
  */
-public class IOConsole extends AbstractConsole {
+public class IOConsole extends AbstractConsole implements IDocumentListener {
     	
 	/**
 	 * Property constant indicating the font of this console has changed. 
@@ -89,15 +94,12 @@ public class IOConsole extends AbstractConsole {
     private int tabWidth = DEFAULT_TAB_SIZE;
     
     /**
-     * Matches text of the console's document to regular expressions.
-     */
-    private IOConsolePatternMatcher patternMatcher;
-    
-    /**
      * The current width of the console. Used for fixed width consoles.
      * A value of <=0 means does not have a fixed width.
      */
     private int consoleWidth = -1;
+    
+    private ArrayList patterns = new ArrayList();
 
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);
@@ -106,7 +108,7 @@ public class IOConsole extends AbstractConsole {
         Document document = new Document();
         document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         partitioner.connect(document);
-        patternMatcher = new IOConsolePatternMatcher(document);
+        document.addDocumentListener(this);
     }
 
 	/**
@@ -267,22 +269,6 @@ public class IOConsole extends AbstractConsole {
     }
 
     /**
-     * Adds a matchHandler to match a pattern to the document's content.
-     * @param matchHandler The IPatternMatchHandler to add.
-     */
-    public void addPatternMatchHandler(IPatternMatchHandler matchHandler) {
-        patternMatcher.addPatternMatchHandler(matchHandler);
-    }
-    
-    /**
-     * Removes an IPatternMatchHandler so that its pattern will no longer get matched to the document.
-     * @param matchHandler The IPatternMatchHandler to remove.
-     */
-    public void removePatternMatchHandler(IPatternMatchHandler matchHandler) {
-        patternMatcher.removePatternMatchHandler(matchHandler);
-    }    
-    
-    /**
      * Adds an IConsoleHyperlink to the document.
      * @param hyperlink The hyperlink to add.
      * @param offset The offset in the document at which the hyperlink should be added.
@@ -308,6 +294,88 @@ public class IOConsole extends AbstractConsole {
             //FIXME: should close output streams? Need to store references.
         } catch (IOException ioe) {
         }
-        patternMatcher.dispose();
+        patterns.clear();
+    }
+    
+    /**
+     * Adds a matchHandler to match a pattern to the document's content.
+     * @param matchHandler The IPatternMatchHandler to add.
+     */
+    public void addPatternMatchHandler(IPatternMatchListener matchHandler) {
+        synchronized(patterns) {
+            if (matchHandler == null || matchHandler.getPattern() == null) {
+                throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
+            }
+            
+            Pattern pattern = Pattern.compile(matchHandler.getPattern());
+            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchHandler);
+            patterns.add(notifier);
+            
+            try {
+                testForMatch(notifier, 0);
+            } catch (BadLocationException e){
+            }
+        }
+    }
+    
+    /**
+     * Removes an IPatternMatchHandler so that its pattern will no longer get matched to the document.
+     * @param matchHandler The IPatternMatchHandler to remove.
+     */
+    public void removePatternMatchHandler(IPatternMatchListener matchHandler) {
+        synchronized(patterns){
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
+                if (element.listener == matchHandler) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+     */
+    public void documentAboutToBeChanged(DocumentEvent event) {
+        
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+     */
+    public void documentChanged(DocumentEvent event) {
+        synchronized(patterns) {
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+                CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
+                try {
+                    testForMatch(pattern, event.fOffset);
+                } catch (BadLocationException e) {
+                }
+            }
+        }
+    }
+    
+    private void testForMatch(CompiledPatternMatchListener compiled, int documentOffset) throws BadLocationException {
+        IDocument document = getDocument();
+        String contents = document.get(documentOffset, document.getLength()-documentOffset);
+        Matcher matcher = compiled.pattern.matcher(contents);
+        IPatternMatchListener notifier = compiled.listener;
+        while(matcher.find()) {
+            String group = matcher.group();
+            if (group.length() > 0) {
+                int matchOffset = documentOffset + matcher.start();
+                notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
+            }
+        }
+    }
+
+    private class CompiledPatternMatchListener {
+        Pattern pattern;
+        IPatternMatchListener listener;
+        
+        CompiledPatternMatchListener(Pattern pattern, IPatternMatchListener matchListener) {
+            this.pattern = pattern;
+            this.listener = matchListener;
+        }
     }
 }
