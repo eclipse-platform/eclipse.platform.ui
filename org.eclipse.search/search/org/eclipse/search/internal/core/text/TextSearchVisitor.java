@@ -97,8 +97,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	 * 
 	 * @return an array of all dirty editor parts.
 	 */
-	private IEditorPart[] getDirtyEditors() {
-		Set inputs= new HashSet(7);
+	public static IEditorPart[] getDirtyEditors() {
+		Set inputs= new HashSet();
 		List result= new ArrayList(0);
 		IWorkbench workbench= SearchPlugin.getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
@@ -108,8 +108,11 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				IEditorPart[] editors= pages[x].getDirtyEditors();
 				for (int z= 0; z < editors.length; z++) {
 					IEditorPart ep= editors[z];
-					if (!result.contains(ep))
-						result.add(ep); 
+					IEditorInput input= ep.getEditorInput();
+					if (!inputs.contains(input)) {
+						inputs.add(input);
+						result.add(ep);
+					}
 				}
 			}
 		}
