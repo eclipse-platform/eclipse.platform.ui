@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.ui.forms"
    name="%name"
-   version="3.0.0"
+   version="3.0.1.1"
    provider-name="%provider-name">
 
    <runtime>
