@@ -25,6 +25,22 @@ import org.eclipse.ui.internal.misc.Assert;
  */
 public abstract class StackPresentation {
 
+	/**
+	 * Inactive state. This is the default state for deselected presentations.
+	 */
+	public static final int AS_INACTIVE = 0;
+	
+	/**
+	 * Activation state indicating that one of the parts in the presentation currently has focus
+	 */
+	public static final int AS_ACTIVE_FOCUS = 1;
+	
+	/**
+	 * Activation state indicating that none of the parts in the presentation have focus, but
+	 * one of the parts is being used as the context for global menus and toolbars
+	 */
+	public static final int AS_ACTIVE_NOFOCUS = 2;
+	
     /**
      * The presentation site.
      */
@@ -72,6 +88,17 @@ public abstract class StackPresentation {
 	public abstract void dispose();
 
 	/**
+	 * This is invoked to notify the presentation that its activation
+	 * state has changed. StackPresentations can have three possible activation
+	 * states (see the AS_* constants above)
+	 * 
+	 * @param isActive one of AS_INACTIVE, AS_ACTIVE, or AS_ACTIVE_NOFOCUS
+	 */
+	public void setActive(int newState) {
+		setActive(newState == AS_ACTIVE_FOCUS);
+	}
+	
+	/**
 	 * This is invoked to notify the presentation that one of its parts
 	 * has gained or lost keyboard focus. It should not change the part's focus.
 	 * Only one presentation may be active at a time.
@@ -83,8 +110,10 @@ public abstract class StackPresentation {
 	 * </p> 
 	 * 
 	 * @param isActive
+	 * @deprecated presentation authors should override setActive(int) instead
 	 */
-	public abstract void setActive(boolean isActive);
+	public void setActive(boolean isActive) {
+	}
 	
 	/**
 	 * This causes the presentation to become visible or invisible. 

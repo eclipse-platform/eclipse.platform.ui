@@ -149,8 +149,7 @@ public class FastViewPane {
 			appendToGroupIfPossible(menuManager, "misc", new SystemMenuFastViewOrientation(currentPane)); //$NON-NLS-1$
 			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
 			appendToGroupIfPossible(menuManager, "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
-		}
-		
+		}		
 	};
 
 	private SystemMenuFastView fastViewAction = new SystemMenuFastView(site);
@@ -356,7 +355,7 @@ public class FastViewPane {
 		site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
 		presentation.addPart(pane.getPresentablePart(), null);
 		presentation.selectPart(pane.getPresentablePart());
-		presentation.setActive(true);
+		presentation.setActive(StackPresentation.AS_ACTIVE_FOCUS);
 		presentation.setVisible(true);
 
 		// Show pane fast.

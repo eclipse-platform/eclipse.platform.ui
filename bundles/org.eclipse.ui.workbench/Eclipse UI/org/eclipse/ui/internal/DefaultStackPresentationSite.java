@@ -122,4 +122,12 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 		
 	}
 
+	public boolean isPartMoveable(IPresentablePart toMove) {
+		return isMoveable(toMove);
+	}
+
+	public boolean isStackMoveable() {
+		return isMoveable(null);
+	}
+	
 }

@@ -52,7 +52,9 @@ public interface IStackPresentationSite {
 	/**
 	 * Begins dragging the given part
 	 * 
-	 * @param beingDragged
+	 * @param beingDragged the part to drag (not null)
+	 * @param initialPosition the mouse position at the time of the initial mousedown 
+	 * (display coordinates, not null)
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
 	 * and false if the drag may be using the keyboard
 	 */
@@ -61,13 +63,15 @@ public interface IStackPresentationSite {
 	/**
 	 * Closes the given part.
 	 * 
-	 * @param toClose the part to close
+	 * @param toClose the part to close (not null)
 	 */
 	public void close(IPresentablePart toClose);
 	
 	/**
 	 * Begins dragging the entire stack of parts
 	 * 
+	 * @param initialLocation the mouse position at the time of the initial mousedown (display coordinates, 
+	 * not null)
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
 	 * and false if the drag may be using the keyboard	 
 	 */
@@ -76,15 +80,33 @@ public interface IStackPresentationSite {
 	/**
 	 * Returns true iff this site will allow the given part to be closed
 	 * 
-	 * @param toClose part to test
+	 * @param toClose part to test (not null)
 	 * @return true iff the part may be closed
 	 */
 	public boolean isCloseable(IPresentablePart toClose);
 	
 	/**
+	 * Returns true iff the given part can be dragged. If this
+	 * returns false, the given part should not trigger a drag.
+	 * 
+	 * @param toMove part to test (not null)
+	 * @return true iff this part is a valid drag source
+	 */
+	public boolean isPartMoveable(IPresentablePart toMove);
+	
+	/**
+	 * Returns true iff this entire stack can be dragged
+	 * 
+	 * @return tre iff the stack can be dragged
+	 */
+	public boolean isStackMoveable();
+	
+	/**
 	 * Returns true iff this site will allow the given part to be moved.
 	 * If the argument is null, this returns whether dragging should
 	 * be enabled for the entire stack
+	 *
+	 * @deprecated use isPartMoveable(...) or isStackMoveable() instead
 	 *
 	 * @param toMove part to test, or null if we're testing the entire stack
 	 * @return true iff the part may be moved

@@ -419,7 +419,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return result;
     }
 
-    private StackPresentation getPresentation() {
+    protected StackPresentation getPresentation() {
         return presentationSite.getPresentation();
     }
     
@@ -627,7 +627,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             }            
         }
 
-        getPresentation().setActive(activeState);
+        getPresentation().setActive(activeState ? StackPresentation.AS_ACTIVE_FOCUS : StackPresentation.AS_INACTIVE);
     }
 
     /**
