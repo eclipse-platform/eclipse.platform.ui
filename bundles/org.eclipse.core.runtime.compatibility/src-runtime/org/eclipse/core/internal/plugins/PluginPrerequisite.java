@@ -16,6 +16,10 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.Version;
 
+
+/**
+ * @deprecated Marking as deprecated to remove the warnings
+ */
 public class PluginPrerequisite implements IPluginPrerequisite {
 	private BundleSpecification prereq = null;
 

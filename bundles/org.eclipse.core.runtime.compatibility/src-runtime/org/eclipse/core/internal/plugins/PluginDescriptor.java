@@ -25,6 +25,10 @@ import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
+
+/**
+ * @deprecated Marking as deprecated to remove the warnings
+ */
 public class PluginDescriptor implements IPluginDescriptor {
 
 	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
