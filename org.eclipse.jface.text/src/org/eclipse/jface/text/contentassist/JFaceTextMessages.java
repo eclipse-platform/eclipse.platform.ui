@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
  */
 class JFaceTextMessages {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.jface.text.JFaceTextMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= JFaceTextMessages.class.getName();
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
