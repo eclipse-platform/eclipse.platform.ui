@@ -25,14 +25,15 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(BlobStoreTest.suite());
+		suite.addTest(BucketTreeTests.suite());
 		suite.addTest(CaseSensitivityTest.suite());
 		suite.addTest(CopyTest.suite());
 		suite.addTest(DeleteTest.suite());
 		suite.addTest(FileSystemResourceManagerTest.suite());
 		suite.addTest(FileSystemStoreTest.suite());
+		suite.addTest(HistoryBucketTest.suite());
 		suite.addTest(HistoryStoreTest.suite());
-		suite.addTest(BucketIndexTest.suite());
-		suite.addTest(HistoryStoreConversionTest.suite());		
+		suite.addTest(HistoryStoreConversionTest.suite());
 		suite.addTest(LocalSyncTest.suite());
 		suite.addTest(MoveTest.suite());
 		suite.addTest(RefreshLocalTest.suite());

@@ -14,16 +14,12 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.core.tests.session.SessionTestSuite;
-import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
-import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 /**
  * This class defines all tests for the HistoryStore Class.
@@ -101,28 +97,7 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		//if (true) return new TestSuite(HistoryStoreTest.class);
-		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
-		SessionTestSuite oldHistoryTestSuite = new WorkspaceSessionTestSuite(PI_RESOURCES_TESTS, HistoryStoreTest.class, "Old History Store test");
-		try {
-			oldHistoryTestSuite.getSetup().setSystemProperty(FileSystemResourceManager.ENABLE_NEW_HISTORY_STORE, Boolean.toString(false));
-		} catch (SetupException e) {
-			log(PI_RESOURCES_TESTS, e);
-			// an empty test should cause an error
-			return new TestSuite(oldHistoryTestSuite.getName());
-		}
-		suite.addTest(oldHistoryTestSuite);
-		//	 adds the tests for the new history store as session tests		
-		SessionTestSuite newHistoryTestSuite = new SessionTestSuite(PI_RESOURCES_TESTS, HistoryStoreTest.class, "New History Store test");
-		try {
-			newHistoryTestSuite.getSetup().setSystemProperty(FileSystemResourceManager.ENABLE_NEW_HISTORY_STORE, Boolean.toString(true));
-		} catch (SetupException e) {
-			log(PI_RESOURCES_TESTS, e);
-			// an empty test should cause an error
-			return new TestSuite(newHistoryTestSuite.getName());
-		}
-		suite.addTest(newHistoryTestSuite);
-		return suite;
+		return new TestSuite(HistoryStoreTest.class);
 	}
 
 	/*

@@ -150,12 +150,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	/**
 	 * Factory method for creating history stores. 
 	 */
-	private static IHistoryStore createHistoryStore(Workspace workspace, IPath location, int limit) {		
-		if (!Boolean.getBoolean(ENABLE_NEW_HISTORY_STORE))
+	private static IHistoryStore createHistoryStore(Workspace workspace, IPath location, int limit) {
+		// the default is to use new implementation
+		if (Boolean.FALSE.toString().equalsIgnoreCase(System.getProperty(ENABLE_NEW_HISTORY_STORE)))
 			// keep using the old history store
 			return new HistoryStore(workspace, location, limit);
 		HistoryStore2 newHistoryStore = new HistoryStore2(workspace, location, limit);
-		if (!Boolean.getBoolean(CONVERT_HISTORY_STORE))
+		// the default is to convert to the new implementation		
+		if (Boolean.FALSE.toString().equalsIgnoreCase(System.getProperty(CONVERT_HISTORY_STORE)))
 			// do not try to convert - return as it is
 			return newHistoryStore;
 		IStatus result = new HistoryStoreConverter().convertHistory(workspace, location, limit, newHistoryStore, true);

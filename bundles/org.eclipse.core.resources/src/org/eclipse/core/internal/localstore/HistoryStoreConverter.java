@@ -32,11 +32,12 @@ public class HistoryStoreConverter {
 		// visit all existing entries and add them to the new history store
 		long start = System.currentTimeMillis();
 		final CoreException[] exception = new CoreException[1];
-		final BucketIndex currentBucket = destination.createBucketTable();
+		final BucketTree tree = destination.getTree();
+		final HistoryBucket currentBucket = (HistoryBucket) tree.getCurrent();
 		HistoryStore source = new HistoryStore(workspace, location, limit);
 		source.accept(Path.ROOT, new IHistoryStoreVisitor() {
 			public boolean visit(HistoryStoreEntry state) {
-				File bucketDir = destination.locationFor(state.getPath().removeLastSegments(1));
+				File bucketDir = tree.locationFor(state.getPath());
 				try {
 					currentBucket.load(bucketDir);
 				} catch (CoreException e) {
@@ -50,7 +51,7 @@ public class HistoryStoreConverter {
 		}, true);
 		try {
 			// the last bucket changed will not have been saved
-			currentBucket.save();
+			tree.close();
 			// we are done using the old history store instance		
 			source.shutdown(null);
 		} catch (CoreException e) {
