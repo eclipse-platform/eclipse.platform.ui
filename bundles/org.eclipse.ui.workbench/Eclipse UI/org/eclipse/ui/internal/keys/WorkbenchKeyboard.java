@@ -140,6 +140,11 @@ public final class WorkbenchKeyboard {
                 .convertEventToUnmodifiedAccelerator(event);
         keyStrokes.add(SWTKeySupport
                 .convertAcceleratorToKeyStroke(firstAccelerator));
+        
+        // We shouldn't allow delete to undergo shift resolution.
+        if (event.character == SWT.DEL) {
+            return keyStrokes;
+        }
 
         final int secondAccelerator = SWTKeySupport
                 .convertEventToUnshiftedModifiedAccelerator(event);
