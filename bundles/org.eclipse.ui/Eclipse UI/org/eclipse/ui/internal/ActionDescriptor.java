@@ -4,11 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 /**
@@ -45,7 +41,6 @@ public class ActionDescriptor {
 	public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
 	public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
 	public static final String ATT_CLASS = "class";//$NON-NLS-1$
-	public static final String ATT_ACCELERATOR = "accelerator";//$NON-NLS-1$
 /**
  * Creates a new descriptor with the specified target.
  */
@@ -69,7 +64,6 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	String hoverIcon = actionElement.getAttribute(ATT_HOVERICON);
 	String disabledIcon = actionElement.getAttribute(ATT_DISABLEDICON);
 	String description = actionElement.getAttribute(ATT_DESCRIPTION);
-	String accelerator = actionElement.getAttribute(ATT_ACCELERATOR);
 
 	// Verify input.
 	if (label == null) {
@@ -133,9 +127,6 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	if (disabledIcon != null) {
 		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), disabledIcon));
 	}
-	
-	if(accelerator != null)
-		processAccelerator(action,accelerator);
 }
 /**
  * Creates an instance of PluginAction. Depending on the target part,
@@ -205,64 +196,5 @@ public String getToolbarPath() {
  */
 public String toString() {
 	return "ActionDescriptor(" + id + ")";//$NON-NLS-2$//$NON-NLS-1$
-}
-
-/**
- * Process the accelerator definition. If it is a number
- * then process the code directly - if not then parse it
- * and create the code
- */
-private void processAccelerator(IAction action, String acceleratorText){
-	
-	if(acceleratorText.length() == 0)
-		return;
-	
-	//Is it a numeric definition?
-	if(Character.isDigit(acceleratorText.charAt(0))){
-		try{
-			action.setAccelerator(Integer.valueOf(acceleratorText).intValue());
-		}
-		catch (NumberFormatException exception){
-			WorkbenchPlugin.log("Invalid accelerator declaration: " + id); //$NON-NLS-1$
-		}
-	}
-	else
-		action.setAccelerator(convertAccelerator(acceleratorText));
-}
-		
-/**
- * Parses the given accelerator text, and converts it to an accelerator key code.
- *
- * @param acceleratorText the accelerator text
- * @result the SWT key code, or 0 if there is no accelerator
- */
-private int convertAccelerator(String acceleratorText) {
-	int accelerator = 0;
-	StringTokenizer stok = new StringTokenizer(acceleratorText, "+");    //$NON-NLS-1$
-
-	int keyCode = -1;
-
-	boolean hasMoreTokens = stok.hasMoreTokens();
-	while (hasMoreTokens) {
-		System.out.println(getClass().getName());
-		String token = stok.nextToken();
-		hasMoreTokens = stok.hasMoreTokens();
-		// Every token except the last must be one of the modifiers
-		// Ctrl, Shift, or Alt.
-		if (hasMoreTokens) {
-			int modifier = Action.findModifier(token);
-			if (modifier != 0) {
-				accelerator |= modifier;
-			} else {//Leave if there are none
-				return 0;
-			}
-		} else {
-			keyCode = Action.findKeyCode(token);
-		}
-	}
-	if (keyCode != -1) {
-		accelerator |= keyCode;
-	}
-	return accelerator;
 }
 }

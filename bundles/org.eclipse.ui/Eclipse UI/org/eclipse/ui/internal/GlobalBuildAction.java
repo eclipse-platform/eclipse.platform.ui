@@ -4,18 +4,21 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * Workbench global action for building all 
@@ -37,7 +40,6 @@ public GlobalBuildAction(IWorkbench aWorkbench, int type) {
 		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.BUILD);
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION});
-		setAccelerator(SWT.CTRL | 'b');
 	}
 	else {
 		setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$

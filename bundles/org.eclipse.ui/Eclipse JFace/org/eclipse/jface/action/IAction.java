@@ -353,14 +353,4 @@ public void setText(String text);
  * @see #TOOL_TIP_TEXT
  */
 public void setToolTipText(String text);
-
-/**
- * Sets the accelerator keycode that this action maps to.
- * This is a bitwise OR of zero or more SWT key modifier masks
- * (i.e. SWT.CTRL or SWT.ALT) and a character code.
- * For example, for Ctrl+Z, use <code>SWT.CTRL | 'Z'</code>.
- * 
- * @param int the keycode to be accepted.
- */
-public void setAccelerator(int keycode);
 }

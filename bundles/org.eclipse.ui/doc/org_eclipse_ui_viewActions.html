@@ -71,8 +71,6 @@ into which actions can be added.</li>
 NMTOKEN #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; accelerator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; menubarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; toolbarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -101,14 +99,6 @@ on the context. In menus, it is used as the menu text. In toolbars, it
 is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
 
-<li>
-<b>accelerator</b> - an integer or String that is used to specify the keycode of the
-accelerator for the action.  The integer value is the value resulting from
-a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) 
-and a character code.  For example, for Ctrl+Z use <code>SWT.CTRL | 'Z' = (1<<18)|'Z' = 262234</code>.
-The string value is a combination of keys seperated by a +. For example Ctrl+Z is
-specified directly as Ctrl+Z. 
-</li>
 <li>
 <b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
 the location of the action in the pulldown menu. Each token in the path,

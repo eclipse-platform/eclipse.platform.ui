@@ -4,11 +4,9 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Action to select all bookmarks.

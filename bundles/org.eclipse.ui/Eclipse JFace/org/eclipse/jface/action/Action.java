@@ -537,7 +537,7 @@ public void setText(String text) {
 			int newAccelerator = convertAccelerator(acceleratorText);
 			//Be sure to not wipe out the accelerator if nothing found
 			if(newAccelerator > 0)
-				setAccelerator(newAccelerator);
+				this.accelerator = newAccelerator;
 		}
 	}
 	if (this.accelerator != oldAccel 
@@ -565,11 +565,4 @@ public void setToolTipText(String text) {
 		firePropertyChange(TOOL_TIP_TEXT, oldToolTipText, toolTipText);
 	}
 }
-/*
- * @see IAction#setAccelerator(int)
- */
-public void setAccelerator(int keycode) {
-	this.accelerator = keycode;
-}
-
 }

@@ -10,7 +10,6 @@ import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.NewWizardAction;
@@ -225,14 +224,8 @@ private void createMenuBar() {
 	popup.add(editActionSetAction = new EditActionSetsAction(window));
 	popup.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
 	popup.add(new Separator());
-	NextPageAction previousAction = 
-		new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window);//$NON-NLS-1$
-	popup.add(previousAction); 
-	previousAction.setAccelerator(SWT.ALT | SWT.ARROW_UP);
-	NextPageAction nextAction = 
-		new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window);//$NON-NLS-1$
-			nextAction.setAccelerator(SWT.ALT | SWT.ARROW_DOWN);
-	popup.add(nextAction); 
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window)); //$NON-NLS-1$
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window)); //$NON-NLS-1$
 	popup.add(new Separator());
 	popup.add(closePageAction = new ClosePageAction(window));
 	popup.add(closeAllPagesAction = new CloseAllPagesAction(window));
@@ -396,7 +389,6 @@ private void makeActions() {
 	undoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT));
 	undoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER));
 	undoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED));
-	undoAction.setAccelerator(SWT.CTRL | 'z');
 	partService.addPartListener(undoAction);
 
 	redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
@@ -404,7 +396,6 @@ private void makeActions() {
 	redoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT));
 	redoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER));
 	redoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED));
-	redoAction.setAccelerator(SWT.CTRL | 'y');
 	partService.addPartListener(redoAction);
 
 	cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, WorkbenchMessages.getString("Workbench.cut")); //$NON-NLS-1$
@@ -412,7 +403,6 @@ private void makeActions() {
 	cutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT));
 	cutAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER));
 	cutAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
-	cutAction.setAccelerator(SWT.CTRL | 'x');
 	partService.addPartListener(cutAction);
 
 	copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$
@@ -420,7 +410,6 @@ private void makeActions() {
 	copyAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT));
 	copyAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER));
 	copyAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
-	copyAction.setAccelerator(SWT.CTRL | 'c');
 	partService.addPartListener(copyAction);
 
 	pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$
@@ -428,7 +417,6 @@ private void makeActions() {
 	pasteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT));
 	pasteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER));
 	pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
-	pasteAction.setAccelerator(SWT.CTRL | 'v');
 	partService.addPartListener(pasteAction);
 
 	printAction = new RetargetAction(IWorkbenchActionConstants.PRINT,WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
@@ -436,12 +424,10 @@ private void makeActions() {
 	printAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
 	printAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
 	printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
-	printAction.setAccelerator(SWT.CTRL | 'p');
 	partService.addPartListener(printAction);
 	
 	selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
 	selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
-	selectAllAction.setAccelerator(SWT.CTRL |'a');
 	partService.addPartListener(selectAllAction);
 
 	findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
@@ -449,7 +435,6 @@ private void makeActions() {
 	findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 	findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 	findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
-	findAction.setAccelerator(SWT.CONTROL |'f');
 	partService.addPartListener(findAction);
 	
 	closeAction = new CloseEditorAction(window);

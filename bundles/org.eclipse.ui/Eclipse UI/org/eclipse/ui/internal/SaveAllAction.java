@@ -4,12 +4,15 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-
-import org.eclipse.swt.SWT;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.internal.IHelpContextIds;
+import java.util.*;
 
 /**
  * Global action that saves all targets in the
@@ -37,7 +40,6 @@ public SaveAllAction(WorkbenchWindow window) {
 	setText(WorkbenchMessages.getString("SaveAll.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
-	setAccelerator(SWT.CTRL | SWT.SHIFT |'s');
 	setEnabled(false);
 	this.window = window;
 	window.addPageListener(this);
