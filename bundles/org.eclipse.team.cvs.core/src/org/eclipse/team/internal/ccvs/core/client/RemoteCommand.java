@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
@@ -52,9 +53,21 @@ public abstract class RemoteCommand extends Command {
 			// Convert arguments
 			List stringArguments = new ArrayList(arguments.length);
 			for (int i = 0; i < arguments.length; i++) {
-				stringArguments.add(arguments[i].getRepositoryRelativePath());
+			    ICVSResource resource = arguments[i];
+			    String remotePath;
+                if (isDefinedModule(resource)) {
+			        remotePath = resource.getName();
+			    } else {
+			        remotePath = resource.getRepositoryRelativePath();
+                    
+			    }
+                stringArguments.add(remotePath);
 			}
 			return (String[]) stringArguments.toArray(new String[stringArguments.size()]);
 	}
+
+    private boolean isDefinedModule(ICVSResource resource) {
+        return resource instanceof ICVSRemoteFolder && ((ICVSRemoteFolder)resource).isDefinedModule();
+    }
 
 }
