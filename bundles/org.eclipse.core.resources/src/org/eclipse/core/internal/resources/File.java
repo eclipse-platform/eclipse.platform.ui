@@ -217,7 +217,19 @@ public class File extends Resource implements IFile {
 			return charset;
 		// tries to obtain a description for the file contents
 		IContentDescription description = getContentDescription();
-		return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
+		if (description == null)
+			return getParent().getDefaultCharset();
+		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		if (bom != null)
+			if (bom == IContentDescription.BOM_UTF_8)
+				return "UTF-8"; //$NON-NLS-1$
+			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
+				// UTF-16 will properly recognize the BOM
+				return "UTF-16"; //$NON-NLS-1$
+			else
+				// unknown BOM... ignore it				
+				;
+		return description.getProperty(IContentDescription.CHARSET) == null ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
 	}
 
 	public IContentDescription getContentDescription() throws CoreException {

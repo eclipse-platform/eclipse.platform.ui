@@ -437,7 +437,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @return the name of a charset
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> This resource does not exist.</li>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> The workspace is not in sync with the corresponding location
@@ -478,7 +477,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @return the name of a charset, or <code>null</code>
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> This resource does not exist.</li>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> The workspace is not in sync with the corresponding location
