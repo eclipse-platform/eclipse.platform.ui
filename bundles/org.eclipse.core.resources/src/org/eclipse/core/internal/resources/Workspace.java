@@ -1000,7 +1000,6 @@ public IProject[] getBuildOrder() {
 		List projectList = new ArrayList(order.length);
 		for (int i = 0; i < order.length; i++) {
 			IProject project = getRoot().getProject(order[i]);
-			//FIXME should non-accessible projects be removed?
 			if (project.isAccessible()) {
 				projectList.add(project);
 			}
