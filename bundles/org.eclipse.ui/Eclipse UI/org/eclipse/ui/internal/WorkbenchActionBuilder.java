@@ -46,8 +46,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private SavePerspectiveAction savePerspectiveAction;
 	private ResetPerspectiveAction resetPerspectiveAction;
 	private EditActionSetsAction editActionSetAction;
-	private ClosePageAction closePageAction;
-	private CloseAllPagesAction closeAllPagesAction;
+	private ClosePerspectiveAction closePerpsAction;
+	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
 	private ShowPartPaneMenuAction showPartPaneMenuAction;
@@ -137,8 +137,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				savePerspectiveAction.setEnabled(value);
 				resetPerspectiveAction.setEnabled(value);
 				editActionSetAction.setEnabled(value);
-				closePageAction.setEnabled(value);
-				closeAllPagesAction.setEnabled(value);
+				closePerpsAction.setEnabled(value);
+				closeAllPerspsAction.setEnabled(value);
 				newWizardMenu.setEnabled(value);
 				newWizardDropDownAction.setEnabled(value);
 			}
@@ -251,8 +251,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(editActionSetAction = new EditActionSetsAction(window));
 		menu.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
 		menu.add(new Separator());
-		menu.add(closePageAction = new ClosePageAction(window));
-		menu.add(closeAllPagesAction = new CloseAllPagesAction(window));
+		menu.add(closePerpsAction = new ClosePerspectiveAction(window));
+		menu.add(closeAllPerspsAction = new CloseAllPerspectivesAction(window));
 		menu.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator());
