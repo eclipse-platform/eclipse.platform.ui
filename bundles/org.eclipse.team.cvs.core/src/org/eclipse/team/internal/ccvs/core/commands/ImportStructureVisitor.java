@@ -132,7 +132,7 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 			return;
 		}
 		
-		sendFolder(mFolder,true);
+		sendFolder(mFolder,true,false);
 		mFolder.acceptChildren(this);
 		
 	}

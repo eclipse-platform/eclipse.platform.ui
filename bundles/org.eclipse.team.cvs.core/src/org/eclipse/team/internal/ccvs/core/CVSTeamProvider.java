@@ -43,6 +43,9 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
+import org.eclipse.team.internal.ccvs.core.response.custom.DiffErrorHandler;
+import org.eclipse.team.internal.ccvs.core.response.custom.DiffMessageHandler;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 
 /**
@@ -584,7 +587,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * Diff the resources against the repository
 	 */
 	public void diff(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-			
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, depth, progress);
 		
@@ -599,7 +601,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		try {
 			Client.execute(
 				Client.DIFF,
-				new String[] {"-Q"},
+				DEFAULT_GLOBAL_OPTIONS,
 				(String[])localOptions.toArray(new String[localOptions.size()]),
 				arguments,
 				managedProject,
@@ -610,6 +612,47 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 	
+	/** 
+	 * Diff the resources against the repository and write the
+	 * output to the provided PrintStream in a form that is usable
+	 * as a patch
+	 */
+	public void diff(IResource[] resources, int depth, PrintStream stream, IProgressMonitor progress) throws TeamException {
+			
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, depth, progress);	
+		
+		// Build the local options
+		List localOptions = new ArrayList();
+		// Perform a context diff
+		localOptions.add("-N"); // include diffs for added and removed files
+		localOptions.add("-u"); // use unified output format
+		// If the depth is not infinite, we want the -l option
+		if (depth != IResource.DEPTH_INFINITE)
+			localOptions.add(Client.LOCAL_OPTION);
+			
+		final List errors = new ArrayList();	
+		try {
+			Client.execute(
+				Client.DIFF,
+				Client.EMPTY_ARGS_LIST,
+				(String[])localOptions.toArray(new String[localOptions.size()]),
+				arguments,
+				managedProject,
+				progress,
+				stream,
+				new IResponseHandler[] {new DiffMessageHandler(), new DiffErrorHandler(errors)});
+		} catch(CVSDiffException e) {
+			// Ignore this for now
+		} catch (CVSException e) {
+			if (!errors.isEmpty()) {
+				PrintStream out = getPrintStream();
+				for (int i=0;i<errors.size();i++)
+					out.println(errors.get(i));
+			}
+			throw e;
+		}
+	}
 	/**
 	 * Temporary method to allow fixing a resources types
 	 */
@@ -786,6 +829,18 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			return System.out;
 		else
 			return printStream;
+	}
+	
+	/** 
+	 * Get the remote resource corresponding to the base of the local resource
+	 */
+	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
+		checkIsChild(resource);
+		IManagedResource managed = getChild(resource);
+		if (managed.isFolder()) {
+		} else {
+		}
+		return null;
 	}
 	
 	/** 

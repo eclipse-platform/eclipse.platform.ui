@@ -59,6 +59,12 @@
 			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
 			objectClass="org.eclipse.core.resources.IResource"> 
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.GenerateDiff"
+				label="%GenerateDiff.label"
+				tooltip="%GenerateDiff.tooltip"
+				menubarPath="team.main/advancedGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.add"
 				label="%AddAction.label"

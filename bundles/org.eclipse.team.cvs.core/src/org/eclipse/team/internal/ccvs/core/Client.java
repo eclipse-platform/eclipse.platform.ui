@@ -114,6 +114,24 @@ public class Client {
 						IProgressMonitor monitor, 
 						PrintStream messageOut) 
 						throws CVSException {
+		execute(request, globalOptions, localOptions, arguments, mRoot, monitor, messageOut, new IResponseHandler[0]);
+	}
+							
+	/**
+	 * Executes the given request.
+	 * 
+	 * create a new Connection to the server, either from an "-d" global option
+	 * or from the Root-Properie of the root-folder.
+	 */
+	public static void execute(String request, 
+						String[] globalOptions, 
+						String[] localOptions, 
+						String[] arguments,
+						IManagedFolder mRoot,
+						IProgressMonitor monitor, 
+						PrintStream messageOut,
+						IResponseHandler[] customHandlers) 
+						throws CVSException {
 		
 		CVSRepositoryLocation repository;
 		Connection connection;
@@ -134,7 +152,8 @@ public class Client {
 				mRoot,
 				monitor,
 				messageOut,
-				connection);
+				connection,
+				customHandlers);
 		} finally {
 			connection.close();
 		}

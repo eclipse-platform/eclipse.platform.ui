@@ -72,16 +72,42 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public void visitFolder(IManagedFolder mFolder) throws CVSException {
 		
+		IManagedFile[] files;
+		IManagedFolder[] folders;
+		
 		if (emptyFolders) {
 			// If we want to send empty folder, that just send it when
 			// we come to it
 			sendFolder(mFolder);
 		}
 		
-		if (mFolder.exists()) {
-			mFolder.acceptChildren(this);
+		if (!mFolder.isCVSFolder() || !mFolder.exists()) {
+			return;
 		}
 		
+		// We have to do a manual visit to ensure that the questionable
+		// folders are send before the normal
+		
+		files = mFolder.getFiles();
+		
+		for (int i = 0; i < files.length; i++) {
+			files[i].accept(this);
+		}
+		
+		folders = mFolder.getFolders();
+
+		for (int i = 0; i < folders.length; i++) {
+			if (!folders[i].isCVSFolder()) {
+				folders[i].accept(this);
+				folders[i] = null;
+			}
+		}
+
+		for (int i = 0; i < folders.length; i++) {
+			if (folders[i] != null) {
+				folders[i].accept(this);
+			}
+		}
 	}
 	
 	private void sendFile(IManagedFile mFile) throws CVSException {
@@ -97,7 +123,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	}
 	
 	private void sendFolder(IManagedFolder mFolder) throws CVSException{
-		sendFolder(mFolder,false);
+		sendFolder(mFolder,false,true);
 	}
 }
 

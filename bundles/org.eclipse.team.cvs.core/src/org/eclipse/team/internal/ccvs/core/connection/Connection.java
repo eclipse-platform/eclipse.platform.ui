@@ -34,8 +34,8 @@ import org.eclipse.team.ccvs.core.*;
  */
 public class Connection {
 	
-	private static final boolean DEBUG= System.getProperty("cvsclient.debug")!=null;
-	// private static final boolean DEBUG=true;
+	//private static final boolean DEBUG= System.getProperty("cvsclient.debug")!=null;
+	private static final boolean DEBUG=true;
 	
 	public static final byte NEWLINE= 0xA;
 	

@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * All Rights Reserved.
  */
 
-import java.io.FileDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
@@ -13,6 +12,7 @@ import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * An IManagedVisitor that is superclass to all IManagedVisitor's used
@@ -41,7 +41,8 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 	 * Send the folder relative to the root to the server
 	 */
 	void sendFolder(IManagedFolder mFolder, 
-					boolean contructFolder) 
+					boolean constructFolder,
+					boolean sendQuestionable)
 					throws CVSException{
 
 		String local;
@@ -54,9 +55,22 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 
 		local = mFolder.getRelativePath(mRoot);
 		
-		if (contructFolder  && mFolder.exists()) {
+		if (constructFolder  && mFolder.exists()) {
 			requestSender.sendConstructedDirectory(local,local);
 			lastFolderSend = mFolder;
+			return;
+		}
+		
+		if (sendQuestionable && !mFolder.isCVSFolder()) {
+			// This implies, that the mFolder exists
+			
+			// If we have not send the parent-folder of this 
+			// folder we have to send the parent-folder to have
+			// this questianable below this parent-folder
+			Assert.isTrue(mFolder.getParent().isCVSFolder());
+			sendFolder(mFolder.getParent(),constructFolder,sendQuestionable);
+			
+			requestSender.sendQuestionable(mFolder.getName());
 			return;
 		}
 		

@@ -30,7 +30,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder {
 	/**
 	 * Constructor for RemoteFolder.
 	 */
-	protected RemoteFolder(RemoteFolder parent, String name, String tag) {
+	public RemoteFolder(RemoteFolder parent, String name, String tag) {
 		super(parent, name, tag);
 	}
 

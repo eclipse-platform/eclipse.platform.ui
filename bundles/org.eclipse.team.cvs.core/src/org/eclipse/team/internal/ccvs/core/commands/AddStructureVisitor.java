@@ -84,7 +84,7 @@ public class AddStructureVisitor extends AbstractStructureVisitor {
 		if (forceSend || !alreadyVisited) {
 			visitedFolders.add(mFolder);
 			lastVisitedFolder = mFolder;
-			sendFolder(mFolder,false);
+			sendFolder(mFolder,false,false);
 		}
 	}
 
