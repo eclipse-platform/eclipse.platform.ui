@@ -72,10 +72,12 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		storeAppliedValues();
 
 		Font font= getFieldEditorParent().getFont();
-		Label label= new Label(getFieldEditorParent(), SWT.NONE);
+		Label label= new Label(getFieldEditorParent(), SWT.WRAP);
 		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Enter")); //$NON-NLS-1$
-		GridData gd= new GridData();
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
+		gd.widthHint= convertWidthInCharsToPixels(60);
+		label.setLayoutData(gd);
 		label.setLayoutData(gd);
 		label.setFont(font);
 		
@@ -86,8 +88,16 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	
 		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
-			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent());  //$NON-NLS-1$
+		    label= new Label(getFieldEditorParent(), SWT.WRAP);
+			label.setText(AntPreferencesMessages.getString("AntPreferencePage.0")); //$NON-NLS-1$
+			gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			gd.horizontalSpan= 2;
+			gd.widthHint= convertWidthInCharsToPixels(60);
+			label.setLayoutData(gd);
+			label.setFont(font);
+			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.1"), getFieldEditorParent()); //$NON-NLS-1$
 			addField(toolsWarningEditor);
+			new Label(getFieldEditorParent(), SWT.NONE);
 		}
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
