@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.core.runtime"
-   name="%pluginName"
-   version="3.0.0"
-   provider-name="%providerName"
-   class="org.eclipse.core.internal.runtime.PlatformActivator">
-
-   <runtime>
-      <library name="runtime.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.osgi" export="true"/>
-      <import plugin="org.eclipse.osgi.services" export="true"/>
-   </requires>
-
+<plugin>
    <extension-point id="applications" name="%applicationsName" schema="schema/applications.mxsd"/>
    <extension-point id="products" name="%productsName" schema="schema/products.exsd"/>
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
