@@ -14,6 +14,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Common superclass for all runtime tests.
@@ -81,6 +83,22 @@ public abstract class RuntimeTest extends TestCase {
 
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
+	}
+
+	public static void runPerformanceTest(TestCase testCase, Runnable operation, int iterations) {
+		Performance perf = Performance.getDefault();
+		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
+		try {
+			for (int i = 0; i < iterations; i++) {
+				meter.start();
+				operation.run();
+				meter.stop();
+			}
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 }

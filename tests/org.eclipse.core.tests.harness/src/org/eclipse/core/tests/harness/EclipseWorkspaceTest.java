@@ -15,6 +15,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Tests that use the Eclipse Platform workspace.
@@ -987,6 +989,22 @@ public class EclipseWorkspaceTest extends TestCase {
 
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	}
+
+	public static void runPerformanceTest(TestCase testCase, Runnable operation, int iterations) {
+		Performance perf = Performance.getDefault();
+		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
+		try {
+			for (int i = 0; i < iterations; i++) {
+				meter.start();
+				operation.run();
+				meter.stop();
+			}
+			meter.commit();
+			perf.assertPerformance(meter);
+		} finally {
+			meter.dispose();
+		}
 	}
 
 }
