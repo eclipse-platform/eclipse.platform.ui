@@ -33,7 +33,7 @@ import java.util.Comparator;
  * @see IStructuredContentProvider
  * @see StructuredViewer
  */
-public abstract class ViewerSorter {
+public class ViewerSorter {
 	/**
 	 * The collator used to sort strings.
 	 */
@@ -42,7 +42,7 @@ public abstract class ViewerSorter {
  * Creates a new viewer sorter, which uses the default collator
  * to sort strings.
  */
-protected ViewerSorter() {
+public ViewerSorter() {
 	this(Collator.getInstance());
 }
 /**
@@ -51,7 +51,7 @@ protected ViewerSorter() {
  *
  * @param collator the collator to use to sort strings
  */
-protected ViewerSorter(Collator collator) {
+public ViewerSorter(Collator collator) {
 	this.collator = collator;
 }
 /**

@@ -85,8 +85,7 @@ public class ProjectReferencePage extends PropertyPage {
 
 		listViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 		listViewer.setContentProvider(getContentProvider(project));
-		listViewer.setSorter(new ViewerSorter() {
-		});
+		listViewer.setSorter(new ViewerSorter());
 		listViewer.setInput(project.getWorkspace());
 		try {
 			listViewer.setCheckedElements(project.getReferencedProjects());

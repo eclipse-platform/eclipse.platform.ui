@@ -89,7 +89,7 @@ protected Control createDialogArea(Composite parent) {
 	list.getTable().setFont(parent.getFont());
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
-	list.setSorter(new ViewerSorter() {});
+	list.setSorter(new ViewerSorter());
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
 	list.addDoubleClickListener(new IDoubleClickListener() {
