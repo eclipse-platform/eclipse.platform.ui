@@ -21,6 +21,30 @@ function resynchNav(button)
 		document.getElementById(button).blur();
 	}
 }
+
 function toggleShowAll(button){
 	window.parent.parent.toggleShowAll();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
+function removeBookmark(button){
+	try {
+		parent.bookmarksViewFrame.removeBookmark();
+	} catch(e){
+	}
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
+function removeAllBookmarks(button){
+	try {
+		parent.bookmarksViewFrame.removeAllBookmarks();
+	} catch(e){
+	}
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
 }
