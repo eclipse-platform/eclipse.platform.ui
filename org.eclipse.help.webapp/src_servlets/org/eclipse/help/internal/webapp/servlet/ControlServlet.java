@@ -23,67 +23,74 @@ import org.osgi.framework.*;
 
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
- * Accepts the following paramters: command=displayHelp | shutdown href - may be
- * provided if comand==displayHelp
+ * Accepts the following parameters: command=displayHelp | shutdown
+ * | install | update | enable | disable | uninstall | search | listFeatures
+ * | addSite | removeSite | apply.  
+ * href - may be provided if comand==displayHelp.
+ * featureId, version, from, to, verifyOnly may be provided for update commands
  */
 public class ControlServlet extends HttpServlet {
-	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core";
+	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core"; //$NON-NLS-1$
 
-	public static final String CMD_INSTALL = "install";
+	public static final String CMD_DISPLAYHELP = "displayHelp"; //$NON-NLS-1$
 
-	public static final String CMD_UPDATE = "update";
+	public static final String CMD_SHUTDOWN = "shutdown"; //$NON-NLS-1$
 
-	public static final String CMD_ENABLE = "enable";
+	public static final String CMD_INSTALL = "install"; //$NON-NLS-1$
 
-	public static final String CMD_DISABLE = "disable";
+	public static final String CMD_UPDATE = "update"; //$NON-NLS-1$
 
-	public static final String CMD_UNINSTALL = "uninstall";
+	public static final String CMD_ENABLE = "enable"; //$NON-NLS-1$
 
-	public static final String CMD_SEARCH = "search";
+	public static final String CMD_DISABLE = "disable"; //$NON-NLS-1$
 
-	public static final String CMD_LIST = "listFeatures";
+	public static final String CMD_UNINSTALL = "uninstall"; //$NON-NLS-1$
 
-	public static final String CMD_ADDSITE = "addSite";
+	public static final String CMD_SEARCH = "search"; //$NON-NLS-1$
 
-	public static final String CMD_APPLY = "apply";
+	public static final String CMD_LIST = "listFeatures"; //$NON-NLS-1$
 
-	public static final String CMD_REMOVESITE = "removeSite";
+	public static final String CMD_ADDSITE = "addSite"; //$NON-NLS-1$
 
-	public static final String PACKAGE_PREFIX = "org.eclipse.update.standalone.";
+	public static final String CMD_APPLY = "apply"; //$NON-NLS-1$
+
+	public static final String CMD_REMOVESITE = "removeSite"; //$NON-NLS-1$
+
+	public static final String PACKAGE_PREFIX = "org.eclipse.update.standalone."; //$NON-NLS-1$
 
 	public static final String CLASS_INSTALL = PACKAGE_PREFIX
-			+ "InstallCommand";
+			+ "InstallCommand"; //$NON-NLS-1$
 
-	public static final String CLASS_UPDATE = PACKAGE_PREFIX + "UpdateCommand";
+	public static final String CLASS_UPDATE = PACKAGE_PREFIX + "UpdateCommand"; //$NON-NLS-1$
 
-	public static final String CLASS_ENABLE = PACKAGE_PREFIX + "EnableCommand";
+	public static final String CLASS_ENABLE = PACKAGE_PREFIX + "EnableCommand"; //$NON-NLS-1$
 
 	public static final String CLASS_DISABLE = PACKAGE_PREFIX
-			+ "DisableCommand";
+			+ "DisableCommand"; //$NON-NLS-1$
 
 	public static final String CLASS_UNINSTALL = PACKAGE_PREFIX
-			+ "UninstallCommand";
+			+ "UninstallCommand"; //$NON-NLS-1$
 
-	public static final String CLASS_SEARCH = PACKAGE_PREFIX + "SearchCommand";
+	public static final String CLASS_SEARCH = PACKAGE_PREFIX + "SearchCommand"; //$NON-NLS-1$
 
 	public static final String CLASS_LIST = PACKAGE_PREFIX
-			+ "ListFeaturesCommand";
+			+ "ListFeaturesCommand"; //$NON-NLS-1$
 
 	public static final String CLASS_ADDSITE = PACKAGE_PREFIX
-			+ "AddSiteCommand";
+			+ "AddSiteCommand"; //$NON-NLS-1$
 
 	public static final String CLASS_REMOVESITE = PACKAGE_PREFIX
-			+ "RemoveSiteCommand";
+			+ "RemoveSiteCommand"; //$NON-NLS-1$
 
-	public static final String PARAM_FEATUREID = "featureId";
+	public static final String PARAM_FEATUREID = "featureId"; //$NON-NLS-1$
 
-	public static final String PARAM_VERSION = "version";
+	public static final String PARAM_VERSION = "version"; //$NON-NLS-1$
 
-	public static final String PARAM_FROM = "from";
+	public static final String PARAM_FROM = "from"; //$NON-NLS-1$
 
-	public static final String PARAM_TO = "to";
+	public static final String PARAM_TO = "to"; //$NON-NLS-1$
 
-	public static final String PARAM_VERIFYONLY = "verifyOnly";
+	public static final String PARAM_VERIFYONLY = "verifyOnly"; //$NON-NLS-1$
 
 	private HelpDisplay helpDisplay = null;
 
@@ -152,9 +159,9 @@ public class ControlServlet extends HttpServlet {
 			return;
 		}
 
-		if ("shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
+		if (CMD_SHUTDOWN.equalsIgnoreCase(command)) {
 			shutdown();
-		} else if ("displayHelp".equalsIgnoreCase(command)) { //$NON-NLS-1$
+		} else if (CMD_DISPLAYHELP.equalsIgnoreCase(command)) {
 			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 				displayHelp(req);
 			}
@@ -198,23 +205,27 @@ public class ControlServlet extends HttpServlet {
 						+ command);
 				return;
 			}
-			Method run = c.getMethod("run", new Class[]{});
-			Method apply = c.getMethod("applyChangesNow", new Class[]{});
+			Method m;
+			if (!CMD_APPLY.equalsIgnoreCase(command)) {
+				m = c.getMethod("run", new Class[]{}); //$NON-NLS-1$
+			} else {
+				m = c.getMethod("applyChangesNow", new Class[]{}); //$NON-NLS-1$
+			}
 			Object[] initargs = getInitArgs(className, req);
 			Object o = constr.newInstance(initargs);
-			if (CMD_APPLY.equalsIgnoreCase(command)) {
-				apply.invoke(o, new Object[]{});
+			Object ret = m.invoke(o, new Object[]{});
+			if (!CMD_APPLY.equalsIgnoreCase(command) &&((Boolean)ret).equals(Boolean.FALSE)){
+				System.out.println("Command not executed.");
 			} else {
-				run.invoke(o, new Object[]{});
+				System.out.println("Command executed.");
 			}
-			System.out.println(command + " done.");
 		} catch (Exception e) {
 			Throwable t = e;
 			if (e instanceof InvocationTargetException) {
 				t = ((InvocationTargetException) e).getTargetException();
 			}
 			System.out.println(t.getLocalizedMessage());
-			t.printStackTrace();
+			//t.printStackTrace();
 		}
 	}
 

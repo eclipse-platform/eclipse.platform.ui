@@ -90,7 +90,7 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out
-				.println("-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
+				.println("-command start | shutdown | [update command [update parameters]] [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("where:");
 		System.out
@@ -102,7 +102,11 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out
 				.println(" noexec option indicates that Eclipse executable should not be used, ");
 		System.out
-				.println(" platform options are other options that are supported by Eclipse Executable.");
+				.println(" platform options are other options that are supported by Eclipse Executable,");
+		System.out
+				.println(" update command is one of install, update, enable, disable, uninstall, search, listFeatures, addSite, removeSite, or apply,");
+		System.out
+				.println(" update parameters are -featureId, -version, -from, -to, -verifyOnly as required by update commands used.");
 	}
 
 }
