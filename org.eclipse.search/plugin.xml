@@ -32,7 +32,7 @@
 
 <!-- Extensions -->
 
-<extension id="searchmarker" point="org.eclipse.core.resources.markers" name="%searchMarker">
+<extension point="org.eclipse.core.resources.markers" id="searchmarker" name="%searchMarker">
 	<super type="org.eclipse.core.resources.textmarker"/>
 	<attribute name="line"/>
 	<attribute name="potentialMatch"/>
@@ -49,16 +49,8 @@
 
 
 <extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition
-		id="org.eclipse.search.ui.openSearchDialog"
-		name= "%ActionDefinition.openSearchDialog.name"
-		description="%ActionDefinition.openSearchDialog.description"
-	/>
-	<actionDefinition
-		id="org.eclipse.search.ui.openFileSearchPage"
-		name= "%ActionDefinition.openFileSearchPage.name"
-		description="%ActionDefinition.openFileSearchPage.description"
-	/>
+	<actionDefinition id="org.eclipse.search.ui.openSearchDialog"/>
+	<actionDefinition id="org.eclipse.search.ui.openFileSearchPage"/>
 </extension>
 
 <extension point="org.eclipse.ui.acceleratorSets">
