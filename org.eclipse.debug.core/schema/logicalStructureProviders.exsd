@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="logicalStructureProviders" name="%logicalStructureProvidersExtensionPointName"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="logicalStructureProviders" name="Logical Structure Providers"/>
       </appInfo>
       <documentation>
          This extension point allows contributors to provide multiple logical structure types for a value.

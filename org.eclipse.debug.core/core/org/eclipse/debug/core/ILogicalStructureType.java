@@ -44,18 +44,16 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * </ul>
  * </p>
  * <p>
- * 
- * TODO: review the doc for the new provider extension point
- * 
- * 
- * Clients are not intended to implement this interface. Instead clients
- * providing logical strucutre types provide and implement an
- * <code>ILogicalStructureTypeDelegate</code>. Clients may optionally implement
- * <code>ILogicalStructureTypeDelegate2</code> to provide dynamic descriptions
- * of logical structures.
+ * Clients contributing logicalStructureType extensions are not intended to implement
+ * this interface. Rather, they provide an <code>ILogicalStructureTypeDelegate</code>
+ * that optionally implements <code>ILogicalStructureTypeDelegate2</code> to provide
+ * dynamic descriptions of logical structures.
+ * Since 3.1, clients contributing logicalStructureProviders extensions may implement this
+ * interface to return a collection of logical structure types applicable to a value.
  * </p>
  * @since 3.0
  * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate
+ * @see org.eclipse.debug.core.ILogicalStructureProvider
  */
 public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
 	
