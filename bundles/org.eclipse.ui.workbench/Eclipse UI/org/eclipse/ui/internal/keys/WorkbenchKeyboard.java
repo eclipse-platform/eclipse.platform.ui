@@ -672,8 +672,12 @@ public final class WorkbenchKeyboard {
         String message = Util.translateString(RESOURCE_BUNDLE,
                 "ExecutionError.Message"); //$NON-NLS-1$
         String title = Util.translateString(RESOURCE_BUNDLE, "ExecutionError.Title"); //$NON-NLS-1$
+        String exceptionMessage = exception.getMessage();
+        if (exceptionMessage == null) {
+            exceptionMessage = message;
+        }
         IStatus status = new Status(IStatus.ERROR,
-                WorkbenchPlugin.PI_WORKBENCH, 0, exception.getMessage(), exception);
+                WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
         ErrorDialog.openError(workbench.getActiveWorkbenchWindow().getShell(),
                 title, message, status);
         WorkbenchPlugin.log(message, status);
