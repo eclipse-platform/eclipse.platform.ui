@@ -56,12 +56,16 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
-		if (dialog.getReturnCode() == IDialogConstants.YES_ID) { 
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
+		int buttonId = dialog.getReturnCode();
+		if (buttonId == IDialogConstants.YES_ID) { 
 			relaunchInDebugMode(configuration);
-			return new Boolean(true);
+			return new Boolean(true); // stops launch
+		} else if (buttonId == IDialogConstants.NO_ID) {
+			return new Boolean(false); // continue launch
+		} else { //CANCEL 
+			return new Boolean(true); // stops the launch
 		}
-		return new Boolean(false);
 	}
 	/**
 	 * @param configuration
