@@ -79,6 +79,7 @@ public class ReentrantLock {
 				boolean success = false;
 				try {
 					Platform.getJobManager().beginRule(rule, monitor);
+					addRule(rule);
 					success = true;
 				} finally {
 					if (!success) {
@@ -94,8 +95,11 @@ public class ReentrantLock {
 						}
 					}
 				}
+			} else {
+				// Record the fact that we didn't push a rule so we
+				// can match it when we pop
+				addRule(rule);
 			}
-			addRule(rule);
 			return rule;
 		}
 		/**

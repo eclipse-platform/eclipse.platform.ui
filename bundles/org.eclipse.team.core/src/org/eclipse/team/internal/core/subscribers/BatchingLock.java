@@ -73,18 +73,26 @@ public class BatchingLock {
 			// The scheduling rule is either the project or the resource's parent
 			ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
+				boolean success = false;
 				try {
 					Platform.getJobManager().beginRule(rule, monitor);
-				} catch (OperationCanceledException e) {
-					// The begin was cancelled.
-					// Free the scheduling rule and throw the cancel
-					// so the clients of ReentrantLock don't need to
-					// do an endRule when the operation is cancelled.
-					Platform.getJobManager().endRule(rule);
-					throw e;
+					addRule(rule);
+					success = true;
+				} finally {
+					if (!success) {
+						try {
+							Platform.getJobManager().endRule(rule);
+						} catch (RuntimeException e) {
+							// Log and ignore so the original exception is not lost
+							TeamPlugin.log(IStatus.ERROR, "Failed to end scheduling rule", e); //$NON-NLS-1$
+						}
+					}
 				}
+			} else {
+				// Record the fact that we didn't push a rule so we
+				// can match it when we pop
+				addRule(rule);
 			}
-			addRule(rule);
 			return rule;
 		}
 		/**
