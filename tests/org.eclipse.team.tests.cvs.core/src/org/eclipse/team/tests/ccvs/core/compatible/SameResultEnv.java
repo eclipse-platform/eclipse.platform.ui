@@ -132,7 +132,6 @@ public final class SameResultEnv extends JUnitTestCase {
 			try {
 				// temporary flush
 				referenceProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-				EclipseSynchronizer.getInstance().flush(referenceProject, true, true,null);
 			} catch (CoreException e) {
 				fail("CoreException during refreshLocal: " + e.getMessage());
 			}
