@@ -910,7 +910,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
                     IBreakpoint[] breakpoints = getBreakpoints();
                     for (int i = 0; i < breakpoints.length; i++) {
                         IBreakpoint breakpoint = breakpoints[i];
-                        breakpoint.getMarker().setAttribute(IBreakpoint.SKIP, !enabled);
+                        // Touch the marker (but don't actually change anything) so that the icon in
+                        // the editor ruler will be updated (editors listen to marker changes). 
+                        breakpoint.getMarker().setAttribute(IBreakpoint.ENABLED, breakpoint.isEnabled());
                     }
                 }
             };
