@@ -26,6 +26,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.osgi.framework.Bundle;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	// whether the resources plugin is in debug mode.
@@ -1211,9 +1212,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			validator = (IFileModificationValidator) config.createExecutableExtension("class"); //$NON-NLS-1$
 			shouldValidate = true;
 		} catch (CoreException e) {
-			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			//ignore the failure if we are shutting down (expected since extension
+			//provider plugin has probably already shut down
+			if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
+				ResourcesPlugin.getPlugin().getLog().log(status);
+			}
 		}
 	}
 
@@ -1242,9 +1246,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				IConfigurationElement config = configs[0];
 				moveDeleteHook = (IMoveDeleteHook) config.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				//ignore the failure if we are shutting down (expected since extension
+				//provider plugin has probably already shut down
+				if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+					ResourcesPlugin.getPlugin().getLog().log(status);
+				}
 			}
 		} finally {
 			// for now just use Core's implementation
@@ -1278,9 +1285,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				IConfigurationElement config = configs[0];
 				teamHook = (TeamHook) config.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
-				ResourcesPlugin.getPlugin().getLog().log(status);
+				//ignore the failure if we are shutting down (expected since extension
+				//provider plugin has probably already shut down
+				if (Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING) {//$NON-NLS-1$
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
+					ResourcesPlugin.getPlugin().getLog().log(status);
+				}
 			}
 		} finally {
 			// default to use Core's implementation
