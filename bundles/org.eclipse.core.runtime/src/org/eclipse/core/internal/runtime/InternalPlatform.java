@@ -207,14 +207,7 @@ public final class InternalPlatform implements IPlatform {
 
 		// If this is a platform URL get the local URL from the PlatformURLConnection
 		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL)){
-			URLConnection connection = result.openConnection();
-			if (!(connection instanceof PlatformURLConnection))
-				return result;
-			String file = connection.getURL().getFile();
-			if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR)) //$NON-NLS-1$
-				throw new IOException();
-		
-			result = ((PlatformURLConnection) connection).getURLAsLocal();
+			result = resolve(url);
 		}
 
 		// If the result is a bundleentry or bundleresouce URL then 
