@@ -21,6 +21,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
@@ -51,6 +52,7 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.IProjectionListener;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -86,7 +88,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * The actual editor implementation for Eclipse's Ant integration.
  */
-public class AntEditor extends TextEditor implements IReconcilingParticipant {
+public class AntEditor extends TextEditor implements IReconcilingParticipant, IProjectionListener {
 	
 	/**
 	 * Updates the Ant outline page selection and this editor's range indicator.
@@ -340,6 +342,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	private AntFoldingStructureProvider fFoldingStructureProvider;
 	
 	private boolean fSelectionSetFromOutline= false;
+
+    private org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup fFoldingGroup;
   
     public AntEditor() {
         super();
@@ -369,6 +373,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
 		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
         setAction("ContentFormat", action); //$NON-NLS-1$
+        
+        fFoldingGroup= new FoldingActionGroup(this, getViewer());
         
 		//TODO set help
 		//WorkbenchHelp.setHelp(action, IJavaHelpContextIds.FORMAT_ACTION);
@@ -692,6 +698,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 //    		});
             fProjectionSupport.install();
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+			((ProjectionViewer)getViewer()).addProjectionListener(this);
         }
 
 		if (isTabConversionEnabled()) {
@@ -701,7 +708,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
 	
-	public boolean isFoldingEnabled() {
+	private boolean isFoldingEnabled() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
@@ -881,5 +888,27 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 
     public ISourceViewer getViewer() {
         return getSourceViewer();
+    }
+
+    protected FoldingActionGroup getFoldingActionGroup() {
+        return fFoldingGroup;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
+     */
+    public void projectionEnabled() {
+        fFoldingStructureProvider= new AntFoldingStructureProvider(this);
+		fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(getEditorInput()));
+		fFoldingStructureProvider.updateFoldingRegions(getAntModel());
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
+     */
+    public void projectionDisabled() {
+        fFoldingStructureProvider= null;
     }
 }

@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -61,10 +62,17 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		fContentFormat.setAction(getAction(editor, "ContentFormat")); //$NON-NLS-1$
 		
 		if (part instanceof AntEditor) {
+		    AntEditor antEditor= (AntEditor) part;
 			if (fOpenDeclarationAction == null) {
-				initializeActions((AntEditor) part);
+				initializeActions(antEditor);
 				contributeToMenu(getActionBars().getMenuManager());
 			}
+			
+			FoldingActionGroup foldingActions= antEditor.getFoldingActionGroup();
+			if (foldingActions != null) {
+				foldingActions.updateActionBars();
+			}
+			
 		}
 
 		if (fOpenDeclarationAction != null) {
