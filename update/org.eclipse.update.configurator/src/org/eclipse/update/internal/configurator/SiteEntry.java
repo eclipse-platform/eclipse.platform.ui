@@ -466,17 +466,46 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (pluginsChangeStamp > 0)
 			return pluginsChangeStamp;
 		
+		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
+			Utils.log(Messages.getString("SiteEntry.computePluginStamp", resolvedURL.toExternalForm()));
+			return 0;
+		}
 		long start = 0;
 		if (ConfigurationActivator.DEBUG)
 			start = (new Date()).getTime();
 		// compute stamp for the plugins directory
-		long dirStamp = 0;
-		if (PlatformConfiguration.supportsDetection(resolvedURL)) {
-			File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-			File pluginsDir = new File(root, PLUGINS);
-			dirStamp = pluginsDir.lastModified();
+		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
+		File pluginsDir = new File(root, PLUGINS);
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
+			Utils.log(Messages.getString("SiteEntry.pluginsDir", pluginsDir.getAbsolutePath()));
+			return 0;
 		}
-		String[] plugins = getPlugins();
+
+		// Compute the plugins list
+		String[] plugins = null;
+		ISitePolicy policy = getSitePolicy();
+		if (policy.getType() == ISitePolicy.USER_INCLUDE)
+			plugins = policy.getList();
+		else if (policy.getType() == ISitePolicy.USER_EXCLUDE) {
+			File[] files = pluginsDir.listFiles();
+			ArrayList detectedPlugins = new ArrayList(files.length);
+			for (int i = 0; i < files.length; i++) {
+				if(files[i].isDirectory())
+					detectedPlugins.add(PLUGINS + "/" + files[i].getName() + "/");
+				else if(files[i].getName().endsWith(".jar"))
+					detectedPlugins.add(PLUGINS + "/" + files[i].getName());
+			} 
+			
+			String[] excludedPlugins = policy.getList();
+			for (int i = 0; i < excludedPlugins.length; i++) {
+				if (detectedPlugins.contains(excludedPlugins[i]))
+					detectedPlugins.remove(excludedPlugins[i]);
+			}
+			plugins = (String[])detectedPlugins.toArray(new String[0]);
+		}
+
+		
+		long dirStamp = pluginsDir.lastModified();
 		pluginsChangeStamp = Math.max(dirStamp, computeStamp(plugins));
 		if (ConfigurationActivator.DEBUG) {
 			long end = (new Date()).getTime();
