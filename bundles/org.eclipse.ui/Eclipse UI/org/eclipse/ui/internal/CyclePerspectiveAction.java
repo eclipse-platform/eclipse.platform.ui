@@ -51,8 +51,8 @@ protected void dispose() {
  */
 public void activate(IWorkbenchPage page, Object selection) {
 	if (selection != null) {
-		Perspective persp = (Perspective)selection;
-		page.setPerspective(persp.getDesc());
+		IPerspectiveDescriptor persp = (IPerspectiveDescriptor)selection;
+		page.setPerspective(persp);
 	}
 }
 /**
@@ -72,13 +72,13 @@ public void updateState() {
  * Add all views to the dialog in the activation order
  */
 protected void addItems(Table table,WorkbenchPage page) {
-	Perspective perspectives[] = page.getSortedPerspectives();
+	IPerspectiveDescriptor perspectives[] = page.getSortedPerspectives();
 	for (int i = perspectives.length - 1; i >= 0 ; i--) {
 		TableItem item = new TableItem(table,SWT.NONE);
-		IPerspectiveDescriptor desc = perspectives[i].getDesc();
+		IPerspectiveDescriptor desc = perspectives[i];
 		item.setText(labelProvider.getText(desc));
 		item.setImage(labelProvider.getImage(desc));
-		item.setData(perspectives[i]);
+		item.setData(desc);
 	}
 }
 /**

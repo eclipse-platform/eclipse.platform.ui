@@ -2295,8 +2295,13 @@ public IEditorPart[] getSortedEditors() {
 /*
  * Returns the perspectives in activation order (oldest first).
  */
-public Perspective[] getSortedPerspectives() {
-	return perspList.getSortedPerspectives();
+protected IPerspectiveDescriptor[] getSortedPerspectives() {
+	Perspective sortedArray[] = perspList.getSortedPerspectives();
+	IPerspectiveDescriptor[] result = new IPerspectiveDescriptor[sortedArray.length];
+	for (int i = 0; i < result.length; i++) {
+		result[i] = sortedArray[i].getDesc();
+	}
+	return result;
 }
 /*
  * Returns the parts in activation order (oldest first).
@@ -2469,7 +2474,7 @@ class ActivationList {
 	 * Helper class to keep track of all opened perspective.
 	 * Both the opened and used order is kept.
 	 */
-	class PerspectiveList {
+	private class PerspectiveList {
 		/**
 		 * List of perspectives in the order they were opened;
 		 */
