@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -176,6 +177,10 @@ public class ContainerGenerator {
                     String currentSegment = containerFullPath.segment(i);
                     IResource resource = container.findMember(currentSegment);
                     if (resource != null) {
+                    	if (resource.getType() == IResource.FILE) {
+                    		String msg = IDEWorkbenchMessages.format("ContainerGenerator.pathOccupied", new Object[] {resource.getFullPath().makeRelative()}); //$NON-NLS-1$
+                    		throw new CoreException(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, msg, null));
+                    	}
                         container = (IContainer) resource;
                         monitor.worked(1000);
                     } else {
@@ -193,7 +198,7 @@ public class ContainerGenerator {
                     }
                 }
             }
-        }, monitor);
+        }, null, IResource.NONE, monitor);
         return container;
     }
 

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -52,6 +53,8 @@ public class ResourceAndContainerGroup implements Listener {
     public static final int PROBLEM_PROJECT_DOES_NOT_EXIST = 6;
 
     public static final int PROBLEM_NAME_INVALID = 7;
+
+    public static final int PROBLEM_PATH_OCCUPIED = 8;
 
     // the client to notify of changes
     private Listener client;
@@ -315,6 +318,18 @@ public class ResourceAndContainerGroup implements Listener {
             problemMessage = IDEWorkbenchMessages
                     .getString("ResourceGroup.noProject"); //$NON-NLS-1$
             return false;
+        }
+        //path is invalid if any prefix is occupied by a file
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        while (path.segmentCount() > 1) {
+        	if (root.getFile(path).exists()) {
+        		problemType = PROBLEM_PATH_OCCUPIED;
+        		problemMessage = IDEWorkbenchMessages
+        			.format("ResourceGroup.pathOccupied",  //$NON-NLS-1$
+        			new Object[] {path.makeRelative()});
+        		return false;
+        	}
+        	path = path.removeLastSegments(1);
         }
         return true;
     }
