@@ -470,13 +470,22 @@ public class DetailsForm extends PropertyWebForm {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
-		if (alreadyInstalled || !newerVersion) {
-			if (!(currentAdapter instanceof IConfigurationSiteContext))
-				return false;
+		if (currentAdapter instanceof IConfigurationSiteContext) {
+			// part of the local configuration
 			IConfigurationSiteContext context = (IConfigurationSiteContext)currentAdapter;
-			if (context.getInstallConfiguration().isCurrent()==false)
+			if (!context.getInstallConfiguration().isCurrent())
 				return false;
+			else
+				return true;
 		}
+		// Random site feature
+		if (alreadyInstalled)
+			return false;
+		// Not installed - check if there are other 
+		// features with this ID that are installed
+		// and that are newer than this one
+		if (installedFeatures.length>0 && !newerVersion)
+			return false;
 		return true;
 	}
 	
