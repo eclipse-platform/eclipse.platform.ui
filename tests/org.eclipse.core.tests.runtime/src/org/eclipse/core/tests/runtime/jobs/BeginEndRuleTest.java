@@ -69,9 +69,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		int NUM_REPEATS = 10;
 
 		Job[] jobs = new Job[NUM_THREADS];
-		jobs[0] = new JobRuleRunner("ComplexJob1", new PathRule("/A"), status, 0, NUM_REPEATS, true);
-		jobs[1] = new JobRuleRunner("ComplexJob2", new PathRule("/A/B"), status, 1, NUM_REPEATS, true);
-		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/A/B/C"), status, 2, NUM_REPEATS, true);
+		jobs[0] = new JobRuleRunner("ComplexJob1", new PathRule("/testComplexRuleStarting"), status, 0, NUM_REPEATS, true);
+		jobs[1] = new JobRuleRunner("ComplexJob2", new PathRule("/testComplexRuleStarting/B"), status, 1, NUM_REPEATS, true);
+		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/testComplexRuleStarting/B/C"), status, 2, NUM_REPEATS, true);
 
 		//schedule the jobs
 		for (int i = 0; i < jobs.length; i++) 
@@ -156,8 +156,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//number of repetitions of beginning and ending the rule
 		final int NUM_REPEATS = 10;
 		Job[] jobs = new Job[2];
-		jobs[0] = new JobRuleRunner("SimpleJob1", new PathRule("/A"), status, 0, NUM_REPEATS, false);
-		jobs[1] = new JobRuleRunner("SimpleJob2", new PathRule("/A/B"), status, 1, NUM_REPEATS, false);
+		jobs[0] = new JobRuleRunner("SimpleJob1", new PathRule("/testSimpleRuleStarting"), status, 0, NUM_REPEATS, false);
+		jobs[1] = new JobRuleRunner("SimpleJob2", new PathRule("/testSimpleRuleStarting/B"), status, 1, NUM_REPEATS, false);
 
 		//schedule both jobs to start their execution
 		jobs[0].schedule();
@@ -239,10 +239,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void testComplexRuleContainment() {
 		ISchedulingRule rules[] = new ISchedulingRule[4];
 
-		rules[0] = new PathRule("/A");
-		rules[1] = new PathRule("/A/B");
-		rules[2] = new PathRule("/A/B/C");
-		rules[3] = new PathRule("/A/D");
+		rules[0] = new PathRule("/testComplexRuleContainment");
+		rules[1] = new PathRule("/testComplexRuleContainment/B");
+		rules[2] = new PathRule("/testComplexRuleContainment/B/C");
+		rules[3] = new PathRule("/testComplexRuleContainment/D");
 
 		//adding multiple rules in correct order
 		int RULE_REPEATS = 10;
@@ -335,8 +335,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	}
 
 	public void testNestedCase() {
-		ISchedulingRule rule1 = new PathRule("/A");
-		ISchedulingRule rule2 = new PathRule("/A/B");
+		ISchedulingRule rule1 = new PathRule("/testNestedCase");
+		ISchedulingRule rule2 = new PathRule("/testNestedCase/B");
 
 		//ending an outer rule before an inner one
 		manager.beginRule(rule1, null);
@@ -439,10 +439,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void testRuleContainment() {
 		ISchedulingRule rules[] = new ISchedulingRule[4];
 
-		rules[0] = new PathRule("/A");
-		rules[1] = new PathRule("/A/B");
-		rules[2] = new PathRule("/A/B/C");
-		rules[3] = new PathRule("/A/D");
+		rules[0] = new PathRule("/testRuleContainment");
+		rules[1] = new PathRule("/testRuleContainment/B");
+		rules[2] = new PathRule("/testRuleContainment/B/C");
+		rules[3] = new PathRule("/testRuleContainment/D");
 
 		//simple addition of rules in incorrect containment order
 		manager.beginRule(rules[1], null);
@@ -497,9 +497,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//starting several rules on this thread, and trying to end them from other threads
 		ISchedulingRule rules[] = new ISchedulingRule[3];
 
-		rules[0] = new PathRule("/A");
-		rules[1] = new PathRule("/A/B");
-		rules[2] = new PathRule("/A/C");
+		rules[0] = new PathRule("/testSimpleOtherThreadAccess");
+		rules[1] = new PathRule("/testSimpleOtherThreadAccess/B");
+		rules[2] = new PathRule("/testSimpleOtherThreadAccess/C");
 
 		//end the rules right after starting them
 		for (int i = 0; i < rules.length; i++) {

@@ -64,9 +64,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
-//				TestSuite suite = new TestSuite();
-//				suite.addTest(new IJobManagerTest("testSuspendMismatchedBegins"));
-//				return suite;
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IJobManagerTest("testJobFamilyJoinRepeating"));
+//		return suite;
 	}
 
 	public IJobManagerTest() {
@@ -146,9 +146,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testBug48073() {
-		ISchedulingRule ruleA = new PathRule("/A");
-		ISchedulingRule ruleB = new PathRule("/A/B");
-		ISchedulingRule ruleC = new PathRule("/A/C");
+		ISchedulingRule ruleA = new PathRule("/testBug48073");
+		ISchedulingRule ruleB = new PathRule("/testBug48073/B");
+		ISchedulingRule ruleC = new PathRule("/testBug48073/C");
 		TestJob jobA = new TestJob("Job1", 1000, 100);
 		TestJob jobB = new TestJob("Job2", 1000, 100);
 		TestJob jobC = new TestJob("Job3", 1000, 100);

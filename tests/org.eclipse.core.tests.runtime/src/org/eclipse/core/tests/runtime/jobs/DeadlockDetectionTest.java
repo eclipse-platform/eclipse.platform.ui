@@ -10,7 +10,9 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import junit.framework.TestCase;
+
+import junit.framework.*;
+
 import org.eclipse.core.internal.jobs.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -26,6 +28,13 @@ public class DeadlockDetectionTest extends TestCase {
 
 	public DeadlockDetectionTest(String name) {
 		super(name);
+	}
+	
+	public static Test suite() {
+		return new TestSuite(DeadlockDetectionTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+//		return suite;
 	}
 
 	/**
@@ -318,7 +327,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
-		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
+		final ISchedulingRule[] rules = {new PathRule("/testRuleHierarchyWaitReplace"), new PathRule("/testRuleHierarchyWaitReplace/B"), new PathRule("/testRuleHierarchyWaitReplace/C")};
 		final ILock[] locks = {manager.newLock(), manager.newLock()};
 		Job[] jobs = new Job[NUM_JOBS];
 
@@ -426,7 +435,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
-		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
+		final ISchedulingRule[] rules = {new PathRule("/testDetectDeadlock"), new PathRule("/testDetectDeadlock/B"), new PathRule("/testDetectDeadlock/C")};
 		final ILock lock = manager.newLock();
 		Job[] jobs = new Job[NUM_JOBS];
 
@@ -529,7 +538,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
-		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
+		final ISchedulingRule[] rules = {new PathRule("/testMultipleColumnRemoval"), new PathRule("/testMultipleColumnRemoval/B"), new PathRule("/testMultipleColumnRemoval/C")};
 		final IProgressMonitor first = new BlockingMonitor(status, 1);
 		final IProgressMonitor second = new BlockingMonitor(status, 2);
 		Job[] jobs = new Job[NUM_JOBS];
@@ -618,8 +627,8 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testBeginRuleCancelAfterWait() {
 		final JobManager manager = JobManager.getInstance();
-		final ISchedulingRule rule1 = new PathRule("/A");
-		final ISchedulingRule rule2 = new PathRule("/A/B");
+		final ISchedulingRule rule1 = new PathRule("/testBeginRuleCancelAfterWait");
+		final ISchedulingRule rule2 = new PathRule("/testBeginRuleCancelAfterWait/B");
 
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final IProgressMonitor canceller = new FussyProgressMonitor();
@@ -672,7 +681,6 @@ public class DeadlockDetectionTest extends TestCase {
 		//let the first job finish
 		status[0] = TestBarrier.STATUS_RUNNING;
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
-		int i = 0;
 		waitForCompletion(ruleOwner);
 		//the underlying graph should now be empty
 		assertTrue("Cancelled rule not removed from graph.", manager.getLockManager().isEmpty());
@@ -686,7 +694,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 4;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
-		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D")};
+		final ISchedulingRule[] rules = {new PathRule("/testImplicitRules"), new PathRule("/testImplicitRules/B"), new PathRule("/testImplicitRules/C"), new PathRule("/testImplicitRules/B/D")};
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
