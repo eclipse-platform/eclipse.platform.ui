@@ -30,7 +30,7 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
 	// change them.
 	private static final String TAG_PATH = "path";//$NON-NLS-1$
 	private static final String TAG_TYPE = "type";//$NON-NLS-1$
-	private static final String FACTORY_ID = "org.eclipse.ui.internal.ide.model.ResourceFactory";//$NON-NLS-1$
+	private static final String FACTORY_ID = "org.eclipse.ui.internal.model.ResourceFactory";//$NON-NLS-1$
 
 	// IPersistable data.
 	private IResource res;

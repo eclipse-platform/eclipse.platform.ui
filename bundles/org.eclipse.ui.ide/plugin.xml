@@ -195,11 +195,11 @@
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.ui.internal.ide.model.ResourceFactory"
-            id="org.eclipse.ui.internal.ide.model.ResourceFactory">
+            id="org.eclipse.ui.internal.model.ResourceFactory">
       </factory>
       <factory
             class="org.eclipse.ui.internal.ide.model.WorkspaceFactory"
-            id="org.eclipse.ui.internal.ide.model.WorkspaceFactory">
+            id="org.eclipse.ui.internal.model.WorkspaceFactory">
       </factory>
       <factory
             class="org.eclipse.ui.part.FileEditorInputFactory"
@@ -207,7 +207,7 @@
       </factory>
       <factory
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInputFactory"
-            id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInputFactory">
+            id="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory">
       </factory>
    </extension>
    <extension
