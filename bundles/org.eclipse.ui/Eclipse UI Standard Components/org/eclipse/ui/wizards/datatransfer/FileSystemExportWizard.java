@@ -4,18 +4,18 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IExportWizard;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**
@@ -83,7 +83,23 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
+	
+	
+	//Make it the current selection by default but look it up otherwise
+	
 	selection = currentSelection;
+	
+	if(currentSelection.isEmpty() && workbench.getActiveWorkbenchWindow() != null){
+		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+		if(page != null){
+			IEditorPart currentEditor = page.getActiveEditor();
+			if(currentEditor != null){
+				Object selectedResource = currentEditor.getEditorInput().getAdapter(IResource.class);
+				if(selectedResource != null)
+				selection = new StructuredSelection(selectedResource);
+			}
+		}
+	}
 
 	setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
