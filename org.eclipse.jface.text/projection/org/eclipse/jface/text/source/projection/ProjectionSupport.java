@@ -34,7 +34,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Supports the configuration of projection capabilities a {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.<p>
- * This class is not intended to be subclassed. Clients are supposed to use it as is.
+ * This class is not intended to be subclassed. Clients are supposed to configure and use it as is.
  * 
  * @since 3.0
  */
@@ -157,9 +157,15 @@ public class ProjectionSupport {
 	private ProjectionListener fProjectionListener;
 	private ProjectionAnnotationsPainter fPainter;
 	private ProjectionRulerColumn fColumn;
+	/** 
+	 * @since 3.1 
+	 */
+	private AnnotationPainter.IDrawingStrategy fDrawingStrategy;
 	
 	/**
-	 * Creates new projection support for the given projection viewer.
+	 * Creates new projection support for the given projection viewer. Initially,
+	 * no annotation types are summarized. A default hover control creator and a
+	 * default drawing strategy are used.
 	 * 
 	 * @param viewer the projection viewer
 	 * @param annotationAccess the annotation access
@@ -221,6 +227,33 @@ public class ProjectionSupport {
 	}
 	
 	/**
+	 * Sets the drawing strategy that the projection support's annotation
+	 * painter uses to draw the indication of collapsed regions onto the
+	 * projection viewer's text widget. When <code>null</code> is passed in,
+	 * the drawing strategy is reset to the default. In order to avoid any
+	 * representation use {@link AnnotationPainter#NullStrategy}.
+	 * 
+	 * @param strategy the drawing strategy or <code>null</code> to reset the
+	 *            strategy to the default
+	 * @since 3.1
+	 */
+	public void setAnnotationPainterDrawingStrategy(AnnotationPainter.IDrawingStrategy strategy) {
+		fDrawingStrategy= strategy;
+	}
+	
+	/**
+	 * Returns the drawing strategy to be used by the support's annotation painter.
+	 * 
+	 * @return the drawing strategy to be used by the support's annotation painter
+	 * @since 3.1
+	 */
+	private AnnotationPainter.IDrawingStrategy getDrawingStrategy() {
+		if (fDrawingStrategy == null)
+			fDrawingStrategy= new ProjectionDrawingStrategy();
+		return fDrawingStrategy;
+	}
+	
+	/**
 	 * Installs this projection support on its viewer.
 	 */
 	public void install() {
@@ -250,7 +283,7 @@ public class ProjectionSupport {
 		
 		if (fPainter == null) {
 			fPainter= new ProjectionAnnotationsPainter(fViewer, fAnnotationAccess);
-			fPainter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
+			fPainter.addDrawingStrategy(PROJECTION, getDrawingStrategy());
 			fPainter.addAnnotationType(ProjectionAnnotation.TYPE, PROJECTION);
 			fPainter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, fSharedTextColors.getColor(getColor()));
 			fViewer.addPainter(fPainter);
