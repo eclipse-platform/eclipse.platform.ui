@@ -103,7 +103,7 @@ public class DebugUITools {
 	}
 	
 	private static String getDefaultImageKey(Object element) {
-		return fgDefaultLabelProvider.getDefaultImageKey(element);
+		return fgDefaultLabelProvider.getImageKey(element);
 	}
 	
 	/**

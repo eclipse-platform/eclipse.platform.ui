@@ -112,56 +112,42 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
-		if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) {
-			IDebugModelPresentation lp= getConfiguredPresentation(item);
-			if (lp != null) {
-				Image image= lp.getImage(item);
-				if (image != null) {
-					return image;
-				}
+		// Attempt to delegate
+		IDebugModelPresentation lp= getConfiguredPresentation(item);
+		if (lp != null) {
+			Image image= lp.getImage(item);
+			if (image != null) {
+				return image;
 			}
-			// default to show the simple element name
-			return getDefaultImage(item);
-		} else {
-			ImageRegistry iRegistry= DebugUIPlugin.getDefault().getImageRegistry();
-			if (item instanceof IProcess) {
-				if (((IProcess) item).isTerminated()) {
-					return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED);
-				} else {
-					return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS);
-				}
-			} else if (item instanceof ILauncher) {
-				return getLauncherImage((ILauncher)item);
-			} else if (item instanceof ILaunch) {
-				ILaunch launch = (ILaunch) item;
-				String mode= launch.getLaunchMode();
-				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-					return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
-				} else {
-					return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
-				}
-			} else if (item instanceof ILaunchConfigurationType) {
-				String configTypeID = ((ILaunchConfigurationType)item).getIdentifier();
-				return DebugUITools.getImage(configTypeID);
-			} else if (item instanceof ILaunchConfiguration) {
-				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_CONFIGURATION);
-			} else if (item instanceof IAdaptable) {
-				IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
-				if (de != null) {
-					ImageDescriptor descriptor= de.getImageDescriptor(item);
-					if( descriptor != null) {
-						return descriptor.createImage();
-					}
-				}
-			}
-	
-			return null;
-
 		}
+		// If no delegate returned an image, use the default
+		return getDefaultImage(item);
 	}
-
-	protected Image getLauncherImage(ILauncher launcher) {
-		return DebugPluginImages.getImage(launcher.getIdentifier());
+	
+	/**
+	 * @see IDebugModelPresentation#getText(Object)
+	 */
+	public String getText(Object item) {
+		// Attempt to delegate
+		IDebugModelPresentation lp= getConfiguredPresentation(item);
+		if (lp != null) {
+			String label= lp.getText(item);
+			if (label != null) {
+				return label;
+			}
+		}
+		// If no delegate returned a text label, use the default
+		if (showVariableTypeNames()) {
+			try {
+				if (item instanceof IExpression) {
+					return new StringBuffer(((IExpression)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
+				} else if (item instanceof IVariable) {
+					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
+				}
+			} catch (DebugException de) {
+			}
+		}
+		return getDefaultText(item);
 	}
 	
 	/**
@@ -188,7 +174,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 
 
 	/**
-	 * Returns a default image for the debug element
+	 * Returns a default text label for the debug element
 	 */
 	protected String getDefaultText(Object element) {
 		return DebugUITools.getDefaultLabelProvider().getText(element);
@@ -199,65 +185,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 */
 	protected Image getDefaultImage(Object element) {
 		return DebugUITools.getDefaultLabelProvider().getImage(element);
-	}
-
-	/**
-	 * @see IDebugModelPresentation#getText(Object)
-	 */
-	public String getText(Object item) {
-		boolean displayVariableTypes= showVariableTypeNames();
-		if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
-			IDebugModelPresentation lp= getConfiguredPresentation(item);
-			if (lp != null) {
-				String label= lp.getText(item);
-				if (label != null) {
-					return label;
-				}
-			}
-			if (item instanceof IExpression) {
-				return getExpressionText((IExpression)item);
-			}		
-			if (item instanceof IVariable) {
-				IVariable var= (IVariable) item;
-				StringBuffer buf= new StringBuffer();
-				try {
-					IValue value = var.getValue();
-					
-					if (displayVariableTypes) {
-						buf.append(value.getReferenceTypeName());
-						buf.append(' ');
-					}
-					buf.append(var.getName());
-					buf.append(" = "); //$NON-NLS-1$
-					buf.append(value.getValueString());
-					return buf.toString();
-				} catch (DebugException de) {
-				}
-			}
-			// default to show the simple element name
-			return getDefaultText(item);
-		} else {
-
-			String label= null;
-			if (item instanceof IProcess) {
-				label= ((IProcess) item).getLabel();
-			} else if (item instanceof ILauncher) {
-				label = ((ILauncher)item).getLabel();
-			} else if (item instanceof ILaunch) {
-				label= getLaunchText((ILaunch) item);
-			} else if (item instanceof ILaunchConfiguration) {
-				return ((ILaunchConfiguration)item).getName();
-			} else if (item instanceof ILaunchConfigurationType) {
-				return ((ILaunchConfigurationType)item).getName();
-			} else {
-				label= getDesktopLabel(item);
-			}
-
-			if ((item instanceof ITerminate) && ((ITerminate) item).isTerminated()) {
-				label= DebugUIMessages.getString("DelegatingModelPresentation.<terminated>__7") + label; //$NON-NLS-1$
-			}
-			return label;
-		}
 	}
 	
 	/*
@@ -273,40 +200,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}	
 
 	/**
-	 * Expressions have their left halves rendered here, and their
-	 * right halves rendered by the registered model presentation.
-	 */
-	protected String getExpressionText(IExpression expression) {
-		StringBuffer buffer= new StringBuffer(expression.getExpressionText());
-		String valueString= null;
-		IDebugModelPresentation lp= getConfiguredPresentation(expression);
-		IValue value= expression.getValue();
-		if (lp != null) {
-			valueString= lp.getText(value);
-		} 
-		if ((valueString == null) || (valueString.length() < 1)) {
-			try {
-				valueString= value.getValueString();
-			} catch (DebugException de) {
-			}
-		}
-		if (valueString != null && valueString.length() > 0) {
-			buffer.append("= "); //$NON-NLS-1$
-			buffer.append(valueString);		
-		}
-		if (showVariableTypeNames()) {
-			String typeName = null;
-			try {
-				typeName = value.getReferenceTypeName();
-				buffer.insert(0,' ');
-				buffer.insert(0,typeName);
-			} catch (DebugException de) {
-			}
-		}
-		return buffer.toString();
-	}	
-
-	/**
 	 * Delegate to all extensions.
 	 *
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
@@ -316,17 +209,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		while (i.hasNext()) {
 			((ILabelProvider) i.next()).removeListener(listener);
 		}
-	}
-
-	public String getDesktopLabel(Object object) {
-		if (object instanceof IAdaptable) {
-			IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
-			if (de != null) {
-				return de.getLabel(object);
-			}
-		}
-
-		return DebugUIMessages.getString("DelegatingModelPresentation.<unknown>_9"); //$NON-NLS-1$
 	}
 
 	/**
@@ -386,33 +268,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		}
 		return null;
 	}
-
-	/**
-	 * Used to render launch history items in the re-launch drop downs
-	 */
-	protected String getLaunchText(ILaunch launch) {
-		if (launch.getLaunchConfiguration() == null) {
-			// old launcher
-			StringBuffer buff= new StringBuffer(getDesktopLabel(launch.getElement()));
-			buff.append(" ["); //$NON-NLS-1$
-			buff.append(getText(launch.getLauncher()));
-			buff.append("]"); //$NON-NLS-1$
-			return buff.toString();
-		} else {
-			// new launch configuration
-			ILaunchConfiguration config = launch.getLaunchConfiguration();
-			StringBuffer buff= new StringBuffer(config.getName());
-			buff.append(" ["); //$NON-NLS-1$
-			try {
-				buff.append(config.getType().getName());
-			} catch (CoreException e) {
-				//XXX: unknown configuration type
-			}
-			buff.append("]"); //$NON-NLS-1$
-			return buff.toString();			
-		}
-
-	}
 	
 	/**
 	 * @see IDebugModelPresentation#setAttribute(String, Object)
@@ -424,6 +279,11 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		getAttributes().put(id, value);
 	}
 
+	/**
+	 * Whether or not to show variable type names.
+	 * This option is configured per model presentation.
+	 * This allows this option to be set per view, for example.
+	 */
 	protected boolean showVariableTypeNames() {
 		Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
 		show= show == null ? new Boolean(false) : show;
