@@ -992,20 +992,28 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * 
 	 * @return label without accelerators
 	 */
-	public static String removeAccelerators(String label) {
-		String title = label;
-		if (title != null) {
-			// strip out any '&' (accelerators)
-			int index = title.indexOf('&');
-			if (index == 0) {
-				title = title.substring(1);
-			} else if (index > 0 && index < (title.length() - 1)){
-				String first = title.substring(0, index);
-				String last = title.substring(index + 1);
-				title = first + last;
-			}		
-		}
-		return title;
-	}
+    public static String removeAccelerators(String label) {
+        String title = label;
+        if (title != null) {
+            // strip out any '&' (accelerators)
+            int index = title.indexOf('&');
+            if (index == 0) {
+                title = title.substring(1);
+            } else if (index > 0) {
+                //DBCS languages use "(&X)" format
+                if (title.charAt(index - 1) == '(' && title.length() >= index + 2 && title.charAt(index + 2) == ')') {
+                    String first = title.substring(0, index - 1);
+                    String last = title.substring(index + 3);
+                    title = first + last;
+                } else if (index < (title.length() - 1)) {
+                    String first = title.substring(0, index);
+                    String last = title.substring(index + 1);
+                    title = first + last;
+                }
+            }
+        }
+        return title;
+    }
+
 }
 
