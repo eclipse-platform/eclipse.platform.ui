@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import java.util.*;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +27,7 @@ public class Locator implements Cloneable {
 	public int marginHeight;
 	public int rowCounter;
 	public ArrayList heights;
+	public Hashtable breaks;
 	
 	public void newLine() {
 		resetCaret();

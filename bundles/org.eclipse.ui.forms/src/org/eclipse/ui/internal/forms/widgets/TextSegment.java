@@ -204,6 +204,13 @@ public class TextSegment extends ParagraphSegment {
 
 		BreakIterator wb = BreakIterator.getLineInstance();
 		wb.setText(text);
+		
+		ArrayList breaks = null;
+		
+		if (computeHeightOnly) {
+			breaks = new ArrayList();
+			locator.breaks.put(this, breaks);
+		}
 
 		int lineStart = 0;
 		int cursor = 0;
@@ -213,6 +220,8 @@ public class TextSegment extends ParagraphSegment {
 		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
 			String word = text.substring(cursor, loc);
 			Point extent = gc.textExtent(word);
+			if (breaks!=null)
+				breaks.add(new Integer(loc));
 
 			if (locator.x + lineExtent.x + extent.x > wHint) {
 				// overflow
@@ -510,15 +519,19 @@ public class TextSegment extends ParagraphSegment {
 			layoutWithoutWrapping(gc, width, locator, selected,
 					fm, lineHeight, descent);
 		} else {
-			BreakIterator wb = BreakIterator.getLineInstance();
-			wb.setText(text);
+			//BreakIterator wb = BreakIterator.getLineInstance();
+			//wb.setText(text);
 
 			int lineStart = 0;
 			int lastLoc = 0;
 			Point lineExtent = new Point(0,0);
+			ArrayList breaks = (ArrayList)locator.breaks.get(this);
+			//System.out.println("Nbreaks: "+breaks.size());
 
-			for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
-					.next()) {
+			//for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
+			//		.next()) {
+			for (int i=0; i<breaks.size(); i++) {
+				int breakLoc = ((Integer)breaks.get(i)).intValue();
 				if (breakLoc == 0)
 					continue;
 				String word = text.substring(lastLoc, breakLoc);

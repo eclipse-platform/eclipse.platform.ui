@@ -115,39 +115,9 @@ public class BulletParagraph extends Paragraph {
 	public void paint(GC gc, Rectangle repaintRegion,
 			Hashtable resourceTable, IHyperlinkSegment selectedLink,
 			SelectionData selData) {
-		repaintBullet(gc, repaintRegion, resourceTable, selData);
+		paintBullet(gc, repaintRegion, resourceTable);
 		super.paint(gc, repaintRegion, resourceTable, selectedLink, selData);
 	}
-/*
-	private void paintBullet(GC gc, Locator loc, int lineHeight,
-			Hashtable resourceTable, SelectionData selData) {
-		int x = loc.x - getIndent() + getBulletIndent();
-		int rowHeight = ((int[]) loc.heights.get(0))[0];
-		if (style == CIRCLE) {
-			int y = loc.y + rowHeight / 2 - CIRCLE_DIAM / 2;
-			Color bg = gc.getBackground();
-			Color fg = gc.getForeground();
-			gc.setBackground(fg);
-			gc.fillRectangle(x, y + 1, 5, 3);
-			gc.fillRectangle(x + 1, y, 3, 5);
-			gc.setBackground(bg);
-			bbounds = new Rectangle(x, y, CIRCLE_DIAM, CIRCLE_DIAM);
-		} else if (style == TEXT && text != null) {
-			gc.drawText(text, x, loc.y);
-			int height = gc.getFontMetrics().getHeight();
-			Point textSize = gc.textExtent(text);
-			bbounds = new Rectangle(x, loc.y, textSize.x, textSize.y);
-		} else if (style == IMAGE && text != null) {
-			Image image = (Image) resourceTable.get(text);
-			if (image != null) {
-				Rectangle ibounds = image.getBounds();
-				int y = loc.y + rowHeight / 2 - ibounds.height / 2;
-				gc.drawImage(image, x, y);
-				bbounds = new Rectangle(x, y, ibounds.width, ibounds.height);
-			}
-		}
-	}
-*/
 
 	private void layoutBullet(GC gc, Locator loc, int lineHeight,
 			Hashtable resourceTable) {
@@ -170,8 +140,8 @@ public class BulletParagraph extends Paragraph {
 		}
 	}
 
-	public void repaintBullet(GC gc, Rectangle repaintRegion,
-			Hashtable resourceTable, SelectionData selData) {
+	public void paintBullet(GC gc, Rectangle repaintRegion,
+			Hashtable resourceTable) {
 		if (bbounds == null)
 			return;
 		int x = bbounds.x;
