@@ -334,8 +334,9 @@
    
     <extension
          point="org.eclipse.ui.themes">
-		<themeElementCategory label="%antConsolePresentation.label" id="org.eclipse.ant.ui.console.presentation"/>
-		<themeElementCategory label="%antEditorPresentation.label" id="org.eclipse.ant.ui.editor.presentation"/>
+        <themeElementCategory label="%antPresentation.label" id="org.eclipse.ant.ui.presentation"/>
+		<themeElementCategory label="%antConsolePresentation.label" id="org.eclipse.ant.ui.console.presentation" parentId= "org.eclipse.ant.ui.presentation"/>
+		<themeElementCategory label="%antEditorPresentation.label" id="org.eclipse.ant.ui.editor.presentation" parentId= "org.eclipse.ant.ui.presentation"/>
 		 <!-- Ant Console colors -->
 		 <!-- Ant error messages should default to the console std err -->
 		<colorDefinition
