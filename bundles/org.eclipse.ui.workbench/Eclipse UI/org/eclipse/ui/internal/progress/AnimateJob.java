@@ -11,10 +11,27 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * AnimateJob is an abstract class for the job that runs the animations.
  */
 abstract class AnimateJob extends Job {
+
+	/**
+	 * Create a new animate job with the supplied name.
+	 * @param name
+	 */
+	public AnimateJob(String name) {
+		super(name);
+	}
+
+	/**
+	 * Create an AnimateJob with the default name.
+	 *
+	 */
+	public AnimateJob() {
+		super(ProgressMessages.getString("AnimateJob.JobName")); //$NON-NLS-1$
+	}
 
 }

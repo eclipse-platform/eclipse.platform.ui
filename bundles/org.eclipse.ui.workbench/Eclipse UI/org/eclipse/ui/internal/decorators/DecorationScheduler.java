@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -156,7 +157,7 @@ public class DecorationScheduler {
 		//Don't bother if we are shutdown now
 		if (!shutdown) {
 
-			UIJob job = new UIJob() {
+			UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 
 					if (pendingUpdate.isEmpty())
@@ -215,7 +216,7 @@ public class DecorationScheduler {
 	 * Create the Thread used for running decoration.
 	 */
 	private void createDecorationJob() {
-		decorationJob = new Job() {
+		decorationJob = new Job(WorkbenchMessages.getString("DecorationScheduler.CalculationJobName")) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
