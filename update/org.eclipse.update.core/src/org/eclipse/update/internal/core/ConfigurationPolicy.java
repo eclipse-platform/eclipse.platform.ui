@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
