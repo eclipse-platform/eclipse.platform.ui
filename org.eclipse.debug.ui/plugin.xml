@@ -1406,326 +1406,326 @@ M4 = Platform-specific fourth key
       </category>
       <command
             name="%ActionDefinition.toggleStepFilters.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.toggleStepFilters.description"
             id="org.eclipse.debug.ui.commands.ToggleStepFilters">
       </command>
       <keyBinding
             keySequence="M2+F5"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ToggleStepFilters"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.ToggleStepFilters"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepInto.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepInto.description"
             id="org.eclipse.debug.ui.commands.StepInto">
       </command>
       <keyBinding
             keySequence="F5"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.StepInto"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.StepInto"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepOver.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepOver.description"
             id="org.eclipse.debug.ui.commands.StepOver">
       </command>
       <keyBinding
             keySequence="F6"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.StepOver"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.StepOver"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepReturn.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepReturn.description"
             id="org.eclipse.debug.ui.commands.StepReturn">
       </command>
       <keyBinding
             keySequence="F7"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.StepReturn"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.StepReturn"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.resume.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.resume.description"
             id="org.eclipse.debug.ui.commands.Resume">
       </command>
       <keyBinding
             keySequence="F8"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.Resume"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.Resume"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.terminate.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.terminate.description"
             id="org.eclipse.debug.ui.commands.Terminate">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.Terminate"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.Terminate"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.suspend.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.suspend.description"
             id="org.eclipse.debug.ui.commands.Suspend">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.Suspend"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.Suspend"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openProfile.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openProfile.description"
             id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openRun.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openRun.description"
             id="org.eclipse.debug.ui.commands.OpenRunConfigurations">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.OpenRunConfigurations"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.OpenRunConfigurations"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openDebug.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openDebug.description"
             id="org.eclipse.debug.ui.commands.OpenDebugConfigurations">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.debugLast.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.debugLast.description"
             id="org.eclipse.debug.ui.commands.DebugLast">
       </command>
       <keyBinding
             keySequence="F11"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.DebugLast"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.DebugLast"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="carbon"
             keySequence="M1+F11"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.DebugLast"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.DebugLast"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.runLast.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.runLast.description"
             id="org.eclipse.debug.ui.commands.RunLast">
       </command>
       <keyBinding
             keySequence="M1+F11"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.RunLast"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.RunLast"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="carbon"
             keySequence="M1+M2+F11"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.RunLast"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.RunLast"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>      
       <command
             name="%ActionDefinition.profileLast.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.profileLast.description"
             id="org.eclipse.debug.ui.commands.ProfileLast">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ProfileLast"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.ProfileLast"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.runToLine.name"
             description="%ActionDefinition.runToLine.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.RunToLine">
       </command>
       <keyBinding
             keySequence="M1+R"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.RunToLine"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.RunToLine"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>          
       <command
             name="%ActionDefinition.toggleBreakpoint.name"
             description="%ActionDefinition.toggleBreakpoint.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleBreakpoint">
       </command>
       <keyBinding
             keySequence="M1+M2+B"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.skipAllBreakpoints.name"
             description="%ActionDefinition.skipAllBreakpoints.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.SkipAllBreakpoints">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.toggleWatchpoint.name"
             description="%ActionDefinition.toggleWatchpoint.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleWatchpoint">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ToggleWatchpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.toggleMethodBreakpoint.name"
             description="%ActionDefinition.toggleMethodBreakpoint.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
 <!-- console -->      
       <command
             name="%ActionDefinition.eof.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.eof.description"
             id="org.eclipse.debug.ui.commands.eof">
       </command>
       <keyBinding
-            command="org.eclipse.debug.ui.commands.eof"
+            commandId="org.eclipse.debug.ui.commands.eof"
             platform="win32"
-            scope="org.eclipse.debug.ui.console"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.debug.ui.console"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="CTRL+Z">
      </keyBinding>
      <keyBinding
-		    command="org.eclipse.debug.ui.commands.eof"
-            scope="org.eclipse.debug.ui.console"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		    commandId="org.eclipse.debug.ui.commands.eof"
+            contextId="org.eclipse.debug.ui.console"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="CTRL+D">
       </keyBinding>
 <!-- views -->
       <command
             name="%ViewCommand.debugView.name"
             description="%ViewCommand.debugView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.DebugView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.DebugView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.DebugView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ViewCommand.breakpointView.name"
             description="%ViewCommand.breakpointView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.BreakpointView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.BreakpointView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.BreakpointView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ViewCommand.variableView.name"
             description="%ViewCommand.variableView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.VariableView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.VariableView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.VariableView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ViewCommand.expressionView.name"
             description="%ViewCommand.expressionView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.ExpressionView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.ExpressionView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.ExpressionView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ViewCommand.registerView.name"
             description="%ViewCommand.registerView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.RegisterView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.RegisterView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.RegisterView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ViewCommand.memoryView.name"
             description="%ViewCommand.memoryView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.MemoryView">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.MemoryView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.MemoryView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension

@@ -73,26 +73,26 @@
       <command
             name="%ActionDefinition.externalToolMenuDelegateToolbar.name"
             description="%ActionDefinition.externalToolMenuDelegateToolbar.description"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
        <command
             name="%ActionDefinition.openExternalToolsConfigurations.name"
-            category="org.eclipse.debug.ui.category.run"
+            categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openExternalToolsConfigurations.description"
             id="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations">
       </command>
       <keyBinding
             keySequence=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension

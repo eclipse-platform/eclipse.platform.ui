@@ -46,14 +46,14 @@ M4 = Platform-specific fourth key
       <command
             name="%ViewCommand.consoleView.name"
             description="%ViewCommand.consoleView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.console.ConsoleView">
       </command>
       <keyBinding
             keySequence="M3+M2+Q C"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.console.ConsoleView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ui.console.ConsoleView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
     <extension
