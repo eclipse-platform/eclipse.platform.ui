@@ -227,7 +227,7 @@ public final class CommandCallback implements ICallback {
                     }
                 });
 
-                return false;
+                return true;
             }
 
             return workbench.getActivitySupport().getActivityManager()
