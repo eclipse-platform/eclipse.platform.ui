@@ -11,13 +11,14 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 
-public class AntModelLabelProvider extends org.eclipse.jface.viewers.LabelProvider implements IColorProvider {
+public class AntModelLabelProvider extends LabelProvider implements IColorProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
