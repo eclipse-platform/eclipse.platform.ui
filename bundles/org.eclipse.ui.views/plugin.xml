@@ -8,6 +8,7 @@
    <runtime>
       <library name="views.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.ui"/>
       </library>
    </runtime>
    <requires>
@@ -16,6 +17,5 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.workbench"/>
    </requires>
-
 
 </plugin>
