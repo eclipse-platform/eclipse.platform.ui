@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
+import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +62,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.Workbench;
@@ -223,6 +225,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private Label labelCommands;
 	private TreeViewer treeViewerCommands;
 	//private Button buttonCategorize;
+	private Label labelName;
+	private Text textName;
+	private Label labelDescription;
+	private Text textDescription; 
 	private Label labelSequencesForCommand;
 	private Table tableSequencesForCommand;
 	//private TableViewer ;	
@@ -364,9 +370,30 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			if (!Util.equals(scopes, this.scopes)) {
 				this.scopes = Collections.unmodifiableList(scopes);
 				scopesById = Collections.unmodifiableSortedMap(Scope.sortedMapById(this.scopes));
-				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));
-				Set scopeNameSet = scopesByName.keySet();
-				comboScope.setItems((String[]) scopeNameSet.toArray(new String[scopeNameSet.size()]));
+				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));							
+				List names = new ArrayList();
+				Iterator iterator = this.scopes.iterator();
+				
+				while (iterator.hasNext()) {
+					Scope scope = (Scope) iterator.next();
+					
+					if (scope != null) {
+						String name = scope.getName();
+						String parent = scope.getParent();
+					
+						if (parent != null) {
+							scope = (Scope) scopesById.get(parent);
+						
+							if (scope != null)
+								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, scope.getName() }); //$NON-NLS-1$
+						}
+
+						names.add(name);
+					}
+				}
+				
+				Collections.sort(names, Collator.getInstance());								
+				comboScope.setItems((String[]) names.toArray(new String[names.size()]));
 			}		
 
 			coreActiveKeyConfigurations = new ArrayList(coreRegistry.getActiveKeyConfigurations());
@@ -411,12 +438,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private void copyFromUI() {
 		activeKeyConfiguration = null; 		
-		preferenceActiveKeyConfigurations = new ArrayList();		
-		int index = comboActiveConfiguration.getSelectionIndex();
-				
-		if (index >= 0) {
-			Configuration keyConfiguration = (Configuration) keyConfigurationsByName.get(comboActiveConfiguration.getItem(index));
-			activeKeyConfiguration = ActiveConfiguration.create(null, keyConfiguration.getId());
+		preferenceActiveKeyConfigurations = new ArrayList();
+		String activeKeyConfigurationId = getActiveKeyConfigurationId();		
+
+		if (activeKeyConfigurationId != null) {
+			activeKeyConfiguration = ActiveConfiguration.create(null, activeKeyConfigurationId);
 			preferenceActiveKeyConfigurations.add(activeKeyConfiguration);
 		}
 
@@ -443,26 +469,33 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
 			keyConfigurationsById = Collections.unmodifiableSortedMap(Configuration.sortedMapById(this.keyConfigurations));
 			keyConfigurationsByName = Collections.unmodifiableSortedMap(Configuration.sortedMapByName(this.keyConfigurations));
-			Set keyConfigurationNameSet = keyConfigurationsByName.keySet();
-			comboActiveConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
-			comboConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
+			List names = new ArrayList();
+			Iterator iterator = this.keyConfigurations.iterator();
+				
+			while (iterator.hasNext()) {
+				Configuration keyConfiguration = (Configuration) iterator.next();
+					
+				if (keyConfiguration != null) {
+					String name = keyConfiguration.getName();
+					String parent = keyConfiguration.getParent();
+					
+					if (parent != null) {
+						keyConfiguration = (Configuration) keyConfigurationsById.get(parent);
+						
+						if (keyConfiguration != null)
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, keyConfiguration.getName() }); //$NON-NLS-1$
+					}	
+
+					names.add(name);
+				}
+			}
+
+			Collections.sort(names, Collator.getInstance());								
+			comboActiveConfiguration.setItems((String[]) names.toArray(new String[names.size()]));
+			comboConfiguration.setItems((String[]) names.toArray(new String[names.size()]));
 		}		
 
-		int index = -1;
-			
-		if (activeKeyConfiguration != null) {
-			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(activeKeyConfiguration.getValue());
-
-			if (keyConfiguration != null)
-				index = comboActiveConfiguration.indexOf(keyConfiguration.getName());
-		}
-			
-		if (index >= 0)
-			comboActiveConfiguration.select(index);
-		else {
-			comboActiveConfiguration.clearSelection();
-			comboActiveConfiguration.deselectAll();
-		}
+		setActiveKeyConfigurationId(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : null);
 
 		SortedSet keyBindingSet = new TreeSet();
 		keyBindingSet.addAll(coreKeyBindings);
@@ -512,7 +545,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		comboActiveConfiguration = new Combo(compositeActiveKeyConfiguration, SWT.READ_ONLY);
 		comboActiveConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
 		GridData gridData = new GridData();
-		gridData.widthHint = 150;
+		gridData.widthHint = 200;
 		comboActiveConfiguration.setLayoutData(gridData);
 
 		//buttonNew = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
@@ -595,10 +628,39 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		compositeAssignmentRight.setLayout(gridLayout);
 		compositeAssignmentRight.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		Composite compositeAssignmentTitle = new Composite(compositeAssignmentRight, SWT.NULL);
+		compositeAssignmentTitle.setFont(compositeAssignmentRight.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;		
+		gridLayout.numColumns = 2;
+		compositeAssignmentTitle.setLayout(gridLayout);
+		compositeAssignmentTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		labelName = new Label(compositeAssignmentTitle, SWT.LEFT);
+		labelName.setFont(compositeAssignmentTitle.getFont());
+		labelName.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		labelName.setText(Util.getString(resourceBundle, "labelName")); //$NON-NLS-1$
+
+		textName = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.READ_ONLY);
+		textName.setFont(compositeAssignmentTitle.getFont());
+		textName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		labelDescription = new Label(compositeAssignmentTitle, SWT.LEFT);
+		labelDescription.setFont(compositeAssignmentTitle.getFont());
+		labelDescription.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		labelDescription.setText(Util.getString(resourceBundle, "labelDescription")); //$NON-NLS-1$
+
+		textDescription = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		textDescription.setFont(compositeAssignmentTitle.getFont());
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.heightHint = 30;
+		textDescription.setLayoutData(gridData);
+
 		labelSequencesForCommand = new Label(compositeAssignmentRight, SWT.LEFT);
 		labelSequencesForCommand.setFont(compositeAssignmentRight.getFont());
 		labelSequencesForCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		labelSequencesForCommand.setText(Util.getString(resourceBundle, "labelSequencesForCommand.noSelection")); //$NON-NLS-1$
+		labelSequencesForCommand.setText(Util.getString(resourceBundle, "labelSequencesForCommand")); //$NON-NLS-1$
 
 		tableSequencesForCommand = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableSequencesForCommand.setFont(compositeAssignmentRight.getFont());
@@ -618,14 +680,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		tableColumn.setWidth(tableColumn.getWidth() + 40);
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		tableColumn.setWidth(tableColumn.getWidth() + 40);
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 3);
@@ -648,32 +710,35 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		labelScope = new Label(compositeAssignmentChange, SWT.LEFT);
 		labelScope.setFont(compositeAssignmentChange.getFont());
+		labelScope.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelScope.setText(Util.getString(resourceBundle, "labelScope")); //$NON-NLS-1$
 
 		comboScope = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
 		comboScope.setFont(compositeAssignmentChange.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 150;
+		gridData.widthHint = 200;
 		comboScope.setLayoutData(gridData);
 		
 		labelConfiguration = new Label(compositeAssignmentChange, SWT.LEFT);
 		labelConfiguration.setFont(compositeAssignmentChange.getFont());
+		labelConfiguration.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelConfiguration.setText(Util.getString(resourceBundle, "labelConfiguration")); //$NON-NLS-1$
 
 		comboConfiguration = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
 		comboConfiguration.setFont(compositeAssignmentChange.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 150;
+		gridData.widthHint = 200;
 		comboConfiguration.setLayoutData(gridData);
 
 		labelSequence = new Label(compositeAssignmentChange, SWT.LEFT);
 		labelSequence.setFont(compositeAssignmentChange.getFont());
+		labelSequence.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelSequence.setText(Util.getString(resourceBundle, "labelSequence")); //$NON-NLS-1$
 
 		comboSequence = new Combo(compositeAssignmentChange, SWT.NULL);
 		comboSequence.setFont(compositeAssignmentChange.getFont());
 		gridData = new GridData();
-		gridData.widthHint = 220;
+		gridData.widthHint = 200;
 		comboSequence.setLayoutData(gridData);
 
 		Control spacer = new Composite(compositeAssignmentChange, SWT.NULL);	
@@ -733,14 +798,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth(tableColumn.getWidth() + 20);
+		tableColumn.setWidth(tableColumn.getWidth() + 40);
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth(tableColumn.getWidth() + 20);		
+		tableColumn.setWidth(tableColumn.getWidth() + 40);		
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 3);
@@ -812,14 +877,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	public void selectionChanged(SelectionChangedEvent event) {
 		//	}
 		//});
-
-		comboSequence.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {		
-			}
-
-			public void keyReleased(KeyEvent e) {
-			}		
-		});
 
 		comboSequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {
@@ -953,7 +1010,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private void selectedButtonChange() {
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && !keySequence.getStrokes().isEmpty();
+		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
@@ -1019,6 +1076,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		String keyConfigurationId = getKeyConfigurationId();
 		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
 
+		labelName.setEnabled(commandSelected);
+		textName.setEnabled(commandSelected);
+		labelDescription.setEnabled(commandSelected);
+		textDescription.setEnabled(commandSelected);
 		labelSequencesForCommand.setEnabled(commandSelected);
 		tableSequencesForCommand.setEnabled(commandSelected);
 		labelSequence.setEnabled(commandSelected);		
@@ -1031,11 +1092,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		labelCommandsForSequence.setEnabled(validKeySequence);		
 		tableCommandsForSequence.setEnabled(validKeySequence);		
 
-		if (commandSelected) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelSequencesForCommand.selection"), new Object[] { '\'' + command.getName() + '\'' }); //$NON-NLS-1$
-			labelSequencesForCommand.setText(text);		
-		} else 
-			labelSequencesForCommand.setText(Util.getString(resourceBundle, "labelSequencesForCommand.noSelection")); //$NON-NLS-1$
+		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);
+		textDescription.setText(commandSelected ? command.getDescription() : Util.ZERO_LENGTH_STRING);
 		
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
@@ -1476,6 +1534,36 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				
 				if (scope.getId().equals(scopeId)) {
 					comboScope.select(i);
+					break;		
+				}
+			}
+		}
+	}
+
+	private String getActiveKeyConfigurationId() {
+		int selection = comboActiveConfiguration.getSelectionIndex();
+		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+		
+		if (selection >= 0 && selection < keyConfigurations.size()) {
+			Configuration keyConfiguration = (Configuration) keyConfigurations.get(selection);
+			return keyConfiguration.getId();				
+		}
+		
+		return null;
+	}
+
+	private void setActiveKeyConfigurationId(String keyConfigurationId) {				
+		comboActiveConfiguration.clearSelection();
+		comboActiveConfiguration.deselectAll();
+		
+		if (keyConfigurationId != null) {
+			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+				
+			for (int i = 0; i < keyConfigurations.size(); i++) {
+				Configuration keyConfiguration = (Configuration) keyConfigurations.get(i);		
+				
+				if (keyConfiguration.getId().equals(keyConfigurationId)) {
+					comboActiveConfiguration.select(i);
 					break;		
 				}
 			}
