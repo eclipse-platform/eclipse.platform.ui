@@ -85,6 +85,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -1796,6 +1797,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// The 'Delete' button is disabled if the selection contains anything other than configurations (no types)
 		ILaunchConfiguration firstSelectedConfig = (ILaunchConfiguration) selection.getFirstElement();
 		ILaunchConfigurationType firstSelectedConfigType = null;
+		try {
+			firstSelectedConfigType = firstSelectedConfig.getType();
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);						
+		}
+		
+		int typeIndex= -1; // The index of the deleted configuration's type
+		int configIndex= -1; // The index of the deleted configuration
+		TreeItem[] items= getTreeViewer().getTree().getItems();
+		TreeItem typeItem;
+		for (int i= 0, numTypes= items.length; i < numTypes; i++) {
+			typeItem= items[i];
+			if (typeItem.getData() == firstSelectedConfigType) {
+				typeIndex= i;
+				TreeItem[] configs= typeItem.getItems();
+				for (int j= 0, numConfigs= configs.length; j < numConfigs; j++) {
+					if (configs[j].getData() == firstSelectedConfig) {
+						configIndex= j;
+						break;
+					}
+				}
+			}
+			
+		}
 
 		// Make the user confirm the deletion
 		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configurations__1") : LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configuration__2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1804,11 +1829,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 
-		try {
-			firstSelectedConfigType = firstSelectedConfig.getType();
-		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce);						
-		}
+
 		Iterator iterator = selection.iterator();
 		while (iterator.hasNext()) {
 			clearLaunchConfiguration();
@@ -1822,11 +1843,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		}
 		
-		// Reset selection to the config type of the first selected configuration
-		if (firstSelectedConfigType != null) {
-			IStructuredSelection newSelection = new StructuredSelection(firstSelectedConfigType);
-			getTreeViewer().setSelection(newSelection);
+		IStructuredSelection newSelection= null;
+		if (typeIndex != -1 && configIndex != -1) {
+			// Reset selection to the next config
+			TreeItem[] configItems= getTreeViewer().getTree().getItems()[typeIndex].getItems();
+			if (configItems.length >= configIndex && configItems.length != 0) {
+				newSelection= new StructuredSelection(configItems[configIndex].getData());
+			}
+		} 
+		if (newSelection == null) {
+			// Reset selection to the config type of the first selected configuration
+			newSelection = new StructuredSelection(firstSelectedConfigType);
 		}
+		getTreeViewer().setSelection(newSelection);
 	}	
 	
 	/**
