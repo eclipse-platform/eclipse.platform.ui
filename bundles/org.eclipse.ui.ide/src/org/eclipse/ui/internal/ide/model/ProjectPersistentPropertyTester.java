@@ -14,9 +14,13 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IResourceActionFilter;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Property tester for detecting the exisitance of a particular persitent
@@ -57,7 +61,20 @@ public class ProjectPersistentPropertyTester extends PropertyTester {
 	                    atLeastOne = true;
 	                } else if (!allowUnsetProjects) {
 	                    return false;
-	                }
+	                } else {
+                        // Check to see if the persistant property is present
+                        // If it is, we fail since it must be set to somethings else
+                        try {
+                            if (project != null && project.getPersistentProperty(getPropertyKey(persitentPropertyEntry)) != null)
+                                return false;
+                        } catch (CoreException e) {
+                            final String message = "Core exception while testing project persistent property"; //$NON-NLS-1$
+                            IDEWorkbenchPlugin.log(message,
+                                    new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+                                            IStatus.ERROR, message, e));
+                            // Just continue
+                        }
+                    }
 	            }
 	            return atLeastOne;
             }
@@ -71,6 +88,25 @@ public class ProjectPersistentPropertyTester extends PropertyTester {
         }
         
         return false;
+    }
+
+    private QualifiedName getPropertyKey(String value) {
+        String propertyName;
+        int i = value.indexOf('=');
+        if (i != -1) {
+            propertyName = value.substring(0, i).trim();
+        } else {
+            propertyName = value.trim();
+        }
+        QualifiedName key;
+        int dot = propertyName.lastIndexOf('.');
+        if (dot != -1) {
+            key = new QualifiedName(propertyName.substring(0, dot),
+                    propertyName.substring(dot + 1));
+        } else {
+            key = new QualifiedName(null, propertyName);
+        }
+        return key;
     }
 
 }
