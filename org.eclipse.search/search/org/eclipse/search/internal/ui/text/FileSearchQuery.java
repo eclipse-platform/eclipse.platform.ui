@@ -71,7 +71,7 @@ public class FileSearchQuery implements ISearchQuery {
 				// do nothing
 			}
 		};
-		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, collector, new MatchLocator(fSearchString, fSearchOptions));
+		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 
 	public String getLabel() {
@@ -81,6 +81,10 @@ public class FileSearchQuery implements ISearchQuery {
 	
 	public String getSearchString() {
 		return fSearchString;
+	}
+	
+	private String getSearchOptions() {
+		return fSearchOptions;
 	}
 
 	String getSingularLabel() {
@@ -122,10 +126,26 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 		};
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, fSearchOptions));
+		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 		return Status.OK_STATUS; //$NON-NLS-1$
 	}
 	
+	public boolean isRegexSearch() {
+		return isRegexSearch(getSearchOptions());
+	}
+	
+	static boolean isRegexSearch(String options) {
+		return options.indexOf('r') != -1;
+	}
+
+	public boolean isCaseSensitive() {
+		return isCaseSensitive(getSearchOptions());
+	}
+
+	static boolean isCaseSensitive(String options) {
+		return options.indexOf('i') == -1;
+	}
+
 	public boolean canRerun() {
 		return true;
 	}

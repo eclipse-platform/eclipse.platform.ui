@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -44,7 +45,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	private Control fContents;
 	private Button fCancelButton;
 	private Set fActionButtons;
-	
 	// The number of long running operation executed from the dialog.	
 	private long fActiveRunningOperations;
 
@@ -126,12 +126,15 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		GridLayout pmlayout= new GridLayout();
 		pmlayout.numColumns= 1;
 		fProgressMonitorPart= new ProgressMonitorPart(result, pmlayout, SWT.DEFAULT);
-		fProgressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		fProgressMonitorPart.setLayoutData(gd);
 		fProgressMonitorPart.setVisible(false);
 
 
+		
 		Label separator= new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		separator.setLayoutData(gd);
 		
 		applyDialogFont(result);
 		return result;

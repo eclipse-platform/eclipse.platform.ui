@@ -81,7 +81,6 @@ public class AnnotationHighlighter extends Highlighter {
 	 * Removes annotations from the given annotation model. The default implementation works for editors that
 	 * implement <code>ITextEditor</code>.
 	 * Subclasses may override this method. 
-	 * @param editor
 	 * @param annotations A set containing the annotations to be removed.
 	 * 			 @see Annotation
 	 */

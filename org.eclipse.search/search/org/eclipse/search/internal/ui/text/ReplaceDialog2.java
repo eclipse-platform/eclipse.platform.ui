@@ -12,9 +12,13 @@ package org.eclipse.search.internal.ui.text;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -24,23 +28,33 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -56,6 +70,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -94,11 +109,13 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	// Widgets
 	private Text fTextField;
+	private Button fReplaceWithRegex;
 	private Button fReplaceButton;
 	private Button fReplaceAllInFileButton;
 	private Button fReplaceAllButton;
 	private Button fSkipButton;
 	private Button fSkipFileButton;
+
 	
 	private List fMarkers;
 	private boolean fSkipReadonly= false;
@@ -106,7 +123,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	// reuse editors stuff
 	private IReusableEditor fEditor;
 	private FileSearchPage fPage;
-	
+	private ContentAssistHandler fReplaceContentAssistHandler;
+	private Label fStatusLabel;
 	protected ReplaceDialog2(Shell parentShell, IFile[] entries, FileSearchPage page) {
 		super(parentShell);
 		Assert.isNotNull(entries);
@@ -114,6 +132,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		fPage= page;
 		fMarkers= new ArrayList();
 		initializeMarkers(entries);
+	}
+	
+	private boolean isRegexQuery() {
+		return ((FileSearchQuery)fPage.getInput().getQuery()).isRegexSearch();
 	}
 	
 	private void initializeMarkers(IFile[] entries) {
@@ -172,11 +194,28 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		
 		new Label(result, SWT.NONE);
-		Button replaceWithRegex= new Button(result, SWT.CHECK);
-		replaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label")); //$NON-NLS-1$
-		replaceWithRegex.setEnabled(false);
-		replaceWithRegex.setSelection(false);
+		fReplaceWithRegex= new Button(result, SWT.CHECK);
+		fReplaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label"));//$NON-NLS-1$
+		if (isRegexQuery()) {
+			fReplaceWithRegex.setSelection(true);
+		} else {
+			fReplaceWithRegex.setSelection(false);
+			fReplaceWithRegex.setEnabled(false);
+		}
+	
+		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean newState= fReplaceWithRegex.getSelection();
+				setContentAssistsEnablement(newState);
+			}
+		});
 		
+		fStatusLabel= new Label(result, SWT.NULL);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalAlignment= SWT.BOTTOM;
+		gd.horizontalSpan= 2;
+		fStatusLabel.setLayoutData(gd);
+
 		applyDialogFont(result);
 		return result;
 	}
@@ -208,6 +247,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	protected void buttonPressed(int buttonId) {
 		final String replaceText= fTextField.getText();
+		statusMessage(false, ""); //$NON-NLS-1$
 		try {
 			switch (buttonId) {
 				case SKIP :
@@ -248,9 +288,15 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				}
 			}
 		} catch (InvocationTargetException e) {
-			SearchPlugin.log(e);
-			String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_replace", ((IFile)getCurrentMarker().getElement()).getName()); //$NON-NLS-1$
-			MessageDialog.openError(getParentShell(), getDialogTitle(), message);
+			Throwable targetException= e.getTargetException();
+			if (targetException instanceof PatternSyntaxException) {
+				String format= SearchMessages.getString("ReplaceDialog2.regexError.format"); //$NON-NLS-1$
+				String message= MessageFormat.format(format, new Object[] { targetException.getLocalizedMessage() });
+				statusMessage(true, message);
+			} else {
+				String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_replace", ((IFile)getCurrentMarker().getElement()).getName()); //$NON-NLS-1$
+				ExceptionHandler.handle(e, getParentShell(), getDialogTitle(), message);
+			}
 		} catch (InterruptedException e) {
 			// means operation canceled
 		}
@@ -294,6 +340,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 	
 	private void doReplaceInFile(IProgressMonitor pm, IFile file, String replacementText, final Match[] markers) throws BadLocationException, CoreException {
+		Pattern pattern= null;
+		if (fReplaceWithRegex.getSelection()) {
+			pattern= createReplacePattern();
+		}
 		try {
 			if (file.isReadOnly()) {
 				file.getWorkspace().validateEdit(new IFile[]{file}, null);
@@ -331,7 +381,9 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 							offset= currentPosition.offset;
 							length= currentPosition.length;
 						}
-						doc.replace(offset, length, replacementText);
+						String originalText= doc.get(offset, length);
+						String replacementString= computeReplacementString(pattern, originalText, replacementText);
+						doc.replace(offset, length, replacementString);
 						fMarkers.remove(0);
 						fPage.getInput().removeMatch(markers[i]);
 					}
@@ -345,6 +397,25 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		}
 	}
 	
+	private Pattern createReplacePattern() {
+		FileSearchQuery query= (FileSearchQuery)fPage.getInput().getQuery();
+		if (!query.isCaseSensitive())
+			return Pattern.compile(query.getSearchString(), Pattern.CASE_INSENSITIVE);
+		else
+			return Pattern.compile(query.getSearchString());
+	}
+
+	private String computeReplacementString(Pattern pattern, String originalText, String replacementText) {
+		if (pattern != null) {
+			try {
+				return pattern.matcher(originalText).replaceFirst(replacementText);
+			} catch (IndexOutOfBoundsException ex) {
+				throw new PatternSyntaxException(ex.getLocalizedMessage(), replacementText, -1);
+			}
+		}
+		return replacementText;
+	}
+
 	private int askForSkip(final IFile file) {
 		
 		String message= SearchMessages.getFormattedString("ReadOnlyDialog.message", file.getFullPath().toOSString()); //$NON-NLS-1$
@@ -571,4 +642,52 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private boolean canReplace() {
 		return fMarkers.size() > 0;
 	}
+	
+	public static SubjectControlContentAssistant createContentAssistant() {
+		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
+		
+		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings()); //$NON-NLS-1$
+		
+		IContentAssistProcessor processor= new RegExContentAssistProcessor();
+		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		
+		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+		contentAssistant.setInformationControlCreator(new IInformationControlCreator() {
+			/*
+			 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+			 */
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent);
+			}});
+		
+		return contentAssistant;
+	}
+	
+	private void setContentAssistsEnablement(boolean enable) {
+		if (enable) {
+			if (fReplaceContentAssistHandler == null) {
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForText(fTextField, createContentAssistant());
+			}
+			fReplaceContentAssistHandler.setEnabled(true);
+			
+		} else {
+			if (fReplaceContentAssistHandler == null)
+				return;
+			fReplaceContentAssistHandler.setEnabled(false);
+		}
+	}
+
+	private void statusMessage(boolean error, String message) {
+		fStatusLabel.setText(message);
+	
+		if (error)
+			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
+		else
+			fStatusLabel.setForeground(null);
+	
+		if (error)
+			getShell().getDisplay().beep();
+	}
+
+
 }

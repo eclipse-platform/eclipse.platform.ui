@@ -44,12 +44,12 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	/**
 	 * Creates a new text search operation.
 	 */
-	public TextSearchOperation(IWorkspace workspace,  String pattern, String options, 
+	public TextSearchOperation(IWorkspace workspace,  String pattern, boolean isCaseSensitive, boolean isRegexSearch, 
 		ISearchScope scope, TextSearchResultCollector collector)  {
 		super(null);
 		Assert.isNotNull(collector);
 		fWorkspace= workspace;
-		fMatchLocator= new MatchLocator(pattern, options);
+		fMatchLocator= new MatchLocator(pattern, isCaseSensitive, isRegexSearch);
 		fScope= scope;
 		fCollector= collector;
 		fCollector.setOperation(this);
@@ -98,9 +98,5 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	
 	String getPattern() {
 		return fMatchLocator.getPattern();
-	}
-	
-	boolean isRegexSearch() {
-		return fMatchLocator.isRegExSearch();
-	}
+	}	
 }

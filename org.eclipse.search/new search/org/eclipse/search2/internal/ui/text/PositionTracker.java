@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
@@ -23,8 +24,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -136,7 +140,8 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			fMatchesToPositions.put(match, position);
 			addFileBufferMapping(fb, match);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			Object element= match.getElement();
+			SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
 		}
 	}
 

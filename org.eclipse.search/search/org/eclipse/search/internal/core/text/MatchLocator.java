@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -34,17 +35,15 @@ public class MatchLocator {
 	protected int fPushbackChar;
 	protected boolean fPushback;
 	private String fPattern;
-	private boolean fIsRegEx;
 	
-	public MatchLocator(String pattern, String options) {
+	public MatchLocator(String pattern, boolean isCaseSensitive, boolean isRegexSearch) throws PatternSyntaxException {
 		fPattern= pattern;
 		Pattern regExPattern;
 		
-		fIsRegEx= options.indexOf('r') != -1;
-		if (!isRegExSearch())
+		if (!isRegexSearch)
 			pattern= asRegEx(pattern);
 		
-		if (options.indexOf('i') != -1)
+		if (!isCaseSensitive)
 			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 		else
 			regExPattern= Pattern.compile(pattern);
@@ -53,6 +52,7 @@ public class MatchLocator {
 		
 	}
 	
+
 	public boolean isEmtpy() {
 		return getPattern().length() == 0;
 	}
@@ -180,10 +180,5 @@ public class MatchLocator {
 			ch= reader.read();
 		}
 		return -1;
-	}
-
-	public boolean isRegExSearch() {
-		return fIsRegEx;
-	}
-	
+	}	
 }

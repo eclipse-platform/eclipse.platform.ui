@@ -46,6 +46,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -124,6 +125,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private boolean fPageStateIgnoringScopePart;
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
+	private Label fStatusLabel;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor, String pageId) {
 		super(shell);
@@ -591,5 +593,17 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private boolean mustResize(Point currentSize, Point newSize) {
 		return currentSize.x < newSize.x || currentSize.y < newSize.y;
+	}
+
+	protected void statusMessage(boolean error, String message) {
+		fStatusLabel.setText(message);
+	
+		if (error)
+			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
+		else
+			fStatusLabel.setForeground(null);
+	
+		if (error)
+			getShell().getDisplay().beep();
 	}
 }

@@ -53,10 +53,8 @@ public class MarkerHighlighter extends Highlighter {
 	private IMarker createMarker(Match match) throws CoreException {
 		IMarker marker= fFile.createMarker(SearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);
-		attributes.put(SearchUI.LINE, "this is the line attribute");
 		attributes.put(IMarker.CHAR_START, new Integer(match.getOffset()));
 		attributes.put(IMarker.CHAR_END, new Integer(match.getOffset()+match.getLength()));
-		attributes.put(IMarker.LINE_NUMBER, new Integer(20));
 		marker.setAttributes(attributes);
 		return marker;
 	}
