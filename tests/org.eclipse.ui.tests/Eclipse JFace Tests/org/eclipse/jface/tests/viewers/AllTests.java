@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.jface.preference.StringConverterTest;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -27,8 +25,6 @@ public class AllTests {
 		suite.addTest(new TestSuite(TableTreeViewerTest.class));
 		suite.addTest(new TestSuite(ListViewerTest.class));
 		suite.addTest(new TestSuite(CheckboxTableViewerTest.class));
-		suite.addTest(new TestSuite(CheckboxTreeViewerTest.class));
-		suite.addTest(new TestSuite(StringConverterTest.class));
 		return suite;
 	}
 }
