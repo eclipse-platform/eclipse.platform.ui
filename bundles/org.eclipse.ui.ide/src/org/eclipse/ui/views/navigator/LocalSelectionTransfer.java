@@ -39,6 +39,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	private static final LocalSelectionTransfer INSTANCE= new LocalSelectionTransfer();
 	
 	private ISelection selection;
+	private long selectionSetTime;
 	
 	/**
 	 * Only the singleton instance of this class may be used. 
@@ -124,4 +125,30 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	public void setSelection(ISelection s) {
 		selection = s;
 	}
+	
+	/**
+	 * Returns the time when the selection operation
+	 * this transfer is associated with was started.
+	 * 
+	 * @return the time when the selection operation has started
+	 * 
+	 * @see org.eclipse.swt.events.TypedEvent#time
+	 */
+	public long getSelectionSetTime() {
+		return selectionSetTime;
+	}
+
+	/**
+	 * Sets the time when the selection operation this
+	 * transfer is associated with was started.
+	 * If assigning this from an SWT event, be sure to use
+	 * <code>setSelectionTime(event.time & 0xFFFF)</code>
+	 * 
+	 * @param time the time when the selection operation was started
+	 * 
+	 * @see org.eclipse.swt.events.TypeddEvent#time
+	 */
+	public void setSelectionSetTime(long time) {
+		selectionSetTime = time;
+	}	
 }
