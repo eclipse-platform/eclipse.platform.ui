@@ -61,15 +61,15 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 	  For example, see org.eclipse.jdt.internal.ui.preferences.SpellingPreferenceBlock and
 	  the General > Editors > All Text Editors > Spelling preference page.
 	- Extension specification example from the org.eclipse.jdt.ui plug-in's plugin.xml:
-		    <extension point="org.eclipse.ui.workbench.texteditor.spellingEngine">
-		        <engine
+		    &lt;extension point="org.eclipse.ui.workbench.texteditor.spellingEngine"&gt;
+		        &lt;engine
 		              preferencesClass="org.eclipse.jdt.internal.ui.preferences.SpellingPreferenceBlock"
 		              label="%defaultSpellingEngine.label"
 		              class="org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine"
 		              default="true"
-		              id="org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine">
-		        </engine>
-		    </extension>
+		              id="org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine"&gt;
+		        &lt;/engine&gt;
+		    &lt;/extension&gt;
 	  
 - bug fixing
 </pre>
