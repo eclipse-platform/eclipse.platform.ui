@@ -61,9 +61,8 @@ public class JobView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-	    if (viewer != null) {
-	        viewer.getControl().setFocus();
-	    }
+	    if (viewer != null)
+	        viewer.setFocus();
 	}
 	/**
 	 * Sets the content provider for the viewer.

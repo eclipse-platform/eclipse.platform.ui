@@ -1129,19 +1129,41 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		scroller.getVerticalBar().setIncrement(height * 2);
 		scroller.setExpandHorizontal(true);
 		scroller.setExpandVertical(true);
-					
+
+		scroller.addListener(SWT.KeyDown, new Listener() {
+		    public void handleEvent (Event e) {
+		        System.err.println("KeyDown1");
+		    }
+		});
+
 		list= new Composite(scroller, SWT.NONE);
 		list.setFont(defaultFont);
 		list.setBackground(lightColor);
 		list.setLayout(new ListLayout());
 		
-		list.addListener(SWT.Traverse, new Listener() {
-			public void handleEvent(Event event) {
-				//System.err.println("Traverse");
-				//select(null, event);
-			}			
+		list.addListener(SWT.KeyDown, new Listener() {
+		    public void handleEvent (Event e) {
+		        System.err.println("KeyDown2");
+		    }
 		});
 		
+		list.addListener(SWT.Traverse, new Listener () {
+           public void handleEvent (Event e) {
+               System.err.println("Traverse");
+               switch (e.detail) {
+                    /* Do tab group traversal */
+                   case SWT.TRAVERSE_ESCAPE:
+                   case SWT.TRAVERSE_RETURN:
+                   case SWT.TRAVERSE_TAB_NEXT:     
+                   case SWT.TRAVERSE_TAB_PREVIOUS:
+                   case SWT.TRAVERSE_PAGE_NEXT:    
+                   case SWT.TRAVERSE_PAGE_PREVIOUS:
+                           e.doit = true;
+                           break;
+               }
+           }
+		});
+
 		list.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent(Event event) {
 				select(null, event);	// clear selection
@@ -1173,6 +1195,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 		// refresh UI
 		refresh(true);
+    }
+    
+    public void setFocus() {
+        System.out.println("NewProgressViewer.setFocus");
+        scroller.setFocus();
     }
 
     public Control getControl() {
