@@ -44,7 +44,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.core.ExceptionCollector;
@@ -156,11 +155,6 @@ public class CVSLightweightDecorator
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
-		
-		// Make sure that the decorator thread only has read access to the CVS sync info.
-		// This will register the thread on each decoration but it's the only way we
-		// know of to ensure the proper thread is registered.
-		EclipseSynchronizer.getInstance().addReadOnlyThread(Thread.currentThread());
 		
 		IResource resource = getResource(element);
 		if (resource == null || resource.getType() == IResource.ROOT)

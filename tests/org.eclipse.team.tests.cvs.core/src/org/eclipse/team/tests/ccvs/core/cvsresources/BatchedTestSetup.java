@@ -13,6 +13,8 @@ package org.eclipse.team.tests.ccvs.core.cvsresources;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
@@ -22,7 +24,7 @@ public class BatchedTestSetup extends TestSetup {
 	}
 
 	public void setUp() throws CVSException {
-		EclipseSynchronizer.getInstance().beginOperation(null);
+		EclipseSynchronizer.getInstance().beginOperation(ResourcesPlugin.getWorkspace().getRoot(), null);
 	}
 	
 	public void tearDown() throws CVSException {
