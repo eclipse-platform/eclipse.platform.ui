@@ -442,11 +442,9 @@ public final class LegacyResourceSupport {
             // If we get here, that means that the object in question doesn't adapt to resource mapping
             // and it's contributed adapter doesn't do the adaptation either.
             // Before we fail, we will attempt to adapt the object to IResource and then to ResourceMapping
-            if (resourceAdapter != null) {
-	            Object r = getAdaptedContributorResource(object);
-	            if (r != null) {
-	            	return Platform.getAdapterManager().getAdapter(r, resourceMappingClass);
-	            }
+            Object r = getAdaptedContributorResource(object);
+            if (r != null) {
+            	return Platform.getAdapterManager().getAdapter(r, resourceMappingClass);
             }
             
             // we've exhausted every avenue so just return null
