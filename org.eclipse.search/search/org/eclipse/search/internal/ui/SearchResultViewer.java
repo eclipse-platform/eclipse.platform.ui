@@ -61,6 +61,7 @@ class SearchResultViewer extends TableViewer {
 	private SearchDropDownAction fSearchDropDownAction;
 	private CopyToClipboardAction fCopyToClipboardAction;
 	private int fMarkerToShow;
+	private boolean fHandleNextSelectionChangedEvent= true;
 	
 	/*
 	 * These static fields will go away when support for 
@@ -103,7 +104,7 @@ class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					handleSelectionChanged();
+					handleSelectionChanged(true);
 				}
 			}
 		);
@@ -130,7 +131,8 @@ class SearchResultViewer extends TableViewer {
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
 	}
 
-	private void handleSelectionChanged() {
+	private void handleSelectionChanged(boolean updateMarkerToShow) {
+
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
 		boolean hasElements= getItemCount() > 0;
@@ -138,7 +140,14 @@ class SearchResultViewer extends TableViewer {
 		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fGotoMarkerAction.setEnabled(hasSingleSelection);
 		fRemoveMatchAction.setEnabled(hasSingleSelection);
-		fMarkerToShow= -1;
+		if (updateMarkerToShow && fHandleNextSelectionChangedEvent) {
+			fMarkerToShow= -1;
+		} else
+			fHandleNextSelectionChangedEvent= true;
+
+		if (!updateMarkerToShow)
+			fHandleNextSelectionChangedEvent= false;
+		
 		String location= ""; //$NON-NLS-1$
 		if (hasSingleSelection) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
@@ -405,6 +414,7 @@ class SearchResultViewer extends TableViewer {
 	private void selectResult(Table table, int index) {
 		table.setSelection(index);
 		table.showSelection();
+		handleSelectionChanged(false);
 	}
 
 	private void openCurrentSelection() {
