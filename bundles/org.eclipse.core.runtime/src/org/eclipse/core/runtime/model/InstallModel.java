@@ -172,4 +172,12 @@ public void setDiscoveries(URLModel[] value) {
 	discoveries = value;
 }
 
+private String location;
+public String getLocation() {
+	return location;
+}
+public void setLocation(String value) {
+	assertIsWriteable();
+	location = value;
+}
 }
