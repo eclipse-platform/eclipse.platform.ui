@@ -863,7 +863,14 @@ public class Project extends Container implements IProject {
 				workspace.prepareOperation(rule, monitor);
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
-				checkDescription(this, description, false);
+				//if nothing has changed, we don't need to do anything
+				ProjectDescription oldDescription = internalGetDescription();
+				ProjectDescription newDescription = (ProjectDescription)description;
+				boolean hasPublicChanges = oldDescription.hasPublicChanges(newDescription);
+				boolean hasPrivateChanges = oldDescription.hasPrivateChanges(newDescription);
+				if (!hasPublicChanges && !hasPrivateChanges)
+					return;
+				checkDescription(this, newDescription, false);
 				//If we're out of sync and !FORCE, then fail.
 				//If the file is missing, we want to write the new description then throw an exception.
 				boolean hadSavedDescription = true;
@@ -879,15 +886,16 @@ public class Project extends Container implements IProject {
 					hadSavedDescription = workspace.getMetaArea().hasSavedProject(this);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 				workspace.beginOperation(true);
-				MultiStatus status = basicSetDescription((ProjectDescription) description, updateFlags);
+				MultiStatus status = basicSetDescription(newDescription, updateFlags);
 				if (hadSavedDescription && !status.isOK())
 					throw new CoreException(status);
 				//write the new description to the .project file
-				if (writeDescription(internalGetDescription(), updateFlags)) {
-					info = getResourceInfo(false, true);
-					info.incrementContentId();
-					workspace.updateModificationStamp(info);
-				}
+				if (hasPublicChanges)
+					writeDescription(oldDescription, updateFlags);
+				//increment the content id even for private changes
+				info = getResourceInfo(false, true);
+				info.incrementContentId();
+				workspace.updateModificationStamp(info);
 				if (!hadSavedDescription) {
 					String msg = Policy.bind("resources.missingProjectMetaRepaired", getName()); //$NON-NLS-1$
 					status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
@@ -984,12 +992,12 @@ public class Project extends Container implements IProject {
 	 * the description isn't then immediately discovered as an incoming
 	 * change and read back from disk.
 	 */
-	public boolean writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
+	public void writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
 		if (ProjectDescription.isReading)
-			return false;
+			return;
 		ProjectDescription.isWriting = true;
 		try {
-			return getLocalManager().internalWrite(this, description, updateFlags);
+			getLocalManager().internalWrite(this, description, updateFlags);
 		} finally {
 			ProjectDescription.isWriting = false;
 		}

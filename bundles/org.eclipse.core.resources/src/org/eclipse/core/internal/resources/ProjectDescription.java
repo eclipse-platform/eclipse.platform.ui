@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
@@ -28,19 +29,19 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	//these can be static because only one description can be read at once.
 	protected static boolean isWriting = false;
 	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
+	/*
+	 * Cached union of static and dynamic references (duplicates omitted).
+	 * This cache is not persisted.
+	 */
+	protected IProject[] cachedRefs = null;
 	protected String comment = ""; //$NON-NLS-1$
+	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
 	protected HashMap linkDescriptions = null;
 
 	// fields
 	protected IPath location = null;
 	protected String[] natures = EMPTY_STRING_ARRAY;
 	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
-	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
-	/*
-	 * Cached union of static and dynamic references (duplicates omitted).
-	 * This cache is not persisted.
-	 */
-	protected IProject[] cachedRefs = null;
 
 	public ProjectDescription() {
 		super();
@@ -198,6 +199,42 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			if (natureIDs[i].equals(natureID))
 				return true;
 		return false;
+	}
+	/**
+	 * Returns true if any private attributes of the description have changed.
+	 * Private attributes are those that are not stored in the project description
+	 * file (.project).
+	 */
+	public boolean hasPrivateChanges(ProjectDescription description) {
+		if (!Arrays.equals(dynamicRefs, description.getDynamicReferences(false)))
+			return true;
+		IPath otherLocation = description.getLocation();
+		if (location == null)
+			return otherLocation != null;
+		return !location.equals(otherLocation);
+	}
+
+	/**
+	 * Returns true if any public attributes of the description have changed.
+	 * Public attributes are those that are stored in the project description
+	 * file (.project).
+	 */
+	public boolean hasPublicChanges(ProjectDescription description) {
+		if (!getName().equals(description.getName()))
+			return true;
+		if (!comment.equals(description.getComment()))
+			return true;
+		//don't bother optimizing if the order has changed
+		if (!Arrays.equals(buildSpec, description.getBuildSpec(false)))
+			return true;
+		if (!Arrays.equals(staticRefs, description.getReferencedProjects(false)))
+			return true;
+		if (!Arrays.equals(staticRefs, description.getNatureIds(false)))
+			return true;
+		HashMap otherLinks = description.getLinks();
+		if (linkDescriptions == null)
+			return otherLinks != null;
+		return !linkDescriptions.equals(otherLinks);
 	}
 
 	/* (non-Javadoc)
