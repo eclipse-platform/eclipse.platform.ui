@@ -27,7 +27,6 @@ public interface IHelpContextIds {
 	public static final String RELEASE_COMMENT_DIALOG = PREFIX + "release_comment_dialog_context"; //$NON-NLS-1$
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_TO_VERSION_CONTROL_DIALOG = PREFIX + "add_to_version_control_dialog_context"; //$NON-NLS-1$
-	public static final String SYNCHRONIZE_PROJECTS_DIALOG = PREFIX + "sychronize_projects_dialog_context"; //$NON-NLS-1$
 	public static final String EDITORS_DIALOG = PREFIX + "editors_dialog_context"; //$NON-NLS-1$
 	public static final String HISTORY_FILTER_DIALOG = PREFIX + "history_filter_dialog_context"; //$NON-NLS-1$
 	public static final String DATE_TAG_DIALOG = PREFIX + "date_tag_dialog_context"; //$NON-NLS-1$
