@@ -1,13 +1,20 @@
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -24,10 +31,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class FileStatesPage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, Listener {
-
-	private static final long defaultFileStateLongevity = 7; // 7 days
-	private static final long defaultMaxFileStateSize = 1; // 1 Mb
-	private static final int defaultMaxFileStates = 50;
 
 	private static final String LONGEVITY_TITLE = WorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
 	private static final String MAX_FILE_STATES_TITLE = WorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
@@ -214,10 +217,18 @@ public class FileStatesPage
 	protected void performDefaults() {
 		super.performDefaults();
 
-		this.longevityText.setText(String.valueOf(defaultFileStateLongevity));
-		this.maxStatesText.setText(String.valueOf(defaultMaxFileStates));
-		this.maxStateSizeText.setText(String.valueOf(defaultMaxFileStateSize));
+		Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 
+		long days =
+			prefs.getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY)
+				/ DAY_LENGTH;
+		long megabytes =
+			prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE)
+				/ MEGABYTES;
+		this.longevityText.setText(String.valueOf(days));
+		this.maxStatesText.setText(
+			prefs.getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
+		this.maxStateSizeText.setText(String.valueOf(megabytes));
 		checkState();
 	}
 	/** 
