@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -42,6 +43,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	// cache for file contents received from the server
 	private byte[] contents;
+	
+	// relative synchronization state calculated by server of this remote file compare to the current local 
+	// workspace copy.
+	private int workspaceSyncState = Update.STATE_NONE;
 	
 	/**
 	 * Static method which creates a file as a single child of its parent.
@@ -76,31 +81,65 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
 			return null;
 		}
+		
 		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
+		
+		// use the contents of the file on disk so that the server can calculate the relative
+		// sync state. This is a trick to allow the server to calculate sync state for us.
+		InputStream is = managed.getInputStream();
+		OutputStream os = file.getOutputStream();
+		try {		
+			FileUtil.transfer(is, os);
+		} catch(IOException e) {			
+		} finally {
+			try {
+				os.close();
+				is.close();
+			} catch(IOException e) {
+			}
+		}
+			
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		if( ! file.updateRevision(tag, monitor)) {
 			// If updateRevision returns false then the resource no longer exists remotely
 			return null;
 		}
+		
+		// forget local contents. Remote contents will be fetched the next time
+		// the returned handle is used.
+		file.clearContents();
 		return file;
 	}
+	
+	/**
+	 * Forget the contents associated with this remote handle.
+	 */
+	public void clearContents() {
+		contents = null;
+	}
+		
 	/**
 	 * Constructor for RemoteFile that should be used when nothing is know about the
 	 * file ahead of time.
 	 */
 	// XXX do we need the first two constructors?
-	public RemoteFile(RemoteFolder parent, String name, CVSTag tag) {
-		this(parent, name, "0", tag);
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, CVSTag tag) {
+		this(parent, workspaceSyncState, name, "0", tag);
 	}
 	
-	public RemoteFile(RemoteFolder parent, String name, String revision, CVSTag tag) {
-		this(parent, new ResourceSyncInfo(name, revision, "dummy", "", tag, "u=rw,g=rw,o=rw"));
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
+		this(parent, workspaceSyncState, new ResourceSyncInfo(name, revision, "dummy", "", tag, "u=rw,g=rw,o=rw"));
 		// A blank keyword mode will use the type provided by the server to transfer the file contents
 	}
 	
 	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {
+		this(parent, Update.STATE_NONE, info);
+	}
+	
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, ResourceSyncInfo info) {
 		this.parent = parent;
 		this.info = info;
+		this.workspaceSyncState = workspaceSyncState;
 		Assert.isTrue(!info.isDirectory());
 	}
 
@@ -183,7 +222,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 */
 	public RemoteFile toRevision(String revision) {
 		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), new Path(parent.getRepositoryRelativePath()), parent.getTag());
-		RemoteFile file = new RemoteFile(newParent, getName(), revision, CVSTag.DEFAULT);
+		RemoteFile file = new RemoteFile(newParent, getWorkspaceSyncState(), getName(), revision, CVSTag.DEFAULT);
 		newParent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
@@ -192,7 +231,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @see IManagedFile#getSize()
 	 */
 	public long getSize() {
-		return 0;
+		return contents == null ? 0 : contents.length;
 	}
 
 	/**
@@ -204,6 +243,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 
 	public ICVSFolder getParent() {
 		return parent;
+ 	}
+ 	
+ 	public int getWorkspaceSyncState() {
+ 		return workspaceSyncState;
+ 	}
+ 	
+ 	public void setWorkspaceSyncState(int workspaceSyncState) {
+ 		this.workspaceSyncState = workspaceSyncState;
  	}
  	
 	/**
@@ -253,15 +300,25 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 			contents = new byte[0];
 	}
 
+	/**
+	 * Set the revision for this remote file.
+	 * 
+	 * @param revision to associated with this remote file
+	 */
 	public void setRevision(String revision) {
 		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
-	}
-		
+	}		
 	
+	/*
+	 * @see ICVSFile#getInputStream()
+	 */
 	public InputStream getInputStream() throws CVSException {
-		return new ByteArrayInputStream(new byte[0]);
+		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
 	}
 	
+	/*
+	 * @see ICVSFile#getOutputStream()
+	 */
 	public OutputStream getOutputStream() throws CVSException {
 		// stores the contents of the file when the stream is closed
 		// could perhaps be optimized in some manner to avoid excessive array copying
@@ -300,12 +357,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	
 	/**
 	 * @see IManagedFile#isModified()
-	 * 
-	 * The file is modified if its contents haven't been fetched yet.
-	 * This will trigger a fetch by the update command
 	 */
 	public boolean isModified() throws CVSException {
-		return contents == null;
+		// it is safe to always consider a remote file handle as modified. This will cause any
+		// CVS command to fetch new contents from the server.
+		return true;
 	}
 
 	/**

@@ -24,6 +24,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 
@@ -134,7 +135,7 @@ public class RemoteModule extends RemoteFolder {
 					if ( ! files.isEmpty()) {
 						ICVSRemoteResource[] children = new ICVSRemoteResource[files.size()];
 						for (int j = 0; j < children.length; j++) {
-							children[j] = new RemoteFile(remoteModule, (String)files.get(j), tag);
+							children[j] = new RemoteFile(remoteModule, Update.STATE_NONE, (String)files.get(j), tag);
 							remoteModule.setChildren(children);
 						}
 					}

@@ -147,7 +147,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 			public void directoryDoesNotExist(IPath path) {
 			}
-			public void fileInformation(char type, String filename) {
+			public void fileInformation(int type, String filename) {
 				exists[0] = true;
 			}
 			public void fileDoesNotExist(String filename) {
@@ -224,7 +224,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 			public void directoryDoesNotExist(IPath path) {
 			}
-			public void fileInformation(char type, String filename) {
+			public void fileInformation(int type, String filename) {
 				IPath filePath = new Path(filename);	
 				if( filePath.segmentCount() == 1 ) {
 					String properFilename = filePath.lastSegment();
@@ -263,7 +263,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			// Convert the file and folder names to IManagedResources
 			List result = new ArrayList();
 			for (int i=0;i<newRemoteFiles.size();i++) {
-				result.add(new RemoteFile(this, (String)newRemoteFiles.get(i), tag));
+				result.add(new RemoteFile(this, Update.STATE_NONE, (String)newRemoteFiles.get(i), tag));
 			}
 			for (int i=0;i<newRemoteDirectories.size();i++)
 				result.add(new RemoteFolder(this, getRepository(), new Path(getRepositoryRelativePath()).append((String)newRemoteDirectories.get(i)), tag));
@@ -557,8 +557,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 					// If we get this, we can assume that the parent directory no longer exists
 					exists[0] = false;
 				}
-				public void fileInformation(char type, String filename) {
+				public void fileInformation(int type, String filename) {
 					// The file was found and has a different revision
+					try {
+						((RemoteFile)getChild(filename)).setWorkspaceSyncState(type);
+					} catch(CVSException e) {
+						exists[0] = false;
+					}
 					exists[0] = true;
 				}
 				public void fileDoesNotExist(String filename) {

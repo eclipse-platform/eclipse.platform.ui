@@ -23,6 +23,16 @@ public class Update extends Command {
 	
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new UpdateListener(null);
+	
+	/*** File information status returned from update ***/
+	public static final int STATE_NONE = 0;							// no state information available
+	public static final int STATE_ADDED_LOCAL = 1; 			// new file locally that was added but not comitted to server yet
+	public static final int STATE_UNKOWN = 2; 						// new file locally but not added to server
+	public static final int STATE_REMOTE_CHANGES = 3; 		// remote changes to an unmodified local file
+	public static final int STATE_DELETED = 4; 						// removed locally but still exists on the server
+	public static final int STATE_MODIFIED = 5; 					// modified locally
+	public static final int STATE_CONFLICT = 6; 					// modified locally and on the server but cannot be auto-merged
+	public static final int STATE_MERGEABLE_CONFLICT = 7;  // modified locally and on the server but can be auto-merged
 
 	/**
 	 * Makes a -r or -D or -A option for a tag.

@@ -90,7 +90,5 @@ class UpdatedHandler extends ResponseHandler {
 			timestamp = ResourceSyncInfo.RESULT_OF_MERGE + mFile.getTimeStamp();
 		}			
 		mFile.setSyncInfo(new ResourceSyncInfo(entryLine, permissionsLine, timestamp));
-
-		Assert.isTrue(mFile.isModified() != updateResponse);
 	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -295,4 +296,25 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), localInfo.getIsStatic()));
 		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 	 }	 	
+	/*
+	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
+	 */
+	public int getSyncKind(int granularity, IProgressMonitor progress) {
+		
+		if(remote instanceof RemoteFile) {
+			int type = ((RemoteFile)remote).getWorkspaceSyncState();
+			switch(type) {
+				case Update.STATE_CONFLICT: 
+					return ILocalSyncElement.CONFLICTING | 
+							   ILocalSyncElement.CHANGE | 
+							   ILocalSyncElement.MANUAL_CONFLICT;
+
+				case Update.STATE_MERGEABLE_CONFLICT: 
+					return ILocalSyncElement.CONFLICTING | 
+							   ILocalSyncElement.CHANGE | 
+							   ILocalSyncElement.AUTOMERGE_CONFLICT;
+			}			
+		}		
+		return super.getSyncKind(granularity, progress);
+	}
 }

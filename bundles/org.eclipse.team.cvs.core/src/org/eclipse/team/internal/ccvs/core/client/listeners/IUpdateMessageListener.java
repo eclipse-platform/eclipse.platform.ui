@@ -23,7 +23,7 @@ public interface IUpdateMessageListener {
 	/**
 	 * file information
 	 */
-	public void fileInformation(char type, String filename);
+	public void fileInformation(int type, String filename);
 	
 	public void fileDoesNotExist(String filename);
 }

@@ -91,16 +91,11 @@ public interface ILocalSyncElement {
 	public static final int AUTOMERGE_CONFLICT = 32;
 	
 	/**
-	 * Sync constant (value 48) indicating that both the local and remote resources have changed relative 
+	 * Sync constant (value 64) indicating that both the local and remote resources have changed relative 
 	 * to the base and their content changes conflict (e.g. local and remote resource have changes on 
 	 * same lines). These conflicts can only be correctly resolved by the user.
 	 */
-	public static final int MANUAL_CONFLICT = 48;
-	
-	/**
-	 * Bit mask for extracting the conflict type.
-	 */
-	public static final int CONFLICT_MASK = MANUAL_CONFLICT;
+	public static final int MANUAL_CONFLICT = 64;
 	
 	/*====================================================================
 	 * Constants defining synchronization granularity:

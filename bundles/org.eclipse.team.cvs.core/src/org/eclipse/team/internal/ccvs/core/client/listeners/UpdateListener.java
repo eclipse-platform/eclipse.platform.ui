@@ -13,12 +13,21 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public class UpdateListener implements ICommandOutputListener {
 	static final String SERVER_PREFIX = "cvs server: "; //$NON-NLS-1$
 	static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: "; //$NON-NLS-1$
 
+	// Message line prefix constants
+	private static final char MLP_ADDED_LOCAL = 'A'; // new file locally that was added but not comitted to server yet
+	private static final char MLP_UNKOWN = '?'; // new file locally but not added to server
+	private static final char MLP_REMOTE_CHANGES = 'U'; // remote changes to an unmodified local file
+	private static final char MLP_DELETED = 'R'; // removed locally but still exists on the server
+	private static final char MLP_MODIFIED = 'M'; // modified locally
+	private static final char MLP_CONFLICT = 'C'; // modified locally and on the server but cannot be auto-merged
+	
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
 
@@ -29,20 +38,35 @@ public class UpdateListener implements ICommandOutputListener {
 	public IStatus messageLine(String line, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		if (updateMessageListener == null) return OK;
-		if (line.indexOf(' ') == 1) {
-			// We have a message that indicates the type of update (A, R, M, U, C, ?) and the file name
+		if(line.startsWith("Merging differences")) { //$NON-NLS-1$
+			merging = true;
+		} else if(line.indexOf(' ')==1) {
+			// We have a message that indicates the type of update. The possible messages are
+			// defined by the prefix constants MLP_*.
 			String path = line.substring(2);
 			char changeType = line.charAt(0);
+			
+			// calculate change type
+			int type = 0;
+			switch(changeType) {
+				case 'A': type = Update.STATE_ADDED_LOCAL; break; // new file locally that was added but not comitted to server yet
+				case '?': type = Update.STATE_UNKOWN; break; // new file locally but not added to server
+				case 'U': type = Update.STATE_REMOTE_CHANGES; break;  // remote changes to an unmodified local file
+				case 'R': type = Update.STATE_DELETED; break; // removed locally but still exists on the server
+				case 'M': type = Update.STATE_MODIFIED; break; // modified locally
+				case 'C': type = Update.STATE_CONFLICT; break;  // modified locally and on the server but cannot be auto-merged
+				default: type = Update.STATE_NONE;
+			}
+				
 			if (merging) {
-				// If we are merging, use 'C' as the change type to indicate that there is a conflict
-				if (changeType == 'M')
-					changeType = 'C';
+				// If we are merging the modified prefix is used both to show merges and
+				// local changes. We have to detect this case and use a more specific change
+				// type.
+				if (type == Update.STATE_MODIFIED)
+					type = Update.STATE_MERGEABLE_CONFLICT;
 				merging = false;
 			}
-			updateMessageListener.fileInformation(changeType, path);
-		} else if (line.startsWith("Merging")) { //$NON-NLS-1$
-			// We are merging two files
-			merging = true;	
+			updateMessageListener.fileInformation(type, path);
 		}
 		return OK;
 	}

@@ -5,19 +5,10 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
  
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.zip.CRC32;
-
-import javax.swing.plaf.FileChooserUI;
-import org.eclipse.team.internal.ccvs.core.CVSException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class FileUtil {
 		
@@ -29,5 +20,17 @@ public class FileUtil {
 			}
 		}
 		resource.delete();
+	}
+	
+	public static void transfer(InputStream in, OutputStream out) throws IOException {
+		final byte[] BUFFER = new byte[4096];
+		int read = 0;
+		long totalRead = 0;
+		synchronized (BUFFER) {
+			while ((read = in.read(BUFFER)) != -1) {
+				out.write(BUFFER, 0, read);
+			}
+		}
+		out.flush();
 	}
 }

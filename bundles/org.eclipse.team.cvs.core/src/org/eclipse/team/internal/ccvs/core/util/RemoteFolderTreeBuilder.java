@@ -41,7 +41,6 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.omg.CORBA.UNKNOWN;
 
 /*
  * This class is responsible for building a remote tree that shows the repository
@@ -76,6 +75,31 @@ public class RemoteFolderTreeBuilder {
 	private static String FOLDER = "FOLDER";
 	
 	private static Map EMPTY_MAP = new HashMap();
+	
+	static class DeltaNode {
+		int syncState = Update.STATE_NONE;
+		String name;
+		String revision;
+		
+		DeltaNode(String name, String revision, int syncState) {
+			this.name = name;
+			this.revision = revision;
+			this.syncState = syncState;			
+		}
+		
+		String getName() {
+			return name;
+		}
+		
+		String getRevision() {
+			return revision;
+		}
+		
+		int getSyncState() {
+			return syncState;
+		}
+	}
+		
 	
 	private RemoteFolderTreeBuilder(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag) {
 		this.repository = repository;
@@ -225,31 +249,34 @@ public class RemoteFolderTreeBuilder {
 			// Build the child folders corresponding to local folders
 			ICVSFolder[] folders = local.getFolders();
 			for (int i=0;i<folders.length;i++) {
-				if (folders[i].isCVSFolder() && (deltas.get(folders[i].getName()) != DELETED))
+				DeltaNode d = (DeltaNode)deltas.get(folders[i].getName());
+				if (folders[i].isCVSFolder() && (d==null || d.getRevision() != DELETED)) {
 					children.put(folders[i].getName(), 
 						new RemoteFolderTree(remote, repository, 
 							new Path(folders[i].getFolderSyncInfo().getRepository()), 
 							tagForRemoteFolder(folders[i],tag)));
+				}
 			}
 			// Build the child files corresponding to local files
 			ICVSFile[] files = local.getFiles();
 			for (int i=0;i<files.length;i++) {
 				ICVSFile file = files[i];
-				Object deltaType = deltas.get(file.getName());
-				if (deltaType != DELETED) {
-					ResourceSyncInfo info = file.getSyncInfo();
-					// if there is no sync info then there isn't a remote file for this local file on the
-					// server.
-					if (info==null)
-						continue;
-					// There is no remote if the file was added and we didn't get a conflict (C) indicator from the server
-					if (info.isAdded() && (deltaType == null))
-						continue;
-					// There is no remote if the file was deleted and we didn;t get a remove (R) indicator from the server
-					if (info.isDeleted() && (deltaType == null))
-						continue;
-					children.put(file.getName(), new RemoteFile(remote, info));
-				}
+
+				DeltaNode d = (DeltaNode)deltas.get(file.getName());
+				ResourceSyncInfo info = file.getSyncInfo();
+				// if there is no sync info then there isn't a remote file for this local file on the
+				// server.
+				if (info==null)
+					continue;
+				// There is no remote if the file was added and we didn't get a conflict (C) indicator from the server
+				if (info.isAdded() && d==null)
+					continue;
+				// There is no remote if the file was deleted and we didn;t get a remove (R) indicator from the server
+				if (info.isDeleted() && d==null)
+					continue;
+					
+				int type = d==null ? Update.STATE_NONE : d.getSyncState();
+				children.put(file.getName(), new RemoteFile(remote, type, info));
 			}
 		}
 		
@@ -257,19 +284,20 @@ public class RemoteFolderTreeBuilder {
 		Iterator i = deltas.keySet().iterator();
 		while (i.hasNext()) {
 			String name = (String)i.next();
-			String revision = (String)deltas.get(name);
+			DeltaNode d = (DeltaNode)deltas.get(name);
+			String revision = d.getRevision();
 			if (revision == FOLDER) {
 				// XXX should getRemotePath() return an IPath instead of a String?
 				children.put(name, new RemoteFolderTree(remote, repository, 
 					new Path(remote.getRepositoryRelativePath()).append(name), 
 					tagForRemoteFolder(remote, tag)));
 			} else if (revision == ADDED) {
-				children.put(name, new RemoteFile(remote, name, tagForRemoteFolder(remote, tag)));
+				children.put(name, new RemoteFile(remote, d.getSyncState(), name, tagForRemoteFolder(remote, tag)));
 			} else if (revision == UNKNOWN) {
 				// The local resource is out of sync with the remote.
 				// Create a RemoteFile associated with the tag so we are assured of getting the proper revision
 				// (Note: this will replace the RemoteFile added from the local base)
-				children.put(name, new RemoteFile(remote, name, tagForRemoteFolder(remote, tag)));
+				children.put(name, new RemoteFile(remote, d.getSyncState(), name, tagForRemoteFolder(remote, tag)));
 			} else if (revision == DELETED) {
 				// This should have been deleted while creating from the local resources.
 				// If it wasn't, delete it now.
@@ -294,7 +322,9 @@ public class RemoteFolderTreeBuilder {
 				RemoteFolderTree remoteFolder = (RemoteFolderTree)entry.getValue();
 				String name = (String)entry.getKey();
 				ICVSFolder localFolder;
-				if (deltas.get(name) == FOLDER)
+				DeltaNode d = (DeltaNode)deltas.get(name);
+				// for directories that are new on the server 
+				if (d!=null && d.getRevision() == FOLDER)
 					localFolder = null;
 				else
 					localFolder = local.getFolder(name);
@@ -338,7 +368,7 @@ public class RemoteFolderTreeBuilder {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
-					recordDelta(path, FOLDER);
+					recordDelta(path, FOLDER, Update.STATE_NONE);
 					// Record new directory to be used as a parameter to fetch its contents
 					newChildDirectories.add(path.toString());
 				}
@@ -348,32 +378,35 @@ public class RemoteFolderTreeBuilder {
 				if (path.isEmpty()) {
 					projectDoesNotExist = true;
 				} else {
-					recordDelta(path, DELETED);
+					recordDelta(path, DELETED, Update.STATE_NONE);
 				}
 			}
-			public void fileInformation(char type, String filename) {
+			public void fileInformation(int type, String filename) {
 				// Cases that do not require action are:
-				// 	case 'A' :  = A locally added file that does not exists remotely
+				//	case 'A' :  = A locally added file that does not exists remotely
 				//	case '?' :  = A local file that has not been added and does not exists remotely
 				//  case 'M' :  = A locally modified file that has not been modified remotely
 				switch(type) {
-					case 'C' : // We have an remote change to a modified local file
+					case Update.STATE_MERGEABLE_CONFLICT :
+					case Update.STATE_CONFLICT : 
+								// We have an remote change to a modified local file
 								// The change could be a local change conflicting with a remote deletion.
 								// If so, the deltas may already have a DELETED for the file.
 								// We shouldn't override this DELETED
 								IPath filePath = new Path(filename);
 								Map deltas = deltas = (Map)fileDeltas.get(filePath.removeLastSegments(1));
-								if ((deltas != null) && (deltas.get(filePath.lastSegment()) == DELETED))
+								DeltaNode d = deltas != null ? (DeltaNode)deltas.get(filePath.lastSegment()) : null;
+								if ((d!=null) && (d.getRevision() == DELETED))
 									break;
-					case 'R' : // We have a locally removed file that still exists remotely
-					case 'U' : // We have an remote change to an unmodified local file
+					case Update.STATE_DELETED : // We have a locally removed file that still exists remotely
+					case Update.STATE_REMOTE_CHANGES : // We have an remote change to an unmodified local file
 								changedFiles.add(filename);
-								recordDelta(new Path(filename), UNKNOWN);
+								recordDelta(new Path(filename), UNKNOWN, type);
 								break;
 				}	
 			}
 			public void fileDoesNotExist(String filename) {
-				recordDelta(new Path(filename), DELETED);
+				recordDelta(new Path(filename), DELETED, Update.STATE_NONE);
 			}
 		};
 		
@@ -397,15 +430,15 @@ public class RemoteFolderTreeBuilder {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					// NOTE: Check path prefix
-					recordDelta(path, FOLDER);
+					recordDelta(path, FOLDER, Update.STATE_NONE);
 				}
 			}
 			public void directoryDoesNotExist(IPath path) {
 			}
-			public void fileInformation(char type, String filename) {
+			public void fileInformation(int type, String filename) {
 				// NOTE: Check path prefix
 				changedFiles.add(filename);
-				recordDelta(new Path(filename), ADDED);
+				recordDelta(new Path(filename), ADDED, type);
 			}
 			public void fileDoesNotExist(String filename) {
 			}
@@ -487,14 +520,15 @@ public class RemoteFolderTreeBuilder {
 	 * A revison of UNKNOWN indicates that the revision has not been fetched
 	 * from the repository yet.
 	 */
-	private void recordDelta(IPath path, String revision) {
+	private void recordDelta(IPath path, String revision, int syncState) {
 		IPath parent = path.removeLastSegments(1);
 		Map deltas = (Map)fileDeltas.get(parent);
 		if (deltas == null) {
 			deltas = new HashMap();
 			fileDeltas.put(parent, deltas);
 		}
-		deltas.put(path.lastSegment(), revision);
+		String name = path.lastSegment();
+		deltas.put(name, new DeltaNode(name, revision, syncState));
 	}
 	
 	private void updateRevision(IPath path, String revision) throws CVSException {
