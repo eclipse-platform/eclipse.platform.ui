@@ -186,9 +186,9 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#install(IFeature,IFeatureVerification, IProgressMonitor) throws CoreException
+	 * @see IFeature#install(IFeature,IVerificationListener, IProgressMonitor) throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature, IFeatureVerification verifier, IProgressMonitor progress) throws CoreException {
+	public IFeatureReference install(IFeature targetFeature, IVerificationListener verificationListener, IProgressMonitor progress) throws CoreException {
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -201,6 +201,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 		// do the install
 		IFeatureContentConsumer consumer = targetFeature.getFeatureContentConsumer();
+		IVerifier verifier = getFeatureContentProvider().getVerifier();
 
 		try {
 			// determine list of plugins to install
@@ -221,7 +222,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 			if (verifier != null) {
 				ContentReference[] references = getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
-				verifier.verify(this, references, monitor);
+				promptForVerification(verifier.verify(this, references, monitor),verificationListener);
 			}
 
 			//finds the contentReferences for this IFeature
@@ -240,22 +241,25 @@ public class Feature extends FeatureModel implements IFeature {
 
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
+				// verification
+				if (verifier != null) {
+					references = getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
+					promptForVerification(verifier.verify(this, references, monitor),verificationListener);
+				}
+				
+			}
+			
+			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
 					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionedIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				
-				// verification
-				if (verifier != null) {
-					references = getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-					verifier.verify(this, references, monitor);
-				}
-
-				// instalation
+				// installation
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
-					pluginConsumer.store(references[j], monitor);
+						pluginConsumer.store(references[j], monitor);
 				}
 				pluginConsumer.close();
 				if (monitor != null)
@@ -270,7 +274,7 @@ public class Feature extends FeatureModel implements IFeature {
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				if (verifier != null)
-					verifier.verify(this, references, monitor);
+				promptForVerification(verifier.verify(this, references, monitor),verificationListener);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
@@ -381,6 +385,28 @@ public class Feature extends FeatureModel implements IFeature {
 	public String toString() {
 		String URLString = (getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm(); //$NON-NLS-1$
 		return Policy.bind("Feature.FeatureVersionToString", URLString, getVersionedIdentifier().toString()); //$NON-NLS-1$ 
+	}
+
+
+	/**
+	 * 
+	 */
+	private void promptForVerification(IVerificationResult verificationResult, IVerificationListener listener) throws CoreException{
+
+		if (listener==null) return;
+		int result =  listener.prompt(verificationResult);
+		
+		if (result == IVerificationListener.CHOICE_ABORT) {
+			throw Utilities.newCoreException(Policy.bind("JarVerificationService.CancelInstall"), //$NON-NLS-1$
+			verificationResult.getResultException());
+		}
+		if (result == IVerificationListener.CHOICE_ERROR) {
+			throw Utilities.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"), //$NON-NLS-1$
+			verificationResult.getResultException());
+		}
+
+	return;
+		
 	}
 
 }

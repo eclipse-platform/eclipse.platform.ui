@@ -14,6 +14,9 @@ import java.util.jar.*;
 
 import org.apache.xerces.utils.regex.REUtil;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.IVerifier;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -25,14 +28,17 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  *
  */
 
-public class JarVerifier {
+public class JarVerifier implements IVerifier {
 
 	private JarVerificationResult result;
+	private List /*of CertificatePair*/
+	trustedCertificates = null;		
 
 	/**
 	 * List of initialized keystores
 	 */
-	private List /* of KeyStore */	listOfKeystores;
+	private List /* of KeyStore */
+	listOfKeystores;
 
 	/**
 	 * Number of files in the JarFile
@@ -81,11 +87,11 @@ public class JarVerifier {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
 					} catch (NoSuchAlgorithmException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (CertificateException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
 					} catch (KeyStoreException e) {
-						throw newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore", handle.getType()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore", handle.getType()), e); //$NON-NLS-1$
 					} finally {
 						if (in != null) {
 							try {
@@ -111,11 +117,14 @@ public class JarVerifier {
 	/**
 	 * initialize instance variables
 	 */
-	private void initializeVariables(File jarFile) throws IOException {
+	private void initializeVariables(File jarFile, IFeature feature, ContentReference contentRef) throws IOException {
 		result = new JarVerificationResult();
-		result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
-		result.setResultCode(JarVerification.ERROR_INSTALL);
-		result.setResultException(new Exception());
+		result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
+		result.setResultException(null);
+		result.setFeature(feature);
+		result.setContentReference(contentRef);
+		
+		// # of entries
 		JarFile jar = new JarFile(jarFile);
 		entries = jar.size();
 		try {
@@ -142,7 +151,7 @@ public class JarVerifier {
 				}
 			}
 		} catch (KeyStoreException e) {
-			throw newCoreException(Policy.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -167,8 +176,7 @@ public class JarVerifier {
 				}
 			}
 		} catch (IOException e) {
-			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
-			result.setResultCode(JarVerification.ERROR_INSTALL);
+			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (monitor != null)
@@ -183,6 +191,30 @@ public class JarVerifier {
 	public void setMonitor(IProgressMonitor newMonitor) {
 		monitor = newMonitor;
 	}
+
+	/*
+	* @see IFeatureVerification#verify(IFeature feature,ContentReference[], InstallMonitor)
+	*/
+	public IVerificationResult verify(IFeature feature, ContentReference[] references, InstallMonitor monitor) throws CoreException {
+		if (references == null || references.length == 0)
+			return null;
+
+		setMonitor(monitor);
+		for (int i = 0; i < references.length; i++) {
+			if (references[i] instanceof JarContentReference) {
+				JarContentReference jarReference = (JarContentReference) references[i];
+				try {
+					File jarFile = jarReference.asFile(); 
+					initializeVariables(jarFile, feature, references[i]);
+					return verify(jarFile);
+				} catch (IOException e){
+					throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	* Verifies integrity and the validity of a valid
 	* URL representing a JAR file
@@ -203,11 +235,9 @@ public class JarVerifier {
 	*										not install.
 	* @return int
 	*/
-	public JarVerificationResult verify(File jarFile) {
+	private JarVerificationResult verify(File jarFile) {
 
 		try {
-			// new verification, clean instance variables
-			initializeVariables(jarFile);
 
 			// verify integrity
 			verifyIntegrity(jarFile);
@@ -216,12 +246,11 @@ public class JarVerifier {
 			// as verifyIntegrity already did it
 
 			// verify source certificate
-			if (result.getVerificationCode() == JarVerification.JAR_INTEGRITY_VERIFIED)
+			if (result.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED)
 				verifyAuthentication();
 
 		} catch (Exception e) {
-			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
-			result.setResultCode(JarVerification.ERROR_INSTALL);
+			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
 		}
 
@@ -239,13 +268,17 @@ public class JarVerifier {
 		CertificatePair[] entries = result.getRootCertificates();
 		boolean certificateFound = false;
 
-		// If all the cartificate of an entry are
+		if (alreadyValidated()) {
+			result.setVerificationCode(IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED_DO_NOT_PROMPT);			
+		}
+
+		// If all the certificate of an entry are
 		// not found in the list of known certifcate
 		// the certificate is not trusted by any keystore.
 		for (int i = 0; i < entries.length; i++) {
 			certificateFound = existsInKeystore(entries[i].getRoot());
 			if (certificateFound) {
-				result.setVerificationCode(JarVerification.JAR_SOURCE_VERIFIED);
+				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED);
 				result.setFoundCertificate(entries[i]);
 				return;
 			}
@@ -283,21 +316,20 @@ public class JarVerifier {
 				}
 
 				if (certificateFound)
-					result.setVerificationCode(JarVerification.JAR_INTEGRITY_VERIFIED);
+					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED);
 				else
-					result.setVerificationCode(JarVerification.JAR_NOT_SIGNED);
+					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
 				result.setResultException(new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + jarFile.getAbsolutePath()));
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
 			// but content has changed since signed
-			result.setVerificationCode(JarVerification.JAR_CORRUPTED);
+			result.setVerificationCode(IVerificationResult.TYPE_ENTRY_CORRUPTED);
 		} catch (InterruptedException e) {
-			result.setVerificationCode(JarVerification.VERIFICATION_CANCELLED);
+			result.setVerificationCode(IVerificationResult.VERIFICATION_CANCELLED);
 		} catch (Exception e) {
-			result.setVerificationCode(JarVerification.UNKNOWN_ERROR);
-			result.setResultCode(JarVerification.ERROR_INSTALL);
+			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (jis != null) {
@@ -320,12 +352,39 @@ public class JarVerifier {
 		return false;
 	}
 
-	/**
-	 * 
-	 */
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
+
+	private boolean alreadyValidated() {
+
+		if (trustedCertificates != null) {
+			// check if this is not a user accepted certificate for this feature
+			Iterator iter = trustedCertificates.iterator();
+			while (iter.hasNext()) {
+				CertificatePair trustedCertificate = (CertificatePair) iter.next();
+				CertificatePair[] pairs = result.getRootCertificates();
+				for (int i = 0; i < pairs.length; i++) {
+					if (trustedCertificate.equals(pairs[i])) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
+	private void addTrustedCertificate(CertificatePair pair) {
+		if (trustedCertificates == null)
+			trustedCertificates = new ArrayList();
+		if (pair != null)
+			trustedCertificates.add(pair);
+	}
+
+	private List getTrustedCertificates() {
+		if (trustedCertificates == null)
+			trustedCertificates = new ArrayList();
+		return trustedCertificates;
+	}
+
+
+	
 }

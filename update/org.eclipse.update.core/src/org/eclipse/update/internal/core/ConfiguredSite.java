@@ -130,9 +130,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	}
 
 	/*
-	 * @see IConfiguredSite#install(IFeature,IFeatureVerification, IProgressMonitor)
+	 * @see IConfiguredSite#install(IFeature,IVerifier, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature feature,IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException {
 		if (!isUpdateable()) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("ConfiguredSite.NonInstallableSite", getSite().getURL().toExternalForm()), null); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		activity.setDate(new Date());
 
 		try {
-			installedFeature = getSite().install(feature, verifier,monitor);
+			installedFeature = getSite().install(feature, verificationListener,monitor);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);

@@ -9,9 +9,14 @@ public interface IVerificationListener {
 	/**
 	 * choices
 	 */
+	// User cancelled
 	public static final int CHOICE_ABORT = 0;
-	public static final int CHOICE_INSTALL_TRUST_ONCE = 1;
-	public static final int CHOICE_INSTALL_TRUST_ALWAYS = 2;
+	// Error occured, abort 
+	public static final int CHOICE_ERROR = 1;	
+	// Install for this time
+	public static final int CHOICE_INSTALL_TRUST_ONCE = 2;
+	//intall and persist info
+	public static final int CHOICE_INSTALL_TRUST_ALWAYS = 3;
 	
 	public int prompt(IVerificationResult notifier);
 }

@@ -15,14 +15,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.security.*;
+import org.eclipse.update.internal.security.CertificatePair;
 import sun.security.x509.X500Name;
 
 public class JarVerificationDialog extends Dialog {
-	private JarVerificationResult _VerificationResult = null;
+	private IVerificationResult _VerificationResult = null;
 	private String _fileName = null;
 	private String _strComponentName = null;
 	private String _strId = null;
@@ -35,13 +34,13 @@ public class JarVerificationDialog extends Dialog {
 	/**
 	 *
 	 */
-	public JarVerificationDialog(Shell shell, JarContentReference jarReference, IFeature feature, JarVerificationResult VerificationResult) {
+	public JarVerificationDialog(Shell shell,  IVerificationResult verificationResult) {
 		super(shell);
-		_fileName = jarReference.getIdentifier();
-		_VerificationResult = VerificationResult;
-		_strId = feature.getVersionedIdentifier().toString();
-		_strComponentName = feature.getLabel();
-		_strProviderName = feature.getProvider();
+		_fileName = verificationResult.getContentReference().getIdentifier();
+		_VerificationResult = verificationResult;
+		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
+		_strComponentName =verificationResult.getFeature().getLabel();
+		_strProviderName = verificationResult.getFeature().getProvider();
 		trustedCertificate = null;
 		okToInstall = false;
 	}
@@ -73,44 +72,44 @@ public class JarVerificationDialog extends Dialog {
 		textInformation.setLayoutData(new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
 		StringBuffer strb = new StringBuffer();
 		switch (_VerificationResult.getVerificationCode()) {
-			case JarVerification.JAR_NOT_SIGNED :
+			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
 				strb.append(Policy.bind("JarVerificationDialog.AboutToInstall")); //$NON-NLS-1$
-				strb.append("\n\n"); //$NON-NLS-1$
+				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.NotDigitallySigned")); //$NON-NLS-1$
-				strb.append("\n"); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.CannotVerifyProvider")); //$NON-NLS-1$
-				strb.append("\n"); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
 				textInformation.setText(strb.toString());
 				break;
-			case JarVerification.JAR_CORRUPTED :
+			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
 				strb.append(Policy.bind("JarVerificationDialog.CorruptedContent")); //$NON-NLS-1$
-				strb.append("\n\n"); //$NON-NLS-1$
+				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.ComponentNotInstalled")); //$NON-NLS-1$
 				textInformation.setText(strb.toString());
 				break;
-			case JarVerification.JAR_INTEGRITY_VERIFIED :
+			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
 				strb.append(Policy.bind("JarVerificationDialog.SignedComponent")); //$NON-NLS-1$
-				strb.append("\n\n"); //$NON-NLS-1$
+				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.UnknownCertificate")); //$NON-NLS-1$
-				strb.append("\n"); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.UnableToVerifyProvider")); //$NON-NLS-1$ 
-				strb.append("\n"); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
 				textInformation.setText(strb.toString());
 				break;
-			case JarVerification.JAR_SOURCE_VERIFIED :
+			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
 				strb.append(Policy.bind("JarVerificationDialog.SignedComponent")); //$NON-NLS-1$
-				strb.append("\n\n"); //$NON-NLS-1$
+				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.KnownCertificate")); //$NON-NLS-1$
-				strb.append("\n"); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.ProviderKnown")); //$NON-NLS-1$
-				strb.append("\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.Caution")); //$NON-NLS-1$
+				strb.append("\r\n"); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.Caution",_strProviderName)); //$NON-NLS-1$
 				textInformation.setText(strb.toString());
 				break;
 		}
-		if (_VerificationResult.getVerificationCode() == JarVerification.JAR_INTEGRITY_VERIFIED || _VerificationResult.getVerificationCode() == JarVerification.JAR_SOURCE_VERIFIED) {
+		if (_VerificationResult.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED  || _VerificationResult.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED) {
 			addCertificateView(compositeClient);
 		}
 		// Composite: Information labels
@@ -151,7 +150,7 @@ public class JarVerificationDialog extends Dialog {
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(_strProviderName);
 		}
-		if (_VerificationResult.getVerificationCode() != JarVerification.JAR_CORRUPTED) {
+		if (_VerificationResult.getVerificationCode() != IVerificationResult.TYPE_ENTRY_CORRUPTED) {
 			// Group box
 			//----------
 			Group group = new Group(compositeClient, SWT.NONE);
@@ -185,91 +184,24 @@ public class JarVerificationDialog extends Dialog {
 	}
 
 	private void addCertificateView(Composite compositeClient) {
-		X509Certificate certRoot = null;
-		X509Certificate certIssuer = null;
-		if (_VerificationResult.getFoundCertificate() == null) {
-			CertificatePair[] certs = _VerificationResult.getRootCertificates();
-			if (certs.length == 0)
-				return;
-			trustedCertificate = (CertificatePair) certs[0];
-		} else {
-			trustedCertificate = (CertificatePair) _VerificationResult.getFoundCertificate();
-		}
-		certRoot = (X509Certificate) trustedCertificate.getRoot();
-		certIssuer = (X509Certificate) trustedCertificate.getIssuer();
 
 		// Group box
 		//----------
 		Group group = new Group(compositeClient, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL));
-
 		// Text: Information
 		//------------------
 		Text textInformation = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
 		textInformation.setLayoutData(new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
 		StringBuffer strb = new StringBuffer();
-		strb.append(Policy.bind("JarVerificationDialog.SubjectCA")); //$NON-NLS-1$
-		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.CAIssuer", issuerString(certIssuer.getSubjectDN()))); //$NON-NLS-1$
-		strb.append("\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationDialog.ValidBetween", dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()))); //$NON-NLS-1$
-		strb.append(checkValidity(certIssuer));
-		if (certIssuer != null && !certIssuer.equals(certRoot)) {
-			strb.append("\n\n"); //$NON-NLS-1$				
-			strb.append(Policy.bind("JarVerificationDialog.RootCA")); //$NON-NLS-1$
-			strb.append("\n"); //$NON-NLS-1$
-			strb.append(Policy.bind("JarVerificationDialog.CAIssuer", issuerString(certIssuer.getIssuerDN()))); //$NON-NLS-1$
-			strb.append("\n"); //$NON-NLS-1$
-			strb.append(Policy.bind("JarVerificationDialog.ValidBetween", dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()))); //$NON-NLS-1$ 
-			strb.append(checkValidity(certRoot));
-			strb.append("\n\n"); //$NON-NLS-1$	
+		if (_VerificationResult.getSignerInfo()!=null) {
+			strb.append(_VerificationResult.getSignerInfo());
+		}
+		if (_VerificationResult.getVerifierInfo()!=null) {		
+			strb.append("\r\n\r\n"); //$NON-NLS-1$
+			strb.append(_VerificationResult.getVerifierInfo());			
 		}
 		textInformation.setText(strb.toString());
-
-	}
-
-	private String checkValidity(X509Certificate cert) {
-
-		try {
-			cert.checkValidity();
-		} catch (CertificateExpiredException e) {
-			return ("\n" + Policy.bind("JarVerificationDialog.ExpiredCertificate")); //$NON-NLS-1$ 
-		} catch (CertificateNotYetValidException e) {
-			return ("\n" + Policy.bind("JarVerificationDialog.CertificateNotYetValid")); //$NON-NLS-1$ 
-		}
-		return ("\n" + Policy.bind("JarVerificationDialog.CertificateValid")); //$NON-NLS-1$
-	}
-
-	/**
-	 * Gets the trustedCertificate.
-	 * @return Returns a CertificatePair
-	 */
-	public CertificatePair getCertificate() {
-		return trustedCertificate;
-	}
-
-	private String issuerString(Principal principal) {
-		try {
-			if (principal instanceof X500Name) {
-				String issuerString = "";
-				X500Name name = (X500Name) principal;
-				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ",1" : "";
-				issuerString += name.getCommonName();
-				issuerString += (name.getOrganizationalUnit() != null) ? "," + name.getOrganizationalUnit() : "";
-				issuerString += (name.getOrganization() != null) ? "," + name.getOrganization() : "";
-				issuerString += (name.getLocality() != null) ? "," + name.getLocality() : "";
-				issuerString += (name.getCountry() != null) ? "," + name.getCountry() : "";
-				return issuerString;
-			}
-		} catch (Exception e) {
-			// FIXME should log
-		}
-		return principal.toString();
-	}
-
-	private String dateString(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyyy");
-		return formatter.format(date);
 	}
 }

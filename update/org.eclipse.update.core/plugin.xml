@@ -16,7 +16,6 @@
       <import plugin="org.eclipse.help"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.boot"/>
-      <import plugin="org.eclipse.webdav"/>
    </requires>
 
 

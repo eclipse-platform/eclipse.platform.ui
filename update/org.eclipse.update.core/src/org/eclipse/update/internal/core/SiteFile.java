@@ -42,9 +42,9 @@ public class SiteFile extends Site {
 	}	
 	
 	/*
-	 * @see ISite#install(IFeature, IFeatureVerification, IProgressMonitor)
+	 * @see ISite#install(IFeature, IVerifier, IProgressMonitor)
 	 */	
-	public IFeatureReference install(IFeature sourceFeature, IFeatureVerification verifier, IProgressMonitor progress) throws CoreException {
+	public IFeatureReference install(IFeature sourceFeature, IVerificationListener verificationListener, IProgressMonitor progress) throws CoreException {
 
 		if (sourceFeature==null) return null;
 
@@ -59,7 +59,7 @@ public class SiteFile extends Site {
 
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
-		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, verifier, monitor);
+		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, verificationListener, monitor);
 		if (localFeature instanceof FeatureModel)
 			 ((FeatureModel) localFeature).markReadOnly();
 		this.addFeatureReference(localFeatureReference);

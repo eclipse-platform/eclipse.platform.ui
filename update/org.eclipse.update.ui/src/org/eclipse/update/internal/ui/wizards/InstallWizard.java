@@ -154,7 +154,7 @@ public class InstallWizard extends Wizard {
 			if (oldFeature != null) {
 				success = unconfigure(oldFeature);
 			}
-			if (success) targetSite.install(feature,verifierFor(feature), monitor);
+			if (success) targetSite.install(feature,getVerificationListener(), monitor);
 			else return;
 		}
 		else if (job.getJobType() == PendingChange.CONFIGURE) {
@@ -197,10 +197,9 @@ public class InstallWizard extends Wizard {
 			site.configure(feature);
 		}
 	}
-	private IFeatureVerification verifierFor(IFeature feature) throws CoreException {
-		if (feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider){ 
-			return new JarVerificationService(this.getShell());
-		}
-		return null;
+	
+	
+	private IVerificationListener getVerificationListener(){
+		return new JarVerificationService(this.getShell());
 	}
 }

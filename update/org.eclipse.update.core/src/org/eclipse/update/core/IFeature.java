@@ -257,7 +257,7 @@ public interface IFeature {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature,IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException;
+	public IFeatureReference install(IFeature targetFeature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of plug-ins managed by the Feature
@@ -338,7 +338,7 @@ public interface IFeature {
 	 * @since 2.0
 	 */
 	IFeatureContentConsumer getFeatureContentConsumer() throws CoreException;
-				
+		
 }
 
 

@@ -4,16 +4,20 @@ package org.eclipse.update.internal.security;
  * All Rights Reserved.
  */
 
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.security.Principal;
+import java.security.cert.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.IVerificationResult;
+import org.eclipse.update.internal.core.Policy;
+import sun.security.x509.X500Name;
 
 /**
  * Result of the service
  */
-public class JarVerificationResult {
+public class JarVerificationResult implements IVerificationResult {
 
 
 	private int resultCode;
@@ -23,6 +27,12 @@ public class JarVerificationResult {
 	certificates;
 	private CertificatePair[] rootCertificates;
 	private CertificatePair foundCertificate; // certificate found in one keystore
+	
+	private String signerInfo;
+	private String verifierInfo;
+	private ContentReference contentReference;
+	private String text;
+	private IFeature feature;
 
 	/**
 	 */
@@ -40,7 +50,7 @@ public class JarVerificationResult {
 		resultCode = newResultCode;
 	}
 	/**
-	 * called by JarVerificationService only
+	 * 
 	 */
 	public void setResultException(Exception newResultException) {
 		resultException = newResultException;
@@ -75,7 +85,7 @@ public class JarVerificationResult {
 	 * Gets the certificates.
 	 * @return Returns a List
 	 */
-	public List getCertificates() {
+	private List getCertificates() {
 		return certificates;
 	}
 
@@ -133,7 +143,7 @@ public class JarVerificationResult {
 	 * Gets the foundCertificate.
 	 * @return Returns a Certificate
 	 */
-	public CertificatePair getFoundCertificate() {
+	private CertificatePair getFoundCertificate() {
 		return foundCertificate;
 	}
 
@@ -143,6 +153,143 @@ public class JarVerificationResult {
 	 */
 	public void setFoundCertificate(CertificatePair foundCertificate) {
 		this.foundCertificate = foundCertificate;
+	}
+
+
+	private void initializeCertificates(){
+		X509Certificate certRoot = null;
+		X509Certificate certIssuer = null;
+		CertificatePair trustedCertificate;
+		if (getFoundCertificate() == null) {
+			CertificatePair[] certs = getRootCertificates();
+			if (certs.length == 0)
+				return;
+			trustedCertificate = (CertificatePair) certs[0];
+		} else {
+			trustedCertificate = (CertificatePair) getFoundCertificate();
+		}
+		certRoot = (X509Certificate) trustedCertificate.getRoot();
+		certIssuer = (X509Certificate) trustedCertificate.getIssuer();
+
+		StringBuffer strb = new StringBuffer();
+		strb.append(Policy.bind("JarVerificationResult.SubjectCA")); //$NON-NLS-1$
+		strb.append("\r\n"); //$NON-NLS-1$
+		strb.append(Policy.bind("JarVerificationResult.CAIssuer", issuerString(certIssuer.getSubjectDN()))); //$NON-NLS-1$
+		strb.append("\r\n"); //$NON-NLS-1$
+		strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()))); //$NON-NLS-1$
+		strb.append(checkValidity(certIssuer));
+		signerInfo = strb.toString();
+		if (certIssuer != null && !certIssuer.equals(certRoot)) {
+			strb = new StringBuffer();			
+			strb.append(Policy.bind("JarVerificationResult.RootCA")); //$NON-NLS-1$
+			strb.append("\r\n"); //$NON-NLS-1$
+			strb.append(Policy.bind("JarVerificationResult.CAIssuer", issuerString(certIssuer.getIssuerDN()))); //$NON-NLS-1$
+			strb.append("\r\n"); //$NON-NLS-1$
+			strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()))); //$NON-NLS-1$ 
+			strb.append(checkValidity(certRoot));
+			verifierInfo = strb.toString();
+		}
+
+	}
+
+	private String checkValidity(X509Certificate cert) {
+
+		try {
+			cert.checkValidity();
+		} catch (CertificateExpiredException e) {
+			return ("\r\n" + Policy.bind("JarVerificationResult.ExpiredCertificate")); //$NON-NLS-1$ 
+		} catch (CertificateNotYetValidException e) {
+			return ("\r\n" + Policy.bind("JarVerificationResult.CertificateNotYetValid")); //$NON-NLS-1$ 
+		}
+		return ("\r\n" + Policy.bind("JarVerificationResult.CertificateValid")); //$NON-NLS-1$
+	}
+
+	/**
+	 * 
+	 */
+	private String issuerString(Principal principal) {
+		try {
+			if (principal instanceof X500Name) {
+				String issuerString = "";
+				X500Name name = (X500Name) principal;
+				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ",1" : "";
+				issuerString += name.getCommonName();
+				issuerString += (name.getOrganizationalUnit() != null) ? "," + name.getOrganizationalUnit() : "";
+				issuerString += (name.getOrganization() != null) ? "," + name.getOrganization() : "";
+				issuerString += (name.getLocality() != null) ? "," + name.getLocality() : "";
+				issuerString += (name.getCountry() != null) ? "," + name.getCountry() : "";
+				return issuerString;
+			}
+		} catch (Exception e) {
+			// FIXME should log
+		}
+		return principal.toString();
+	}
+
+	/**
+	 * 
+	 */
+	private String dateString(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyyy");
+		return formatter.format(date);
+	}
+
+	/*
+	 * @see IVerificationResult#getSignerInfo()
+	 */
+	public String getSignerInfo() {
+		if (signerInfo==null) initializeCertificates();
+		return signerInfo;
+	}
+
+	/*
+	 * @see IVerificationResult#getVerifierInfo()
+	 */
+	public String getVerifierInfo() {
+		if (signerInfo==null) initializeCertificates();		
+		return verifierInfo;
+	}
+
+	/*
+	 * @see IVerificationResult#getContentReference()
+	 */
+	public ContentReference getContentReference() {
+		return contentReference;
+	}
+
+	/*
+	 * @see IVerificationResult#getFeature()
+	 */
+	public IFeature getFeature() {
+		return feature;
+	}
+
+	/**
+	 * 
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	/**
+	 * 
+	 */
+	public void setContentReference(ContentReference ref) {
+		this.contentReference = ref;
+	}
+
+	/**
+	 * 
+	 */
+	public void setFeature(IFeature feature) {
+		this.feature = feature;
+	}
+
+	/*
+	 * @see IVerificationResult#getText()
+	 */
+	public String getText() {
+		return null;
 	}
 
 }

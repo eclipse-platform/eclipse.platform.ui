@@ -123,6 +123,14 @@ public interface IFeatureContentProvider {
 	 * @since 2.0
 	 */
 	long getInstallSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries);
+
+	
+	/**
+	 * Returns the verifier for ths feature or null if the feature canot be verified
+	 * @since 2.0
+	 */	
+	IVerifier getVerifier() throws CoreException ;
+			
 }
 
 

@@ -12,11 +12,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Verify a feature
  */
-public interface IFeatureVerification {
+public interface IVerifier {
 	
 	/**
 	 * Throws CoreException if the verification was unsucessful and the installation should not continue
 	 */
-	void verify(IFeature feature,ContentReference[] references,InstallMonitor monitor) throws CoreException;
+	IVerificationResult verify(IFeature feature,ContentReference[] references,InstallMonitor monitor) throws CoreException;
 
 }

@@ -99,7 +99,7 @@ public class InternalSiteManager {
 					throw e;
 				site = createSite(exception.getNewType(), siteURL, forceCreation);
 			} catch (InvalidSiteTypeException e1) {
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType",e.getNewType(),siteURL.toExternalForm()), e1); //$NON-NLS-1$ //$NON-NLS-2$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType",e.getNewType(),siteURL.toExternalForm()), e1); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} 
 
@@ -141,38 +141,38 @@ public class InternalSiteManager {
 			// or a directory, without reference			
 			if (url.getRef() != null) {
 				// 4 nothing we can do
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e); //$NON-NLS-1$ 
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e); //$NON-NLS-1$ 
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 				// 1 try to add site.xml
 				try {
 					url = new URL(url, Site.SITE_XML);
 				} catch (MalformedURLException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
 					site = factory.createSite(url, forceCreation);
 				} catch (ParsingException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
 				} catch (IOException e1) {
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e1); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e1); //$NON-NLS-1$
 				}
 			} else if (url.getFile().endsWith(Site.SITE_XML)) {
 				// 3 nothing we can do
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() , e.getMessage()), e); //$NON-NLS-1$
 			} else {
 				// 2 try to add /site.xml 
 				try {
 					url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML); //$NON-NLS-1$
 				} catch (MalformedURLException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				try {
 					site = factory.createSite(url, forceCreation);
 				} catch (ParsingException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
 				}  catch (IOException e1) {
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() ,e.getMessage()), e1); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() ,e.getMessage()), e1); //$NON-NLS-1$
 				}
 			}
 
@@ -187,39 +187,39 @@ public class InternalSiteManager {
 			//if (e.getException() instanceof InvalidSiteTypeException) {
 				if (url.getRef() != null) {
 					// 4 nothing we can do
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e);  //$NON-NLS-1$
 				} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 					// 1 try to add site.xml
 					try {
 						url = new URL(url, Site.SITE_XML);
 					} catch (MalformedURLException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					try {
 						site = factory.createSite(url, forceCreation);
 					} catch (ParsingException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
 					} catch (IOException e1) {
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm() , e.getMessage()), e1); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm() , e.getMessage()), e1); //$NON-NLS-1$
 					}
 
 				} else if (url.getFile().endsWith(Site.SITE_XML)) {
 					// 3 nothing we can do
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e);  //$NON-NLS-1$
 				} else {
 					// 2 try to add /site.xml
 
 					try {
 						url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML); //$NON-NLS-1$
 					} catch (MalformedURLException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					try {
 						site = factory.createSite(url, forceCreation);
 					} catch (ParsingException e1) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToParseURL",url.toExternalForm(),e.getMessage()), e1);  //$NON-NLS-1$
 					}  catch (IOException e1) {
-				throw newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() ,e.getMessage()), e1); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL" ,url.toExternalForm() ,e.getMessage()), e1); //$NON-NLS-1$
 					}
 
 				}
@@ -247,7 +247,7 @@ public class InternalSiteManager {
 				URL siteURL = siteLocation.toURL();
 				site = (Site) getSite(siteURL, true);
 			} catch (MalformedURLException e) {
-					throw newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", siteLocation.getAbsolutePath()), e); //$NON-NLS-1$ 
+					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", siteLocation.getAbsolutePath()), e); //$NON-NLS-1$ 
 			}
 		}
 		return site;
@@ -281,11 +281,4 @@ public class InternalSiteManager {
 		return configSite;
 	}
 
-	/**
-	 * returns a Core Exception
-	 */
-	private static CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR,id, 0, s, e)); //$NON-NLS-1$
 	}
-}

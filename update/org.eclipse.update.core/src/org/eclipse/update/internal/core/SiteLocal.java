@@ -80,11 +80,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			site.save();
 
 		} catch (SAXException exception) {
-			throw newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState") + site.getLocationURLString(), exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState") + site.getLocationURLString(), exception); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
-			throw newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + site.getLocationURLString() + " & " + SITE_LOCAL_FILE, exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + site.getLocationURLString() + " & " + SITE_LOCAL_FILE, exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {
-			throw newCoreException(Policy.bind("SiteLocal.UnableToAccessFile") + configXML, exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToAccessFile") + configXML, exception); //$NON-NLS-1$
 		}
 
 		return site;
@@ -175,9 +175,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				writer.writeSite(this, fileWriter);
 				fileWriter.close();
 			} catch (FileNotFoundException e) {
-				throw newCoreException(Policy.bind("SiteLocal.UnableToSaveStateIn") + file.getAbsolutePath(), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToSaveStateIn") + file.getAbsolutePath(), e); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
-				throw newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + getLocationURL().toExternalForm() + " : " + SITE_LOCAL_FILE, e); //$NON-NLS-2$ //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + getLocationURL().toExternalForm() + " : " + SITE_LOCAL_FILE, e); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}
 	}
@@ -268,7 +268,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
 		} catch (MalformedURLException e) {
-			throw newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -340,7 +340,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				newConfiguration.setCreationDate(currentDate);
 
 			} catch (MalformedURLException e) {
-				throw newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
 			}
 			((InstallConfiguration) newConfiguration).saveConfigurationFile();
 
@@ -513,7 +513,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		try {
 			resolvedURL = Platform.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
-			throw newCoreException(Policy.bind("SiteLocal.UnableToResolve",newSiteEntry.getURL().toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToResolve",newSiteEntry.getURL().toExternalForm()), e); //$NON-NLS-1$
 		}
 		return resolvedURL;
 	}
@@ -701,11 +701,4 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	}
 
-	/**
-	 * returns a Core Exception
-	 */
-	private static CoreException newCoreException(String message, Throwable exception) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR, id, IStatus.OK, message, exception));
 	}
-}

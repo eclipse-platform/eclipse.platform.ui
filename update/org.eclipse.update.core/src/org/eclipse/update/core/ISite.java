@@ -48,7 +48,7 @@ public interface ISite {
 	 * @since 2.0 
 	 */
 
-	IFeatureReference install(IFeature feature, IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException;
+	IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * 

@@ -6,6 +6,9 @@ package org.eclipse.update.core;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+
 /**
  *
  */
@@ -156,7 +159,10 @@ public class Utilities {
 		path.deleteOnExit();			
 	}
 
-	
+	public static CoreException newCoreException(String s, Throwable e) throws CoreException {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
+	}
 	
 
 }

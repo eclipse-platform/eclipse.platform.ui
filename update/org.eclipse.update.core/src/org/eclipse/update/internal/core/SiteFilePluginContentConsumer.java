@@ -48,7 +48,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
-			throw newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + pluginPath, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + pluginPath, e); //$NON-NLS-1$
 		} finally {
 			try {
 				// close stream
@@ -67,13 +67,6 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			((SiteFile) site).addPluginEntry(pluginEntry);
 	}
 	
-	/**
-	 * 
-	 */
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
-	}	
-	
+		
 	
 }

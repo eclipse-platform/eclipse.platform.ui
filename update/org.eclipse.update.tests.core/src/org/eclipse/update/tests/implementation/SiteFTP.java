@@ -35,7 +35,7 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#install(IFeature, FeatureVerification verifier,IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature feature,IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException {
 		return null;
 	}
 

@@ -83,9 +83,9 @@ public class Site extends SiteModel implements ISite{
 	}
 	
 	/*
-	 * @see ISite#install(IFeature,IFeatureVerification, IProgressMonitor)
+	 * @see ISite#install(IFeature,IVerifier, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature sourceFeature,IFeatureVerification verifier, IProgressMonitor progress) throws CoreException {
+	public IFeatureReference install(IFeature sourceFeature,IVerificationListener verificationListener, IProgressMonitor progress) throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 

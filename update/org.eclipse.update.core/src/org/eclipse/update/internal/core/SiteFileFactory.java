@@ -193,7 +193,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				}
 			} catch (MalformedURLException e) {
-				throw newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -228,7 +228,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				}
 			} catch (MalformedURLException e) {
-				throw newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -269,9 +269,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} // path is a directory
 		} catch (IOException e) {
-			throw newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
 		} catch (SAXException e) {
-			throw newCoreException(Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFile.getAbsolutePath()), e); //$NON-NLS-1$
 		}
 
 	}
@@ -306,7 +306,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				((Site) site).addArchiveReferenceModel(archive);
 			}
 		} catch (MalformedURLException e) {
-			throw newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", location), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", location), e); //$NON-NLS-1$
 		}
 	}
 
@@ -345,7 +345,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 
 		} catch (Exception e) {
-			throw newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", refString), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", refString), e); //$NON-NLS-1$
 		}
 
 	}
@@ -381,9 +381,5 @@ public class SiteFileFactory extends BaseSiteFactory {
 	public void abort() {
 	}
 
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
-	}
 
 }

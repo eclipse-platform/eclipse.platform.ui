@@ -112,6 +112,14 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString()+"/"; //$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier().toString();
 	}
+	
+	/*
+	 * @see IFeatureContentProvider#getVerifier()
+	 */
+	public IVerifier getVerifier() throws CoreException {
+		return null;
+	}
+	
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */

@@ -21,6 +21,7 @@ import org.eclipse.update.core.FeatureContentProvider;
 import org.eclipse.update.core.IFeatureContentProvider;
 import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.IVerifier;
 import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
@@ -246,4 +247,11 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
 		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples",0,s,e));
 	}
+	/*
+	 * @see IFeatureContentProvider#getVerifier()
+	 */
+	public IVerifier getVerifier() throws CoreException {
+		return null;
+	}
+
 }

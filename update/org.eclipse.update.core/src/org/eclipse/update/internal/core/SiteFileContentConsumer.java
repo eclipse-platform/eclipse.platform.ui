@@ -39,7 +39,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		URL newURL = new URL(getSite().getURL(),path);
 		featurePath = newURL.getFile();
 		} catch (MalformedURLException e){
-			throw newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURL")+e.getMessage(),e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURL")+e.getMessage(),e); //$NON-NLS-1$
 		}
 		return featurePath;
 	}
@@ -70,7 +70,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
-			throw newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + featurePath, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + featurePath, e); //$NON-NLS-1$
 		} finally {
 			try {
 				// close stream
@@ -92,7 +92,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
 		} catch (MalformedURLException e){
-			throw newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURLForFile")+ file.getAbsolutePath(),e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURLForFile")+ file.getAbsolutePath(),e); //$NON-NLS-1$
 		}
 		return ref;
 	}
@@ -103,11 +103,4 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public void abort() {
 	}
 	
-	/**
-	 * 
-	 */
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
-	}	
-}
+	}

@@ -6,61 +6,110 @@ package org.eclipse.update.core;
 
 public interface IVerificationResult {
 	
-	/**
-	 * types
-	 */
-	public static final int TYPE_FEATURE_NOT_SIGNED = 0;
-	public static final int TYPE_FEATURE_CORRUPTED = 1;
-	public static final int TYPE_FEATURE_SIGNED_RECOGNIZED = 2;
-	public static final int TYPE_FEATURE_SIGNED_UNRECOGNIZED = 3;
-	public static final int TYPE_ENTRY_NOT_SIGNED = 4;
-	public static final int TYPE_ENTRY_CORRUPTED = 5;
-	public static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 6;
-	public static final int TYPE_ENTRY_SIGNED_UNRECOGNIZED = 7;
-	// FIXME: maybe we need more/ others
 	
+	
+	
+	/**
+	 * verification codes
+	 */
+	static final int TYPE_ENTRY_NOT_SIGNED = 1;
+	static final int TYPE_ENTRY_CORRUPTED = 2;
+	static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
+	static final int TYPE_ENTRY_SIGNED_RECOGNIZED_DO_NOT_PROMPT = 4;	
+	static final int TYPE_ENTRY_SIGNED_UNRECOGNIZED = 5;
+	static final int UNKNOWN_ERROR = 6;
+	static final int VERIFICATION_CANCELLED = 7;
+		
+	/**
+	 * Sets the exception that may have occured while verifying
+	 */
+	void setResultException(Exception ex);
+
+
+	/**
+	 * Sets the result code
+	 * @see IVerificationNotifier#CANCEL_INSTALL
+	 * @see IVerificationNotifier#ERROR_INSTALL
+	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
+	 */ 
+	void setResultCode(int code);
+
+
 	/**
 	 * Sets the type of notification. 
 	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
 	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
-	 * @see IVerificationNotifier#TYPE_ENTRY_NOT_SIGNED
-	 * @see IVerificationNotifier#TYPE_ENTRY_CORRUPTED
-	 * @see IVerificationNotifier#TYPE_ENTRY_SIGNED_RECOGNIZED
-	 * @see IVerificationNotifier#TYPE_ENTRY_SIGNED_UNRECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
+	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
 	 */
-	public void setType(int type);
+	void setVerificationCode(int type);
+
+	
 	
 	/**
-	 * Sets the notifier text. If no text is supplied, default
+	 * Returns the type of notification. 
+	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
+	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
+	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
+	 */
+	int getVerificationCode();
+
+	
+		
+	/**
+	 * Returns the result code
+	 * @see IVerificationNotifier#CANCEL_INSTALL
+	 * @see IVerificationNotifier#ERROR_INSTALL
+	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
+	 */ 
+	int getResultCode();	
+	
+		
+	/**
+	 * Returns the exception that may have occured while verifying
+	 */
+	Exception getResultException();
+	
+	
+		
+	/**
+	 * Returns the notifier text. If no text is supplied, default
 	 * text may be generated based on the notification type
 	 */
-	public void setText(String text);
+	String getText();
+		
+		
+	/**
+	 * Returns the signer info text
+	 */
+	String getSignerInfo();
+		
 	
 	/**
-	 * Sets the signer info text
+	 * Returns the verifier (eg. CA) info text
 	 */
-	public void setSignerInfo(String text);
+	String getVerifierInfo();
+
+	
 	
 	/**
-	 * Sets the verifier (eg. CA) info text
+	 * Returns the content reference that is verified 
 	 */
-	public void setVerifierInfo(String text);
+	ContentReference getContentReference();
+
 	
 	/**
-	 * Sets the element identifier (based on type)
+	 * Returns the feature
 	 */
-	public void setIdentifier(String text);
-	
-	/**
-	 * Sets the element provider 
-	 */
-	public void setProvider(String text);
-	
-	/**
-	 * Sets the element file name 
-	 */
-	public void setFileName(String text);
+	IFeature getFeature();
 
 }

@@ -56,7 +56,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		} catch (Exception e){
 			//catch (SAXException e) parseFeature
 			//catch (ParsingException)  parerFeature
-			throw newCoreException(Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
 		} finally {
 			try {
 				featureStream.close();
@@ -96,22 +96,18 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private URL validate(URL url) throws CoreException {
 		
 		if (url==null) 
-			throw newCoreException(Policy.bind("FeatureExecutableFactory.NullURL"),null);		 //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.NullURL"),null);		 //$NON-NLS-1$
 		
 		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))){ //$NON-NLS-1$
 			try {
 				String path = url.getFile() + "/"; //$NON-NLS-1$
 				url = new URL(url.getProtocol(),url.getHost(),url.getPort(),path);
 			} catch (MalformedURLException e){
-				throw newCoreException(Policy.bind("FeatureExecutableFactory.CannotCreateURL",url.toExternalForm()),e);				 //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.CannotCreateURL",url.toExternalForm()),e);				 //$NON-NLS-1$
 			}
 		}
 		return url;
 	}
 
-	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
-		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
-	}
 
 }
