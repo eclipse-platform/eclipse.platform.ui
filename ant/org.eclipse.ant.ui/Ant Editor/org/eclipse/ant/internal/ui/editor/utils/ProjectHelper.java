@@ -239,13 +239,12 @@ public class ProjectHelper extends ProjectHelper2 {
 			if (name.equals("project") //$NON-NLS-1$
 					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
 				return ProjectHelper.projectHandler;
-			} else {
-				try {
-					return super.onStartChild(uri, name, qname, attrs, context);
-				} catch (SAXParseException e) {
-					getAntModel().error(e);
-					throw e;
-				}
+			} 
+			try {
+				return super.onStartChild(uri, name, qname, attrs, context);
+			} catch (SAXParseException e) {
+				getAntModel().error(e);
+				throw e;
 			}
 		}
 	}
@@ -259,9 +258,8 @@ public class ProjectHelper extends ProjectHelper2 {
 			if (name.equals("target") //$NON-NLS-1$
 					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
 				return ProjectHelper.targetHandler;
-			} else {
-				return ProjectHelper.elementHandler;
-			}
+			} 
+			return ProjectHelper.elementHandler;
 		}
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
