@@ -84,7 +84,7 @@ public void add(LayoutPart part) {
 			createTab(editorPane);
 			createPage(editorPane);
 			setVisibleEditor(editorPane);
-		}
+		}	
 	}
 }
 /**
@@ -775,9 +775,9 @@ public void setVisibleEditor(EditorPane comp) {
 		setControlSize(visibleEditor);
 		if(visibleEditor.getControl() != null)
 			visibleEditor.getControl().setVisible(true);
-	}
 
-	becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
+		becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
+	}
 }
 public void tabFocusHide() {
 	if (tabFolder == null || ignoreTabFocusHide) 
