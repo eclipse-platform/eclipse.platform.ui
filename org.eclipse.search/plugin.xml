@@ -80,6 +80,18 @@
 			name= "%ActionDefinition.openFileSearchPage.name"
 			description="%ActionDefinition.openFileSearchPage.description"
 		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.openFileSearchPage"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.openFileSearchPage"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
 	</extension>
 	
 	<!-- action sets -->
