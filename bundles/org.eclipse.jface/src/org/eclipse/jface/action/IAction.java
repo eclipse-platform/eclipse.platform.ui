@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.HelpListener;
@@ -142,7 +142,7 @@ public interface IAction {
      * 
      * @since 3.1
      */
-    public static final String HANDLED = Command.ATTRIBUTE_HANDLED; //$NON-NLS-1$
+	public static final String HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * Adds a property change listener to this action.

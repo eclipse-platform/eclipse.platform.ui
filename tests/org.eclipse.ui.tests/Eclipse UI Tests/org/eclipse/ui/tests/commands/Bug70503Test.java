@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
-import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.ActionHandler;
@@ -75,17 +75,17 @@ public class Bug70503Test extends UITestCase {
 		final ActionHandler actionHandler = new ActionHandler(retargetAction);
 		assertFalse("The retarget action handler should start 'unhandled'",
 				((Boolean) actionHandler.getAttributeValuesByName().get(
-						Command.ATTRIBUTE_HANDLED)).booleanValue());
+						IHandlerAttributes.ATTRIBUTE_HANDLED)).booleanValue());
 		retargetAction.changeHandler(new PubliclyRetargettableAction(
 				"actionID", "text"));
 		assertTrue(
 				"The retarget action handler should recognize the new handler.",
 				((Boolean) actionHandler.getAttributeValuesByName().get(
-						Command.ATTRIBUTE_HANDLED)).booleanValue());
+						IHandlerAttributes.ATTRIBUTE_HANDLED)).booleanValue());
 		retargetAction.changeHandler(null);
 		assertFalse(
 				"The retarget action handler should recognize that the handler is now gone.",
 				((Boolean) actionHandler.getAttributeValuesByName().get(
-						Command.ATTRIBUTE_HANDLED)).booleanValue());
+						IHandlerAttributes.ATTRIBUTE_HANDLED)).booleanValue());
 	}
 }

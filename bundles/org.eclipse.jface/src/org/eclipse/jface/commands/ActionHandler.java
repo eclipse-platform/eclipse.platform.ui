@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -52,7 +52,7 @@ public class ActionHandler extends AbstractHandler {
      * <code>RetargetAction</code> has a handler.
      * </p>
      */
-    private final static String ATTRIBUTE_HANDLED = Command.ATTRIBUTE_HANDLED; //$NON-NLS-1$
+	private final static String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * The attribute name for the identifier of the wrapped action. This is the

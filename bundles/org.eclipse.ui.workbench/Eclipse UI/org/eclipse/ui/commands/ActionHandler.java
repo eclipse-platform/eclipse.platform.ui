@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -49,7 +49,7 @@ public final class ActionHandler extends AbstractHandler {
      * <code>RetargetAction</code> has a handler.
      * </p>
      */
-    private final static String ATTRIBUTE_HANDLED = Command.ATTRIBUTE_HANDLED; //$NON-NLS-1$
+    private final static String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * The attribute name for the identifier of the wrapped action. This is the
