@@ -318,9 +318,11 @@ public class OverviewRuler implements IOverviewRuler {
 		fTextViewer= textViewer;
 		
 		fHitDetectionCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
+
 		fHeader= new Canvas(parent, SWT.NONE);
-		
+
+		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
+	
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fTextViewer != null)
@@ -1005,5 +1007,39 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 			
 		fHeader.redraw();
+		updateHeaderToolTipText();
+	}
+
+	/**
+	 * Updates the tool tip text of the header of this ruler.
+	 * 
+	 * @since 3.0
+	 */
+	private void updateHeaderToolTipText() {
+		
+		if (fHeader == null || fHeader.isDisposed())
+			return;
+	
+		String overview= ""; //$NON-NLS-1$
+		
+		for (int i= fAnnotationsSortedByLayer.size() -1; i >= 0; i--) {
+			
+			Object annotationType= fAnnotationsSortedByLayer.get(i);
+			
+			if (!fHeaderAnnotationTypes.contains(annotationType) || !fAnnotationTypes.contains(annotationType))
+				continue;
+	
+			int count= 0;
+	
+			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
+				if (e.next() != null) {
+					count++;
+				}
+			}
+			if (overview.length() > 0)
+				overview += "\n"; //$NON-NLS-1$
+			overview += annotationType + "" + count; //$NON-NLS-1$
+		}
+		fHeader.setToolTipText(overview);
 	}
 }
