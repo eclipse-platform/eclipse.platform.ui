@@ -46,8 +46,12 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the fully-qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.core.resources.team.IMoveDeleteHook&lt;/samp&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -82,7 +86,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must represent an implementation of &lt;tt&gt;org.eclipse.core.resources.IMoveDeleteHook&lt;/tt&gt;.
+         The value of the class attribute must represent an implementation of &lt;tt&gt;org.eclipse.core.resources.team.IMoveDeleteHook&lt;/tt&gt;.
       </documentation>
    </annotation>
 
