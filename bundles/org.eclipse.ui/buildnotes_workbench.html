@@ -11,6 +11,26 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 200201203
+<h2>What's new in this drop</h2>
+<p><b><u>Support added for declarative fonts</u></b>. There is a new extension
+point fontDefinition for defining fonts so that they can be viewed and managed
+by the workbench fonts preference page. There is also a defaultTo attribute
+which when set keeps the entry for the fontDefinition consistent with the
+defaultsTo entry if the preference for the fontDefinition is not set.</p>
+<p>For example if a font called org.eclipse.myplugin.textfont had a defaultsTo
+of org.eclipse.jface.textfont the value in the font registry for
+org.eclipse.myplugin.textfont will be the same as the value for
+org.eclipse.jface.textfont until the user sets a preference for
+org.eclipse.myplugin.textfont .</p>
+<h3>Other highlights</h3>
+<h2>Known deficiencies</h2>
+<h2>Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;chfield=bug_status&amp;chfieldfrom=2002%2F11%2F26&amp;chfieldto=2002%2F12%2F02&amp;product=Platform&amp;component=UI&amp;cmdtype=doit&amp;&amp;order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/11/26 and 2002/12/03.
+<p>&nbsp;
+<hr SIZE="0" WIDTH="100%">
 Eclipse Integration Build 200201126
 <h2>
 What's new in this drop</h2>
