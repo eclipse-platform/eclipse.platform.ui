@@ -61,7 +61,7 @@ public class SaveableMockViewPart extends MockViewPart implements
 	 */
 	public boolean isSaveOnCloseNeeded() {
 		callTrace.add("isSaveOnCloseNeeded" );
-		return false;
+		return true;
 	}
 
 	public void setDirty(boolean isDirty) {

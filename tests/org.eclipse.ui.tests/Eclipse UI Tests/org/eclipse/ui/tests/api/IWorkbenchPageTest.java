@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.CallHistory;
@@ -652,6 +653,9 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	public void testHideSaveableView() throws Throwable {
+		if (!PrefUtil.getInternalPreferenceStore().getBoolean("fix72114")) {
+			return;
+		}
 		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
 		fActivePage.hideView(view);
 		CallHistory callTrace = view.getCallHistory();

@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -154,10 +155,14 @@ public boolean bringToTop(IViewReference ref) {
  * Returns true if a view can close.
  */
 public boolean canCloseView(IViewPart view) {
-	if (view instanceof ISaveablePart) {
-		ISaveablePart saveable = (ISaveablePart)view;
-		IWorkbenchWindow window = view.getSite().getWorkbenchWindow();		
-		return SaveableHelper.savePart(saveable, view, window, true);
+	if (PrefUtil.getInternalPreferenceStore().getBoolean("fix72114")) {
+		if (view instanceof ISaveablePart) {
+			ISaveablePart saveable = (ISaveablePart)view;
+			if (saveable.isSaveOnCloseNeeded()) {
+				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();		
+				return SaveableHelper.savePart(saveable, view, window, true);
+			}
+		}
 	}
 	return true;
 }
