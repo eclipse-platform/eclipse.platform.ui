@@ -23,21 +23,21 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
 	protected Plugin pluginObject = null; // plugin object
-
+	private boolean useDevURLs = InternalPlatform.inVAJ() || InternalPlatform.inVAME();
+	private boolean usePlatformURLs = true;
 	private ResourceBundle bundle = null; // plugin.properties
 	private Locale locale = null; // bundle locale
 	private boolean bundleNotFound = false; // marker to prevent unnecessary lookups
 
 	// constants
-	private static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/";
+	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/";
+	static final String VERSION_SEPARATOR = "_";
 
 	private static final String DEFAULT_BUNDLE_NAME = "plugin";
 	private static final String KEY_PREFIX = "%";
 	private static final String KEY_DOUBLE_PREFIX = "%%";
 
 	private static final String URL_PROTOCOL_FILE = "file";
-
-	private static final String VERSION_SEPARATOR = "_";
 
 	// Development mode constants
 	private static final String PLUGIN_JARS = "plugin.jars";
@@ -268,7 +268,7 @@ public ClassLoader getPluginClassLoader(boolean eclipseURLs) {
 	// definition will cause endless loop in initializePrereqs()
 	return loader;
 }
-private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
+private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	// If running in development mode, check for a plugin.jars file. 
 	// The file has entries corresponding to each of the <library>
 	// elements in the plugin.xml. Each defined property is of form
@@ -299,10 +299,11 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 	Properties jarDefinitions = loadJarDefinitions();
 	// compute the base of the classpath urls.  If <code>eclipseURLs</code> is
 	// true, we should use eclipse: URLs.  Otherwise the native URLs are used.
-	URL install = eclipseURLs ? getInstallURL() : getInstallURLInternal();
+	usePlatformURLs = platformURLFlag;
+	URL install = usePlatformURLs ? getInstallURL() : getInstallURLInternal();
 	String execBase = install.toExternalForm();
 	String devBase = null;
-	if (InternalPlatform.inVAJ() || InternalPlatform.inVAME())
+	if (useDevURLs)
 		devBase = PlatformURLBaseConnection.PLATFORM_URL_STRING;
 	else
 		devBase = execBase;
@@ -324,7 +325,14 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 			// if the spec is not a jar and does not have a trailing slash, add one
 			if (!(spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
 				spec = spec + "/";
-			resolveAndAddLibrary(devBase, spec, exportAll, ILibrary.CODE, false, result);
+			// add the dev path for the plugin itself
+			addLibrary(devBase, spec, exportAll, ILibrary.CODE, false, result);
+			// add the dev path for all of the fragments
+			PluginFragmentModel[] fragments = getFragments();
+			for (int i = 0; fragments != null && i < fragments.length; i++) {
+				String subBase = getFragmentLocation(fragments[i]);
+				addLibrary(subBase, spec, exportAll, ILibrary.CODE, false, result);
+			}
 		}
 	}
 
@@ -370,11 +378,24 @@ private boolean resolveAndAddLibrary(String base, String spec, String[] filters,
 		if (first.equalsIgnoreCase("$nl$"))
 			return resolveAndAddNLLibrary(base, spec, filters, type, hasJarSpec, result);
 	}
-	addLibrary(base, spec, filters, type, hasJarSpec, result);
-	return true;
+	return addLibraryWithFragments(base, spec, filters, type, hasJarSpec, result);
 }
 
-private boolean addLibrary (String base, String libSpec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean addLibraryWithFragments(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+	boolean added = addLibrary(base, spec, filters, type, hasJarSpec, result);
+	if (added)
+		return true;
+	PluginFragmentModel[] fragments = getFragments();
+	if (fragments == null)
+		return false;
+	for (int i = 0; !added && i < fragments.length; i++) {
+		String subBase = getFragmentLocation (fragments[i]);
+		added = addLibrary(subBase, spec, filters, type, hasJarSpec, result);
+	}
+	return added;
+}
+
+private boolean addLibrary(String base, String libSpec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
 	// create path entries for all libraries except those which are files
 	// and do not exist.
 	String spec = concat(base, libSpec);
@@ -417,9 +438,11 @@ private boolean addLibrary (String base, String libSpec, String[] filters, Strin
 	return false;
 }
 
-private String getFileFromURL(URL target) {
+public String getFileFromURL(URL target) {
 	String protocol = target.getProtocol();
 	if (protocol.equals(PlatformURLHandler.FILE))
+		return target.getFile();
+	if (protocol.equals(PlatformURLHandler.VA))
 		return target.getFile();
 	if (protocol.equals(PlatformURLHandler.JAR)) {
 		// strip off the jar separator at the end of the url then do a recursive call
@@ -696,23 +719,45 @@ private void pluginActivationExit(boolean errorExit) {
 		active = true;
 }
 private boolean resolveAndAddOSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	IPath path = new Path(spec);
-	String location = new Path("os/" + BootLoader.getOS()).append(path.removeFirstSegments(1)).toString();
-	return addLibrary(base, location, filters, type, hasJarSpec, result);
+	IPath path = new Path(spec).removeFirstSegments(1);
+	String location = new Path("os/" + BootLoader.getOS()).append(path).toString();
+	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
 }
 
 private boolean resolveAndAddWSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	IPath path = new Path(spec);
-	String location = new Path("ws/" + BootLoader.getWS()).append(path.removeFirstSegments(1)).toString();
-	return addLibrary(base, location, filters, type, hasJarSpec, result);
+	IPath path = new Path(spec).removeFirstSegments(1);
+	String location = new Path("ws/" + BootLoader.getWS()).append(path).toString();
+	return addLibraryWithFragments(base, location, filters, type, hasJarSpec, result);
 }
 
 private boolean resolveAndAddNLLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
-	IPath path = new Path(spec).removeFirstSegments(1);
+	String path = new Path(spec).removeFirstSegments(1).toString();
+	boolean added = addLibraryNL(base, path, filters, type, hasJarSpec, result);
+	if (added) 
+		return true;
+	PluginFragmentModel[] fragments = getFragments();
+	if (fragments == null)
+		return false;
+	for (int i = 0; !added && i < fragments.length; i++) {
+		String subBase = getFragmentLocation (fragments[i]);
+		added = addLibraryNL(subBase, path, filters, type, hasJarSpec, result);
+	}
+	return added;
+}
+
+private String getFragmentLocation(PluginFragmentModel fragment) {
+	if (useDevURLs) 
+		return PlatformURLBaseConnection.PLATFORM_URL_STRING;
+	if (usePlatformURLs)
+		return FragmentDescriptor.FRAGMENT_URL + fragment.toString() + "/";
+	return fragment.getLocation();
+}
+
+private boolean addLibraryNL(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
 	String nl = BootLoader.getNL();
 	boolean added = false;
 	while (!added && nl.length() > 0) {
-		String location = new Path("nl/" + nl).append(path).toString();
+		String location = new Path("nl/" + nl).append(spec).toString();
 		added = addLibrary(base, location, filters, type, hasJarSpec, result);
 		int i = nl.lastIndexOf('_');
 		if (i < 0)
@@ -722,6 +767,7 @@ private boolean resolveAndAddNLLibrary(String base, String spec, String[] filter
 	}
 	return added;
 }
+
 
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
 	loader = value;

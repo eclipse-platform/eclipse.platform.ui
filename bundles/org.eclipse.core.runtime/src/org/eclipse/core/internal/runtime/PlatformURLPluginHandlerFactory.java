@@ -45,7 +45,6 @@ public static void startup() {
 
 	// initialize plugin and fragment connection support
 	PlatformURLPluginConnection.startup();
-	// FIXME: uncomment once we get the fragment code merged
-//	PlatformURLFragmentConnection.startup();
+	PlatformURLFragmentConnection.startup();
 }
 }

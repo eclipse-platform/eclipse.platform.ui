@@ -25,12 +25,20 @@ public ExtensionModel createExtension() {
 public ExtensionPointModel createExtensionPoint() {
 	return new ExtensionPoint();
 }
+
+
+
 public LibraryModel createLibrary() {
 	return new Library();
 }
 public PluginDescriptorModel createPluginDescriptor() {
 	return new PluginDescriptor();
 }
+
+public PluginFragmentModel createPluginFragment() {
+	return new FragmentDescriptor();
+}
+
 public PluginPrerequisiteModel createPluginPrerequisite() {
 	return new PluginPrerequisite();
 }

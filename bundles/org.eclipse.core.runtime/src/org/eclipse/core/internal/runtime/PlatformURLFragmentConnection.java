@@ -11,11 +11,12 @@ package org.eclipse.core.internal.runtime;
  * platform:/fragment/<fragmentId>/		maps to fragmentDescriptor.getInstallURLInternal()
  */
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.boot.*;
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.internal.boot.PlatformURLConnection;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
  
@@ -42,7 +43,7 @@ protected URL resolve() throws IOException {
 	String id = getId(ref);
 	String vid = getVersion(ref);
 	PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
-	fd = (vid==null ? registry.getFragment(id) : registry.getFragment(id,vid));
+	fd = vid==null ? registry.getFragment(id) : registry.getFragment(id,vid);
 	if (fd == null)
 		throw new IOException("Unable to resolve fragment "+url.toString());
 	URL result = new URL (fd.getLocation());

@@ -6,6 +6,8 @@ package org.eclipse.core.runtime.model;
  * (c) Copyright IBM Corp 2000
  */
 
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+
 /**
  * An object which represents the user-defined contents of a plug-in model
  * (either a descriptor or a fragment) in a plug-in manifest.
@@ -213,7 +215,8 @@ public void setRuntime(LibraryModel[] value) {
 	runtime = value;
 }
 /**
- * Sets the version name of this plug-in.
+ * Sets the version name of this plug-in.  The version number
+ * is canonicalized.
  * This object must not be read-only.
  *
  * @param value the version name of this plug-in.
@@ -221,6 +224,6 @@ public void setRuntime(LibraryModel[] value) {
  */
 public void setVersion(String value) {
 	assertIsWriteable();
-	version = value;
+	version = new PluginVersionIdentifier(value).toString();
 }
 }

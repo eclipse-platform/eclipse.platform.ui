@@ -21,6 +21,8 @@ public class PluginDescriptorModel extends PluginModel {
 
 	// transient properties (not included in plug-in manifest)
 	private boolean enabled = true; // whether or not the plugin definition loaded ok
+	private PluginFragmentModel[] fragments;
+
 /**
  * Creates a new plug-in descriptor model in which all fields
  * are <code>null</code>.
@@ -35,6 +37,16 @@ public PluginDescriptorModel() {
 public boolean getEnabled() {
 	return enabled;
 }
+
+/**
+ * Returns the fragments installed for this plug-in.
+ *
+ * @return this plug-in's fragments or <code>null</code>
+ */
+public PluginFragmentModel[] getFragments() {
+	return fragments;
+}
+
 /**
  * Returns the fully qualified name of the Java class which implements
  * the runtime support for this plug-in.
@@ -64,6 +76,8 @@ public String getPluginId() {
 public PluginPrerequisiteModel[] getRequires() {
 	return requires;
 }
+
+
 /**
  * Sets this model object and all of its descendents to be read-only.
  * Subclasses may extend this implementation.
@@ -87,6 +101,18 @@ public void markReadOnly() {
 public void setEnabled(boolean value) {
 	enabled = value;
 }
+
+/**
+ * Sets the list of fragments for this plug-in.
+ * This object must not be read-only.
+ *
+ * @param value the fragments for this plug-in.  May be <code>null</code>.
+ */
+public void setFragments(PluginFragmentModel[] value) {
+	assertIsWriteable();
+	fragments = value;
+}
+
 /**
  * Sets the fully qualified name of the Java class which implements
  * the runtime support for this plug-in.
@@ -109,4 +135,6 @@ public void setRequires(PluginPrerequisiteModel[] value) {
 	assertIsWriteable();
 	requires = value;
 }
+
+
 }

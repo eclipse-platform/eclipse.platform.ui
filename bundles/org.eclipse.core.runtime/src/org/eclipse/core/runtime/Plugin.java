@@ -8,11 +8,12 @@ package org.eclipse.core.runtime;
 import org.eclipse.core.internal.plugins.DefaultPlugin;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
+import org.eclipse.core.boot.BootLoader;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.net.*;
-import java.io.InputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * The abstract superclass of all plug-in runtime class
@@ -193,23 +194,80 @@ public Plugin(IPluginDescriptor descriptor) {
  * @return a URL for the given path or <code>null</code>
  */
 public final URL find(IPath path) {
+	URL install = getDescriptor().getInstallURL();
 	String first = path.segment(0);
 	if (first.charAt(0) != '$') {
 		try {
-			return new URL(getDescriptor().getInstallURL(), path.toString());
+			return new URL(install, path.toString());
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
+	IPath rest = path.removeFirstSegments(1);
 	if (first.equalsIgnoreCase("$nl$"))
-		return null;
+		return findNL(install, rest);
 	if (first.equalsIgnoreCase("$os$"))
-		return null;
+		return findOS(install, rest);
 	if (first.equalsIgnoreCase("$ws$"))
-		return null;
+		return findWS(install, rest);
 	if (first.equalsIgnoreCase("$files$"))
 		return null;
 	return null;
+}
+
+private URL findOS(URL install, IPath path) {
+	try {
+		return new URL(install, "os/" + BootLoader.getOS() + path.toString());
+	} catch (MalformedURLException e) {
+		return null;
+	}
+}
+private URL findWS(URL install, IPath path) {
+	try {
+		return new URL(install, "ws/" + BootLoader.getWS() + path.toString());
+	} catch (MalformedURLException e) {
+		return null;
+	}
+}
+private URL findNL(URL install, IPath path) {
+	String nl = BootLoader.getNL();
+	URL result = null;
+	while (result == null && nl.length() > 0) {
+		try {
+			URL location = new URL(install, "nl/" + nl + path.toString());
+			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+			if (file != null && new File(file).exists())
+				result = location;
+		} catch (MalformedURLException e) {
+			return null;
+		}
+		int i = nl.lastIndexOf('_');
+		if (i < 0)
+			nl = "";
+		else
+			nl = nl.substring(0, i);
+	}
+	return result;
+}
+
+private URL findFiles(URL install, IPath path) {
+	PluginFragmentModel[] fragments = ((PluginDescriptor)getDescriptor()).getFragments();
+	for (int i = 0; i < fragments.length; i++) {
+		try {
+			URL location = new URL(fragments[i].getLocation() + path.toString());
+			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
+			if (file != null && new File(file).exists())
+				return location;
+		} catch (MalformedURLException e) {
+			// skip malformed urls
+		}
+	}
+	return null;
+}
+
+
+private boolean exists(URL location) {
+	return true;
 }
 /**
  * Returns the plug-in descriptor for this plug-in runtime object.

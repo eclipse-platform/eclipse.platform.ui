@@ -739,8 +739,19 @@ private void resolvePluginFragments(PluginFragmentModel[] fragments, PluginDescr
 				latestVersion = fragmentVersion;
 			}
 	}
-	if (latestFragment != null)
+	if (latestFragment != null) {
 		resolvePluginFragment(latestFragment, plugin);
+		PluginFragmentModel[] oldList = plugin.getFragments();
+		PluginFragmentModel[] newList = null;
+		if (oldList == null)
+			newList = new PluginFragmentModel[1];
+		else {
+			newList = new PluginFragmentModel[oldList.length + 1];
+			System.arraycopy(oldList, 0, newList, 0, oldList.length);
+		}
+		newList[newList.length - 1] = latestFragment;
+		plugin.setFragments(newList);
+	}
 }
 private void resolvePluginRegistry() {
 	// filter out disabled plugins from "live" registry
