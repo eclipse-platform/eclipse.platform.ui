@@ -31,6 +31,7 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 			fDisconnectAction.selectionChanged(selection);
 		}
 		fRemoveTerminatedAction.update();
+		fTerminateAllAction.update();
 	}
 
 	/**

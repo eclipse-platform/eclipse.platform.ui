@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.viewers.*;import org.eclipse.ui.*;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.core.resources.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.texteditor.ITextEditor;
 
 public class DebugView extends LaunchesView {
 	
