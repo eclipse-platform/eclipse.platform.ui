@@ -92,7 +92,9 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWordJS13="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
+	var form = document.forms["searchForm"];
+	var searchWord = form.searchWord.value;
+	advancedDialog = window.open("advanced.jsp?searchWordJS13="+escape(searchWord.value), "advancedDialog", "height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 

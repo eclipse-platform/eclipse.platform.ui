@@ -1,9 +1,10 @@
-<%@ page import="org.eclipse.help.servlet.*, org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Locale,org.eclipse.help.servlet.*, org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
+
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!--
@@ -19,10 +20,8 @@
 
 <style type="text/css">
 
-/* need this one for Mozilla */
-
+ 
 BODY {
-	font: 8pt Tahoma;
 	background:#D4D0C8;
 	border:1px black solid;
 	padding:0px;
@@ -30,7 +29,6 @@ BODY {
 }
 
 TABLE {
-	font: 8pt Tahoma;
 	background:#D4D0C8;
 }
 
@@ -44,36 +42,26 @@ FORM {
 	margin:0;
 	padding:0px;
 	border:0px;
+	height:100%;
+}
+
+
+#searchTable {
+	background:transparent; 
+	margin:10px 0px 20px 0px;
 }
 
 #searchWord {
-	font: 8pt Tahoma;
 	border:1px solid #000;
-	padding-left:2px;
-	margin:0px;
 	width:100%;
-}
-
-#search {
-	width:410px;
-	margin:10px 10px;
+	font:icon;
 }
 
 #booksContainer {
-
 	border-top:1px solid black;
 	border-bottom:1px solid black;
 	padding-left:10px;
-	overflow:auto; 
-	height:104px;
-	width=100%;
-}
-
-
-#books {
-	margin-left:10px;
-	overflow:auto;
-	height:104;
+	overflow:auto; ;
 }
 
 .book {
@@ -83,11 +71,12 @@ FORM {
 }
 
 .button {
-	font: 8pt Tahoma;
+	font:icon;
 	border:1px solid #ffffff;
 	margin:0px;
 	padding:0px;
 }
+
 
 </style>
 
@@ -101,8 +90,6 @@ FORM {
  
 function doAdvancedSearch()
 {
-	try
-	{
 		var form = document.forms["searchForm"];
 		var searchWord = form.searchWord.value;
 		var maxHits = form.maxHits.value;
@@ -110,41 +97,88 @@ function doAdvancedSearch()
 			return;
 	
 		var scope = "";
-		var buttons = document.getElementsByTagName("INPUT");
+		var buttons = form;
 		for (var i=0; i<buttons.length; i++)
 		{
 			if (buttons[i].type != "checkbox") continue;
 			if (buttons[i].checked == false) continue;
 			scope += "&scopeJS13="+escape(buttons[i].name);
 		}
+				
+		// persist selection
+		window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
 		var query = "searchWordJS13="+escape(searchWord)+"&maxHits="+maxHits + scope;
 		window.opener.parent.doSearch(query);
 		window.opener.focus();
 		window.close();
-	} catch(ex) {}
+}
+
+function restoreSelectedBooks()
+{
+	var selectedBooks = window.opener.selectedBooks;
+	var inputs = document.forms["searchForm"];
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "checkbox" && isSelected(inputs[i].name, selectedBooks))
+			inputs[i].checked = true;
+	}
+}
+
+
+function getSelectedBooks()
+{
+	var selectedBooks = new Array();
+	var inputs = document.forms["searchForm"];
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "checkbox"  && inputs[i].checked)
+			selectedBooks[selectedBooks.length] = inputs[i].name;
+	}
+	return selectedBooks;
+}
+
+function isSelected(book, selectedBooks)
+{
+	// the first time select all
+	if (!selectedBooks)
+		return true;
+		
+	for (var i=0; i<selectedBooks.length; i++)
+		if (book == selectedBooks[i])
+			return true;
+	return false;
+}
+
+function onloadHandler()
+{
+	document.forms["searchForm"].searchWord.value = opener.document.forms["searchForm"].searchWord.value;
+	// select the books from previous run, or all otherwise
+	restoreSelectedBooks();
 }
 
 </script>
 
 </head>
 
-<body>
+<body  onload="onloadHandler()">
 
 <form name="searchForm" onsubmit="doAdvancedSearch()">
+
+	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
+		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("SearchExpression", request)%>
+		</td></tr>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value='' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+          	  	<input type="hidden" name="maxHits" value="500" >
+        </td></tr>
+        <tr><td style="padding:0px 10px;"><%=WebappResources.getString("expression_label", request)%>
+        </td></tr>
+    </table>
   
-<div style="width:100%; height:15px; margin-left:12px; margin-top:10px;"><%=WebappResources.getString("SearchExpression", request)%></div>
-
-<div style="width:420px; height:16px;margin-left:7px"><input type="text" id="searchWord" name="searchWord" value='<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
-          	  			<input type="hidden" name="maxHits" value="500" >
-</div>
-
-<div style="height:40px; margin-left:12px;margin-top:4px; "><%=WebappResources.getString("expression_label", request)%></div>
-  	
- <div id="booksContainer" >
- 		<div style="height:20px; margin-top:-5px; padding-top:10px; padding-bottom:5px; "><%=WebappResources.getString("Select", request)%></div>
-  		
+  	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center  style="background:transparent;">
+		<tr><td><div id="selectBook" style="margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
+		</td></tr>
+		<tr><td>
+			<div id="booksContainer">
 <% 
 ContentUtil content = new ContentUtil(application, request);
 Element tocsElement = content.loadTocs();
@@ -156,25 +190,25 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='book'><input class="checkbox" type="checkbox" name="<%=id%>" ><%=label%></div>
+				<div class="book"><input class="checkbox" type="checkbox" name="<%=id%>" alt="<%=label%>"><%=label%></div>
 <%
 }		
 %>
- </div>
-  				
-<div style="height:36px; ">
-
-  				<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
-  					<tr valign=center >
-  						<td style="border:1px solid black; padding:0px;">
-  							<input class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" >
-  						</td>
-  						<td style="border:1px solid black; padding:0px;">
-  						  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel">
-  						</td>
-  					</tr>
-  				</table>
-</div>
+			</div>
+		</td></tr>
+		<tr id="buttonsTable" valign="bottom" align=right><td valign="bottom" align="right">
+  			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
+				<tr>
+					<td style="border:1px solid black; padding:0px; margin:0px;">
+						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" alt='<%=WebappResources.getString("Search", request)%>'>
+					</td>
+					<td style="border:1px solid black; padding:0px; margin:0px;">
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
+					</td>
+				</tr>
+  			</table>
+		</td></tr>
+	</table>
  </form>
 
 </body>
