@@ -183,13 +183,13 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 					if (fListeners != null) {
 						Object[] list = fListeners.getListeners();
 						for (int i= 0; i < list.length; i++) {
-							fPresentation.addListener((ILabelProviderListener)list[i]);
+						    tempPresentation.addListener((ILabelProviderListener)list[i]);
 						}
 					}
 					Iterator keys= fAttributes.keySet().iterator();
 					while (keys.hasNext()) {
 						String key= (String)keys.next();
-						fPresentation.setAttribute(key, fAttributes.get(key));
+						tempPresentation.setAttribute(key, fAttributes.get(key));
 					}
 					// Only assign to the instance variable after it's been configured. Otherwise,
 					// the synchronization is defeated (a thread could return the presentation before
