@@ -13,5 +13,8 @@
 </requires>
 
 <runtime>
+	<library name="updatetests.jar">
+      <export name="*"/>
+    </library>
 </runtime>
 </plugin>
