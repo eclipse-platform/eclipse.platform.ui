@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.handles.IHandle;
-import org.eclipse.ui.handles.IHandleEvent;
-import org.eclipse.ui.handles.IHandleListener;
-import org.eclipse.ui.handles.NotDefinedException;
+import org.eclipse.ui.internal.handles.api.IHandle;
+import org.eclipse.ui.internal.handles.api.IHandleEvent;
+import org.eclipse.ui.internal.handles.api.IHandleListener;
+import org.eclipse.ui.internal.handles.api.NotDefinedException;
 
 public class Handle implements IHandle {
 

@@ -28,35 +28,47 @@ import java.util.List;
  */
 public interface ICommand extends Comparable {
 
-	// TODO getInContext(), List getKeySequences(), Map getImageUrisByStyle(), SortedSet getContextIds();
+	// TODO SortedSet getContextIds(), Map getImageUrisByStyle(), SortedSet getKeySequences()
+	
+	/**
+	 * Registers an ICommandListener instance with this command.
+	 *
+	 * @param commandListener the ICommandListener instance to register.
+	 * @throws NullPointerException
+	 */	
+	void addCommandListener(ICommandListener commandListener);
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCategoryId();
+	String getCategoryId()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	List getContextBindings();
+	List getContextBindings()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
+	String getDescription()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getHelpId();
+	String getHelpId()
+		throws NotDefinedException;
 		
 	/**
 	 * JAVADOC
@@ -64,27 +76,30 @@ public interface ICommand extends Comparable {
 	 * @return
 	 */	
 	String getId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	List getImageBindings()
+		throws NotDefinedException;
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	List getKeyBindings()
+		throws NotDefinedException;	
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	List getImageBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	List getKeyBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
+	String getName()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
@@ -92,4 +107,26 @@ public interface ICommand extends Comparable {
 	 * @return
 	 */	
 	boolean isActive();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isDefined();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isInContext();
+	
+	/**
+	 * Unregisters an ICommandListener instance with this command.
+	 *
+	 * @param commandListener the ICommandListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	void removeCommandListener(ICommandListener commandListener);
 }

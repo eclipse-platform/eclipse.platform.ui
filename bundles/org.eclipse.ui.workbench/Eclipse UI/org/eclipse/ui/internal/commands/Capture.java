@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -9,35 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.handles;
+package org.eclipse.ui.internal.commands;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public class NotDefinedException extends Exception {
+public interface CaptureListener {
 
-	/**
-	 * JAVADOC
-	 */	
-	public NotDefinedException() {
-	}
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param s
-	 */	
-	public NotDefinedException(String s) {
-		super(s);
-	}
+	void capture(CaptureEvent captureEvent);
 }

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.handles;
 
-import org.eclipse.ui.handles.IHandle;
-import org.eclipse.ui.handles.IHandleEvent;
+import org.eclipse.ui.internal.handles.api.IHandle;
+import org.eclipse.ui.internal.handles.api.IHandleEvent;
 
 final class HandleEvent implements IHandleEvent {
 

@@ -20,14 +20,14 @@ import java.util.TreeMap;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements ICategoryDefinition {
+public final class CategoryDefinition implements ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	static Comparator nameComparator() {
+	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -38,7 +38,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List categories) {
+	public static SortedMap sortedMapById(List categories) {
 		if (categories == null)
 			throw new NullPointerException();
 
@@ -55,7 +55,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List categories) {
+	public static SortedMap sortedMapByName(List categories) {
 		if (categories == null)
 			throw new NullPointerException();
 

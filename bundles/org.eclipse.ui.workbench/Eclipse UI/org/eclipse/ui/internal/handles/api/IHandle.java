@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.handles;
+package org.eclipse.ui.internal.handles.api;
 
 /**
  * <p>
@@ -24,12 +24,44 @@ package org.eclipse.ui.handles;
  * 
  * @since 3.0
  */
-public interface IHandleEvent {
+public interface IHandle {
+
+	/**
+	 * Registers an IHandleListener instance with this handle.
+	 *
+	 * @param handleListener the IHandleListener instance to register.
+	 * @throws NullPointerException
+	 */	
+	void addHandleListener(IHandleListener handleListener);
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 * @throws NotDefinedException;
+	 */	
+	Object getObject()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IHandle getHandle();
+	boolean isDefined();
+	
+	/**
+	 * Unregisters an IHandleListener instance with this handle.
+	 *
+	 * @param handleListener the IHandleListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	void removeHandleListener(IHandleListener handleListener);
 }

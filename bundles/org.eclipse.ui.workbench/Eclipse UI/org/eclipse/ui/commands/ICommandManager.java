@@ -13,8 +13,6 @@ package org.eclipse.ui.commands;
 
 import java.util.SortedSet;
 
-import org.eclipse.ui.handles.IHandle;
-
 /**
  * <p>
  * JAVADOC
@@ -80,7 +78,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IHandle getCategoryHandle(String categoryId);
+	ICategory getCategory(String categoryId);
 
 	/**
 	 * JAVADOC
@@ -89,7 +87,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IHandle getCommandHandle(String commandId);
+	ICommand getCommand(String commandId);
 
 	/**
 	 * JAVADOC
@@ -119,7 +117,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IHandle getKeyConfigurationHandle(String keyConfigurationId);
+	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);
 
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.

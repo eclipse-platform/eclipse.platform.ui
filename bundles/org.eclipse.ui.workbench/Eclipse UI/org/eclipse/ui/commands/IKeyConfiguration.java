@@ -27,12 +27,21 @@ package org.eclipse.ui.commands;
 public interface IKeyConfiguration extends Comparable {
 
 	/**
+	 * Registers an IKeyConfigurationListener instance with this key configuration.
+	 *
+	 * @param keyConfigurationListener the IKeyConfigurationListener instance to register.
+	 * @throws NullPointerException
+	 */	
+	void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
+
+	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		
+	String getDescription()
+		throws NotDefinedException;
+	
 	/**
 	 * JAVADOC
 	 * 
@@ -45,14 +54,16 @@ public interface IKeyConfiguration extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getName();
+	String getName()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getParentId();
+	String getParentId()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
@@ -60,4 +71,19 @@ public interface IKeyConfiguration extends Comparable {
 	 * @return
 	 */	
 	boolean isActive();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isDefined();
+	
+	/**
+	 * Unregisters an IKeyConfigurationListener instance with this key configuration.
+	 *
+	 * @param keyConfigurationListener the IKeyConfigurationListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 }

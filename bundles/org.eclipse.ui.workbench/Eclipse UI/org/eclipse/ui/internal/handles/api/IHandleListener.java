@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.handles;
+package org.eclipse.ui.internal.handles.api;
 
 /**
  * <p>

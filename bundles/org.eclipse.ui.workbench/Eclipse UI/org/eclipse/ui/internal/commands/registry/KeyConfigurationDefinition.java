@@ -20,14 +20,14 @@ import java.util.TreeMap;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
+public final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	static Comparator nameComparator() {
+	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -38,7 +38,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List keyConfigurations) {
+	public static SortedMap sortedMapById(List keyConfigurations) {
 		if (keyConfigurations == null)
 			throw new NullPointerException();
 
@@ -55,7 +55,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List keyConfigurations) {
+	public static SortedMap sortedMapByName(List keyConfigurations) {
 		if (keyConfigurations == null)
 			throw new NullPointerException();
 

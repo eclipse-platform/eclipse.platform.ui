@@ -20,14 +20,14 @@ import java.util.TreeMap;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CommandDefinition implements ICommandDefinition {
+public final class CommandDefinition implements ICommandDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CommandDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	static Comparator nameComparator() {
+	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -38,7 +38,7 @@ final class CommandDefinition implements ICommandDefinition {
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List commands) {
+	public static SortedMap sortedMapById(List commands) {
 		if (commands == null)
 			throw new NullPointerException();
 
@@ -55,7 +55,7 @@ final class CommandDefinition implements ICommandDefinition {
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List commands) {
+	public static SortedMap sortedMapByName(List commands) {
 		if (commands == null)
 			throw new NullPointerException();
 

@@ -9,26 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextEvent;
-import org.eclipse.ui.contexts.IContextListener;
-import org.eclipse.ui.contexts.NotDefinedException;
+import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IKeyConfigurationEvent;
+import org.eclipse.ui.commands.IKeyConfigurationListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
-final class Context implements IContext {
+final class KeyConfiguration implements IKeyConfiguration {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Context.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeyConfiguration.class.getName().hashCode();
 
 	private boolean active;
-	private IContextEvent contextEvent;
-	private List contextListeners;
+	private IKeyConfigurationEvent keyConfigurationEvent;
+	private List keyConfigurationListeners;
 	private boolean defined;
 	private String description;
 	private String id;
@@ -39,42 +39,42 @@ final class Context implements IContext {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	Context(String id) {	
+	KeyConfiguration(String id) {	
 		if (id == null)
 			throw new NullPointerException();
 
 		this.id = id;
 	}
 
-	public void addContextListener(IContextListener contextListener) {
-		if (contextListener == null)
+	public void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
+		if (keyConfigurationListener == null)
 			throw new NullPointerException();
 		
-		if (contextListeners == null)
-			contextListeners = new ArrayList();
+		if (keyConfigurationListeners == null)
+			keyConfigurationListeners = new ArrayList();
 		
-		if (!contextListeners.contains(contextListener))
-			contextListeners.add(contextListener);
+		if (!keyConfigurationListeners.contains(keyConfigurationListener))
+			keyConfigurationListeners.add(keyConfigurationListener);
 	}
 
 	public int compareTo(Object object) {
-		Context context = (Context) object;
-		int compareTo = active == false ? (context.active == true ? -1 : 0) : 1;
+		KeyConfiguration keyConfiguration = (KeyConfiguration) object;
+		int compareTo = active == false ? (keyConfiguration.active == true ? -1 : 0) : 1;
 
 		if (compareTo == 0) {
-			compareTo = defined == false ? (context.defined == true ? -1 : 0) : 1;
+			compareTo = defined == false ? (keyConfiguration.defined == true ? -1 : 0) : 1;
 			
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, context.description);
+				compareTo = Util.compare(description, keyConfiguration.description);
 			
 				if (compareTo == 0) {		
-					compareTo = id.compareTo(context.id);			
+					compareTo = id.compareTo(keyConfiguration.id);			
 				
 					if (compareTo == 0) {
-						compareTo = name.compareTo(context.name);
+						compareTo = name.compareTo(keyConfiguration.name);
 						
 						if (compareTo == 0)
-							compareTo = Util.compare(parentId, context.parentId);		
+							compareTo = Util.compare(parentId, keyConfiguration.parentId);		
 					}
 				}
 			}
@@ -84,17 +84,17 @@ final class Context implements IContext {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Context))
+		if (!(object instanceof KeyConfiguration))
 			return false;
 
-		Context context = (Context) object;	
+		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
 		boolean equals = true;
-		equals &= active == context.active;
-		equals &= defined == context.defined;
-		equals &= Util.equals(description, context.description);
-		equals &= id.equals(context.id);
-		equals &= name.equals(context.name);
-		equals &= Util.equals(parentId, context.parentId);
+		equals &= active == keyConfiguration.active;
+		equals &= defined == keyConfiguration.defined;
+		equals &= Util.equals(description, keyConfiguration.description);
+		equals &= id.equals(keyConfiguration.id);
+		equals &= name.equals(keyConfiguration.name);
+		equals &= Util.equals(parentId, keyConfiguration.parentId);
 		return equals;
 	}
 
@@ -149,15 +149,15 @@ final class Context implements IContext {
 		return defined;
 	}
 
-	public void removeContextListener(IContextListener contextListener) {
-		if (contextListener == null)
+	public void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
+		if (keyConfigurationListener == null)
 			throw new NullPointerException();
 
-		if (contextListeners != null) {
-			contextListeners.remove(contextListener);
+		if (keyConfigurationListeners != null) {
+			keyConfigurationListeners.remove(keyConfigurationListener);
 			
-			if (contextListeners.isEmpty())
-				contextListeners = null;
+			if (keyConfigurationListeners.isEmpty())
+				keyConfigurationListeners = null;
 		}
 	}
 
@@ -183,21 +183,21 @@ final class Context implements IContext {
 		return string;		
 	}
 	
-	void fireContextChanged() {
-		if (contextListeners != null) {
+	void fireKeyConfigurationChanged() {
+		if (keyConfigurationListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextListeners).iterator();			
+			Iterator iterator = new ArrayList(keyConfigurationListeners).iterator();			
 			
 			if (iterator.hasNext()) {
-				if (contextEvent == null)
-					contextEvent = new ContextEvent(this);
+				if (keyConfigurationEvent == null)
+					keyConfigurationEvent = new KeyConfigurationEvent(this);
 				
 				while (iterator.hasNext())	
-					((IContextListener) iterator.next()).contextChanged(contextEvent);
+					((IKeyConfigurationListener) iterator.next()).keyConfigurationChanged(keyConfigurationEvent);
 			}							
 		}			
 	}
-	
+
 	boolean setActive(boolean active) {
 		if (active != this.active) {
 			this.active = active;

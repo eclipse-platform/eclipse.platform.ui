@@ -27,12 +27,21 @@ package org.eclipse.ui.commands;
 public interface ICategory extends Comparable {
 
 	/**
+	 * Registers an ICategoryListener instance with this category.
+	 *
+	 * @param categoryListener the ICategoryListener instance to register.
+	 * @throws NullPointerException
+	 */	
+	void addCategoryListener(ICategoryListener categoryListener);
+
+	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		
+	String getDescription()
+		throws NotDefinedException;
+	
 	/**
 	 * JAVADOC
 	 * 
@@ -45,5 +54,21 @@ public interface ICategory extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getName();
+	String getName()
+		throws NotDefinedException;
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isDefined();
+	
+	/**
+	 * Unregisters an ICategoryListener instance with this category.
+	 *
+	 * @param categoryListener the ICategoryListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	void removeCategoryListener(ICategoryListener categoryListener);
 }

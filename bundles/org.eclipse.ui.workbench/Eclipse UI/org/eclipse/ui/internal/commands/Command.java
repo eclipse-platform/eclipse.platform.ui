@@ -11,17 +11,17 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.text.Collator;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandEvent;
+import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
@@ -29,82 +29,42 @@ final class Command implements ICommand {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Command.class.getName().hashCode();
 
-	private static Comparator nameComparator;
-
-	static Comparator nameComparator() {
-		if (nameComparator == null)
-			nameComparator = new Comparator() {
-				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((ICommand) left).getName(), ((ICommand) right).getName());
-				}	
-			};		
-		
-		return nameComparator;
-	}
-
-	static SortedMap sortedMapById(List commands) {
-		if (commands == null)
-			throw new NullPointerException();
-
-		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = commands.iterator();
-		
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, ICommand.class);				
-			ICommand command = (ICommand) object;
-			sortedMap.put(command.getId(), command);									
-		}			
-		
-		return sortedMap;
-	}
-
-	static SortedMap sortedMapByName(List commands) {
-		if (commands == null)
-			throw new NullPointerException();
-
-		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = commands.iterator();
-		
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, ICommand.class);
-			ICommand command = (ICommand) object;
-			sortedMap.put(command.getName(), command);									
-		}			
-		
-		return sortedMap;
-	}
-
 	private boolean active;
 	private String categoryId;
 	private List contextBindings;
+	private ICommandEvent commandEvent;
+	private List commandListeners;
+	private boolean defined;
 	private String description;
 	private String helpId;
 	private String id;
 	private List imageBindings;
+	private boolean inContext;
 	private List keyBindings;
 	private String name;
-	
+
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	Command(boolean active, String categoryId, List contextBindings, String description, String helpId, String id, List imageBindings, List keyBindings, String name) {
-		if (id == null || name == null)
+	Command(String id) {	
+		if (id == null)
+			throw new NullPointerException();
+
+		this.id = id;
+	}
+
+	public void addCommandListener(ICommandListener commandListener) {
+		if (commandListener == null)
 			throw new NullPointerException();
 		
-		this.active = active;
-		this.categoryId = categoryId;
-		this.contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
-		this.description = description;
-		this.helpId = helpId;
-		this.id = id;
-		this.imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
-		this.keyBindings = Util.safeCopy(keyBindings, IKeyBinding.class);
-		this.name = name;
+		if (commandListeners == null)
+			commandListeners = new ArrayList();
+		
+		if (!commandListeners.contains(commandListener))
+			commandListeners.add(commandListener);
 	}
-	
+
 	public int compareTo(Object object) {
 		Command command = (Command) object;
 		int compareTo = active == false ? (command.active == true ? -1 : 0) : 1;
@@ -115,23 +75,31 @@ final class Command implements ICommand {
 			if (compareTo == 0) {	
 				compareTo = Util.compare(contextBindings, command.contextBindings);
 
-				if (compareTo == 0) {		
-					compareTo = Util.compare(description, command.description);	
+				if (compareTo == 0) {
+					compareTo = defined == false ? (command.defined == true ? -1 : 0) : 1;
 
-					if (compareTo == 0) {
-						compareTo = Util.compare(helpId, command.helpId);
-
+					if (compareTo == 0) {		
+						compareTo = Util.compare(description, command.description);	
+	
 						if (compareTo == 0) {
-							compareTo = id.compareTo(command.id);	
+							compareTo = Util.compare(helpId, command.helpId);
+	
+							if (compareTo == 0) {
+								compareTo = id.compareTo(command.id);	
+	
+								if (compareTo == 0) {	
+									compareTo = Util.compare(imageBindings, command.imageBindings);
 
-							if (compareTo == 0) {	
-								compareTo = Util.compare(imageBindings, command.imageBindings);
-			
-								if (compareTo == 0)	{
-									compareTo = Util.compare(keyBindings, command.keyBindings);
-									
-									if (compareTo == 0)
-										compareTo = name.compareTo(command.name);	
+									if (compareTo == 0) {	
+										compareTo = inContext == false ? (command.inContext == true ? -1 : 0) : 1;
+				
+										if (compareTo == 0)	{
+											compareTo = Util.compare(keyBindings, command.keyBindings);
+											
+											if (compareTo == 0)
+												compareTo = name.compareTo(command.name);	
+										}
+									}
 								}
 							}
 						}
@@ -152,28 +120,46 @@ final class Command implements ICommand {
 		equals &= active == command.active;	
 		equals &= Util.equals(categoryId, command.categoryId);
 		equals &= contextBindings.equals(command.contextBindings);
+		equals &= defined == command.defined;
 		equals &= Util.equals(description, command.description);
 		equals &= Util.equals(helpId, command.helpId);
 		equals &= id.equals(command.id);
 		equals &= imageBindings.equals(command.imageBindings);
+		equals &= inContext == command.inContext;	
 		equals &= keyBindings.equals(command.keyBindings);
 		equals &= name.equals(command.name);
 		return equals;
 	}
 
-	public String getCategoryId() {
+	public String getCategoryId()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+			
 		return categoryId;
 	}
 
-	public List getContextBindings() {
+	public List getContextBindings()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
 		return contextBindings;
 	}
 
-	public String getDescription() {
+	public String getDescription()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+			
 		return description;	
 	}
 
-	public String getHelpId() {
+	public String getHelpId()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
 		return helpId;	
 	}
 	
@@ -181,38 +167,72 @@ final class Command implements ICommand {
 		return id;	
 	}
 
-	public List getImageBindings() {
+	public List getImageBindings()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
 		return imageBindings;
 	}
 
-	public List getKeyBindings() {
+	public List getKeyBindings()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
 		return keyBindings;
 	}
 	
-	public String getName() {
+	public String getName()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
 		return name;
 	}	
 
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
+			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
 			hashCode = hashCode * HASH_FACTOR + contextBindings.hashCode();
+			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(helpId);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + imageBindings.hashCode();
+			hashCode = hashCode * HASH_FACTOR + (inContext ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + keyBindings.hashCode();
 			hashCode = hashCode * HASH_FACTOR + name.hashCode();
 			hashCodeComputed = true;
 		}
 			
-		return hashCode;
+		return hashCode;		
 	}
 
 	public boolean isActive() {
 		return active;
+	}
+	
+	public boolean isDefined() {
+		return defined;
+	}
+
+	public boolean isInContext() {
+		return inContext;
+	}
+
+	public void removeCommandListener(ICommandListener commandListener) {
+		if (commandListener == null)
+			throw new NullPointerException();
+
+		if (commandListeners != null) {
+			commandListeners.remove(commandListener);
+			
+			if (commandListeners.isEmpty())
+				commandListeners = null;
+		}
 	}
 
 	public String toString() {
@@ -220,6 +240,8 @@ final class Command implements ICommand {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
 			stringBuffer.append(active);
+			stringBuffer.append(',');
+			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(categoryId);
 			stringBuffer.append(',');
@@ -233,6 +255,8 @@ final class Command implements ICommand {
 			stringBuffer.append(',');
 			stringBuffer.append(imageBindings);
 			stringBuffer.append(',');
+			stringBuffer.append(inContext);
+			stringBuffer.append(',');
 			stringBuffer.append(keyBindings);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
@@ -242,4 +266,148 @@ final class Command implements ICommand {
 	
 		return string;
 	}	
+
+	void fireCommandChanged() {
+		if (commandListeners != null) {
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(commandListeners).iterator();			
+			
+			if (iterator.hasNext()) {
+				if (commandEvent == null)
+					commandEvent = new CommandEvent(this);
+				
+				while (iterator.hasNext())	
+					((ICommandListener) iterator.next()).commandChanged(commandEvent);
+			}							
+		}			
+	}
+	
+	boolean setActive(boolean active) {
+		if (active != this.active) {
+			this.active = active;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setContextBindings(List contextBindings) {
+		contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
+		
+		if (!Util.equals(contextBindings, this.contextBindings)) {
+			this.contextBindings = contextBindings;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+	
+		return false;
+	}
+
+	boolean setDefined(boolean defined) {
+		if (defined != this.defined) {
+			this.defined = defined;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setCategoryId(String categoryId) {
+		if (!Util.equals(categoryId, this.categoryId)) {
+			this.categoryId = categoryId;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setHelpId(String helpId) {
+		if (!Util.equals(helpId, this.helpId)) {
+			this.helpId = helpId;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setImageBindings(List imageBindings) {
+		imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
+		
+		if (!Util.equals(imageBindings, this.imageBindings)) {
+			this.imageBindings = imageBindings;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+	
+		return false;
+	}
+
+	boolean setInContext(boolean inContext) {
+		if (inContext != this.inContext) {
+			this.inContext = inContext;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setKeyBindings(List keyBindings) {
+		keyBindings = Util.safeCopy(keyBindings, IKeyBinding.class);
+		
+		if (!Util.equals(keyBindings, this.keyBindings)) {
+			this.keyBindings = keyBindings;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+	
+		return false;
+	}
+
+	boolean setName(String name) {
+		if (name == null)
+			throw new NullPointerException();
+		
+		if (!Util.equals(name, this.name)) {
+			this.name = name;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
 }

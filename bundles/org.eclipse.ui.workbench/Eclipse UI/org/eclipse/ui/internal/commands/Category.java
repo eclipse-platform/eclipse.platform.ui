@@ -9,92 +9,80 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextEvent;
-import org.eclipse.ui.contexts.IContextListener;
-import org.eclipse.ui.contexts.NotDefinedException;
+import org.eclipse.ui.commands.ICategory;
+import org.eclipse.ui.commands.ICategoryEvent;
+import org.eclipse.ui.commands.ICategoryListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
-final class Context implements IContext {
+final class Category implements ICategory {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Context.class.getName().hashCode();
+	private final static int HASH_INITIAL = Category.class.getName().hashCode();
 
-	private boolean active;
-	private IContextEvent contextEvent;
-	private List contextListeners;
+	private ICategoryEvent categoryEvent;
+	private List categoryListeners;
 	private boolean defined;
 	private String description;
 	private String id;
 	private String name;
-	private String parentId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	Context(String id) {	
+	Category(String id) {	
 		if (id == null)
 			throw new NullPointerException();
 
 		this.id = id;
 	}
 
-	public void addContextListener(IContextListener contextListener) {
-		if (contextListener == null)
+	public void addCategoryListener(ICategoryListener categoryListener) {
+		if (categoryListener == null)
 			throw new NullPointerException();
 		
-		if (contextListeners == null)
-			contextListeners = new ArrayList();
+		if (categoryListeners == null)
+			categoryListeners = new ArrayList();
 		
-		if (!contextListeners.contains(contextListener))
-			contextListeners.add(contextListener);
+		if (!categoryListeners.contains(categoryListener))
+			categoryListeners.add(categoryListener);
 	}
 
 	public int compareTo(Object object) {
-		Context context = (Context) object;
-		int compareTo = active == false ? (context.active == true ? -1 : 0) : 1;
-
+		Category category = (Category) object;
+		int compareTo = defined == false ? (category.defined == true ? -1 : 0) : 1;
+			
 		if (compareTo == 0) {
-			compareTo = defined == false ? (context.defined == true ? -1 : 0) : 1;
+			compareTo = Util.compare(description, category.description);
+		
+			if (compareTo == 0) {		
+				compareTo = id.compareTo(category.id);			
 			
-			if (compareTo == 0) {
-				compareTo = Util.compare(description, context.description);
-			
-				if (compareTo == 0) {		
-					compareTo = id.compareTo(context.id);			
-				
-					if (compareTo == 0) {
-						compareTo = name.compareTo(context.name);
-						
-						if (compareTo == 0)
-							compareTo = Util.compare(parentId, context.parentId);		
-					}
-				}
+				if (compareTo == 0)
+					compareTo = name.compareTo(category.name);
 			}
 		}
-		
+
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Context))
+		if (!(object instanceof Category))
 			return false;
 
-		Context context = (Context) object;	
+		Category category = (Category) object;	
 		boolean equals = true;
-		equals &= active == context.active;
-		equals &= defined == context.defined;
-		equals &= Util.equals(description, context.description);
-		equals &= id.equals(context.id);
-		equals &= name.equals(context.name);
-		equals &= Util.equals(parentId, context.parentId);
+		equals &= defined == category.defined;
+		equals &= Util.equals(description, category.description);
+		equals &= id.equals(category.id);
+		equals &= name.equals(category.name);
 		return equals;
 	}
 
@@ -118,46 +106,32 @@ final class Context implements IContext {
 		return name;
 	}	
 
-	public String getParentId()
-		throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-
-		return parentId;
-	}
-
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + name.hashCode();
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
 			
 		return hashCode;		
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-	
 	public boolean isDefined() {
 		return defined;
 	}
 
-	public void removeContextListener(IContextListener contextListener) {
-		if (contextListener == null)
+	public void removeCategoryListener(ICategoryListener categoryListener) {
+		if (categoryListener == null)
 			throw new NullPointerException();
 
-		if (contextListeners != null) {
-			contextListeners.remove(contextListener);
+		if (categoryListeners != null) {
+			categoryListeners.remove(categoryListener);
 			
-			if (contextListeners.isEmpty())
-				contextListeners = null;
+			if (categoryListeners.isEmpty())
+				categoryListeners = null;
 		}
 	}
 
@@ -165,8 +139,6 @@ final class Context implements IContext {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(active);
-			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
@@ -174,40 +146,26 @@ final class Context implements IContext {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
 	
 		return string;		
 	}
-	
-	void fireContextChanged() {
-		if (contextListeners != null) {
+
+	void fireCategoryChanged() {
+		if (categoryListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextListeners).iterator();			
+			Iterator iterator = new ArrayList(categoryListeners).iterator();			
 			
 			if (iterator.hasNext()) {
-				if (contextEvent == null)
-					contextEvent = new ContextEvent(this);
+				if (categoryEvent == null)
+					categoryEvent = new CategoryEvent(this);
 				
 				while (iterator.hasNext())	
-					((IContextListener) iterator.next()).contextChanged(contextEvent);
+					((ICategoryListener) iterator.next()).categoryChanged(categoryEvent);
 			}							
 		}			
-	}
-	
-	boolean setActive(boolean active) {
-		if (active != this.active) {
-			this.active = active;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
 	}
 
 	boolean setDefined(boolean defined) {
@@ -240,18 +198,6 @@ final class Context implements IContext {
 		
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;
