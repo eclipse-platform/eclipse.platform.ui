@@ -41,7 +41,6 @@ import org.eclipse.ui.internal.skins.IPresentablePart;
 import org.eclipse.ui.internal.skins.IPresentationSite;
 import org.eclipse.ui.internal.skins.StackDropResult;
 import org.eclipse.ui.internal.skins.StackPresentation;
-import org.eclipse.ui.internal.skins.newlook.DefaultStackPresentationSite;
 import org.eclipse.ui.internal.skins.newlook.PartTabFolderPresentation;
 
 
@@ -51,19 +50,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private PartPane.PaneContribution paneContribution;
 
 	private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
-		public void selectPart(IPresentablePart toSelect) {
-			super.selectPart(toSelect);
-			
-			setCurrentLayoutPart(getLayoutPart(toSelect));
-						
-			// set the title of the detached window to reflect the active tab
-			Window window = getWindow();
-			if (window instanceof DetachedWindow) {
-				if (current == null || !(current instanceof PartPane))
-					window.getShell().setText("");//$NON-NLS-1$
-				else
-					window.getShell().setText(((PartPane) current).getPartReference().getTitle());
-			}
+		public void selectPart(IPresentablePart toSelect) {			
+			presentationSelectionChanged(toSelect);
 		}
 		
 		public void setPresentation(StackPresentation newPresentation) {
@@ -127,6 +115,29 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 */
 	public PartTabFolder(WorkbenchPage page) {
 		this(page, SWT.MIN | SWT.MAX);
+	}
+	
+	/**
+	 * Returns the current presentable part, or null if there is no current selection
+	 * 
+	 * @return the current presentable part, or null if there is no current selection
+	 */
+	private IPresentablePart getCurrentPresentablePart() {
+		if (current != null) {
+			return current.getPresentablePart();
+		}
+		
+		return null;
+	}
+	
+	private void presentationSelectionChanged(IPresentablePart newSelection) {
+		setSelection(getLayoutPart(newSelection));
+					
+		// set the title of the detached window to reflect the active tab
+		Window window = getWindow();
+		if (window instanceof DetachedWindow) {
+			window.getShell().setText(newSelection.getTitle());
+		}
 	}
 	
 	/**
@@ -197,6 +208,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * See IVisualContainer#add
 	 */
 	public void add(LayoutPart child) {
+		
 		children.add(child);
 		if (active) {
 			showPart(child, null);
@@ -277,6 +289,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		if (presentationSite.getPresentation() != null)
 			return;
 	
+		// The following line should be redirected to a factory in order to 
+		// support pluggable look-and-feel.
 		presentationSite.setPresentation(new PartTabFolderPresentation(parent, 
 				presentationSite, flags, page.getTheme()));
 
@@ -385,7 +399,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		presentationSite.getPresentation().addPart(presentablePart, position);
 		
 		if (current == null) {
-			presentationSite.selectPart(presentablePart);
+			setSelection(part);
 		}
 	}
 
@@ -400,9 +414,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		StackPresentation presentation = presentationSite.getPresentation();
 		
 		presentationSite.dispose();
-		//presentationSite.selectPart(null);
-		
-		//presentationSite.setPresentation(null);
 		
 		Iterator iter = children.iterator();
 		while (iter.hasNext()) {
@@ -490,7 +501,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		if (!active)
 			return 0;
 		
-		return getPresentableParts().indexOf(presentationSite.getCurrent());
+		return indexOf(current);
 	}
 
 	/**
@@ -570,11 +581,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 		
 		if (oldChild == inactiveCurrent) {
-			setCurrentLayoutPart(newChild);
+			setSelection(newChild);
 			inactiveCurrent = null;
 		}
 		
-		remove(oldChild);		
+		remove(oldChild);
+
 	}
 	
 	/**
@@ -675,20 +687,25 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		if (!active)
 			return;
 
-		getPresentation().selectPart((IPresentablePart)getPresentableParts().get(index));	
+		setSelection(getLayoutPart((IPresentablePart)getPresentableParts().get(index)));	
 	}
 	
 	private void setSelection(LayoutPart part) {
-
-		if (!active)
+		if (current == part) {
 			return;
-		if (part instanceof PartPlaceholder)
-			return;
-
-		IPresentablePart presentablePart = part.getPresentablePart();
+		}
 		
-		if (presentablePart != null) {
-			presentationSite.selectPart(presentablePart);
+		current = part;
+		
+		updateSystemMenu();
+		
+		if (part != null) {
+			IPresentablePart presentablePart = part.getPresentablePart();
+			StackPresentation presentation = getPresentation();
+			
+			if (presentablePart != null && presentation != null) {
+				presentation.selectPart(presentablePart);
+			}
 		}
 	}
 
@@ -725,8 +742,13 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * @param active
 	 */
 	public void setActive(boolean activeState) {
-		if (activeState && presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
-			setState(IPresentationSite.STATE_RESTORED);
+		if (activeState) {
+			if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
+				setState(IPresentationSite.STATE_RESTORED);
+			}
+			if (page.isZoomed()) {
+				presentationSite.setPresentationState(IPresentationSite.STATE_MAXIMIZED);
+			}
 		}
 		
 		getPresentation().setActive(activeState);
@@ -827,12 +849,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		int oldState = presentationSite.getState();
 		
-		presentationSite.setPresentationState(newState);
-		
 		if (current != null) {
-			if (presentationSite.getState() == IPresentationSite.STATE_MAXIMIZED) {
+			if (newState == IPresentationSite.STATE_MAXIMIZED) {
 				((PartPane) current).doZoom();
 			} else {
+				presentationSite.setPresentationState(newState);
+				
 				WorkbenchPage page = ((PartPane) current).getPage();
 				if (page.isZoomed()) {
 					page.zoomOut();
@@ -848,6 +870,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
 			page.refreshActiveView();
+		}
+	}
+	
+	public void setZoomed(boolean isZoomed) {
+		if (isZoomed) {
+			presentationSite.setPresentationState(IPresentationSite.STATE_MAXIMIZED);
 		}
 	}
 	
@@ -890,7 +918,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * @param org.eclipse.ui.internal.ILayoutContainer
 	 */
 	private void updateContainerVisibleTab() {
-
 		LayoutPart[] parts = getChildren();
 		if (parts.length < 1)
 			return;
@@ -911,14 +938,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			}
 		}
 
-		if (selPart != null) {
-			//Make sure the new visible part is restored.
-			//If part can't be restored an error part is created.
-			selPart.getPartReference().getPart(true);
-			int selIndex = indexOf(selPart);
-			if (getSelection() != selIndex)
-				setSelection(selIndex);
-		}
+		setSelection(selPart);
 	}
 	
 	public boolean resizesVertically() {
@@ -941,13 +961,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		return true;
 	}
-	
-	private void setCurrentLayoutPart(LayoutPart newCurrent) {
-		current = newCurrent;
 		
-		updateSystemMenu();
-	}
-	
 	private void updateSystemMenu() {
 		
 		StackPresentation presentation = getPresentation();
@@ -967,11 +981,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			paneContribution = null;
 		}
 		
-		if (PartTabFolder.this.current != null) {
+		if (current != null && current instanceof PartPane) {
 			paneContribution = ((PartPane)PartTabFolder.this.current).createPaneContribution(); 
 			systemMenuManager.add(paneContribution);
 		}
-
 	}
+	
 }
 
