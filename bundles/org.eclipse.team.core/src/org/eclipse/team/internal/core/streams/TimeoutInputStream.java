@@ -41,6 +41,8 @@ public class TimeoutInputStream extends FilterInputStream {
 	private int length = 0;  // number of remaining unread bytes
 	private IOException ioe = null; // if non-null, contains a pending exception
 	private boolean waitingForClose = false; // if true, thread is waiting for close()
+	
+	private boolean growWhenFull = false; // if true, buffer will grow when it is full
 
 	/**
 	 * Creates a timeout wrapper for an input stream.
@@ -64,6 +66,11 @@ public class TimeoutInputStream extends FilterInputStream {
 		}, "TimeoutInputStream");//$NON-NLS-1$
 		thread.setDaemon(true);
 		thread.start();
+	}
+	
+	public TimeoutInputStream(InputStream in, int bufferSize, long readTimeout, long closeTimeout, boolean growWhenFull) {
+		this(in, bufferSize, readTimeout, closeTimeout);
+		this.growWhenFull = growWhenFull;
 	}
 
 	/**
@@ -247,14 +254,9 @@ public class TimeoutInputStream extends FilterInputStream {
 		for (;;) {
 			int off, len;
 			synchronized (this) {
-				for (;;) {
+				while (isBufferFull()) {
 					if (closeRequested) return; // quit signal
-					if (length != iobuffer.length) break;
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						closeRequested = true; // alternate quit signal
-					}
+					waitForRead();
 				}
 				off = (head + length) % iobuffer.length;
 				len = ((head > off) ? head : iobuffer.length) - off;
@@ -273,5 +275,47 @@ public class TimeoutInputStream extends FilterInputStream {
 				notify();
 			}
 		}				
+	}
+	
+	/*
+	 * Wait for a read when the buffer is full (with the implication
+	 * that space will become available in the buffer after the read 
+	 * takes place).
+	 */
+	private synchronized void waitForRead() {
+		try {
+			if (growWhenFull) {
+				// wait a second before growing to let reads catch up
+				wait(readTimeout);
+			} else {
+				wait();
+			}
+		} catch (InterruptedException e) {
+			closeRequested = true; // alternate quit signal
+		}
+		// If the buffer is still full, give it a chance to grow
+		if (growWhenFull && isBufferFull()) {
+			growBuffer();
+		}
+	}
+
+	private synchronized void growBuffer() {
+		int newSize = 2 * iobuffer.length;
+		if (newSize > iobuffer.length) {
+			byte[] newBuffer = new byte[newSize];
+			int pos = 0;
+			int len = length;
+			while (len-- > 0) {
+				newBuffer[pos++] = iobuffer[head++];
+				if (head == iobuffer.length) head = 0;
+			}
+			iobuffer = newBuffer;
+			head = 0;
+			// length instance variable was not changed by this method
+		}
+	}
+
+	private boolean isBufferFull() {
+		return length == iobuffer.length;
 	}
 }
