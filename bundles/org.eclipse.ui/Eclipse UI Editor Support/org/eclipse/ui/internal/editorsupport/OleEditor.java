@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -86,7 +87,8 @@ public void createPartControl(Composite parent) {
 	// Create a frame.
 	clientFrame = new OleFrame(parent, SWT.CLIP_CHILDREN);
 	clientFrame.setBackground(
-		clientFrame.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		JFaceColors.getBannerBackground(clientFrame.getDisplay()));
+
 	initializeWorkbenchMenus();
 
 	// Set the input file.
@@ -98,7 +100,7 @@ public void createPartControl(Composite parent) {
 	// Create a OLE client site.
 	clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
 	clientSite.setBackground(
-		clientFrame.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		JFaceColors.getBannerBackground(clientFrame.getDisplay()));
 }
 private void deactivateClient(IWorkbenchPart part) {
 	//Check the client active flag. Set it to false when we have deactivated

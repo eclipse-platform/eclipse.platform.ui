@@ -4,34 +4,27 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
-import java.io.*;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.net.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.part.EditorPart;
 
 /**
  * A "fake" editor to show a welcome page
@@ -117,7 +110,7 @@ private Composite createInfoArea(Composite parent) {
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	Color bg = JFaceColors.getBannerBackground(display);;
 	infoArea.setBackground(bg);
 
 	StyledText sampleStyledText = null;
@@ -270,7 +263,7 @@ public void createPartControl(Composite parent) {
 private Composite createTitleArea(Composite parent) {
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	Color bg = JFaceColors.getBannerBackground(display);
 
 	// Create the title area which will contain
 	// a title, message, and image.

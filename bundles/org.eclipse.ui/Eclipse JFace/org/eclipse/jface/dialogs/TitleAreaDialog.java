@@ -54,10 +54,6 @@ public class TitleAreaDialog extends Dialog {
 		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
 	}
 
-	// Title area fields
-	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
-	private static final RGB ERROR_BORDER_RGB = new RGB(192, 192, 192);
-
 	private Composite titleArea;
 	private Label titleLabel;
 	private Label titleImage;
@@ -229,7 +225,7 @@ private Composite createTitleArea(Composite parent) {
 		titleAreaColor = new Color(display, titleAreaRGB);
 		bg = titleAreaColor;
 	} else {
-		bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		bg = JFaceColors.getBannerBackground(display);
 	}	
 	titleArea.setBackground(bg);
 
@@ -251,7 +247,7 @@ private Composite createTitleArea(Composite parent) {
 				Rectangle area = messageArea.getClientArea();
 				GC gc = event.gc;
 				if (errorMsgAreaBorderColor == null)
-					errorMsgAreaBorderColor = new Color(messageArea.getDisplay(), ERROR_BORDER_RGB);
+					errorMsgAreaBorderColor = JFaceColors.getErrorBorder(messageArea.getDisplay());
 				gc.setForeground(errorMsgAreaBorderColor);
 				gc.setLineWidth(1);
 				gc.drawLine(area.x, area.y, area.x + area.width - 1, area.y);
@@ -339,7 +335,7 @@ public void setErrorMessage(String errorMessage) {
 
 			// lazy initialize the error background color and image
 			if (errorMsgAreaBackground == null) {
-				errorMsgAreaBackground = new Color(messageLabel.getDisplay(), ERROR_BACKGROUND_RGB);
+				errorMsgAreaBackground = JFaceColors.getErrorBackground(messageArea.getDisplay());
 				errorMsgImage = JFaceResources.getImage(DLG_IMG_TITLE_ERROR);
 			}
 
