@@ -49,7 +49,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
-		
+		createVerticalSpacer(mainComposite, 1);
 		createRefreshComponent(mainComposite);
 		createRecursiveComponent(mainComposite);
 		createScopeComponent(mainComposite);

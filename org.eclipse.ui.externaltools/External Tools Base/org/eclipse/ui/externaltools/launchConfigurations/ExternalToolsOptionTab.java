@@ -71,15 +71,15 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		
+		createVerticalSpacer(mainComposite, 1);
 		createRunBackgroundComponent(mainComposite);
 		createCaptureOutputComponent(mainComposite);
 		createOpenPerspComponent(mainComposite);
 		createShowInMenuComponent(mainComposite);
 		createSaveDirtyEditorsComponent(mainComposite);
-		createSpacer(parent);
+		createVerticalSpacer(parent, 1);
 		createArgumentComponent(mainComposite);
 		createPromptForArgumentComponent(mainComposite);
-		createSpacer(parent);
 	}
 	
 	/**
@@ -269,16 +269,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		showInMenuButton.setText("Show in Run->External Tools menu");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		showInMenuButton.setLayoutData(data);
-	}
-	
-	/**
-	 * Creates a vertical space between controls.
-	 */
-	protected final void createSpacer(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 1;
-		label.setLayoutData(data);
 	}
 	
 	/**
