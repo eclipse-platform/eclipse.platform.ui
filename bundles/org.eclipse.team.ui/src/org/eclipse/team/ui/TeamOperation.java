@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.*;
@@ -127,7 +128,17 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * @return a shell
 	 */
 	protected Shell getShell() {
-		return Utils.getShell(getSite());
+		final Shell[] shell = new Shell[] { null };
+		if (canRunAsJob()) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					shell[0] = Utils.getShell(getSite());
+				}
+			});
+		} else {
+			shell[0] = Utils.getShell(getSite());
+		}
+		return shell[0];
 	}
 	
 	/*
