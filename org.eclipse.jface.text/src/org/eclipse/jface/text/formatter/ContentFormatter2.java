@@ -1018,6 +1018,8 @@ public class ContentFormatter2 implements IContentFormatter, IContentFormatterEx
 				// to both offset and length, the offset comes first.
 				// Therefore, the end of the position (offset + positions[i]) is supposedly
 				// greater than r.getOffset()
+				// if this is not the case, perhaps the position returned from the formatter was negative?
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=46617
 				int length= offset + positions[i] - r.getOffset();
 				if (length >= 0)
 					r.setLength(length);
