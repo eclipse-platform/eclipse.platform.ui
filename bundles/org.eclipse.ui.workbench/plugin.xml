@@ -17,5 +17,6 @@
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.swt" export="true"/>
    </requires>
 </plugin>
