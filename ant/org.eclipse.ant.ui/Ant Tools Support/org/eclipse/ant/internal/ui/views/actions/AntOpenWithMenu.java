@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
@@ -35,12 +41,16 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * 
@@ -54,6 +64,9 @@ public class AntOpenWithMenu extends ContributionItem {
 	private static final String SYSTEM_EDITOR_ID= PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
 	private static Map imageCache = new Hashtable(11);
+	
+	private int fLine;
+	private int fColumn;
 
 	/**
 	 * The id of this action.
@@ -254,17 +267,56 @@ public class AntOpenWithMenu extends ContributionItem {
 	 *
 	 * @param editor the editor descriptor, or null for the system editor
 	 */
-	private void openEditor(IEditorDescriptor editor) {
+	private void openEditor(IEditorDescriptor editorDescriptor) {
+		IEditorPart editorPart= null;
 		IFile fileResource = getFileResource();
 		try {
-			if (editor == null) {
-				page.openEditor(new FileEditorInput(fileResource), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+			if (editorDescriptor == null) {
+				editorPart= page.openEditor(new FileEditorInput(fileResource), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 			} else {
-				page.openEditor(new FileEditorInput(fileResource), editor.getId());
+				editorPart= page.openEditor(new FileEditorInput(fileResource), editorDescriptor.getId());
 			}
 		} catch (PartInitException e) {
 			AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 		}
+		if (editorPart instanceof ITextEditor) {
+			ITextEditor editor= (ITextEditor)editorPart;
+			int offset= getOffset(fLine, fColumn, editor);
+			if (offset == -1) {
+				return;
+			}
+			IDocumentProvider provider= editor.getDocumentProvider();
+			if (provider instanceof AntEditorDocumentProvider) {
+				AntModel model= ((AntEditorDocumentProvider)provider).getAntModel(editor.getEditorInput());
+				AntElementNode node= model.getProjectNode().getNode(offset);
+				editor.setHighlightRange(node.getOffset(), node.getLength(), true);
+				editor.selectAndReveal(node.getOffset(), node.getSelectionLength());	
+			}
+		}
+	}
+	
+	private int getOffset(int line, int column, ITextEditor editor) {
+		IDocumentProvider provider= editor.getDocumentProvider();
+		IEditorInput input= editor.getEditorInput();
+		try {
+			provider.connect(input);
+		} catch (CoreException e) {
+			return -1;
+		}
+		try {
+			IDocument document= provider.getDocument(input);
+			if (document != null) {
+				if (column > -1) {
+					return document.getLineOffset(line - 1) + column - 1;
+				} else {
+					return document.getLineOffset(line - 1);
+				}
+			}
+		} catch (BadLocationException e) {
+		} finally {
+			provider.disconnect(input);
+		}
+		return -1;
 	}
 
 	/**
@@ -297,5 +349,11 @@ public class AntOpenWithMenu extends ContributionItem {
 		};
 
 		menuItem.addListener(SWT.Selection, listener);
+	}
+
+	
+	public void setExternalInfo(int line, int column) {
+		fLine= line;
+		fColumn= column;
 	}
 }
