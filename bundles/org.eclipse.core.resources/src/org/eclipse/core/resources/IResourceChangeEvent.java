@@ -182,9 +182,14 @@ public interface IResourceChangeEvent {
 	public IResourceDelta getDelta();
 
 	/**
-	 * Returns the resource in question. Returns <code>null</code>
-	 * if not applicable to this type of event.
-	 *
+	 * Returns the resource in question or <code>null</code>
+	 * if not applicable to this type of event. 
+	 * <p>
+	 * If the event is a <code>PRE_CLOSE</code> or 
+	 * <code>PRE_DELETE</code> event then the resource 
+	 * will be the affected project. Otherwise the resource will 
+	 * be <code>null</code>.
+	 * </p>
 	 * @return the resource, or <code>null</code> if not applicable
 	 */
 	public IResource getResource();
