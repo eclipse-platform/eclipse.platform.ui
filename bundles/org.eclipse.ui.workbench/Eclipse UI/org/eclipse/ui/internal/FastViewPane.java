@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +21,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.internal.skins.IPresentablePart;
+import org.eclipse.ui.internal.skins.IPresentationSite;
+import org.eclipse.ui.internal.skins.StackPresentation;
+import org.eclipse.ui.internal.skins.newlook.PartTabFolderPresentation;
 
 /**
  * Handles the presentation of an active fastview. A fast view pane docks to one side of a
@@ -47,65 +45,63 @@ class FastViewPane {
 	private static final int SASH_SIZE = 3;
 	private static final int MIN_FASTVIEW_SIZE = 10;
 	private float ratio;
+	private DefaultStackPresentationSite site = new DefaultStackPresentationSite() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.skins.IPresentationSite#setState(int)
+		 */
+		public void setState(int newState) {
+			switch(newState) {
+				case IPresentationSite.STATE_MINIMIZED: 
+					currentPane.getPage().toggleFastView(currentPane.getViewReference());
+					break;
+				case IPresentationSite.STATE_MAXIMIZED:
+					ViewPane pane = currentPane;
+					pane.getPage().removeFastView(pane.getViewReference());
+				    pane.doZoom();
+					//currentPane.getPage().removeFastView(currentPane.getViewReference());
+				    //(currentPane).doZoom();
+					break;
+				default:
+			}
+		}
+		
+		public void close(IPresentablePart part) {
+			if (!isClosable(part)) {
+				return;
+			}
+			currentPane.getPage().hideView(currentPane.getViewReference());
+		}
+	};
 	
 	private Listener resizeListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.type == SWT.Resize && currentPane != null) {
-				ViewPane pane = currentPane;
-				if (pane.isZoomed() == false) {
-					setFastViewSizeUsingRatio();
-					
-					pane.moveAbove(null);
-					updateFastViewSashBounds(pane.getBounds());
-				}
+				setFastViewSizeUsingRatio();
+				
+				currentPane.moveAbove(null);
+				updateFastViewSashBounds(getBounds());
 			}
 		}
 	};
-	
-	private PaintListener paintListener = new PaintListener() {
-		public void paintControl(PaintEvent event) {
-		    if (currentPane == null)
-		        return;
-		    ColorRegistry registry = currentPane.getPage().getTheme().getColorRegistry();
-		    
-			Point size = fastViewSash.getSize();
-			Rectangle d = new Rectangle(0, 0, size.x, size.y);
-			GC gc = event.gc;
-			
-			int deltay = 0;
-			int deltax = 0;
-
-			if (Geometry.isHorizontal(side)) {
- 				deltax = d.width;
-			} else {
-				deltay = d.height;
-			}
-
-			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_1));
-			gc.drawLine(d.x, d.y, d.x + deltax, d.y + deltay);
-			
-			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_2));
-			gc.drawLine(d.x + 1, d.y + 1, d.x + 1 + deltax, d.y + 1 + deltay);
-			
-			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_3));
-			gc.drawLine(d.x + 2, d.y + 2, d.x + 2 + deltax, d.y + 2 + deltay);
-		}
-	};
-	
+		
 	private SelectionAdapter selectionListener = new SelectionAdapter () {
 		public void widgetSelected(SelectionEvent e) {
 			if (e.detail == SWT.DRAG && currentPane != null) {
-				ViewPane pane = currentPane;
-				Rectangle bounds = pane.getBounds();
+				Rectangle bounds = getBounds();
 				Point location = new Point(e.x, e.y);
 				int distanceFromEdge = Geometry.getDistanceFromEdge(bounds, location, side);
 				if (distanceFromEdge < MIN_FASTVIEW_SIZE) {
 					distanceFromEdge = MIN_FASTVIEW_SIZE;
 				}
+				
+				if (side == SWT.BOTTOM || side == SWT.RIGHT) {
+					distanceFromEdge -= SASH_SIZE;
+				}
+				
 				Rectangle newBounds = Geometry.getExtrudedEdge(bounds, distanceFromEdge, side);
 				
-				pane.setBounds(newBounds);
-				pane.moveAbove(null); 
+				getPresentation().setBounds(newBounds);
+				currentPane.moveAbove(null); 
 				
 				updateFastViewSashBounds(newBounds);
 				
@@ -128,11 +124,15 @@ class FastViewPane {
 		Rectangle clientArea = clientComposite.getClientArea();
 
 		int clientSize = Geometry.getDimension(clientArea, isVertical);
-		int currentSize = Geometry.getDimension(currentPane.getBounds(), isVertical);
+		int currentSize = Geometry.getDimension(getBounds(), isVertical);
 		
 		return (float)currentSize / (float)clientSize;
 	}
 
+	private Rectangle getBounds() {
+		return getPresentation().getControl().getBounds();
+	}
+	
 	private void setFastViewSizeUsingRatio() {
 		// Set initial bounds
 		boolean isVertical = !Geometry.isHorizontal(side);
@@ -140,7 +140,7 @@ class FastViewPane {
 
 		int defaultSize = (int) (Geometry.getDimension(clientArea, isVertical) * ratio);
 		Rectangle newBounds = Geometry.getExtrudedEdge(clientArea, defaultSize, side);
-		currentPane.setBounds(newBounds);
+		getPresentation().setBounds(newBounds);
 	}
 	
 	/**
@@ -177,6 +177,15 @@ class FastViewPane {
 			ctrl = pane.getControl();			
 		}
 		
+		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX, pane.getPage().getTheme());
+		
+		site.setPresentation(presentation);
+		site.setPresentationState(IPresentationSite.STATE_RESTORED);
+		presentation.addPart(pane.getPresentablePart(), null);
+		presentation.selectPart(pane.getPresentablePart());
+		presentation.setActive(true);
+		presentation.setVisible(true);
+		
 		setFastViewSizeUsingRatio();
 		
 		// Show pane fast.
@@ -185,24 +194,16 @@ class FastViewPane {
 		Rectangle bounds = getFastViewBounds();
 
 		pane.setVisible(true);
-		pane.setBounds(bounds);
+		presentation.setBounds(bounds);
+		presentation.getControl().moveAbove(null);
 		pane.moveAbove(null);
 		pane.setFocus();
 		
 		fastViewSash = new Sash(parent, Geometry.getSwtHorizontalOrVerticalConstant(Geometry.isHorizontal(side)));
-		fastViewSash.addPaintListener(paintListener);
-		fastViewSash.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				fastViewSash.removePaintListener(paintListener);
-			}
-			public void focusLost(FocusEvent e) {
-				fastViewSash.addPaintListener(paintListener);
-			}
-		});
 		fastViewSash.addSelectionListener(selectionListener);
 
 		pane.setFastViewSash(fastViewSash);
-		updateFastViewSashBounds(bounds);
+		updateFastViewSashBounds(bounds);		
 	}
 	
 	/**
@@ -228,6 +229,7 @@ class FastViewPane {
 			fastViewSash.dispose();
 			fastViewSash = null;
 		}
+		site.dispose();
 	}
 
 	/**
@@ -244,12 +246,19 @@ class FastViewPane {
 
 		boolean isVertical = !Geometry.isHorizontal(side);
 		int clientSize = Geometry.getDimension(clientArea, isVertical);
-		int viewSize = Math.min(Geometry.getDimension(currentPane.getControl().getBounds(), isVertical),
+		int viewSize = Math.min(Geometry.getDimension(getBounds(), isVertical),
 				clientSize - MIN_FASTVIEW_SIZE);
 		
 		return Geometry.getExtrudedEdge(clientArea, viewSize, side);
 	}
 	
+	/**
+	 * @return
+	 */
+	private StackPresentation getPresentation() {
+		return site.getPresentation();
+	}
+
 	/**
 	 * Hides the sash for the fastview if it is currently visible. This method may not be
 	 * required anymore, and might be removed from the public interface.
@@ -268,19 +277,20 @@ class FastViewPane {
 			return;
 		}
 		
+		clientComposite.removeListener(SWT.Resize, resizeListener);
+		
 		// Get pane.
 		// Hide the right side sash first
 		hideFastViewSash();
 		Control ctrl = currentPane.getControl();
 		
 		// Hide it completely.
-		currentPane.setVisible(false);
+		getPresentation().setVisible(false);
+		site.dispose();
 		currentPane.setFastViewSash(null);
 		ctrl.setEnabled(false); // Remove focus support.
 		
 		currentPane = null;
-
-		clientComposite.removeListener(SWT.Resize, resizeListener);
 	}
 	
 	/**
