@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
  * Used to run an event loop whenever progress monitor methods
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
  * this was not done for 1.0, so this was added to keep the UI live
  * (including allowing the cancel button to work).
  */
-public class EventLoopProgressMonitor extends ProgressMonitorWrapper {
+public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements IProgressMonitorWithBlocking {
 	
 	/**
 	 * Threshold for how often the event loop is spun, in ms.
@@ -34,6 +34,16 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper {
 	 */
 	private static int T_MAX = 50;
 	
+	/**
+	 * The dialog that is shown when the operation is blocked
+	 */
+	private ProgressMonitorJobsDialog dialog;
+	
+	/**
+	 * The name of the task that is being executed
+	 */
+	private String taskName;
+
 	/**
 	 * Last time the event loop was spun.
 	 */
@@ -49,8 +59,19 @@ public EventLoopProgressMonitor(IProgressMonitor monitor) {
  * @see IProgressMonitor#beginTask
  */
 public void beginTask(String name, int totalWork) {
+	this.taskName = name;
 	super.beginTask(name, totalWork);
 	runEventLoop();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+ */
+public void clearBlocked() {
+	//the UI operation is no longer blocked so get rid of the progress dialog
+	if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed())
+		return;
+	dialog.close();
+	dialog = null;
 }
 /**
  * @see IProgressMonitor#done
@@ -101,6 +122,21 @@ private void runEventLoop() {
 			break;
 		}
 	}
+}
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+ */
+public void setBlocked(IStatus reason) {
+	//The UI operation has been blocked.  Open a progress dialog
+	//to report the situation and give the user an opportunity to cancel.
+	dialog = new ProgressMonitorJobsDialog(null);
+	dialog.setBlockOnOpen(false);
+	dialog.setCancelable(true);
+	dialog.open();
+	IProgressMonitor monitor = dialog.getProgressMonitor();
+	monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
+	if (monitor instanceof IProgressMonitorWithBlocking) 
+		((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
 }
 /**
  * @see IProgressMonitor#setCanceled
