@@ -134,15 +134,17 @@ public class OpenInCompareAction extends Action {
 	
 		for (int i = 0; i < editorRefs.length; i++) {
 			final IEditorPart part = editorRefs[i].getEditor(true);
-			IEditorInput input = part.getEditorInput();
-			if(part != null && input instanceof SyncInfoCompareInput) {
-				SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
-				if(inputInfo.getLocal().equals(resource)) {
-					viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							page.closeEditor(part, true /*save changes if required */);
-						}
-					});
+			if(part != null) {
+				IEditorInput input = part.getEditorInput();
+				if(part != null && input instanceof SyncInfoCompareInput) {
+					SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
+					if(inputInfo.getLocal().equals(resource)) {
+						viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								page.closeEditor(part, true /*save changes if required */);
+							}
+						});
+					}
 				}
 			}
 		}
