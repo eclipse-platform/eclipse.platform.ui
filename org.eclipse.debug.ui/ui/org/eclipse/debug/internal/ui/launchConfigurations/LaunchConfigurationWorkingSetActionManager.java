@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -146,12 +149,29 @@ public class LaunchConfigurationWorkingSetActionManager {
 		int i = 0;
 		while (iter.hasNext()) {
 			IWorkingSet workingSet= (IWorkingSet)iter.next();
-			if (workingSet != null) {
+			// Only show launch configuration working sets in the context menu
+			if ((workingSet != null) && isLaunchConfigurationWorkingSet(workingSet)) {
 				IContributionItem item = new LaunchConfigurationWorkingSetMenuContributionItem(++i, this, workingSet);
 				mm.insertBefore(SEPARATOR_ID, item);
 			}
 		}
 		fLRUMenuCount = i;
+	}
+	
+	private boolean isLaunchConfigurationWorkingSet(IWorkingSet workingSet) {
+		IAdaptable[] elements = workingSet.getElements();
+		for (int i = 0; i < elements.length; i++) {
+			IAdaptable adaptable = elements[i];
+			ILaunchConfigurationType configType = (ILaunchConfigurationType) adaptable.getAdapter(ILaunchConfigurationType.class);
+			if (configType != null) {
+				return true;
+			}
+			ILaunchConfiguration config = (ILaunchConfiguration) adaptable.getAdapter(ILaunchConfiguration.class);
+			if (config != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private IPropertyChangeListener addWorkingSetChangeSupport() {
