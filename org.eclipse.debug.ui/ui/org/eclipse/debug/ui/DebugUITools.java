@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.InspectItem;
 import org.eclipse.debug.internal.ui.InspectorView;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPage;
@@ -156,6 +157,10 @@ public class DebugUITools {
 	 * Returns a new debug model presentation that delegates to
 	 * appropriate debug models.
 	 * 
+	 * It is the client's responsibility to ensure to call the dispose
+	 * method of the returned debug model presentation.
+	 * 
+	 * @see IBaseLabelProvider#dispose()
 	 * @return a debug model presentation
 	 */
 	public static IDebugModelPresentation newDebugModelPresentation() {
@@ -184,6 +189,5 @@ public class DebugUITools {
 	public static IProcess getCurrentProcess() {
 		return DebugUIPlugin.getDefault().getCurrentProcess();
 	}
-	
 }
 
