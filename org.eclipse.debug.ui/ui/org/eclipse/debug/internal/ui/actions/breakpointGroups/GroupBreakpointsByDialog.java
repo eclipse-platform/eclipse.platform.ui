@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactor
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,13 +27,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,14 +44,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.dialogs.ViewLabelProvider;
 
 /**
- * 
+ * Dialog which presents available breakpoint groupings to
+ * the user and allows them to specify which they'd like
+ * to use and in what order they should be applied.
  */
-public class ShowBreakpointsByDialog extends Dialog {
+public class GroupBreakpointsByDialog extends Dialog {
 	
 	private BreakpointsView fView;
 	
-	// List viewer that presents available containers
-	private ListViewer fAvailableViewer;
+	// Table viewer that presents available containers
+	private TableViewer fAvailableViewer;
 	private AvailableContainersProvider fAvailableContainersProvider= new AvailableContainersProvider();
 	
 	// Tree viewer that presents selected containers
@@ -80,7 +85,7 @@ public class ShowBreakpointsByDialog extends Dialog {
 	/**
 	 * @param parentShell
 	 */
-	protected ShowBreakpointsByDialog(BreakpointsView view) {
+	protected GroupBreakpointsByDialog(BreakpointsView view) {
 		super(view.getSite().getShell());
 		fView= view;
 	}
@@ -116,11 +121,11 @@ public class ShowBreakpointsByDialog extends Dialog {
 		data.horizontalSpan= 2;
 		label.setLayoutData(data);
 		
-		fAvailableViewer= new ListViewer(composite);
+		fAvailableViewer= new TableViewer(composite);
 		fAvailableViewer.setContentProvider(fAvailableContainersProvider);
 		fAvailableViewer.setLabelProvider(labelProvider);
 		fAvailableViewer.setInput(new Object());
-		fAvailableViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fAvailableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleAddPressed();
@@ -377,11 +382,36 @@ public class ShowBreakpointsByDialog extends Dialog {
 	}
 	
 	private class BreakpointContainerFactoryLabelProvider extends ViewLabelProvider {
+		private HashMap fImageCache= new HashMap();
+		
 		public String getText(Object element) {
 			if (element instanceof IBreakpointContainerFactory) {
 				return ((IBreakpointContainerFactory) element).getLabel();
 			}
-			return null;
+			return super.getText(element);
+		}
+		public Image getImage(Object element) {
+			if (element instanceof IBreakpointContainerFactory) {
+				ImageDescriptor imageDescriptor = ((IBreakpointContainerFactory) element).getImageDescriptor();
+				if (imageDescriptor != null) {
+					Image image = (Image) fImageCache.get(imageDescriptor);
+					if (image == null) {
+						image= imageDescriptor.createImage();
+						if (image != null) {
+							fImageCache.put(imageDescriptor, image);
+						}
+					}
+					return image;
+				}
+			}
+			return super.getImage(element);
+		}
+		public void dispose() {
+			Iterator imageIter = fImageCache.values().iterator();
+			while (imageIter.hasNext()) {
+				((Image) imageIter.next()).dispose();
+			}
+			super.dispose();
 		}
 	}
 }

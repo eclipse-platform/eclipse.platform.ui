@@ -8,54 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ * Action that opens a dialog to select which breakpoint
+ * container factories should be applies to the breakpoints
+ * view.
  */
-public class ShowBreakpointsByAction extends Action implements IViewActionDelegate {
+public class AdvancedGroupBreakpointsByAction extends Action {
 	
 	private BreakpointsView fView;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {
-		fView= (BreakpointsView) view;
+	
+	public AdvancedGroupBreakpointsByAction(BreakpointsView view) {
+		fView= view;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-	    ShowBreakpointsByDialog dialog = new ShowBreakpointsByDialog(fView);
+	    GroupBreakpointsByDialog dialog = new GroupBreakpointsByDialog(fView);
 		if (dialog.open() == Dialog.OK) {
 			List selectedContainers = dialog.getSelectedContainers();
 			fView.setBreakpointContainerFactories(selectedContainers);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		run();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 }

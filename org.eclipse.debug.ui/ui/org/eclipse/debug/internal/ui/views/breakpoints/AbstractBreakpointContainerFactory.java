@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * 
@@ -19,6 +20,7 @@ public abstract class AbstractBreakpointContainerFactory implements IBreakpointC
 	
 	protected String fLabel;
 	protected String fIdentifier;
+	private ImageDescriptor fImage;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[], java.lang.String)
@@ -37,6 +39,18 @@ public abstract class AbstractBreakpointContainerFactory implements IBreakpointC
 	 */
 	public void setLabel(String label) {
 		fLabel= label;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getImage()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return fImage;
+	}
+	
+	
+	public void setImageDescriptor(ImageDescriptor image) {
+		fImage= image;
 	}
 	
 	/* (non-Javadoc)

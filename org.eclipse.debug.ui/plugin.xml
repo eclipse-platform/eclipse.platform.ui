@@ -702,12 +702,12 @@
                tooltip="%clearDefaultGroup.tooltip">
          </action>
          <action
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.showByAction"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.groupByAction"
                menubarPath="defaultBreakpointGroup"
-               class="org.eclipse.debug.internal.ui.actions.ShowBreakpointsByAction"
-               helpContextId="show_breakpoints_by_action_context"
-               label="Show By..."
-               tooltip="Choose how to show breakpoints">
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupBreakpointsByAction"
+               helpContextId="group_breakpoints_by_action_context"
+               label="Group By"
+               tooltip="Choose how to group breakpoints">
          </action>
       </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
@@ -2140,18 +2140,22 @@ M4 = Platform-specific fourth key
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactory"
           	id="org.eclipse.debug.ui.breakpointProjectContainerFactory"
-          	label="Project"/>
+          	label="Project"
+          	icon="icons/full/obj16/prj_obj.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFileContainerFactory"
           	id="org.eclipse.debug.ui.breakpointFileContainerFactory"
-          	label="File"/>
+          	label="File"
+          	icon="icons/full/obj16/file_obj.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeContainerFactory"
           	id="org.eclipse.debug.ui.breakpointTypeContainerFactory"
-          	label="Breakpoint Type"/>
+          	label="Breakpoint Type"
+          	icon="icons/full/obj16/brkp_type.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainerFactory"
           	id="org.eclipse.debug.ui.breakpointGroupContainerFactory"
-          	label="Custom Groups"/>
+          	label="Custom Groups"
+          	icon="icons/full/obj16/brkp_grp.gif"/>
     </extension>
 </plugin>

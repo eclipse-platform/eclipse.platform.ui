@@ -19,11 +19,14 @@ import java.util.Set;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * 
  */
 public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerFactory {
+	
+	private Image fContainerImage;
 	
 	public BreakpointTypeContainerFactory() {
 	}
@@ -32,6 +35,9 @@ public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerF
 	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId) {
+		if (fContainerImage == null) {
+			fContainerImage= getImageDescriptor().createImage();
+		}
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -59,8 +65,17 @@ public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerF
 					this,
 					typeName,
 					parentId);
+			container.setImage(fContainerImage);
 			containers.add(container);
 		}
 		return (IBreakpointContainer[]) containers.toArray(new IBreakpointContainer[containers.size()]);
+	}
+	
+	public void dispose() {
+		if (fContainerImage != null) {
+			fContainerImage.dispose();
+			fContainerImage= null;
+		}
+		super.dispose();
 	}
 }

@@ -11,10 +11,13 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Factory which produces <code>IBreakpointContainer</code>s based on some
  * factory-specific criteria.
+ * 
+ * @since 3.1
  */
 public interface IBreakpointContainerFactory {
 	
@@ -39,6 +42,19 @@ public interface IBreakpointContainerFactory {
 	 * @param label the label
 	 */
 	public void setLabel(String label);
+	
+	/**
+	 * Returns an image for presentation along with this factory or <code>null</code>
+	 * if none.
+	 * @return an image for presentation along with this factory or <code>null</code>
+	 */
+	public ImageDescriptor getImageDescriptor();
+	
+	/**
+	 * Sets this breakpoint container factory's image.
+	 * @param image the image
+	 */
+	public void setImageDescriptor(ImageDescriptor image);
 	
 	/**
 	 * Returns this breakpoint container factory's unique identifier.

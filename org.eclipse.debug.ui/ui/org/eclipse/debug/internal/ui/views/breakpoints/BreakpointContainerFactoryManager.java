@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.osgi.framework.Bundle;
 
 /**
  * 
@@ -53,15 +57,41 @@ public class BreakpointContainerFactoryManager {
 			if (id != null && label != null) {
 				try {
 					IBreakpointContainerFactory factory = (IBreakpointContainerFactory) element.createExecutableExtension("class"); //$NON-NLS-1$
-					factory.setLabel(label);
-					factory.setIdentifier(id);
 					if (factory != null) {
+						factory.setLabel(label);
+						factory.setIdentifier(id);
+						ImageDescriptor imageDescriptor = getImageDescriptor(element);
+						if (imageDescriptor != null) {
+							factory.setImageDescriptor(imageDescriptor);
+						}
 						fFactories.put(id, factory);
 					}
 				} catch (CoreException e) {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns the image for this shortcut, or <code>null</code> if none
+	 * 
+	 * @return the image for this shortcut, or <code>null</code> if none
+	 */
+	public ImageDescriptor getImageDescriptor(IConfigurationElement element) {
+		ImageDescriptor descriptor= null;
+		String iconPath = element.getAttribute("icon"); //$NON-NLS-1$
+		// iconPath may be null because icon is optional
+		if (iconPath != null) {
+			try {
+				Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+				URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
+				iconURL = new URL(iconURL, iconPath);
+				descriptor = ImageDescriptor.createFromURL(iconURL);
+			} catch (MalformedURLException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		return descriptor;
 	}
 	
 	/**

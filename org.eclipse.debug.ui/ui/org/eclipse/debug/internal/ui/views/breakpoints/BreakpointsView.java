@@ -117,27 +117,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	    viewer.setLabelProvider(new DelegatingModelPresentation() {
 			public Image getImage(Object item) {
 				if (item instanceof IBreakpointContainer) {
-					Image image= DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP);
-					IBreakpointContainer container= (IBreakpointContainer) item;
-					Image containerImage = container.getContainerImage();
-					if (container instanceof BreakpointGroupContainer) {
-						// First, set to the "disabled group" image
-						containerImage= DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP_DISABLED);
-						IBreakpoint[] breakpoints = container.getBreakpoints();
-						for (int i = 0; i < breakpoints.length; i++) {
-							try {
-								if (breakpoints[i].isEnabled()) {
-									// If any child breakpoints are enabled, reset to the
-									// default (enabled) image.
-									containerImage= image;
-								}
-							} catch (CoreException e) {
-								DebugUIPlugin.log(e);
-							}
-						}
-					}
-					if (containerImage != null) {
-						image= containerImage;
+					Image image = ((IBreakpointContainer) item).getContainerImage();
+					if (image == null) {
+						image= DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_GROUP);
 					}
 					return image;
 				}
@@ -368,9 +350,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	}
 	
 	/**
-	 * Updates the checked state and icon of the given object's container
-	 * assuming that the child element has changed to the given
-	 * enabled state.
+	 * Updates the checked state of the given object's container assuming
+	 * that the child element has changed to the given enabled state.
 	 * @param object
 	 * @param enable
 	 */
@@ -399,7 +380,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			} catch (CoreException e) {
 			}
 		}
-		viewer.update(container, new String[] { IBasicPropertyConstants.P_IMAGE });
 		updateParents(parent, enable);
 	}
 
