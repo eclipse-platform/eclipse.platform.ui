@@ -90,6 +90,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		SearchPreferencePage.initDefaults(store);
+		WorkInProgressPreferencePage.initDefaults(store);
 	}
 	
 	/**
