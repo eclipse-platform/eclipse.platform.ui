@@ -195,7 +195,10 @@ public class CheckoutAsWizard extends Wizard {
 	 */
 	private ICVSRemoteFolder getRemoteFolder() {
 		ICVSRemoteFolder folder = remoteFolders[0];
-		folder = (ICVSRemoteFolder)folder.forTag(getSelectedTag());
+		CVSTag selectedTag = getSelectedTag();
+		if (selectedTag != null) {
+			folder = (ICVSRemoteFolder)folder.forTag(selectedTag);
+		}
 		return folder;
 	}
 	
