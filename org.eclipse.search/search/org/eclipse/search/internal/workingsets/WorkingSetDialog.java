@@ -4,22 +4,29 @@
  */
 package org.eclipse.search.internal.workingsets;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
+
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -55,7 +62,7 @@ class WorkingSetDialog extends InputDialog {
 	}
 
 	// Widgets constants
-	private final static int SIZING_SELECTION_WIDGET_WIDTH= 100;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH= 50;
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 200;
 
 	private IWorkingSet fWorkingSet;
@@ -88,34 +95,57 @@ class WorkingSetDialog extends InputDialog {
 
 		GridData gd= new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.heightHint= SIZING_SELECTION_WIDGET_HEIGHT;
+		gd.widthHint= SIZING_SELECTION_WIDGET_WIDTH;
 		fTree.getControl().setLayoutData(gd);
 
-//		fTree.addCheckStateListener(new ICheckStateListener() {
-//			public void checkStateChanged(CheckStateChangedEvent event) {
-//				handleCheckStateChange(event);
-//			}
-//		});
+		fTree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				handleCheckStateChange(event);
+			}
+		});
 		
+		fTree.addTreeListener(new ITreeViewerListener() {
+			public void treeCollapsed(TreeExpansionEvent event) {
+			}
+			public void treeExpanded(TreeExpansionEvent event) {
+				Object element= event.getElement();
+				if (!fTree.getGrayed(element))
+					setSubtreeChecked((IContainer)element, fTree.getChecked(element), false);
+			}
+		});
 		
-		if (fWorkingSet != null)
-			fTree.setCheckedElements(fWorkingSet.getResources());
+		initializeCheckedState();
+		disableClosedProjects();
 
 		return composite;
+	}
+
+	private void disableClosedProjects() {
+		IProject[] projects= SearchPlugin.getWorkspace().getRoot().getProjects();
+		for (int i= 0; i < projects.length; i++) {
+			if (!projects[i].isOpen())
+				fTree.setGrayed(projects[i], true);
+		}
 	}
 
 	/*
 	 * Overrides method from Dialog
 	 */
 	protected void okPressed() {
+		ArrayList resources= new ArrayList(10);
+		findCheckedResources(resources, (IContainer)fTree.getInput());
 		if (fWorkingSet == null)
-			fWorkingSet= new WorkingSet(getText().getText(), fTree.getCheckedElements());
-		else {
-			if (fWorkingSet instanceof WorkingSet) {
-				((WorkingSet)fWorkingSet).setName(getText().getText());
-				((WorkingSet)fWorkingSet).setResources(fTree.getCheckedElements());
-			}
-		}
+			fWorkingSet= new WorkingSet(getText().getText(), resources.toArray());
+		else if (fWorkingSet instanceof WorkingSet) {
+			// Add not accessible resources
+			IResource[] oldResources= fWorkingSet.getResources();
+			for (int i= 0; i < oldResources.length; i++)
+				if (!oldResources[i].isAccessible())
+					resources.add(oldResources[i]);
 
+			((WorkingSet)fWorkingSet).setName(getText().getText());
+			((WorkingSet)fWorkingSet).setResources(resources.toArray());
+		}
 		super.okPressed();
 	}
 
@@ -123,48 +153,73 @@ class WorkingSetDialog extends InputDialog {
 		return fWorkingSet;
 	}
 
+	private void findCheckedResources(List checkedResources, IContainer container) {
+		IResource[] resources= null;
+		try {
+			resources= container.members();
+		} catch (CoreException ex) {
+			ExceptionHandler.handle(ex, getShell(), WorkingSetMessages.getString("WorkingSetDialog.error"), WorkingSetMessages.getString("WorkingSetDialog.error.updateCheckedState")); //$NON-NLS-2$ //$NON-NLS-1$
+		}
+		for (int i= 0; i < resources.length; i++) {
+			if (fTree.getGrayed(resources[i]))
+				findCheckedResources(checkedResources, (IContainer)resources[i]);
+			else if (fTree.getChecked(resources[i]))
+				checkedResources.add(resources[i]);
+		}
+	}
+
 	//--- Checked state handling --------------------------	
 
 	void handleCheckStateChange(CheckStateChangedEvent event) {
-		boolean state= event.getChecked();
 		IResource resource= (IResource)event.getElement();
+		if (!resource.isAccessible()) {
+			MessageDialog.openInformation(getShell(), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.title"), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			fTree.setChecked(resource, false);
+			fTree.setGrayed(resource, true);
+			return;
+		}
+		boolean state= event.getChecked();		
 		fTree.setGrayed(resource, false);
 		if (resource instanceof IContainer)
-			setSubtreeChecked((IContainer)resource, state);
+			setSubtreeChecked((IContainer)resource, state, true);
 		updateParentState(resource, state);
 	}
 
-	private void setSubtreeChecked(IContainer container, boolean state) {
+	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
+		
+		if (!container.isAccessible() || !fTree.getExpandedState(container) && checkExpandedState)
+			return;
+		
 		IResource[] members= null;
 		try {
 			members= container.members();
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, getShell(), "Error", "Error during update of checked state");
+			ExceptionHandler.handle(ex, getShell(), WorkingSetMessages.getString("WorkingSetDialog.error"), WorkingSetMessages.getString("WorkingSetDialog.error.updateCheckedState")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		for (int i= members.length - 1; i >= 0; i--) {
 			IResource element= members[i];
 			fTree.setChecked(element, state);
 			fTree.setGrayed(element, false);
 			if (element instanceof IContainer)
-				setSubtreeChecked((IContainer)element, state);
+				setSubtreeChecked((IContainer)element, state, true);
 		}
 	}
 
 	private void updateParentState(IResource child, boolean baseChildState) {
 
-		if (child == null || child.getParent() == null)
+		if (child == null || child.getParent() == null || !child.isAccessible())
 			return;
 
-		IContainer parent= child.getParent();		
+		IContainer parent= child.getParent();
 		boolean allSameState= true;
 		IResource[] members= null;
 		try {
 			members= parent.members();
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, getShell(), "Error", "Error during update of checked state");
+			ExceptionHandler.handle(ex, getShell(), WorkingSetMessages.getString("WorkingSetDialog.error"), WorkingSetMessages.getString("WorkingSetDialog.error.updateCheckedState")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		for (int i= members.length -1; i >= 0; i--) {
-			if (fTree.getChecked(members[i]) != baseChildState) {
+			if (fTree.getChecked(members[i]) != baseChildState || fTree.getGrayed(members[i])) {
 				allSameState= false;
 				break;
 			}
@@ -184,7 +239,7 @@ class WorkingSetDialog extends InputDialog {
 		fTree.setCheckedElements(resources);
 		for (int i= 0; i < resources.length; i++) {
 			if (resources[i] instanceof IContainer)
-				setSubtreeChecked((IContainer)resources[i], true);
+				setSubtreeChecked((IContainer)resources[i], true, true);
 			updateParentState(resources[i], true);
 		}
 	}

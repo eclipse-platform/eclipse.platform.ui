@@ -4,13 +4,6 @@
  */
 package org.eclipse.search.internal.workingsets;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -45,8 +38,6 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 import org.eclipse.search.ui.IWorkingSet;
 
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 
 public class WorkingSetSelectionDialog extends SelectionDialog {
