@@ -59,6 +59,9 @@ public class MarkerHighlighter extends Highlighter {
 			if (match.getOffset() < 0 || match.getLength() < 0)
 				return null;
 			position= new Position(match.getOffset(), match.getLength());
+		} else {
+			// need to clone position, can't have it twice in a document.
+			position= new Position(position.getOffset(), position.getLength());
 		}
 		IMarker marker= fFile.createMarker(SearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);

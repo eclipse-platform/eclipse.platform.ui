@@ -80,6 +80,9 @@ public class EditorAccessHighlighter extends Highlighter {
 		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 		if (position == null)
 			position= new Position(match.getOffset(), match.getLength());
+		else
+			// need to clone position, can't have it twice in a document.
+			position= new Position(position.getOffset(), position.getLength());
 		if (match.getBaseUnit() == Match.UNIT_LINE) {
 			IDocument doc= fEditorAcess.getDocument(match);
 			if (doc != null) {
