@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -27,7 +27,33 @@ import java.util.ArrayList;
  * @since 3.0
  */
 public class MultiRule implements ISchedulingRule {
-	private final ISchedulingRule[] rules;
+	private ISchedulingRule[] rules;
+	
+	/**
+	 * Returns a scheduling rule that encompases both provided rules.  The resulting
+	 * rule may or may not be an instance of <code>MultiRule</code>.  If both
+	 * provided rules are <code>null</code> then the result will be
+	 * <code>null</code>.
+	 * 
+	 * @param rule1 a scheduling rule, or <code>null</code>
+	 * @param rule2 another scheduling rule, or <code>null</code>
+	 * @return a combined scheduling rule, or <code>null</code>
+	 */
+	public static ISchedulingRule combine(ISchedulingRule rule1, ISchedulingRule rule2) {
+		if (rule1 == rule2)
+			return rule1;
+		if (rule1 == null) 
+			return rule2;
+		if (rule2 == null)
+			return rule1;
+		if (rule1.contains(rule2))
+			return rule1;
+		if (rule2.contains(rule1))
+			return rule2;
+		MultiRule result = new MultiRule();
+		result.rules = new ISchedulingRule[] {rule1, rule2};
+		return result;
+	}
 	/**
 	 * Creates a new scheduling rule that composes a set of nested rules.
 	 * 
@@ -35,6 +61,13 @@ public class MultiRule implements ISchedulingRule {
 	 */
 	public MultiRule(ISchedulingRule[] nestedRules) {
 		this.rules = flatten(nestedRules);
+	}
+	/**
+	 * Creates a new scheduling rule with no nested rules. For
+	 * internal use only.
+	 */
+	private MultiRule() {
+		//to be invoked only by factory methods
 	}
 	private ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
 		ArrayList myRules = new ArrayList(nestedRules.length);
