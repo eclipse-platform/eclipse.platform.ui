@@ -260,6 +260,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		RowLayouter layouter;
 		Composite result= new Composite(parent, SWT.NONE);
 		result.setLayout(new GridLayout());
+		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		// Search Expression group
 		Group group= new Group(result, SWT.NONE);
