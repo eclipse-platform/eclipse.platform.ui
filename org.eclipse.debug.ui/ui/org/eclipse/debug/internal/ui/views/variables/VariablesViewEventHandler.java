@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -97,7 +98,9 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 				refresh(event.getSource());
 			}
 		} else {
-			refresh();
+			if (!(event.getSource() instanceof IExpression)) {
+				refresh();
+			}
 		}	
 	}	
 

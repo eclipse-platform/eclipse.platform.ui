@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -159,6 +161,21 @@ public class DebugPlugin extends Plugin {
 	private Vector fRunnables = null;
 	
 	/**
+	 * A set of pending schedulers that must agree it is OK to run async
+	 * runnables.
+	 * 
+	 * @since 2.1
+	 */
+	private Set fPendingSchedulers = null;
+	
+	/**
+	 * Map of locks to schedulers
+	 * 
+	 * @since 2.1
+	 */
+	private HashMap fSchedulers = null;
+	
+	/**
 	 * Thread that async runnables are run in
 	 * 
 	 * @since 2.1
@@ -234,6 +251,8 @@ public class DebugPlugin extends Plugin {
 	public DebugPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		setDefault(this);
+		fSchedulers = new HashMap();
+		fPendingSchedulers = new HashSet();		
 	}
 	
 	/**
@@ -273,15 +292,58 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
+	 * Registers the given scheduler with the given lock.
+	 * 
+	 * @param scheduler scheduler that synchronizes runnables to be executed as
+	 * required for the given lock
+	 * @param lock the object on which runnable execution must be synchronized
+	 * @since 2.1
+	 * @see IScheduler
+	 * @see #asyncExec(Runnable, Object)
+	 */
+	public void registerScheduler(IScheduler scheduler, Object lock) {
+		fSchedulers.put(lock, scheduler);
+	}
+	
+	/**
 	 * Asynchronously executes the given runnable in a seperate
-	 * thread, after debug event dispatch has completed. If debug
-	 * events are not currently being dispatched, the runnable is
-	 * scheduled to run in a seperate thread immediately.
+	 * thread, after debug event dispatch has completed and all schedulers
+	 * agree that runnables may be executed.
+	 * <p>
+	 * As debug event handlers may need to modify the state of a debug model in
+	 * response to a debug event, it is neccessary to provide a mechanism to
+	 * ensure that all debug events have been dispatched and processed before
+	 * the state of a debug model is modified. Since events may be handled
+	 * asynchronously by event handlers, the debug platform can not assume that
+	 * event processing is complete after all listeners are notified of an event
+	 * set.
+	 * </p>
+	 * <p>
+	 * A scheduler is registered with the debug plug- in for an object,
+	 * representing a lock or object on which event processing needs to by
+	 * synchronized. During event dispatch event handlers may register runnables
+	 * with the debug plug-in, and specify the object (lock) on which the
+	 * runnable must be synchronized with. After event dispatch is complete, the
+	 * debug plug-in notifies all schedulers for which runnables have been
+	 * registered, and it then becomes each scheduler's responsibility to notify
+	 * the debug plug-in when it is safe to execute the registered runnables.
+	 * When all pertinent schedulers have notified the debug plug-in that it is
+	 * safe to continue, the runnables are executed in a seperate thread.
+	 * </p>
+	 * <p>
+	 * For convenience, the debug UI plug-in registers a scheduler for the
+	 * Display's thread. This allows runnables to be executed after event
+	 * handlers process events asynchronously in the UI thread.
+	 * </p>
 	 * 
 	 * @param r runnable to execute asynchronously
+	 * @param lock the object with which the runnables are to be synchronized,
+	 * or <code>null</code> if no synchronization is required
+	 * @exception CoreException if a scheduler is registered for the given lock
 	 * @since 2.1
+	 * @see IScheduler
 	 */
-	public void asyncExec(Runnable r) {
+	public void asyncExec(Runnable r, Object lock) throws CoreException {
 		if (fAsynchRunner == null) {
 			// initialize and launch the debug async queue
 			fRunnables= new Vector(10);
@@ -289,12 +351,49 @@ public class DebugPlugin extends Plugin {
 			fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
 			fAsyncThread.start();
 		}
+		IScheduler scheduler = null;
+		if (lock != null) {
+			scheduler = (IScheduler)fSchedulers.get(lock);
+			if (scheduler == null) {
+				IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Unable to schedule runnable for execution - associated lock does not have a registered scheduler.", null);
+				throw new CoreException(status);
+			}
+			fPendingSchedulers.add(scheduler);
+		}
 		fRunnables.add(r);
 		if (!isDispatching()) {
-			synchronized (fAsynchRunner) {
-				fAsynchRunner.notifyAll();
-			}			
+			if (scheduler == null) {
+				// if there is no scheduler, and there are not pending schedulers, run
+				if (fPendingSchedulers.isEmpty()) {
+					synchronized (fAsynchRunner) {
+						fAsynchRunner.notifyAll();
+					}								
+				}
+			} else {
+				scheduler.scheduleRunnables();
+			}
 		} 
+	}
+	
+	/**
+	 * Notification from the given scheduler that it is now safe to execute its
+	 * runnables.
+	 * 
+	 * @param scheduler
+	 * @since 2.1
+	 */
+	public void schedule(IScheduler scheduler) {
+		if (fPendingSchedulers != null) {
+			synchronized (fPendingSchedulers) {
+				fPendingSchedulers.remove(scheduler);
+				if (fPendingSchedulers.isEmpty()) {
+					// if all schedulers have agreed, execute the runnables
+					synchronized (fAsynchRunner) {
+						fAsynchRunner.notifyAll();
+					}					
+				}
+			}
+		}
 	}
 	
 	/**
@@ -677,9 +776,21 @@ public class DebugPlugin extends Plugin {
 			fDispatching--;
 		}
 		if (!isDispatching()) {
-			if (fAsynchRunner != null) {
-				synchronized (fAsynchRunner) {
-					fAsynchRunner.notifyAll();
+			if (fAsynchRunner != null && fRunnables.size() > 0) {
+				synchronized (fPendingSchedulers) {
+					if (fPendingSchedulers.isEmpty()) {
+						// if no schedulers are involved, run
+						synchronized (fAsynchRunner) {
+							fAsynchRunner.notifyAll();
+						}						
+					} else {
+						Iterator iterator = fPendingSchedulers.iterator();
+						while (iterator.hasNext()) {
+							IScheduler scheduler = (IScheduler)iterator.next();
+							scheduler.scheduleRunnables();
+						
+						}
+					}
 				}
 			}
 		}
@@ -742,7 +853,6 @@ public class DebugPlugin extends Plugin {
 					log(t);
 				}
 			}
-			executeRunnables();
 		}		
 	}
 	
