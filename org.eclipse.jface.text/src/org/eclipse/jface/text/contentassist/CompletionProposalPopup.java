@@ -111,7 +111,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private ICompletionProposal[] fComputedProposals;
 	/** The offset for which the proposals have been computed */
 	private int fInvocationOffset;
-	/** The offset for which the computed proposaks have been filtered */
+	/** The offset for which the computed proposals have been filtered */
 	private int fFilterOffset;
 	/** The default line delimiter of the viewer's widget */
 	private String fLineDelimiter;
@@ -198,14 +198,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 					if (!autoActivated)
 						control.getDisplay().beep();
+					
+					unregister();
 				
 				} else {
 					
-					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting())
+					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting()) {
 						
 						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
+						unregister();
 					
-					else {
+					} else {
 					
 						if (fLineDelimiter == null)
 							fLineDelimiter= fContentAssistSubjectAdapter.getLineDelimiter();
