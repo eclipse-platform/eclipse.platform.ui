@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -21,6 +25,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.SelectionEnabler;
+
+import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -188,38 +194,38 @@ public class WorkbenchWizardElement
 	 * by asking each for its IResource property (iff it isn't already a
 	 * resource). If all elements in the initial selection can be converted to
 	 * resources then answer a new selection containing these resources;
-	 * otherwise answer a new empty selection
+	 * otherwise answer an empty selection.
 	 * 
-	 * @param originalSelection
-	 *            IStructuredSelection
-	 * @return IStructuredSelection
+	 * @param originalSelection the original selection
+	 * @return the converted selection or an empty selection
 	 */
 	private IStructuredSelection convertToResources(IStructuredSelection originalSelection) {
-		return originalSelection;
-		//	@issue resource-specific code temporarily removed - needs to be
-		// pushed into IDE
-		//	List result = new ArrayList();
-		//	Iterator elements = originalSelection.iterator();
-		//	
-		//	while (elements.hasNext()) {
-		//		Object currentElement = elements.next();
-		//		if (currentElement instanceof IResource) { // already a resource
-		//			result.add(currentElement);
-		//		} else if (!(currentElement instanceof IAdaptable)) { // cannot be
-		// converted to resource
-		//			return StructuredSelection.EMPTY; // so fail
-		//		} else {
-		//			Object adapter =
-		// ((IAdaptable)currentElement).getAdapter(IResource.class);
-		//			if (!(adapter instanceof IResource)) // chose not to be converted to
-		// resource
-		//				return StructuredSelection.EMPTY; // so fail
-		//			result.add(adapter); // add the converted resource
-		//		}
-		//	}
-		//	
-		//	return new StructuredSelection(result.toArray()); // all converted
-		// fine, answer new selection
+		//	@issue resource-specific code should be pushed into IDE
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
+		if (resourceClass == null) {
+			return originalSelection;
+		}
+		
+		List result = new ArrayList();
+		Iterator elements = originalSelection.iterator();
+
+		while (elements.hasNext()) {
+			Object currentElement = elements.next();
+			if (resourceClass.isInstance(currentElement)) { // already a resource
+				result.add(currentElement);
+			} else if (
+				!(currentElement instanceof IAdaptable)) { // cannot be converted to resource
+				return StructuredSelection.EMPTY; // so fail
+			} else {
+				Object adapter = ((IAdaptable) currentElement).getAdapter(resourceClass);
+				if (!(resourceClass.isInstance(adapter))) // chose not to be converted to resource
+					return StructuredSelection.EMPTY; // so fail
+				result.add(adapter); // add the converted resource
+			}
+		}
+
+		// all converted fine, answer new selection
+		return new StructuredSelection(result.toArray());
 	}
 
 	/*

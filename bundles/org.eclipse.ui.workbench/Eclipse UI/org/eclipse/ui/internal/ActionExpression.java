@@ -346,7 +346,7 @@ public class ActionExpression {
 			}
 
 			// Try out the underlying resource.
-			Class resourceClass = ObjectContributorManager.getResourceClass();
+			Class resourceClass = LegacyResourceSupport.getResourceClass();
 			if (resourceClass == null) {
 				return false;
 			}

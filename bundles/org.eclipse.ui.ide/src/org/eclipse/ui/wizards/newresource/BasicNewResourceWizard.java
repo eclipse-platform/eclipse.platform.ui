@@ -12,15 +12,28 @@ package org.eclipse.ui.wizards.newresource;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ISetSelectionTarget;
+
 
 /**
  * Abstract base implementation of the standard workbench wizards
@@ -67,28 +80,11 @@ public IWorkbench getWorkbench() {
  * <code>IWorkbenchWizard</code> method records the given workbench and
  * selection, and initializes the default banner image for the pages
  * by calling <code>initializeDefaultPageImageDescriptor</code>.
- * If the given selection is empty but the window's active part is an
- * editor open on an <code>IFile</code> then use that file as the
- * selection.
  * Subclasses may extend.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	this.selection = currentSelection;
-
-	if (currentSelection == null || currentSelection.isEmpty()) {
-		// plan B: get selection from IFile of active editor
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPart part = window.getPartService().getActivePart();
-			if (part instanceof IEditorPart) {
-				IEditorInput input = ((IEditorPart) part).getEditorInput();
-				if (input instanceof IFileEditorInput) {
-					this.selection = new StructuredSelection(((IFileEditorInput) input).getFile());
-				}
-			}		
-		}
-	}
 	
 	initializeDefaultPageImageDescriptor();
 }

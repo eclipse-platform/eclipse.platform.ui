@@ -188,7 +188,7 @@ public abstract class PluginAction extends Action
 				adaptableNotChecked = false;
 				return false;
 			}
-			Class resourceClass = ObjectContributorManager.getResourceClass();
+			Class resourceClass = LegacyResourceSupport.getResourceClass();
 			if (resourceClass == null) {
 				// resources plug-in not even present
 				isAdaptableAction = false;
@@ -324,7 +324,7 @@ public abstract class PluginAction extends Action
 			for (int i = 0; i < elements.length; i++) {
 				Object originalValue = elements[i];
 				if (originalValue instanceof IAdaptable) {
-					Class resourceClass = ObjectContributorManager.getResourceClass();
+					Class resourceClass = LegacyResourceSupport.getResourceClass();
                     if (resourceClass != null) {
 					   Object adaptedValue = ((IAdaptable)originalValue).getAdapter(resourceClass);
 					   if (adaptedValue != null) {
