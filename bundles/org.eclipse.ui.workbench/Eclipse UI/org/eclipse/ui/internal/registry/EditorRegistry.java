@@ -683,7 +683,7 @@ public class EditorRegistry implements IEditorRegistry {
 			// which were not deleted.
 			IEditorDescriptor[] editorsArray = mapping.getEditors();
 			for (int j = 0; j < editorsArray.length; j++) {
-				if (!editors.contains(editorsArray[j])
+				if (!contains(editors, editorsArray[j])
 						&& !deletedEditors.contains(editorsArray[j])) {
 					editors.add(editorsArray[j]);
 				}
@@ -694,6 +694,29 @@ public class EditorRegistry implements IEditorRegistry {
 			typeEditorMappings.put(mappingKeyFor(mapping), mapping);
 		}
 	}
+	/**
+	 * Determine if the editors list contains the editor descriptor.
+	 * 
+	 * @param editorsArray
+	 * 			The list of editors.
+	 * @param editorDescriptor
+	 * 			The editor descriptor.
+	 * @return true if the editors list contains the editor descriptor.
+	 */
+	private boolean contains(List editorsArray, IEditorDescriptor editorDescriptor)
+	{
+		IEditorDescriptor currentEditorDescriptor = null;
+		Iterator i = editorsArray.iterator();
+		while(i.hasNext())
+		{
+			currentEditorDescriptor  = (IEditorDescriptor) i.next();
+			if(currentEditorDescriptor.getId().equals(editorDescriptor.getId()))
+				return true;
+		}
+		return false;
+	
+	}
+	
 	/**
 	 * Creates the reader for the resources preferences defined in the
 	 * preference store.
