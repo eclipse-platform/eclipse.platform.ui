@@ -327,7 +327,9 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 		try {
 			Set potentialChildren = new HashSet();
 			IContainer container = (IContainer)resource;
-			potentialChildren.addAll(Arrays.asList(container.members()));
+			if (container.exists()) {
+				potentialChildren.addAll(Arrays.asList(container.members()));
+			}
 			potentialChildren.addAll(Arrays.asList(cache.members(resource)));
 			List result = new ArrayList();
 			for (Iterator iter = potentialChildren.iterator(); iter.hasNext();) {
