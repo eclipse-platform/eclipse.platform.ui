@@ -255,7 +255,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.setLayout(new FillLayout());
 		createViewer(fViewerContainer, fIsInitiallyFlat);
 		
-		updateBusyLabel();
+		showBusyLabel(fIsBusyShown);
 		NewSearchUI.addQueryListener(fQueryListener);
 	}
 	
@@ -297,12 +297,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		boolean shouldShowBusy= result != null && NewSearchUI.isQueryRunning(result.getQuery()) && result.getMatchCount() == 0;
 		if (shouldShowBusy == fIsBusyShown)
 			return;
+		fIsBusyShown= shouldShowBusy;
+		showBusyLabel(fIsBusyShown);
+	}
+	
+	private void showBusyLabel(boolean shouldShowBusy) {
 		if (shouldShowBusy)
 			fPagebook.showPage(fBusyLabel);
 		else
 			fPagebook.showPage(fViewerContainer);
-		fIsBusyShown= shouldShowBusy;
 	}
+
 	/**
 	 * Toggles the page between tree mode and flat (table) layout.
 	 */
