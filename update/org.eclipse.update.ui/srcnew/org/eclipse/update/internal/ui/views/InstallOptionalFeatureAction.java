@@ -17,7 +17,6 @@ import org.eclipse.update.search.*;
  * @author wassimm
  */
 public class InstallOptionalFeatureAction extends Action {
-	private static final String KEY_OPTIONAL_INSTALL_MESSAGE = "FeaturePage.optionalInstall.message"; //$NON-NLS-1$
 	private static final String KEY_OPTIONAL_INSTALL_TITLE = "FeaturePage.optionalInstall.title"; //$NON-NLS-1$
 
 	private MissingFeature missingFeature;

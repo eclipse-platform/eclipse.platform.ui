@@ -31,8 +31,6 @@ public class DuplicateConflictsDialog2 extends MessageDialog {
 		"DuplicateConflictsDialog.message";
 	private static final String KEY_TREE_LABEL =
 		"DuplicateConflictsDialog.treeLabel";
-	private static final String KEY_CONFLICT =
-		"DuplicateConflictsDialog.conflict";
 
 	private TreeViewer treeViewer;
 	private ArrayList conflicts;
