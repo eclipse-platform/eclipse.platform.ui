@@ -1133,6 +1133,45 @@
 <!-- Contributions to Breakpoints View Popup Menu -->
       <viewerContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.debug.ui.breakpointview.breakpointGroupActions">
+         <visibility>
+            <objectClass
+               name="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
+            </objectClass>
+         </visibility>
+         <action
+               label="%editGroup.label"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.EditBreakpointGroupAction"
+               menubarPath="breakpointGroupGroup"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.actions.editBreakpointGroup">
+         </action>
+         <action
+               label="%ToggleDefault.label"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.ToggleDefaultGroupAction"
+               menubarPath="breakpointGroupGroup"
+               id="org.eclipse.debug.ui.actions.toggleDefaultGroup"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.debug.ui.breakpointview.breakpointActions">
+         <visibility>
+            <objectClass
+               name="org.eclipse.debug.core.model.IBreakpoint">
+            </objectClass>
+         </visibility>
+         <action
+               label="%addToGroup.label"
+               icon="icons/full/obj16/brkp_grp.gif"
+               helpContextId="add_breakpoint_to_group_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.AddBreakpointToGroupAction"
+               menubarPath="breakpointGroupGroup"
+               enablesFor="1+"
+               id="org.eclipse.debug.ui.actions.AddBreakpointToGroup">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.debug.ui.breakpointview.popupMenu">
          <action
                label="%SelectAll.label"
@@ -1186,41 +1225,7 @@
         </action>
       </viewerContribution>
       <!-- Breakpoint actions -->
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.BreakpointView"
-            id="org.eclipse.debug.ui.breakpointview.breakpointActions">
-         <visibility>
-            <objectClass
-               name="org.eclipse.debug.core.model.IBreakpoint">
-            </objectClass>
-         </visibility>
-         <action
-               label="%addToGroup.label"
-               icon="icons/full/obj16/brkp_grp.gif"
-               helpContextId="add_breakpoint_to_group_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.AddBreakpointToGroupAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.actions.AddBreakpointToGroup">
-         </action>
-      </viewerContribution>
       <!-- Breakpoint group actions -->
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.BreakpointView"
-            id="org.eclipse.debug.ui.breakpointview.breakpointGroupActions">
-         <visibility>
-            <objectClass
-               name="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
-            </objectClass>
-         </visibility>
-         <action
-               label="%editGroup.label"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.EditBreakpointGroupAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="1"
-               id="org.eclipse.debug.ui.actions.editBreakpointGroup">
-         </action>
-      </viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView"
