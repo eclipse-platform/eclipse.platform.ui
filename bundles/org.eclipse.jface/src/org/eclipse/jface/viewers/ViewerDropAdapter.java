@@ -171,12 +171,8 @@ private void doDropValidation(DropTargetEvent event) {
  * if the drop should be allowed.
  */
 public void dragEnter(DropTargetEvent event) {
-	try {
-		currentTarget = determineTarget(event);
-		doDropValidation(event);
-	} catch (Throwable t) {
-		handleException(t, event);
-	}
+	currentTarget = determineTarget(event);
+	doDropValidation(event);
 }
 /* (non-Javadoc)
  * Method declared on DropTargetAdapter.
@@ -184,12 +180,8 @@ public void dragEnter(DropTargetEvent event) {
  * should still be enabled.
  */
 public void dragOperationChanged(DropTargetEvent event) {
-	try {
-		currentTarget = determineTarget(event);
-		doDropValidation(event);
-	} catch (Throwable t) {
-		handleException(t, event);
-	}
+	currentTarget = determineTarget(event);
+	doDropValidation(event);
 }
 /* (non-Javadoc)
  * Method declared on DropTargetAdapter.
@@ -198,22 +190,18 @@ public void dragOperationChanged(DropTargetEvent event) {
  * that it is still enabled.
  */
 public void dragOver(DropTargetEvent event) {
-	try {
-		//use newly revealed item as target if scrolling occurs
-		Object target = determineTarget(event);
+	//use newly revealed item as target if scrolling occurs
+	Object target = determineTarget(event);
 
-		//set the location feedback
-		int oldLocation = currentLocation;
-		currentLocation = determineLocation(event);
-		setFeedback(event, currentLocation);
-		
-		//see if anything has really changed before doing validation.
-		if (target != currentTarget || currentLocation != oldLocation) {
-			currentTarget = target;
-			doDropValidation(event);
-		}
-	} catch (Throwable t) {
-		handleException(t, event);
+	//set the location feedback
+	int oldLocation = currentLocation;
+	currentLocation = determineLocation(event);
+	setFeedback(event, currentLocation);
+	
+	//see if anything has really changed before doing validation.
+	if (target != currentTarget || currentLocation != oldLocation) {
+		currentTarget = target;
+		doDropValidation(event);
 	}
 }
 /* (non-Javadoc)
@@ -221,29 +209,21 @@ public void dragOver(DropTargetEvent event) {
  * The user has dropped something on the desktop viewer.
  */
 public void drop(DropTargetEvent event) {
-	try {
-		currentLocation = determineLocation(event);
+	currentLocation = determineLocation(event);
 
-		//perform the drop behaviour
-		if (!performDrop(event.data)) {
-			event.detail = DND.DROP_NONE;
-		}
-		currentOperation = event.detail;
-	} catch (Throwable t) {
-		handleException(t, event);
+	//perform the drop behaviour
+	if (!performDrop(event.data)) {
+		event.detail = DND.DROP_NONE;
 	}
+	currentOperation = event.detail;
 }
 /* (non-Javadoc)
  * Method declared on DropTargetAdapter.
  * Last chance for the action to disable itself
  */
 public void dropAccept(DropTargetEvent event) {
-	try {
-		if (!validateDrop(currentTarget, event.detail, event.currentDataType)) {
-			event.detail = DND.DROP_NONE;
-		}
-	} catch (Throwable t) {
-		handleException(t, event);
+	if (!validateDrop(currentTarget, event.detail, event.currentDataType)) {
+		event.detail = DND.DROP_NONE;
 	}
 }
 /**
@@ -324,6 +304,8 @@ protected Viewer getViewer() {
 	return viewer;
 }
 /**
+ * @deprecated this method should not be used. Exception handling has been 
+ * 	removed from DropTargetAdapter methods overridden by this class.
  * Handles any exception that occurs during callback, including 
  * rethrowing behavior.
  * <p>
@@ -362,22 +344,22 @@ public abstract boolean performDrop(Object data);
  * that it is still enabled.
  */
 private void setFeedback(DropTargetEvent event, int location) {
-	if (scrollExpandEnabled)
-		event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
 	if (feedbackEnabled) {
 		switch (location) {
-			case LOCATION_BEFORE:
-				event.feedback |= DND.FEEDBACK_INSERT_BEFORE;
-				break;
-			case LOCATION_AFTER:
-				event.feedback |= DND.FEEDBACK_INSERT_AFTER;
-				break;
-			case LOCATION_ON:
-			default:
-				event.feedback |= DND.FEEDBACK_SELECT;
-				break;
+		   case LOCATION_BEFORE:
+			  event.feedback = DND.FEEDBACK_INSERT_BEFORE;
+			  break;
+		   case LOCATION_AFTER:
+			  event.feedback = DND.FEEDBACK_INSERT_AFTER;
+			  break;
+		   case LOCATION_ON:
+		   default:
+			  event.feedback = DND.FEEDBACK_SELECT;
+			  break;
 		}
-	}
+	 }
+	 if (scrollExpandEnabled)
+		  event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;	
 }
 /**
  * Sets whether visible insertion feedback should be presented to the user.
