@@ -199,7 +199,7 @@ public final class KeySupport {
 			if (integer != null)
 				value = integer.intValue();
 			else if (token.length() == 1)
-				value = token.charAt(0);
+				value = token.toUpperCase().charAt(0);
 
 			if (value != 0) {
 				for (int i = 0; i < size - 1; i++) {
