@@ -28,7 +28,7 @@ public class CVSException extends TeamException {
 	/*
 	 * Helpers for creating CVS exceptions
 	 */
-	public CVSException(int severity, int code, String message, Exception e) {
+	public CVSException(int severity, int code, String message, Throwable e) {
 		super(new CVSStatus(severity, code, message, null));
 	}
 	
@@ -40,7 +40,7 @@ public class CVSException extends TeamException {
 		super(new CVSStatus(IStatus.ERROR, UNABLE, message, null));
 	}
 
-	public CVSException(String message, Exception e) {
+	public CVSException(String message, Throwable e) {
 		this(IStatus.ERROR, UNABLE, message, e);
 	}
 
