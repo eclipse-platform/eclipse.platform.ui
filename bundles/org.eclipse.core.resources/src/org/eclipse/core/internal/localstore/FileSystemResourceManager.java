@@ -26,7 +26,10 @@ import org.eclipse.osgi.util.NLS;
 public class FileSystemResourceManager implements ICoreConstants, IManager {
 
 	protected Workspace workspace;
-	protected IHistoryStore historyStore;
+	/**
+	 * The history store is initialized lazily - always use the accessor method
+	 */
+	protected IHistoryStore _historyStore;
 	protected FileSystemStore localStore;
 
 	public FileSystemResourceManager(Workspace workspace) {
@@ -224,7 +227,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	public IHistoryStore getHistoryStore() {
-		return historyStore;
+		if (_historyStore == null) {
+			IPath location = getWorkspace().getMetaArea().getHistoryStoreLocation();
+			location.toFile().mkdirs();
+			_historyStore = ResourcesCompatibilityHelper.createHistoryStore(location, 256);
+		}
+		return _historyStore;
 	}
 
 	protected IPath getProjectDefaultLocation(IProject project) {
@@ -702,14 +710,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
-		historyStore.shutdown(monitor);
+		if (_historyStore != null)
+			_historyStore.shutdown(monitor);
 	}
 
 	public void startup(IProgressMonitor monitor) throws CoreException {
-		IPath location = getWorkspace().getMetaArea().getHistoryStoreLocation();
-		location.toFile().mkdirs();
-		historyStore = ResourcesCompatibilityHelper.createHistoryStore(location, 256);
-		historyStore.startup(monitor);
+		//nothing to do
 	}
 
 	/**
@@ -774,7 +780,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			// add entry to History Store.
 			if (keepHistory && localFile.exists())
 				//never move to the history store, because then the file is missing if write fails
-				historyStore.addState(target.getFullPath(), location.toFile(), lastModified, false);
+				getHistoryStore().addState(target.getFullPath(), location.toFile(), lastModified, false);
 			getStore().write(localFile, content, append, monitor);
 			// get the new last modified time and stash in the info
 			lastModified = CoreFileSystemLibrary.getLastModified(locationString);
