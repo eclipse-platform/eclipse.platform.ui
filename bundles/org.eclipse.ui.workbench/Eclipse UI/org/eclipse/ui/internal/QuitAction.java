@@ -32,6 +32,8 @@ public class QuitAction extends Action implements ActionFactory.IWorkbenchAction
 	 * Creates a new <code>QuitAction</code>.
 	 */
 	public QuitAction(IWorkbenchWindow window) {
+		// Although window is not currently used,
+		// this follows the same pattern as other ActionFactory actions.
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
