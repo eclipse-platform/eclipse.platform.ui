@@ -29,10 +29,9 @@ public class TypeTests extends AbstractAntTest {
 
 	public void testAddType() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls= prefs.getExtraClasspathURLs();
 		Type newType= new Type();
-		String path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
-		URL url= new URL("file:" + path);
-		newType.setLibrary(url);
+		newType.setLibrary(urls[0]);
 		newType.setTypeName("anttestpath");
 		newType.setClassName("org.eclipse.ant.tests.core.support.types.AntTestPath");
 		prefs.setCustomTypes(new Type[]{newType});

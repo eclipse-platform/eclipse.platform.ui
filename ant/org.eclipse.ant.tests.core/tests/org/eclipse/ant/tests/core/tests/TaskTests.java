@@ -31,16 +31,9 @@ public class TaskTests extends AbstractAntTest {
 	
 	public void testAddTask() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls= prefs.getExtraClasspathURLs();
 		Task newTask= new Task();
-		String path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
-		URL url= new URL("file:" + path);
-		URL urls[] = prefs.getCustomURLs();
-		URL newUrls[] = new URL[urls.length + 1];
-		System.arraycopy(urls, 0, newUrls, 0, urls.length);
-		newUrls[urls.length] = url;
-		prefs.setCustomURLs(newUrls);
-		
-		newTask.setLibrary(url);
+		newTask.setLibrary(urls[0]);
 		newTask.setTaskName("AntTestTask");
 		newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask");
 		prefs.setCustomTasks(new Task[]{newTask});
