@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
@@ -75,7 +76,7 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 			try {
 				removeNode();
 			} catch (BackingStoreException e) {
-				String message = "Exception trying to remove node from exported prefs: " + absolutePath();
+				String message = Policy.bind("preferences.removeExported", absolutePath()); //$NON-NLS-1$
 				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 				log(status);
 			}

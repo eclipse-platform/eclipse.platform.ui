@@ -190,7 +190,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public PluginVersionIdentifier getVersionIdentifier() {
-		String version = (String) bundleOsgi.getHeaders("").get(Constants.BUNDLE_VERSION);
+		String version = (String) bundleOsgi.getHeaders("").get(Constants.BUNDLE_VERSION); //$NON-NLS-1$
 		try {
 			return new PluginVersionIdentifier(version);
 		} catch (Exception e) {
@@ -373,7 +373,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders("").get(PLUGIN_CLASS);
+		return (String) bundleOsgi.getHeaders("").get(PLUGIN_CLASS); //$NON-NLS-1$
 	}
 
 	private String getId() {
