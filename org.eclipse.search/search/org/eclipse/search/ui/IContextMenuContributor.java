@@ -12,6 +12,10 @@ package org.eclipse.search.ui;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IInputSelectionProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.action.IAction;
 
 /**
  * Specify how clients can add menu items
@@ -20,7 +24,7 @@ import org.eclipse.jface.viewers.IInputSelectionProvider;
  * must implement this interface and pass an
  * instance of itself to the search result view.
  * 
- * @see	ISearchResultView#searchStarted
+ * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
  * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
  */
 public interface IContextMenuContributor {

@@ -27,28 +27,28 @@ public class PixelConverter {
 		gc.dispose();
 	}
 	
-	/**
+	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertHeightInCharsToPixels(int)
 	 */
 	public int convertHeightInCharsToPixels(int chars) {
 		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertHorizontalDLUsToPixels(int)
 	 */
 	public int convertHorizontalDLUsToPixels(int dlus) {
 		return Dialog.convertHorizontalDLUsToPixels(fFontMetrics, dlus);
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertVerticalDLUsToPixels(int)
 	 */
 	public int convertVerticalDLUsToPixels(int dlus) {
 		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
 	
-	/**
+	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertWidthInCharsToPixels(int)
 	 */
 	public int convertWidthInCharsToPixels(int chars) {

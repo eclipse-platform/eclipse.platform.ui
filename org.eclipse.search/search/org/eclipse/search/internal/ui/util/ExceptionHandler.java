@@ -37,6 +37,8 @@ public class ExceptionHandler {
 	/**
 	 * Logs the given exception using the platform's logging mechanism. The exception is
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
+	 * @param t The exception to log
+	 * @param message The message to be used for teh status
 	 */
 	public static void log(Throwable t, String message) {
 		SearchPlugin.log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, t));

@@ -54,7 +54,7 @@ public class ComboFieldEditor extends FieldEditor {
 		createControl(parent);		
 	}
 
-	/**
+	/*
 	 * Checks whether given <code>String[][]</code> is of "type" 
 	 * <code>String[][2]</code>.
 	 *
@@ -131,7 +131,7 @@ public class ComboFieldEditor extends FieldEditor {
 		return 2;
 	}
 
-	/**
+	/*
 	 * Lazily create and return the Combo control.
 	 */
 	public Combo getComboBoxControl(Composite parent) {
@@ -154,7 +154,7 @@ public class ComboFieldEditor extends FieldEditor {
 		return fCombo;
 	}
 	
-	/**
+	/*
 	 * Given the name (label) of an entry, return the corresponding value.
 	 */
 	protected String getValueForName(String name) {
@@ -167,7 +167,7 @@ public class ComboFieldEditor extends FieldEditor {
 		return fEntryNamesAndValues[0][0];
 	}
 	
-	/**
+	/*
 	 * Set the name in the combo widget to match the specified value.
 	 */
 	protected void updateComboForValue(String value) {

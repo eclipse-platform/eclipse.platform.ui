@@ -11,6 +11,10 @@
 package org.eclipse.search.ui;
 
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.action.IAction;
 
 /**
  * Allows to specify an <code>ActionGroup</code> factory
@@ -25,7 +29,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * instance to the search result view.
  * 
  * @see	org.eclipse.ui.actions.ActionGroup
- * @see	ISearchResultView#searchStarted()
+ * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
  * @since 	2.0
  * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
  */
@@ -36,6 +40,7 @@ public interface IActionGroupFactory {
 	 *
 	 * @param 	searchView the search result view for which the group is made
 	 * @see	org.eclipse.ui.actions.ActionGroup
+	 * @return an <code>ActionGroup</code> for a Search view
 	 */
 	ActionGroup createActionGroup(ISearchResultView searchView);
 }

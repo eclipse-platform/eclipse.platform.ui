@@ -69,6 +69,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * Hook called when the user has pressed the button to perform
 	 * the dialog's action. If the method returns <code>false</code>
 	 * the dialog stays open. Otherwise the dialog is going to be closed.
+	 * @param buttonId Id of the botton activated
+	 * @return If the method returns <code>false</code>
+	 * the dialog stays open.
 	 */
 	protected boolean performAction(int buttonId) {
 		return true;
@@ -78,6 +81,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * Hook called when the user has pressed the button to cancel
 	 * the dialog. If the method returns <code>false</code> the dialog 
 	 * stays open. Otherwise the dialog is going to be closed.
+	 * @return If the method returns <code>false</code>
+	 * the dialog stays open.
 	 */
 	protected boolean performCancel() {
 		return true;
@@ -87,6 +92,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 
 	/**
 	 * Create the page area.
+	 * @param parent The parent composite
+	 * @return The created control
 	 */
 	protected abstract Control createPageArea(Composite parent); 
 	 
@@ -110,6 +117,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 
 	/**
 	 * Creates the layout of the extended dialog window.
+	 * 	@param parent The parent composite
+	 * @return The created control
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite result= new Composite(parent, SWT.NULL);
@@ -158,6 +167,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	
 	/**
 	 * Set the enable state of the perform action button.
+	 * @param state The new state
 	 */
 	public void setPerformActionEnabled(boolean state) {
 		for (Iterator buttons = fActionButtons.iterator(); buttons.hasNext(); ) {
@@ -168,12 +178,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 
 	//---- Operation stuff ------------------------------------------------------
 	
-	/**
-	 * Runs the given <code>IRunnableWithProgress</code> with the progress monitor for this
-	 * wizard dialog.  
-	 * @param fork if true, it is run in a separate thread
-	 * @param cancelable specifies whether to enable the cancel button or not
-	 * @param runnable the runnable to run
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		// The operation can only be canceled if it is executed in a separate thread.
@@ -191,7 +198,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	}
 
 	/**
-	 * Returns the progress monitor. If the wizard dialog doesn't
+	 * @return Returns the progress monitor. If the wizard dialog doesn't
 	 * have a progress monitor <code>null</code> is returned.
 	 */
 	protected IProgressMonitor getProgressMonitor() {
@@ -202,6 +209,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * About to start a long running operation tiggered through
 	 * the wizard. So show the progress monitor and disable
 	 * the wizard.
+	 * @param enableCancelButton The cancel button enable state
 	 * @return The saved UI state.
 	 */
 	protected synchronized Object aboutToStart(boolean enableCancelButton) {
@@ -283,9 +291,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		pageState.restore();
 	}
 	
-	/**
+	/*
 	 * Restores the enable state of the given control.
-	 * @private
 	 */
 	protected void restoreEnableState(Control w, HashMap h) {
 		if (!w.isDisposed()) {
@@ -323,6 +330,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * The dialog is going to be closed. Check if there is a running
 	 * operation. If so, post an alert saying that the wizard can't
 	 * be closed.
+	 * @return If false is returned, the dialog should stay open
 	 */
 	public boolean okToClose() {
 		if (fActiveRunningOperations > 0) {
@@ -352,7 +360,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	}
 
 	/**
-	 * Returns the cancel component that is to be used to cancel 
+	 * @return Returns the cancel component that is to be used to cancel 
 	 * a long running operation.
 	 */
 	protected Control getCancelComponent() {

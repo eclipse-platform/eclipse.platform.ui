@@ -49,7 +49,7 @@ public final class SearchUI {
 	 * Line marker attribute (value <code>"line"</code>)
 	 * The value of the marker attribute is the line which contains the text search match.
 	 *
-	 * @see org.eclipse.core.resources.IMarker#getAttribute
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
 	 */
 	public static final String LINE= "line"; //$NON-NLS-1$
 
@@ -66,7 +66,7 @@ public final class SearchUI {
 	 * the Search view. The color can be changed in the Search preferences.
 	 * </p>
 	 *
-	 * @see org.eclipse.core.resources.IMarker#getAttribute
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
 	 * @since 2.0
 	 */
 	public static final String POTENTIAL_MATCH= "potentialMatch"; //$NON-NLS-1$
@@ -110,8 +110,9 @@ public final class SearchUI {
 	 * If <code>pageId</code> is specified and a corresponding page
 	 * is found then it is brought to top.
 	 *
-	 * @param pageId	the page to select or <code>null</code>
-	 * 					if the best fitting page should be selected
+	 * @param window the given window
+	 * @param pageId the page to select or <code>null</code>
+	 * 				 if the best fitting page should be selected
 	 * @since 2.0
 	 * @deprecated Use {@link NewSearchUI#openSearchDialog(IWorkbenchWindow, String)} instead.
 	 */
