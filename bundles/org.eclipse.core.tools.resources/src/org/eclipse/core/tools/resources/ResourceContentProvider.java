@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Constructs a tree made of <code>TreeContentProviderNode</code>, representing
@@ -52,7 +53,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	protected void extractInfo(IResource selectedResource) {
 
 		if (!(selectedResource instanceof Resource)) {
-			String message = Policy.bind("resource.error_unknown_resource_impl", selectedResource.getClass().getName()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.resource_error_unknown_resource_impl, selectedResource.getClass().getName()); //$NON-NLS-1$
 			getRootNode().addChild(message);
 			return;
 		}
@@ -86,14 +87,14 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			if (properties.isEmpty())
 				return;
 			// creates a node for persistent properties and populates it
-			TreeContentProviderNode propertiesRootNode = createNode(Policy.bind("resource.persistent_properties")); //$NON-NLS-1$
+			TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_persistent_properties); //$NON-NLS-1$
 			getRootNode().addChild(propertiesRootNode);
 			for (Iterator i = properties.entrySet().iterator(); i.hasNext();) {
 				Map.Entry entry = (Map.Entry) i.next();
 				propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue().toString()));
 			}
 		} catch (CoreException ce) {
-			getRootNode().addChild(createNode(Policy.bind("resources.error_stored_properties", ce.toString()))); //$NON-NLS-1$
+			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_stored_properties, ce.toString()))); //$NON-NLS-1$
 		}
 	}
 
@@ -110,7 +111,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a node for session properties and populates it
-		TreeContentProviderNode propertiesRootNode = createNode(Policy.bind("resource.session_properties")); //$NON-NLS-1$
+		TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_session_properties); //$NON-NLS-1$
 		getRootNode().addChild(propertiesRootNode);
 
 		Set set = properties.entrySet();
@@ -136,16 +137,16 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		String type = null;
 		switch (resource.getType()) {
 			case IResource.FILE :
-				type = Policy.bind("resource.file"); //$NON-NLS-1$
+				type = Messages.resource_file;
 				break;
 			case IResource.FOLDER :
-				type = Policy.bind("resource.folder"); //$NON-NLS-1$
+				type = Messages.resource_folder;
 				break;
 			case IResource.PROJECT :
-				type = Policy.bind("resource.project"); //$NON-NLS-1$
+				type = Messages.resource_project;
 				break;
 			case IResource.ROOT :
-				type = Policy.bind("resource.root"); //$NON-NLS-1$
+				type = Messages.resource_root;
 				break;
 		}
 
@@ -154,11 +155,11 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		long nodeId = info.getNodeId();
 
 		// creates a root node for each basic information
-		getRootNode().addChild(createNode(Policy.bind("resource.full_path"), resourcePath)); //$NON-NLS-1$
-		getRootNode().addChild(createNode(Policy.bind("resource.content_id"), Long.toString(id))); //$NON-NLS-1$
-		getRootNode().addChild(createNode(Policy.bind("resource.type"), type)); //$NON-NLS-1$
-		getRootNode().addChild(createNode(Policy.bind("resource.node_id"), Long.toString(nodeId))); //$NON-NLS-1$
-		getRootNode().addChild(createNode(Policy.bind("resource.local_sync_info"), Long.toString(localSyncInfo))); //$NON-NLS-1$
+		getRootNode().addChild(createNode(Messages.resource_full_path, resourcePath));
+		getRootNode().addChild(createNode(Messages.resource_content_id, Long.toString(id)));
+		getRootNode().addChild(createNode(Messages.resource_type, type));
+		getRootNode().addChild(createNode(Messages.resource_node_id, Long.toString(nodeId)));
+		getRootNode().addChild(createNode(Messages.resource_local_sync_info, Long.toString(localSyncInfo)));
 	}
 
 	/**
@@ -182,20 +183,20 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		boolean defaultContentDescription = info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
 
 		// creates a node for flags
-		TreeContentProviderNode flagsParentNode = createNode(Policy.bind("resource.flags")); //$NON-NLS-1$
+		TreeContentProviderNode flagsParentNode = createNode(Messages.resource_flags); //$NON-NLS-1$
 		getRootNode().addChild(flagsParentNode);
 
 		// creates a child node in "Flags" node for each basic information
-		flagsParentNode.addChild(createNode(Policy.bind("resource.open"), Boolean.valueOf(isOpen))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.local_exists"), Boolean.valueOf(localExists))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.phantom"), Boolean.valueOf(isPhantom))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.used"), Boolean.valueOf(isUsed))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.derived"), Boolean.valueOf(isDerived))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.team_private"), Boolean.valueOf(isTeamPrivateMember))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.markers_snap_dirty"), Boolean.valueOf(isMarkersSnapDirty))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.sync_info_snap_dirty"), Boolean.valueOf(isSyncInfoSnapDirty))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.no_content_description"), Boolean.valueOf(noContentDescription))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Policy.bind("resource.default_content_description"), Boolean.valueOf(defaultContentDescription))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_open, Boolean.valueOf(isOpen))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_local_exists, Boolean.valueOf(localExists))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_phantom, Boolean.valueOf(isPhantom))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_used, Boolean.valueOf(isUsed))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_derived, Boolean.valueOf(isDerived))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_team_private, Boolean.valueOf(isTeamPrivateMember))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_markers_snap_dirty, Boolean.valueOf(isMarkersSnapDirty))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_sync_info_snap_dirty, Boolean.valueOf(isSyncInfoSnapDirty))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_no_content_description, Boolean.valueOf(noContentDescription))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_default_content_description, Boolean.valueOf(defaultContentDescription))); //$NON-NLS-1$
 
 	}
 
@@ -206,12 +207,12 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		// creates a node for flags
 		try {
 			boolean cached = org.eclipse.core.internal.resources.SpySupport.isContentDescriptionCached(file);
-			String description = file.getContentDescription() + " (" + Policy.bind("resource.content_description_from_cache", Boolean.toString(cached)) + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			TreeContentProviderNode contentDescriptionNode = createNode(Policy.bind("resource.content_description"), description); //$NON-NLS-1$
+			String description = file.getContentDescription() + " (" + NLS.bind(Messages.resource_content_description_from_cache, Boolean.toString(cached)) + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			TreeContentProviderNode contentDescriptionNode = createNode(Messages.resource_content_description, description); //$NON-NLS-1$
 			getRootNode().addChild(contentDescriptionNode);
 		} catch (CoreException ce) {
 			// in the case of a CoreException, just present it as node
-			getRootNode().addChild(createNode(Policy.bind("resource.error_content_description", ce.toString()))); //$NON-NLS-1$
+			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_content_description, ce.toString()))); //$NON-NLS-1$
 		}
 
 	}
@@ -233,7 +234,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a root node for all markers
-		TreeContentProviderNode markersParentNode = createNode(Policy.bind("resource.markers")); //$NON-NLS-1$
+		TreeContentProviderNode markersParentNode = createNode(Messages.resource_markers); //$NON-NLS-1$
 		getRootNode().addChild(markersParentNode);
 
 		int markerSetSize = markerSetElements.length;
@@ -250,7 +251,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 
 			} catch (CoreException ce) {
 				// in the case of a CoreException, just present it as node
-				markersParentNode.addChild(createNode(Policy.bind("resource.error_marker", ce.toString()))); //$NON-NLS-1$
+				markersParentNode.addChild(createNode(NLS.bind(Messages.resource_error_marker, ce.toString()))); //$NON-NLS-1$
 			}
 		}
 	}
@@ -295,7 +296,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a root node for all sync info		
-		TreeContentProviderNode syncInfoParentNode = createNode(Policy.bind("resource.sync_info")); //$NON-NLS-1$
+		TreeContentProviderNode syncInfoParentNode = createNode(Messages.resource_sync_info); //$NON-NLS-1$
 		getRootNode().addChild(syncInfoParentNode);
 
 		Set entrySet = syncInfo.entrySet();
