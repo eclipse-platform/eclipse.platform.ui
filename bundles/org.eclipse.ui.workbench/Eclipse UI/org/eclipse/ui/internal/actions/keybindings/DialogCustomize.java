@@ -505,8 +505,6 @@ final class DialogCustomize extends Dialog {
 	}
 	
 	private void buildTableKeySequence() {
-		String scopeId = getScopeId();
-		String configurationId = getConfigurationId();
 		tableKeySequence.removeAll();
 	
 		for (int i = 0; i < keySequenceRecords.size(); i++) {
