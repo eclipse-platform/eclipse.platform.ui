@@ -2,10 +2,9 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+import java.io.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.core.runtime.CoreException;
@@ -17,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 	Diff fDiff;
 	IStreamContentAccessor fCurrent;
 	String fName;
+	byte[] fContent;
 	
 	/* package */ PatchedResource(IStreamContentAccessor current, Diff diff, String name) {
 		fDiff= diff;
@@ -25,13 +25,25 @@ import org.eclipse.swt.graphics.Image;
 	}
 	
 	public InputStream getContents() throws CoreException {
-		InputStream is= null;
-		try {
-			is= fCurrent.getContents();
-		} catch (CoreException ex) {
-			is= new ByteArrayInputStream(new byte[0]);
+		if (fContent == null) {
+			InputStream is= null;
+			
+			try {
+				is= fCurrent.getContents();
+			} catch (CoreException ex) {
+				is= new ByteArrayInputStream(new byte[0]);
+			}
+			if (is != null) {
+				String s= fDiff.patch(is);
+				if (s != null)
+					fContent= s.getBytes();
+				try {
+					is.close();
+				} catch (IOException ex) {
+				}
+			}
 		}
-		return fDiff.patch(is);
+		return new ByteArrayInputStream(fContent);
 	}
 	
 	public Image getImage() {

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
 import java.io.*;
 import java.io.ByteArrayInputStream;
@@ -93,6 +93,39 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 	
+	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		if (fRoot instanceof DiffNode) {
+			try {
+				commit(pm, (DiffNode) fRoot);
+			} finally {	
+				setDirty(false);
+			}
+		}
+	}
+	
+	/*
+	 * Recursively walks the diff tree and commits all changes.
+	 */
+	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
+		
+		ITypedElement left= node.getLeft();
+		if (left instanceof BufferedResourceNode)
+			((BufferedResourceNode) left).commit(pm);
+			
+		ITypedElement right= node.getRight();
+		if (right instanceof BufferedResourceNode)
+			((BufferedResourceNode) right).commit(pm);
+
+		IDiffElement[] children= node.getChildren();
+		if (children != null) {
+			for (int i= 0; i < children.length; i++) {
+				IDiffElement element= children[i];
+				if (element instanceof DiffNode)
+					commit(pm, (DiffNode) element);
+			}
+		}
+	}
+
 	/* package */ void createPath(DiffContainer root, IContainer folder, String path, Diff diff) {
 		int pos= path.indexOf('/');
 		if (pos >= 0) {

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
 import java.util.*;
 import java.io.*;
@@ -92,11 +92,11 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 //		return 0;
 //	}
 		
-	/* package */ InputStream patch(InputStream is) {
+	/* package */ String patch(InputStream is) {
 		return patch(new BufferedReader(new InputStreamReader(is)));
 	}
-	
-	/* package */ InputStream patch(BufferedReader reader) {
+		
+	/* package */ String patch(BufferedReader reader) {
 		List lines= new LineReader(reader).readLines();
 		if (lines == null)
 			lines= new ArrayList();
@@ -112,7 +112,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		iter= lines.iterator();
 		while (iter.hasNext())
 			sb.append((String)iter.next());
-		return new ByteArrayInputStream(sb.toString().getBytes());
+		return sb.toString();
 	}
 	
 	/* package */ void compare(List l1, List l2) {

@@ -932,13 +932,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	protected byte[] getContents(boolean left) {
 		
 		if (left) {
-			if (fLeftContentsChanged)
+			//if (fLeftContentsChanged)	// TRY
 				return fLeft.getDocument().get().getBytes();
 		} else {
-			if (fRightContentsChanged)
+			//if (fRightContentsChanged)	// TRY
 				return fRight.getDocument().get().getBytes();
 		}
-		return null;
+		//return null;
 	}
 				
 	private IRegion normalizeDocumentRegion(IDocument doc, IRegion region) {
@@ -1439,12 +1439,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean leftToRight= false;
 		boolean rightToLeft= false;
 		
-		if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
+		if (fCurrentDiff != null) {
 			IMergeViewerContentProvider cp= getMergeContentProvider();
 			if (cp != null) {
 				rightToLeft= cp.isLeftEditable(getInput());
 				leftToRight= cp.isRightEditable(getInput());
 			}
+		}
+		
+		if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
 			fDirectionLabel.setImage(fCurrentDiff.getImage());
 		} else {
 			fDirectionLabel.setImage(null);
@@ -2180,7 +2183,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			fLeftLineCount= fLeft.getLineCount();
 			setLeftDirty(true);
-			fLeftContentsChanged= false;			
+			fLeftContentsChanged= false;
 		}
 		doDiff();
 		invalidateLines();

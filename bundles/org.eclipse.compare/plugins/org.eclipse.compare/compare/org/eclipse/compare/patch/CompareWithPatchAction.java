@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;

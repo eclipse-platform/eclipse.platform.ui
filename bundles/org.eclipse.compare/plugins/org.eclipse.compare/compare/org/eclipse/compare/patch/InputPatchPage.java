@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
 import java.io.*;
 
@@ -51,6 +51,7 @@ import org.eclipse.compare.internal.Utilities;
 	InputPatchPage(PatchWizard pw) {
 		super("Select Patch Input", "Select Patch Input", null);
 		fPatchWizard= pw;
+		//setPageComplete(false);
 	}
 	
 	/**

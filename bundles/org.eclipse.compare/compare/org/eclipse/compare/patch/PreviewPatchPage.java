@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.patch;
+package org.eclipse.compare.patch;
 
 import java.util.*;
 
@@ -33,6 +33,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	/* package */ PreviewPatchPage(PatchWizard pw) {
 		super("Preview Patch", "Preview Patch", null);
 		fPatchWizard= pw;
+		//setPageComplete(false);
 	}
 	
 	/* (non-Javadoc)
@@ -49,6 +50,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	 * list of Diffs.
 	 */
 	private void update() {
+		setPageComplete(true);
 		if (fTree != null && !fTree.isDisposed()) {
 			fTree.removeAll();
 			fText.setText("");
