@@ -92,13 +92,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 	
 	/**
-	 * Updates this action's tooltip to correspond to the most recent launch from the appropriate history.
+	 * Updates this action's tooltip to correspond to the most recent launch.
 	 */
 	protected void updateTooltip() {
-		LaunchConfigurationHistoryElement[] history = getHistory();
+		LaunchConfigurationHistoryElement lastLaunched = getLastLaunch();
 		String tooltip= fOriginalTooltip;
-		if ((history != null) && (history.length > 0)) {
-			tooltip= getLastLaunchPrefix() + history[0].getLaunchConfiguration().getName();
+		if (lastLaunched != null) {
+			tooltip= getLastLaunchPrefix() + lastLaunched.getLaunchConfiguration().getName();
 		} else {
 			tooltip= getStaticTooltip();
 		}
@@ -117,6 +117,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 */
 	public void dispose() {
 		DebugUIPlugin.getLaunchConfigurationManager().removeLaunchHistoryListener(this);
+	}
+	
+	/**
+	 * Return the last launch that occurred in the workspace.
+	 */
+	protected LaunchConfigurationHistoryElement getLastLaunch() {
+		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
 	}
 
 	/**

@@ -414,6 +414,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launchConfig, mode);
 		
 		// Update the most recent launch list
+		boolean modified = false;
 		if (launch.getLaunchMode().equals(mode)) {
 			int index = fLastLaunchList.indexOf(item);
 			if (index > 0) {
@@ -421,6 +422,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			}	
 			if (index != 0) {		
 				fLastLaunchList.add(0, item);
+				modified = true;
 			}
 		}
 		
@@ -428,7 +430,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		int index = findConfigInHistoryList(favorites, item.getLaunchConfiguration());
 		if (index >= 0) {
 			// a favorite, do not add to history
-			return false;
+			return modified;
 		}
 		
 		// Look for an equivalent launch in the history list
@@ -436,7 +438,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		
 		//It's already listed as the most recent launch, so nothing to do
 		if (index == 0) {
-			return false;
+			return modified;
 		}
 		
 		// Make it the top item in the list, removing it from it's previous location, if there was one

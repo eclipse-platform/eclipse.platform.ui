@@ -1,7 +1,6 @@
 package org.eclipse.debug.internal.ui.actions;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org.eclipse.debug.core.ILaunchManager;
 
 /**
  * Relaunches the last run-mode launch
@@ -9,10 +8,10 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHis
 public class RunLastAction extends RelaunchLastAction {
 
 	/**
-	 * @see RelaunchLastAction#getHistory()
+	 * @see RelaunchLastAction#getMode()
 	 */
-	public LaunchConfigurationHistoryElement[] getHistory() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
+	public String getMode() {
+		return ILaunchManager.RUN_MODE;
 	}
-
+	
 }

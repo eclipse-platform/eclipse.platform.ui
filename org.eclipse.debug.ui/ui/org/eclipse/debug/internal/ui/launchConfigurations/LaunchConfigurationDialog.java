@@ -458,13 +458,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * just set the initial selection in the dialog to the last launched configuration.
 	 */
 	protected int doLastLaunchedConfig(boolean launch) {
-		fFirstConfig = getLastLaunchedWorkbenchConfigurationForMode();
+		fFirstConfig = getLastLaunchedWorkbenchConfiguration();
 		if (launch) {
 			try {
 				if (fFirstConfig != null) {
-					fUnderlyingConfig = fFirstConfig;
-					doLaunch(fFirstConfig);
-					return ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING;					
+					if (fFirstConfig.supportsMode(getMode())) {
+						fUnderlyingConfig = fFirstConfig;
+						doLaunch(fFirstConfig);
+					} else {
+						// If we're trying to launch, but the last launched config doesn't 
+						// support the current mode of the dialog, show an error dialog
+						String configName = fFirstConfig.getName();
+						MessageDialog.openError(getShell(), "Cannot relaunch", "Cannot relaunch \'" + configName + "\' because it does not support " + getMode() + " mode");										
+					}
+					return ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING;
 				}
 			} catch(CoreException e) {
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -495,20 +502,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return the last launched configuration in the workspace that matches the current mode.
+	 * Return the last launched configuration in the workspace.
 	 */
-	protected ILaunchConfiguration getLastLaunchedWorkbenchConfigurationForMode() {
-		LaunchConfigurationHistoryElement[] history;
-		if (getMode() == ILaunchManager.DEBUG_MODE) {
-			history = DebugUIPlugin.getLaunchConfigurationManager().getDebugHistory();
-		} else {
-			history = DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
-		}
-		if ((history != null) && (history.length > 0)) {
-			LaunchConfigurationHistoryElement element = history[0];
-			if (element != null) {
-				return element.getLaunchConfiguration();
-			}
+	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
+		LaunchConfigurationHistoryElement historyElement = DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
+		if (historyElement != null) {
+			return historyElement.getLaunchConfiguration();
 		}
 		return null;			
 	}
