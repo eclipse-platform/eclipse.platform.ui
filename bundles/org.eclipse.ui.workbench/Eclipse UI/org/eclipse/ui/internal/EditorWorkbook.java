@@ -294,7 +294,6 @@ public void openEditorList() {
 		return;
 	}
 	Shell parent = getEditorArea().getWorkbenchWindow().getShell();
-	Point point = pullDownBar.getParent().toDisplay (pullDownBar.getLocation());
 	
 	listComposite = new ViewForm(parent, SWT.BORDER);
 	listComposite.setVisible(false);
@@ -323,7 +322,7 @@ public void openEditorList() {
 	listComposite.setContent(editorListControl);
 	listComposite.pack();
 
-	setEditorListBounds(parent, point);
+	setEditorListBounds(parent);
 
 	listComposite.setVisible(true);
 	listComposite.moveAbove(null);
@@ -340,24 +339,24 @@ public void openEditorList() {
 	});
 }
 
-private void setEditorListBounds(Shell parent, Point point) {
+private void setEditorListBounds(Shell parent) {
 	final int MAX_ITEMS = 11;
 	
-	Point pullDownSize = pullDownBar.getSize();
 	Rectangle r = listComposite.getBounds();
-	point = parent.toControl(point);
+	
 	int width = r.width;
 	int height = Math.min(r.height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
-	int x = point.x - width  + pullDownSize.x;
-	int y = point.y + pullDownSize.y + 1;
-	listComposite.setBounds(listComposite.computeTrim(x, y, width, height));
+	Rectangle bounds = tabFolder.getClientArea();
+	Point point = new Point(bounds.x + bounds.width - width, bounds.y);
+	point = tabFolder.toDisplay(point);
+	point = parent.toControl(point);
+	listComposite.setBounds(listComposite.computeTrim(point.x, point.y, width, height));
 }
 
 public void resizeEditorList() {
 	Shell parent = getEditorArea().getWorkbenchWindow().getShell();
-	Point point = pullDownBar.getParent().toDisplay (pullDownBar.getLocation());
 	listComposite.pack();
-	setEditorListBounds(parent, point);
+	setEditorListBounds(parent);
 }
 /**
  * Show a title label menu for this pane.
