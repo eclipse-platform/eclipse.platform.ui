@@ -51,7 +51,7 @@ public class LaunchVariableSelectionDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
-		
+		composite.setFont(parent.getFont());
 		final Button contextVariables= createRadioButton(composite, LaunchVariableMessages.getString("VariableSelectionDialog.1")); //$NON-NLS-1$
 		contextVariables.setSelection(true);
 		contextVariables.addSelectionListener(new SelectionAdapter() {
@@ -88,6 +88,7 @@ public class LaunchVariableSelectionDialog extends SelectionDialog {
 	protected Button createRadioButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.RADIO);
 		button.setText(label);
+		button.setFont(parent.getFont());
 		button.setLayoutData(new GridData());
 		return button;
 	}
@@ -96,6 +97,7 @@ public class LaunchVariableSelectionDialog extends SelectionDialog {
 		formComposite= new Composite(parent, SWT.NONE);
 		formComposite.setLayout(new GridLayout());
 		formComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		formComposite.setFont(parent.getFont());
 		form= new LaunchConfigurationVariableForm(LaunchVariableMessages.getString("VariableSelectionDialog.3"), variables); //$NON-NLS-1$
 		form.createContents(formComposite, new IVariableComponentContainer() {
 			
