@@ -29,12 +29,13 @@ import org.eclipse.ui.tests.util.EmptyPerspective;
  */
 class WorkbenchPerformanceSuite extends TestSuite {
 
+	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
     // Note: to test perspective switching properly, we need perspectives with lots of
     // associated actions. 
     public static final String [] PERSPECTIVE_IDS = {
         EmptyPerspective.PERSP_ID2,
         UIPerformanceTestSetup.PERSPECTIVE, 
-        "org.eclipse.ui.resourcePerspective",
+        RESOURCE_PERSPID,
         "org.eclipse.jdt.ui.JavaPerspective", 
         "org.eclipse.debug.ui.DebugPerspective"};
     
@@ -46,7 +47,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
         
         // Test switching between two perspectives with lots of actions but some commonality
         {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"},
-        {"org.eclipse.ui.resourcePerspective", "org.eclipse.jdt.ui.JavaPerspective", "1.java"} 
+        {RESOURCE_PERSPID, "org.eclipse.jdt.ui.JavaPerspective", "1.java"} 
     };
     
     public static final String[] VIEW_IDS = {
@@ -71,6 +72,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
         addWindowOpenCloseScenarios();
+        addWindowResizeSwitchScenarios();
     }
 
     /**
@@ -99,6 +101,16 @@ class WorkbenchPerformanceSuite extends TestSuite {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
             addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i]));            
         }   
+    }
+    
+    /**
+     * add a single fingerprint test for window resize
+     */
+    private void addWindowResizeSwitchScenarios() {
+    	if (PERSPECTIVE_IDS.length == 0)
+    		return;
+    	
+        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}));
     }
     
     /**
