@@ -593,7 +593,7 @@ public class AntClasspathBlock {
 				invalid= false;
 			}
 		} else {			
-			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.7")); //$NON-NLS-1$
+			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.57")); //$NON-NLS-1$
 		}
 		if (invalid) {
 			setValidated();
