@@ -143,14 +143,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
 
-		Label titleLabel = new Label(composite, SWT.NONE);
-		titleLabel.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
-
-		Composite buttonComposite = new Composite(composite, SWT.LEFT);
+		Group buttonComposite = new Group(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
+		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
 
 		//Open New Page button
 		this.openProjectInNewPageButton = createRadioButton(buttonComposite, OPEN_NEW_PAGE_PROJECT_LABEL);
