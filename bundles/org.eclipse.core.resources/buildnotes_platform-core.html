@@ -4,6 +4,35 @@
    <title>Eclipse Platform Release Notes Core</title>
 </head>
 <body>
+<hr>
+<h1>Eclipse Platform Build Notes<br>
+Core</h1>
+Eclipse SDK Build 20030113
+
+<h2>What's new in this drop</h2>
+
+<h3>API changes</h3>
+<ul>
+  <li>New API for more efficient visiting of resource trees.  This new visitor mechanism allows clients
+  to traverse resource trees very quickly, by avoiding the creation of unnecessary objects during the
+  traversal.  See the new types <code>org.eclipse.core.resources.IResourceProxyVisitor</code> and
+  <code>org.eclipse.core.resources.IResourceProxy</code>, and the corresponding new accept methods 
+  on <code>org.eclipse.core.resources.IResource</code>.</li>
+</ul>
+
+<h3>Other highlights</h3>
+<ul>
+<li>None.
+</ul>
+
+<h3>Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2002%2F12%2F10&chfieldto=2002%2F12%2F17&chfieldvalue=&cmdtype=doit&namedcmd=core-later&newqueryname=&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
 
 <hr>
 <h1>Eclipse Platform Build Notes<br>
