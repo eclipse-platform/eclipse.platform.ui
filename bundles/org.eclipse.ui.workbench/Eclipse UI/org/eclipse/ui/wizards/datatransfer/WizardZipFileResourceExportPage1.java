@@ -299,4 +299,11 @@ class WizardZipFileResourceExportPage1
 				settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
+	 */
+	protected String destinationEmptyMessage() {
+		return DataTransferMessages.getString("ZipExport.destinationEmpty"); //$NON-NLS-1$
+	}
+
 }

@@ -46,7 +46,6 @@ class WizardFileSystemResourceExportPage1
 	private static final String STORE_CREATE_STRUCTURE_ID =
 		"WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID";	//$NON-NLS-1$
 	//messages
-	private static final String DESTINATION_EMPTY_MESSAGE = DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
 	private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.getString("FileExport.selectDestinationMessage"); //$NON-NLS-1$
 	private static final String SELECT_DESTINATION_TITLE = DataTransferMessages.getString("FileExport.selectDestinationTitle"); //$NON-NLS-1$
 	/**
@@ -398,7 +397,7 @@ class WizardFileSystemResourceExportPage1
 	protected boolean validateDestinationGroup() {
 		String destinationValue = getDestinationValue();
 		if (destinationValue.length() == 0) {
-			setMessage(DESTINATION_EMPTY_MESSAGE);
+			setMessage(destinationEmptyMessage());
 			return false;
 		}
 
@@ -414,6 +413,13 @@ class WizardFileSystemResourceExportPage1
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Get the message used to denote an empty destination.
+	 */
+	protected String destinationEmptyMessage(){
+		return DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
 	}
 
 	/**
