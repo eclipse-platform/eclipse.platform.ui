@@ -197,20 +197,20 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 					if (remote == null) {
 						description = CONFLICTING | DELETION | PSEUDO_CONFLICT;
 					} else {
-						if (compare(granularity, isOutOfDate, base, remote))
+						if (compare(granularity, !isOutOfDate, base, remote))
 							description = OUTGOING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					}
 				} else {
 					if (remote == null) {
-						if (compare(granularity, isDirty, local, base))
+						if (compare(granularity, !isDirty, local, base))
 							description = INCOMING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					} else {
-						boolean ay = compare(granularity, isDirty, local, base);
-						boolean am = compare(granularity, isOutOfDate, base, remote);
+						boolean ay = compare(granularity, !isDirty, local, base);
+						boolean am = compare(granularity, !isOutOfDate, base, remote);
 						if (ay && am) {
 							;
 						} else if (ay && !am) {
@@ -275,18 +275,26 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 */
 	private boolean compare(int granularity, boolean timestampDiff, InputStream is1, InputStream is2) {
 		if (granularity == GRANULARITY_CONTENTS) {
-			return timestampDiff || contentsEqual(is1, is2);
+			return contentsEqual(is1, is2);
 		} else {
 			return timestampDiff;
 		}
 	}
 	
 	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
-		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		if (granularity == GRANULARITY_CONTENTS) {
+			return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		} else {
+			return timestampDiff;
+		}
 	}
 	
 	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
-		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		if (granularity == GRANULARITY_CONTENTS) {
+			return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+		} else {
+			return timestampDiff;
+		}
 	}
 	
 	private InputStream getContents(IResource resource) {
