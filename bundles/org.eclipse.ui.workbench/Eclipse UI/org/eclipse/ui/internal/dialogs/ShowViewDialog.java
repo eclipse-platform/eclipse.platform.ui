@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -22,20 +23,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
@@ -45,19 +41,15 @@ import org.eclipse.ui.internal.registry.ViewRegistry;
  * The Show View dialog.
  */
 public class ShowViewDialog
-	extends org.eclipse.jface.dialogs.Dialog
+	extends Dialog
 	implements ISelectionChangedListener, IDoubleClickListener {
 
 	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog"; //$NON-NLS-1$
 	private static final int LIST_HEIGHT = 300;
 	private static final int LIST_WIDTH = 250;
-	private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
-	private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME + ".SHOW_ALL_SELECTED"; //$NON-NLS-1$    
-	private TreeViewer filteredTree, unfilteredTree;
+	private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$    
+	private TreeViewer tree;
 	private Button okButton;
-	private StackLayout stackLayout;
-	private Composite stackComposite;
-	private Button showAllCheck;
 	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 	private IViewRegistry viewReg;
 
@@ -131,52 +123,12 @@ public class ShowViewDialog
 	protected Control createDialogArea(Composite parent) {
 		// Run super.
 		Composite composite = (Composite) super.createDialogArea(parent);
-		composite.setFont(parent.getFont());
+		composite.setFont(parent.getFont());		
 
-		stackComposite = new Composite(composite, SWT.NONE);
-		stackLayout = new StackLayout();
-		stackComposite.setLayout(stackLayout);
+		createViewer(composite);
+
+		layoutTopControl(tree.getControl());		
 		
-		stackComposite.setFont(parent.getFont());
-
-		layoutTopControl(stackComposite);
-
-		// Add filtered view list.
-		filteredTree = createViewer(stackComposite, true);
-		
-		if (WorkbenchActivityHelper.showAll()) {
-			unfilteredTree = createViewer(stackComposite, false);
-			showAllCheck = new Button(composite, SWT.CHECK);
-			showAllCheck.setText(ActivityMessages.getString("ActivityFiltering.showAll")); //$NON-NLS-1$
-			
-			// flipping tabs updates the selected node
-			showAllCheck.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (!showAllCheck.getSelection()) {
-					    filteredTree.setExpandedElements(unfilteredTree.getExpandedElements());
-					    filteredTree.setSelection(unfilteredTree.getSelection());
-						stackLayout.topControl = filteredTree.getControl();	
-						stackComposite.layout();
-						selectionChanged(
-							new SelectionChangedEvent(
-								filteredTree,
-								filteredTree.getSelection()));
-					} else {
-					    unfilteredTree.setExpandedElements(filteredTree.getExpandedElements());
-					    unfilteredTree.setSelection(filteredTree.getSelection());
-						stackLayout.topControl = unfilteredTree.getControl();
-						stackComposite.layout();
-						selectionChanged(
-							new SelectionChangedEvent(
-								unfilteredTree,
-								unfilteredTree.getSelection()));
-					}
-				}
-			});
-			
-		}
-		stackLayout.topControl = filteredTree.getControl();
-
 		// Restore the last state
 		restoreWidgetValues();
 
@@ -188,24 +140,19 @@ public class ShowViewDialog
 	 * Create a new viewer in the parent.
 	 * 
 	 * @param parent the parent <code>Composite</code>.
-	 * @param filtering whether the viewer should be filtering based on
-	 *            activities.
-	 * @return <code>TreeViewer</code>
 	 */
-	private TreeViewer createViewer(Composite parent, boolean filtering) {
-		TreeViewer tree =
+	private void createViewer(Composite parent) {
+		tree =
 			new TreeViewer(
 				parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		tree.setLabelProvider(new ViewLabelProvider());
-		tree.setContentProvider(new ViewContentProvider(filtering));
+		tree.setContentProvider(new ViewContentProvider());
 		tree.setSorter(new ViewSorter((ViewRegistry) viewReg));
 		tree.setInput(viewReg);
 		tree.addSelectionChangedListener(this);
 		tree.addDoubleClickListener(this);
 		tree.getTree().setFont(parent.getFont());
-
-		return tree;
 	}
 
 	/*
@@ -214,13 +161,6 @@ public class ShowViewDialog
 	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 	 */
 	public void doubleClick(DoubleClickEvent event) {
-		TreeViewer tree = null;
-		if (event.getViewer() instanceof TreeViewer)
-			tree = (TreeViewer) event.getViewer();
-
-		if (tree == null)
-			return;
-
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (tree.isExpandable(element)) {
@@ -230,29 +170,6 @@ public class ShowViewDialog
 			setReturnCode(OK);
 			close();
 		}
-	}
-
-	/**
-	 * Expand categories for a given <code>TreeViewer</code>
-	 * 
-	 * @param expandedCategoryIds the categories to expand
-	 * @param tree the <code>TreeViewer</code> to expand
-	 */
-	private void expandTree(String[] expandedCategoryIds, TreeViewer tree) {
-		if (expandedCategoryIds == null)
-			return;
-
-		ViewRegistry reg = (ViewRegistry) viewReg;
-		ArrayList categoriesToExpand =
-			new ArrayList(expandedCategoryIds.length);
-		for (int i = 0; i < expandedCategoryIds.length; i++) {
-			Category category = reg.findCategory(expandedCategoryIds[i]);
-			if (category != null) // ie.- it still exists
-				categoriesToExpand.add(category);
-		}
-
-		if (!categoriesToExpand.isEmpty())
-			tree.setExpandedElements(categoriesToExpand.toArray());
 	}
 
 	/**
@@ -295,47 +212,21 @@ public class ShowViewDialog
 	protected void restoreWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 
-		expandTree(
-			settings.getArray(STORE_EXPANDED_CATEGORIES_ID),
-			filteredTree);
+		String [] expandedCategoryIds = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
+		if (expandedCategoryIds == null)
+			return;
 
-		if (unfilteredTree != null) {
-			expandTree(
-				settings.getArray(STORE_EXPANDED_CATEGORIES_ID),
-				filteredTree);
-		    
-			boolean unfilteredSelected =
-				getDialogSettings().getBoolean(SHOW_ALL_ENABLED);
-
-			showAllCheck.setSelection(unfilteredSelected);
-			
-			if (unfilteredSelected) {
-				stackLayout.topControl = unfilteredTree.getControl();
-				stackComposite.layout();
-			}
+		ViewRegistry reg = (ViewRegistry) viewReg;
+		ArrayList categoriesToExpand =
+			new ArrayList(expandedCategoryIds.length);
+		for (int i = 0; i < expandedCategoryIds.length; i++) {
+			Category category = reg.findCategory(expandedCategoryIds[i]);
+			if (category != null) // ie.- it still exists
+				categoriesToExpand.add(category);
 		}
-	}
 
-	/**
-	 * Save the expanded settings for the given <code>TreeViewer</code> into
-	 * the given <code>String</code> key.
-	 * 
-	 * @param settings the <code>IDialogSettings</code> to set against
-	 * @param tree the <code>TreeViewer</code> to preserve
-	 * @param key the key to use in the <code>IDialogSettings</code>
-	 */
-	private void saveExpanded(
-		IDialogSettings settings,
-		TreeViewer tree,
-		String key) {
-		// Collect the ids of the all expanded categories
-		Object[] expandedElements = tree.getExpandedElements();
-		String[] expandedCategoryIds = new String[expandedElements.length];
-		for (int i = 0; i < expandedElements.length; ++i)
-			expandedCategoryIds[i] = ((Category) expandedElements[i]).getId();
-
-		// Save them for next time.
-		settings.put(key, expandedCategoryIds);
+		if (!categoriesToExpand.isEmpty())
+			tree.setExpandedElements(categoriesToExpand.toArray());
 	}
 
 	/**
@@ -344,25 +235,16 @@ public class ShowViewDialog
 	 */
 	protected void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
-
-		if (showAllCheck != null && showAllCheck.getSelection()) {
-			saveExpanded(
-					settings,
-					unfilteredTree,
-					STORE_EXPANDED_CATEGORIES_ID);
-		}
-		else {
-			saveExpanded(
-				settings,
-				filteredTree,
-				STORE_EXPANDED_CATEGORIES_ID);
-		}
 		
-		if (showAllCheck != null) {
-			settings.put(
-				SHOW_ALL_ENABLED,
-				showAllCheck.getSelection());
-		}
+		// Collect the ids of the all expanded categories
+		Object[] expandedElements = tree.getExpandedElements();
+		String[] expandedCategoryIds = new String[expandedElements.length];
+		for (int i = 0; i < expandedElements.length; ++i)
+			expandedCategoryIds[i] = ((Category) expandedElements[i]).getId();
+
+		// Save them for next time.
+		settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);
+		
 	}
 
 	/**
@@ -386,13 +268,6 @@ public class ShowViewDialog
 	 * Update the selection object.
 	 */
 	protected void updateSelection(SelectionChangedEvent event) {
-		TreeViewer tree = null;
-		if (event.getSelectionProvider() instanceof TreeViewer)
-			tree = (TreeViewer) event.getSelectionProvider();
-
-		if (tree == null)
-			return;
-
 		ArrayList descs = new ArrayList();
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		for (Iterator i = sel.iterator(); i.hasNext();) {

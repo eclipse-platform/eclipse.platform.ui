@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.activities.ws.FilterableObject;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -28,7 +27,6 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
  * Provides content for viewers that wish to show Views.
  */
 public class ViewContentProvider
-	extends FilterableObject
 	implements ITreeContentProvider {
     
     /**
@@ -39,12 +37,9 @@ public class ViewContentProvider
 
 	/**
 	 * Create a new instance of the ViewContentProvider.
-	 * 
-	 * @param filtering
-	 *            the initial filtering state.
 	 */
-	public ViewContentProvider(boolean filtering) {
-		super(filtering);
+	public ViewContentProvider() {
+	    //no-op
 	}
 
 	/*
@@ -100,20 +95,15 @@ public class ViewContentProvider
 		} else if (element instanceof Category) {
 			ArrayList list = ((Category) element).getElements();
 			if (list != null) {
-				if (getFiltering()) {
-					ArrayList filtered = new ArrayList();
-					for (Iterator i = list.iterator(); i.hasNext();) {
-                        Object o = i.next();
-                        if (WorkbenchActivityHelper.filterItem(o))
-							continue;
-						filtered.add(o);
-					}
-					return removeIntroView(filtered).toArray();
-				}				
-				
-				return removeIntroView(list).toArray();
+				ArrayList filtered = new ArrayList();
+				for (Iterator i = list.iterator(); i.hasNext();) {
+                    Object o = i.next();
+                    if (WorkbenchActivityHelper.filterItem(o))
+						continue;
+					filtered.add(o);
+				}
+				return removeIntroView(filtered).toArray();				
 			}
-
 		}
         
 		return new Object[0];
