@@ -147,7 +147,7 @@ public final class KeySupport {
 	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		char character = (char) event.keyCode;
+		int character = event.keyCode;
 		return modifiers + toUpperCase(character);
 	}
 
@@ -265,13 +265,14 @@ public final class KeySupport {
 	/**
 	 * Makes the given character uppercase if it is a letter.
 	 * 
-	 * @param character
+	 * @param keyCode
 	 *           The character to convert.
 	 * @return The uppercase equivalent, if any; otherwise, the character
 	 *         itself.
 	 */
-	private static char toUpperCase(char character) {
-		return Character.isLetter(character) ? Character.toUpperCase(character) : character;
+	private static int toUpperCase(int keyCode) {
+		char character = (char) keyCode;
+		return Character.isLetter(character) ? Character.toUpperCase(character) : keyCode;
 	}
 
 	private KeySupport() {

@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.internal.roles.api;
 
-import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -27,41 +26,40 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface IRoleManager {
-
-	/**
-	 * Registers an IRoleManagerListener instance with this role manager.
-	 *
-	 * @param roleManagerListener the IRoleManagerListener instance to register.
-	 */	
-	void addRoleManagerListener(IRoleManagerListener roleManagerListener);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	List getActiveRoleIds();
+public interface IRoleActivationService {
 
 	/**
 	 * JAVADOC
 	 *
 	 * @param roleId
-	 * @return
 	 */	
-	IRole getRole(String roleId);
+	void activateRole(String roleId);
 
+	/**
+	 * Registers an IRoleActivationServiceListener instance with this role activation service.
+	 *
+	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to register.
+	 */	
+	void addRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param roleId
+	 */	
+	void deactivateRole(String roleId);
+		
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedSet getDefinedRoleIds();
+	SortedSet getActiveRoleIds();
 	
 	/**
-	 * Unregisters an IRoleManagerListener instance with this role manager.
+	 * Unregisters an IRoleActivationServiceListener instance with this role activation services.
 	 *
-	 * @param roleManagerListener the IRoleManagerListener instance to unregister.
+	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to unregister.
 	 */
-	void removeRoleManagerListener(IRoleManagerListener roleManagerListener);
+	void removeRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
 }

@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.keys;
 
@@ -27,42 +27,170 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class CharacterKey extends NaturalKey {
-
+	
+	/**
+	 *
+	 */
 	private final static char BS_CHARACTER = '\b';
-	private final static CharacterKey[] CACHE = new CharacterKey[256];		
+	
+	/**
+	 *
+	 */
+	private final static CharacterKey[] CACHE = new CharacterKey[256];	
+	
+	/**
+	 *
+	 */
 	private final static char CR_CHARACTER = '\r';
+	
+	/**
+	 *
+	 */
 	private final static char DEL_CHARACTER = '\u007F';
+	
+	/**
+	 *
+	 */
 	private final static char ESC_CHARACTER = '\u001B';
+	
+	/**
+	 *
+	 */
 	private final static char FF_CHARACTER = '\f';
+	
+	/**
+	 *
+	 */
 	private final static char LF_CHARACTER = '\n';
+	
+	/**
+	 *
+	 */
 	private final static char NUL_CHARACTER = '\0';
+	
+	/**
+	 *
+	 */
 	private final static char SPACE_CHARACTER = '\u0020';
+	
+	/**
+	 *
+	 */
 	private final static char TAB_CHARACTER = '\t';
+	
+	/**
+	 *
+	 */
 	private final static char VT_CHARACTER = '\u000B';	
 	
+	/**
+	 *
+	 */
 	public final static CharacterKey BS = CharacterKey.getInstance(BS_CHARACTER); 
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey CR = CharacterKey.getInstance(CR_CHARACTER); 
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey DEL = CharacterKey.getInstance(DEL_CHARACTER); 
-	public final static CharacterKey ESC = CharacterKey.getInstance(ESC_CHARACTER); 
-	public final static CharacterKey FF = CharacterKey.getInstance(FF_CHARACTER); 
+	
+	/**
+	 *
+	 */
+	public final static CharacterKey ESC = CharacterKey.getInstance(ESC_CHARACTER);
+	
+	/**
+	 *
+	 */
+	public final static CharacterKey FF = CharacterKey.getInstance(FF_CHARACTER);
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey LF = CharacterKey.getInstance(LF_CHARACTER); 
-	public final static CharacterKey NUL = CharacterKey.getInstance(NUL_CHARACTER); 
+	
+	/**
+	 *
+	 */
+	public final static CharacterKey NUL = CharacterKey.getInstance(NUL_CHARACTER);
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey SPACE = CharacterKey.getInstance(SPACE_CHARACTER); 
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey TAB = CharacterKey.getInstance(TAB_CHARACTER); 
+	
+	/**
+	 *
+	 */
 	public final static CharacterKey VT = CharacterKey.getInstance(VT_CHARACTER); 
 	
+	/**
+	 *
+	 */
 	private final static String BS_NAME = "BS"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String CR_NAME = "CR"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String DEL_NAME = "DEL"; //$NON-NLS-1$
-	private final static String ESC_NAME = "ESC"; //$NON-NLS-1$	
+	
+	/**
+	 *
+	 */
+	private final static String ESC_NAME = "ESC"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String FF_NAME = "FF"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String LF_NAME = "LF"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String NUL_NAME = "NUL"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(CharacterKey.class.getName());
+	
+	/**
+	 *
+	 */
 	private final static String SPACE_NAME = "SPACE"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String TAB_NAME = "TAB"; //$NON-NLS-1$
+	
+	/**
+	 *
+	 */
 	private final static String VT_NAME = "VT"; //$NON-NLS-1$
 
+	/**
+	 *
+	 */
 	private final char character;
 	
 	/**
@@ -133,11 +261,24 @@ public final class CharacterKey extends NaturalKey {
 			return new CharacterKey(character, name);
 	}
 
+	/**
+	 * Constructs an instance of CharacterKey for a specific unicode character.
+	 * This constructor also expects a formal name for this key which must be 
+	 * unique across all instances of Key.
+	 * 
+	 * @param character	The unicode character this object represents.
+	 * @param name		The unique formal name of this key. In most cases this
+	 * 					will be a string of one character in length , equal to 
+	 * 					the unicode character that   
+	 */
 	private CharacterKey(char character, String name) {
 		super(name);
 		this.character = character;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.keys.Key#format()
+	 */
 	public String format() {
 		// TODO consider platform-specific resource bundles		
 		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
@@ -154,6 +295,11 @@ public final class CharacterKey extends NaturalKey {
 		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
 	}
 	
+	/**
+	 * Gets the character that this object represents.
+	 * 
+	 * @return the character that this object represents.
+	 */
 	public char getCharacter() {
 		return character;
 	}

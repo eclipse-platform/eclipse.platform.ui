@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.internal.roles.api;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,12 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public interface IRoleListener {
+public interface IRoleActivationServiceEvent {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param roleEvent
-	 */
-	void roleChanged(IRoleEvent roleEvent);
+	 * @return
+	 */	
+	IRoleActivationService getRoleActivationService();
 }

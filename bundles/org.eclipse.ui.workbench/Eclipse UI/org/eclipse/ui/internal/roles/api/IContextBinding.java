@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.internal.roles.api;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This class is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,20 +24,12 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public class NotDefinedException extends Exception {
+public interface IContextBinding extends Comparable {
 
 	/**
 	 * JAVADOC
+	 * 
+	 * @return
 	 */	
-	public NotDefinedException() {
-	}
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param s
-	 */	
-	public NotDefinedException(String s) {
-		super(s);
-	}
+	String getContextId();
 }

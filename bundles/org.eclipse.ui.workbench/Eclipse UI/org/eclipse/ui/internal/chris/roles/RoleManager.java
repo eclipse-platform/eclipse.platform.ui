@@ -32,10 +32,10 @@ import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistry;
 import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryEvent;
 import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryListener;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
-import org.eclipse.ui.roles.IRoleManagerEvent;
-import org.eclipse.ui.roles.IRoleManagerListener;
+import org.eclipse.ui.internal.roles.api.IRole;
+import org.eclipse.ui.internal.roles.api.IRoleManager;
+import org.eclipse.ui.internal.roles.api.IRoleManagerEvent;
+import org.eclipse.ui.internal.roles.api.IRoleManagerListener;
 
 public final class RoleManager implements IRoleManager {
 

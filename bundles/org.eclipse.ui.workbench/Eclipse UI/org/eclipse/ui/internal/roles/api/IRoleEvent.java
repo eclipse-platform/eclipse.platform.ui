@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.internal.roles.api;
 
 /**
  * <p>
@@ -24,12 +24,12 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public interface IRoleActivationServiceEvent {
+public interface IRoleEvent {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IRoleActivationService getRoleActivationService();
+	IRole getRole();
 }

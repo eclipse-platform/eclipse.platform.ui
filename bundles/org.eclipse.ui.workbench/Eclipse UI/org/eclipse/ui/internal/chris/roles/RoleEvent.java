@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.chris.roles;
 
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleEvent;
+import org.eclipse.ui.internal.roles.api.IRole;
+import org.eclipse.ui.internal.roles.api.IRoleEvent;
 
 final class RoleEvent implements IRoleEvent {
 

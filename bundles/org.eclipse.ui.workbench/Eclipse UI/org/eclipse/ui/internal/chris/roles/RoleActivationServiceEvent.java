@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.chris.roles;
 
-import org.eclipse.ui.roles.IRoleActivationService;
-import org.eclipse.ui.roles.IRoleActivationServiceEvent;
+import org.eclipse.ui.internal.roles.api.IRoleActivationService;
+import org.eclipse.ui.internal.roles.api.IRoleActivationServiceEvent;
 
 final class RoleActivationServiceEvent implements IRoleActivationServiceEvent {
 
