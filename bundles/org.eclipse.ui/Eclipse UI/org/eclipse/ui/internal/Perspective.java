@@ -726,12 +726,14 @@ public void restoreState(IMemento memento) {
 	}	
 	this.memento = memento;
 	// Add the visible views.
-	IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	IMemento[] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
 	createReferences(views);
 	
 	memento = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-	views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	createReferences(views);	
+	if(memento != null) {
+		IMemento[] fastViews = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+		createReferences(fastViews);
+	}
 }
 private void createReferences(IMemento views[]) {
 	for (int x = 0; x < views.length; x ++) {
@@ -788,7 +790,6 @@ public void restoreState() {
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 
-		// Create and open the view.
 		IViewReference ref = viewFactory.getView(viewID);
 		if(ref == null) {
 			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
