@@ -20,7 +20,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public final class ContentType implements IContentType {
-	private static final String DESCRIBER_ELEMENT = "describer"; //$NON-NLS-1$
 
 	/* A placeholder for missing/invalid describers. */
 	private class InvalidDescriber implements IContentDescriber {
@@ -35,11 +34,12 @@ public final class ContentType implements IContentType {
 
 	final static byte ASSOCIATED_BY_EXTENSION = 2;
 	final static byte ASSOCIATED_BY_NAME = 1;
+	private static final String DESCRIBER_ELEMENT = "describer"; //$NON-NLS-1$
+	final static byte NOT_ASSOCIATED = 0;
 
 	final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$	
 	final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
 	final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
-	final static byte NOT_ASSOCIATED = 0;
 	final static byte PRIORITY_HIGH = 1;
 	final static byte PRIORITY_LOW = -1;
 	final static byte PRIORITY_NORMAL = 0;
@@ -53,6 +53,7 @@ public final class ContentType implements IContentType {
 	private IContentType[] children;
 	private IConfigurationElement contentTypeElement;
 	private String defaultCharset;
+	private IContentDescription defaultDescription;
 	private IContentDescriber describer;
 	private List fileSpecs;
 	private ContentTypeManager manager;
@@ -61,7 +62,6 @@ public final class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation;
-	private IContentDescription defaultDescription;
 
 	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(manager);
@@ -241,6 +241,12 @@ public final class ContentType implements IContentType {
 		String currentCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, internalGetDefaultCharset());
 		// an empty string as charset means: no default charset
 		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
+	}
+
+	public IContentDescription getDefaultDescription() {
+		if (aliasTarget != null)
+			return getTarget().getDefaultDescription();
+		return defaultDescription;
 	}
 
 	public int getDepth() {
@@ -460,12 +466,6 @@ public final class ContentType implements IContentType {
 		return describer = new InvalidDescriber();
 	}
 
-	private void log(String message, Throwable reason) {
-		// don't log CoreExceptions again
-		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
-		InternalPlatform.getDefault().log(status);
-	}
-
 	public boolean isAssociatedWith(String fileName) {
 		return internalIsAssociatedWith(fileName) != NOT_ASSOCIATED;
 	}
@@ -486,6 +486,12 @@ public final class ContentType implements IContentType {
 
 	boolean isValid() {
 		return validation == STATUS_VALID;
+	}
+
+	private void log(String message, Throwable reason) {
+		// don't log CoreExceptions again
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
+		InternalPlatform.getDefault().log(status);
 	}
 
 	public synchronized void removeFileSpec(String fileSpec, int type) throws CoreException {
@@ -541,11 +547,5 @@ public final class ContentType implements IContentType {
 
 	public String toString() {
 		return getId();
-	}
-
-	public IContentDescription getDefaultDescription() {
-		if (aliasTarget != null)
-			return getTarget().getDefaultDescription();
-		return defaultDescription;
 	}
 }

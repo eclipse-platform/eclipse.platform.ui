@@ -18,11 +18,21 @@ import org.eclipse.core.runtime.content.*;
 import org.osgi.service.prefs.Preferences;
 
 public class ContentTypeManager implements IContentTypeManager {
-	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
+
+	private final static class UncloseableArrayReader extends CharArrayReader {
+		public UncloseableArrayReader(char[] buf, int offset, int length) {
+			super(buf, offset, length);
+		}
+
+		public void close() {
+			// don't do anything on close
+		}
+	}
+	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
+	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
 	private static ContentTypeManager instance;
 	private static final int MARK_LIMIT = 0x400;
-	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;
-	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));	
 
 	private ContentTypeBuilder builder;
 	private Map catalog = new HashMap();
@@ -92,7 +102,7 @@ public class ContentTypeManager implements IContentTypeManager {
 				contents.mark(MARK_LIMIT);
 			char[] buffer = new char[MARK_LIMIT];
 			int read = contents.read(buffer);
-			return read == -1 ? null : new CharArrayReader(buffer, 0, read);
+			return read == -1 ? null : new UncloseableArrayReader(buffer, 0, read);
 		} catch (IOException ioe) {
 			failed = true;
 			throw ioe;
