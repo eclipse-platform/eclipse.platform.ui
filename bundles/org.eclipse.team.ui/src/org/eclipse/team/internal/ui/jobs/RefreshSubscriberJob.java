@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.jobs;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -30,7 +31,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * 
  * There can be several refresh jobs created but they will be serialized.
  */
-public class RefreshSubscriberJob extends Job {
+public class RefreshSubscriberJob extends WorkspaceJob {
 	
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
@@ -118,7 +119,7 @@ public class RefreshSubscriberJob extends Job {
 	 * This is run by the job scheduler. A list of subscribers will be refreshed, errors will not stop the job 
 	 * and it will continue to refresh the other subscribers.
 	 */
-	public IStatus run(IProgressMonitor monitor) {		
+	public IStatus runInWorkspace(IProgressMonitor monitor) {		
 		MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("Team.errorRefreshingSubscribers"), null); //$NON-NLS-1$
 		TeamSubscriber subscriber = getSubscriber();
 		IResource[] roots = getResources();
