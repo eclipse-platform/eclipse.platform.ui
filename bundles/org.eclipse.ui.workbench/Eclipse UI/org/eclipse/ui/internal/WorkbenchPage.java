@@ -1423,7 +1423,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Fire part open out.
 	 */
 	public void firePartOpened(IWorkbenchPart part) {
-		String label = "deactivate" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+		String label = "opened" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
 			partListeners.firePartOpened(part);
@@ -1721,6 +1721,50 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		return viewFactory;
 	}
 
+	/**
+	 * Returns all parts that are owned by this page
+	 * 
+	 * @return
+	 */
+	IWorkbenchPartReference[] getAllParts() {
+		IViewReference[] views = viewFactory.getViews();
+		IEditorReference[] editors = getEditorReferences();
+		
+		IWorkbenchPartReference[] result = new IWorkbenchPartReference[views.length + editors.length];
+		int resultIdx = 0;
+		
+		for (int i = 0; i < views.length; i++) {
+			result[resultIdx++] = views[i];
+		}
+		
+		for (int i = 0; i < editors.length; i++) {
+			result[resultIdx++] = editors[i];
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns all open parts that are owned by this page (that is, all parts
+	 * for which a part opened event would have been sent -- these would be
+	 * activated parts whose controls have already been created.
+	 */
+	IWorkbenchPartReference[] getOpenParts() {
+		IWorkbenchPartReference[] refs = getAllParts();
+		List result = new ArrayList();
+		
+		for (int i = 0; i < refs.length; i++) {
+			IWorkbenchPartReference reference = refs[i];
+			
+			IWorkbenchPart part = reference.getPart(false);
+			if (part != null) {
+				result.add(reference);
+			}
+		}
+		
+		return (IWorkbenchPartReference[]) result.toArray(new IWorkbenchPartReference[result.size()]);
+	}
+	
 	/**
 	 * See IWorkbenchPage.
 	 */

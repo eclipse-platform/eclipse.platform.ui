@@ -1369,13 +1369,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			WorkbenchPage newPage = null;
 			try {
 				newPage = new WorkbenchPage(this, input);
-				/*
-				 * TODO Bug 67590. This a hack for the 3.0.1 stream. It fixes
-				 * the symptom, but does not fix the root problem. Part service
-				 * will get special treatment, and be notified of the page
-				 * opening prematurely.
-				 */
-				partService.pageOpened(newPage);
 				result.add(newPage.restoreState(pageMem, activeDescriptor));
 				pageList.add(newPage);
 				firePageOpened(newPage);

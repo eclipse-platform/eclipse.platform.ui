@@ -22,44 +22,19 @@ public class WWinPartService implements IPartService {
 	private IWorkbenchPage activePage;
 	private IPartListener2 partListner = new IPartListener2() {
 		public void partActivated(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
-			if(part != null) {
-				listeners.firePartActivated(part);
-				selectionService.partActivated(part);
-			}
-			listeners2.firePartActivated(ref);	
+			firePartActivated(ref);	
 		}
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
-			if(part != null) {
-				listeners.firePartBroughtToTop(part);
-				selectionService.partBroughtToTop(part);
-			}
-			listeners2.firePartBroughtToTop(ref);	
+			firePartBroughtToTop(ref);	
 		}
 		public void partClosed(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
-			if(part != null) {
-				listeners.firePartClosed(part);
-				selectionService.partClosed(part);
-			}
-			listeners2.firePartClosed(ref);	
+			firePartClosed(ref);	
 		}
 		public void partDeactivated(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
-			if(part != null) {
-				listeners.firePartDeactivated(part);
-				selectionService.partDeactivated(part);
-			}
-			listeners2.firePartDeactivated(ref);	
+			firePartDeactivated(ref);	
 		}
 		public void partOpened(IWorkbenchPartReference ref) {
-			IWorkbenchPart part = ref.getPart(false);
-			if(part != null) {
-				listeners.firePartOpened(part);
-				selectionService.partOpened(part);
-			}
-			listeners2.firePartOpened(ref);	
+			firePartOpened(ref);	
 		}
 		public void partHidden(IWorkbenchPartReference ref) {
 			listeners2.firePartHidden(ref);	
@@ -147,7 +122,15 @@ void pageActivated(IWorkbenchPage newPage) {
 	activePage = newPage;
 
 	// Hook listener on the new page.
-	if (activePage != null) {
+	if (activePage != null) {		
+		IWorkbenchPartReference[] refs = ((WorkbenchPage)activePage).getOpenParts(); 
+		
+		for (int i = 0; i < refs.length; i++) {
+			IWorkbenchPartReference reference = refs[i];
+			
+			firePartOpened(reference);
+		}
+		
 		activePage.addPartListener(partListner);
 		if (getActivePart() != null)
 			partListner.partActivated(getActivePartReference());
@@ -168,15 +151,82 @@ void pageClosed(IWorkbenchPage page) {
 void pageOpened(IWorkbenchPage page) {
 	pageActivated(page);
 }
+
 /*
  * Resets the part service.  The active page, part and selection are
  * dereferenced.
  */
 private void reset() {
+	
 	if (activePage != null) {
+		IWorkbenchPartReference[] refs = ((WorkbenchPage)activePage).getOpenParts(); 
+		
+		for (int i = 0; i < refs.length; i++) {
+			IWorkbenchPartReference reference = refs[i];
+			
+			firePartClosed(reference);
+		}
+		
 		activePage.removePartListener(partListner);
 		activePage = null;
 	}
 	selectionService.reset();
+}
+/**
+ * @param ref
+ */
+private void firePartActivated(IWorkbenchPartReference ref) {
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {
+		listeners.firePartActivated(part);
+		selectionService.partActivated(part);
+	}
+	listeners2.firePartActivated(ref);
+}
+/**
+ * @param ref
+ */
+private void firePartBroughtToTop(IWorkbenchPartReference ref) {
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {
+		listeners.firePartBroughtToTop(part);
+		selectionService.partBroughtToTop(part);
+	}
+	listeners2.firePartBroughtToTop(ref);
+}
+/**
+ * @param ref
+ */
+private void firePartClosed(IWorkbenchPartReference ref) {
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {
+		listeners.firePartClosed(part);
+		selectionService.partClosed(part);
+	}
+	listeners2.firePartClosed(ref);
+}
+/**
+ * @param ref
+ */
+private void firePartDeactivated(IWorkbenchPartReference ref) {
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {
+		listeners.firePartDeactivated(part);
+		selectionService.partDeactivated(part);
+	}
+	listeners2.firePartDeactivated(ref);
+}
+/**
+ * @param ref
+ */
+private void firePartOpened(IWorkbenchPartReference ref) {
+
+	
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {		
+		listeners.firePartOpened(part);
+		selectionService.partOpened(part);
+	}
+	listeners2.firePartOpened(ref);
 }
 }

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
@@ -58,6 +59,16 @@ public class EditorStack extends PartStack {
         this.page = page;
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.presentations.StackPresentation)
+	 */
+	public void createControl(Composite parent, StackPresentation presentation) {
+		super.createControl(parent, presentation);
+		
+		// Hack from Eclipse 2.1.3 to force initialization of the active editor
+		setSelection(getVisiblePart());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartStack#getPage()
 	 */
@@ -166,6 +177,25 @@ public class EditorStack extends PartStack {
         return (EditorPane) getVisiblePart();
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#setSelection(org.eclipse.ui.internal.LayoutPart)
+	 */
+	public void setSelection(LayoutPart part) {
+		// Hack from Eclipse 2.1.3 to force initialization of the active editor
+		if (!isDisposed() && part instanceof PartPane) {
+			Object result = ((PartPane)part).getPartReference().getPart(true);
+			if (result == null) {
+				part = null;
+			}
+		}
+		
+		if (getVisiblePart() == part) {
+			return;
+		}
+		
+		super.setSelection(part);
+	}
+	
     public void setVisibleEditor(EditorPane editorPane) {
         setSelection(editorPane);
     }

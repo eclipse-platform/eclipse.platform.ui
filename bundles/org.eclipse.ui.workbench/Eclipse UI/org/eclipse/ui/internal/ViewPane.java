@@ -128,6 +128,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		if (control == null)
 			return;
 
+		// Make sure the child control has not been created yet
+		if(control.getChildren().length != 0)
+			return;
+		
 		super.createChildControl();
 
 		Platform.run(new SafeRunnable() {
