@@ -51,18 +51,18 @@ public class SpellingService {
 	 */
 	public static final String PREFERENCE_SPELLING_ENGINE= "spellingEngine"; //$NON-NLS-1$
 	
-	/** Spelling service singleton */
-	private static SpellingService fgSpellingService;
+	/** Preferences */
+	private IPreferenceStore fPreferences;
 	
 	/**
-	 * Return the spelling service singleton.
+	 * Initializes the spelling service with the given preferences.
 	 * 
-	 * @return the spelling service singleton
+	 * @param preferences the preferences
+	 * @see SpellingService#PREFERENCE_SPELLING_ENABLED
+	 * @see SpellingService#PREFERENCE_SPELLING_ENGINE
 	 */
-	public static SpellingService getDefault() {
-		if (fgSpellingService == null)
-			fgSpellingService= new SpellingService();
-		return fgSpellingService;
+	public SpellingService(IPreferenceStore preferences) {
+		fPreferences= preferences;
 	}
 
 	/**
@@ -74,12 +74,9 @@ public class SpellingService {
 	 * @param context the context
 	 * @param collector the problem collector
 	 * @param monitor the progress monitor, can be <code>null</code>
-	 * @param preferences the preferences
-	 * @see SpellingService#PREFERENCE_SPELLING_ENABLED
-	 * @see SpellingService#PREFERENCE_SPELLING_ENGINE
 	 */
-	public void check(IDocument document, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor, IPreferenceStore preferences) {
-		check(document, new IRegion[] { new Region(0, document.getLength()) }, context, collector, monitor, preferences);
+	public void check(IDocument document, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
+		check(document, new IRegion[] { new Region(0, document.getLength()) }, context, collector, monitor);
 	}
 
 	/**
@@ -92,16 +89,13 @@ public class SpellingService {
 	 * @param context the context
 	 * @param collector the problem collector
 	 * @param monitor the progress monitor, can be <code>null</code>
-	 * @param preferences the preferences
-	 * @see SpellingService#PREFERENCE_SPELLING_ENABLED
-	 * @see SpellingService#PREFERENCE_SPELLING_ENGINE
 	 */
-	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor, IPreferenceStore preferences) {
+	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
 		try {
 			collector.beginReporting();
-			if (preferences.getBoolean(PREFERENCE_SPELLING_ENABLED))
+			if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED))
 				try {
-					ISpellingEngine engine= createEngine(preferences);
+					ISpellingEngine engine= createEngine(fPreferences);
 					if (engine != null)
 						engine.check(document, regions, context, collector, monitor);
 				} catch (CoreException x) {
@@ -168,11 +162,5 @@ public class SpellingService {
 		if (descriptor != null)
 			return descriptor.createEngine();
 		return null;
-	}
-	
-	/**
-	 * Not intended to be instantiated by clients.
-	 */
-	private SpellingService() {
 	}
 }

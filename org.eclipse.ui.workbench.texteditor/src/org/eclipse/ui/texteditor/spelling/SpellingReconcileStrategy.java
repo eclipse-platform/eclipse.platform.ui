@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -49,25 +47,25 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	/** Text editor to operate on */
 	private ITextEditor fEditor;
 
-	/** Preference store to use */
-	private IPreferenceStore fPreferences;
-
 	/** Document to operate on */
 	private IDocument fDocument;
 
 	/** Progress monitor */
 	private IProgressMonitor fProgressMonitor;
+
+	/** Spelling service */
+	private SpellingService fSpellingService;
 	
 	/**
 	 * Configures this strategy with the given editor and
 	 * preferences.
 	 * 
 	 * @param editor the text editor to operate on
-	 * @param preferences the preference store to get the preferences from
+	 * @param spellingService the spelling service to use
 	 */
-	public SpellingReconcileStrategy(ITextEditor editor, IPreferenceStore preferences) {
+	public SpellingReconcileStrategy(ITextEditor editor, SpellingService spellingService) {
 		fEditor= editor;
-		fPreferences= preferences;
+		fSpellingService= spellingService;
 	}
 
 	/*
@@ -92,7 +90,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		if (annotationModel != null) {
 			SpellingContext context= new SpellingContext();
 			context.setContentType(getContentType());
-			SpellingService.getDefault().check(fDocument, context, new DefaultSpellingProblemCollector(annotationModel), fProgressMonitor, fPreferences);
+			fSpellingService.check(fDocument, context, new DefaultSpellingProblemCollector(annotationModel), fProgressMonitor);
 		}
 	}
 

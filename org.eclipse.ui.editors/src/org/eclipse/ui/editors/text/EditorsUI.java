@@ -19,6 +19,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
  * The central class for access to this plug-in. 
@@ -137,5 +138,18 @@ public final class EditorsUI {
 	 */
 	public static Preferences getPluginPreferences() {
 		return EditorsPlugin.getDefault().getPluginPreferences();
+	}
+
+	/**
+	 * Returns the spelling service.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * </p>
+	 * 
+	 * @return the spelling service
+	 * @since 3.1
+	 */
+	public static SpellingService getSpellingService() {
+		return EditorsPlugin.getDefault().getSpellingService();
 	}
 }

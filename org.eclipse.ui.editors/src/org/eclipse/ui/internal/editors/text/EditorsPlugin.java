@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -69,6 +70,12 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	
+	/**
+	 * Spelling service.
+	 * @since 3.1
+	 */
+	private SpellingService fSpellingService;
+
 	public EditorsPlugin() {
 		Assert.isTrue(fgInstance == null);
 		fgInstance= this;
@@ -137,5 +144,17 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		fAnnotationTypeHierarchy= null;
 		
 		super.stop(context);
+	}
+
+	/**
+	 * Returns the spelling service.
+	 * 
+	 * @return the spelling service
+	 * @since 3.1
+	 */
+	public SpellingService getSpellingService() {
+		if (fSpellingService == null)
+			fSpellingService= new SpellingService(getPreferenceStore());
+		return fSpellingService;
 	}
 }
