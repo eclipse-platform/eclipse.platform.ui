@@ -169,7 +169,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			entries = prefs.getString(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES);
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
-			additionalEntries = new IAntClasspathEntry[]{getToolsJarEntry()};
+			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
+			if (toolsJarEntry != null) {
+				additionalEntries = new IAntClasspathEntry[] { toolsJarEntry };
+			}
 		} else {
 			additionalEntries = extractEntries(getArrayFromString(entries));
 		}
