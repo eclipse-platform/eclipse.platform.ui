@@ -45,74 +45,22 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
 /*
  * The page for setting the editor options.
  */
 public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	public final OverlayPreferenceStore.OverlayKey[] fKeys= new OverlayPreferenceStore.OverlayKey[] {
 		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN),
-
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_INFO_INDICATION),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_TASK_INDICATION),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION),
-
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION),
-
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION),
-
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER),
-		
-//		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER),
-	};
-	
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{TextEditorMessages.getString("TextEditorPreferencePage.lineNumberForegroundColor"), TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
 		{TextEditorMessages.getString("TextEditorPreferencePage.currentLineHighlighColor"), TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
 		{TextEditorMessages.getString("TextEditorPreferencePage.printMarginColor"), TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
 	};
 	
-	private final String[][] fAnnotationColorListModel= new String[][] {
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.errors"), TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, TextEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.warnings"), TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION, TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.infos"), TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_INFO_INDICATION, TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.tasks"), TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_TASK_INDICATION, TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.searchResults"), TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.bookmarks"), TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.annotations.others"), TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER } //$NON-NLS-1$
-	};
+	private final String[][] fAnnotationColorListModel;
 
 	private OverlayPreferenceStore fOverlayStore;
 	
@@ -151,7 +99,54 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	public TextEditorPreferencePage2() {
 		setDescription(TextEditorMessages.getString("TextEditorPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
-		fOverlayStore= new OverlayPreferenceStore(getPreferenceStore(), fKeys);
+		
+		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+		fOverlayStore= createOverlayStore(preferences);
+		fAnnotationColorListModel= createAnnotationTypeListModel(preferences);
+	}
+	
+	private OverlayPreferenceStore createOverlayStore(MarkerAnnotationPreferences preferences) {
+		
+		ArrayList overlayKeys= new ArrayList();
+		Iterator e= preferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
+		}
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		
+		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+		overlayKeys.toArray(keys);
+		return new OverlayPreferenceStore(getPreferenceStore(), keys);
+	}
+	
+	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
+		ArrayList listModelItems= new ArrayList();
+		Iterator e= preferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey()});
+		}
+		String[][] items= new String[listModelItems.size()][];
+		listModelItems.toArray(items);
+		return items;
 	}
 	
 	/*
@@ -296,12 +291,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		composite.setLayout(layout);
-				
-//		String text= TextEditorMessages.getString("TextEditorPreferencePage.analyseAnnotationsWhileTyping"); //$NON-NLS-1$
-//		addCheckBox(composite, text, TextEditorPreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, 0);
-//		
-//		addFiller(composite);
-				
+						
 		Label label= new Label(composite, SWT.LEFT);
 		label.setText(TextEditorMessages.getString("TextEditorPreferencePage.annotationPresentationOptions")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -405,15 +395,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		return composite;
 	}
-
-//	private void addFiller(Composite composite) {
-//		Label filler= new Label(composite, SWT.LEFT );
-//		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		gd.horizontalSpan= 2;
-//		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-//		filler.setLayoutData(gd);
-//	}
-	
+		
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -624,5 +606,4 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 				break;		
 		}
 	}
-	
 }

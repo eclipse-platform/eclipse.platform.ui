@@ -8,58 +8,139 @@
 
    <runtime>
       <library name="texteditor.jar">
-		<export name="*"/>
-		<packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.internal.texteditor"/>
+         <export name="*"/>
+         <packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.internal.texteditor"/>
       </library>
    </runtime>
-
    <requires>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.core.resources"/>      
+      <import plugin="org.eclipse.core.resources"/>
    </requires>
 
+
+   <extension-point id="markerAnnotationSpecification" name="Marker Annotation Specification" schema="schema/markerAnnotationSpecification.exsd"/>
+
 <!-- action definitions -->
-
-<extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition
-		id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-		name= "%goToLastEditPosition.label"
-		description="%goToLastEditPosition.description"
-	/>
-</extension>
-
-<extension point="org.eclipse.ui.acceleratorSets">
-	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-		<accelerator key="Ctrl+Q" id="org.eclipse.ui.edit.text.gotoLastEditPosition" />
-	</acceleratorSet>
-	
-	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-		<accelerator key="Ctrl+Q" id="org.eclipse.ui.edit.text.gotoLastEditPosition" />
-	</acceleratorSet>
-</extension>
-
+   <extension
+         point="org.eclipse.ui.actionDefinitions">
+      <actionDefinition
+            name="%goToLastEditPosition.label"
+            description="%goToLastEditPosition.description"
+            id="org.eclipse.ui.edit.text.gotoLastEditPosition">
+      </actionDefinition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.acceleratorSets">
+      <acceleratorSet
+            scopeId="org.eclipse.ui.globalScope"
+            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <accelerator
+               key="Ctrl+Q"
+               id="org.eclipse.ui.edit.text.gotoLastEditPosition">
+         </accelerator>
+      </acceleratorSet>
+      <acceleratorSet
+            scopeId="org.eclipse.ui.globalScope"
+            configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+         <accelerator
+               key="Ctrl+Q"
+               id="org.eclipse.ui.edit.text.gotoLastEditPosition">
+         </accelerator>
+      </acceleratorSet>
+   </extension>
 <!-- action sets -->
-
-<extension point="org.eclipse.ui.actionSets">
-	<actionSet
-		id="org.eclipse.ui.edit.text.actionSet.navigation"
-        label="%textEditorNavigationActionSet.label"
-		visible="true">
-
-		<action id="gotoLastEditPosition"
-			definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"	
-			menubarPath="navigate/"
-			label="%goToLastEditPosition.label"
-			tooltip="%goToLastEditPosition.tooltip"
-            disabledIcon="icons/full/dtool16/last_edit_pos.gif"
-            hoverIcon="icons/full/ctool16/last_edit_pos.gif"
-			icon="icons/full/etool16/last_edit_pos.gif"
-			class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"/>
-     </actionSet>
-</extension>
-
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%textEditorNavigationActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.edit.text.actionSet.navigation">
+         <action
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+               id="gotoLastEditPosition"
+               hoverIcon="icons/full/ctool16/last_edit_pos.gif"
+               class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
+               definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
+               disabledIcon="icons/full/dtool16/last_edit_pos.gif"
+               icon="icons/full/etool16/last_edit_pos.gif"
+               label="%goToLastEditPosition.label"
+               menubarPath="navigate/"
+               tooltip="%goToLastEditPosition.tooltip">
+         </action>
+      </actionSet>
+   </extension>
+<!-- marker annotation types -->
+   <extension
+          point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.error"
+            label="Problems"
+            markerType="org.eclipse.core.resources.problemmarker"
+            markerSeverity="2"
+            textPreferenceKey="errorIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="errorIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="errorIndicationColor"
+            colorPreferenceValue="255,0,128"
+            presentationLayer="6"
+            contributesToHeader="true">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.warning"
+            label="Warnings"
+            markerType="org.eclipse.core.resources.problemmarker"
+            markerSeverity="1"
+            textPreferenceKey="warningIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="warningIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="warningIndicationColor"
+            colorPreferenceValue="244,200,45"
+            presentationLayer="5"
+            contributesToHeader="true">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.info"
+            label="Infos"
+            markerType="org.eclipse.core.resources.problemmarker"
+            textPreferenceKey="infoIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="infoIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="infoIndicationColor"
+            colorPreferenceValue="244,200,45"
+            presentationLayer="4"
+            contributesToHeader="false">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.task"
+            label="Tasks"
+            markerType="org.eclipse.core.resources.taskmarker"
+            textPreferenceKey="taskIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="taskIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="taskIndicationColor"
+            colorPreferenceValue="0,128,255"
+            presentationLayer="2"
+            contributesToHeader="false">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
+            label="Bookmarks"
+            markerType="org.eclipse.core.resources.bookmark"
+            textPreferenceKey="bookmarkIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="bookmarkIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="bookmarkIndicationColor"
+            colorPreferenceValue="34,164,99"
+            presentationLayer="1"
+            contributesToHeader="false">
+      </specification>
+   </extension>
 </plugin>

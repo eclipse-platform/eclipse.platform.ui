@@ -43,14 +43,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class SourceViewerDecorationSupport {
 	
 	
-	static class AnnotationTypePreferenceInfo {
-		public Object fAnnotationType;
-		public String fColorKey;
-		public String fOverviewRulerKey;
-		public String fEditorKey;
-		public int fLayer;
-	};
-
 	private class FontPropertyChangeListener implements IPropertyChangeListener {
 		/*
 		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
@@ -238,13 +230,16 @@ public class SourceViewerDecorationSupport {
 	 *          overview  ruler
 	 */
 	public void setAnnotationPainterPreferenceKeys(Object type, String colorKey, String editorKey, String overviewRulerKey, int layer) {
-		AnnotationTypePreferenceInfo info= new AnnotationTypePreferenceInfo();
-		info.fAnnotationType= type;
-		info.fColorKey= colorKey;
-		info.fEditorKey= editorKey;
-		info.fOverviewRulerKey= overviewRulerKey;
-		info.fLayer= layer;
-		fAnnotationTypeKeyMap.put(info.fAnnotationType, info);
+		AnnotationPreference info= new AnnotationPreference(type, colorKey, editorKey, overviewRulerKey, layer);
+		fAnnotationTypeKeyMap.put(type, info);
+	}
+	
+	/**
+	 * Sets the preference info for the annotation painter.
+	 * @param info the preference info to be set
+	 */
+	public void setAnnotationPreference(AnnotationPreference info) {
+		fAnnotationTypeKeyMap.put(info.getAnnotationType(), info);
 	}
 	
 	/**
@@ -290,14 +285,12 @@ public class SourceViewerDecorationSupport {
 		fSymbolicFontName= symbolicFontName;
 	}
 	
-	private AnnotationTypePreferenceInfo getAnnotationTypePreferenceInfo(String preferenceKey) {
+	private AnnotationPreference getAnnotationPreferenceInfo(String preferenceKey) {
 		Iterator e= fAnnotationTypeKeyMap.values().iterator();
 		while (e.hasNext()) {
-			AnnotationTypePreferenceInfo info= (AnnotationTypePreferenceInfo) e.next();
-			if (info != null) {
-				if (preferenceKey.equals(info.fColorKey) || preferenceKey.equals(info.fEditorKey) || preferenceKey.equals(info.fOverviewRulerKey)) 
-					return info;
-			}
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			if (info != null && info.isPreferenceKey(preferenceKey)) 
+				return info;
 		}
 		return null;
 	}
@@ -362,32 +355,32 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		AnnotationTypePreferenceInfo info= getAnnotationTypePreferenceInfo(p);
+		AnnotationPreference info= getAnnotationPreferenceInfo(p);
 		if (info != null) {
 			
-			if (info.fColorKey.equals(p)) {
-				Color color= getColor(info.fColorKey);
+			if (info.getColorPreferenceKey().equals(p)) {
+				Color color= getColor(info.getColorPreferenceKey());
 				if (fAnnotationPainter != null) {
-					fAnnotationPainter.setAnnotationTypeColor(info.fAnnotationType, color);
+					fAnnotationPainter.setAnnotationTypeColor(info.getAnnotationType(), color);
 					fAnnotationPainter.paint(IPainter.CONFIGURATION);
 				}
-				setAnnotationOverviewColor(info.fAnnotationType, color);
+				setAnnotationOverviewColor(info.getAnnotationType(), color);
 				return;
 			}
 			
-			if (info.fEditorKey.equals(p)) {
-				if (areAnnotationsShown(info.fAnnotationType))
-					showAnnotations(info.fAnnotationType);
+			if (info.getTextPreferenceKey().equals(p)) {
+				if (areAnnotationsShown(info.getAnnotationType()))
+					showAnnotations(info.getAnnotationType());
 				else
-					hideAnnotations(info.fAnnotationType);
+					hideAnnotations(info.getAnnotationType());
 				return;
 			}
 			
-			if (info.fOverviewRulerKey.equals(p)) {
-				if (isAnnotationOverviewShown(info.fAnnotationType))
-					showAnnotationOverview(info.fAnnotationType);
+			if (info.getOverviewRulerPreferenceKey().equals(p)) {
+				if (isAnnotationOverviewShown(info.getAnnotationType()))
+					showAnnotationOverview(info.getAnnotationType());
 				else
-					hideAnnotationOverview(info.fAnnotationType);
+					hideAnnotationOverview(info.getAnnotationType());
 				return;
 			}
 		}			
@@ -407,16 +400,16 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	private Color getAnnotationTypeColor(Object annotationType) {
-		AnnotationTypePreferenceInfo info= (AnnotationTypePreferenceInfo) fAnnotationTypeKeyMap.get(annotationType);
+		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
-			return getColor( info.fColorKey);
+			return getColor( info.getColorPreferenceKey());
 		return null;
 	}
 	
 	private int getAnnotationTypeLayer(Object annotationType) {
-		AnnotationTypePreferenceInfo info= (AnnotationTypePreferenceInfo) fAnnotationTypeKeyMap.get(annotationType);
+		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
-			return info.fLayer;
+			return info.getPresentationLayer();
 		return 0;
 	}
 	
@@ -551,9 +544,9 @@ public class SourceViewerDecorationSupport {
 	
 	private boolean areAnnotationsShown(Object annotationType) {
 		if (fPreferenceStore != null) {
-			AnnotationTypePreferenceInfo info= (AnnotationTypePreferenceInfo) fAnnotationTypeKeyMap.get(annotationType);
+			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null)
-				return fPreferenceStore.getBoolean(info.fEditorKey);
+				return fPreferenceStore.getBoolean(info.getTextPreferenceKey());
 		}
 		return false;
 	}
@@ -561,9 +554,9 @@ public class SourceViewerDecorationSupport {
 	private boolean isAnnotationOverviewShown(Object annotationType) {
 		if (fPreferenceStore != null) {
 			if (fOverviewRuler != null) {
-				AnnotationTypePreferenceInfo info= (AnnotationTypePreferenceInfo) fAnnotationTypeKeyMap.get(annotationType);
+				AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 				if (info != null)
-					return fPreferenceStore.getBoolean(info.fOverviewRulerKey);
+					return fPreferenceStore.getBoolean(info.getOverviewRulerPreferenceKey());
 			}
 		}
 		return false;

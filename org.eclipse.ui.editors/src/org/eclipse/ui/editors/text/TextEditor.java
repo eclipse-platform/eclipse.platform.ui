@@ -14,6 +14,8 @@ package org.eclipse.ui.editors.text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -56,12 +58,15 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.internal.editors.text.*;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AddTaskAction;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.StatusTextEditor;
@@ -88,50 +93,12 @@ public class TextEditor extends StatusTextEditor {
 	private final static String LINE_NUMBER_COLOR= TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
 	/** Preference key for showing the overview ruler */
 	private final static String OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-	/** Preference key for error indication in overview ruler */
-	private final static String ERROR_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for warning indication in overview ruler */
-	private final static String WARNING_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for info indication in overview ruler */
-	private final static String INFO_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for task indication in overview ruler */
-	private final static String TASK_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for bookmark indication in overview ruler */
-	private final static String BOOKMARK_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for search result indication in overview ruler */
-	private final static String SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER;
 	/** Preference key for unknown annotation indication in overview ruler */
 	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
-
-	/** Preference key for error indication */
-	private final static String ERROR_INDICATION= TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION;
-	/** Preference key for error color */
-	private final static String ERROR_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR;
-	/** Preference key for warning indication */
-	private final static String WARNING_INDICATION= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION;
-	/** Preference key for warning color */
-	private final static String WARNING_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR;
-	/** Preference key for info indication */
-	private final static String INFO_INDICATION= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION;
-	/** Preference key for info color */
-	private final static String INFO_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR;
-	/** Preference key for task indication */
-	private final static String TASK_INDICATION= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION;
-	/** Preference key for task color */
-	private final static String TASK_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR;
-	/** Preference key for bookmark indication */
-	private final static String BOOKMARK_INDICATION= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION;
-	/** Preference key for bookmark color */
-	private final static String BOOKMARK_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR;
-	/** Preference key for search result indication */
-	private final static String SEARCH_RESULT_INDICATION= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION;
-	/** Preference key for search result color */
-	private final static String SEARCH_RESULT_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR;
 	/** Preference key for unknown annotation indication */
 	private final static String UNKNOWN_INDICATION= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
 	/** Preference key for unknown annotation color */
 	private final static String UNKNOWN_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
-
 	/** Preference key for highlighting current line */
 	private final static String CURRENT_LINE= TextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
 	/** Preference key for highlight color of current line */
@@ -168,6 +135,11 @@ public class TextEditor extends StatusTextEditor {
 	 * @since 2.0
 	 */
 	protected DefaultEncodingSupport fEncodingSupport;
+	/**
+	 * The annotation preferences.
+	 * @since 2.1
+	 */
+	private MarkerAnnotationPreferences fAnnotationPreferences;
 	
 	
 	/**
@@ -176,6 +148,7 @@ public class TextEditor extends StatusTextEditor {
 	public TextEditor() {
 		super();
 		initializeEditor();
+		fAnnotationPreferences= new MarkerAnnotationPreferences();
 	}
 	
 	/**
@@ -203,6 +176,9 @@ public class TextEditor extends StatusTextEditor {
 			fSourceViewerDecorationSupport.dispose();
 			fSourceViewerDecorationSupport= null;
 		}
+		
+		fAnnotationPreferences= null;
+		fAnnotationAccess= null;
 		
 		super.dispose();
 	}
@@ -491,11 +467,17 @@ public class TextEditor extends StatusTextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		
 		fAnnotationAccess= createAnnotationAccess();
 		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
+		
 		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
-		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
-		fOverviewRuler.addHeaderAnnotationType(AnnotationType.ERROR);
+		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference preference= (AnnotationPreference) e.next();
+			if (preference.contributesToHeader())
+				fOverviewRuler.addHeaderAnnotationType(preference.getAnnotationType());
+		}
 		
 		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
@@ -509,22 +491,18 @@ public class TextEditor extends StatusTextEditor {
 	 * @return the created annotation access
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
-		return new AnnotationAccess();
+		return new DefaultMarkerAnnotationAccess(fAnnotationPreferences);
 	}
 
 	protected void configureSourceViewerDecorationSupport() {
-		
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, BOOKMARK_INDICATION_COLOR, BOOKMARK_INDICATION, BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, TASK_INDICATION_COLOR, TASK_INDICATION, TASK_INDICATION_IN_OVERVIEW_RULER, 2);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, SEARCH_RESULT_INDICATION_COLOR, SEARCH_RESULT_INDICATION, SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, INFO_INDICATION_COLOR, INFO_INDICATION, INFO_INDICATION_IN_OVERVIEW_RULER, 4);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, WARNING_INDICATION_COLOR, WARNING_INDICATION, WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, ERROR_INDICATION_COLOR, ERROR_INDICATION, ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
+
+		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext())
+			fSourceViewerDecorationSupport.setAnnotationPreference((AnnotationPreference) e.next());
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(DefaultMarkerAnnotationAccess.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
 		
 		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
-		
 		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 
