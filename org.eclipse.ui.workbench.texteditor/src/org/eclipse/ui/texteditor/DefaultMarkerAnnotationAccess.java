@@ -64,6 +64,22 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 			}
 		return null;
 	}
+
+	/**
+	 * Returns the annotation preference for the given marker.
+	 * 
+	 * @param marker
+	 * @return the annotation preference or <code>null</code> if none
+	 */	
+	private AnnotationPreference getAnnotationPreference(String markerType, int severity) {
+		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			if (info.getMarkerType().equals(markerType) && severity == info.getSeverity())
+				return info;
+			}
+		return null;
+	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
@@ -77,6 +93,10 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 				if (preference != null)
 					return preference.getAnnotationType();
 			}
+		} else if (annotation instanceof IAnnotationExtension) {
+			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
+			AnnotationPreference preference= getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
+			return preference.getAnnotationType();
 		}
 		return UNKNOWN;
 	}
@@ -92,6 +112,10 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isTemporary(org.eclipse.jface.text.source.Annotation)
 	 */
 	public boolean isTemporary(Annotation annotation) {
+
+		if (annotation instanceof IAnnotationExtension)
+			return ((IAnnotationExtension)annotation).isTemporary();
+
 		return false;
 	}
 }
