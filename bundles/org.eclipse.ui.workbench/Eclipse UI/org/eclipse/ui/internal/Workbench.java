@@ -192,7 +192,7 @@ public final class Workbench implements IWorkbench {
 		Assert.isNotNull(adviser);
 		this.adviser = adviser;
 		this.display = display;
-		Workbench.instance = this;
+		Workbench.instance = this;		
 	}
 	
 	/**
@@ -285,14 +285,8 @@ public final class Workbench implements IWorkbench {
 	private IMutableActivityManager activityManager;	
 	/* TODO private */ ICommandManager commandManager;
 	private IRoleManager roleManager;
-
-	// TODO
-	private final IActivityService activityService = ActivityServiceFactory.getMutableActivityService();	
+	private WorkbenchActivityService workbenchActivityService;
 	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
-
-	private volatile boolean keyFilterDisabled;
-	private final Object keyFilterMutex = new Object();	
-
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);	
 	private WorkbenchActivityHelper activityHelper;	
@@ -310,12 +304,16 @@ public final class Workbench implements IWorkbench {
 	}		
 
 	public IActivityService getActivityService() {
-		return activityService;
+		return workbenchActivityService;
 	}	
-	
+
 	public ICompoundActivityService getCompoundActivityService() {
 		return compoundActivityService;
 	}
+	
+	
+	private volatile boolean keyFilterDisabled;
+	private final Object keyFilterMutex = new Object();	
 	
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
@@ -728,8 +726,7 @@ public final class Workbench implements IWorkbench {
 	 * of each window, or <code>null</code> if none
 	 * @return true if init succeeded.
 	 */
-	private boolean init(ImageDescriptor windowImage, Display display) {
-		
+	private boolean init(ImageDescriptor windowImage, Display display) {		
 		// create an activity manager		
 		activityManager = ActivityManagerFactory.getMutableActivityManager();
 		activityManager.addActivityManagerListener(workbenchActivitiesCommandsAndRoles.activityManagerListener);                   
@@ -814,6 +811,9 @@ public final class Workbench implements IWorkbench {
 
 		// create workbench window manager
 		windowManager = new WindowManager();
+		
+		workbenchActivityService = new WorkbenchActivityService(this);
+		workbenchActivityService.start();		
 
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();

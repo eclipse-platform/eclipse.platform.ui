@@ -32,7 +32,7 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 				ActivityManagerEvent proxyActivityManagerEvent =
 					new ActivityManagerEvent(
-						ProxyActivityManager.this.activityManager,
+						ProxyActivityManager.this,
 						activityManagerEvent.haveDefinedActivityIdsChanged(),
 						activityManagerEvent.haveEnabledActivityIdsChanged());
 				fireActivityManagerChanged(proxyActivityManagerEvent);

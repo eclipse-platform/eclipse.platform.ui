@@ -114,7 +114,12 @@ public void registerContextMenu(MenuManager menuManager,
  */
 public IKeyBindingService getKeyBindingService();
 
-//IContextActivationService getContextActivationService();
-
-
+/**
+ * Returns the mutable activity service for the workbench part site.
+ * 
+ * @return the mutable activity service for the workbench part site. Guaranteed 
+ * 		   not to be <code>null</code>.
+ * @since 3.0
+ */
+//public IMutableActivityService getMutableActivityService();
 }

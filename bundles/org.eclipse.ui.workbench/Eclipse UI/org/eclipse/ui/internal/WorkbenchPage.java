@@ -386,7 +386,12 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 
 public ICompoundActivityService getCompoundActivityService() {
-	return compoundActivityService;
+	Perspective perspective = getActivePerspective();
+	
+	if (perspective != null)
+		return perspective.getCompoundActivityService();
+	else 
+		return compoundActivityService;
 }
 
 private IActionService actionService;

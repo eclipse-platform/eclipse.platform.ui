@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityService;
 import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
@@ -395,6 +396,15 @@ public ICommandManager getCommandManager();
  * @since 3.0
  */
 public IRoleManager getRoleManager();
+
+/**
+ * Returns the activity service for the workbench.
+ * 
+ * @return the activity service for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public IActivityService getActivityService();
 
 /**
  * Returns the compound activity service for the workbench.
