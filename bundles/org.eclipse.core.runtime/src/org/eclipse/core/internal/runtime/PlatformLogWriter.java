@@ -17,7 +17,7 @@ import java.util.Date;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 /**
- * A log writer that writes log entries in XML format.  
+ * A log writer that writes log entries.  
  * See PlatformLogReader for reading logs back into memory.
  */
 public class PlatformLogWriter implements ILogListener {
