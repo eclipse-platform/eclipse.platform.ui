@@ -33,9 +33,11 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	private Map imageTable;
 
 	/**
-	 * Get a WorkbenchLabelProvider that is hooked up to the decorator
+	 * Returns a workbench label provider that is hooked up to the decorator
 	 * mechanism.
-	 * @return ILabelProvider
+	 * 
+	 * @return a new <code>DecoratingLabelProvider</code> which wraps a <code>
+	 *   new <code>WorkbenchLabelProvider</code>
 	 */
 	public static ILabelProvider getDecoratingWorkbenchLabelProvider() {
 		return new DecoratingLabelProvider(
