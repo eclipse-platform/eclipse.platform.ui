@@ -15,20 +15,24 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class keeps track of the CVS repository locations that are known to
  * the CVS plugin.
  */
-public class KnownRepositories {
+public class KnownRepositories implements INodeChangeListener, IPreferenceChangeListener {
 
 	private List repositoryListeners = new ArrayList();
 	private Map repositories;
@@ -186,13 +190,15 @@ public class KnownRepositories {
 		if (repositories == null) {
 			// Load the repositories from the preferences
 			repositories = new HashMap();
-			Preferences prefs = CVSRepositoryLocation.getParentPreferences();
+			IEclipsePreferences prefs = (IEclipsePreferences) CVSRepositoryLocation.getParentPreferences();
+			prefs.addNodeChangeListener(this);
 			try {
 				String[] keys = prefs.childrenNames();
 				for (int i = 0; i < keys.length; i++) {
 					String key = keys[i];
 					try {
-						Preferences node = prefs.node(key);
+						IEclipsePreferences node = (IEclipsePreferences) prefs.node(key);
+						node.addPreferenceChangeListener(this);
 						String location = node.get(CVSRepositoryLocation.PREF_LOCATION, null);
 						if (location != null) {
 							repositories.put(location, CVSRepositoryLocation.fromString(location));
@@ -247,6 +253,30 @@ public class KnownRepositories {
 		for (int i = 0; i < listeners.length; i++) {
 			ICVSListener listener = listeners[i];
 			notification.run(listener);
+		}
+	}
+
+	public void added(NodeChangeEvent event) {
+		((IEclipsePreferences)event.getChild()).addPreferenceChangeListener(this);
+	}
+
+	public void removed(NodeChangeEvent event) {
+		// Cannot remove the listener once the node is removed
+		//((IEclipsePreferences)event.getChild()).removePreferenceChangeListener(this);
+	}
+
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (CVSRepositoryLocation.PREF_LOCATION.equals(event.getKey())) {
+			String location = (String)event.getNewValue();
+			if (location == null) {
+				((IEclipsePreferences)event.getNode()).removePreferenceChangeListener(this);
+			} else {
+				try {
+					addRepository(CVSRepositoryLocation.fromString(location), true);
+				} catch (CVSException e) {
+					CVSProviderPlugin.log(e);
+				}
+			}
 		}
 	}
 }
