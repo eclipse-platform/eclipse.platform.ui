@@ -577,6 +577,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
+		final BundleContext fc = context;
         // Should only attempt refreshPluginActions() once the bundle
         // has been fully started.  Otherwise, action delegates
         // can be created while in the process of creating 
@@ -589,6 +590,7 @@ public abstract class AbstractUIPlugin extends Plugin {
                 if (event.getBundle() == getBundle()) {
                     if (event.getType() == BundleEvent.STARTED) {
                         refreshPluginActions();
+                        fc.removeBundleListener(this);
                     }
                 }
             }

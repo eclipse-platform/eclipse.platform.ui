@@ -23,6 +23,13 @@ import org.osgi.framework.Bundle;
  * operations related to bundle management.
  */
 public class BundleUtility {
+	public static boolean isActive(Bundle bundle) {
+		if (bundle == null)
+			return false;
+
+		return bundle.getState() == Bundle.ACTIVE;
+	}
+
     public static boolean isActivated(Bundle bundle) {
         if (bundle == null)
             return false;
@@ -52,6 +59,10 @@ public class BundleUtility {
             return false;
         }
     }
+
+	public static boolean isActive(String bundleId) {
+		return isActive(Platform.getBundle(bundleId));
+	}
 
     public static boolean isActivated(String bundleId) {
         return isActivated(Platform.getBundle(bundleId));
