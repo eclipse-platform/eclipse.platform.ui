@@ -17,12 +17,15 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 
 
@@ -241,5 +244,28 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 		// Close since we have "performed Ok" and cancel is no longer valid
 		close();	
 	}
+	
+	/** 
+	 * Checks whether the given preference node is contributed via the registry 
+	 * and if so filters it based on the currently enabled roles.  Note that 
+	 * if a given node is filtered out of the view, then its subnodes are 
+	 * filtered out as well.
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
+	 */
+	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
+		if (node instanceof WorkbenchPreferenceNode) {
+			IConfigurationElement configElement = ((WorkbenchPreferenceNode)node).getConfigurationElement();
+			if (configElement != null) {
+				//String uID = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+				String uID = configElement.getAttribute("id"); //$NON-NLS-1$
+				if (!RoleManager.getInstance().isEnabledId(uID)) {
+					return;
+				}
+			}		
+		}
+		super.createTreeItemFor(parent, node);
+	}
+
 }
 

@@ -2091,13 +2091,16 @@
             class="org.eclipse.ui.internal.commands.KeysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePages.BuildOrder"
             class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
+      </page>
+       <page
+            name="%PreferencePages.Roles"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.roles.RolePreferencePage"
+            id="org.eclipse.ui.preferencePages.Roles">
       </page>
    </extension>
    <extension

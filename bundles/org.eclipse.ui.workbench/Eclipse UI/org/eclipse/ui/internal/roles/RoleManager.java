@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /**
  * RoleManager is the type that defines and filters based on
  * role.
@@ -29,6 +33,9 @@ public class RoleManager {
 	public static String TEAM_PATTERN = "org.eclipse.team.*";
 	public static String ANT_PATTERN = "org.eclipse.ant.*";
 	public static String EXTERNAL_TOOLS_PATTERN = "org.eclipse.ui.externaltools";
+
+	// Prefix for all role preferences
+	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
 
 	public static RoleManager getInstance() {
 		if (singleton == null)
@@ -62,6 +69,37 @@ public class RoleManager {
 				"External Tools Role",
 				"org.eclipse.roles.externalToolsRole",
 				new String[] { EXTERNAL_TOOLS_PATTERN, ANT_PATTERN });
+
+		loadEnabledStates();
+	}
+
+	/**
+	 * Loads the enabled states from the preference store.
+	 */
+	void loadEnabledStates() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		for (int i = 0; i < roles.length; i++) {
+			roles[i].enabled = store.getBoolean(createPreferenceKey(i));
+		}
+	}
+
+	/**
+	 * Save the enabled states in he preference store.
+	 */
+	void saveEnabledStates() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		for (int i = 0; i < roles.length; i++) {
+			store.setValue(createPreferenceKey(i), roles[i].enabled);
+		}
+	}
+
+	/**
+	 * Create the preference key for the role at index i.
+	 * @param i index of the role
+	 * @return
+	 */
+	private String createPreferenceKey(int i) {
+		return PREFIX + roles[i].id;
 	}
 
 	/**
@@ -89,12 +127,20 @@ public class RoleManager {
 	public void enableRoles(String pattern) {
 		if (!filterRoles)
 			return;
-		if(pattern == null)
+		if (pattern == null)
 			return;
 		for (int i = 0; i < roles.length; i++) {
 			if (roles[i].patternMatches(pattern))
 				roles[i].setEnabled(true);
 		}
+	}
+
+	/**
+	 * Return the roles currently defined.
+	 * @return
+	 */
+	public Role[] getRoles() {
+		return roles;
 	}
 
 }

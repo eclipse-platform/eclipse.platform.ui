@@ -73,4 +73,12 @@ public void createPage() {
 public String getCategory() {
 	return category;
 }
+
+/**
+ * @return
+ */
+public IConfigurationElement getConfigurationElement() {
+	return configurationElement;
+}
+
 }
