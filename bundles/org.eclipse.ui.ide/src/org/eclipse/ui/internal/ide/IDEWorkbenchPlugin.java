@@ -209,6 +209,13 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
 
+	/* (non-javadoc)
+	 * Method declared on AbstractUIPlugin
+	 */
+	protected void refreshPluginActions() {
+		// do nothing
+	}
+	
 	/** 
 	 * Set default preference values.
 	 * This method must be called whenever the preference store is initially loaded

@@ -34,7 +34,7 @@
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.exsd"/>
 
    <extension
-         id="ide"
+         id="workbench"
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
