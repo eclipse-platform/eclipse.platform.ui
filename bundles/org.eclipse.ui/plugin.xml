@@ -879,7 +879,7 @@
                id="org.eclipse.ui.project.rebuildProject">
          </accelerator>          
          <accelerator
-               key=""
+               key="Ctrl+Shift+W"
                id="org.eclipse.ui.window.switchToEditor">
          </accelerator>
          <accelerator

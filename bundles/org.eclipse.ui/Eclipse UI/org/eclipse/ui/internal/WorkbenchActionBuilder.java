@@ -293,7 +293,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		
 		menu.add(closeAction);
 		menu.add(closeAllAction);
-		menu.add(closeAllSavedAction);
+//		menu.add(closeAllSavedAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
 		menu.add(new Separator());
 		menu.add(saveAction);
@@ -529,6 +529,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			addPerspectiveActions(menu);
 			menu.add(new Separator());
 			addKeyboardShortcuts(menu);
+			menu.add(new Separator());
+			menu.add(workbenchEditorsAction);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
 			menu.add(openPreferencesAction);
