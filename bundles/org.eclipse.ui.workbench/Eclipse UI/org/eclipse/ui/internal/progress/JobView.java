@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.swt.widgets.*;
-//import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -15,7 +15,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
@@ -192,6 +195,9 @@ public class JobView extends ViewPart {
 		}
 	}
 	
+	/*
+	 * Label with hyperlink capability.
+	 */
 	static class Hyperlink extends Canvas implements Listener {
 		boolean hasFocus;
 		String fText;
@@ -717,8 +723,11 @@ public class JobView extends ViewPart {
 		}
 	}
 	
-	protected Composite fContent;
+	private Composite fContent;
 	private ScrolledComposite fScrolledComposite;
+	private IAction fClearAllAction;
+	private IAction fVerboseAction;
+	
 
 	/**
 	 * The constructor.
@@ -787,6 +796,37 @@ public class JobView extends ViewPart {
 
 		// initially sync view with model
 		intRefresh(REFRESH, null);
+
+		// build the actions
+		fClearAllAction= new Action() {
+			public void run() {
+				JobsModel.getJobsModel().clearAll();
+			}
+		};
+		fClearAllAction.setText(ProgressMessages.getString("ProgressView.RemoveAllAction"));
+		ImageDescriptor id= getImageDescriptor("remove_all.gif");
+		if (id != null)
+			fClearAllAction.setImageDescriptor(id);
+		
+		fVerboseAction= new Action(ProgressMessages.getString("ProgressView.VerboseAction"), //$NON-NLS-1$
+							IAction.AS_CHECK_BOX) {
+			public void run() {
+				/*
+				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+				updater.debug = !updater.debug;
+				setChecked(updater.debug);
+				updater.refreshAll();
+				*/
+			}
+		};
+
+		IActionBars bars= getViewSite().getActionBars();
+		IMenuManager mm= bars.getMenuManager();
+		mm.add(fClearAllAction);
+		mm.add(fVerboseAction);
+		
+		IToolBarManager tm= bars.getToolBarManager();
+		tm.add(fClearAllAction);
 	}
 	
 	private void intRefresh(int changeType, JobModel jobModel) {
@@ -853,8 +893,15 @@ public class JobView extends ViewPart {
 	public void setFocus() {
 		fContent.setFocus();
 	}
+	
+	private Image getImage(Display display, String name) {
+		ImageDescriptor id= getImageDescriptor(name);
+		if (id != null)
+			return id.createImage(display);
+		return null;
+	}
 
-	protected Image getImage(Display display, String name) {
+	protected ImageDescriptor getImageDescriptor(String name) {
 		return null;
 	}
 	
@@ -896,12 +943,5 @@ public class JobView extends ViewPart {
 		Point size= fContent.computeSize(fContent.getClientArea().x, SWT.DEFAULT);
 		fContent.setSize(size);
 		fScrolledComposite.setMinSize(size);		
-	}
-
-	/*
-	 * Remove all terminated "sticky" jobs from the job views.
-	 */
-	protected void clearAll() {
-		JobsModel.getJobsModel().clearAll();
 	}
 }
