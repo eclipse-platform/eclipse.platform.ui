@@ -168,6 +168,7 @@
       <attribute name="resultfof"/>
       <attribute name="order"/>
    </extension>
+   
    <extension point="org.eclipse.search.searchResultSorters"> 
     <sorter 
         id="org.eclipse.help.ui.helpsearchhitsorter" 

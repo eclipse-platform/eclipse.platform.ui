@@ -5,7 +5,6 @@ package org.eclipse.help.internal.ui;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.server.*;
 import org.eclipse.help.ui.browser.*;
 import org.eclipse.help.ui.internal.browser.*;
 import org.eclipse.ui.plugin.*;
@@ -43,7 +42,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 			AppServer.remove("help", "org.eclipse.help.webapp");
 		}
 		BrowserManager.getInstance().closeAll();
-		HelpServer.instance().close();
 		super.shutdown();
 	}
 	/**
@@ -54,7 +52,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		if (AppServer.isRunning()) {
 			AppServer.add("help", "org.eclipse.help.webapp", "");
 		}
-		HelpServer.instance();
 	}
 
 	public IBrowser getHelpBrowser() {

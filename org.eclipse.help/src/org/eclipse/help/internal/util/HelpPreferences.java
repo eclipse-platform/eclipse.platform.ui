@@ -13,12 +13,6 @@ import org.eclipse.help.internal.HelpPlugin;
 public class HelpPreferences extends HelpProperties {
 	// Constants
 	public static final String LOG_LEVEL_KEY = "log_level";
-	public static final String LOCAL_SERVER_CONFIG = "local_server_config";
-	public static final String LOCAL_SERVER_ADDRESS_KEY = "local_server_addr";
-	public static final String LOCAL_SERVER_PORT_KEY = "local_server_port";
-	public static final String INSTALL_OPTION_KEY = "install";
-	public static final String SERVER_PATH_KEY = "server_path";
-	public static final String BROWSER_PATH_KEY = "browser_path";
 	public static final String INFOCENTER_URL_KEY = "infocenter_url";
 	protected URL defaultsUrl = null;
 	protected Properties defaults;

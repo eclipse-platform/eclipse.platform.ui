@@ -6,7 +6,6 @@ package org.eclipse.help.internal.protocols;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.internal.server.HelpURL;
 import org.eclipse.help.internal.util.Resources;
 /**
  * URL that performs live help action.

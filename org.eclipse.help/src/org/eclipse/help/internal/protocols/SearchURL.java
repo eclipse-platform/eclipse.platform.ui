@@ -7,7 +7,6 @@ import java.io.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.server.HelpURL;
 import org.eclipse.help.internal.util.*;
 /**
  * URL to the search server.

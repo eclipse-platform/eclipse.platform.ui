@@ -93,10 +93,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				.createImage());
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				Point location = shell.getLocation();
 				store.put(BROWSER_X, Integer.toString(x));
 				store.put(BROWSER_Y, Integer.toString(y));
-				Point size = shell.getSize();
 				store.put(BROWSER_WIDTH, Integer.toString(w));
 				store.put(BROWSER_HEIGTH, Integer.toString(h));
 				store.put(BROWSER_MAXIMIZED, (new Boolean(shell.getMaximized()).toString()));

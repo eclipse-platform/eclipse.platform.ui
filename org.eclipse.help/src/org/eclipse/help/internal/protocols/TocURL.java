@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.server;
+package org.eclipse.help.internal.protocols;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
