@@ -543,6 +543,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		updateDisabled = true;
 
 		try {
+			// let the adviser cancel this operation
+			boolean okToClose = getAdviser().preWindowClose(getWindowConfigurer()); 
+			if (!okToClose && !getWindowConfigurer().getWorkbenchConfigurer().emergencyClosing()) {
+				return false;
+			}
+			
 			// Only do the check if it is OK to close if we are not closing
 			// via the workbench as the workbench will check this itself.
 			Workbench workbench = getWorkbenchImpl();
