@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.actions.PinEditorContributionItem;
-import org.eclipse.ui.internal.actions.SearchComboContributionItem;
+import org.eclipse.ui.internal.actions.HelpSearchComboContributionItem;
 
 /**
  * Access to standard contribution items provided by the workbench.
@@ -219,7 +219,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new SearchComboContributionItem(window, getId());
+            return new HelpSearchComboContributionItem(window, getId());
         }
     };
 

@@ -15,7 +15,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.1
  */
 
-public class SearchComboContributionItem extends ControlContribution {
+public class HelpSearchComboContributionItem extends ControlContribution {
 	private static final String ID = "org.eclipse.ui.searchCombo"; //$NON-NLS-1$
 	
 	private IWorkbenchWindow window;
@@ -29,7 +29,7 @@ public class SearchComboContributionItem extends ControlContribution {
 	 * 
 	 * @param window
 	 */
-	public SearchComboContributionItem(IWorkbenchWindow window) {
+	public HelpSearchComboContributionItem(IWorkbenchWindow window) {
 		this(window, ID);
 	}
 
@@ -39,7 +39,7 @@ public class SearchComboContributionItem extends ControlContribution {
 	 * @param window
 	 * @param id
 	 */
-	public SearchComboContributionItem(IWorkbenchWindow window, String id) {
+	public HelpSearchComboContributionItem(IWorkbenchWindow window, String id) {
 		super(id);
 		this.window = window;
 	}
@@ -52,14 +52,11 @@ public class SearchComboContributionItem extends ControlContribution {
 		if (items != null)
 			combo.setItems(items);
 		combo.setText(WorkbenchMessages.getString("WorkbenchWindow.searchCombo.text")); //$NON-NLS-1$
-		combo.addKeyListener(new KeyListener() {
+		combo.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				if (e.character == SWT.CR) {
 					doSearch(combo.getText(), true);
 				}
-			}
-
-			public void keyPressed(KeyEvent e) {
 			}
 		});
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -91,9 +88,9 @@ public class SearchComboContributionItem extends ControlContribution {
 				}
 			}
 			if (!exists) {
-				combo.add(phrase);
+				combo.add(phrase, 0);
 				if (combo.getItemCount() > MAX_ITEM_COUNT)
-					combo.remove(0);
+					combo.remove(combo.getItemCount() - 1);
 				WorkbenchPlugin.getDefault().getDialogSettings().put(ID,
 						combo.getItems());
 			}
