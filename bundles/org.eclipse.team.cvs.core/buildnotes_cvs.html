@@ -28,6 +28,36 @@ content="text/html; charset=iso-8859-1">
 </tr><tr>
       <td> 
         <!-- ####### START OF 3.0 BUILD SUBMISSIONS BLOCK -->
+        <h4>September 23rd 2003 - 3.0 (I20030923)</h4>
+        <h4>Interesting changes</h4>
+        <ul>
+          <li>CVS operations performed from the Synchronize View are run in the 
+            background. Depending on the operation, the resources affected by 
+            the CVS command are locked for modification and other operations run 
+            may block (e.g. saving a file or creating a new file) until the background 
+            job is done. The use-case of a background job blocking annother operation 
+            is being addressed by an improved progress monitor that is yet to 
+            be released.</li>
+          <li>A CVS repository location can be configured to use different locations 
+            for <strong>reading</strong> and <strong>writing</strong>. This can 
+            speed up CVS operations for which most of the time is consumed by 
+            costly extssh authentication and only read access is required (e.g. 
+            opening remote files, browsing a remote repository, opening a compare 
+            editor). To configure a read and write locations, first create a read 
+            location (e.g. for Eclipse developers, a useful read location would 
+            be the anonymous pserver location), then from the CVS Repositories 
+            View select the Properties page of a location and configure the read 
+            or write locations.</li>
+          <li>The CVS History View can now be linked to the active editor. The 
+            linking is enabled for editors with the following inputs: IFileEditorInput, 
+            RemoteFileInput (e.g. created when browing remote CVS files), and 
+            SyncInfoEditorInput (e.g. created when browing changes in a compare 
+            editor from the Synchronize View).</li>
+          <li>The CVS synchronize action now opens the new Synchronize View.</li>
+        </ul>
+        <h4>Fixed bugs</h4>
+        <p>See <a href="https://bugs.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=VCM&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=resolution&chfieldfrom=2003-09-01&chfieldto=Now&chfieldvalue=&cmdtype=doit&namedcmd=3.0%2BM3%2BFixed&newqueryname=&order=Reuse%2Bsame%2Bsort%2Bas%2Blast%2Btime&field0-0-0=noop&type0-0-0=noop&value0-0-0=">this</a> 
+          bugzilla query to list all fixed bugs in this build.</p>
         <h4><img src="http://dev.eclipse.org/images/Adarrow.gif" nosave="" border=0 height=16 width=16 alt=""> 
           August 6th 2003 - 3.0 (I20030806)</h4>
         <h4>Interesting changes</h4>
