@@ -203,6 +203,7 @@ public class CheatSheetView extends ViewPart {
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
 			getViewItemArray()[0].setExpanded();
+			getViewItemArray()[0].getMainItemComposite().setFocus();
 			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 		}
 
@@ -512,14 +513,17 @@ public class CheatSheetView extends ViewPart {
 				saveCurrentSheet();
 				hideFields.setChecked(true);
 			}
-			currentItem.setAsCurrentActiveItem();
 			
 			// If the last item is the current one and it is complete then
-			// we should collapse the last item and set the focus on intro 
+			// we should collapse the last item and set the focus on intro.
+			// For all other cases, set the current item as the active item.
 			if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
 				currentItem.setCollapsed();
 				getViewItemArray()[0].getMainItemComposite().setFocus();
+			} else {
+				currentItem.setAsCurrentActiveItem();
 			}
+
 			/* LP-item event */
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
 		} else {
