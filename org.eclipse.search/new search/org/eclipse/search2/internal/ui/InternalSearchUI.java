@@ -62,6 +62,7 @@ public class InternalSearchUI {
 		public Job fJob;
 		public boolean fBackground;
 		public boolean fIsRunning;
+		public ProgressMonitorWrapper fProgressMonitor;
 
 		SearchJobRecord(ISearchQuery job, boolean bg) {
 			fQuery= job;
@@ -70,6 +71,50 @@ public class InternalSearchUI {
 		}
 	}
 	
+	private class ProgressMonitorWrapper implements IProgressMonitor {
+		private IProgressMonitor fMonitor;
+		public int fTotalWork;
+		public double fWorked;
+		
+		public ProgressMonitorWrapper(IProgressMonitor pm) {
+			fMonitor= pm;
+		}
+
+		public void beginTask(String name, int totalWork) {
+			fTotalWork= totalWork;
+			fMonitor.beginTask(name, totalWork);
+		}
+
+		public void done() {
+			fMonitor.done();
+		}
+
+		public void internalWorked(double work) {
+			fWorked+= work; 
+			fMonitor.internalWorked(work);
+		}
+
+		public boolean isCanceled() {
+			return fMonitor.isCanceled();
+		}
+
+		public void setCanceled(boolean value) {
+			fMonitor.setCanceled(value);
+		}
+
+		public void setTaskName(String name) {
+			fMonitor.setTaskName(name);
+		}
+
+		public void subTask(String name) {
+			fMonitor.subTask(name);
+		}
+
+		public void worked(int work) {
+			fMonitor.worked(work);
+		}
+		
+	}
 	private class InternalSearchJob extends Job {
 		SearchJobRecord fSearchJobRecord;
 		public InternalSearchJob(SearchJobRecord sjr) {
@@ -79,10 +124,11 @@ public class InternalSearchUI {
 		
 		protected IStatus run(IProgressMonitor monitor) {
 			fSearchJobRecord.fJob= this;
+			fSearchJobRecord.fProgressMonitor= new ProgressMonitorWrapper(monitor); 
 			searchJobStarted(fSearchJobRecord);
 			IStatus status= null;
 			try{
-				status= fSearchJobRecord.fQuery.run(monitor);
+				status= fSearchJobRecord.fQuery.run(fSearchJobRecord.fProgressMonitor); 
 			} finally {
 				searchJobFinished(fSearchJobRecord);
 			}
@@ -166,8 +212,6 @@ public class InternalSearchUI {
 	}
 
 	private void configureJob(Job job) {
-		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE);
-		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new ShowJobResultAction());
 		try {
 			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
 			URL icon;
@@ -244,6 +288,20 @@ public class InternalSearchUI {
 		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
 		if (rec != null && rec.fJob != null)
 			rec.fJob.cancel();
+	}
+
+	public int getAmountOfWork(ISearchQuery job) {
+		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
+		if (rec != null && rec.fJob != null)
+			return rec.fProgressMonitor.fTotalWork; 
+		return 0;
+	}
+
+	public double getCurrentAmountOfWork(ISearchQuery job) {
+		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
+		if (rec != null && rec.fJob != null)
+			return rec.fProgressMonitor.fWorked;  
+		return 1;
 	}
 
 	public ISearchResultViewPart activateSearchView() {
