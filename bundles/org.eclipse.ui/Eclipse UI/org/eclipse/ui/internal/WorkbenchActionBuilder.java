@@ -259,7 +259,12 @@ private void createMenuBar() {
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
-	popup.add(activateEditorAction);
+/*
+ * ActivateEditorAction removed due to problems using Esc as accelerator.
+ * See bug#5456.
+ * 
+ * 	popup.add(activateEditorAction);
+ */
 	popup.add(nextEditorAction);
 	popup.add(prevEditorAction);
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
