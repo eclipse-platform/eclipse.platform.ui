@@ -202,14 +202,16 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * existing read-only files to overwrite and resources that should not be
      * overwritten.
      * 
-     * @param destinationPath destination path to check for existing files
+     * @param sourceStart destination path to check for existing files
      * @param sources file system objects that may exist in the destination
      * @param noOverwrite files that were selected to be skipped (don't overwrite).
      * 	object type IPath
      * @param overwriteReadonly the collected existing read-only files to overwrite.
      * 	object type IPath
+     * @param policy on of the POLICY constants defined in the
+     * class.
      */
-    void collectExistingReadonlyFiles(IPath destinationPath, List sources,
+    void collectExistingReadonlyFiles(IPath sourceStart, List sources,
             ArrayList noOverwrite, ArrayList overwriteReadonly, int policy) {
         IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
         Iterator sourceIter = sources.iterator();
@@ -219,14 +221,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
             sourceRootPath = new Path(provider.getFullPath(this.source));
         }
         while (sourceIter.hasNext()) {
-            Object source = sourceIter.next();
-            IPath sourcePath = new Path(provider.getFullPath(source));
+            Object nextSource = sourceIter.next();
+            IPath sourcePath = new Path(provider.getFullPath(nextSource));
             IPath newDestinationPath;
             IResource newDestination;
 
             if (sourceRootPath == null) {
-                newDestinationPath = destinationPath.append(provider
-                        .getLabel(source));
+                newDestinationPath = sourceStart.append(provider
+                        .getLabel(nextSource));
             } else {
                 int prefixLength = sourcePath
                         .matchingFirstSegments(sourceRootPath);
@@ -275,7 +277,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     IContainer createContainersFor(IPath path) throws CoreException {
 
-        IContainer currentFolder = (IContainer) destinationContainer;
+        IContainer currentFolder = destinationContainer;
 
         int segmentCount = path.segmentCount();
 
@@ -397,15 +399,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         if (createContainerStructure)
             return createContainersFor(pathname.removeLastSegments(1));
-        else {
-            if (source == fileSystemObject)
+        if (source == fileSystemObject)
                 return null;
-            IPath sourcePath = new Path(provider.getFullPath(source));
-            IPath destContainerPath = pathname.removeLastSegments(1);
-            IPath relativePath = destContainerPath.removeFirstSegments(
-                    sourcePath.segmentCount()).setDevice(null);
-            return createContainersFor(relativePath);
-        }
+        IPath sourcePath = new Path(provider.getFullPath(source));
+        IPath destContainerPath = pathname.removeLastSegments(1);
+        IPath relativePath = destContainerPath.removeFirstSegments(
+                sourcePath.segmentCount()).setDevice(null);
+        return createContainersFor(relativePath);
+        
     }
 
     /**
@@ -419,10 +420,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
         if (resource instanceof IFile) {
             return (IFile) resource;
         }
-        if (resource instanceof IAdaptable) {
-            return (IFile) ((IAdaptable) resource).getAdapter(IFile.class);
-        }
-        return null;
+        Object adapted = ((IAdaptable) resource).getAdapter(IFile.class);
+        if(adapted == null)
+        	return null;
+        return (IFile) adapted;
+      
     }
 
     /**
@@ -436,10 +438,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
         if (resource instanceof IFolder) {
             return (IFolder) resource;
         }
-        if (resource instanceof IAdaptable) {
-            return (IFolder) ((IAdaptable) resource).getAdapter(IFolder.class);
-        }
-        return null;
+        Object adapted = ((IAdaptable) resource).getAdapter(IFolder.class);
+        if(adapted == null)
+        	return null;
+        return (IFolder) adapted;
     }
 
     /**
@@ -450,15 +452,16 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @return list of rejected files as absolute paths. Object type IPath.
      */
     ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
-        ArrayList rejectedFiles = new ArrayList();
+        ArrayList filteredFiles = new ArrayList();
 
         IStatus[] status = multiStatus.getChildren();
         for (int i = 0; i < status.length; i++) {
             if (status[i].isOK() == false) {
-                rejectedFiles.add(files[i].getFullPath());
+            	errorTable.add(status[i]);
+            	filteredFiles.add(files[i].getFullPath());
             }
         }
-        return rejectedFiles;
+        return filteredFiles;
     }
 
     /**
@@ -599,7 +602,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * If the import fails, adds a status object to the list to be returned by
      * <code>getResult</code>.
      *
-     * @param fileObject the file system container object to be imported
+     * @param folderObject the file system container object to be imported
      * @param policy determines how the folder object and children are imported
      * @return the policy to use to import the folder's children
      */
@@ -674,7 +677,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Queries the user whether the resource with the specified path should be
      * overwritten by a file system object that is being imported.
      * 
-     * @param path the workspace path of the resource that needs to be overwritten
+     * @param resourcePath the workspace path of the resource that needs to be overwritten
      * @return <code>true</code> to overwrite, <code>false</code> to not overwrite
      * @exception OperationCanceledException if canceled
      */
@@ -776,21 +779,30 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @return list of rejected files as absolute paths. Object type IPath.
      */
     ArrayList validateEdit(List existingFiles) {
-        ArrayList rejectedFiles = new ArrayList();
-
+       
         if (existingFiles.size() > 0) {
             IFile[] files = (IFile[]) existingFiles
                     .toArray(new IFile[existingFiles.size()]);
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IStatus status = workspace.validateEdit(files, context);
 
+            //If there was a mix return the bad ones
             if (status.isMultiStatus())
-                rejectedFiles = getRejectedFiles(status, files);
-            else if (!status.isOK())
-                throw new OperationCanceledException(DataTransferMessages
-                        .getString("DataTransfer.emptyString")); //$NON-NLS-1$
+                return getRejectedFiles(status, files);
+            
+           if(!status.isOK()){
+           		//If just a single status reject them all
+           		errorTable.add(status);
+           		ArrayList filteredFiles = new ArrayList();
+
+           		for (int i = 0; i < files.length; i++) {
+           			filteredFiles.add(files[i].getFullPath());
+           		}
+           		return filteredFiles;
+           }
+            
         }
-        return rejectedFiles;
+        return new ArrayList();
     }
 
     /**
