@@ -16,21 +16,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -64,6 +68,10 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	private IEditorInput fEditorInput;
 	/** Private lock no one else will synchronize on. */
 	private final Object fLock= new Object();
+	/** The document lock for non-IResources. */
+	private Object fDocumentAccessorLock;
+	/** Document lock state, protected by <code>fDocumentAccessorLock</code>. */
+	private boolean fDocumentLocked;
 	/**
 	 * The progress monitor for a currently running <code>getReference</code>
 	 * operation, or <code>null</code>.
@@ -195,9 +203,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		IDocument doc= fReference;
 		ITextEditor editor= fEditor;
 		
-		if (prov instanceof IStorageDocumentProvider && inp instanceof IFileEditorInput) {
+		if (prov instanceof IStorageDocumentProvider && inp instanceof IStorageEditorInput) {
 			
-			IFileEditorInput input= (IFileEditorInput) inp;
+			IStorageEditorInput input= (IStorageEditorInput) inp;
 			IStorageDocumentProvider provider= (IStorageDocumentProvider) prov;
 			
 			if (doc == null)
@@ -207,9 +215,10 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					return;
 
 			IJobManager jobMgr= Platform.getJobManager();
-			IFile file= input.getFile();
+			IStorage storage= null;
 			
 			try {
+				storage= input.getStorage();
 				fProgressMonitor= monitor;
 
 				// this protects others from not being able to delete the file,
@@ -221,27 +230,31 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				// 1) we don't mind waiting for someone else here
 				// 2) we do not take long, or require other locks etc. -> short
 				// delay for any other job requiring the lock on file
-				jobMgr.beginRule(file, monitor);
+				lockDocument(monitor, jobMgr, storage);
 				
-				InputStream stream= getFileContents(file);
-				if (stream == null)
-					return;
-				
-				String encoding= file.getCharset();
-				if (encoding == null)
-					return;
-				
-				boolean skipUTF8BOM= isUTF8BOM(encoding, file);
-				
-				setDocumentContent(doc, stream, encoding, monitor, skipUTF8BOM);
+				try {
+					InputStream stream= getFileContents(storage);
+					if (stream == null)
+						return;
+					
+					String encoding;
+					if (storage instanceof IEncodedStorage)
+						encoding= ((IEncodedStorage) storage).getCharset();
+					else
+						encoding= null;
+					
+					boolean skipUTF8BOM= isUTF8BOM(encoding, storage);
+					
+					setDocumentContent(doc, stream, encoding, monitor, skipUTF8BOM);
+				} finally {
+					unlockDocument(jobMgr, storage);
+					fProgressMonitor= null;
+				}
 				
 			} catch (IOException e) {
 				return;
 			} catch (CoreException e) {
 				return;
-			} finally {
-				jobMgr.endRule(file);
-				fProgressMonitor= null;
 			}
 			
 			if (monitor != null && monitor.isCanceled())
@@ -261,6 +274,31 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	/* utility methods */
+
+	private void lockDocument(IProgressMonitor monitor, IJobManager jobMgr, IStorage storage) {
+		if (storage instanceof ISchedulingRule) {
+			jobMgr.beginRule((ISchedulingRule) storage, monitor);
+		} else synchronized (fDocumentAccessorLock) {
+			while (fDocumentLocked) {
+				try {
+					fDocumentAccessorLock.wait();
+				} catch (InterruptedException e) {
+					// nobody interrupts us!
+					throw new OperationCanceledException();
+				}
+			}
+			fDocumentLocked= true;
+		}
+	}
+
+	private void unlockDocument(IJobManager jobMgr, IStorage storage) {
+		if (storage instanceof ISchedulingRule) {
+			jobMgr.endRule((ISchedulingRule) storage);
+		} else synchronized (fDocumentAccessorLock) {
+			fDocumentLocked= false;
+			fDocumentAccessorLock.notify();
+		}
+	}
 
 	/**
 	 * Adds this as element state listener in the UI thread as it can otherwise 
@@ -303,14 +341,14 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	/**
 	 * Gets the contents of <code>file</code> as an input stream.
 	 * 
-	 * @param file the <code>IFile</code> which we want the content for
+	 * @param storage the <code>IStorage</code> which we want the content for
 	 * @return an input stream for the file's content
 	 */
-	private static InputStream getFileContents(IFile file) {
+	private static InputStream getFileContents(IStorage storage) {
 		InputStream stream= null;
 		try {
-			if (file != null)
-				stream= file.getContents();
+			if (storage != null)
+				stream= storage.getContents();
 		} catch (CoreException e) {
 			// ignore
 		}
@@ -341,7 +379,10 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			
 			final int DEFAULT_FILE_SIZE= 15 * 1024;
 			
-			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
+			if (encoding == null)
+				in= new BufferedReader(new InputStreamReader(contentStream), DEFAULT_FILE_SIZE);
+			else
+				in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
 			StringBuffer buffer= new StringBuffer(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);
@@ -375,12 +416,17 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * This is a workaround for a corresponding bug in Java readers and writer,
 	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 	 * </p>
+	 * @param encoding the encoding
+	 * @param storage the storage
+	 * @return <code>true</code> if <code>storage</code> is a UTF-8-encoded file
+	 * 		   that has an UTF-8 BOM
 	 * @throws CoreException if
 	 * 			- reading of file's content description fails
 	 * 			- byte order mark is not valid for UTF-8
 	 */
-	private static boolean isUTF8BOM(String encoding, IFile file) throws CoreException {
-		if ("UTF-8".equals(encoding)) { //$NON-NLS-1$
+	private static boolean isUTF8BOM(String encoding, IStorage storage) throws CoreException {
+		if (storage instanceof IFile && "UTF-8".equals(encoding)) { //$NON-NLS-1$
+			IFile file= (IFile) storage;
 			IContentDescription description= file.getContentDescription();
 			if (description != null) {
 				byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
