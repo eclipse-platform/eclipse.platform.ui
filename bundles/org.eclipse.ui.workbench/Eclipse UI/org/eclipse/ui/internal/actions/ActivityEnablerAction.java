@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
@@ -70,6 +68,14 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 		}
 		Dialog d = new Dialog(workbenchWindow.getShell()) {
 
+            /* (non-Javadoc)
+             * @see org.eclipse.jface.window.Window#create()
+             */
+            public void create() {
+                setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
+                super.create();
+            }         
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 			 */
@@ -88,6 +94,7 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
 				GridData data = new GridData(GridData.FILL_BOTH);
 				data.widthHint = 600;
 				data.heightHint = 240;
+				composite.setFont(parent.getFont());
 
 				enabler = new ActivityEnabler(activitySupport);
 				enabler.createControl(composite).setLayoutData(data);

@@ -165,6 +165,7 @@ public class ActivityEnabler {
 		Label label = new Label(c, SWT.NONE);
 		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setFont(parent.getFont());
 		
 		dualViewer = new CheckboxTreeViewer(c);
 		dualViewer.setSorter(new ViewerSorter());
@@ -173,6 +174,7 @@ public class ActivityEnabler {
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport.getActivityManager());
 		dualViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		dualViewer.getControl().setFont(parent.getFont());
 
 		c = new Composite(mainComposite, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -181,8 +183,10 @@ public class ActivityEnabler {
 		label = new Label(c, SWT.NONE);
 		label.setText(ActivityMessages.getString("ActivityEnabler.description")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setFont(parent.getFont());
 		
 		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP);
+		descriptionText.setFont(parent.getFont());
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		setInitialStates();
 
