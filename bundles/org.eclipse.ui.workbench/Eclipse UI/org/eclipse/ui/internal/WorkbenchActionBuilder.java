@@ -560,7 +560,7 @@ public class WorkbenchActionBuilder {
 		tBarMgr.addGroup(IWorkbenchActionConstants.NEW_GROUP, id);
 		tBarMgr.add(newWizardDropDownAction);
 		tBarMgr.addGroupMarker(IWorkbenchActionConstants.NEW_EXT, id);
-		tBarMgr.addGroup(IWorkbenchActionConstants.SAVE_GROUP, id);
+		tBarMgr.addGroupMarker(IWorkbenchActionConstants.SAVE_GROUP, id);
 		tBarMgr.add(saveAction);
 		tBarMgr.add(saveAsAction);
 		tBarMgr.addGroupMarker(IWorkbenchActionConstants.SAVE_EXT, id);
