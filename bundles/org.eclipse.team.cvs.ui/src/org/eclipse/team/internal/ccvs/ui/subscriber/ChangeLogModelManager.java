@@ -40,6 +40,7 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
 	private class ToggleCommitSetAction extends Action {
         public ToggleCommitSetAction() {
             super(Policy.bind("ChangeLogModelManager.0"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG)); //$NON-NLS-1$
+            setToolTipText(Policy.bind("ChangeLogModelManager.0")); //$NON-NLS-1$
             update();
         }
         public void run() {
