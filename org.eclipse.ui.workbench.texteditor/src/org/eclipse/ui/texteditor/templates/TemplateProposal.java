@@ -96,6 +96,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		try {
 			IDocument document= viewer.getDocument();
 			
+			// TODO do we need this position?
 			Position position= new Position(fRegion.getOffset(), fRegion.getLength());
 			final String category= "__template_position_" + System.currentTimeMillis(); //$NON-NLS-1$
 			IPositionUpdater updater= new DefaultPositionUpdater(category);
