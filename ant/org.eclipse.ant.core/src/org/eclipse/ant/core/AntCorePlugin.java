@@ -184,7 +184,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 			AntCorePreferences preferences = getPreferences();
 			URL[] urls = preferences.getURLs();
 			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
-			classLoader= new AntClassLoader(urls, pluginLoaders, null);
+			classLoader= new AntClassLoader(urls, pluginLoaders);
 			getPluginPreferences().addPropertyChangeListener(this);
 		}
 		return classLoader;
