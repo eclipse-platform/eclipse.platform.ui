@@ -2,7 +2,7 @@
 <cheatsheet title="CVS - Merging from one branch to another">
 
 	<intro 
-		href="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm">
+		href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
 		<description>
 This cheat sheet will automatically launch wizards, perform actions, and guide you through the individual steps to merge changes from a CVS branch into another branch, or into HEAD. To learn more about using cheat sheets or to see a list of available cheat sheets click help (?).To start working on this cheat sheet, click the "Click to begin" button below.
 		</description>
