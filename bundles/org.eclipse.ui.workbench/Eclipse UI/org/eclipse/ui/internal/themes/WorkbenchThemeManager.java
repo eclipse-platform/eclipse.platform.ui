@@ -64,8 +64,10 @@ public class WorkbenchThemeManager implements IThemeManager {
 	 * @return singleton instance
 	 */
 	public static WorkbenchThemeManager getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new WorkbenchThemeManager();
+		    instance.getCurrentTheme(); //initialize the current theme
+		}
 		return instance;
 	}
 	
