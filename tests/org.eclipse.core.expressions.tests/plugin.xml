@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.core.expressions.tests"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.core.internal.expressions.tests.ExpressionTestPlugin">
+
+   <runtime>
+      <library name="expressionstests.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.core.internal.expressions.tests"/>         
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.junit"/>
+   	  <import plugin="org.eclipse.core.runtime"/>
+   	  <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
+   	  <import plugin="org.eclipse.core.expressions"/>
+   </requires>
+
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            namespace="org.eclipse.core.internal.expressions.tests"
+            properties="simple, overridden, ordering, chainOrdering"
+            type="org.eclipse.core.internal.expressions.tests.A"
+            class="org.eclipse.core.internal.expressions.tests.A_TypeExtender"
+            id="org.eclipse.core.internal.expressions.tests.A_TypeExtender">
+      </propertyTester>
+      <propertyTester
+            namespace="org.eclipse.core.internal.expressions.tests"
+            properties="chaining, chainOrdering"
+            type="org.eclipse.core.internal.expressions.tests.A"
+            class="org.eclipse.core.internal.expressions.tests.A_TypeExtender2"
+            id="org.eclipse.core.internal.expressions.tests.A_TypeExtender2">
+      </propertyTester>
+      <propertyTester
+            namespace="org.eclipse.core.internal.expressions.tests"
+            properties="overridden"
+            type="org.eclipse.core.internal.expressions.tests.B"
+            class="org.eclipse.core.internal.expressions.tests.B_TypeExtender"
+            id="org.eclipse.core.internal.expressions.tests.B_TypeExtender">
+      </propertyTester>
+      <propertyTester
+            namespace="org.eclipse.core.internal.expressions.tests"
+            properties="ordering"
+            type="org.eclipse.core.internal.expressions.tests.I"
+            class="org.eclipse.core.internal.expressions.tests.I_TypeExtender"
+            id="org.eclipse.core.internal.expressions.tests.I_TypeExtender">
+      </propertyTester>
+      
+      <propertyTester
+            namespace="org.eclipse.core.internal.expressions.tests2"
+            properties="differentNamespace"
+            type="org.eclipse.core.internal.expressions.tests.A"
+            class="org.eclipse.core.internal.expressions.tests.A_TypeExtender3"
+            id="org.eclipse.core.internal.expressions.tests.A_TypeExtender">
+      </propertyTester>
+   </extension>
+
+</plugin>
