@@ -942,7 +942,6 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		context = null;
-		bundle = null;
 	}
 	
 	/**
