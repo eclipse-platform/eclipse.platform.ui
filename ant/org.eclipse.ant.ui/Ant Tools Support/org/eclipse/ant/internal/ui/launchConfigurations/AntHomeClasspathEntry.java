@@ -118,6 +118,9 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	}
 	
 	public File resolveAntHome() throws CoreException {
+		if (antHomeLocation == null) { //using the default ant home
+			return null;
+		}
 		IPath libDir= new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
 		File lib= libDir.toFile();
 		File parentDir= lib.getParentFile();
