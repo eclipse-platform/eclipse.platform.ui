@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -47,6 +48,8 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     public static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 
     public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
+    
+	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
     private static final String P_TRUE = "true";//$NON-NLS-1$
 
@@ -106,6 +109,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     	String pageId = element.getAttribute(ATT_ID);
         String pageClassName = element.getAttribute(ATT_CLASS);
         String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
+        Collection keywordReferences = readKeywordReferences(element); 
 
         if (pageId == null) {
             logMissingAttribute(element, ATT_ID);
@@ -121,11 +125,29 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
         }
 
         RegistryPageContributor contributor = new RegistryPageContributor(
-                pageId, element);
+                pageId, element, keywordReferences);
         registerContributor(contributor, objectClassName);
     }
 
     /**
+	 * Read the pages for the receiver from element.
+	 * @param element
+	 * @return Collection the ids of the children
+	 */
+	private static Collection readKeywordReferences(IConfigurationElement element) {
+		IConfigurationElement[] references = element.getChildren(TAG_KEYWORD_REFERENCE);
+		HashSet list = new HashSet();
+		for (int i = 0; i < references.length; i++) {
+			IConfigurationElement page = references[i];
+			String id = page.getAttribute(ATT_ID);
+			if (id != null)
+				list.add(id);
+		}
+
+		return list;
+	}
+
+	/**
      * Reads the next contribution element.
      * 
      * public for dynamic UI

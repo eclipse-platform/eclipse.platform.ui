@@ -14,25 +14,21 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
 /**
  * A proxy for a preference page to avoid creation of preference page just to
  * show a node in the preference dialog tree.
  */
-public class WorkbenchPreferenceNode extends PreferenceNode implements IPluginContribution {
+public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode implements IPluginContribution {
 
 	/**
 	 * The attribute for class name.
@@ -44,8 +40,7 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements IPluginCo
 	private IConfigurationElement configurationElement;
 
 	private IWorkbench workbench;
-	
-	private Collection keywordReferences;
+
 
 	/**
 	 * Create a new instance of the receiver.
@@ -78,8 +73,7 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements IPluginCo
 			ImageDescriptor nodeImage, IConfigurationElement element, Collection keywordBindings,
 			IWorkbench newWorkbench) {
 		this(nodeId,nodeLabel,category,nodeImage,element,newWorkbench);
-		if(keywordBindings.size() > 0)
-			keywordReferences = keywordBindings;
+		setKeywordBindings(keywordBindings);
 	}
 
 	/**
@@ -145,12 +139,5 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements IPluginCo
 	public ImageDescriptor getDescriptor() {
 		return getImageDescriptor();
 	}
-	/**
-	 * Get the ids of the keywords the receiver is bound to.
-	 * @return Collection of String or <code>null</code> if there
-	 * are none.
-	 */
-	public Collection getKeywordReferences() {
-		return keywordReferences;
-	}
+	
 }

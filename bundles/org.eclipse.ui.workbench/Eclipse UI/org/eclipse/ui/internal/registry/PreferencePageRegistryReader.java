@@ -16,22 +16,18 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceGroup;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time in order
@@ -59,15 +55,11 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	private static final String TAG_GROUP = "group"; //$NON-NLS-1$
 	
-	private static final String TAG_KEYWORD = "keyword"; //$NON-NLS-1$
-	
 	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
 	private List nodes;
 
 	private List groups;
-	
-	private Hashtable keywords;
 
 	private IWorkbench workbench;
 	
@@ -181,7 +173,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
 		groups = new ArrayList();
-		keywords = new Hashtable();
 
 		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 
@@ -196,8 +187,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_GROUP) == true)
 			return readGroupElement(element);
-		if (element.getName().equals(TAG_KEYWORD) == true)
-			return readKeywordElement(element);
 		if (element.getName().equals(TAG_PAGE) == false)
 			return false;
 		WorkbenchPreferenceNode node = createNode(workbench, element);
@@ -207,19 +196,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		return true;
 	}
 	
-	/**
-	 * Read a keyword from the configuration element
-	 * @param element
-	 * @return boolean <code>true</code> if the definition
-	 * was successful
-	 */
-	private boolean readKeywordElement(IConfigurationElement element) {
-
-		String name = element.getAttribute(ATT_NAME);
-		String id = element.getAttribute(ATT_ID);
-		keywords.put(id,name);
-		return true;
-	}
 	/**
 	 * Read an element that is a group.
 	 * @param element
@@ -377,11 +353,5 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	public Collection getGroups() {
 		return this.groups;
 	}
-	/**
-	 * Get the mapping of keywords to readable String.
-	 * @return a mapping from keyword ids to keyword strings
-	 */
-	public Map getKeywords() {
-		return keywords;
-	}
+	
 }

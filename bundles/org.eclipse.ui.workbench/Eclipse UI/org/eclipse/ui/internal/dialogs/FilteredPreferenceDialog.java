@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -87,18 +88,24 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 				IPreferenceNode node = (IPreferenceNode) element;
 				Object[] children = contentProvider.getChildren(node);
-				if (match(node.getLabelText()) || (filter(viewer, element, children).length > 0))
+				
+				String[] words = node.getLabelText().split("\\W"); //$NON-NLS-1$
+				for (int i = 0;  i < words.length; i++){
+					if( match(words[i]))
+						return true;
+				}	
+				if (filter(viewer, element, children).length > 0)
 					return true;
-				if(node instanceof WorkbenchPreferenceNode){
-					Collection keywordCollection = ((WorkbenchPreferenceNode) node).getKeywordReferences();
+				
+				if(node instanceof WorkbenchPreferenceExtensionNode){
+					WorkbenchPreferenceExtensionNode workbenchNode =
+						(WorkbenchPreferenceExtensionNode) node;
+					Collection keywordCollection = workbenchNode.getKeywordLabels();
 					if(keywordCollection == null)
 						return false;
 					Iterator keywords = keywordCollection.iterator();
 					while(keywords.hasNext()){
-						String id = (String) keywords.next();
-						String keyword = 
-							(String) ((WorkbenchPreferenceManager) getPreferenceManager()).keywords.get(id);
-						if(match(keyword))
+						if(match((String) keywords.next()))
 							return true;
 					}
 				}

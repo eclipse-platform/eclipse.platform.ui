@@ -10,23 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
 /**
  * Property page node allows us to achive presence in the property page dialog
  * without loading the page itself, thus loading the contributing plugin.
  * Only when the user selects the page will it be loaded.
  */
-public class PropertyPageNode extends PreferenceNode implements
+public class PropertyPageNode extends WorkbenchPreferenceExtensionNode implements
         IPluginContribution {
     private RegistryPageContributor contributor;
 
@@ -37,13 +39,18 @@ public class PropertyPageNode extends PreferenceNode implements
     private IAdaptable element;
 
     /**
-     * PropertyPageNode constructor.
+     * Create a new instance of the receiver.
+     * @param contributor
+     * @param element
+     * @param keywordIds The ids of the keywords this page
+     * supports.
      */
     public PropertyPageNode(RegistryPageContributor contributor,
-            IAdaptable element) {
+            IAdaptable element, Collection keywordIds) {
         super(contributor.getPageId());
         this.contributor = contributor;
         this.element = element;
+        setKeywordBindings(keywordIds);
     }
 
     /**
@@ -100,13 +107,6 @@ public class PropertyPageNode extends PreferenceNode implements
      */
     public String getLabelText() {
         return contributor.getPageName();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return true;
     }
 
     /* (non-Javadoc)

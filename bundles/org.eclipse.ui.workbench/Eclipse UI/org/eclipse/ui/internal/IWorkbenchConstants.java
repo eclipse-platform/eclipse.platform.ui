@@ -75,6 +75,11 @@ public interface IWorkbenchConstants {
      * The extension point for encoding definitions.
      */
     public static final String PL_ENCODINGS = "encodings"; //$NON-NLS-1$
+    
+    /**
+     * The extension point for keyword definitions.
+     */
+	public static final String PL_KEYWORDS = "keywords"; //$NON-NLS-1$
 
     /**
      * @deprecated
@@ -357,4 +362,5 @@ public interface IWorkbenchConstants {
 
     //Colors
     public static final String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
+
 }

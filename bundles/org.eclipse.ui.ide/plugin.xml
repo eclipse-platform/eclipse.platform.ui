@@ -266,6 +266,15 @@
       </decorator>
    </extension>
    <extension
+   		point="org.eclipse.ui.keywords">
+    <keyword
+            label="%PreferenceKeywords.Editing"
+            id="org.eclipse.ui.ide.editing"/>
+      <keyword
+            label="%PreferenceKeywords.Appearance"
+            id="org.eclipse.ui.ide.appearance"/>
+   </extension>      
+   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePages.Workbench"
@@ -348,12 +357,6 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             name="%PreferencePages.Activities"
             id="org.eclipse.ui.ide.page1"/>
-      <keyword
-            name="%PreferenceKeywords.Editing"
-            id="org.eclipse.ui.ide.editing"/>
-      <keyword
-            name="%PreferenceKeywords.Appearance"
-            id="org.eclipse.ui.ide.appearance"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">

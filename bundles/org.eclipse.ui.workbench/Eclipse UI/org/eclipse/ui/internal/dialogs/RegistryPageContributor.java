@@ -53,6 +53,8 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
     private IConfigurationElement pageElement;
 
     private SoftReference filterProperties;
+    
+    private Collection keywordReferences;
 
     /**
      * PropertyPageContributor constructor.
@@ -63,13 +65,25 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
         adaptable = Boolean.valueOf(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE)).booleanValue();
     }
 
+    /**
+     * Create a new instance of the receiver with the 
+     * supported keywords.
+     * @param pageId
+     * @param element
+     * @param keywordIds
+     */
+	public RegistryPageContributor(String pageId, IConfigurationElement element, Collection keywordIds) {
+		this(pageId,element);
+		keywordReferences = keywordIds;
+	}
+
 	/**
      * Implements the interface by creating property page specified with
      * the configuration element.
      */
     public boolean contributePropertyPages(PropertyPageManager mng,
             IAdaptable element) {
-        PropertyPageNode node = new PropertyPageNode(this, element);
+        PropertyPageNode node = new PropertyPageNode(this, element,keywordReferences);
         
         if(getCategory() == null){
         	mng.addToRoot(node);
