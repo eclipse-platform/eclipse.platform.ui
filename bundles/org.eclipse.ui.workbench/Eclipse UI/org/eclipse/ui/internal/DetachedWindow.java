@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.graphics.Rectangle;
@@ -24,6 +25,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -41,8 +45,8 @@ public class DetachedWindow extends Window   {
 	 */
 	public DetachedWindow(WorkbenchPage workbenchPage) {
 		super(workbenchPage.getWorkbenchWindow().getShell());
-		setShellStyle(/* SWT.CLOSE | SWT.MIN | SWT.MAX | */
-		SWT.RESIZE);
+		setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
+			SWT.RESIZE );
 		this.page = workbenchPage;
 		folder = new PartTabFolder();
 	}
@@ -138,15 +142,16 @@ public class DetachedWindow extends Window   {
 	 * Close has been pressed.  Close all views.
 	 */
 	protected void handleShellCloseEvent() {
-		//	List views = new ArrayList();
-		//	collectViewPanes(views, getChildren());
-		//	Iterator enum = views.iterator();
-		//	while (enum.hasNext()) {
-		//		ViewPane child = (ViewPane)enum.next();
-		//		page.hideView(child.getViewPart());
-		//	}
-		//	close();
+		List views = new ArrayList();
+		collectViewPanes(views, getChildren());
+		Iterator enum = views.iterator();
+		while (enum.hasNext()) {
+			ViewPane child = (ViewPane)enum.next();
+			page.hideView(child.getViewReference());
+		}
+		close();
 	}
+	
 	protected void initializeBounds() {
 		if (bounds != null)
 			getShell().setBounds(bounds);
@@ -212,4 +217,17 @@ public class DetachedWindow extends Window   {
 		return folder.getControl();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getConstrainedShellSize(org.eclipse.swt.graphics.Rectangle)
+	 */
+	protected Rectangle getConstrainedShellSize(Rectangle preferredSize) {
+		Rectangle displayBounds = getShell().getDisplay().getBounds();
+		
+		// As long as the initial position is somewhere on the display, don't mess with it.
+		if (displayBounds.intersects(preferredSize)) {
+			return preferredSize;
+		}
+		
+		return super.getConstrainedShellSize(preferredSize);
+	}
 }

@@ -216,12 +216,10 @@ public class CompatibilityDragTarget implements IDragOverListener {
 			
 			PartDropEvent dropEvent = createDropEvent(currentControl, position, source, new Point(dragRectangle.x, dragRectangle.y));
 			 
+			listener.dragOver(dropEvent);
+			
 			if (dropEvent.relativePosition != DragCursors.INVALID) {
-				listener.dragOver(dropEvent);
-				
-				if (dropEvent.relativePosition != DragCursors.INVALID) {
-					return new DropTarget(dropEvent);
-				}
+				return new DropTarget(dropEvent);
 			}
 		}
 		

@@ -291,46 +291,12 @@ public class PerspectivePresentation {
 	}
 
 	/**
-	 * Answer a list of the view panes.
-	 */
-	private DetachedWindow[] collectDetachedWindows(Window[] windows) {
-		DetachedWindow[] result = new DetachedWindow[0];
-		for (int i = 0, length = windows.length; i < length; i++) {
-			if (windows[i] instanceof DetachedWindow
-				&& ((DetachedWindow) windows[i]).belongsToWorkbenchPage(page)) {
-				DetachedWindow[] newResult =
-					new DetachedWindow[result.length + 1];
-				System.arraycopy(result, 0, newResult, 0, result.length);
-				newResult[result.length] = (DetachedWindow) windows[i];
-				result = newResult;
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * Open the tracker to allow the user to move the specified part using
 	 * keyboard.
 	 */
 	public void openTracker(ViewPane pane) {
 		DragUtil.performDrag(pane, DragUtil.getDisplayBounds(pane.getControl()));
 	}
-	/**
-	 * Answer a list of the view panes.
-	 */
-	private void collectDragParts(List result, LayoutPart[] parts) {
-		for (int i = 0, length = parts.length; i < length; i++) {
-			LayoutPart part = parts[i];
-			if (part instanceof ViewPane) {
-				result.add(part);
-			} else if (part instanceof ILayoutContainer) {
-				collectDragParts(
-					result,
-					((ILayoutContainer) part).getChildren());
-			}
-		}
-	}
-
 	/**
 	 * Answer a list of the PartPlaceholder objects.
 	 */
@@ -440,7 +406,7 @@ public class PerspectivePresentation {
 		disableAllDrag();
 
 		// Reparent all views to the main window
-		Composite parent = (Composite) mainLayout.getParent();
+		Composite parent = mainLayout.getParent();
 		Vector children = new Vector();
 		collectViewPanes(children, mainLayout.getChildren());
 
@@ -477,7 +443,7 @@ public class PerspectivePresentation {
 		ILayoutContainer oldContainer = part.getContainer();
 
 		// Reparent the part back to the main window
-		part.reparent((Composite) mainLayout.getParent());
+		part.reparent(mainLayout.getParent());
 
 		// Update container.
 		if (oldContainer == null)
@@ -903,7 +869,7 @@ public class PerspectivePresentation {
 		} else if (newContainer instanceof PartTabFolder) {
 			// move this part relative to the folder
 			// rather than relative to the part in the folder
-			movePart(part, position, (PartTabFolder) newContainer);
+			movePart(part, position, newContainer);
 		}
 	}
 	/**
@@ -979,14 +945,16 @@ public class PerspectivePresentation {
 		// If drop target is not registered object then reject.
 		if (e.dropTarget == null
 			&& e.relativePosition != DragCursors.OFFSCREEN) {
-			e.dropTarget = null;
-			e.relativePosition = offScreenPosition;
+			e.relativePosition = DragCursors.INVALID;
+			//e.dropTarget = null;
+			//e.relativePosition = offScreenPosition;
 			return;
 		}
 
 		// If drop target is not over view, or tab folder, reject.
 		if (!(e.dropTarget instanceof ViewPane
 			|| e.dropTarget instanceof PartTabFolder)) {
+			//e.relativePosition = DragCursors.INVALID;
 			e.dropTarget = null;
 			e.relativePosition = offScreenPosition;
 			return;
@@ -994,6 +962,14 @@ public class PerspectivePresentation {
 
 		// If drag source is view ..
 		if (e.dragSource instanceof ViewPane) {
+			// If target is detached window force stacking.
+			Window window = e.dropTarget.getWindow();
+			if (window instanceof DetachedWindow) {
+				//e.relativePosition = DragCursors.CENTER;
+				e.relativePosition = offScreenPosition;
+				return;
+			}
+			
 			if (e.dragSource == e.dropTarget) {
 				// Reject stack onto same view
 				if (e.relativePosition == DragCursors.CENTER) {
@@ -1025,13 +1001,6 @@ public class PerspectivePresentation {
 				}
 			}
 
-			// If target is detached window force stacking.
-			Window window = e.dropTarget.getWindow();
-			if (window instanceof DetachedWindow) {
-				e.relativePosition = DragCursors.CENTER;
-				return;
-			}
-
 			// All seems well
 			return;
 		}
@@ -1052,13 +1021,6 @@ public class PerspectivePresentation {
 					e.relativePosition = DragCursors.INVALID;
 					return;
 				}
-			}
-
-			// If target is detached window force stacking.
-			Window window = e.dropTarget.getWindow();
-			if (window instanceof DetachedWindow) {
-				e.relativePosition = DragCursors.CENTER;
-				return;
 			}
 
 			// All seems well
