@@ -311,8 +311,7 @@ public class JarVerifier implements IVerifier {
 	private void verifyIntegrity(String file) {
 
 		JarFile jarFile = null;
-		Collection certificateEntries; // of Certificate[] 
-
+		
 		try {
 			// If the JAR is signed and not valid
 			// a security exception will be thrown

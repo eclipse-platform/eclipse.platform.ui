@@ -109,7 +109,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
-		String configuredFeature = feature2.getLabel();
+		//String configuredFeature = feature2.getLabel();
 
 		assertEquals(feature2.getVersionedIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
@@ -200,7 +200,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
-		String configuredFeature = feature2.getLabel();
+		//String configuredFeature = feature2.getLabel();
 		assertEquals(feature2.getVersionedIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
@@ -272,7 +272,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
-		String configuredFeature = feature2.getLabel();
+		//String configuredFeature = feature2.getLabel();
 		assertEquals(feature2.getVersionedIdentifier().toString(),"org.test1.ident1_1.0.0");
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		

@@ -47,7 +47,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		
 		IFeature anotherFeature = factory.createFeature(featureURL,site);
 		
-		//assertTrue("Factory doesn't create same feature",anotherFeature.getIdentifier().equals(anotherFeature.getIdentifier()));
+		assertTrue("Factory doesn't create same feature",anotherFeature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 	}	
 	
 		/**
@@ -62,7 +62,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		
 		IFeature anotherFeature = factory.createFeature(featureURL,site);
 		
-		//assertTrue("Factory doesn't create same feature",anotherFeature.getIdentifier().equals(anotherFeature.getIdentifier()));
+		assertTrue("Factory doesn't create same feature",anotherFeature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 	}	
 	
 	/**
@@ -132,8 +132,8 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		try {
-			IFeature feature = ref.getFeature();
-			assertTrue("id found, should be found",false);
+			ref.getFeature();
+			assertTrue("id found, should not be found",false);
 		} catch (CoreException e){
 			if (e.getMessage().indexOf("org.eclipse.update.core.unknowntype.jar")==-1){
 				throw e;

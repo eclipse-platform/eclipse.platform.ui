@@ -52,7 +52,6 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 
 	private IFeature getFeature1(ISite site) throws MalformedURLException, CoreException {
-		URL url = UpdateManagerUtils.getURL(site.getURL(), "features/org.eclipse.update.core.tests.feature1_1.0.4.jar", null);
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
@@ -228,7 +227,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 		try {
-			ISite site = SiteManager.getSite(new URL("http://www.eclipse.org/"));
+			SiteManager.getSite(new URL("http://www.eclipse.org/"));
 			// FIXME apparently works !!!
 	//		fail("The site contains site.xml... it should be an HTTP site without an XML file");			
 		} catch (CoreException e){

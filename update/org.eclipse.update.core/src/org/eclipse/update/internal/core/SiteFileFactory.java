@@ -238,7 +238,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	private void parseInstalledPlugin(File dir) throws CoreException {
 		PluginIdentifier plugin = null;
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		File pluginFile = null;
 
 		try {
@@ -276,8 +275,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @throws CoreException
 	 */
 	private void addParsedPlugin(PluginIdentifier plugin) throws CoreException {
-
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
 		// tranform each Plugin and Fragment in an ArchiveEntry
 		// and a PluginEntry for the Site

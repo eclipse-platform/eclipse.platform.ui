@@ -77,7 +77,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 			String site = localSite.getURL().getFile();
 			INonPluginEntry[] entries = remoteFeature.getNonPluginEntries();
 			assertTrue("no data entry", (entries != null && entries.length != 0));
-			String pluginName = entries[0].getIdentifier().toString();
+			entries[0].getIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString()+File.separator+ "nondata"+File.separator+"file1.zip");
 			assertTrue("Data file inside the jar not installed locally:"+pluginFile, pluginFile.exists());
 			pluginFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString()+File.separator+ "file.zip");

@@ -72,8 +72,7 @@ public class FeatureMain extends UpdateManagerTestCase {
 		writePrereqs(w, level+1, feature);
 		writePluginEntries(w, level+1, feature);
 		writeNonPluginEntries(w, level+1, feature);
-		writeGroups(w, level+1, feature);
-         
+		         
         w.println(in+"</feature>");
 	}
 	
@@ -175,10 +174,6 @@ public class FeatureMain extends UpdateManagerTestCase {
 		}
 	}
 	
-	private static void writeGroups(PrintWriter w, int level, FeatureModel feature) {
-		String in = getIndent(level);
-		// TBA
-	}
 	
 	private static String getIndent(int level) {
 		String indent = "";
