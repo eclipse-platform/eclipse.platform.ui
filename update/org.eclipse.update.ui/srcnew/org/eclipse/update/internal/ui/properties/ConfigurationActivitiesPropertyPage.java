@@ -17,11 +17,11 @@ import org.eclipse.update.internal.ui.wizards.ActivitiesTableViewer;
 /**
  * @see PropertyPage
  */
-public class ConfigurationActivitiesPreferencePage extends PropertyPage implements IWorkbenchPropertyPage {
+public class ConfigurationActivitiesPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 	/**
 	 *
 	 */
-	public ConfigurationActivitiesPreferencePage() {
+	public ConfigurationActivitiesPropertyPage() {
 		noDefaultAndApplyButton();
 	}
 

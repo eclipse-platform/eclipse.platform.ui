@@ -102,11 +102,16 @@
       <page
             objectClass="org.eclipse.update.configuration.ILocalSite"
             name="%properties.currentConfig.activities"
-            class="org.eclipse.update.internal.ui.properties.ConfigurationActivitiesPreferencePage"
+            class="org.eclipse.update.internal.ui.properties.ConfigurationActivitiesPropertyPage"
             id="org.eclipse.update.ui.currentConfigActivities">
       </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter"
+            name="%properties.configSite"
+            class="org.eclipse.update.internal.ui.properties.ConfiguredSitePropertyPage"
+            id="org.eclipse.update.ui.configSite">
+      </page>
    </extension>
-
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -120,7 +125,6 @@
             class="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage">
       </page>
-      
    </extension>
    <extension
          point="org.eclipse.update.core.deltaHandler">

@@ -113,7 +113,7 @@ public class NewConfigurationView
 				return;
 			updateTitle(newInput);
 		}
-		
+
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
@@ -149,7 +149,8 @@ public class NewConfigurationView
 			if (parent instanceof ConfiguredFeatureAdapter
 				&& showNestedFeaturesAction.isChecked()) {
 				IFeatureAdapter[] nested =
-					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(
+						null);
 				if (showUnconfFeaturesAction.isChecked())
 					return nested;
 				ArrayList result = new ArrayList();
@@ -171,14 +172,16 @@ public class NewConfigurationView
 				if (!showNestedFeaturesAction.isChecked())
 					return false;
 				IFeatureAdapter[] features =
-					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(
+						null);
 
 				if (showUnconfFeaturesAction.isChecked())
 					return features.length > 0;
 
 				for (int i = 0; i < features.length; i++) {
-					if (((ConfiguredFeatureAdapter)features[i]).isConfigured())
-						return true;	
+					if (((ConfiguredFeatureAdapter) features[i])
+						.isConfigured())
+						return true;
 				}
 				return false;
 			}
@@ -295,7 +298,9 @@ public class NewConfigurationView
 					ILocalSite localSite = getLocalSite();
 					if (localSite != null) {
 						int code =
-							getStatusCode(feature, localSite.getFeatureStatus(feature));
+							getStatusCode(
+								feature,
+								localSite.getFeatureStatus(feature));
 						switch (code) {
 							case IFeature.STATUS_UNHAPPY :
 								flags |= UpdateLabelProvider.F_ERROR;
@@ -304,7 +309,8 @@ public class NewConfigurationView
 								flags |= UpdateLabelProvider.F_WARNING;
 								break;
 							default :
-								if (adapter.isConfigured() && adapter.isUpdated())
+								if (adapter.isConfigured()
+									&& adapter.isUpdated())
 									flags |= UpdateLabelProvider.F_UPDATED;
 								break;
 						}
@@ -357,7 +363,6 @@ public class NewConfigurationView
 			edesc = info.getWindowImage();
 		eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
 	}
-	
 
 	public void initProviders() {
 		treeViewer.setContentProvider(new LocalSiteProvider());
@@ -411,7 +416,8 @@ public class NewConfigurationView
 				ILocalSite localSite = getLocalSite();
 				if (localSite == null)
 					return;
-				IInstallConfiguration config = getLocalSite().getCurrentConfiguration();
+				IInstallConfiguration config =
+					getLocalSite().getCurrentConfiguration();
 				IConfiguredSite[] sites = config.getConfiguredSites();
 				Object[] result = new Object[sites.length];
 				for (int i = 0; i < sites.length; i++) {
@@ -434,7 +440,8 @@ public class NewConfigurationView
 			ILocalSite localSite = getLocalSite();
 			if (localSite != null) {
 				localSite.removeLocalSiteChangedListener(this);
-				IInstallConfiguration config = localSite.getCurrentConfiguration();
+				IInstallConfiguration config =
+					localSite.getCurrentConfiguration();
 				config.removeInstallConfigurationChangedListener(this);
 			}
 			initialized = false;
@@ -449,7 +456,9 @@ public class NewConfigurationView
 		collapseAllAction = new Action() {
 			public void run() {
 				treeViewer.getControl().setRedraw(false);
-				treeViewer.collapseToLevel(treeViewer.getInput(), TreeViewer.ALL_LEVELS);
+				treeViewer.collapseToLevel(
+					treeViewer.getInput(),
+					TreeViewer.ALL_LEVELS);
 				treeViewer.getControl().setRedraw(true);
 			}
 		};
@@ -463,31 +472,39 @@ public class NewConfigurationView
 
 		siteStateAction = new SiteStateAction2();
 
-
 		revertAction = new RevertConfigurationAction("Revert...");
 		WorkbenchHelp.setHelp(
 			revertAction,
 			"org.eclipse.update.ui.CofigurationView_revertAction");
-			
-		installationHistoryAction = new InstallationHistoryAction("Installation History", UpdateUIImages.DESC_HISTORY_OBJ);
-		newExtensionLocationAction = new NewExtensionLocationAction("Extension Location...", UpdateUIImages.DESC_ESITE_OBJ);
+
+		installationHistoryAction =
+			new InstallationHistoryAction(
+				"Installation History",
+				UpdateUIImages.DESC_HISTORY_OBJ);
+		newExtensionLocationAction =
+			new NewExtensionLocationAction(
+				"Extension Location...",
+				UpdateUIImages.DESC_ESITE_OBJ);
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
 				treeViewer);
-		propertiesAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
 			propertiesAction,
 			"org.eclipse.update.ui.CofigurationView_propertiesAction");
 
 		uninstallFeatureAction = new UninstallFeatureAction("Uninstall");
 
-		installOptFeatureAction = new InstallOptionalFeatureAction(getControl().getShell(), "Install");
+		installOptFeatureAction =
+			new InstallOptionalFeatureAction(
+				getControl().getShell(),
+				"Install");
 
 		swapVersionAction = new SwapVersionAction("&Another Version...");
 
-		findUpdatesAction = new FindUpdatesAction("Find Updates...");
-		
+		findUpdatesAction =
+			new FindUpdatesAction(getControl().getShell(), "Find Updates...");
+
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
@@ -587,13 +604,14 @@ public class NewConfigurationView
 		Object obj = getSelectedObject();
 
 		if (obj instanceof ILocalSite) {
-			manager.add(findUpdatesAction);
 			manager.add(revertAction);
+			manager.add(findUpdatesAction);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
 		}
-		
-		if (obj instanceof ILocalSite || obj instanceof IConfiguredSiteAdapter) {
+
+		if (obj instanceof ILocalSite
+			|| obj instanceof IConfiguredSiteAdapter) {
 			manager.add(new Separator());
 			MenuManager mgr = new MenuManager("New");
 			mgr.add(newExtensionLocationAction);
@@ -601,9 +619,6 @@ public class NewConfigurationView
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
-				manager.add(findUpdatesAction);
-				manager.add(new Separator());
-				
 				MenuManager mgr = new MenuManager("Replace with");
 				mgr.add(swapVersionAction);
 				manager.add(mgr);
@@ -618,19 +633,25 @@ public class NewConfigurationView
 					manager.add(uninstallFeatureAction);
 				}
 				manager.add(new Separator());
+				manager.add(findUpdatesAction);
+				manager.add(new Separator());
 			} catch (CoreException e) {
 			}
 		}
 
-		drillDownAdapter.addNavigationActions(manager); 
+		drillDownAdapter.addNavigationActions(manager);
 
-		if (obj instanceof IFeatureAdapter || obj instanceof ILocalSite) {
+		if (obj instanceof ILocalSite) {
+			manager.add(new Separator());
+			manager.add(installationHistoryAction);
+		}
+
+		if (obj instanceof IFeatureAdapter
+			|| obj instanceof ILocalSite
+			|| obj instanceof IConfiguredSiteAdapter) {
 			manager.add(new Separator());
 			manager.add(propertiesAction);
 		}
-		if (obj instanceof ILocalSite)
-			manager.add(installationHistoryAction);
-
 	}
 
 	public void installSiteAdded(IConfiguredSite csite) {
@@ -798,7 +819,7 @@ public class NewConfigurationView
 		if (e.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
 			Object obj = ssel.getFirstElement();
-			if (obj instanceof ILocalSite || obj instanceof IFeatureAdapter)
+			if (obj!=null)
 				propertiesAction.run();
 		}
 	}
@@ -821,9 +842,10 @@ public class NewConfigurationView
 
 		treeViewer.expandToLevel(2);
 	}
-	
+
 	private void createTreeViewer(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer =
+			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeViewer.setUseHashlookup(true);
 		initProviders();
@@ -837,16 +859,17 @@ public class NewConfigurationView
 			}
 		});
 
-		treeViewer.getControl().setMenu(menuMgr.createContextMenu(treeViewer.getControl()));
+		treeViewer.getControl().setMenu(
+			menuMgr.createContextMenu(treeViewer.getControl()));
 		getSite().registerContextMenu(menuMgr, treeViewer);
 
-
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		treeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
 		});
-		
+
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
@@ -854,9 +877,9 @@ public class NewConfigurationView
 		});
 
 		getSite().setSelectionProvider(treeViewer);
-		
+
 	}
-	
+
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
@@ -877,7 +900,6 @@ public class NewConfigurationView
 		gd.widthHint = 1;
 		line.setLayoutData(gd);
 	}
-	
 
 	public Control getControl() {
 		return splitter;
@@ -922,17 +944,17 @@ public class NewConfigurationView
 				boolean missing = feature instanceof MissingFeature;
 
 				swapVersionAction.setEnabled(enable && !missing);
-				
+
 				featureStateAction.setFeature(adapter);
 				featureStateAction.setEnabled(enable && !missing);
-				
+
 				if (enable && !missing && adapter.isConfigured()) {
 					findUpdatesAction.setEnabled(true);
 					findUpdatesAction.setFeature(feature);
 				} else {
 					findUpdatesAction.setEnabled(false);
 				}
-				
+
 				if (missing) {
 					MissingFeature mf = (MissingFeature) feature;
 					installOptFeatureAction.setEnabled(
@@ -947,9 +969,6 @@ public class NewConfigurationView
 			} catch (CoreException ex) {
 				UpdateUI.logException(ex);
 			}
-			propertiesAction.setEnabled(true);
-		} else {
-			propertiesAction.setEnabled(false);
 		}
 		if (obj instanceof ILocalSite) {
 			propertiesAction.setEnabled(true);
@@ -975,11 +994,6 @@ public class NewConfigurationView
 		key = ILocalSite.class;
 		array.add(
 			new PreviewTask(
-				"Scan for Updates",
-				"Search for updates for all the installed features.",
-				findUpdatesAction));
-		array.add(
-			new PreviewTask(
 				"Revert to Previous",
 				"You can revert to one of the previous configurations if you are having problems with the current one.",
 				revertAction));
@@ -995,10 +1009,15 @@ public class NewConfigurationView
 				propertiesAction));
 		array.add(
 			new PreviewTask(
+				"Scan for Updates",
+				"Search for updates for all the installed features.",
+				findUpdatesAction));
+		array.add(
+			new PreviewTask(
 				"View Installation History",
 				"This task allows you to view all activities since the installation of the product.",
 				installationHistoryAction));
-				
+
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// configured site tasks
@@ -1012,23 +1031,18 @@ public class NewConfigurationView
 		array.add(
 			new PreviewTask(
 				"Add an Extension Location",
-				"This task allows you to locate and add an extension location to the current configuration.",
+				"Locate and add an extension location to the current configuration.",
 				newExtensionLocationAction));
+		array.add(
+			new PreviewTask(
+				"Show Properties",
+				"View the properties of the install location.",
+				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// feature adapter tasks
 		array.clear();
 		key = IFeatureAdapter.class;
-		array.add(
-			new PreviewTask(
-				"Scan for Updates",
-				"Search for updates for this feature.",
-				findUpdatesAction));
-		array.add(
-			new PreviewTask(
-				"Replace With Another Version",
-				"This tasks allows you to disable the current version of the feature and replace it with another version from the list of currently disabled features.",
-				swapVersionAction));
 		array.add(
 			new PreviewTask(
 				null,
@@ -1041,13 +1055,23 @@ public class NewConfigurationView
 				installOptFeatureAction));
 		array.add(
 			new PreviewTask(
+				"Replace With Another Version",
+				"This task will disable the current version of the feature and replace it with another version from the list of the currently disabled features.",
+				swapVersionAction));
+		array.add(
+			new PreviewTask(
 				"Uninstall",
 				"This feature is currently not used and can be uninstalled from the product.",
 				uninstallFeatureAction));
 		array.add(
 			new PreviewTask(
+				"Scan for Updates",
+				"Search for updates for this feature.",
+				findUpdatesAction));
+		array.add(
+			new PreviewTask(
 				"Show Properties",
-				"This task allows you to view properties of the feature such as version, provider name, license agreement etc.",
+				"View properties of the feature such as version, provider name, license agreement etc.",
 				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 	}
@@ -1060,18 +1084,21 @@ public class NewConfigurationView
 		if (object instanceof ILocalSite)
 			tasks = (IPreviewTask[]) previewTasks.get(ILocalSite.class);
 		if (object instanceof IConfiguredSiteAdapter)
-			tasks = (IPreviewTask[]) previewTasks.get(IConfiguredSiteAdapter.class);
+			tasks =
+				(IPreviewTask[]) previewTasks.get(IConfiguredSiteAdapter.class);
 		return (tasks != null) ? tasks : new IPreviewTask[0];
 	}
-	
+
 	void updateTitle(Object newInput) {
-		if (newInput == null || newInput.equals(UpdateUI.getDefault().getUpdateModel())) {
+		if (newInput == null
+			|| newInput.equals(UpdateUI.getDefault().getUpdateModel())) {
 			// restore old
 			setTitle(getViewName());
 			setTitleToolTip(getTitle());
 		} else {
 			String name =
-				((LabelProvider) treeViewer.getLabelProvider()).getText(newInput);
+				((LabelProvider) treeViewer.getLabelProvider()).getText(
+					newInput);
 			setTitle(getViewName() + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getTitle());
 		}
@@ -1079,12 +1106,12 @@ public class NewConfigurationView
 	public String getViewName() {
 		return viewName;
 	}
-	
+
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
-	
+
 	public void setFocus() {
-	}	
+	}
 
 }
