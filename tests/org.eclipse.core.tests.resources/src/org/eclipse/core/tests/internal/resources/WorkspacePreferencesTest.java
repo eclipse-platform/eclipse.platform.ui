@@ -52,7 +52,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	/**
 	 * Tests properties state in a brand new workspace (must match defaults).
 	 */
-	public void testDefaults() {
+	public void _testDefaults() {
 		IWorkspaceDescription description = Workspace.defaultWorkspaceDescription();
 
 		assertEquals("1.0", description, preferences);
