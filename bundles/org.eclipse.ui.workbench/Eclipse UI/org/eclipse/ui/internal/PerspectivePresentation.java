@@ -1726,7 +1726,7 @@ public void zoomOut() {
 		return;
 
 	PartPane pane = ((WorkbenchPartReference)zoomPart).getPane();
-	// If view ..
+	
 	if (pane instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		mainLayout.zoomOut();
@@ -1736,10 +1736,7 @@ public void zoomOut() {
 			persp.showFastView((IViewReference)zoomPart);
 		}
 		parentWidget.setRedraw(true);
-	}
-	
-	// If editor.
-	else if (pane instanceof EditorPane) {
+	} else if (pane instanceof EditorPane) {
 		parentWidget.setRedraw(false);
 		EditorWorkbook wb = ((EditorPane)pane).getWorkbook();
 		EditorArea ea = wb.getEditorArea();
@@ -1748,6 +1745,10 @@ public void zoomOut() {
 		mainLayout.zoomOut();
 		pane.setZoomed(false);
 		parentWidget.setRedraw(true);
+	} else { //if null
+		parentWidget.setRedraw(false);
+		mainLayout.zoomOut();
+		parentWidget.setRedraw(true);		
 	}
 
 	// Deref all.
