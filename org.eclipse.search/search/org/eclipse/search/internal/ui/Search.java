@@ -179,10 +179,6 @@ public class Search extends Object {
 		return fGotoMarkerAction;
 	}
 
-	/*
-	 * XXX: Activate deprecate tag after 2.0
-	 * @deprecated	As of build > 20020514 use #getActionGroupFactory
-	 */
 	IContextMenuContributor getContextMenuContributor() {
 		return fContextMenuContributor;
 	}
