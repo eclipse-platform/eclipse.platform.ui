@@ -74,9 +74,6 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	public String getTitle() {
 		return Policy.bind("MergeEditorInput.title", start.getName(), end.getName()); //$NON-NLS-1$
 	}
-	public boolean isSaveNeeded() {
-		return false;
-	}
 	protected void contentsChanged(ICompareInput source) {
 	}
 			

@@ -75,10 +75,6 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 		return Policy.bind("CVSLocalCompareEditorInput.title", tags[0].getName()); //$NON-NLS-1$
 	}
 	
-	public boolean isSaveNeeded() {
-		return false;
-	}
-	
 	protected void contentsChanged(ICompareInput source) {
 	}
 
