@@ -2329,7 +2329,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		// Get the active tab.  If there isn't one, clear the information & error messages
+		// Get the active tab.  If there isn't one, clear the informational & error messages
 		ILaunchConfigurationTab activeTab = getActiveTab();
 		if (activeTab == null) {
 			setMessage(null);
@@ -2346,18 +2346,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		String errorMessage = checkTabForError(activeTab);
 		boolean errorOnActiveTab = errorMessage != null;
 		setTabIcon(getActiveTabItem(), errorOnActiveTab);
-		if (!errorOnActiveTab) {
-			ILaunchConfigurationTab[] allTabs = getTabs();
-			for (int i = 0; i < allTabs.length; i++) {
-				String tabError = checkTabForError(allTabs[i]);				
-				TabItem tabItem = getTabFolder().getItem(i);
-				boolean errorOnTab = tabError != null;
-				setTabIcon(tabItem, errorOnTab);
-				if (errorOnTab) {
-					errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError;
-				}
+		
+		ILaunchConfigurationTab[] allTabs = getTabs();
+		for (int i = 0; i < allTabs.length; i++) {
+			if (getTabFolder().getSelectionIndex() == 1) {
+				continue;
 			}
-		} 
+			String tabError = checkTabForError(allTabs[i]);				
+			TabItem tabItem = getTabFolder().getItem(i);
+			boolean errorOnTab = tabError != null;
+			setTabIcon(tabItem, errorOnTab);
+			if (errorOnTab && !errorOnActiveTab) {
+				errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError;
+			}
+		}
 		setErrorMessage(errorMessage);				
 	}
 	
