@@ -50,6 +50,8 @@ public class EditorManager {
 	private WorkbenchWindow window;
 	private WorkbenchPage page;
 	private Map actionCache = new HashMap();
+	
+	private MultiStatus closingEditorStatus = null;
 
 	private static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.getString("EditorManager.saveResourcesMessage"); //$NON-NLS-1$
 	private static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.getString("EditorManager.saveResourcesTitle"); //$NON-NLS-1$
@@ -88,6 +90,15 @@ public class EditorManager {
 	 */
 	public void closeEditor(IEditorReference ref) {
 		// Close the pane, action bars, pane, etc.
+		boolean createdStatus = false;
+		if(closingEditorStatus == null) {
+			createdStatus = true;
+			closingEditorStatus = new MultiStatus(
+				PlatformUI.PLUGIN_ID,IStatus.OK,
+				WorkbenchMessages.getString("EditorManager.unableToOpenEditors"), //$NON-NLS-1$
+				null);
+	    }
+
 		IEditorPart part = ref.getEditor(false);
 		if(part != null) {
 			if(part instanceof MultiEditor) {
@@ -113,6 +124,17 @@ public class EditorManager {
 		} else {
 			editorPresentation.closeEditor(ref);
 			((Editor)ref).dispose();
+		}
+		if(createdStatus) {
+			if(closingEditorStatus.getSeverity() == IStatus.ERROR) {
+				ErrorDialog.openError(
+					window.getShell(),
+					WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
+					null,
+					closingEditorStatus,
+					IStatus.WARNING | IStatus.ERROR);
+			}
+			closingEditorStatus = null;
 		}
 	}
 	/**
@@ -1233,7 +1255,9 @@ public class EditorManager {
 			if(status.getSeverity() == IStatus.ERROR) {
 				editorMemento = null;
 				page.closeEditor(this,false);
-				if(!workbench.isStarting()) {
+				if(closingEditorStatus != null) {
+					closingEditorStatus.add(status);
+				} else if(!workbench.isStarting()) {
 					ErrorDialog.openError(
 						window.getShell(),
 						WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
