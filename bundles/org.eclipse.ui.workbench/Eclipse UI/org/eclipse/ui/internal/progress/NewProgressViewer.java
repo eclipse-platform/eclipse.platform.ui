@@ -337,7 +337,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				gotoAction.removePropertyChangeListener(this);
 			gotoAction= action;
 			if (gotoAction != null) {
-				gotoAction.setEnabled(false);
+				
+				// temporary workaround for CVS actionWrapper problem
+				String actionName= gotoAction.getClass().getName();
+				if (actionName.indexOf("RefreshSubscriberJob$2") >= 0) //$NON-NLS-1$
+					gotoAction.setEnabled(false);
+				// end of temporary workaround
+
 				gotoAction.addPropertyChangeListener(this);
 				String tooltip= gotoAction.getToolTipText();
 				if (tooltip != null)
@@ -592,7 +598,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			super(parent, info, SWT.NONE);
 			
 			Assert.isNotNull(info);
-						
+			
 			Display display= getDisplay();
 						
 			iconItem= new Label(this, SWT.NONE);
@@ -697,21 +703,22 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		public boolean remove() {
 			
 			jobTerminated= true;
+	
+			if (finishedJobs.isFinished(jobTreeElement)) {
+				keepItem= true;
+			}
 			
 			// propagate status down
 			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
 				if (children[i] instanceof JobTreeItem)
-					//((JobTreeItem)children[i]).remove();
 					((JobTreeItem)children[i]).jobTerminated= true;
 			}
 							
 			if (! dialogContext) {	// we never keep jobs in dialogs
 				if (!keepItem)
 					checkKeep();
-				
-				//dump("JobItem.remove"); //$NON-NLS-1$
-	
+					
 				if (keepItem)
 					return aboutToKeep();
 			}
@@ -1073,23 +1080,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
         
         finishedJobs= FinishedJobs.getInstance();
         
-	    progressManagerListener= new IJobProgressManagerListener() {
-            public void addJob(JobInfo info) { }
-            public void addGroup(GroupInfo info) { }
-            public void refreshJobInfo(JobInfo info) { }
-            public void refreshGroup(GroupInfo info) { }
-            public void refreshAll() { }
-            public void removeJob(JobInfo info) {
-                forcedRemove(info);
-            }
-            public void removeGroup(GroupInfo group) {
-                forcedRemove(group);
-            }
-            public boolean showsDebug() {
-                return false;
-            }
-	    };
-	    ProgressManager.getInstance().addListener(progressManagerListener);	
+//	    progressManagerListener= new IJobProgressManagerListener() {
+//            public void addJob(JobInfo info) { }
+//            public void addGroup(GroupInfo group) {
+//            }
+//            public void refreshJobInfo(JobInfo info) { }
+//            public void refreshGroup(GroupInfo info) { }
+//            public void refreshAll() { }
+//            public void removeJob(JobInfo info) {
+//                forcedRemove(info);
+//            }
+//            public void removeGroup(GroupInfo group) {
+//                forcedRemove(group);
+//            }
+//            public boolean showsDebug() {
+//                return false;
+//            }
+//	    };
+//	    ProgressManager.getInstance().addListener(progressManagerListener);	
        
 	    finishedJobs.addListener(this);
 		
@@ -1150,17 +1158,17 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		list.addListener(SWT.Traverse, new Listener () {
            public void handleEvent (Event e) {
                System.err.println("Traverse");
-               switch (e.detail) {
-                    /* Do tab group traversal */
-                   case SWT.TRAVERSE_ESCAPE:
-                   case SWT.TRAVERSE_RETURN:
-                   case SWT.TRAVERSE_TAB_NEXT:     
-                   case SWT.TRAVERSE_TAB_PREVIOUS:
-                   case SWT.TRAVERSE_PAGE_NEXT:    
-                   case SWT.TRAVERSE_PAGE_PREVIOUS:
-                           e.doit = true;
-                           break;
-               }
+//               switch (e.detail) {
+//                    /* Do tab group traversal */
+//                   case SWT.TRAVERSE_ESCAPE:
+//                   case SWT.TRAVERSE_RETURN:
+//                   case SWT.TRAVERSE_TAB_NEXT:     
+//                   case SWT.TRAVERSE_TAB_PREVIOUS:
+//                   case SWT.TRAVERSE_PAGE_NEXT:    
+//                   case SWT.TRAVERSE_PAGE_PREVIOUS:
+//                           e.doit = true;
+//                           break;
+//               }
            }
 		});
 
@@ -1173,7 +1181,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		scroller.addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
 				finishedJobs.removeListener(NewProgressViewer.this);
-			    ProgressManager.getInstance().removeListener(progressManagerListener);
+				if (progressManagerListener != null)
+					ProgressManager.getInstance().removeListener(progressManagerListener);
 			    
 				defaultJobIcon.dispose();
 				cancelJobIcon.dispose();
@@ -1198,8 +1207,18 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     }
     
     public void setFocus() {
-        System.out.println("NewProgressViewer.setFocus");
-        scroller.setFocus();
+        if (list != null) {
+			Control[] cs= list.getChildren();
+			for (int i= 0; i < cs.length; i++) {
+				JobItem ji= (JobItem) cs[i];
+				if (ji.selected) {
+					ji.setFocus();
+					return;
+				}
+			}
+			if (cs.length > 0)
+				cs[0].setFocus();
+        }
     }
 
     public Control getControl() {
@@ -1303,8 +1322,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				changed |= ji.refresh();
 			} else {
 				if (DEBUG) System.err.println("  remove: " + ji.jobTreeElement); //$NON-NLS-1$
-				countChanged= true;
-				changed |= ji.remove();
+				if (ji.remove())
+					countChanged= changed= true;
 			}
 		}
 		
@@ -1632,13 +1651,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		}
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#infoVisited()
-	 */
-	public void infoVisited() {
-    	// we should not have to do anything here
-	}
-	
 	////// SelectionProvider
 
     public ISelection getSelection() {

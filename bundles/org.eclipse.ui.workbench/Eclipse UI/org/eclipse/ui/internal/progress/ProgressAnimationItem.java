@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * Create an instance of the receiver in the window.
@@ -47,8 +50,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	ProgressRegion progressRegion;
     Image noneImage, okImage, errorImage;
     boolean animationRunning;
-    long timeStamp;
-	
+    JobInfo lastJobInfo;
 	
 	/**
 	 * Create an instance of the receiver in the supplied region.
@@ -62,16 +64,123 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		
 		progressRegion= region;
 		mouseListener = new MouseAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-			 */
 			public void mouseDoubleClick(MouseEvent e) {
-			    progressRegion.processDoubleClick();
-                infoVisited();
+				doAction();
 			}
 		};
 	}
+		
+	void doAction() {
+		
+		JobTreeElement[] jobTreeElements= FinishedJobs.getInstance().getJobInfos();
+		// search from end (youngest)
+		for (int i= jobTreeElements.length-1; i >= 0; i--) {
+			if (jobTreeElements[i] instanceof JobInfo) {
+				JobInfo ji= (JobInfo) jobTreeElements[i];
+				Job job= ji.getJob();
+				if (job != null) {
+					
+				    IStatus status= job.getResult();
+				    if (status != null && status.getSeverity() == IStatus.ERROR) {
+						String title= ProgressMessages.getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
+						String msg= ProgressMessages.getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+						ErrorDialog.openError(toolbar.getShell(), title, msg, status);
+						JobTreeElement topElement= (JobTreeElement) ji.getParent();
+						if (topElement == null)
+							topElement= ji;
+						FinishedJobs.getInstance().remove(topElement);
+				        return;
+				    }
+				
+					IAction action= null;
+					Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
+					if (property instanceof IAction) {
+						action= (IAction) property;
+					} else {	// backward compatibility
+						property= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
+						if (property instanceof IAction)
+							action= (IAction) property;
+					}
+					if (action != null && action.isEnabled()) {
+						action.run();
+						JobTreeElement topElement= (JobTreeElement) ji.getParent();
+						if (topElement == null)
+							topElement= ji;
+						FinishedJobs.getInstance().remove(topElement);
+						return;
+					}
+				}
+			}
+		}
+		
+		progressRegion.processDoubleClick();
+		refresh();		
+	}
+	
+	private IAction getAction(Job job) {
+		Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
+		if (property instanceof IAction)
+			return (IAction) property;
+		// backward compatibility
+		property= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
+		if (property instanceof IAction)
+			return (IAction) property;
+		return null;
+	}
 
+	private void refresh() {
+		
+		if (toolbar == null && toolbar.isDisposed())
+			return;
+		
+		lastJobInfo= null;
+
+		JobTreeElement[] jobTreeElements= FinishedJobs.getInstance().getJobInfos();
+		// search from end (youngest)
+		for (int i= jobTreeElements.length-1; i >= 0; i--) {
+			if (jobTreeElements[i] instanceof JobInfo) {
+				JobInfo ji= (JobInfo) jobTreeElements[i];
+	    		lastJobInfo= ji;
+				Job job= ji.getJob();
+				if (job != null) {
+				    IStatus status= job.getResult();
+				    if (status != null && status.getSeverity() == IStatus.ERROR) {
+				    	// green arrow with error overlay
+				    	initButton(errorImage, ProgressMessages.format("ProgressAnimationItem.error", new Object[] { job.getName() } )); //$NON-NLS-1$
+				        return;
+				    }
+					IAction action= getAction(job);
+					if (action != null && action.isEnabled()) {
+						// green arrow with exclamation mark
+						String tt= action.getToolTipText();
+						if (tt == null || tt.trim().length() == 0)
+							tt= ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } );
+						initButton(okImage, tt); //$NON-NLS-1$
+			    		return;			
+					}
+					// just the green arrow
+					initButton(noneImage, ProgressMessages.getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
+		    		return;
+				}
+			}
+		}
+		
+		if (animationRunning) {			
+			initButton(noneImage, ProgressMessages.getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
+    		return;			
+		}
+		
+		// if nothing found hide tool item
+   		toolbar.setVisible(false);
+	}
+	
+	private void initButton(Image im, String tt) {
+		toolButton.setImage(im);
+		toolButton.setToolTipText(tt);
+		toolbar.setVisible(true);
+		toolbar.redraw();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,11 +223,10 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolbar.setVisible(false);
 		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		toolButton= new ToolItem(toolbar, SWT.NONE);
-		setNoneImage();
+		refresh();
 		toolButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                progressRegion.processDoubleClick();
-                infoVisited();
+            	doAction();
            }
         });
 
@@ -145,12 +253,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		if (bar.isDisposed())
 			return;
 		bar.setVisible(false);
-		
-		long ts= FinishedJobs.getInstance().getTimeStamp();
-		if (ts <= timeStamp) {	// if up to date, hide status
-	        toolbar.setVisible(false);		    
-	        timeStamp= ts;
-		}
+		refresh();
 	}
 
 	/*
@@ -164,71 +267,24 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		if (bar.isDisposed())
 			return;
 		bar.setVisible(true);
-		
-		long ts= FinishedJobs.getInstance().getTimeStamp();
-		if (ts <= timeStamp) {
-			setNoneImage();
-	        timeStamp= ts;
-		}
-        toolbar.setVisible(true);
+		refresh();
 	}
 	
-	private void setNoneImage() {
-        toolButton.setImage(noneImage);
-        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.tasks", new Object[] { } )); //$NON-NLS-1$
-	}
-
-	private void setErrorImage(Job job) {
-        toolButton.setImage(errorImage);		
-        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.error", new Object[] { job.getName() } )); //$NON-NLS-1$
-	}
-
-	private void setOkImage(Job job) {
-        toolButton.setImage(okImage);		
-        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } )); //$NON-NLS-1$
-	}
-
     public void removed(JobTreeElement info) {
-        infoVisited();
+	    final Display display= Display.getDefault();
+	    display.asyncExec(new Runnable() {
+	        public void run() {
+	        	refresh();
+	        }
+	    });
     }
     
     public void finished(final JobTreeElement jte) {
 	    final Display display= Display.getDefault();
 	    display.asyncExec(new Runnable() {
 	        public void run() {
-	        	if (jte instanceof JobInfo) {
-	        		JobInfo ji= (JobInfo) jte;
-	        		Job job= ji.getJob();
-	        		if (job != null)
-	        			setStatus(job);
-	        	}
+	        	refresh();
 	        }
 	    });
     }
-    
-	private void setStatus(Job job) {
-	    IStatus status= job.getResult();
-	    if (status != null && !toolbar.isDisposed()) {
-	        //toolbar.getDisplay().beep();
-	        if (status.getSeverity() == IStatus.ERROR)
-	            setErrorImage(job);
-	        else
-	        	if (toolButton.getImage() != errorImage)
-	        		setOkImage(job);
-    		toolbar.setVisible(true);
-	    }
-	}
-
-	public void infoVisited() {
-	    final Display display= Display.getDefault();
-	    display.asyncExec(new Runnable() {
-	        public void run() {
-	            if (!toolbar.isDisposed()) {
-	            	setNoneImage();
-                	toolbar.setVisible(animationRunning);
-	            }
-	        	timeStamp= FinishedJobs.getInstance().getTimeStamp();
-	        }
-	    });
-	}
 }

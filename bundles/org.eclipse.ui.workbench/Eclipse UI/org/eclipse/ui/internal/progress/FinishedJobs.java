@@ -1,6 +1,8 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,17 +30,12 @@ class FinishedJobs {
          * A kept job has been removed.
          */
         void removed(JobTreeElement jte);
-        /*
-         * All kept jobs have been been viewed.
-         */
-        void infoVisited();
     }
 
     private static FinishedJobs theInstance;
     private static ListenerList listeners = new ListenerList();
     private IJobProgressManagerListener listener;
     private HashSet keptjobinfos = new HashSet();
-    private long timeStamp;
     private HashMap finishedTime= new HashMap();
 
     
@@ -150,7 +147,6 @@ class FinishedJobs {
                 	finishedTime.put(parent, new Long(now));
                 }
   
-                timeStamp++;
                 fire = true;
             }
         }
@@ -243,7 +239,6 @@ class FinishedJobs {
 		        		toBeRemoved= findJobsToRemove(element);
 		                keptjobinfos.add(tinfo);
 		                finishedTime.put(tinfo, new Long(System.currentTimeMillis()));
-		                timeStamp++;
 		            }
 	        	}
 	        	
@@ -299,23 +294,33 @@ class FinishedJobs {
         }
     }
     
-    void refresh() {
-        if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: refresh"); //$NON-NLS-1$
-        Object l[] = listeners.getListeners();
-        for (int i = 0; i < l.length; i++) {
-            KeptJobsListener jv = (KeptJobsListener) l[i];
-            jv.infoVisited();
-        }
-    }
-
+    /**
+     * Returns all kept elements sorted by finished date.
+     */
     JobTreeElement[] getJobInfos() {
-        synchronized (keptjobinfos) {
-            return (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
-        }
+    	JobTreeElement[] all;
+    	synchronized (keptjobinfos) {
+    		all= (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
+    	}
+        Arrays.sort(all, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				long t1= getFinishedDateAsLong((JobTreeElement)o1);
+				long t2= getFinishedDateAsLong((JobTreeElement)o2);
+				if (t1 < t2)
+					return -1;
+				if (t1 > t2)
+					return 1;
+				return 0;
+			}
+        });
+        return all;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    private long getFinishedDateAsLong(JobTreeElement jte) {
+    	Object o= finishedTime.get(jte);
+    	if (o instanceof Long)
+    		return ((Long)o).longValue();
+    	return 0;
     }
     
     public Date getFinishDate(JobTreeElement jte) {
@@ -324,4 +329,8 @@ class FinishedJobs {
     		return new Date(((Long)o).longValue());
     	return null;
     }
+
+	public boolean isFinished(JobTreeElement element) {
+		return keptjobinfos.contains(element);
+	}
 }
