@@ -376,10 +376,16 @@ class TableContentProvider implements IStructuredContentProvider {
 						lock.release();
 					}
 					
-					if (uiJob.shouldSchedule()) {
+					try {
 						uiJob.schedule();
 						// Wait for the current update job to complete before scheduling another
 						uiJob.join();				
+					} catch (IllegalStateException e) {
+						// Ignore this exception -- it means that the Job manager was shut down, which is expected
+						// at the end of the application. Note that we need to check for this by catching the exception
+						// rather than using something like if (jobManagerIsShutDown())... since the job manager might
+						// be shut down in another thread between the time we evaluate the if statement and when
+						// we schedule the job.
 					}
 					
 					// Estimate how much of the remaining work we'll be doing in this update,
@@ -396,10 +402,15 @@ class TableContentProvider implements IStructuredContentProvider {
 					break;
 				}
 			}
-		} finally {			
-			if (enableUpdatesJob.shouldSchedule()) {
+		} finally {
+			try {
 				enableUpdatesJob.schedule();
 				enableUpdatesJob.join();
+			} catch (IllegalStateException e) {
+				// Ignore this exception -- it means that the Job manager was shut down, which is expected
+				// at the end of the application. Note that we need to check for this by catching the exception
+				// rather than using something like if (jobManagerIsShutDown())... since the job manager might
+				// be shut down at any time in another thread.
 			}
 			
 			monitor.done();
