@@ -27,16 +27,6 @@ public final class EditorPluginAction extends PartPluginAction {
 
 	/**
 	 * This class adds the requirement that action delegates
-	 * loaded on demand implement IViewActionDelegate.
-	 * 
-	 * @deprecated
-	 */
-	public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part, String definitionId) {
-		this(actionElement, runAttribute, part, definitionId, IAction.AS_PUSH_BUTTON);
-	}
-
-	/**
-	 * This class adds the requirement that action delegates
 	 * loaded on demand implement IViewActionDelegate
 	 */
 	public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part, String definitionId, int style) {

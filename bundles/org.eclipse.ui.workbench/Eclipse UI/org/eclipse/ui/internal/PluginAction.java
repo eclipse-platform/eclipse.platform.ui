@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -36,6 +37,7 @@ import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -98,15 +100,23 @@ public abstract class PluginAction extends Action
 	 * Creates the delegate and refreshes its enablement.
 	 */
 	protected final void createDelegate() {
-		if (delegate == null) {
+		// The runAttribute is null if delegate creation failed previously...
+		if (delegate == null && runAttribute != null) {
 			try {
 				Object obj = WorkbenchPlugin.createExtension(configElement, runAttribute);
 				delegate = validateDelegate(obj);
 				initDelegate();
 				refreshEnablement();
-			} catch (CoreException e) {
+			} catch (Throwable e) {
+				runAttribute = null;
+				IStatus status = null;
+				if (e instanceof CoreException) {
+					status = ((CoreException)e).getStatus();
+				} else {
+					status = StatusUtil.newStatus(IStatus.ERROR, "Internal plug-in action delegate error on creation.", e); //$NON-NLS-1$
+				}
 				String id = configElement.getAttribute(ActionDescriptor.ATT_ID);
-				WorkbenchPlugin.log("Could not create action delegate for id: " + id, e.getStatus()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Could not create action delegate for id: " + id, status); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -140,7 +150,9 @@ public abstract class PluginAction extends Action
 	}
 	
 	/**
-	 * Return the delegate action or null if not created yet
+	 * Returns the action delegate if created. Can be <code>null</code>
+	 * if the delegate is not created yet or if previous delegate
+	 * creation failed.
 	 */
 	protected IActionDelegate getDelegate() {
 		return delegate;

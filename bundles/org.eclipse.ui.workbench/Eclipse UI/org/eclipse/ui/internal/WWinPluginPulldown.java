@@ -66,7 +66,8 @@ public class WWinPluginPulldown extends WWinPluginAction {
 	}
 
 	/**
-	 * Returns the pulldown delegate.  If it does not exist it is created.
+	 * Returns the pulldown delegate. If it does not exist it is created.
+	 * Can return <code>null</code> if delegate creation failed.
 	 */
 	protected IWorkbenchWindowPulldownDelegate getPulldownDelegate() {
 		IActionDelegate delegate = getDelegate();
