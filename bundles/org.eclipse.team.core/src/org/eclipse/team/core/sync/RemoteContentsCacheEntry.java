@@ -97,11 +97,11 @@ public class RemoteContentsCacheEntry {
 		}
 	}
 	
-	private synchronized void endOperation() {
+	private void endOperation() {
 		cache.getLock().release();
 	}
 
-	private synchronized void beginOperation() {
+	private void beginOperation() {
 		cache.getLock().acquire();
 	}
 
@@ -173,7 +173,13 @@ public class RemoteContentsCacheEntry {
 	 * This method is sychronized to ensure atomic setting of the bytes.
 	 * @param bytes
 	 */
-	public synchronized void setSyncBytes(byte[] bytes) {
+	public void setSyncBytes(byte[] bytes) {
+		try {
+			beginOperation();
+			syncBytes = bytes;
+		} finally {
+			endOperation();
+		}
 		syncBytes = bytes;
 	}
 
