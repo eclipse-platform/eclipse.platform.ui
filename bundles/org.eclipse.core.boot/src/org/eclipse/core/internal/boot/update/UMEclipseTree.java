@@ -6,13 +6,9 @@ package org.eclipse.core.internal.boot.update;
  * (c) Copyright IBM Corp 2001
  *
  */
-import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;
-import org.eclipse.webdav.http.client.IStatusCodes;
-import org.eclipse.core.boot.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-public class UMEclipseTree  {
+import java.io.File;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;
+import java.net.HttpURLConnection;import java.net.MalformedURLException;import java.net.URL;import java.util.Arrays;import java.util.Vector;
+import org.eclipse.core.boot.*;public class UMEclipseTree  {
 	private static URL fBaseInstallURL = BootLoader.getInstallURL();		// Base tree where Eclipse is running
 	
 	// Members of the Eclipse install URL directory
@@ -215,12 +211,10 @@ public static String getFileInPlatformString(URL url) {
 
 	// Convert the URL to a string
 	//----------------------------
-	String strFilespec = url.getFile();
+	String strFilespec = url.getFile().replace('/',File.separatorChar);
 	int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
-	if (k != -1) {		// we're on windoze
-		strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
-	} else {
-		strFilespec = strFilespec.replace('/', File.separatorChar).substring(0);
+	if (k != -1 && strFilespec.startsWith(File.separator)) {
+		strFilespec = strFilespec.substring(1);
 	}
 	return strFilespec;
 }
@@ -270,9 +264,9 @@ public static String[] getPathMembers(URL path) {
 		InputStream inputStream = null;
 
 		try {
-			Response response = BaseURLHandler.open(url);
-			if( response.getResponseCode() == IStatusCodes.HTTP_OK ){
-				InputStream stream = response.getInputStream();
+			BaseURLHandler.Response response = BaseURLHandler.open(url);
+			if( response.getResponseCode() == HttpURLConnection.HTTP_OK ){
+				inputStream = response.getInputStream();
 			}
 		}
 		catch (IOException ex) {

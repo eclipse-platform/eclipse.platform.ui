@@ -43,7 +43,7 @@ public LogStore() {
 public File createFile(URL url) throws LogStoreException {
 
 	String strFilespec = url.getFile().replace('/',File.separatorChar);
-	int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
+	int k = strFilespec.indexOf(":");
 	if (k != -1 && strFilespec.startsWith(File.separator)) {
 		strFilespec = strFilespec.substring(1);
 	}

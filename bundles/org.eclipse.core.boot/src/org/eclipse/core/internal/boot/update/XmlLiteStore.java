@@ -47,12 +47,10 @@ public XmlLiteStore() {
  */
 public File createFile(URL url) throws XmlLiteException {
 
-	String strFilespec = url.getFile();
-	int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
-	if (k != -1) {		// we're on windoze
-		strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
-	} else {
-		strFilespec = strFilespec.replace('/', File.separatorChar).substring(0);
+	String strFilespec = url.getFile().replace('/',File.separatorChar);
+	int k = strFilespec.indexOf(":");
+	if (k != -1 && strFilespec.startsWith(File.separator)) {
+		strFilespec = strFilespec.substring(1);
 	}
 
 
