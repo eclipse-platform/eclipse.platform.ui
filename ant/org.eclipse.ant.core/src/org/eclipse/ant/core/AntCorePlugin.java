@@ -182,12 +182,13 @@ public class AntCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Set this plug-in's preferences for running headless.
+	 * Set this plug-in's preferences for running headless based on the 
+	 * headless parameter.
 	 * This method is public for testing purposes only. It should not
 	 * be called outside of the Ant integration framework.
 	 */
-	public void setRunningHeadless() {
-		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), extractExtensions(PT_PROPERTIES), true);
+	public void setRunningHeadless(boolean headless) {
+		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), extractExtensions(PT_PROPERTIES), headless);
 	}
 
 	/**

@@ -448,7 +448,7 @@ public class AntRunner implements IPlatformRunnable {
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
 			//set the preferences for headless mode
-			AntCorePlugin.getPlugin().setRunningHeadless();
+			AntCorePlugin.getPlugin().setRunningHeadless(true);
 			
 			// Add debug information if necessary - fix for bug 5672.
 			// Since the platform parses the -debug command line arg

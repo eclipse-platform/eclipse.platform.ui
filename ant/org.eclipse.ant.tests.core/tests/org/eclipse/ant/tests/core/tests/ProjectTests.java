@@ -59,16 +59,17 @@ public class ProjectTests extends AbstractAntTest {
 	}
 	
 	public void testHeadless() throws CoreException {
-		AntCorePlugin.getPlugin().setRunningHeadless();
+		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		String buildFileName="TestForEcho.xml"; 
 		run(buildFileName);
 		assertNull("property.headless should not have been set as AntTestPropertyProvider", AntTestChecker.getDefault().getUserProperty("property.headless"));
 	}
 	
 	public void testNotHeadless() throws CoreException {
+		AntCorePlugin.getPlugin().setRunningHeadless(false);
 		String buildFileName="TestForEcho.xml"; 
 		run(buildFileName);
-		assertTrue("property.headless should not have been set as AntTestPropertyProvider", "headless".equals(AntTestChecker.getDefault().getUserProperty("property.headless")));
+		assertTrue("property.headless should have been set as AntTestPropertyProvider", "headless".equals(AntTestChecker.getDefault().getUserProperty("property.headless")));
 	}
 }
 
