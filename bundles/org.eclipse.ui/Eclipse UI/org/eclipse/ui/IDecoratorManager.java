@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.ILabelDecorator;
  * decorator returned by <code>getLabelDecorator()</code>.
  */
 
-public interface IDecoratorManager extends ILabelDecorator {
+public interface IDecoratorManager {
 
 	/**
 	 * Returns the label decorator which applies the decorations from all
