@@ -15,6 +15,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 import org.eclipse.core.internal.preferences.ListenerList;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.osgi.framework.Bundle;
 
 /**
@@ -287,7 +290,7 @@ public class Preferences {
 	 * <p>
 	 * The file that is written can be read later using the importPreferences method.
 	 * </p>
-	 * @param file The absolute filesystem path of the file to export preferences to.
+	 * @param path The absolute filesystem path of the file to export preferences to.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> The file could not be written.</li>
@@ -295,8 +298,28 @@ public class Preferences {
 	 * @see #importPreferences
 	 * @see #validatePreferenceVersions
 	 */
-	public static void exportPreferences(IPath file) throws CoreException {
-		exporterInvoker("exportPreferences", file);
+	public static void exportPreferences(IPath path) throws CoreException {
+		File file = path.toFile();
+		if (file.exists())
+			file.delete();
+		IPreferencesService service = Platform.getPreferencesService();
+		OutputStream output = null;
+		try {
+			output = new BufferedOutputStream(new FileOutputStream(file));
+			IEclipsePreferences node = (IEclipsePreferences) service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
+			service.exportPreferences(node, output);
+		} catch (FileNotFoundException e) {
+			String message = Policy.bind("preferences.errorWriting", file.toString(), e.getMessage()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
 	}
 
 	private static Object exporterInvoker(String methodName, IPath file) throws CoreException {
@@ -327,7 +350,7 @@ public class Preferences {
 	 * <p>
 	 * The file must have been written by the exportPreferences method.
 	 * </p>
-	 * @param file The absolute filesystem path of the file to import preferences from.
+	 * @param path The absolute filesystem path of the file to import preferences from.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> The file does not exist.</li>
@@ -336,8 +359,25 @@ public class Preferences {
 	 * @see #exportPreferences
 	 * @see #validatePreferenceVersions
 	 */
-	public static void importPreferences(IPath file) throws CoreException {
-		exporterInvoker("importPreferences", file);
+	public static void importPreferences(IPath path) throws CoreException {
+		if (!path.toFile().exists()) {
+			String msg = Policy.bind("preferences.fileNotFound", path.toOSString()); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
+		}
+		IPreferencesService service = Platform.getPreferencesService();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(path.toFile()));
+		} catch (FileNotFoundException e) {
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		service.importPreferences(input);
 	}
 
 	/**

@@ -38,6 +38,8 @@ public class PreferencesService implements IPreferencesService {
 	private static Map scopeRegistry = new HashMap();
 	private static RootPreferences root = new RootPreferences();
 	private static IStatus statusOK;
+	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
+	private static final float EXPORT_VERSION = 3;
 
 	static {
 		initializeScopes();
@@ -253,7 +255,9 @@ public class PreferencesService implements IPreferencesService {
 			found = false;
 		}
 		return (Preferences[]) result.toArray(new Preferences[result.size()]);
-	} /*
+	}
+
+	/*
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getRootNode()
 	 */
 
@@ -290,9 +294,10 @@ public class PreferencesService implements IPreferencesService {
 
 		// import legacy properties file
 		if (isLegacy(properties)) {
-			localRoot = root.node(InstanceScope.SCOPE);
+			localRoot = root.node(Plugin.PLUGIN_PREFERENCE_SCOPE);
 			// TODO version verification
 			// strip out version ids
+			properties = removeVersions(properties);
 			for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
 				String key = (String) i.next();
 				if (new Path(key).segmentCount() < 2)
@@ -319,6 +324,7 @@ public class PreferencesService implements IPreferencesService {
 		Properties properties = null;
 		try {
 			properties = convertToProperties(node);
+			properties.put(VERSION_KEY, Float.toString(EXPORT_VERSION));
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(e.getMessage(), e));
 		}
@@ -376,26 +382,25 @@ public class PreferencesService implements IPreferencesService {
 	 * Returns a boolean value indicating whether or not the given Properties
 	 * object is the result of a preference export previous to Eclipse 3.0.
 	 * <p>
-	 * Check the contents of the file. In the new format introduced in Eclipse 3.0, 
-	 * the first segment of the key path is the scope for the preference. If no
-	 * registered scopes exist in the file, then the file is presumed to be pre-3.0.
+	 * Check the contents of the file. In Eclipse 3.0 we printed out a file
+	 * version key.
 	 */
 	private boolean isLegacy(Properties properties) {
-		for (Enumeration e = properties.propertyNames(); e.hasMoreElements();) {
-			String key = (String) e.nextElement();
-			IPath path = new Path(key);
-			if (path.segmentCount() > 0) {
-				String scope = path.segment(0);
-				try {
-					// if the first segment is the name of a scope then we're 3.0
-					if (root.nodeExists(scope))
-						return false;
-				} catch (BackingStoreException ex) {
-					// go to the next key
-				}
+		return properties.getProperty(VERSION_KEY) == null;
+	}
+
+	private Properties removeVersions(Properties properties) {
+		Properties result = new Properties();
+		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			String value = properties.getProperty(key);
+			if (value != null) {
+				IPath path = new Path(key);
+				if (path.segmentCount() != 1)
+					result.put(key, value);
 			}
 		}
-		return true;
+		return result;
 	}
 
 	/**
