@@ -34,16 +34,6 @@ public interface IConfigurationSite {
 	void setConfigurationPolicy(IConfigurationPolicy policy);
 	
 	/**
-	 * Returns teh configured features for this Site based on the current policy
-	 */
-	IFeatureReference[] getConfiguredFeatures();
-	
-	/**
-	 * returns <code>true</code> if the feature is configured for this Site
-	 */
-	boolean isConfigured(IFeatureReference feature);
-	
-	/**
 	 * Returns true if features can be installed in this Site
 	 */
 	boolean isInstallSite();
@@ -59,16 +49,6 @@ public interface IConfigurationSite {
 	 * sets if the site is an installable site
 	 */
 	void setInstallSite(boolean installable);
-	
-	/**
-	 * Configure the Feature to be available at next startup
-	 */
-	void configure(IFeatureReference feature);
-	
-	/**
-	 * Unconfigure the feature from the execution path
-	 */
-	void unconfigure(IFeatureReference feature);
 	
 }
 

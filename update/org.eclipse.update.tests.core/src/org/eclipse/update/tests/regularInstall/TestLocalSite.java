@@ -57,7 +57,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.createConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
-		configSite.setConfigurationPolicy(new ConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
 		configSite.install(feature,null);
 		site.addConfiguration(newConfig);
 		site.save();
@@ -71,7 +71,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
-		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
+		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
 		
@@ -96,7 +96,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
-		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
+		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
 		

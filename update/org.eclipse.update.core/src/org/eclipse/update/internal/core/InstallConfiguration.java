@@ -91,7 +91,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 				Iterator iter = configurationSites.iterator();
 				while (iter.hasNext()) {
 					IConfigurationSite currentSite = (IConfigurationSite) iter.next();
-					featuresConfigured.addAll(Arrays.asList(currentSite.getConfiguredFeatures()));
+					featuresConfigured.addAll(Arrays.asList(currentSite.getConfigurationPolicy().getConfiguredFeatures()));
 					// unconfigured features are getSIte.getFeatures - configuredFeatures ?
 				}
 			}

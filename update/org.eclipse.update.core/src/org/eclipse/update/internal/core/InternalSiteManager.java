@@ -161,7 +161,16 @@ public class InternalSiteManager {
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
 	public static IConfigurationSite createConfigurationSite(ISite site, int policy) {
-		return new ConfigurationSite(site, new ConfigurationPolicy(policy));
+		return new ConfigurationSite(site, createConfigurationPolicy(policy));
 	}
+	
+	/**
+	 * Creates a Configuration policy
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public static IConfigurationPolicy createConfigurationPolicy(int policy){
+		return new ConfigurationPolicy(policy);
+	}
+	
 
 }

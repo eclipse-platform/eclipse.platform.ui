@@ -101,4 +101,12 @@ public class SiteManager {
 	public static IConfigurationSite createConfigurationSite(ISite site,int policy){
 		return InternalSiteManager.createConfigurationSite(site,policy);
 	}
+	
+	/**
+	 * Creates a Configuration policy
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public static IConfigurationPolicy createConfigurationPolicy(int policy){
+		return InternalSiteManager.createConfigurationPolicy(policy);
+	}
 }

@@ -20,10 +20,6 @@ import org.eclipse.update.core.IFeature;
  */
 public class ConfigurationSite implements IConfigurationSite, IWritable {
 
-	//Should have an ISite.getFeatureReference(versionnedIdentifier) b/c we save teh versionned id
-	// in teh xml file
-	private List featuresReferences;
-
 	private ISite site;
 	private IConfigurationPolicy policy;
 	private boolean installable = false;
@@ -58,54 +54,17 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	}
 
 	/*
-	 * @see IConfigurationSite#getConfiguredFeatures()
-	 */
-	public IFeatureReference[] getConfiguredFeatures() {
-		IFeatureReference[] result = new IFeatureReference[0];
-		// FIXME:
-		if (getConfigurationPolicy().getPolicy()==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
-			result = getConfigurationPolicy().getFilteredFeatures(null);
-		}
-		return result;
-	}
-
-	/*
-	 * @see IConfigurationSite#isConfigured(IFeatureReference)
-	 */
-	public boolean isConfigured(IFeatureReference feature) {
-		return false;
-	}
-
-	/*
 	 * @see IConfigurationSite#isInstallSite()
 	 */
 	public boolean isInstallSite() {
 		return installable;
 	}
-
+	
 	/*
 	 * @see IConfigurationSite#setInstallSite(booelan)
 	 */
 	public void setInstallSite(boolean installable) {
 		this.installable = installable;
-	}
-
-	/*
-	 * @see IConfigurationSite#configure(IFeatureReference)
-	 */
-	public void configure(IFeatureReference feature) {
-		// FIXME:
-		if (getConfigurationPolicy().getPolicy()==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
-			if (featuresReferences==null) featuresReferences = new ArrayList(0);
-			featuresReferences.add(feature);
-			((ConfigurationPolicy)getConfigurationPolicy()).addFeatureReference(feature);
-		}
-	}
-
-	/*
-	 * @see IConfigurationSite#unconfigure(IFeatureReference)
-	 */
-	public void unconfigure(IFeatureReference feature) {
 	}
 
 	/*
@@ -129,10 +88,10 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		w.println("");
 
 		// site configurations
+		IFeatureReference[] featuresReferences = getConfigurationPolicy().getFilteredFeatures(null);
 		if (featuresReferences != null) {
-			Iterator iter = featuresReferences.iterator();
-			while (iter.hasNext()) {
-				IFeatureReference element = (IFeatureReference) iter.next();
+			for (int index = 0; index < featuresReferences.length; index++) {
+				IFeatureReference element = featuresReferences[index];
 				w.print(gap+increment+"<"+InstallConfigurationParser.FEATURE+" ");
 				// feature URL
 				String URLInfoString = null;
@@ -157,7 +116,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			//FIXME: throw error
 		}
 		IFeatureReference installedFeature = getSite().install(feature,monitor);
-		configure(installedFeature);
+		getConfigurationPolicy().configure(installedFeature);
 		
 	}
 
