@@ -37,7 +37,7 @@
       <config
             introId="org.eclipse.platform.intro"
             id="org.eclipse.platform.introConfig"
-            content="introContent.xml">
+            content="$nl$/introContent.xml">
          <presentation
                home-page-id="root">
             <implementation
