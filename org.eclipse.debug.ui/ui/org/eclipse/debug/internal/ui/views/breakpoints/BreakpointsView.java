@@ -347,15 +347,23 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	protected void updateViewerBackground() {
 		Color color= null;
+		boolean enabled = true;
 		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			color= DebugUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			enabled = false;
 		}
 		Table table = getCheckboxViewer().getTable();
 		TableItem[] items = table.getItems();
 		for (int i = 0; i < items.length; i++) {
 			items[i].setBackground(color);
+			items[i].setGrayed(!enabled);
 		}
 		table.setBackground(color);
+		if (enabled) {
+			setTitle(DebugUIViewsMessages.getString("BreakpointsView.19")); //$NON-NLS-1$
+		} else {
+			setTitle(DebugUIViewsMessages.getString("BreakpointsView.20")); //$NON-NLS-1$
+		}
 	}
 	
 }
