@@ -34,7 +34,8 @@ public class MarkerTypeDefinition {
 			IConfigurationElement element = elements[i];
 
 			// supertype
-			if (element.getName().equalsIgnoreCase("super")) { //$NON-NLS-1$
+			final String elementName = element.getName();
+			if (elementName.equalsIgnoreCase("super")) { //$NON-NLS-1$
 				String type = element.getAttribute("type"); //$NON-NLS-1$
 				if (type != null) {
 					if (types == null)
@@ -44,7 +45,7 @@ public class MarkerTypeDefinition {
 			}
 
 			// attribute name
-			if (element.getName().equalsIgnoreCase("attribute")) { //$NON-NLS-1$
+			if (elementName.equalsIgnoreCase("attribute")) { //$NON-NLS-1$
 				String name = element.getAttribute("name"); //$NON-NLS-1$
 				if (name != null) {
 					if (attributes == null)
@@ -54,13 +55,13 @@ public class MarkerTypeDefinition {
 			}
 
 			// persistent
-			if (elements[i].getName().equalsIgnoreCase("persistent")) { //$NON-NLS-1$
+			if (elementName.equalsIgnoreCase("persistent")) { //$NON-NLS-1$
 				String bool = element.getAttribute("value"); //$NON-NLS-1$
 				if (bool != null)
 					this.persistent = Boolean.valueOf(bool).booleanValue();
 			}
 			// XXX: legacy code for support of <transient> tag. remove later.
-			if (elements[i].getName().equalsIgnoreCase("transient")) { //$NON-NLS-1$
+			if (elementName.equalsIgnoreCase("transient")) { //$NON-NLS-1$
 				String bool = element.getAttribute("value"); //$NON-NLS-1$
 				if (bool != null)
 					this.persistent = !Boolean.valueOf(bool).booleanValue();
