@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.osgi;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.runtime.adaptor.testsupport.SimplePlatformAdmin;
 import org.eclipse.osgi.service.resolver.*;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -160,10 +159,10 @@ public class StateResolverTest extends AbstractStateTest {
 		State state = buildComplexState();
 		state.resolve();
 		BundleDescription[] dependent;
-		dependent = StateHelper.getDependentBundles(new BundleDescription[]{state.getBundle(2)});
+		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[]{state.getBundle(2)});
 		assertEquals("1.0", 1, dependent.length);
 		assertEquals("1.1", state.getBundle(2), dependent[0]);
-		dependent = StateHelper.getDependentBundles(new BundleDescription[]{state.getBundle(1)});
+		dependent = platformAdmin.getStateHelper().getDependentBundles(new BundleDescription[]{state.getBundle(1)});
 		assertEquals("2.0", 4, dependent.length);
 		assertContains("2.1", dependent, state.getBundle(1));
 		assertContains("2.2", dependent, state.getBundle(2));
@@ -241,7 +240,6 @@ public class StateResolverTest extends AbstractStateTest {
 	public void testRemoval() throws BundleException {
 		String B1_LOCATION = "org.eclipse.b";
 		final String B1_MANIFEST = "Bundle-SymbolicName: org.eclipse.b1\n" + "Bundle-Version: 1.0\n";
-		PlatformAdmin platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
 		State state = platformAdmin.getState();
 		state.setResolver(platformAdmin.getResolver());
 		BundleDescription b1 = platformAdmin.getFactory().createBundleDescription(parseManifest(B1_MANIFEST), B1_LOCATION, 1);
@@ -262,7 +260,6 @@ public class StateResolverTest extends AbstractStateTest {
 	public void testRemoveAndAdd() throws BundleException {
 		String B_LOCATION = "org.eclipse.b";
 		final String B_MANIFEST = "Bundle-SymbolicName: org.eclipse.b\n" + "Bundle-Version: 1.0\n";
-		PlatformAdmin platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
 		State state = platformAdmin.getState();
 		state.setResolver(platformAdmin.getResolver());
 		BundleDescription b1 = platformAdmin.getFactory().createBundleDescription(parseManifest(B_MANIFEST), B_LOCATION, 1);

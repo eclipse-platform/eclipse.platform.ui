@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.osgi;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.runtime.adaptor.testsupport.SimplePlatformAdmin;
 import org.eclipse.osgi.service.resolver.*;
 import org.osgi.framework.BundleException;
 
@@ -58,7 +57,6 @@ public class PlatformAdminTest extends AbstractStateTest {
 		final String C1_MANIFEST = "Bundle-SymbolicName: org.eclipse.c\n" + "Bundle-Version: 1.0.0\n" + "Required-Bundle: org.eclipse.b";
 		final String D1_LOCATION = "org.eclipse.d";
 		final String D1_MANIFEST = "Bundle-SymbolicName: org.eclipse.d\n" + "Bundle-Version: 1.0.0";
-		PlatformAdmin platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
 		State state = platformAdmin.getState();
 		BundleDescription a1 = null;
 		BundleDescription b1 = null;

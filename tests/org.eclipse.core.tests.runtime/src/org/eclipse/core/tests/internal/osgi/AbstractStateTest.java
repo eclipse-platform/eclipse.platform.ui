@@ -17,22 +17,23 @@ import org.eclipse.osgi.service.resolver.*;
 import org.osgi.framework.BundleException;
 
 public abstract class AbstractStateTest extends EclipseWorkspaceTest {
-	
+	protected PlatformAdmin platformAdmin;
+	protected void setUp() throws Exception {
+		super.setUp();
+		platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
+	}
 	AbstractStateTest(String testName) {
 		super(testName);
-	}	
-
+	}
 	public static void assertContains(String tag, Object[] array, Object element) {
 		for (int i = 0; i < array.length; i++)
 			if (array[i] == element)
 				return;
 		fail(tag);
 	}
-
 	public static void assertEquals(State original, State copy) {
 		assertEquals("", original, copy);
 	}
-
 	public static void assertEquals(String tag, BundleDescription original, BundleDescription copy) {
 		assertEquals(tag + ".0", original.getBundleId(), copy.getBundleId());
 		assertEquals(tag + ".1", original.getUniqueId(), copy.getUniqueId());
@@ -56,7 +57,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < originalRequiredBundles.length; i++)
 			assertEquals(tag + ".11." + i, originalRequiredBundles[i], copyRequiredBundles[i]);
 	}
-
 	public static void assertEquals(String tag, State original, State copy) {
 		BundleDescription[] originalBundles = original.getBundles();
 		BundleDescription[] copyBundles = copy.getBundles();
@@ -70,7 +70,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < originalResolvedBundles.length; i++)
 			assertEquals(tag + ".5." + i, originalResolvedBundles[i], copyResolvedBundles[i]);
 	}
-
 	public static void assertEquals(String tag, VersionConstraint original, VersionConstraint copy) {
 		assertEquals(tag + ".0", original == null, copy == null);
 		if (original == null)
@@ -83,7 +82,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		if (original.getSupplier() != null)
 			assertEquals(tag + ".6", original.getSupplier().getUniqueId(), copy.getSupplier().getUniqueId());
 	}
-
 	public static void assertFullyResolved(String tag, BundleDescription bundle) {
 		assertTrue(tag + "a", bundle.isResolved());
 		PackageSpecification[] packages = bundle.getPackages();
@@ -96,7 +94,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < requiredBundles.length; i++)
 			assertNotNull(tag + "d_" + i, requiredBundles[i].getSupplier());
 	}
-
 	public static void assertFullyUnresolved(String tag, BundleDescription bundle) {
 		assertFalse(tag + "a", bundle.isResolved());
 		PackageSpecification[] packages = bundle.getPackages();
@@ -109,13 +106,11 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		for (int i = 0; i < requiredBundles.length; i++)
 			assertNull(tag + "d_" + i, requiredBundles[i].getSupplier());
 	}
-
 	public static void assertIdentical(String tag, State original, State copy) {
 		assertEquals(tag + ".0a", original.isResolved(), copy.isResolved());
 		assertEquals(tag + ".0b", original.getTimeStamp(), copy.getTimeStamp());
 		assertEquals(tag, original, copy);
 	}
-
 	public State buildComplexState() throws BundleException {
 		State state = buildEmptyState();
 		/*
@@ -162,14 +157,11 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		state.addBundle(b6);
 		return state;
 	}
-
 	public State buildEmptyState() {
-		PlatformAdmin platformAdmin = new SimplePlatformAdmin(getRandomLocation().toFile());
 		State state = platformAdmin.getState();
 		state.setResolver(platformAdmin.getResolver());
 		return state;
 	}
-
 	public State buildInitialState() throws BundleException {
 		State state = buildEmptyState();
 		/*
@@ -181,7 +173,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		state.addBundle(b0);
 		return state;
 	}
-
 	public State buildSimpleState() throws BundleException {
 		State state = buildEmptyState();
 		/*
@@ -207,7 +198,6 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		state.addBundle(b3);
 		return state;
 	}
-
 	public static Dictionary parseManifest(String manifest) {
 		Dictionary entries = new Hashtable();
 		StringTokenizer tokenizer = new StringTokenizer(manifest, ":\n");
