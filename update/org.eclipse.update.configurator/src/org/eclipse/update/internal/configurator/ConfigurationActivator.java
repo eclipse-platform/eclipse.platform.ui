@@ -147,6 +147,18 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public boolean installBundles() {
 		Utils.debug("Installing bundles..."); //$NON-NLS-1$
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
+		int startLevel = 4;
+		String defaultStartLevel = System.getProperty("osgi.bundles.defaultStartLevel");
+		if (defaultStartLevel != null) {
+			try {
+				startLevel = Integer.parseInt(defaultStartLevel);
+			} catch (NumberFormatException e1) {
+				startLevel = 4;
+			}
+		}
+		if (startLevel < 1)
+			startLevel = 4;
+		
 		StartLevel start = null;
 		if (reference != null)
 			start = (StartLevel) context.getService(reference);
@@ -183,7 +195,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 					// any new bundle should be refreshed as well
 					toRefresh.add(target);
 					if (start != null)
-						start.setBundleStartLevel(target, 4);
+						start.setBundleStartLevel(target, startLevel);
 				
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
