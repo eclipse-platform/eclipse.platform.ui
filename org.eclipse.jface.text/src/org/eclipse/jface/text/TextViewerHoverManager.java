@@ -105,7 +105,17 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				try {
 					
 					if (fThread != null) {
-						String information= hover.getHoverInfo(fTextViewer, region);
+						String information;
+						try {
+							information= hover.getHoverInfo(fTextViewer, region);
+						} catch (ArrayIndexOutOfBoundsException ex) {
+							/*
+							 * This code runs in a separate thread which can
+							 * lead to text offsets being out of bounds when
+							 * computing the hover info (see bug 32848).
+							 */
+							information= null;
+						}
 						setInformation(information, area);
 						if (information != null && area != null)
 							fTextHover= hover;
