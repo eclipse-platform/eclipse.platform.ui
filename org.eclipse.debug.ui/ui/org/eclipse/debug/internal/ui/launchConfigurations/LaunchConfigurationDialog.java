@@ -2188,7 +2188,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private void doSave() throws CoreException {
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
-		updateWorkingCopyFromPages();
 		if (isWorkingCopyDirty()) {
 			fUnderlyingConfig = workingCopy.doSave();
 			setWorkingCopy(fUnderlyingConfig.getWorkingCopy());
