@@ -82,7 +82,7 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager()));
+		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
 
@@ -313,7 +313,7 @@ class SearchResultViewer extends TableViewer {
 	}
 
 	void internalSetLabelProvider(ILabelProvider provider) {
-		setLabelProvider(new SearchResultLabelProvider(provider, PlatformUI.getWorkbench().getDecoratorManager()));
+		setLabelProvider(new SearchResultLabelProvider(provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 	}
 
 	/**

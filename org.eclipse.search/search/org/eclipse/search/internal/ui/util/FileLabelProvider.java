@@ -93,6 +93,6 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 	}
 
 	private static ILabelDecorator getDecoratorManager() {
-		return PlatformUI.getWorkbench().getDecoratorManager();
+		return PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 	}
 }
