@@ -21,6 +21,7 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 	protected RefactorActionFactory refactorFactory;
 	protected WorkbenchStateActionFactory workbenchFactory;
 	protected SortAndFilterActionFactory sortAndFilterMenuFactory;
+	protected DecoratorActionFactory decoratorFactory;
 
 	protected IResourceNavigatorPart part;
 
@@ -43,6 +44,7 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 			new WorkbenchStateActionFactory(
 				navigatorPart.getResourceViewer().getControl());
 		sortAndFilterMenuFactory = new SortAndFilterActionFactory(navigatorPart);
+		decoratorFactory = new DecoratorActionFactory();
 		this.part = navigatorPart;
 
 	}
@@ -58,6 +60,7 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		refactorFactory.addGlobalActions(part.getViewSite().getActionBars());
 		workbenchFactory.makeActions();
 		sortAndFilterMenuFactory.makeActions();
+		decoratorFactory.makeActions();
 	}
 
 	/**
@@ -89,6 +92,7 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		gotoFactory.fillToolBar(toolBar);
 		actionBars.updateActionBars();
 		sortAndFilterMenuFactory.fillActionBarMenu(actionBars.getMenuManager(), selection);
+		decoratorFactory.fillActionBarMenu(actionBars.getMenuManager(), selection);
 	}
 
 	/*
