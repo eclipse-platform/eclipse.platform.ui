@@ -550,7 +550,13 @@ public class IWorkbenchPageTest extends UITestCase {
 		//close the editor and discard changes
 		assertEquals( fActivePage.closeEditor(editor, false), true );
 		assertEquals(callTrace.contains( "isSaveOnCloseNeeded"), false);
-		assertEquals(callTrace.contains( "isDirty"), false);
+		/*
+		 * It is possible that some action may query the isDirty value of
+		 * the editor to update its enabled state. There is nothing wrong
+		 * in doing that, so do not test for no isDirty call here.
+		 *
+		 * assertEquals(callTrace.contains( "isDirty"), false);
+		 */
 		assertEquals(callTrace.contains( "doSave"), false);
 		assertEquals(callTrace.contains( "dispose"), true);
 	}
