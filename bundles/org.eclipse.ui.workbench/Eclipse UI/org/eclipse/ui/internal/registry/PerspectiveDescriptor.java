@@ -35,12 +35,14 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private String originalId;
 	private String label;
 	private String className;
+	private String description;
 	private boolean singleton;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;
 	
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
+	private static final String ATT_DESC="description";//$NON-NLS-1$
 	private static final String ATT_NAME="name";//$NON-NLS-1$
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
@@ -70,6 +72,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement)
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
+	description = configElement.getAttribute(ATT_DESC);
 
 	// Sanity check.
 	if ((label == null) || (className == null)) {
@@ -104,6 +107,15 @@ public IPerspectiveFactory createFactory() throws CoreException {
 public void deleteCustomDefinition() {
 	((PerspectiveRegistry)WorkbenchPlugin.getDefault().
 		getPerspectiveRegistry()).deleteCustomDefinition(this);
+}
+/**
+ * Returns this perspective's description. 
+ * This is the value of its <code>"description"</code> attribute.
+ *
+ * @return the description
+ */
+public String getDescription() {
+	return description;
 }
 /**
  * Returns the ID.

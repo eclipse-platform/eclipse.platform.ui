@@ -12,89 +12,31 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
-import org.eclipse.ui.commands.internal.ActionAndContextManager;
-import org.eclipse.ui.commands.internal.Manager;
-import org.eclipse.ui.commands.internal.Sequence;
-import org.eclipse.ui.commands.internal.SequenceMachine;
-import org.eclipse.ui.commands.internal.SimpleActionService;
-import org.eclipse.ui.commands.internal.SimpleContextService;
-import org.eclipse.ui.commands.internal.Stroke;
+import org.eclipse.ui.commands.internal.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.registry.IActionSet;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * A window within the workbench.
@@ -889,6 +831,9 @@ protected MenuManager createMenuManager() {
 		shortcutDND.addDropListener(partDropListener);
 	}
 }
+public void fillActionBars(WWinActionBars actionBars) {
+	getActionBuilder().fillActionBars(actionBars);
+}
 /**
  * Returns the shortcut for a page.
  */
@@ -1188,6 +1133,19 @@ public ToolBarManager getToolBarManager() {
  */
 public IWorkbench getWorkbench() {
 	return workbench;
+}
+public String getToolbarLabel(String actionSetId) {
+	ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
+	IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
+	if (actionSet != null) {
+		return actionSet.getLabel();
+	} else {
+		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId)) 
+			return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar");
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId)) 
+			return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar");
+	}
+	return null;
 }
 /**
  * Unconditionally close this window. Assumes the proper

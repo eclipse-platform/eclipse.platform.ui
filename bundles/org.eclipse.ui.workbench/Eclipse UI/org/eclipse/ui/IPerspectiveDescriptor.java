@@ -45,6 +45,13 @@ import org.eclipse.jface.resource.*;
  */
 public interface IPerspectiveDescriptor {
 /**
+ * Returns the description of this perspective.
+ * This is the value of its <code>"description"</code> attribute.
+ *
+ * @return the description
+ */
+public String getDescription();
+/**
  * Returns this perspective's id. For perspectives declared via an extension,
  * this is the value of its <code>"id"</code> attribute.
  *

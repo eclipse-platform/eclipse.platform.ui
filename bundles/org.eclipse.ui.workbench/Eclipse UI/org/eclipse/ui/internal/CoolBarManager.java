@@ -343,7 +343,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}		
 	/**
 	 */
-	/* package */ void dispose() {
+	public void dispose() {
 		if (coolBarExist()) {
 			IContributionItem[] cbItems = getItems();
 			for (int i=0; i<cbItems.length; i++) {

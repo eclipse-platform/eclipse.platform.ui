@@ -29,6 +29,13 @@ public WWinActionBars(WorkbenchWindow window) {
 public void clearGlobalActionHandlers() {
 }
 /**
+ * Returns the cool bar manager.
+ * 
+ */
+public CoolBarManager getCoolBarManager() {
+	return window.getCoolBarManager();
+}
+/**
  * Get the handler for a window action.
  *
  * @param actionID an action ID declared in the registry

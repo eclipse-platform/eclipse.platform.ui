@@ -13,38 +13,14 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ExportResourcesAction;
-import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.actions.ImportResourcesAction;
-import org.eclipse.ui.actions.LabelRetargetAction;
-import org.eclipse.ui.actions.NewWizardAction;
-import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.actions.OpenInNewWindowAction;
-import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
 
@@ -178,14 +154,17 @@ public class WorkbenchActionBuilder {
 	protected WorkbenchWindow getWindow() {
 		return window;
 	}
-
+	/**
+	 */
+	private WWinActionBars getWWinActionBars() {
+		return (WWinActionBars)getWindow().getActionBars();
+	}
 	/**
 	 * Builds the actions and contributes them to the given window.
 	 */
 	public void buildActions() {
 		makeActions();
-		fillMenuBar();
-		fillToolBar();
+		fillActionBars();
 		fillShortcutBar();
 		hookListeners();
 	}
@@ -278,12 +257,75 @@ public class WorkbenchActionBuilder {
 		importResourcesAction.setEnabled(value);
 		exportResourcesAction.setEnabled(value);
 	}
+	/**
+	 * Fills the menu bar and coolbar with the workbench actions.
+	 */
+	private void fillActionBars() {
+		fillActionBars(getWWinActionBars());
+	}
+	/**
+	 * Fills the given action bars with the workbench actions.
+	 */
+	/* package */ void fillActionBars(WWinActionBars bars) {
+		fillMenuBar(bars.getMenuManager());
+		fillCoolBar(bars.getCoolBarManager());
+		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			// Only add the manual incremental build if auto build off.
+			// Only update the coolbar at this point.
+			addManualIncrementalBuildToolAction(bars.getCoolBarManager());
+		}
 
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+			addPinEditorAction(bars);
+		}
+	}
+	/**
+	 * Fills the coolbar with the workbench actions.
+	 */
+	private void fillCoolBar(CoolBarManager cBarMgr) {
+		// Create a CoolBar item for the workbench
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_FILE); //$NON-NLS-1$
+		cBarMgr.add(coolBarItem);
+		coolBarItem.setVisible(true);
+		IContributionManager toolsManager = (IContributionManager) coolBarItem.getToolBarManager();
+		cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
+		cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
+	
+		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) toolsManager;
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_GROUP, true);
+		tBarMgr.add(newWizardDropDownAction);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_EXT, false);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_GROUP, false);
+		tBarMgr.add(saveAction);
+		tBarMgr.add(saveAsAction);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_EXT, false);
+		tBarMgr.add(printAction);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PRINT_EXT, false);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_GROUP, true);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_EXT, false);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.MB_ADDITIONS, true);
+		
+		coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
+		// we want to add the history cool item before the editor cool item (if it exists)
+		IContributionItem refItem =
+			cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
+		if (refItem == null) {
+			cBarMgr.add(coolBarItem);
+		} else {
+			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
+		}
+		coolBarItem.setVisible(true);
+		tBarMgr =(CoolItemToolBarManager) coolBarItem.getToolBarManager();
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.HISTORY_GROUP, true);
+		tBarMgr.add(backwardHistoryAction);
+		tBarMgr.add(forwardHistoryAction);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PIN_GROUP, true);
+	}
 	/**
 	 * Fills the menu bar with the workbench actions.
 	 */
-	private void fillMenuBar() {
-		MenuManager menubar = getWindow().getMenuBarManager();
+	private void fillMenuBar(IMenuManager menubar) {
 		menubar.add(createFileMenu());
 		menubar.add(createEditMenu());
 		menubar.add(createNavigateMenu());
@@ -292,7 +334,6 @@ public class WorkbenchActionBuilder {
 		menubar.add(createWindowMenu());
 		menubar.add(createHelpMenu());
 	}
-
 	/**
 	 * Creates and returns the File menu.
 	 */
@@ -549,44 +590,6 @@ public class WorkbenchActionBuilder {
 		return menu;
 	}
 
-	/**
-	 * Fills the tool bar by merging all the individual viewers' contributions
-	 * and invariant (static) menus and menu items, as defined in MenuConstants interface.
-	 */
-	private void fillToolBar() {
-		// Create a CoolBar item for the workbench
-		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_FILE); //$NON-NLS-1$
-		cBarMgr.add(coolBarItem);
-		coolBarItem.setVisible(true);
-		IContributionManager toolsManager = (IContributionManager) coolBarItem.getToolBarManager();
-		cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
-		cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
-	
-		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) toolsManager;
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_GROUP, true);
-		tBarMgr.add(newWizardDropDownAction);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_EXT, false);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_GROUP, false);
-		tBarMgr.add(saveAction);
-		tBarMgr.add(saveAsAction);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_EXT, false);
-		tBarMgr.add(printAction);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PRINT_EXT, false);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_GROUP, true);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_EXT, false);
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.MB_ADDITIONS, true);
-		
-		// Only add the manual incremental build if auto build off
-		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			addManualIncrementalBuildToolAction();
-		}
-		addHistoryNavigateActions();
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-			addPinEditorAction();
-		}
-	}
 
 	/**
 	 * Fills the shortcut bar
@@ -1055,9 +1058,9 @@ public class WorkbenchActionBuilder {
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
-				addPinEditorAction();
+				addPinEditorAction(getWWinActionBars());
 			else
-				removePinEditorAction();
+				removePinEditorAction(getWWinActionBars());
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
@@ -1070,36 +1073,11 @@ public class WorkbenchActionBuilder {
 			}
 		}
 	}
-
-	/**
-	 * Adds the editor history navigation actions to the toolbar.
-	 */
-	private void addHistoryNavigateActions() {
-		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
-		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
-		// we want to add the history cool item before the editor cool item (if it exists)
-		IContributionItem refItem =
-			cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
-		if (refItem == null) {
-			cBarMgr.add(coolBarItem);
-		} else {
-			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
-		}
-		coolBarItem.setVisible(true);
-		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) coolBarItem.getToolBarManager();
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.HISTORY_GROUP, true);
-		tBarMgr.add(backwardHistoryAction);
-		tBarMgr.add(forwardHistoryAction);
-		
-		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PIN_GROUP, true);
-		cBarMgr.update(true);
-	}
-
 	/**
 	 * Adds the pin action to the toolbar.  Add it to the navigate toolbar.
 	 */
-	private void addPinEditorAction() {
-		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
+	private void addPinEditorAction(WWinActionBars bars) {
+		CoolBarManager cBarMgr = bars.getCoolBarManager();
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
 		if (coolBarItem == null) {
 			// error if this happens, navigate toolbar assumed to always exist
@@ -1116,8 +1094,8 @@ public class WorkbenchActionBuilder {
 	/**
 	 * Removes the pin action from the toolbar.
 	 */
-	private void removePinEditorAction() {
-		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
+	private void removePinEditorAction(WWinActionBars bars) {
+		CoolBarManager cBarMgr = bars.getCoolBarManager();
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
 		if (coolBarItem != null) {
 			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
@@ -1136,7 +1114,7 @@ public class WorkbenchActionBuilder {
 	 * to both the menu bar and the tool bar.
 	 */
 	protected void addManualIncrementalBuildAction() {
-		MenuManager menubar = getWindow().getMenuBarManager();
+		IMenuManager menubar = getWWinActionBars().getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
@@ -1151,10 +1129,9 @@ public class WorkbenchActionBuilder {
 				// action not found!
 			}
 		}
-		addManualIncrementalBuildToolAction();
+		addManualIncrementalBuildToolAction(getWWinActionBars().getCoolBarManager());
 	}
-	protected void addManualIncrementalBuildToolAction() {
-		IContributionManager cBarMgr = getWindow().getCoolBarManager();
+	private void addManualIncrementalBuildToolAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (coolBarItem == null) {
 			// error if this happens, navigate toolbar assumed to always exist
@@ -1171,7 +1148,7 @@ public class WorkbenchActionBuilder {
 	 * from both the menu bar and the tool bar.
 	 */
 	protected void removeManualIncrementalBuildAction() {
-		MenuManager menubar = getWindow().getMenuBarManager();
+		IMenuManager menubar = getWWinActionBars().getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
@@ -1182,10 +1159,9 @@ public class WorkbenchActionBuilder {
 				// action was not in menu
 			}
 		}
-		removeManualIncrementalBuildToolAction();
+		removeManualIncrementalBuildToolAction(getWWinActionBars().getCoolBarManager());
 	}
-	protected void removeManualIncrementalBuildToolAction() {
-		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
+	private void removeManualIncrementalBuildToolAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (coolBarItem != null) {
 			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
