@@ -10,7 +10,6 @@
    <runtime>
       <library name="resources.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.core"/>
       </library>
    </runtime>
    <requires>
