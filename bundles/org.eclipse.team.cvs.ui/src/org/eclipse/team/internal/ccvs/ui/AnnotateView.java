@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -143,8 +144,13 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 		setTitle(Policy.bind("CVSAnnotateView.showFileAnnotation", new Object[] {cvsResource.getName()})); //$NON-NLS-1$
 		try {
-			setTitleToolTip(cvsResource.getIResource().getFullPath().toString());
-		} catch (CVSException e1) {
+			IResource localResource = cvsResource.getIResource();
+			if (localResource != null) {
+				setTitleToolTip(localResource.getFullPath().toString());
+			} else {
+				setTitleToolTip(cvsResource.getName());
+			}
+		} catch (CVSException e) {
 			setTitleToolTip(cvsResource.getName());
 		}
 		
@@ -272,7 +278,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		
 		// Select the revision in the history view.
-		historyView.selectRevision(listSelection.getRevision());
+		if(historyView != null) {
+			historyView.selectRevision(listSelection.getRevision());
+		}
 		lastSelectionWasText = false;			
 	}
 
