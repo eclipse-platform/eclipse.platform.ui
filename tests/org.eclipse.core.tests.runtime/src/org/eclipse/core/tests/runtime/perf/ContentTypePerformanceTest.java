@@ -26,7 +26,7 @@ import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.runtime.*;
 import org.eclipse.core.tests.session.PerformanceSessionTestSuite;
-import org.eclipse.core.tests.session.TestDescriptor;
+import org.eclipse.core.tests.session.SessionTestSuite;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -77,7 +77,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		int local = nodes;
 		for (int i = 1; i < nodes + 1; i++) {
 			String id = "performance" + (created + i);
-			String definition = createContentType(id, baseTypeId, baseTypeId == null ? new String[] {"performance.ext"} : null, baseTypeId == null ? new String[] {id} : null, "org.eclipse.core.tests.runtime.NaySayer");
+			String definition = createContentType(id, baseTypeId, null, baseTypeId == null ? new String[] {id} : null, "org.eclipse.core.tests.runtime.NaySayer");
 			writer.write(definition);
 			writer.write(System.getProperty("line.separator"));
 			local += createContentTypes(writer, id, created + local, numberOfLevels - 1, minimumPerLevel, maximumPerLevel);
@@ -102,11 +102,25 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ContentTypePerformanceTest.class);
-		// add session test
-		PerformanceSessionTestSuite sessionSuite = new PerformanceSessionTestSuite(PI_RUNTIME_TESTS, 10);
-		sessionSuite.addTest(new TestDescriptor(ContentTypePerformanceTest.class.getName(), "sessionTestLoadCatalog"));
-		suite.addTest(sessionSuite);
+		TestSuite suite = new TestSuite(ContentTypePerformanceTest.class.getName());
+
+		SessionTestSuite setUp = new SessionTestSuite(PI_RUNTIME_TESTS, "testDoSetUp");
+		setUp.addTest(new ContentTypePerformanceTest("testDoSetUp"));
+		suite.addTest(setUp);
+
+		SessionTestSuite singleRun = new SessionTestSuite(PI_RUNTIME_TESTS, "singleSessionTests");
+		singleRun.addTest(new ContentTypePerformanceTest("testContentMatching"));
+		singleRun.addTest(new ContentTypePerformanceTest("testNameMatching"));
+		singleRun.addTest(new ContentTypePerformanceTest("testIsKindOf"));
+		suite.addTest(singleRun);
+
+		PerformanceSessionTestSuite loadCatalog = new PerformanceSessionTestSuite(PI_RUNTIME_TESTS, 5, "multipleSessionTests");
+		loadCatalog.addTest(new ContentTypePerformanceTest("testLoadCatalog"));
+		suite.addTest(loadCatalog);
+
+		SessionTestSuite tearDown = new SessionTestSuite(PI_RUNTIME_TESTS, "testDoTearDown");
+		tearDown.addTest(new ContentTypePerformanceTest("testDoTearDown"));
+		suite.addTest(tearDown);
 		return suite;
 	}
 
@@ -159,127 +173,86 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		return installed;
 	}
 
-	/**
-	 * This test is intended for running as a session test. Use a non-standard prefix to avoid automatic inclusion in test suite.
-	 */
-	public void sessionTestLoadCatalog() {
-		Bundle bundle = null;
-		try {
-			// install 3^10 content types
-			bundle = installContentTypes("1", 3, 10, 10);
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
-			// any cheap interaction that cause the catalog to be built 
-			new PerformanceTestRunner() {
-				protected void test() {
-					Platform.getContentTypeManager().getContentType("");
-				}
-			}.run(this, 1, 1);
-		} finally {
-			// clean-up
-			try {
-				if (bundle == null)
-					return;
-				bundle.uninstall();
-				ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
-			} catch (MalformedURLException e) {
-				fail("99.0", e);
-			} catch (BundleException e) {
-				fail("99.9", e);
-			}
-		}
-	}
-
 	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis */
 	public void testContentMatching() {
+		final IContentTypeManager manager = Platform.getContentTypeManager();
+		new PerformanceTestRunner() {
+			protected void test() {
+				IContentType[] associated = null;
+				try {
+					associated = manager.findContentTypesFor(getRandomContents(), null);
+				} catch (IOException e) {
+					fail("2.0", e);
+				}
+				// we know at least the etxt content type should be here
+				assertTrue("2.1", associated.length >= 1);
+				for (int i = 0; i < associated.length; i++)
+					if (associated[i].getId().equals(IContentTypeManager.CT_TEXT))
+						return;
+				fail("2.2");
+			}
+		}.run(this, 10, 1);
+	}
+
+	public void testDoSetUp() {
 		final int numberOfLevels = 10;
 		int elementsPerLevel = 2;
-		Bundle bundle = installContentTypes("1", numberOfLevels, elementsPerLevel, elementsPerLevel);
-		final IContentTypeManager manager = Platform.getContentTypeManager();
+		installContentTypes("1.0", numberOfLevels, elementsPerLevel, elementsPerLevel);
+	}
+
+	public void testDoTearDown() {
+		Bundle bundle = Platform.getBundle(TEST_DATA_ID);
+		if (bundle == null)
+			// there is nothing to clean up (install failed?) 
+			fail("1.0 nothing to clean-up");
 		try {
-			new PerformanceTestRunner() {
-				protected void test() {
-					IContentType[] associated = null;
-					try {
-						associated = manager.findContentTypesFor(getRandomContents(), null);
-					} catch (IOException e) {
-						fail("2.0", e);
-					}
-					// we know at least the etxt content type should be here
-					assertTrue("2.1", associated.length >= 1);
-					for (int i = 0; i < associated.length; i++)
-						if (associated[i].getId().equals(IContentTypeManager.CT_TEXT))
-							return;
-					fail("2.2");
-				}
-			}.run(this, 10, 2);
-		} finally {
-			try {
-				bundle.uninstall();
-				ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
-			} catch (MalformedURLException e) {
-				fail("99.0", e);
-			} catch (BundleException e) {
-				fail("99.9", e);
-			}
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
+			bundle.uninstall();
+			ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
+		} catch (MalformedURLException e) {
+			fail("2.0", e);
+		} catch (BundleException e) {
+			fail("3.0", e);
 		}
 	}
 
 	public void testIsKindOf() {
 		int numberOfLevels = 10;
 		int elementsPerLevel = 2;
-		Bundle bundle = installContentTypes("1", numberOfLevels, elementsPerLevel, elementsPerLevel);
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		final IContentType lastRoot = manager.getContentType(getContentTypeId(elementsPerLevel));
 		assertNotNull("2.0", lastRoot);
 		final IContentType lastLeaf = manager.getContentType(getContentTypeId(computeNumberOfElements(elementsPerLevel, numberOfLevels)));
 		assertNotNull("2.1", lastLeaf);
-		try {
-			new PerformanceTestRunner() {
-				protected void test() {
-					assertTrue("3.0", lastLeaf.isKindOf(lastRoot));
-				}
-			}.run(this, 1, 10000);
-		} finally {
-			try {
-				bundle.uninstall();
-				ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
-			} catch (MalformedURLException e) {
-				fail("99.0", e);
-			} catch (BundleException e) {
-				fail("99.9", e);
+		new PerformanceTestRunner() {
+			protected void test() {
+				assertTrue("3.0", lastLeaf.isKindOf(lastRoot));
 			}
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
-		}
+		}.run(this, 10, 100000);
+	}
+
+	/**
+	 * This test is intended for running as a session test. Use a non-standard prefix to avoid automatic inclusion in test suite.
+	 */
+	public void testLoadCatalog() {
+		new PerformanceTestRunner() {
+			protected void test() {
+				// any cheap interaction that cause the catalog to be built				
+				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+			}
+		}.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
 	}
 
 	/** Tests how much the size of the catalog affects the performance of content type matching by name */
 	public void testNameMatching() {
-		final int numberOfLevels = 10;
-		int elementsPerLevel = 2;
-		Bundle bundle = installContentTypes("1", numberOfLevels, elementsPerLevel, elementsPerLevel);
 		final IContentTypeManager manager = Platform.getContentTypeManager();
-		try {
-			new PerformanceTestRunner() {
-				protected void test() {
-					IContentType[] associated = manager.findContentTypesFor("foo.txt");
-					// we know at least the etxt content type should be here
-					assertTrue("2.0", associated.length >= 1);
-					// and it is supposed to be the first one (since it is at the root)
-					assertEquals("2.1", IContentTypeManager.CT_TEXT, associated[0].getId());
-				}
-			}.run(this, 1, 20000);
-		} finally {
-			try {
-				bundle.uninstall();
-				ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
-			} catch (MalformedURLException e) {
-				fail("99.0", e);
-			} catch (BundleException e) {
-				fail("99.9", e);
+		new PerformanceTestRunner() {
+			protected void test() {
+				IContentType[] associated = manager.findContentTypesFor("foo.txt");
+				// we know at least the etxt content type should be here
+				assertTrue("2.0", associated.length >= 1);
+				// and it is supposed to be the first one (since it is at the root)
+				assertEquals("2.1", IContentTypeManager.CT_TEXT, associated[0].getId());
 			}
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
-		}
+		}.run(this, 10, 20000);
 	}
-
 }
