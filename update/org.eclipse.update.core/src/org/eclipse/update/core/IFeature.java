@@ -15,7 +15,7 @@ import org.eclipse.update.core.model.InstallAbortedException;
  * plug-in fragments, and optionally non-plug-in files. 
  * <p>
  * Features are treated purely as an installation and packaging construct. 
- * They do not play a role during Eclipse plug-in execution. Features do not nest.
+ * They do not play a role during Eclipse plug-in execution.
  * They are simply an inclusive "manifest" of the plug-ins, fragments 
  * and other files that make up that feature. If features are logically made 
  * up of plug-ins from "sub-features", the top-level feature "manifest"
