@@ -19,8 +19,8 @@
 			jarfile="${dest}/texteditor.jar"
 			basedir="bin"
 		/>
-		<copy file="fragment.xml" todir="${dest}"/>
-		<copy file="fragment.properties" todir="${dest}"/>
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/texteditorsrc.jar">
 		    <fileset dir="src" />
   		</zip>				

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fragment
+<plugin
    id="org.eclipse.ui.workbench.texteditor"
-   name="%fragmentName"
+   name="%pluginName"
    version="2.1.0"
-   provider-name="%providerName"
-   plugin-id="org.eclipse.ui.workbench"
-   plugin-version="2.1.0">
+   provider-name="%providerName">
 
    <runtime>
       <library name="texteditor.jar">
@@ -15,7 +13,10 @@
 
    <requires>
       <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.core.resources"/>      
    </requires>
 
-
-</fragment>
+</plugin>

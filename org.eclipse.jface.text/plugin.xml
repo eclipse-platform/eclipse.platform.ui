@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fragment
+<plugin
    id="org.eclipse.jface.text"
-   name="%fragmentName"
+   name="%pluginName"
    version="2.1.0"
-   provider-name="%providerName"
-   plugin-id="org.eclipse.jface"
-   plugin-version="2.1.0">
+   provider-name="%providerName">
 
    <runtime>
       <library name="jfacetext.jar">
@@ -15,7 +13,8 @@
 
    <requires>
       <import plugin="org.eclipse.text" export="true"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.jface"/>
    </requires>
 
-
-</fragment>
+</plugin>
