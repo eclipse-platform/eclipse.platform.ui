@@ -25,6 +25,7 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -171,6 +172,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 					throw new CVSServerException(status);
 				}
 			}
+			if (contents == null)
+				throw new CVSException(Policy.bind("RemoteFile.noContentsReceived", getRemoteLocation(null)));
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
 			return null;
