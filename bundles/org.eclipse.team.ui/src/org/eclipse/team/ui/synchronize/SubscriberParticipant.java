@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.UIJob;
@@ -111,15 +112,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return new SubscriberRefreshWizard(this);
 	}
 	
-	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
-		this.refreshSchedule = schedule;
-		firePropertyChange(this, P_SYNCVIEWPAGE_SCHEDULE, null, schedule);
-	}
-	
-	public SubscriberRefreshSchedule getRefreshSchedule() {
-		return refreshSchedule;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getResources()
 	 */
@@ -128,7 +120,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	private void internalRefresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
-		final IAction[] gotoAction = new IAction[] {null};
+		final IWorkbenchAction[] gotoAction = new IWorkbenchAction[] {null};
 		final RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 		group.beginTask(taskName + " " + getName(), 100);
@@ -148,6 +140,13 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 					return gotoAction[0].isEnabled();
 				}
 				return false;
+			}
+			
+			public void dispose() {
+				super.dispose();
+				if(gotoAction[0] != null) {
+					gotoAction[0].dispose();
+				}
 			}
 		});
 		// Listener delagate
@@ -242,41 +241,20 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return getSubscriberSyncInfoCollector().getSyncInfoSet();
 	}
 	
-	/*
-	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
-	 * This collector maintains the set of all out-of-sync resources for the subscriber.
-	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
-	 */
-	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
-		return collector;
-	}
-	
 	protected void setSubscriber(Subscriber subscriber) {
 		collector = new SubscriberSyncInfoCollector(subscriber);
 		
 		// listen for global ignore changes
 		TeamUI.addPropertyChangeListener(this);
 		
-		preCollectingChanges();
-		
+		// Start collecting changes
 		collector.start();
 		
-		// start the refresh now that a subscriber has been added
+		// Start the refresh now that a subscriber has been added
 		SubscriberRefreshSchedule schedule = getRefreshSchedule();
 		if(schedule.isEnabled()) {
 			getRefreshSchedule().startJob();
 		}
-	}
-	
-	/**
-	 * This method is invoked just before the collector is started. 
-	 * This gives an oportunity to configure the collector parameters
-	 * before collection starts. The default implementation sets the working
-	 * set as returned by <code>getWorkingSet()</code> and sets the mode 
-	 * as returned by <code>getMode()</code>.
-	 */
-	protected void preCollectingChanges() {
-		//TODO: Is this needed
 	}
 	
 	/**
@@ -318,11 +296,29 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
 	}
 
-	/**
+	/*
 	 * Reset the sync set of the particpant by repopulating it from scratch.
 	 */
 	public void reset() {
 		getSubscriberSyncInfoCollector().reset();
+	}
+	
+	/*
+	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
+	 * This collector maintains the set of all out-of-sync resources for the subscriber.
+	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
+	 */
+	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
+		return collector;
+	}
+	
+	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+		this.refreshSchedule = schedule;
+		firePropertyChange(this, P_SYNCVIEWPAGE_SCHEDULE, null, schedule);
+	}
+	
+	public SubscriberRefreshSchedule getRefreshSchedule() {
+		return refreshSchedule;
 	}
 	
 	/**

@@ -56,15 +56,6 @@ public class CompareParticipant extends CVSParticipant {
 	public String getName() {
 		return getSubscriber().getName();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#preCollectingChanges()
-	 */
-	protected void preCollectingChanges() {
-		super.preCollectingChanges();
-		// JEAN-MICHEL: how to handle filter configurability?
-		//getSubscriberSyncInfoCollector().setFilter(contentComparison);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#isPersistent()
