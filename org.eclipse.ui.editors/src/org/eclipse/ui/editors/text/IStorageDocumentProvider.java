@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
 
  
 /**
- * Document provider for <code>IStorage</code> based domain elements.
+ * Document provider for {@link org.eclipse.core.resources.IStorage} based domain elements.
  * Basically incorporates the concept of character encoding.
  * 
  * @since 2.0

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text; 
 
 import java.text.MessageFormat;
@@ -183,6 +182,9 @@ public class EncodingActionGroup extends ActionGroup {
 		
 	}
 
+	/*
+	 * @since 3.0
+	 */
 	private static String getDefaultEncodingText(ITextEditor editor, String defaultText) {
 		IEditorInput input= (editor.getEditorInput());
 		if (!(input instanceof IFileEditorInput))
@@ -205,6 +207,9 @@ public class EncodingActionGroup extends ActionGroup {
 		return MessageFormat.format(format, new String[] { encoding });
 	}
 
+	/*
+	 * @since 3.0
+	 */
 	private static String getEncodingFromContent(IFile file) throws CoreException {
 		IContentDescription description = file.getContentDescription();
 		if (description != null) {

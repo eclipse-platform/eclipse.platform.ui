@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,13 +38,16 @@ import org.eclipse.ui.internal.texteditor.*;
 
 
 /**
+ * Default class for accessing marker annotation properties.
+ * 
  * @since 2.1
  */
 public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
 	
 	/** 
-	 * Constant for the unknown marker type
-	 * @deprecated use Annotation.TYPE_UNKNOWN instead 
+	 * Constant for the unknown marker type.
+	 * 
+	 * @deprecated As of 3.0, replaced by Annotation.TYPE_UNKNOWN 
 	 */
 	public static final String UNKNOWN= Annotation.TYPE_UNKNOWN;
 	
@@ -86,6 +89,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	
 	/**
 	 * The mapping between external and internal symbolic system image names.
+	 * 
 	 * @since 3.0
 	 */
 	private final static Map MAPPING;
@@ -101,8 +105,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	
 	
 	/** 
-	 * The marker annotation preferences 
-	 * @deprecated since 3.0
+	 * The marker annotation preferences.
+	 *  
+	 * @deprecated As of 3.0, no replacement
 	 */
 	protected MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 	
@@ -110,7 +115,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * Returns a new default marker annotation access with the given preferences.
 	 * 
 	 * @param markerAnnotationPreferences
-	 * @deprecated use <code>DefaultMarkerAnnotationAccess()</code> instead
+	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess#DefaultMarkerAnnotationAccess()}
 	 */
 	public DefaultMarkerAnnotationAccess(MarkerAnnotationPreferences markerAnnotationPreferences) {
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;
@@ -294,7 +299,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	/**
 	 * Translates the given symbolic image name into the according symbolic image name
-	 * the <code>ISharedImages</code> understands.
+	 * the {@link org.eclipse.ui.ISharedImages} understands.
 	 * 
 	 * @param symbolicImageName the symbolic system image name to be translated
 	 * @return the shared image name

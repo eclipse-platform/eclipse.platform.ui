@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
+ * Helper class to get NLSed messages.
+ * 
  * @since 3.0
  */
 class ContributionTemplateMessages {
@@ -24,6 +26,12 @@ class ContributionTemplateMessages {
 
 	private ContributionTemplateMessages() {}
 
+	/**
+	 * Gets a string from the resource bundle.
+	 * 
+	 * @param key the string used to get the bundle value, must not be <code>null<code>
+	 * @return the string from the resource bundle
+	 */
 	public static String getString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);

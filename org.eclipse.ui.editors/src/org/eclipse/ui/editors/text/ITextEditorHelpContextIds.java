@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 
+
 /**
- * Help context ids for the text editor.
+ * Help context IDs for the text editor.
  * <p>
  * This interface contains constants only; it is not intended to be implemented.</p>
  */
@@ -34,7 +34,7 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
 	
 	/**
-	 * Help context id for the Add Bookmark action.
+	 * Help context id for the "Add Bookmark" action.
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
 	 * @since 3.0
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
-
-
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 
 
 /**
- * This registry manages shareable document provider. Document
+ * This registry manages shared document providers. Document
  * providers are specified in <code>plugin.xml</code> either 
  * per name extension or per editor input type. A name extension
  * rule always overrules an editor input type rule. Editor input
@@ -49,7 +47,6 @@ import org.eclipse.ui.PlatformUI;
  * used to find object adapters.
  *
  * @see org.eclipse.core.runtime.IAdapterManager
- * @since 3.0
  */
 public class DocumentProviderRegistry {
 	
@@ -88,6 +85,10 @@ public class DocumentProviderRegistry {
 	 * Reads the comma-separated value of the given configuration element 
 	 * for the given attribute name and remembers the configuration element
 	 * in the given map under the individual tokens of the attribute value.
+	 * 
+	 * @param map the map
+	 * @param element the configuration element
+	 * @param attributeName the attribute name
 	 */
 	private void read(Map map, IConfigurationElement element, String attributeName) {
 		String value= element.getAttribute(attributeName);
@@ -153,6 +154,9 @@ public class DocumentProviderRegistry {
 	
 	/**
 	 * Returns the first enumerated element of the given set.
+	 * 
+	 * @param set the set
+	 * @return the first configuration element in the set or <code>null</code> if none 
 	 */
 	private IConfigurationElement selectConfigurationElement(Set set) {
 		if (set != null && !set.isEmpty()) {
@@ -163,10 +167,10 @@ public class DocumentProviderRegistry {
 	}
 	
 	/**
-	 * Returns a shareable document provider for the given name extension.
+	 * Returns a shared document provider for the given name extension.
 	 *
 	 * @param extension the name extension to be used for lookup
-	 * @return the shareable document provider or <code>null</code>
+	 * @return the shared document provider or <code>null</code>
 	 */
 	public IDocumentProvider getDocumentProvider(String extension) {
 		
@@ -182,7 +186,8 @@ public class DocumentProviderRegistry {
 	 * Computes the class hierarchy of the given type. The type is
 	 * part of the computed hierarchy.
 	 * 
-	 * @return a list with elements of type <code>Class</code>
+	 * @param type the type
+	 * @return a list containing the super class hierarchy
 	 */
 	private List computeClassList(Class type) {
 		
@@ -202,6 +207,7 @@ public class DocumentProviderRegistry {
 	 * classes. The interface lists of the given classes are 
 	 * concatenated.
 	 * 
+	 * @param classes a list of {@link java.lang.Class} objects
 	 * @return a list with elements of type <code>Class</code>
 	 */
 	private List computeInterfaceList(List classes) {
@@ -221,6 +227,10 @@ public class DocumentProviderRegistry {
 	/**
 	 * Computes the list of all interfaces of the given list of interfaces,
 	 * taking a depth-first approach.
+	 * 
+	 * @param interfaces an array of {@link java.lang.Class} objects denoting interfaces
+	 * @param result the result list
+	 * @param visited map of visited interfaces 
 	 */
 	private void computeInterfaceList(Class[] interfaces, List result, Hashtable visited) {
 		
@@ -246,7 +256,8 @@ public class DocumentProviderRegistry {
 	 * Returns the configuration elements for the first class in the list
 	 * of given classes for which configuration elements have been remembered.
 	 * 
-	 * returns an input type mapping or <code>null</code>
+	 * @param classes a list of {@link java.lang.Class} objects
+	 * @return an input type mapping or <code>null</code>
 	 */
 	private Object getFirstInputTypeMapping(List classes) {
 		Iterator e= classes.iterator();
@@ -264,7 +275,8 @@ public class DocumentProviderRegistry {
 	 * there is no configuration element for the type's name, first the list of
 	 * super classes is searched, and if not successful the list of all interfaces.
 	 * 
-	 * returns an input type mapping or <code>null</code>
+	 * @param type a {@link java.lang.Class} object
+	 * @return an input type mapping or <code>null</code>
 	 */
 	private Object findInputTypeMapping(Class type) {
 		
@@ -284,10 +296,10 @@ public class DocumentProviderRegistry {
 	}
 	
 	/**
-	 * Returns the shareable document for the type of the given editor input.
+	 * Returns the shared document for the type of the given editor input.
 	 *
 	 * @param editorInput the input for whose type the provider is looked up
-	 * @return the shareable document provider
+	 * @return the shared document provider
 	 */
 	public IDocumentProvider getDocumentProvider(IEditorInput editorInput) {
 		

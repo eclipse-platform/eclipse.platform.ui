@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
-
-
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -24,8 +22,6 @@ import org.eclipse.core.resources.IMarker;
  * any type. Also they either assume update responsibility for a 
  * specific set of marker attributes or any marker attribute.
  * Marker updater must be registered with an <code>AbstractMarkerAnnotationModel</code>.
- * 
- * @since 3.0
  */
 public interface IMarkerUpdater {
 	

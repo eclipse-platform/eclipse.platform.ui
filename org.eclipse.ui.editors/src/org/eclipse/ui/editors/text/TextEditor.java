@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
-
 
 import java.text.MessageFormat;
 
@@ -42,7 +40,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 
 
 /**
@@ -141,7 +138,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider == null) {
-			// editor has programatically been  closed while the dialog was open
+			// editor has programmatically been  closed while the dialog was open
 			return;
 		}
 		
@@ -312,9 +309,9 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			fEncodingSupport.reset();
 	}
 	
-	
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 * @since 3.0
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);

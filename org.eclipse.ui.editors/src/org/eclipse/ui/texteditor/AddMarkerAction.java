@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
-
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +37,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
 
-
 /**
  * Action for creating a marker of a specified type for the editor's
  * input element based on the editor's selection. If required, the 
@@ -55,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
  *   <li><code>"error.dialog.title"</code> - the error dialog's title</li>
  *   <li><code>"error.dialog.message"</code> - the error dialog's message</li>
  * </ul>
- * This class may be instantiated but is not intended for subclassing.
+ * This class may be instantiated but is not intended to be subclassed.
  * </p>
  */
 public class AddMarkerAction extends TextEditorAction {
@@ -63,13 +60,13 @@ public class AddMarkerAction extends TextEditorAction {
 	
 	/** The maximum length of an proposed label. */
 	private static final int MAX_LABEL_LENGTH= 80;
-	/** The type for newly created markers */
+	/** The type for newly created markers. */
 	private String fMarkerType;
 	/** Should the user be asked for a label? */
 	private boolean fAskForLabel;
-	/** The action's resource bundle */
+	/** The action's resource bundle. */
 	private ResourceBundle fBundle;
-	/** The prefix used for resource bundle lookup */
+	/** The prefix used for resource bundle lookup. */
 	private String fPrefix;
 
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private final static String CURRENT_LINE_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
 	/**
-	 * Preference key for showing print marging ruler.
+	 * Preference key for showing print margin ruler.
 	 */
 	private final static String PRINT_MARGIN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
 	/**
@@ -154,17 +154,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	private boolean fIsChangeInformationShown;
 	/**
 	 * The annotation ruler column used in the vertical ruler.
-	 * @since 3.0
 	 */
 	private AnnotationRulerColumn fAnnotationRulerColumn;
 	/** 
 	 * The editor's implicit document provider.
-	 * @since 3.0
 	 */
 	private IDocumentProvider fImplicitDocumentProvider;
 	/** 
 	 * The editor's goto marker adapter.
-	 * @since 3.0 
 	 */
 	private Object fGotoMarkerAdapter= new GotoMarkerAdapter();
 	
@@ -302,7 +299,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		if (fIsChangeInformationShown) {
 			uninstallChangeRulerModel();
-			showChangeRuler(false); // hide change ruler if its displayed - if the line number ruler is showing, only the colors get removed by deinstalling the model
+			showChangeRuler(false); // hide change ruler if its displayed - if the line number ruler is showing, only the colors get removed by de-installing the model
 		} else {
 			ensureChangeInfoCanBeDisplayed();
 			installChangeRulerModel();
@@ -376,7 +373,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
 	 * a new differ is created and attached to the annotation model.
 	 * 
-	 * @return the linediffer, or <code>null</code> if none could be found or created.
+	 * @return the line differ, or <code>null</code> if none could be found or created
 	 */
 	private IAnnotationModel getOrCreateDiffer() {
 		IAnnotationModel differ= getDiffer();
@@ -410,7 +407,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
 	 * <code>null</code> is returned.
 	 * 
-	 * @return the linediffer, or <code>null</code> if none could be found
+	 * @return the line differ, or <code>null</code> if none could be found
 	 */
 	private IAnnotationModel getDiffer() {
 		// get annotation model extension
@@ -608,15 +605,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Extracts the color preference for <code>pref</code> from <code>store</code>. If <code>store</code>
-	 * indicates that the default value is to be used, or the value stored in the preferences store is <code>null</code>,
-	 * the value is taken from the <code>AnnotationPreference</code>'s default color value.
+	 * Extracts the color preference for the given preference from the given store.
+	 * If the given store indicates that the default value is to be used, or
+	 * the value stored in the preferences store is <code>null</code>,
+	 * the value is taken from the <code>AnnotationPreference</code>'s default
+	 * color value.
+	 * <p>
+	 * The return value is 
+	 * </p>
 	 * 
-	 * <p>The return value is never <code>null</code></p>
-	 * 
-	 * @param store
-	 * @param pref
-	 * @return
+	 * @param store the preference store
+	 * @param pref the annotation preference
+	 * @return the RGB color preference, not <code>null</code> 
 	 */
 	private RGB getColorPreference(IPreferenceStore store, AnnotationPreference pref) {
 		RGB rgb= null;
@@ -831,7 +831,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * 
 	 * @param preferenceKey the preference key string
 	 * @return the annotation preference or <code>null</code> if none
-	 * @since 3.0
 	 */
 	private AnnotationPreference getVerticalRulerAnnotationPreference(String preferenceKey) {
 		if (preferenceKey == null)
@@ -988,7 +987,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
-	 * @since 3.0
 	 */
 	protected boolean isErrorStatus(IStatus status) {
 		// see bug 42230
@@ -1014,7 +1012,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 * @since 3.0
 	 */
 	public Object getAdapter(Class adapter) {
 		if (IGotoMarker.class.equals(adapter))
@@ -1029,7 +1026,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * re-initialized based on the given editor input.
 	 *
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setDocumentProvider(org.eclipse.ui.IEditorInput)
-	 * @since 3.0
 	 */
 	protected void setDocumentProvider(IEditorInput input) {
 		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
@@ -1042,7 +1038,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
-	 * @since 3.0
 	 */
 	public IDocumentProvider getDocumentProvider() {
 		IDocumentProvider provider= super.getDocumentProvider();
@@ -1053,20 +1048,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#disposeDocumentProvider()
-	 * @since 3.0
 	 */
 	protected void disposeDocumentProvider() {
 		super.disposeDocumentProvider();
 		fImplicitDocumentProvider= null;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * This implementation also updates change information in the quick diff
-	 * ruler.</p>
+	/*
+	 * @see AbstractTextEditor#doSetInput(IEditorInput)
 	 * 
-	 * @param input {@inheritDoc}
+	 * This implementation also updates change information in the quick diff
+	 * ruler.
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		if (fIsChangeInformationShown) {

@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -12,7 +12,11 @@ package org.eclipse.ui.editors.text;
 
 import org.eclipse.core.runtime.IPath;
 
+
 /**
+ * This class gets the location for a given
+ * object.
+ * 
  * @since 3.0
  */
 public interface ILocationProvider {

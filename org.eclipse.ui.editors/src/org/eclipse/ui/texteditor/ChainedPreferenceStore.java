@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
 
 /**
  * Preference store that composes multiple preference stores in a
@@ -33,13 +33,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class ChainedPreferenceStore implements IPreferenceStore {
 
-	/** Child preference stores */
+	/** Child preference stores. */
 	private IPreferenceStore[] fPreferenceStores;
 
-	/** Listeners on this chained preference store */
+	/** Listeners on this chained preference store. */
 	private ListenerList fClientListeners= new ListenerList();
 
-	/** Listeners on the child preference stores */
+	/** Listeners on the child preference stores. */
 	private List fChildListeners= new ArrayList();
 
 	/**
@@ -84,7 +84,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		
 		/**
 		 * Returns the preference store.
-		 * @return The preference store
+		 * 
+		 * @return the preference store
 		 */
 		public IPreferenceStore getPreferenceStore() {
 			return fPreferenceStore;
@@ -92,7 +93,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		
 		/**
 		 * Sets the preference store.
-		 * @param preferenceStore The new preference store to set.
+		 * 
+		 * @param preferenceStore the preference store to set
 		 */
 		public void setPreferenceStore(IPreferenceStore preferenceStore) {
 			fPreferenceStore= preferenceStore;
@@ -103,7 +105,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	/**
 	 * Sets the chained preference stores.
 	 * 
-	 * @param preferenceStores The chained preference stores to set.
+	 * @param preferenceStores the chained preference stores to set
 	 */
 	public ChainedPreferenceStore(IPreferenceStore[] preferenceStores) {
 		Assert.isTrue(preferenceStores != null && preferenceStores.length > 0);
@@ -115,8 +117,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fClientListeners.size() == 0) {
@@ -125,8 +127,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		fClientListeners.add(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fClientListeners.remove(listener);
@@ -135,15 +137,15 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
 		return getVisibleStore(name) != null;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		firePropertyChangeEvent(new PropertyChangeEvent(this, name, oldValue, newValue));
@@ -151,7 +153,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 	/**
 	 * Fire the given property change event.
-	 * @param event The property change event 
+	 * 
+	 * @param event the property change event 
 	 */
 	private void firePropertyChangeEvent(PropertyChangeEvent event) {
 		Object[] listeners= fClientListeners.getListeners();
@@ -169,8 +172,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return BOOLEAN_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultBoolean(java.lang.String)
 	 */
 	public boolean getDefaultBoolean(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -179,8 +182,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return BOOLEAN_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultDouble(java.lang.String)
 	 */
 	public double getDefaultDouble(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -189,8 +192,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return DOUBLE_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultFloat(java.lang.String)
 	 */
 	public float getDefaultFloat(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -199,8 +202,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return FLOAT_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultInt(java.lang.String)
 	 */
 	public int getDefaultInt(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -209,8 +212,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return INT_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultLong(java.lang.String)
 	 */
 	public long getDefaultLong(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -219,8 +222,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return LONG_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultString(java.lang.String)
 	 */
 	public String getDefaultString(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -229,8 +232,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return STRING_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getDouble(java.lang.String)
 	 */
 	public double getDouble(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -239,8 +242,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return DOUBLE_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getFloat(java.lang.String)
 	 */
 	public float getFloat(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -249,8 +252,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return FLOAT_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getInt(java.lang.String)
 	 */
 	public int getInt(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -259,8 +262,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return INT_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getLong(java.lang.String)
 	 */
 	public long getLong(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -269,8 +272,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return LONG_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 	 */
 	public String getString(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -279,8 +282,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return STRING_DEFAULT_DEFAULT;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
 	 */
 	public boolean isDefault(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
@@ -289,106 +292,106 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
 	 */
 	public boolean needsSaving() {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 	 */
 	public void putValue(String name, String value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
 	 */
 	public void setDefault(String name, double value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
 	 */
 	public void setDefault(String name, float value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, int)
 	 */
 	public void setDefault(String name, int value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, long)
 	 */
 	public void setDefault(String name, long value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, java.lang.String)
 	 */
 	public void setDefault(String name, String defaultObject) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, boolean)
 	 */
 	public void setDefault(String name, boolean value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
 	 */
 	public void setToDefault(String name) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
 	 */
 	public void setValue(String name, double value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
 	 */
 	public void setValue(String name, float value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
 	 */
 	public void setValue(String name, int value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
 	 */
 	public void setValue(String name, long value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
 	 */
 	public void setValue(String name, String value) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
 	 */
 	public void setValue(String name, boolean value) {
 		throw new UnsupportedOperationException();
@@ -397,8 +400,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	/**
 	 * Handle property change event from the child listener with the given child preference store.
 	 * 
-	 * @param childPreferenceStore The child preference store
-	 * @param event The event
+	 * @param childPreferenceStore the child preference store
+	 * @param event the event
 	 */
 	private void handlePropertyChangeEvent(IPreferenceStore childPreferenceStore, PropertyChangeEvent event) {
 		String property= event.getProperty();
@@ -481,14 +484,14 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	/**
 	 * Returns an object of the same dynamic type as <code>thisValue</code>, the returned object
 	 * encapsulates the value of the <code>property</code> from the preference <code>store</code>.
-	 * Allowed dynamic types for <code>thisValue</code> are <code>Boolean</code>, <code>Double</code>,
-	 * <code>Float</code>, <code>Integer</code>, <code>Long</code> and <code>String</code>. If 
-	 * <code>thisValue</code> has a different type a {@link java.lang.IllegalArgumentException} is thrown.
 	 * 
-	 * @param property The name of the considered property
-	 * @param store The preference store
-	 * @param thisValue The given value
-	 * @return The other value
+	 * @param property the name of the considered property
+	 * @param store the preference store
+	 * @param thisValue the given value
+	 * @return the other value
+	 * @throws java.lang.IllegalArgumentException if <code>thisValue</code> has a different type than
+	 * 		<code>Boolean</code>, <code>Double</code>, <code>Float</code>, <code>Integer</code>,
+	 * 		<code>Long</code> or <code>String</code>
 	 */
 	private Object getOtherValue(String property, IPreferenceStore store, Object thisValue) {
 		Object otherValue;
@@ -513,9 +516,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * Returns the preference store from which the given property's value
 	 * is visible.
 	 * 
-	 * @param property Name of the property.
-	 * @return Preference store from which the property's value is visible,
-	 * 	<code>null</code> if the property is unknown. 
+	 * @param property the name of the property
+	 * @return the preference store from which the property's value is visible,
+	 * 	<code>null</code> if the property is unknown
 	 */
 	private IPreferenceStore getVisibleStore(String property) {
 		IPreferenceStore visibleStore= null;

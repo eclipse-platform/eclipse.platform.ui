@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
-
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -34,6 +32,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+
 /**
  * A preference page to set the font used in the default text editor.
  * <p>
@@ -42,12 +41,12 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * the page description. In addition, it uses <code>"PreferencePage.fontEditor"</code>
  * for the editor description.
  * </p>
- * @deprecated As of 2.1 fonts are managed by the workbench, no longer supported
+ * @deprecated As of 2.1, fonts are managed by the workbench, no longer supported
  */
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	/**
-	 * Indicates whether the preferences that this page maniulates have been initialized.
+	 * Indicates whether the preferences that this page manipulates have been initialized.
 	 * 
 	 * @since 2.0
 	 */
@@ -89,7 +88,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	}
 	
 	/**
-	 * Initialzes the defaults for the given store.
+	 * Initializes the defaults for the given store.
 	 * 
 	 * @param store the preference store
 	 * @since 2.0

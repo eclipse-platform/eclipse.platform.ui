@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,8 +39,9 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
+
 /**
- * Shareable document provider specialized for <code>IStorage</code>s.
+ * Shared document provider specialized for {@link org.eclipse.core.resources.IStorage}s.
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
 	
@@ -55,7 +54,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	
 	
 	/**
-	 * Bundle of all required information to allow <code>IStorage</code> as underlying document resources. 
+	 * Bundle of all required information to allow {@link org.eclipse.core.resources.IStorage} as underlying document resources. 
 	 * @since 2.0
 	 */
 	protected class StorageInfo extends ElementInfo {

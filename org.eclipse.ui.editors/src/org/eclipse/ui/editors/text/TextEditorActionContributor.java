@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
-
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -24,8 +22,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
+
 /**
- * Manages the installation and deinstallation of global actions for the default text editor.
+ * Manages the installation and de-installation of global actions for the default text editor.
  * <p>
  * If instantiated and used as-is, this contributor connects global actions and adds actions
  * for line delimiter conversion and encoding support.</p>
@@ -38,7 +37,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	private RetargetTextEditorAction fConvertToWindows;
 	/** Convert to UNIX action. */
 	private RetargetTextEditorAction fConvertToUNIX;
-	/** Convert to Mac action. */
+	/** Convert to MAC action. */
 	private RetargetTextEditorAction fConvertToMac;
 	/** Encoding action group */
 	private EncodingActionGroup fEncodingActionGroup;

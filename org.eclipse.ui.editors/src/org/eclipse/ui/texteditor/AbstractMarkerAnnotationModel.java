@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,11 +46,12 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * Markers are provided by an underlying source (a subclass responsibility).
  * Markers whose textual range gets deleted during text editing are removed
- * from the model on save. The <code>updateMarkers</code> method can be used
+ * from the model on save. The {@link #updateMarkers(IDocument)} method can be used
  * to force the model to update the source's markers with any changes to their 
- * locations due to edits. Clients can register <code>IMarkerUpdater</code> 
+ * locations due to edits. Clients can register a {@link org.eclipse.ui.texteditor.IMarkerUpdater} 
  * objects in order to define the process of marker updating. Registration can be done
- * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.</p>
+ * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.
+ * </p>
  * <p>
  * Subclasses must implement the following methods:
  * <ul>
@@ -62,8 +61,6 @@ import org.eclipse.ui.PlatformUI;
  *   <li><code>listenToMarkerChanges</code></li>
  * </ul> 
  * </p>
- *
- * @since 3.0
  */
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 
@@ -522,7 +519,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
 	 * @return <code>false</code> if the marker is invalid
-	 * @exception CoreException if there is a problem updating the marker  
+	 * @throws CoreException if there is a problem updating the marker  
 	 * @since 3.0
 	 */
 	public boolean updateMarker(IDocument document, IMarker marker, Position position) throws CoreException {
@@ -539,7 +536,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * all registered marker updaters (<code>IMarkerUpdater</code>).
 	 *
 	 * @param document the document to which this model is currently connected
-	 * @exception CoreException if there is a problem updating the markers
+	 * @throws CoreException if there is a problem updating the markers
 	 */
 	public void updateMarkers(IDocument document) throws CoreException {
 

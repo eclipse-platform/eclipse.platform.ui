@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.editors.text;
-
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -62,9 +60,8 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
-
 /**
- * Shareable document provider specialized for file resources (<code>IFile</code>).
+ * Shared document provider specialized for file resources (<code>IFile</code>).
  * <p>
  * This class may be instantiated or be subclassed.</p>
  */
@@ -171,7 +168,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * Creates a new file synchronizer which is not yet installed on a resource.
 		 * 
 		 * @param fileEditorInput the editor input to be synchronized
-		 * @deprecated use FileSynchronizer(IFileEditorInput)
+		 * @deprecated use {@link FileSynchronizer#FileSynchronizer(IFileEditorInput)}
 		 */
 		public FileSynchronizer(FileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
@@ -391,7 +388,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param cachedModificationStamp the cached modification stamp
 	 * @param resource the resource to check
-	 * @exception CoreException if resource has been changed on the file system
+	 * @exception org.eclipse.core.runtime.CoreException if resource has been changed on the file system
 	 */
 	protected void checkSynchronizationState(long cachedModificationStamp, IResource resource) throws CoreException {
 		if (cachedModificationStamp != computeModificationStamp(resource)) {
@@ -573,6 +570,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
+	/*
+	 * @since 3.0
+	 */
 	private String getCharsetForNewFile(IFile targetFile, IDocument document, FileInfo info) {
 		// User-defined encoding has first priority
 		String encoding;
@@ -833,7 +833,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param file the file to be refreshed
 	 * @param monitor the progress monitor
-	 * @throws  CoreException if the refresh fails
+	 * @throws  org.eclipse.core.runtime.CoreException if the refresh fails
 	 * @since 3.0
 	 */
 	protected void refreshFile(IFile file, IProgressMonitor monitor) throws CoreException {
@@ -906,7 +906,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param element the element for which to store the persisted encoding
 	 * @param encoding the encoding
-	 * @throws CoreException if persisting the encoding fails
+	 * @throws org.eclipse.core.runtime.CoreException if persisting the encoding fails
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
@@ -1017,8 +1017,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * This is a workaround for a corresponding bug in Java readers and writer,
 	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 	 * </p>
-	 *
-	 * @throws CoreException if reading the BOM fails 
+	 * @param file the file
+	 * @param encoding the encoding
+	 * @param element the element, or <code>null</code>
+	 * @throws org.eclipse.core.runtime.CoreException if reading the BOM fails 
 	 * @since 3.0
 	 * @deprecated as of 3.0 this method is no longer in use and does nothing
 	 */

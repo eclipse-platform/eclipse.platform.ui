@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-
 
 
 /**
@@ -59,8 +57,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>int</code>: positive int value specifying the number of
 	 * spaces per tab.
 	 * </p>
-	 * 
-	 * @since 3.0
 	 */
 	public final static String EDITOR_TAB_WIDTH= "tabWidth"; //$NON-NLS-1$
 
@@ -101,7 +97,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @since 2.1
 	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION= "othersIndication"; //$NON-NLS-1$
@@ -116,8 +111,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @see #EDITOR_UNKNOWN_INDICATION
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @since 2.1
-	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
+	 * @deprecated As of 3.0, there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
 
@@ -127,8 +121,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @since 2.1
-	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
+	 * @deprecated As of 3.0, there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER= "othersIndicationInOverviewRuler"; //$NON-NLS-1$
 
@@ -168,7 +161,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Annotations preference page is used to configure annotations.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
-	 * @since 3.0
+	 * </p>
 	 */
 	public static final String USE_ANNOTATIONS_PREFERENCE_PAGE= "useAnnotationsPrefPage"; //$NON-NLS-1$
 	
@@ -177,7 +170,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Quick Diff preference page is used to configure Quick Diff.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
-	 * @since 3.0
+	 * </p>
 	 */
 	public static final String USE_QUICK_DIFF_PREFERENCE_PAGE= "useQuickDiffPrefPage"; //$NON-NLS-1$
 
@@ -185,7 +178,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * A named preference that controls whether quick diff colors are shown on the line number bar.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
-	 * @since 3.0
+	 * </p>
 	 */
 	public static final String QUICK_DIFF_ALWAYS_ON= "quickdiff.quickDiff"; //$NON-NLS-1$
 	
@@ -193,7 +186,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * A named preference that controls the default quick diff reference provider.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * @since 3.0
+	 * </p>
 	 */
 	public static final String QUICK_DIFF_DEFAULT_PROVIDER= "quickdiff.defaultProvider"; //$NON-NLS-1$
 
@@ -201,7 +194,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * A named preference that controls the default quick diff reference provider.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * @since 3.0
+	 * </p>
 	 */
 	public static final String QUICK_DIFF_CHARACTER_MODE= "quickdiff.characterMode"; //$NON-NLS-1$
 	
@@ -212,8 +205,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>false</code>, only
 	 * the default caret is used in the editor.
 	 * </p>
-	 * 
-	 * @since 3.0
 	 */
 	public static final String EDITOR_USE_CUSTOM_CARETS= AbstractTextEditor.PREFERENCE_USE_CUSTOM_CARETS;
 	
@@ -223,8 +214,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code>, the caret is
 	 * twice as wide as the default caret.
 	 * </p>
-	 * 
-	 * @since 3.0
 	 */
 	public static final String EDITOR_WIDE_CARET= AbstractTextEditor.PREFERENCE_WIDE_CARET;
 	
@@ -238,7 +227,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @since 3.0
 	 */
 	public final static String EDITOR_SELECTION_FOREGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_FOREGROUND;
 
@@ -248,8 +236,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * @since 3.0
 	 */
 	public final static String EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT;
 
@@ -263,7 +249,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @since 3.0
 	 */
 	public final static String EDITOR_SELECTION_BACKGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND;
 
@@ -273,8 +258,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>. 
 	 * </p>
-	 * 
-	 * @since 3.0
 	 */
 	public final static String EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT;
 

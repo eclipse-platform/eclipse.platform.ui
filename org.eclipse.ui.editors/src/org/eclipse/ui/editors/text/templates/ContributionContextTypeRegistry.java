@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 
 	/**
 	 * Tries to create a context type given an id. If there is already a context
-	 * type registered under <code>id</code>, nothing happens. Otherwise,
+	 * type registered under the given id, nothing happens. Otherwise,
 	 * contributions to the <code>org.eclipse.ui.editors.templates</code>
 	 * extension point are searched for the given identifier and the specified
 	 * context type instantiated if it is found.
@@ -78,8 +78,8 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 * <code>org.eclipse.ui.editors.templates</code> extension point are
 	 * searched for the given identifier and the specified context type
 	 * instantiated if it is found. Any contributed
-	 * <code>TemplateVariableResolver</code> s are also instantiated and added
-	 * to the context type.
+	 * {@link org.eclipse.jface.text.templates.TemplateVariableResolver}s
+	 * are also instantiated and added to the context type.
 	 * 
 	 * @param id the id for the context type as specified in XML
 	 * @return the instantiated and configured context type, or

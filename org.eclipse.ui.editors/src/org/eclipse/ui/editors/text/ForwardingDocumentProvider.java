@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -26,31 +26,33 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
+
 /**
- * A forwarding document provider is document provider that forwards all request
+ * A forwarding document provider is a document provider that forwards all requests
  * to a known parent document provider. The only functional addition of the
  * forwarding document provider is that it ensures that all documents provided
  * to clients are appropriately set up.
  * <p>
  * This document provider should be used by editors that directly or indirectly
- * work with a <code>TextFileDocumentProvider</code> and do not accept that
- * they may be provided with documents which do not contain the partitioning
+ * work with a {@link org.eclipse.ui.editors.text.TextFileDocumentProvider} and do not
+ * accept that they may be provided with documents which do not contain the partitioning
  * they work on. This can happen either because of a plug-in configuration error
  * or when a user associates a file name or file extension with an existing text
  * editor and the file buffer infrastructure does not recognize that file name
  * or file extension to be of the same file type the editor works on. Thus, the
  * document provided for the files with that name or extension may not be set up
- * in the way the editor expects it. Thus, a
- * <code>ForwardingDocumentProvider</code> compensates for that situation.
+ * in the way the editor expects it. The <code>ForwardingDocumentProvider</code>
+ * compensates for that situation.
+ * </p>
  * <p>
- * Editors that directly work with a <code>TextFileDocumentProvider</code> can
+ * Editors that directly work with a {@link org.eclipse.ui.editors.text.TextFileDocumentProvider} can
  * now use a <code>ForwardingDocumentProvider</code> instead and configure a
- * <code>TextFileDocumentProvider</code> as its parent provider. Editors that
- * indirectly work with a <code>TextFileDocumentProvider</code>, e.g. never
+ * {@link org.eclipse.ui.editors.text.TextFileDocumentProvider} as its parent provider. Editors that
+ * indirectly work with a {@link org.eclipse.ui.editors.text.TextFileDocumentProvider}, e.g. never
  * set a document provider explicitly, should explicitly set a
  * <code>ForwardingDocumentProvider</code> as document provider. In this case
  * the forwarding document provider may not be shared between editors.
- * <p>
+ * </p>
  * 
  * @since 3.0
  */
@@ -64,7 +66,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		
 	/**
 	 * Creates a new forwarding document provider with a fixed parent document provider. Calling
-	 * <code>setParentDocumentProvider</code> does not have any effect on this object.
+	 * {@link #setParentProvider(IDocumentProvider)} does not have any effect on this object.
 	 * 
 	 * @param partitioning the partitioning
 	 * @param documentSetupParticipant the document setup participant
