@@ -116,4 +116,16 @@ public interface IManagedForm {
 	 * Refreshes the form by refreshing every part that is stale.
 	 */
 	void refresh();
+	/**
+	 * Sets the container that owns this form. Depending on the
+	 * context, the container may be wizard, editor page,
+	 * editor etc.
+	 * @param container the container of this form
+	 */
+	void setContainer(Object container);
+	/**
+	 * Returns the container of this form.
+	 * @return the form container
+	 */
+	Object getContainer();
 }

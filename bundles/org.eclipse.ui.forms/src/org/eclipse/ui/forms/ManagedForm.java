@@ -35,6 +35,7 @@ public class ManagedForm implements IManagedForm {
 	private Object input;
 	private ScrolledForm form;
 	private FormToolkit toolkit;
+	private Object container;
 	private boolean ownsToolkit;
 	private Vector parts = new Vector();
 	/**
@@ -223,5 +224,17 @@ public class ManagedForm implements IManagedForm {
 	 * @see IManagedForm#staleStateChanged
 	 */
 	public void staleStateChanged() {
+	}
+	/**
+	 * @return Returns the container.
+	 */
+	public Object getContainer() {
+		return container;
+	}
+	/**
+	 * @param container The container to set.
+	 */
+	public void setContainer(Object container) {
+		this.container = container;
 	}
 }

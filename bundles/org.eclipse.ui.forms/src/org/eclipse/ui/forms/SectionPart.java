@@ -18,11 +18,9 @@ import org.eclipse.ui.forms.widgets.*;
  * 
  * @see Section
  */
-public class SectionPart implements IFormPart {
-	private IManagedForm managedForm;
+public class SectionPart extends AbstractFormPart {
 	private Section section;
-	private boolean dirty = false;
-	private boolean stale = true;
+
 	/**
 	 * Creates a new section part based on the provided section.
 	 * 
@@ -87,48 +85,6 @@ public class SectionPart implements IFormPart {
 	protected void expansionStateChanged(boolean expanded) {
 		managedForm.getForm().reflow(false);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm form) {
-		this.managedForm = form;
-	}
-	/**
-	 * Returns the form that manages this part.
-	 * 
-	 * @return the managed form
-	 */
-	public IManagedForm getForm() {
-		return managedForm;
-	}
-	/**
-	 * Disposes the section part. Subclasses should override to release any
-	 * system resources.
-	 */
-	public void dispose() {
-	}
-	/**
-	 * Commits the section part. Subclasses should call 'super' when
-	 * overriding.
-	 * 
-	 * @param onSave
-	 *            <code>true</code> if the request to commit has arrived as a
-	 *            result of the 'save' action.
-	 */
-	public void commit(boolean onSave) {
-		dirty = false;
-	}
-	/**
-	 * Sets the overal form input. Subclases may elect to override the method
-	 * and adjust according to the form input.
-	 * 
-	 * @param input
-	 *            the form input object
-	 */
-	public void setFormInput(Object input) {
-	}
 	/**
 	 * Instructs the section to grab keyboard focus. The default implementation
 	 * will transfer focus to the section client. Subclasses may override and
@@ -138,49 +94,5 @@ public class SectionPart implements IFormPart {
 		Control client = section.getClient();
 		if (client != null)
 			client.setFocus();
-	}
-	/**
-	 * Refreshes the section after becoming stale (falling behind data in the
-	 * model). Subclasses must call 'super' when overriding this method.
-	 */
-	public void refresh() {
-		stale = false;
-	}
-	/**
-	 * Marks the section dirty. Subclasses should call this method as a result
-	 * of user interaction with the widgets in the section.
-	 */
-	public void markDirty() {
-		dirty = true;
-		managedForm.dirtyStateChanged();
-	}
-	/**
-	 * Tests whether the section is dirty i.e. its widgets have state that is
-	 * newer than the data in the model.
-	 * 
-	 * @return <code>true</code> if the section is dirty, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isDirty() {
-		return dirty;
-	}
-	/**
-	 * Tests whether the section is stale i.e. its widgets have state that is
-	 * older than the data in the model.
-	 * 
-	 * @return <code>true</code> if the section is stale, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isStale() {
-		return stale;
-	}
-	/**
-	 * Marks the section stale. Subclasses should call this method as a result
-	 * of model notification that indicates that the content of the section is
-	 * no longer in sync with the model.
-	 */
-	public void markStale() {
-		stale = true;
-		managedForm.staleStateChanged();
 	}
 }

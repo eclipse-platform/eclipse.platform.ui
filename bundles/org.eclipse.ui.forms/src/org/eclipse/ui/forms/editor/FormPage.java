@@ -82,10 +82,6 @@ public class FormPage extends EditorPart implements IFormPage {
 			// if needed.
 			mform.refresh();
 		}
-		else {
-			// We are going away from the page - commit it
-			mform.commit(false);
-		}
 	}
 	
 	public boolean isActive() {

@@ -210,6 +210,7 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 						if (!pageBook.hasPage(key)) {
 							Composite parent = pageBook.createPage(key);
 							fpage.createContents(parent);
+							parent.setData(fpage);
 						}
 						//commit the current page
 						if (oldPage!=null && oldPage.isDirty())

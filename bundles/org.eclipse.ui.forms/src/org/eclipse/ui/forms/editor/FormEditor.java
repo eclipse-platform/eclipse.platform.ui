@@ -88,10 +88,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		page.setIndex(index);
 		registerPage(page);
 	}
-	
+
 	public void editorDirtyStateChanged() {
 		firePropertyChange(PROP_DIRTY);
 	}
+	
 	/**
 	 * Disposes the pages and the toolkit after disposing the editor itself.
 	 * Subclasses must call 'super' when reimplementing the method.
@@ -150,6 +151,16 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		// fix for windows handles
 		int oldPage = getCurrentPage();
+		
+		if (oldPage != -1 && pages.size() > oldPage
+				&& pages.get(oldPage) instanceof IFormPage) {
+			// Commit old page before activating the new one
+			IFormPage oldFormPage = (IFormPage)pages.get(oldPage);
+			IManagedForm mform = oldFormPage.getManagedForm();
+			if (mform!=null) 
+				mform.commit(false);
+		}
+
 		if (pages.size() > newPageIndex
 				&& pages.get(newPageIndex) instanceof IFormPage)
 			((IFormPage) pages.get(newPageIndex)).setActive(true);

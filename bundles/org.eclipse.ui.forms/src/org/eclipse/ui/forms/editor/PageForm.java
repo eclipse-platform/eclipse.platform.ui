@@ -20,30 +20,29 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * @see FormPage
  */
 public class PageForm extends ManagedForm {
-	private FormPage page;
 	/**
 	 * @param toolkit
 	 * @param form
 	 */
 	public PageForm(FormPage page, ScrolledForm form) {
 		super(page.getEditor().getToolkit(), form);
-		this.page = page;
+		setContainer(page);
 	}
 	
 	public FormPage getPage() {
-		return page;
+		return (FormPage)getContainer();
 	}
 /**
  *@see IManagedForm#dirtyStateChanged
  */	
 	public void dirtyStateChanged() {
-		page.getEditor().editorDirtyStateChanged();
+		getPage().getEditor().editorDirtyStateChanged();
 	}
 /**
  *@see IManagedForm#staleStateChanged
  */	
 	public void staleStateChanged() {
-		if (page.isActive())
+		if (getPage().isActive())
 			refresh();
 	}
 }

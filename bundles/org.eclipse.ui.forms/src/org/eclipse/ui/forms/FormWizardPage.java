@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public abstract class FormWizardPage extends WizardPage {
 	protected FormToolkit toolkit;
-	protected ManagedForm managedForm;
+	protected WizardForm managedForm;
 	
 	public FormWizardPage(String id, FormToolkit toolkit) {
 		super(id);
@@ -35,7 +35,7 @@ public abstract class FormWizardPage extends WizardPage {
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
-		managedForm = new ManagedForm(toolkit, form);
+		managedForm = new WizardForm(this, toolkit, form);
 		createFormContents(form.getBody());
 		setControl(form);
 	}
