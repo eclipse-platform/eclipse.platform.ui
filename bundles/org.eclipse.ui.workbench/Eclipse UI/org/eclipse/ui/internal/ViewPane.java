@@ -168,6 +168,7 @@ public class ViewPane extends PartPane
  */
 public ViewPane(IViewReference ref, WorkbenchPage page) {
 	super(ref, page);
+	fast = ref.isFastView();
 }
 /**
  * Create control. Add the title bar.

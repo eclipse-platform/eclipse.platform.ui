@@ -651,13 +651,15 @@ protected void onActivate() {
 	// be activated.
 	for (int i = 0; i < fastViews.size(); i++){
 		ViewPane pane = getPane((IViewReference)fastViews.get(i));
-		Control ctrl = pane.getControl();
-		if (ctrl == null) {
-			pane.createControl(getClientComposite());
-			ctrl = pane.getControl();
+		if(pane != null) {
+			Control ctrl = pane.getControl();
+			if (ctrl == null) {
+				pane.createControl(getClientComposite());
+				ctrl = pane.getControl();
+			}
+			presentation.enableDrag(pane);		
+			ctrl.setEnabled(false); // Remove focus support.
 		}
-		presentation.enableDrag(pane);		
-		ctrl.setEnabled(false); // Remove focus support.
 	}
 	
 	setAllPinsVisible(true);
@@ -881,13 +883,7 @@ public IStatus restoreState() {
 				continue;
 			}		
 			page.addPart(ref);
-			IStatus restoreStatus = viewFactory.restoreView(ref);
-			result.add(restoreStatus);
-			if(restoreStatus.getSeverity() == IStatus.OK) {
-				fastViews.add(ref);
-			} else {
-				page.removePart(ref);
-			}
+			fastViews.add(ref);
 		}
 	}
 		
@@ -1201,7 +1197,8 @@ private void setAllPinsVisible(boolean visible) {
 	Iterator iter = fastViews.iterator();
 	while (iter.hasNext()) {
 		ViewPane pane = getPane((IViewReference)iter.next());
-		pane.setFast(visible);
+		if(pane != null)
+			pane.setFast(visible);
 	}
 }
 /**
@@ -1290,7 +1287,10 @@ private void setEditorAreaVisible(boolean visible) {
  * Shows a fast view.
  */
 void showFastView(IViewReference ref) {
-	// Get pane.
+	// Make sure the part is restored.
+	if(ref.getPart(true) == null)
+		return;
+	
 	ViewPane pane = getPane(ref);
 
 	// Create the control first
