@@ -1,19 +1,45 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.part;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.*;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -400,6 +426,20 @@ protected abstract PageRec doCreatePage(IWorkbenchPart part);
  * @see #doCreatePage
  */
 protected abstract void doDestroyPage(IWorkbenchPart part, PageRec pageRecord);
+
+/**
+ * The <code>PageBookView</code> implementation of this <code>IAdaptable</code> 
+ * method delegates to the current page, if it implements <code>IAdaptable</code>.
+ */
+public Object getAdapter(Class key) {
+	// delegate to the current page, if supported
+	IPage page = getCurrentPage();
+	if (page instanceof IAdaptable) {
+		return ((IAdaptable) page).getAdapter(key);
+	}
+	return super.getAdapter(key);
+}
+
 /**
  * Returns the active, important workbench part for this view.  
  * <p>
