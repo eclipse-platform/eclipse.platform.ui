@@ -188,13 +188,12 @@ public final class Team {
 	/**
 	 * Returns the list of global ignores.
 	 */
-	public static IIgnoreInfo[] getAllIgnores() {
+	public synchronized static IIgnoreInfo[] getAllIgnores() {
 		if (globalIgnore == null) {
+			globalIgnore = new HashMap();
 			try {
 				readIgnoreState();
 			} catch (TeamException e) {
-				if (globalIgnore == null) 
-					globalIgnore = new HashMap();
 				TeamPlugin.log(IStatus.ERROR, "Error loading ignore state from disk", e);
 			}
 			initializePluginIgnores();
@@ -219,7 +218,7 @@ public final class Team {
 		return result;
 	}
 
-	private static Hashtable getFileTypeTable() {
+	private synchronized static Hashtable getFileTypeTable() {
 		if (fileTypes == null) loadTextState();
 		return fileTypes;
 	}
