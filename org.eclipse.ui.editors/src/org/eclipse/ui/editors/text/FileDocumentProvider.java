@@ -757,7 +757,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	// --------------- Encoding support ---------------
 	
 	/**
-	 * Returns the persited encoding for the given element.
+	 * Returns the persisted encoding for the given element.
 	 * 
 	 * @param element the element for which to get the persisted encoding
 	 * @since 2.1
@@ -766,12 +766,31 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
 			IFile file= editorInput.getFile();
-			if (file != null)
+			if (file != null) {
+				String encoding= null;
 				try {
-					return file.getPersistentProperty(ENCODING_KEY);
-				} catch (CoreException ex) {
-					return null;
+					encoding= file.getPersistentProperty(ENCODING_KEY);
+				} catch (CoreException x) {
+					// we ignore exceptions here because we support the ENCODING_KEY property only for compatibility reasons
 				}
+				if (encoding != null) {
+					// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
+					try {
+						file.setCharset(encoding);
+						// if successful delete old property
+						file.setPersistentProperty(ENCODING_KEY, null);
+					} catch (CoreException ex) {
+						handleCoreException(ex, TextEditorMessages.getString("FileDocumentProvider.getPersistedEncoding")); //$NON-NLS-1$
+					}
+				} else {
+					try {
+						encoding= file.getCharset();
+					} catch (CoreException e) {
+						encoding= null;
+					}
+				}
+				return encoding;
+			}
 		}
 		return null;
 	}
@@ -788,7 +807,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
 			IFile file= editorInput.getFile();
 			if (file != null)
-				file.setPersistentProperty(ENCODING_KEY, encoding);
+				file.setCharset(encoding);
 		}
 	}
 	
