@@ -62,12 +62,7 @@ class WorkbenchMonitorProvider {
 		/**
 		 * Set the message for the receiver. If it is a new message return a
 		 * boolean.
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
+	
 		 * @param newMessage
 		 * @return boolean. true if an update is required
 		 */
@@ -208,8 +203,8 @@ class WorkbenchMonitorProvider {
 			 * Update the message for the receiver.
 			 */
 			private void updateMessage() {
-				refreshJob.setMessage(getDisplayString());
-				refreshJob.schedule(100);
+				if(refreshJob.setMessage(getDisplayString()))
+					refreshJob.schedule(100);
 			}
 
 			/**
