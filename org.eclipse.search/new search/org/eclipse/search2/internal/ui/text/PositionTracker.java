@@ -16,19 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -41,6 +28,19 @@ import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 
 
 public class PositionTracker implements IQueryListener, ISearchResultListener, IFileBufferListener {
@@ -235,22 +235,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		final int[] trackCount= new int[1];
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
-		IWorkspace ws= ResourcesPlugin.getWorkspace();
-		IPath location= buffer.getLocation();
 		
-		/*
-		 * FIXME: After 3.1 M3 replace the code to find the file with: 
-		 */ 
-//		IFile file= FileBuffers.getWorkspaceFileAtLocation(buffer.getLocation());
-//		if (file == null)
-//			return;
-		
-		IFile file= ws.getRoot().getFileForLocation(location);
-		if (file == null) {
-			if (location.segmentCount() < 2)
-				return;
-			file= ws.getRoot().getFile(location);
-		}
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(buffer.getLocation());
+		if (file == null)
+			return;
+
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 		for (int i = 0; i < queries.length; i++) {
 			ISearchResult result = queries[i].getSearchResult();
