@@ -455,8 +455,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	protected EditorHistory getEditorHistory() {
 		if (editorHistory == null) {
-			IPreferenceStore store = getPreferenceStore();
-			editorHistory = new EditorHistory(store.getInt(IPreferenceConstants.RECENT_FILES));
+			editorHistory = new EditorHistory();
 		}
 		return editorHistory;
 	}
