@@ -48,13 +48,13 @@ public class DetachedWindow extends Window   {
 		setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
 			SWT.RESIZE );
 		this.page = workbenchPage;
-		folder = new PartTabFolder(page);
+		folder = new PartTabFolder(page, SWT.NONE);
 	}
 	/**
 	 * Adds a visual part to this window.
 	 * Supports reparenting.
 	 */
-	public void add(ViewPane part, IPartDropListener listener) {
+	public void add(ViewPane part) {
 		
 		Shell shell = getShell();
 		if (shell != null)
