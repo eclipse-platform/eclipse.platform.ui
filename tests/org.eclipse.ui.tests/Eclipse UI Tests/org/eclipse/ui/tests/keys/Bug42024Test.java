@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.tests.keys;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
@@ -35,7 +37,7 @@ public class Bug42024Test extends UITestCase {
 	 * Constructor for Bug42024Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug42024Test(String name) {
 		super(name);
@@ -51,7 +53,7 @@ public class Bug42024Test extends UITestCase {
 		Display display = Display.getCurrent();
 		shell = new Shell(display);
 		shell.setLayout(new RowLayout());
-		text = new KeySequenceText(shell);
+		text = new KeySequenceText(new Text(shell, SWT.BORDER));
 
 		// Open it
 		shell.pack();
@@ -79,7 +81,7 @@ public class Bug42024Test extends UITestCase {
 	 * case, we will use a six stroke sequence.
 	 * 
 	 * @throws ParseException
-	 *            If the test sequence cannot be parsed.
+	 *             If the test sequence cannot be parsed.
 	 */
 	public void testInfiniteStrokes() throws ParseException {
 		String keySequenceText = "A B C D E F"; //$NON-NLS-1$
@@ -95,7 +97,7 @@ public class Bug42024Test extends UITestCase {
 	 * specifically truncation.
 	 * 
 	 * @throws ParseException
-	 *            If the test sequences cannot be parsed.
+	 *             If the test sequences cannot be parsed.
 	 */
 	public void testTruncation() throws ParseException {
 		final int length = 4;

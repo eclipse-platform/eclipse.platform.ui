@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.tests.keys;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
@@ -47,11 +49,12 @@ public class Bug43168Test extends UITestCase {
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
 		shell.setLayout(new RowLayout());
-		KeySequenceText text = new KeySequenceText(shell);
+		Text text = new Text(shell, SWT.BORDER);
+		KeySequenceText keySequenceText = new KeySequenceText(text);
 
 		shell.pack();
 		shell.open();
-		text.setKeySequence(KeySequence.getInstance("CTRL+")); //$NON-NLS-1$
+		keySequenceText.setKeySequence(KeySequence.getInstance("CTRL+")); //$NON-NLS-1$
 		shell.close();
 	}
 }
