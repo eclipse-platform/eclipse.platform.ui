@@ -9,6 +9,26 @@
 
 <h1> Eclipse Platform Build Notes<br>
   Workbench</h1>
+
+<!-- I20031216 -->
+<p>Integration Build (Tuesday, December 16, 2003)</p>
+<h2>What's new in this drop</h2>
+<p>
+The initial implementation of the platform UI colors API has been released.  This API is analogous to the existing fonts API in that it provides a registry (see org.eclipse.jface.resource.JFaceResources.getColorRegistry())  from which instances of defined colors may be obtained and the org.eclipse.ui.colorDefinitions extension point which plugins may use to define them.  Additionally, there is now a Colors preference page located under the Workbench page that allows user customization of colors.
+</p>
+<p>
+Although the API is in place and relativly complete (see Bug 48745), the workbench does not yet utilize it for its own color needs.  This will come for subsequent builds.
+</p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=48745">48745</a> Colors preference page does not properly handle ancestor color changes</p>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=38462">38462</a> [Dialogs] Tree in Preference &amp; Properties dialog should be resizable</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44671">44671</a> [ActivityMgmt] Need to showAll option for role support</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45825">45825</a> [ActivityMgmt] Perspectives don't respect activity enablement</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=48364">48364</a> PreferenceDialog can reopen empty</p>
+<hr SIZE="0" WIDTH="100%">
   
 <!-- I20031209 -->
 <p>Integration Build (Tuesday, December 9, 2003)</p>
