@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class WorkerPool {
 	private static final int MIN_THREADS = 1;
-	private static final int MAX_THREADS = 20;
+	private static final int MAX_THREADS = 10;
 	private boolean running = false;
 	private ArrayList threads = new ArrayList();
 	/**
