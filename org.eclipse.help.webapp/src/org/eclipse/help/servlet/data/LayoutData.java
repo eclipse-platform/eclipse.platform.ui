@@ -14,13 +14,10 @@ import org.eclipse.help.servlet.*;
 public class LayoutData extends RequestData {
 
 	private String query = "";
-	private WebappPreferences prefs;
 	private View[] views;
 
 	public LayoutData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
-
-		prefs = (WebappPreferences) context.getAttribute("WebappPreferences");
 
 		// initialize the query string
 		String qs = request.getQueryString();
@@ -33,7 +30,7 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getBannerURL() {
-		String banner = prefs.getBanner();
+		String banner = preferences.getBanner();
 		if (banner != null) {
 			if (banner.trim().length() == 0)
 				banner = null;
@@ -47,13 +44,13 @@ public class LayoutData extends RequestData {
 		if (getBannerURL() == null)
 			return "0";
 		else
-			return prefs.getBannerHeight();
+			return preferences.getBannerHeight();
 	}
 
 	public String getContentURL() {
 		TocData tocData = new TocData(context, request);
 		String topic = tocData.getSelectedTopic();
-		String help_home = prefs.getHelpHome();
+		String help_home = preferences.getHelpHome();
 
 		if (topic != null)
 			help_home = topic;
@@ -75,11 +72,11 @@ public class LayoutData extends RequestData {
 					new View(
 						"toc",
 						"",
-						prefs.getImagesDirectory() + "/contents_view.gif"),
+						preferences.getImagesDirectory() + "/contents_view.gif"),
 					new View(
 						"search",
 						"",
-						prefs.getImagesDirectory()
+						preferences.getImagesDirectory()
 							+ "/search_results_view.gif"),
 					};
 		} else {
@@ -89,20 +86,20 @@ public class LayoutData extends RequestData {
 					new View(
 						"toc",
 						"",
-						prefs.getImagesDirectory() + "/contents_view.gif"),
+						preferences.getImagesDirectory() + "/contents_view.gif"),
 					new View(
 						"search",
 						"",
-						prefs.getImagesDirectory()
+						preferences.getImagesDirectory()
 							+ "/search_results_view.gif"),
 					new View(
 						"links",
 						"",
-						prefs.getImagesDirectory() + "/links_view.gif"),
+						preferences.getImagesDirectory() + "/links_view.gif"),
 					new View(
 						"bookmarks",
 						"",
-						prefs.getImagesDirectory() + "/bookmarks_view.gif")};
+						preferences.getImagesDirectory() + "/bookmarks_view.gif")};
 		}
 		return views;
 	}

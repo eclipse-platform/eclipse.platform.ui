@@ -45,9 +45,7 @@ public class TocData extends RequestData {
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 
-		WebappPreferences pref =
-			(WebappPreferences) context.getAttribute("WebappPreferences");
-		imagesDirectory = pref.getImagesDirectory();
+		imagesDirectory = preferences.getImagesDirectory();
 
 		loadTocs();
 	}

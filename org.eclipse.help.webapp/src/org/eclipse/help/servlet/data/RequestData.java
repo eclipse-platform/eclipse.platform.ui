@@ -22,6 +22,7 @@ public class RequestData {
 	protected ServletContext context;
 	protected HttpServletRequest request;
 	protected String locale;
+	protected WebappPreferences preferences;
 	/**
 	 * Constructs the data for a request.
 	 * @param context
@@ -30,6 +31,7 @@ public class RequestData {
 	public RequestData(ServletContext context, HttpServletRequest request) {
 		this.context = context;
 		this.request = request;
+		preferences=new WebappPreferences();
 
 		if ((HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
 			&& request != null)
@@ -42,7 +44,7 @@ public class RequestData {
 	 * Returns the preferences object
 	 */
 	public WebappPreferences getPrefs() {
-		return (WebappPreferences) context.getAttribute("WebappPreferences");
+		return preferences;
 	}
 
 	public boolean isIE() {

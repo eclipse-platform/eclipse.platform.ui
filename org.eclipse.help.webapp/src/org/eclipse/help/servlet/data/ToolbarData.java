@@ -48,7 +48,7 @@ public class ToolbarData extends RequestData {
 					new ToolbarButton(
 						names[i],
 						WebappResources.getString(tooltips[i], request),
-						getPrefs().getImagesDirectory() + "/" + images[i],
+						preferences.getImagesDirectory() + "/" + images[i],
 						actions[i]);
 		}
 	}
