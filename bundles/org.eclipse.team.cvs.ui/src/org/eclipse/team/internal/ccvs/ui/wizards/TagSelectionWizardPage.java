@@ -151,7 +151,9 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 
 	private TreeViewer createTree(Composite parent) {
 		Tree tree = new Tree(parent, SWT.SINGLE | SWT.BORDER);
-		tree.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		tree.setLayoutData(gridData);
+		gridData.heightHint = 150;
 		TreeViewer result = new TreeViewer(tree);
 		result.setContentProvider(new WorkbenchContentProvider());
 		result.setLabelProvider(new WorkbenchLabelProvider());
