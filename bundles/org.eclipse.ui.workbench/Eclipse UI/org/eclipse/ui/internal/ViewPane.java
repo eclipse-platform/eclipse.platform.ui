@@ -80,6 +80,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
+	boolean hasFocus;
+
 	private ToolItem lockToolBarButton;
 	
 	private ToolbarFloatingWindow floatingWindow;
@@ -608,6 +610,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * @param active
 	 */
 	void setActive(boolean active){
+		hasFocus = active;
+		
 		if(getContainer() instanceof PartTabFolder){
 			((PartTabFolder) getContainer()).setActive(active);
 		}
@@ -849,4 +853,21 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)
+	 */
+	public void setContainer(ILayoutContainer container) {
+		ILayoutContainer oldContainer = getContainer();
+		if (hasFocus) {
+			if (oldContainer != null && oldContainer instanceof PartTabFolder) {
+				((PartTabFolder)oldContainer).setActive(false);
+			}
+			
+			if (container != null && container instanceof PartTabFolder) {
+				((PartTabFolder)container).setActive(true);
+			}
+		}
+
+		super.setContainer(container);
+	}
 }
