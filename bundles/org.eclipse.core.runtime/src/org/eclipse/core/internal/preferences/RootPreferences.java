@@ -47,7 +47,7 @@ public class RootPreferences extends EclipsePreferences {
 		if (exception != null)
 			throw exception;
 	}
-	
+
 	/*
 	 * @see EclipsePreferences#getChild(String)
 	 */
@@ -73,7 +73,7 @@ public class RootPreferences extends EclipsePreferences {
 		//must perform lazy initialization of child nodes
 		String[] childNames = childrenNames();
 		IEclipsePreferences[] childNodes = new IEclipsePreferences[childNames.length];
-		for (int i = 0; i < childNames.length; i++) 
+		for (int i = 0; i < childNames.length; i++)
 			childNodes[i] = getChild(childNames[i]);
 		return childNodes;
 	}

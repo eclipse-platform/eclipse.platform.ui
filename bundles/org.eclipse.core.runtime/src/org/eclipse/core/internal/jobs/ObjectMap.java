@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
+
 import java.util.*;
+
 /**
  * A specialized map implementation that is optimized for a small set of object
  * keys.
@@ -22,12 +24,14 @@ public class ObjectMap implements Map {
 	protected static final int GROW_SIZE = 10;
 	protected int count = 0;
 	protected Object[] elements = null;
+
 	/**
 	 * Creates a new object map of default size
 	 */
 	public ObjectMap() {
 		super();
 	}
+
 	/**
 	 * Creates a new object map.
 	 * 
@@ -37,6 +41,7 @@ public class ObjectMap implements Map {
 	public ObjectMap(int initialCapacity) {
 		elements = new Object[Math.max(initialCapacity * 2, 0)];
 	}
+
 	/**
 	 * Creates a new object map of the same size as the given map and populate
 	 * it with the key/attribute pairs found in the map.
@@ -48,6 +53,7 @@ public class ObjectMap implements Map {
 		this(map.size());
 		putAll(map);
 	}
+
 	/**
 	 * @see Map#clear
 	 */
@@ -55,12 +61,14 @@ public class ObjectMap implements Map {
 		elements = null;
 		count = 0;
 	}
+
 	/**
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {
 		return new ObjectMap(this);
 	}
+
 	/**
 	 * @see Map#containsKey
 	 */
@@ -72,6 +80,7 @@ public class ObjectMap implements Map {
 				return true;
 		return false;
 	}
+
 	/**
 	 * @see Map#containsValue
 	 */
@@ -83,6 +92,7 @@ public class ObjectMap implements Map {
 				return true;
 		return false;
 	}
+
 	/**
 	 * @see Map#entrySet This implementation does not conform properly to the
 	 *          specification in the Map interface. The returned collection will not
@@ -91,6 +101,7 @@ public class ObjectMap implements Map {
 	public Set entrySet() {
 		return toHashMap().entrySet();
 	}
+
 	/**
 	 * See Object#equals
 	 */
@@ -111,6 +122,7 @@ public class ObjectMap implements Map {
 		}
 		return true;
 	}
+
 	/**
 	 * @see Map#get
 	 */
@@ -122,6 +134,7 @@ public class ObjectMap implements Map {
 				return elements[i + 1];
 		return null;
 	}
+
 	/**
 	 * The capacity of the map has been exceeded, grow the array by GROW_SIZE to
 	 * accomodate more entries.
@@ -131,6 +144,7 @@ public class ObjectMap implements Map {
 		System.arraycopy(elements, 0, expanded, 0, elements.length);
 		elements = expanded;
 	}
+
 	/**
 	 * See Object#hashCode
 	 */
@@ -143,12 +157,14 @@ public class ObjectMap implements Map {
 		}
 		return hash;
 	}
+
 	/**
 	 * @see Map#isEmpty
 	 */
 	public boolean isEmpty() {
 		return count == 0;
 	}
+
 	/**
 	 * @see Map#keySet This implementation does not conform properly to the
 	 *          specification in the Map interface. The returned collection will not
@@ -163,6 +179,7 @@ public class ObjectMap implements Map {
 		}
 		return result;
 	}
+
 	/**
 	 * @see Map#put
 	 */
@@ -202,6 +219,7 @@ public class ObjectMap implements Map {
 		}
 		return null;
 	}
+
 	/**
 	 * @see Map#putAll
 	 */
@@ -212,6 +230,7 @@ public class ObjectMap implements Map {
 			put(key, value);
 		}
 	}
+
 	/**
 	 * @see Map#remove
 	 */
@@ -229,12 +248,14 @@ public class ObjectMap implements Map {
 		}
 		return null;
 	}
+
 	/**
 	 * @see Map#size
 	 */
 	public int size() {
 		return count;
 	}
+
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
@@ -247,6 +268,7 @@ public class ObjectMap implements Map {
 		}
 		return result;
 	}
+
 	/**
 	 * @see Map#values This implementation does not conform properly to the
 	 *          specification in the Map interface. The returned collection will not

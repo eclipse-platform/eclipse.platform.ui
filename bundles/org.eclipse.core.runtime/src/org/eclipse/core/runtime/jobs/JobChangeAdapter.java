@@ -29,6 +29,7 @@ public class JobChangeAdapter implements IJobChangeListener {
 	public void aboutToRun(IJobChangeEvent event) {
 		// do nothing
 	}
+
 	/* (non-Javadoc)
 	 * @see IJobChangeListener#awake(IJobChangeEvent)
 	 * This default implementation does nothing
@@ -36,6 +37,7 @@ public class JobChangeAdapter implements IJobChangeListener {
 	public void awake(IJobChangeEvent event) {
 		// do nothing
 	}
+
 	/* (non-Javadoc)
 	 * @see IJobChangeListener#done(IJobChangeEvent)
 	 * This default implementation does nothing
@@ -43,6 +45,7 @@ public class JobChangeAdapter implements IJobChangeListener {
 	public void done(IJobChangeEvent event) {
 		// do nothing
 	}
+
 	/* (non-Javadoc)
 	 * @see IJobChangeListener#running(IJobChangeEvent)
 	 * This default implementation does nothing
@@ -50,6 +53,7 @@ public class JobChangeAdapter implements IJobChangeListener {
 	public void running(IJobChangeEvent event) {
 		// do nothing
 	}
+
 	/* (non-Javadoc)
 	 * @see IJobChangeListener#scheduled(IJobChangeEvent)
 	 * This default implementation does nothing
@@ -57,6 +61,7 @@ public class JobChangeAdapter implements IJobChangeListener {
 	public void scheduled(IJobChangeEvent event) {
 		// do nothing
 	}
+
 	/* (non-Javadoc)
 	 * @see IJobChangeListener#sleeping(IJobChangeEvent)
 	 * This default implementation does nothing

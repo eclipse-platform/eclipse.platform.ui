@@ -63,8 +63,9 @@ public interface IContentTypeManager {
 	 * @param contents
 	 * @param fileName
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
-	 */	
+	 */
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
+
 	/**
 	 * Returns the preferred content type for the given file name. If multiple content types 
 	 * are associated with the given file name, the one considered the most appropriated will
@@ -74,6 +75,7 @@ public interface IContentTypeManager {
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */
 	public IContentType findContentTypeFor(String fileName);
+
 	/**
 	 * Returns the content types associated to the given contents and file name.
 	 * <p>
@@ -92,8 +94,9 @@ public interface IContentTypeManager {
 	 * @param contents an input stream
 	 * @param fileName the file name associated to the contents, or <code>null</code> 
 	 * @return all content types associated to the given contents and file name
-	 */	
-	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;	
+	 */
+	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;
+
 	/**
 	 * Returns all content types known by the platform that are associated to the given file name.
 	 * <p> 
@@ -104,6 +107,7 @@ public interface IContentTypeManager {
 	 * @return all content types associated to the given file spec
 	 */
 	public IContentType[] findContentTypesFor(String fileName);
+
 	/**
 	 * Returns all content types known by the platform. 
 	 * <p>
@@ -113,6 +117,7 @@ public interface IContentTypeManager {
 	 * @return all content types known by the platform.
 	 */
 	public IContentType[] getAllContentTypes();
+
 	/**
 	 * Returns the content type with the given identifier, or <code>null</code>
 	 * if no such content type is known by the platform.
@@ -121,6 +126,7 @@ public interface IContentTypeManager {
 	 * @return the content type, or <code>null</code>
 	 */
 	public IContentType getContentType(String contentTypeIdentifier);
+
 	/**
 	 * Tries to obtain a description for the given contents and file name. 
 	 * <p>

@@ -26,6 +26,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  */
 public class LockListener {
 	private final LockManager manager = ((JobManager) InternalPlatform.getDefault().getJobManager()).getLockManager();
+
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
 	 * Returns whether the thread should be granted immediate access to the lock.
@@ -38,11 +39,13 @@ public class LockListener {
 	public boolean aboutToWait(Thread lockOwner) {
 		return false;
 	}
+
 	/**
 	 * Notification that a thread is about to release a lock.
 	 */
 	public void aboutToRelease() {
 	}
+
 	/**
 	 * Returns whether this thread currently owns any locks
 	 * @return <code>true</code> if this thread owns any locks, and 

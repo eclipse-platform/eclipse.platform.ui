@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -19,9 +19,11 @@ public class Queue {
 	protected int head;
 	protected boolean reuse;
 	protected int tail;
+
 	public Queue() {
 		this(20, false);
 	}
+
 	/**
 	 * The parameter reuse indicates what do you want to happen with
 	 * the object reference when you remove it from the queue. If
@@ -35,6 +37,7 @@ public class Queue {
 		head = tail = 0;
 		this.reuse = reuse;
 	}
+
 	/**
 	 * Adds an object to the tail of the queue.
 	 */
@@ -47,6 +50,7 @@ public class Queue {
 		elements[tail] = element;
 		tail = newTail;
 	}
+
 	public void clear() {
 		if (tail >= head) {
 			for (int i = head; i < tail; i++)
@@ -59,9 +63,11 @@ public class Queue {
 		}
 		tail = head = 0;
 	}
+
 	public boolean contains(Object o) {
 		return get(o) != null;
 	}
+
 	/**
 	 * This method does not affect the queue itself. It is only a
 	 * helper to decrement an index in the queue.
@@ -69,9 +75,11 @@ public class Queue {
 	public int decrement(int index) {
 		return (index == 0) ? (elements.length - 1) : index - 1;
 	}
+
 	public Object elementAt(int index) {
 		return elements[index];
 	}
+
 	public Iterator elements() {
 		/**/
 		if (isEmpty())
@@ -88,6 +96,7 @@ public class Queue {
 		System.arraycopy(elements, 0, newElements, end, tail);
 		return Arrays.asList(newElements).iterator();
 	}
+
 	public Object get(Object o) {
 		int index = head;
 		while (index != tail) {
@@ -97,6 +106,7 @@ public class Queue {
 		}
 		return null;
 	}
+
 	/**
 	 * Removes the given object from the queue. Shifts the underlying array.
 	 */
@@ -129,6 +139,7 @@ public class Queue {
 		elements[tail] = reuse ? toRemove : null;
 		return true;
 	}
+
 	/**
 	 * Returns an object that has been removed from the queue, if any.
 	 * The intention is to support reuse of objects that have already
@@ -147,6 +158,7 @@ public class Queue {
 		}
 		return null;
 	}
+
 	protected void grow() {
 		int newSize = (int) (elements.length * 1.5);
 		Object[] newElements = new Object[newSize];
@@ -160,6 +172,7 @@ public class Queue {
 		}
 		elements = newElements;
 	}
+
 	/**
 	 * This method does not affect the queue itself. It is only a
 	 * helper to increment an index in the queue.
@@ -167,6 +180,7 @@ public class Queue {
 	public int increment(int index) {
 		return (index == (elements.length - 1)) ? 0 : index + 1;
 	}
+
 	public int indexOf(Object target) {
 		if (tail >= head) {
 			for (int i = head; i < tail; i++)
@@ -182,9 +196,11 @@ public class Queue {
 		}
 		return -1;
 	}
+
 	public boolean isEmpty() {
 		return tail == head;
 	}
+
 	public Object peek() {
 		return elements[head];
 	}
@@ -192,6 +208,7 @@ public class Queue {
 	public Object peekTail() {
 		return elements[decrement(tail)];
 	}
+
 	/**
 	 * Removes an returns the item at the head of the queue.
 	 * @return
@@ -205,6 +222,7 @@ public class Queue {
 		head = increment(head);
 		return result;
 	}
+
 	public Object removeTail() {
 		Object result = peekTail();
 		tail = decrement(tail);
@@ -212,12 +230,15 @@ public class Queue {
 			elements[tail] = null;
 		return result;
 	}
+
 	public void reset() {
 		tail = head = 0;
 	}
+
 	public int size() {
 		return tail > head ? (tail - head) : ((elements.length - head) + tail);
 	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("["); //$NON-NLS-1$

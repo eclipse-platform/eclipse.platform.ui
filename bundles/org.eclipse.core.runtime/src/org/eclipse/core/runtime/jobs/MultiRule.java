@@ -28,7 +28,7 @@ import java.util.ArrayList;
  */
 public class MultiRule implements ISchedulingRule {
 	private ISchedulingRule[] rules;
-	
+
 	/**
 	 * Returns a scheduling rule that encompases both provided rules.  The resulting
 	 * rule may or may not be an instance of <code>MultiRule</code>.  If both
@@ -42,7 +42,7 @@ public class MultiRule implements ISchedulingRule {
 	public static ISchedulingRule combine(ISchedulingRule rule1, ISchedulingRule rule2) {
 		if (rule1 == rule2)
 			return rule1;
-		if (rule1 == null) 
+		if (rule1 == null)
 			return rule2;
 		if (rule2 == null)
 			return rule1;
@@ -54,6 +54,7 @@ public class MultiRule implements ISchedulingRule {
 		result.rules = new ISchedulingRule[] {rule1, rule2};
 		return result;
 	}
+
 	/**
 	 * Creates a new scheduling rule that composes a set of nested rules.
 	 * 
@@ -62,6 +63,7 @@ public class MultiRule implements ISchedulingRule {
 	public MultiRule(ISchedulingRule[] nestedRules) {
 		this.rules = flatten(nestedRules);
 	}
+
 	/**
 	 * Creates a new scheduling rule with no nested rules. For
 	 * internal use only.
@@ -69,6 +71,7 @@ public class MultiRule implements ISchedulingRule {
 	private MultiRule() {
 		//to be invoked only by factory methods
 	}
+
 	private ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
 		ArrayList myRules = new ArrayList(nestedRules.length);
 		for (int i = 0; i < nestedRules.length; i++) {
@@ -82,6 +85,7 @@ public class MultiRule implements ISchedulingRule {
 		}
 		return (ISchedulingRule[]) myRules.toArray(new ISchedulingRule[myRules.size()]);
 	}
+
 	/**
 	 * Returns the child rules within this rule.
 	 * @return the child rules
@@ -89,6 +93,7 @@ public class MultiRule implements ISchedulingRule {
 	public ISchedulingRule[] getChildren() {
 		return (ISchedulingRule[]) rules.clone();
 	}
+
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -110,6 +115,7 @@ public class MultiRule implements ISchedulingRule {
 			return false;
 		}
 	}
+
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -126,6 +132,7 @@ public class MultiRule implements ISchedulingRule {
 		}
 		return false;
 	}
+
 	/*
 	 * For debugging purposes only.
 	 */

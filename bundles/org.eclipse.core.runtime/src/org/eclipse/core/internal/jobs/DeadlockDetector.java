@@ -107,6 +107,7 @@ class DeadlockDetector {
 		}
 		return inCycle;
 	}
+
 	/**
 	 * Get the thread(s) that own the lock this thread is waiting for.
 	 */
@@ -115,6 +116,7 @@ class DeadlockDetector {
 		ISchedulingRule lock = (ISchedulingRule) getWaitingLock(current);
 		return getThreadsOwningLock(lock);
 	}
+
 	/**
 	 * Check that the addition of a waiting thread did not produce deadlock. 
 	 * If deadlock is detected return true, else return false.
@@ -143,6 +145,7 @@ class DeadlockDetector {
 		}
 		return false;
 	}
+
 	/**
 	 * Returns true IFF the matrix contains a row for the given thread.
 	 * (meaning the given thread either owns locks or is waiting for locks)
@@ -150,6 +153,7 @@ class DeadlockDetector {
 	boolean contains(Thread t) {
 		return lockThreads.contains(t);
 	}
+
 	/**
 	 * A new rule was just added to the graph.
 	 * Find a rule it conflicts with and update the new rule with the number of times 
@@ -175,6 +179,7 @@ class DeadlockDetector {
 			}
 		}
 	}
+
 	/**
 	 * Returns all the locks owned by the given thread
 	 */
@@ -190,6 +195,7 @@ class DeadlockDetector {
 			Assert.isLegal(false, "A thread with no locks is part of a deadlock."); //$NON-NLS-1$
 		return ownedLocks.toArray();
 	}
+
 	/**
 	 * Returns an array of threads that form the deadlock (usually 2).
 	 */
@@ -204,6 +210,7 @@ class DeadlockDetector {
 		addCycleThreads(deadlockedThreads, cause);
 		return (Thread[]) deadlockedThreads.toArray(new Thread[deadlockedThreads.size()]);
 	}
+
 	/**
 	 * Returns the thread(s) that own the given lock.
 	 */
@@ -222,6 +229,7 @@ class DeadlockDetector {
 			System.out.println("Lock " + rule + " is owned by more than 1 thread, but it is not a rule."); //$NON-NLS-1$ //$NON-NLS-2$
 		return (Thread[]) blocking.toArray(new Thread[blocking.size()]);
 	}
+
 	/**
 	 * Returns the lock the given thread is waiting for.
 	 */
@@ -235,6 +243,7 @@ class DeadlockDetector {
 		//it can happen that a thread is not waiting for any lock (it is not really part of the deadlock)
 		return null;
 	}
+
 	/**
 	 * Returns the index of the given lock in the lock array. If the lock is
 	 * not present in the array, it is added to the end.
@@ -248,6 +257,7 @@ class DeadlockDetector {
 		}
 		return index;
 	}
+
 	/**
 	 * Returns the index of the given thread in the thread array. If the thread
 	 * is not present in the array, it is added to the end.
@@ -261,12 +271,14 @@ class DeadlockDetector {
 		}
 		return index;
 	}
+
 	/**
 	 * Returns true IFF the adjacency matrix is empty.
 	 */
 	boolean isEmpty() {
 		return (locks.size() == 0) && (lockThreads.size() == 0) && (graph.length == 0);
 	}
+
 	/**
 	 * The given lock was aquired by the given thread.
 	 */
@@ -300,6 +312,7 @@ class DeadlockDetector {
 			}
 		}
 	}
+
 	/**
 	 * The given lock was released by the given thread. Update the graph.
 	 */
@@ -338,6 +351,7 @@ class DeadlockDetector {
 		if (graph[threadIndex][lockIndex] == NO_STATE)
 			reduceGraph(threadIndex, lock);
 	}
+
 	/**
 	 * The given scheduling rule is no longer used because the job that invoked it is done.
 	 * Release this rule regardless of how many times it was acquired.
@@ -367,6 +381,7 @@ class DeadlockDetector {
 		}
 		reduceGraph(threadIndex, rule);
 	}
+
 	/**
 	 * The given thread could not get the given lock and is waiting for it.
 	 * Update the graph.
@@ -391,10 +406,11 @@ class DeadlockDetector {
 		//update the graph to indicate that the locks will now be suspended
 		// to indicate that the lock will be suspended, we set the thread to wait for the lock
 		// when the lock is forced to be released, the entry will be cleared
-		for (int i = 0; i < locks.length; i++) 
+		for (int i = 0; i < locks.length; i++)
 			setToWait(deadlock.getCandidate(), locks[i], true);
 		return deadlock;
 	}
+
 	/**
 	 * The given thread has stopped waiting for the given lock. 
 	 * Update the graph.
@@ -418,6 +434,7 @@ class DeadlockDetector {
 		graph[threadIndex][lockIndex] = NO_STATE;
 		reduceGraph(threadIndex, lock);
 	}
+
 	/**
 	 * Returns true IFF the given thread owns a single lock
 	 */
@@ -429,6 +446,7 @@ class DeadlockDetector {
 		}
 		return false;
 	}
+
 	/**
 	 * Returns true IFF the given thread owns a single real lock.
 	 * A real lock is a lock that can be suspended.
@@ -444,6 +462,7 @@ class DeadlockDetector {
 		}
 		return false;
 	}
+
 	/**
 	 * Return true IFF this thread owns rule locks (ie. implicit locks which
 	 * cannot be suspended)
@@ -459,6 +478,7 @@ class DeadlockDetector {
 		}
 		return false;
 	}
+
 	/**
 	 * Returns an array of real locks that are owned by the given thread.
 	 * Real locks are locks that implement the ILock interface and can be suspended.
@@ -474,6 +494,7 @@ class DeadlockDetector {
 			Assert.isLegal(false, "A thread with no real locks was chosen to resolve deadlock."); //$NON-NLS-1$
 		return (ISchedulingRule[]) ownedLocks.toArray(new ISchedulingRule[ownedLocks.size()]);
 	}
+
 	/**
 	 * The matrix has been simplified. Check if any unnecessary rows or columns
 	 * can be removed.
@@ -558,6 +579,7 @@ class DeadlockDetector {
 		Assert.isTrue(lockThreads.size() == graph.length, "Rows and threads don't match."); //$NON-NLS-1$
 		Assert.isTrue(locks.size() == ((graph.length > 0) ? graph[0].length : 0), "Columns and locks don't match."); //$NON-NLS-1$
 	}
+
 	/**
 	 * Adds a 'deadlock detected' message to the log with a stack trace.
 	 */
@@ -582,6 +604,7 @@ class DeadlockDetector {
 		}
 		InternalPlatform.getDefault().log(main);
 	}
+
 	/**
 	 * The number of threads/locks in the graph has changed. Update the
 	 * underlying matrix.
@@ -591,11 +614,12 @@ class DeadlockDetector {
 		// since new rows/columns are always added to the end, just transfer
 		// old entries to the new graph, with the same indices.
 		int[][] tempGraph = new int[lockThreads.size()][locks.size()];
-		for (int i = 0; i < graph.length; i++) 
+		for (int i = 0; i < graph.length; i++)
 			System.arraycopy(graph[i], 0, tempGraph[i], 0, graph[i].length);
 		graph = tempGraph;
 		resize = false;
 	}
+
 	/**
 	 * Get the thread whose locks can be suspended. (ie. all locks it owns are
 	 * actual locks and not rules). Return the first thread in the array by default.
@@ -614,6 +638,7 @@ class DeadlockDetector {
 		//unnecessary, return the first entry in the array by default
 		return candidates[0];
 	}
+
 	/**
 	 * The given thread is waiting for the given lock. Update the graph.
 	 */
@@ -635,6 +660,7 @@ class DeadlockDetector {
 		if (needTransfer)
 			fillPresentEntries(lock, lockIndex);
 	}
+
 	/**
 	 * Prints out the current matrix to standard output. 
 	 * Only used for debugging.

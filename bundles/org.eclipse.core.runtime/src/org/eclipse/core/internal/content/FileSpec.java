@@ -17,28 +17,34 @@ import org.eclipse.core.runtime.content.IContentType;
  * as file names, file extensions and regular expressions.
  */
 class FileSpec {
-	final static int BASIC_TYPE = IContentType.FILE_EXTENSION_SPEC | IContentType.FILE_NAME_SPEC;	
+	final static int BASIC_TYPE = IContentType.FILE_EXTENSION_SPEC | IContentType.FILE_NAME_SPEC;
 	private String text;
 	private int type;
+
 	public FileSpec(String text, int type) {
 		this.text = text;
 		this.type = type;
 	}
+
 	public String getText() {
 		return text;
 	}
+
 	public int getType() {
 		return type;
 	}
+
 	public int getBasicType() {
 		return BASIC_TYPE & type;
 	}
+
 	public boolean equals(Object other) {
 		if (!(other instanceof FileSpec))
 			return false;
-		FileSpec otherFileSpec = (FileSpec) other; 
+		FileSpec otherFileSpec = (FileSpec) other;
 		return getBasicType() == otherFileSpec.getBasicType() && text.equals(otherFileSpec.text);
 	}
+
 	public int hashCode() {
 		return text.hashCode();
 	}

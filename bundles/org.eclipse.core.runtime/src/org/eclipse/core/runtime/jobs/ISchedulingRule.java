@@ -44,6 +44,7 @@ public interface ISchedulingRule {
 	 * <code>false</code> otherwise.
 	 */
 	public boolean contains(ISchedulingRule rule);
+
 	/**
 	 * Returns whether this scheduling rule is compatible with another scheduling rule.
 	 * If <code>true</code> is returned, then no job with this rule will be run at the 

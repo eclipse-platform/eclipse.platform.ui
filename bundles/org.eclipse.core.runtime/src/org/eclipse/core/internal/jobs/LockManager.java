@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -33,6 +33,7 @@ public class LockManager {
 	private static class LockState {
 		private int depth;
 		private OrderedLock lock;
+
 		/**
 		 * Suspends ownership of the given lock, and returns the saved state.
 		 */
@@ -42,6 +43,7 @@ public class LockManager {
 			state.depth = lock.forceRelease();
 			return state;
 		}
+
 		/**
 		 * Re-acquires a suspended lock and reverts to the correct lock depth.
 		 */
@@ -77,6 +79,7 @@ public class LockManager {
 
 	public LockManager() {
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on LockListener
 	 */
@@ -91,6 +94,7 @@ public class LockManager {
 			handleException(e);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on LockListener
 	 */
@@ -106,6 +110,7 @@ public class LockManager {
 		}
 		return false;
 	}
+
 	/**
 	 * This thread has just acquired a lock.  Update graph.
 	 */
@@ -120,6 +125,7 @@ public class LockManager {
 			handleInternalError(e);
 		}
 	}
+
 	/**
 	 * This thread has just been refused a lock.  Update graph and check for deadlock.
 	 */
@@ -134,7 +140,7 @@ public class LockManager {
 				if (found != null) {
 					ISchedulingRule[] toSuspend = found.getLocks();
 					LockState[] suspended = new LockState[toSuspend.length];
-					for (int i = 0; i < toSuspend.length; i++) 
+					for (int i = 0; i < toSuspend.length; i++)
 						suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
 					synchronized (suspendedLocks) {
 						Stack prevLocks = (Stack) suspendedLocks.get(found.getCandidate());
@@ -149,6 +155,7 @@ public class LockManager {
 			handleInternalError(e);
 		}
 	}
+
 	/**
 	 * Handles exceptions that occur while calling third party code from within the
 	 * LockManager. This is essentially an inlined version of Platform.run(ISafeRunnable)
@@ -164,6 +171,7 @@ public class LockManager {
 		}
 		InternalPlatform.getDefault().log(status);
 	}
+
 	/**
 	 * There was an internal error in the deadlock detection code.  Shut the entire
 	 * thing down to prevent further errors.  Recovery is too complex as it
@@ -179,6 +187,7 @@ public class LockManager {
 		//discard the deadlock detector for good
 		locks = null;
 	}
+
 	/**
 	 * Returns true IFF the underlying graph is empty.
 	 * For debugging purposes only.
@@ -186,6 +195,7 @@ public class LockManager {
 	public boolean isEmpty() {
 		return locks.isEmpty();
 	}
+
 	/**
 	 * Returns true IFF this thread either owns, or is waiting for, any locks or rules.
 	 */
@@ -201,12 +211,14 @@ public class LockManager {
 			return locks.contains(Thread.currentThread());
 		}
 	}
+
 	/**
 	 * Creates and returns a new lock.
 	 */
 	public synchronized OrderedLock newLock() {
 		return new OrderedLock(this);
 	}
+
 	/**
 	 * Releases all the acquires that were called on the given rule. Needs to be called only once.
 	 */
@@ -221,6 +233,7 @@ public class LockManager {
 			handleInternalError(e);
 		}
 	}
+
 	/**
 	 * This thread has just released a lock.  Update graph.
 	 */
@@ -233,6 +246,7 @@ public class LockManager {
 			handleInternalError(e);
 		}
 	}
+
 	/**
 	 * This thread has just stopped waiting for a lock. Update graph.
 	 */
@@ -245,6 +259,7 @@ public class LockManager {
 			handleInternalError(e);
 		}
 	}
+
 	/**
 	 * Resumes all the locks that were suspended while this thread was waiting to acquire another lock.
 	 */
@@ -261,6 +276,7 @@ public class LockManager {
 		for (int i = 0; i < toResume.length; i++)
 			toResume[i].resume();
 	}
+
 	public void setLockListener(LockListener listener) {
 		this.lockListener = listener;
 	}

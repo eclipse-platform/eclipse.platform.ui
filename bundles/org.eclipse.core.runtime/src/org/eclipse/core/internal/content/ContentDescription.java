@@ -22,32 +22,38 @@ public class ContentDescription implements IContentDescription {
 	private boolean immutable;
 	private int mark;
 	private Map properties;
+
 	ContentDescription() {
 		super();
 	}
+
 	private void assertMutable() {
 		//TODO: NLS this
 		if (immutable)
 			throw new IllegalStateException("Content description is immutable"); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see IContentDescription
 	 */
 	public String getCharset() {
 		return charset;
 	}
+
 	/**
 	 * @see IContentDescription
-	 */	
+	 */
 	public IContentType getContentType() {
 		return contentType;
 	}
+
 	/**
 	 * @see IContentDescription
 	 */
 	public int getMark() {
 		return mark;
 	}
+
 	/**
 	 * @see IContentDescription
 	 */
@@ -56,10 +62,12 @@ public class ContentDescription implements IContentDescription {
 			return null;
 		return properties.get(key);
 	}
+
 	public void markAsImmutable() {
 		assertMutable();
 		immutable = true;
 	}
+
 	/**
 	 * @see IContentDescription
 	 */
@@ -67,10 +75,12 @@ public class ContentDescription implements IContentDescription {
 		assertMutable();
 		this.charset = charset;
 	}
+
 	public void setContentType(IContentType contentType) {
 		assertMutable();
 		this.contentType = contentType;
 	}
+
 	/**
 	 * @see IContentDescription
 	 */
@@ -78,6 +88,7 @@ public class ContentDescription implements IContentDescription {
 		assertMutable();
 		this.mark = mark;
 	}
+
 	/**
 	 * @see IContentDescription
 	 */

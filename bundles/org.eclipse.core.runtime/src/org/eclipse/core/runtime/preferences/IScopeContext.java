@@ -25,14 +25,14 @@ import org.eclipse.core.runtime.IPath;
  * @since 3.0
  */
 public interface IScopeContext {
-	
+
 	/**
 	 * Return the name of the scope that this context is associated with. 
 	 * Must not be <code>null</code>.
 	 * 
 	 * @return the name of the scope
 	 */
-	public String getName(); 
+	public String getName();
 
 	/**
 	 * Return the preferences node that contains the preferences for the

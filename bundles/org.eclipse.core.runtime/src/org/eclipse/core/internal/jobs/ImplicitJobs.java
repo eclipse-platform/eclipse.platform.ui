@@ -39,6 +39,7 @@ class ImplicitJobs {
 		 * rule during beginRule, and must release the rule during endRule.
 		 */
 		protected boolean acquireRule = false;
+
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
 			setSystem(true);
@@ -47,6 +48,7 @@ class ImplicitJobs {
 			ruleStack = new ISchedulingRule[2];
 			top = -1;
 		}
+
 		private void illegalPop(ISchedulingRule rule) {
 			StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
 			buf.append(rule);
@@ -69,6 +71,7 @@ class ImplicitJobs {
 			}
 			Assert.isLegal(false, msg);
 		}
+
 		/**
 		 * Client has attempted to begin a rule that is not contained within
 		 * the outer rule.
@@ -87,6 +90,7 @@ class ImplicitJobs {
 			Assert.isLegal(false, msg);
 
 		}
+
 		/**
 		 * Schedule the job and block the calling thread until the job starts running
 		 */
@@ -129,6 +133,7 @@ class ImplicitJobs {
 			running = true;
 			setThread(Thread.currentThread());
 		}
+
 		/**
 		 * Returns true if the monitor is canceled, and false otherwise.
 		 * Protects the caller from exception in the monitor implementation.
@@ -143,6 +148,7 @@ class ImplicitJobs {
 			}
 			return false;
 		}
+
 		/**
 		 * Pops a rule. Returns true if it was the last rule for this thread
 		 * job, and false otherwise.
@@ -153,6 +159,7 @@ class ImplicitJobs {
 			ruleStack[top--] = null;
 			return top < 0;
 		}
+
 		void push(final ISchedulingRule rule) {
 			final ISchedulingRule baseRule = getRule();
 			if (++top >= ruleStack.length) {
@@ -167,6 +174,7 @@ class ImplicitJobs {
 			if (baseRule != null && rule != null && !baseRule.contains(rule))
 				illegalPush(rule, baseRule);
 		}
+
 		/**
 		 * Reset all of this job's fields so it can be reused.  Returns false if
 		 * reuse is not possible
@@ -186,15 +194,17 @@ class ImplicitJobs {
 			top = -1;
 			return true;
 		}
+
 		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
 			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
 			String jobName = (blockingJob == null || blockingJob instanceof ThreadJob) ? "" : " \"" + blockingJob.getName() + "\""; //$NON-NLS-1 //$NON-NLS-2$$ //$NON-NLS-3$ //$NON-NLS-1$
-			String msg =  Policy.bind("jobs.blocked", jobName); //$NON-NLS-1$
+			String msg = Policy.bind("jobs.blocked", jobName); //$NON-NLS-1$
 			IStatus reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, msg, null);
 			((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
 		}
+
 		private void reportUnblocked(IProgressMonitor monitor) {
 			if (running) {
 				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
@@ -205,8 +215,9 @@ class ImplicitJobs {
 				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
 			}
 			if (monitor instanceof IProgressMonitorWithBlocking)
-				 ((IProgressMonitorWithBlocking) monitor).clearBlocked();
+				((IProgressMonitorWithBlocking) monitor).clearBlocked();
 		}
+
 		/** (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -217,9 +228,11 @@ class ImplicitJobs {
 			}
 			return Job.ASYNC_FINISH;
 		}
+
 		void setRealJob(Job realJob) {
 			this.realJob = realJob;
 		}
+
 		/**
 		 * Returns true if this job should cause a self-canceling job
 		 * to cancel itself, and false otherwise.
@@ -228,6 +241,7 @@ class ImplicitJobs {
 			return realJob == null ? true : !realJob.isSystem();
 		}
 	}
+
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
@@ -242,6 +256,7 @@ class ImplicitJobs {
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
 	}
+
 	/* (Non-javadoc) 
 	 * @see IJobManager#beginRule 
 	 */
@@ -275,7 +290,7 @@ class ImplicitJobs {
 		try {
 			if (threadJob.acquireRule) {
 				//no need to reaquire any locks because the thread did not wait to get this lock
-				if (manager.runNow(threadJob)) 
+				if (manager.runNow(threadJob))
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
 					threadJob.joinRun(monitor);
@@ -311,6 +326,7 @@ class ImplicitJobs {
 			recycle(threadJob);
 		}
 	}
+
 	/**
 	 * Returns the currently running implicit job for the given thread, or null
 	 * if there currently isn't one.
@@ -318,6 +334,7 @@ class ImplicitJobs {
 	Job jobForThread(Thread thread) {
 		return (Job) threadJobs.get(thread);
 	}
+
 	/**
 	 * Returns a new or reused ThreadJob instance. 
 	 */
@@ -331,6 +348,7 @@ class ImplicitJobs {
 		}
 		return new ThreadJob(rule);
 	}
+
 	/**
 	 * Indicates that a thread job is no longer in use and can be reused. 
 	 */

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.content.IContentDescriber;
 public class XMLContentDescriber implements IContentDescriber {
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
+
 	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
 		// the XMLDecl is some kind of Unicode, not matter what the encoding for the 
@@ -39,6 +40,7 @@ public class XMLContentDescriber implements IContentDescriber {
 			description.setCharset(getCharset(line));
 		return VALID;
 	}
+
 	public int describe(Reader input, IContentDescription description, int flags) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
 		String line = reader.readLine();
@@ -52,7 +54,8 @@ public class XMLContentDescriber implements IContentDescriber {
 		if ((flags & IContentDescription.CHARSET) != 0)
 			description.setCharset(getCharset(line));
 		return VALID;
-	}	
+	}
+
 	private String getCharset(String firstLine) {
 		int encodingPos = firstLine.indexOf(ENCODING);
 		if (encodingPos == -1)
@@ -65,6 +68,7 @@ public class XMLContentDescriber implements IContentDescriber {
 			return null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
 	}
+
 	public int getSupportedOptions() {
 		return IContentDescription.CHARSET;
 	}

@@ -62,7 +62,7 @@ class WorkerPool {
 		this.manager = manager;
 		computeMaxThreads();
 		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(IPlatform.PI_RUNTIME);
-		IEclipsePreferences eclipseNode = (IEclipsePreferences)node;
+		IEclipsePreferences eclipseNode = (IEclipsePreferences) node;
 		eclipseNode.addPreferenceChangeListener(new IEclipsePreferences.IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if (event.getKey().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
@@ -70,6 +70,7 @@ class WorkerPool {
 			}
 		});
 	}
+
 	/**
 	 * Adds a worker to the list of workers.
 	 */
@@ -82,6 +83,7 @@ class WorkerPool {
 		}
 		threads[numThreads++] = worker;
 	}
+
 	/**
 	 * Computes the maximum number of threads based on the machine speed
 	 * preference.
@@ -106,6 +108,7 @@ class WorkerPool {
 				MAX_THREADS = DEFAULT_MAX_THREADS;
 		}
 	}
+
 	private synchronized void decrementBusyThreads() {
 		//impossible to have less than zero busy threads
 		if (--busyThreads < 0) {
@@ -114,6 +117,7 @@ class WorkerPool {
 			busyThreads = 0;
 		}
 	}
+
 	/**
 	 * Signals the end of a job.  Note that this method can be called under
 	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
@@ -128,6 +132,7 @@ class WorkerPool {
 		}
 		manager.endJob(job, result, true);
 	}
+
 	/**
 	 * Signals the death of a worker thread.  Note that this method can be called under
 	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
@@ -136,6 +141,7 @@ class WorkerPool {
 		if (remove(worker) && JobManager.DEBUG)
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
+
 	private synchronized void incrementBusyThreads() {
 		//impossible to have more busy threads than there are threads
 		if (++busyThreads > numThreads) {
@@ -144,6 +150,7 @@ class WorkerPool {
 			busyThreads = numThreads;
 		}
 	}
+
 	/**
 	 * Notfication that a job has been added to the queue. Wake a worker,
 	 * creating a new worker if necessary. The provided job may be null.
@@ -171,6 +178,7 @@ class WorkerPool {
 			JobManager.debug("Stopped allocating worker threads. Thread count: " + threadCount); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Remove a worker thread from our list.
 	 * @return true if a worker was removed, and false otherwise.
@@ -185,9 +193,11 @@ class WorkerPool {
 		}
 		return false;
 	}
+
 	protected synchronized void shutdown() {
 		notifyAll();
 	}
+
 	/**
 	 * Sleep for the given duration or until woken. 
 	 */
@@ -204,6 +214,7 @@ class WorkerPool {
 			sleepingThreads--;
 		}
 	}
+
 	/**
 	 * Returns a new job to run. Returns null if the thread should die. 
 	 */
@@ -248,6 +259,7 @@ class WorkerPool {
 		}
 		return job;
 	}
+
 	protected synchronized void startup() {
 		computeMaxThreads();
 	}

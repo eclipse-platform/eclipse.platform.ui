@@ -26,7 +26,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 	// cheat here and add "project" even though we really shouldn't know about it
 	// because of plug-in dependancies and it being defined in the resources plug-in
-	private static final String[] DEFAULT_DEFAULT_LOOKUP_ORDER = new String[]{"project", //$NON-NLS-1$ 
+	private static final String[] DEFAULT_DEFAULT_LOOKUP_ORDER = new String[] {"project", //$NON-NLS-1$ 
 			InstanceScope.SCOPE, //
 			ConfigurationScope.SCOPE, //
 			DefaultScope.SCOPE};
@@ -544,14 +544,14 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas = 	event.getExtensionDeltas(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
-		for (int i=0; i<deltas.length; i++) {
+		IExtensionDelta[] deltas = event.getExtensionDeltas(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
+		for (int i = 0; i < deltas.length; i++) {
 			IConfigurationElement[] elements = deltas[i].getExtension().getConfigurationElements();
-			for (int j=0; j<elements.length; j++) {
+			for (int j = 0; j < elements.length; j++) {
 				switch (deltas[i].getKind()) {
 					case IExtensionDelta.ADDED :
 						scopeAdded(elements[j]);
-						break; 
+						break;
 					case IExtensionDelta.REMOVED :
 						String scope = elements[j].getAttribute(ATTRIBUTE_SCOPE);
 						if (scope != null)

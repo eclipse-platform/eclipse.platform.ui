@@ -51,17 +51,17 @@ public interface IContentDescription {
 	public final static int CHARSET = 0x01;
 	/**
 	 * Flag indicating that the bye order mark for the contents should be described. 
-	 */	
-	public final static int BYTE_ORDER_MARK = 0x02;	
+	 */
+	public final static int BYTE_ORDER_MARK = 0x02;
 	/**
 	 * Flag indicating that custom properties for the contents should be described. 
-	 */	
+	 */
 	public final static int CUSTOM_PROPERTIES = 0x7f;
 	/**
 	 * Flag indicating that all available information should be described.
 	 */
-	public final static int ALL = 0xffff;		
-	
+	public final static int ALL = 0xffff;
+
 	/**
 	 * Returns the byte order mark (BOM) for the contents. Returns 0 (zero) if a 
 	 * BOM was not found or was not determined.
@@ -69,6 +69,7 @@ public interface IContentDescription {
 	 * @return the byte order mark, or zero
 	 */
 	public int getMark();
+
 	/**
 	 * Returns the charset for the contents. Returns <code>null</code> if the 
 	 * charset could not be/was not determined.
@@ -76,6 +77,7 @@ public interface IContentDescription {
 	 * @return a charset, or <code>null</code>
 	 */
 	public String getCharset();
+
 	/**
 	 * Returns the content type detected. Returns <code>null</code> if the 
 	 * content type could not be determined.
@@ -83,6 +85,7 @@ public interface IContentDescription {
 	 * @return the corresponding content type, or <code>null</code>
 	 */
 	public IContentType getContentType();
+
 	/**
 	 * Returns the value of custom property set by the content interpreter used.  
 	 * <p>
@@ -95,18 +98,21 @@ public interface IContentDescription {
 	 * found  
 	 */
 	public Object getProperty(QualifiedName key);
+
 	/**
 	 * Sets the charset for this description.
 	 * 
 	 * @param charset the new charset, or <code>null</code>
 	 */
 	public void setCharset(String charset);
+
 	/**
 	 * Sets the Byte Order Mark for this description.
 	 *  
 	 * @param mark the new BOM, or zero 
 	 */
 	public void setMark(int mark);
+
 	/**
 	 * Sets the given property to the given value. 
 	 * <p>

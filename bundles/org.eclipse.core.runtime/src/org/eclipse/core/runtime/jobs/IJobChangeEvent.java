@@ -29,12 +29,14 @@ public interface IJobChangeEvent {
 	 * @return the delay time for this event
 	 */
 	public long getDelay();
+
 	/**
 	 * The job on which this event occurred.
 	 * 
 	 * @return the job for this event
 	 */
 	public Job getJob();
+
 	/**
 	 * The result returned by the job's run method, or <code>null</code> if
 	 * not applicable.  This value is only applicable for the <code>done</code> event.

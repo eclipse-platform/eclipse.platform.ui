@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -28,18 +28,21 @@ public class JobChangeEvent implements IJobChangeEvent {
 	 * or <code>-1</code> if not applicable for this type of event.
 	 */
 	long delay = -1;
+
 	/**
 	 * @return
 	 */
 	public long getDelay() {
 		return delay;
 	}
+
 	/**
 	 * @return the job for this event
 	 */
 	public Job getJob() {
 		return job;
 	}
+
 	/**
 	 * @return
 	 */

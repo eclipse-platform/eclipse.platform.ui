@@ -46,6 +46,7 @@ public interface IContentType {
 	 * File spec type constant, indicating a file extension specification.
 	 */
 	public static final int FILE_EXTENSION_SPEC = 0x08;
+
 	/**
 	 * Adds a user-defined file specification to this content type. Has no 
 	 * effect if the given file specification has already been added by either
@@ -61,6 +62,7 @@ public interface IContentType {
 	 * @see #FILE_EXTENSION_SPEC	 
 	 */
 	public void addFileSpec(String fileSpec, int type);
+
 	/**
 	 * Removes a user-defined file specification from this content type. Has no 
 	 * effect if the given file specification does not exist, or was not defined
@@ -76,6 +78,7 @@ public interface IContentType {
 	 * @see #FILE_EXTENSION_SPEC
 	 */
 	public void removeFileSpec(String fileSpec, int type);
+
 	/**
 	 * Returns a reference to this content type's base type. If this content type
 	 * does not have a base type (it is a root type), returns <code>null</code>.
@@ -83,6 +86,7 @@ public interface IContentType {
 	 * @return this content type's base type, or <code>null</code>
 	 */
 	public IContentType getBaseType();
+
 	/**
 	 * Tries to obtain a description for the given contents. 
 	 * <p>
@@ -97,6 +101,7 @@ public interface IContentType {
 	 * @see IContentDescription
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, int optionsMask) throws IOException;
+
 	/**
 	 * Returns the default charset for this content type if one has been defined, 
 	 * <code>null</code> otherwise.
@@ -104,6 +109,7 @@ public interface IContentType {
 	 * @return the default charset, or <code>null</code>
 	 */
 	public String getDefaultCharset();
+
 	/**
 	 * Returns file specifications from this content type. The type mask 
 	 * is a bit-wise or of file specification type constants indicating the 
@@ -124,6 +130,7 @@ public interface IContentType {
 	 * @see #IGNORE_USER_DEFINED
 	 */
 	public String[] getFileSpecs(int type);
+
 	/**
 	 * Returns this content type's unique identifier. Each content type has an 
 	 * identifier by which they can be retrieved from the content type catalog.
@@ -131,12 +138,14 @@ public interface IContentType {
 	 * @return this content type's unique identifier
 	 */
 	public String getId();
+
 	/**
 	 * Returns a user-friendly name for this content type.
 	 * 
 	 * @return this content type's name  
 	 */
 	public String getName();
+
 	/**
 	 * Returns whether this content type is associated with the 
 	 * given file name.
@@ -146,6 +155,7 @@ public interface IContentType {
 	 * the given file name, <code>false</code> otherwise 
 	 */
 	public boolean isAssociatedWith(String fileName);
+
 	/**
 	 * Returns whether this content type is a kind of the given content 
 	 * type. A content type A is a kind of a content type B if:

@@ -237,7 +237,7 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
-		
+
 		//TODO Need to check if pluginId exists
 		String pluginId = bundle.getSymbolicName();
 		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
@@ -681,7 +681,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
-		
+
 		//This associate a descriptor to any real bundle that uses this to start
 		String pluginId = bundle.getSymbolicName();
 		if (pluginId == null)

@@ -37,6 +37,7 @@ public abstract class ProgressProvider {
 	 * is needed.
 	 */
 	public abstract IProgressMonitor createMonitor(Job job);
+
 	/**
 	 * Returns a progress monitor that can be used to provide
 	 * aggregated progress feedback on a set of running jobs.
@@ -52,6 +53,7 @@ public abstract class ProgressProvider {
 	public IProgressMonitor createProgressGroup() {
 		return new NullProgressMonitor();
 	}
+
 	/**
 	 * Returns a progress monitor that can be used by a running job
 	 * to report progress in the context of a progress group. This method
@@ -79,6 +81,7 @@ public abstract class ProgressProvider {
 	public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
 		return new SubProgressMonitor(group, ticks);
 	}
+
 	/**
 	 * Returns a progress monitor to use when none has been provided
 	 * by the client running the job.  

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -66,6 +66,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		this.manager = manager;
 		this.number = nextLockNumber++;
 	}
+
 	/* (non-Javadoc)
 	 * @see Locks.ILock#acquire()
 	 */
@@ -78,6 +79,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see Locks.ILock#acquire(long)
 	 */
@@ -106,6 +108,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		}
 		return success;
 	}
+
 	/**
 	 * Attempts to acquire the lock.  Returns false if the lock is not available and
 	 * true if the lock has been successfully acquired.
@@ -120,12 +123,14 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		}
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
 	public boolean contains(ISchedulingRule rule) {
 		return false;
 	}
+
 	/**
 	 * Returns null if acquired and a Semaphore object otherwise. If a
 	 * waiting semaphore already exists for this thread, it will be returned, 
@@ -134,6 +139,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	private synchronized Semaphore createSemaphore() {
 		return attempt() ? null : enqueue(new Semaphore(Thread.currentThread()));
 	}
+
 	/**
 	 * Attempts to acquire this lock.  Callers will block  until this lock comes available to 
 	 * them, or until the specified delay has elapsed.
@@ -175,6 +181,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		}
 		return success;
 	}
+
 	/**
 	 * Releases this lock from the thread that used to own it.
 	 * Grants this lock to the next thread in the queue.  
@@ -188,6 +195,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		if (next != null)
 			next.release();
 	}
+
 	/**
 	 * If there is another semaphore with the same runnable in the
 	 * queue, the other is returned and the new one is not added.
@@ -200,6 +208,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		}
 		return semaphore;
 	}
+
 	/**
 	 * Suspend this lock by granting the lock to the next lock in the queue.
 	 * Return the depth of the suspended lock. 
@@ -209,18 +218,21 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		doRelease();
 		return oldDepth;
 	}
+
 	/* (non-Javadoc)
 	 * @see Locks.ILock#getDepth()
 	 */
 	public int getDepth() {
 		return depth;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
 	public boolean isConflicting(ISchedulingRule rule) {
 		return rule == this;
 	}
+
 	/* (non-Javadoc)
 	 * @see Locks.ILock#release()
 	 */
@@ -234,6 +246,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		else
 			manager.removeLockThread(currentOperationThread, this);
 	}
+
 	/**
 	 * If newThread is null, release this lock from its previous owner.
 	 * If newThread is not null, grant this lock to newThread.
@@ -245,6 +258,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		if (currentOperationThread != null)
 			manager.addLockThread(currentOperationThread, this);
 	}
+
 	/**
 	 * Forces the lock to be at the given depth.
 	 * Used when re-acquiring a suspended lock.
@@ -255,12 +269,14 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		}
 		this.depth = newDepth;
 	}
+
 	/**
 	 * For debugging purposes only.
 	 */
 	public String toString() {
 		return "OrderedLock (" + number + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/**
 	 * This lock has just been granted to a new thread (the thread waited for it).
 	 * Remove the request from the queue and update both the graph and the lock.

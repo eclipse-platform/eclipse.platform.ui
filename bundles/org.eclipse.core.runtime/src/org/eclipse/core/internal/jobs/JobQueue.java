@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -35,8 +35,8 @@ public class JobQueue {
 	 */
 	public JobQueue(boolean allowConflictOvertaking) {
 		//compareTo on dummy is never called
-			dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
-	public IStatus run(IProgressMonitor m) {
+		dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
+			public IStatus run(IProgressMonitor m) {
 				return Status.OK_STATUS;
 			}
 		};
@@ -44,6 +44,7 @@ public class JobQueue {
 		dummy.setPrevious(dummy);
 		this.allowConflictOvertaking = allowConflictOvertaking;
 	}
+
 	/** 
 	 * remove all elements 
 	 */
@@ -51,6 +52,7 @@ public class JobQueue {
 		dummy.setNext(dummy);
 		dummy.setPrevious(dummy);
 	}
+
 	/**
 	 * Returns true if the given element is in the queue, and false otherwise.
 	 * NOTE: Containment is based on identity, not equality.
@@ -61,6 +63,7 @@ public class JobQueue {
 			entry = entry.next();
 		return entry == object;
 	}
+
 	/**
 	 * Return and remove the element with highest priority, or null if empty. 
 	 */
@@ -70,6 +73,7 @@ public class JobQueue {
 			return null;
 		return toRemove.remove();
 	}
+
 	/**
 	 * Adds an item to the queue 
 	 */
@@ -87,6 +91,7 @@ public class JobQueue {
 		tail.previous().setNext(newEntry);
 		tail.setPrevious(newEntry);
 	}
+
 	/**
 	 * Removes the given element from the queue. 
 	 */
@@ -94,6 +99,7 @@ public class JobQueue {
 		toRemove.remove();
 		//previous of toRemove might now bubble up
 	}
+
 	/**
 	 * The given object has changed priority. Reshuffle the heap until it is
 	 * valid.
@@ -102,12 +108,14 @@ public class JobQueue {
 		remove(entry);
 		enqueue(entry);
 	}
+
 	/**
 	 * Returns true if the queue is empty, and false otherwise. 
 	 */
 	public boolean isEmpty() {
 		return dummy.next() == dummy;
 	}
+
 	/** 
 	 * Return greatest element without removing it, or null if empty 
 	 */

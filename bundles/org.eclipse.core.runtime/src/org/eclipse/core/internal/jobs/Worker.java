@@ -29,16 +29,19 @@ public class Worker extends Thread {
 		super("Worker-" + nextWorkerNumber++); //$NON-NLS-1$
 		this.pool = pool;
 	}
+
 	/**
 	 * Returns the currently running job, or null if none.
 	 */
 	public Job currentJob() {
 		return (Job) currentJob;
 	}
+
 	private IStatus handleException(InternalJob job, Throwable t) {
 		String message = Policy.bind("jobs.internalError", job.getName()); //$NON-NLS-1$
 		return new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, message, t);
 	}
+
 	private void log(IStatus result) {
 		try {
 			InternalPlatform.getDefault().log(result);
@@ -49,6 +52,7 @@ public class Worker extends Thread {
 				t.printStackTrace();
 		}
 	}
+
 	public void run() {
 		setPriority(Thread.NORM_PRIORITY);
 		try {

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -24,18 +24,21 @@ class Deadlock {
 	private Thread candidate;
 	//the locks that will be suspended
 	private ISchedulingRule[] locks;
-	
+
 	public Deadlock(Thread[] threads, ISchedulingRule[] locks, Thread candidate) {
 		this.threads = threads;
 		this.locks = locks;
 		this.candidate = candidate;
 	}
+
 	public ISchedulingRule[] getLocks() {
 		return locks;
 	}
+
 	public Thread getCandidate() {
 		return candidate;
 	}
+
 	public Thread[] getThreads() {
 		return threads;
 	}

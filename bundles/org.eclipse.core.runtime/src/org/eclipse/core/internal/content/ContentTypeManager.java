@@ -29,6 +29,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			return type1.getId().compareTo(type2.getId());
 		}
 	}
+
 	final static String CONTENT_TYPE_PREF_NODE = IPlatform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
 	private static ContentTypeManager instance;
 	private static final int MARK_LIMIT = 0x400;
@@ -37,15 +38,18 @@ public class ContentTypeManager implements IContentTypeManager {
 	private Comparator comparator = new ContentTypeComparator();
 	private Map fileExtensions = new HashMap();
 	private Map fileNames = new HashMap();
+
 	/**
 	 * Constructs a new content type manager.
 	 */
 	protected ContentTypeManager() {
 		builder = createBuilder();
 	}
+
 	protected void addContentType(IContentType contentType) {
 		catalog.put(contentType.getId(), contentType);
 	}
+
 	private void addFileSpecContributor(IContentType contentType, int fileSpecType, Map fileSpecsMap) {
 		String[] fileSpecs = contentType.getFileSpecs(fileSpecType);
 		for (int i = 0; i < fileSpecs.length; i++) {
@@ -55,9 +59,11 @@ public class ContentTypeManager implements IContentTypeManager {
 			existing.add(contentType);
 		}
 	}
+
 	protected ContentTypeBuilder createBuilder() {
 		return new ContentTypeBuilder(this);
 	}
+
 	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
 		try {
 			return selectedDescriber.describe(contents, description, optionsMask);
@@ -65,6 +71,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			contents.reset();
 		}
 	}
+
 	/**
 	 * A content type will be valid if:
 	 * <ol>
@@ -92,6 +99,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		type.setValidation(baseType.getValidation());
 		return type.isValid();
 	}
+
 	/*
 	 * "public" to make testing easier 
 	 */
@@ -112,6 +120,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 		return mostAppropriate(appropriate);
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -119,6 +128,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		IContentType[] all = findContentTypesFor(contents, fileName);
 		return all.length > 0 ? all[0] : null;
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -127,6 +137,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		IContentType[] associated = findContentTypesFor(fileName);
 		return associated.length == 0 ? null : associated[1];
 	}
+
 	/*
 	 * "public" to make testing easier 
 	 */
@@ -138,6 +149,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			return new IContentType[0];
 		return internalFindContentTypesFor(buffer, subset);
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -148,6 +160,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			return new IContentType[0];
 		return internalFindContentTypesFor(buffer, subset);
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -168,9 +181,10 @@ public class ContentTypeManager implements IContentTypeManager {
 		if (count == 0)
 			return new IContentType[0];
 		if (count == 1 || result[0] == result[1])
-			return new IContentType[]{result[0]};
+			return new IContentType[] {result[0]};
 		return result;
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -183,6 +197,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 		return (IContentType[]) result.toArray(new IContentType[result.size()]);
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -190,6 +205,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		ContentType type = internalGetContentType(contentTypeIdentifier);
 		return (type != null && type.isValid()) ? type : null;
 	}
+
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -214,9 +230,11 @@ public class ContentTypeManager implements IContentTypeManager {
 		description.markAsImmutable();
 		return description;
 	}
+
 	Preferences getPreferences() {
 		return InternalPlatform.getDefault().getPreferencesService().getRootNode().node(CONTENT_TYPE_PREF_NODE);
 	}
+
 	private IContentType[] internalFindContentTypesFor(ByteArrayInputStream buffer, IContentType[] subset) throws IOException {
 		List appropriate = new ArrayList();
 		int valid = 0;
@@ -235,15 +253,18 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
 	}
+
 	ContentType internalGetContentType(String contentTypeIdentifier) {
 		return (ContentType) catalog.get(contentTypeIdentifier);
 	}
+
 	private boolean isBaseTypeOf(IContentType base, IContentType target) {
 		IContentType targetBase = target.getBaseType();
 		if (targetBase == null)
 			return false;
 		return targetBase == base ? true : isBaseTypeOf(base, targetBase);
 	}
+
 	private void makeAliases(Map fileSpecs) {
 		// process all content types per file specs
 		// marking conflicting content types as aliases 
@@ -259,9 +280,11 @@ public class ContentTypeManager implements IContentTypeManager {
 				((ContentType) j.next()).setAliasTarget(ellected);
 		}
 	}
+
 	private int moreAppropriate(IContentType type1, IContentType type2) {
 		return isBaseTypeOf(type1, type2) ? -1 : (isBaseTypeOf(type2, type1) ? 1 : 0);
 	}
+
 	//TODO: should take any user-defined precedences into account
 	//TODO: should pick a common ancestor if two different specific types are deemed appropriate
 	private IContentType mostAppropriate(List candidates) {
@@ -289,6 +312,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 		return chosen;
 	}
+
 	protected void reorganize() {
 		fileExtensions.clear();
 		fileNames.clear();
@@ -309,11 +333,13 @@ public class ContentTypeManager implements IContentTypeManager {
 		makeAliases(fileNames);
 		makeAliases(fileExtensions);
 	}
+
 	protected void startup() {
 		catalog = new HashMap();
 		builder.startup();
 		builder.buildContentTypes();
 	}
+
 	/*
 	 * Returns the extension for a file name (omiting the leading '.'). 
 	 */
@@ -321,6 +347,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		int dotPosition = fileName.lastIndexOf('.');
 		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? null : fileName.substring(dotPosition + 1);
 	}
+
 	public synchronized static IContentTypeManager getInstance() {
 		if (instance != null)
 			return instance;
@@ -328,6 +355,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		instance.startup();
 		return instance;
 	}
+
 	/*
 	 * Returns null if no bytes can be read
 	 */

@@ -41,7 +41,7 @@ public interface IContentDescriber {
 	 * the intended content type.
 	 * 
 	 * @see #describe(InputStream, IContentDescription, int)
-	 */	
+	 */
 	public final static int INVALID = 1;
 	/**
 	 * Description result constant, indicating that it was not possible 
@@ -49,8 +49,8 @@ public interface IContentDescriber {
 	 * the intended content type.
 	 * 
 	 * @see #describe(InputStream, IContentDescription, int)
-	 */	
-	public final static int INDETERMINATE = -1;	
+	 */
+	public final static int INDETERMINATE = -1;
 
 	/**
 	 * Tries to fill a description for the given contents. Returns 
@@ -83,6 +83,7 @@ public interface IContentDescriber {
 	 * @see #INDETERMINATE
 	 */
 	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException;
+
 	/**
 	 * Returns the options supported by this describer as a bit mask. 
 	 *   

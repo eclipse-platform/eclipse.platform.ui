@@ -154,7 +154,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// call each one separately (instead of Properties.clear) so
 		// clients get change notification
 		String[] keys = (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
-		for (int i = 0; i < keys.length; i++) 
+		for (int i = 0; i < keys.length; i++)
 			remove(keys[i]);
 		//Thread safety: protect against concurrent modification
 		synchronized (this) {
@@ -166,6 +166,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected IPath computeLocation(IPath root, String qualifier) {
 		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
+
 	private void convertFromProperties(Properties table) {
 		if (!VERSION_VALUE.equals(table.get(VERSION_KEY))) {
 			legacyConvertFromProperties(table);
@@ -324,7 +325,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected synchronized IEclipsePreferences getChild(String key) {
 		if (children == null)
 			return null;
-		return (IEclipsePreferences)children.get(key);
+		return (IEclipsePreferences) children.get(key);
 	}
 
 	/**
@@ -333,7 +334,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected synchronized IEclipsePreferences[] getChildren() {
 		if (children == null)
 			return EMPTY_NODE_ARRAY;
-		return (IEclipsePreferences[])children.values().toArray(EMPTY_NODE_ARRAY);
+		return (IEclipsePreferences[]) children.values().toArray(EMPTY_NODE_ARRAY);
 	}
 
 	/*
@@ -410,7 +411,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
 		return new EclipsePreferences(nodeParent, nodeName);
 	}
-	
+
 	/**
 	 * Returns the existing value at the given key, or null if
 	 * no such value exists.
@@ -427,6 +428,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return null;
 		return temp.getProperty(key);
 	}
+
 	/**
 	 * Implements the node(IPath) method, and optionally notifies listeners.
 	 */
@@ -435,16 +437,16 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// in case we have a different hierarchy. (e.g. export)
 		if (path.isAbsolute())
 			return calculateRoot().node(path.makeRelative());
-	
+
 		// TODO: handle relative paths correctly (.. refs)
-	
+
 		// illegal state if this node has been removed
 		checkRemoved();
-	
+
 		// short circuit this node
 		if (path.isEmpty())
 			return this;
-	
+
 		String key = path.segment(0);
 		boolean added = false;
 		IEclipsePreferences child;
@@ -461,6 +463,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			nodeAdded(child);
 		return child.node(path.removeFirstSegments(1));
 	}
+
 	/**
 	 * Stores the given (key,value) pair, performing lazy initialization of the
 	 * properties field if necessary. Returns the old value for the given key,
@@ -629,6 +632,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				public void handleException(Throwable exception) {
 					// already logged in Platform#run()
 				}
+
 				public void run() throws Exception {
 					listener.added(event);
 				}
@@ -677,6 +681,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				public void handleException(Throwable exception) {
 					// already being logged in Platform#run()
 				}
+
 				public void run() throws Exception {
 					listener.removed(event);
 				}
@@ -708,6 +713,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				public void handleException(Throwable exception) {
 					// already logged in Platform#run()
 				}
+
 				public void run() throws Exception {
 					listener.preferenceChange(event);
 				}
@@ -850,7 +856,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
-				oldValue = Double.valueOf((String)oldValue);
+				oldValue = Double.valueOf((String) oldValue);
 			} catch (NumberFormatException e) {
 				// ignore - oldValue will be null
 			}
@@ -866,7 +872,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
-				oldValue = Float.valueOf((String)oldValue);
+				oldValue = Float.valueOf((String) oldValue);
 			} catch (NumberFormatException e) {
 				// ignore - oldValue will be null
 			}
@@ -882,7 +888,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
-				oldValue = Integer.valueOf((String)oldValue);
+				oldValue = Integer.valueOf((String) oldValue);
 			} catch (NumberFormatException e) {
 				// ignore - oldValue will be null
 			}
@@ -898,7 +904,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = internalGet(key);
 		if (oldValue != null) {
 			try {
-				oldValue = Long.valueOf((String)oldValue);
+				oldValue = Long.valueOf((String) oldValue);
 			} catch (NumberFormatException e) {
 				// ignore - oldValue will be null
 			}

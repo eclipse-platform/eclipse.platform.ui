@@ -23,6 +23,7 @@ class JobListeners {
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
+
 	private final IListenerDoit aboutToRun = new IListenerDoit() {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
 			listener.aboutToRun(event);
@@ -66,12 +67,14 @@ class JobListeners {
 		instance.job = job;
 		return instance;
 	}
+
 	static JobChangeEvent newEvent(Job job, IStatus result) {
 		JobChangeEvent instance = new JobChangeEvent();
 		instance.job = job;
 		instance.result = result;
 		return instance;
 	}
+
 	static JobChangeEvent newEvent(Job job, long delay) {
 		JobChangeEvent instance = new JobChangeEvent();
 		instance.job = job;
@@ -126,10 +129,11 @@ class JobListeners {
 			}
 		}
 	}
-	private  void handleException(Throwable e) {
+
+	private void handleException(Throwable e) {
 		//this code is roughly copied from InternalPlatform.run(ISafeRunnable), 
 		//but inlined here for performance reasons
-		if (e instanceof OperationCanceledException) 
+		if (e instanceof OperationCanceledException)
 			return;
 		String pluginId = Platform.PI_RUNTIME;
 		String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
@@ -141,27 +145,35 @@ class JobListeners {
 		else
 			e.printStackTrace();
 	}
+
 	public void add(IJobChangeListener listener) {
 		global.add(listener);
 	}
+
 	public void remove(IJobChangeListener listener) {
 		global.remove(listener);
 	}
+
 	public void aboutToRun(Job job) {
 		doNotify(aboutToRun, newEvent(job));
 	}
+
 	public void awake(Job job) {
 		doNotify(awake, newEvent(job));
 	}
+
 	public void done(Job job, IStatus result) {
 		doNotify(done, newEvent(job, result));
 	}
+
 	public void running(Job job) {
 		doNotify(running, newEvent(job));
 	}
+
 	public void scheduled(Job job, long delay) {
 		doNotify(scheduled, newEvent(job, delay));
 	}
+
 	public void sleeping(Job job) {
 		doNotify(sleeping, newEvent(job));
 	}
