@@ -12,8 +12,8 @@ package org.eclipse.team.ui.synchronize.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.Utilities;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
@@ -31,7 +31,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 	 */
 	public RemoveSynchronizeParticipantAction(ISynchronizeParticipant participant) {
 		this.participant = participant;
-		Utilities.initAction(this, "action.removePage.", Policy.getBundle()); //$NON-NLS-1$
+		Utils.initAction(this, "action.removePage.", Policy.getBundle()); //$NON-NLS-1$
 	}
 	
 	public void run() {

@@ -20,12 +20,20 @@ import org.eclipse.team.ui.synchronize.ISynchronizeManager;
  */
 public class TeamUI {
 	
-	// manages synchronize pages
+	// manages synchronize participants
 	private static ISynchronizeManager synchronizeManager;
 	
-	// property change types
-	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
-		
+	/**
+	 * Property constant indicating the global ignores list has changed. 
+	 */
+	public static String GLOBAL_IGNORES_CHANGED = TeamUIPlugin.ID + "global_ignores_changed"; //$NON-NLS-1$
+
+	/**
+	 * Return the synchronize manager.
+	 * 
+	 * @return the synchronize manager
+	 * @since 3.0
+	 */
 	public static ISynchronizeManager getSynchronizeManager() {
 	   if (synchronizeManager == null) {
 		synchronizeManager = new SynchronizeManager();
@@ -36,7 +44,7 @@ public class TeamUI {
 	/**
 	 * Register for changes made to Team properties.
 	 * 
-	 * @param listener  the listener to add
+	 * @param listener the listener to add
 	 */
 	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
 		TeamUIPlugin.addPropertyChangeListener(listener);
@@ -45,7 +53,7 @@ public class TeamUI {
 	/**
 	 * Deregister as a Team property changes.
 	 * 
-	 * @param listener  the listener to remove
+	 * @param listener the listener to remove
 	 */
 	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
 		TeamUIPlugin.removePropertyChangeListener(listener);

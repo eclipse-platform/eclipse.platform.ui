@@ -11,16 +11,18 @@
 package org.eclipse.team.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.ui.Utilities;
+import org.eclipse.team.ui.TeamImages;
 
 public class Utils {
 
@@ -174,6 +176,62 @@ public class Utils {
 	}
 	
 	public static void initAction(IAction a, String prefix) {
-		Utilities.initAction(a, prefix, Policy.bundle);
+		Utils.initAction(a, prefix, Policy.bundle);
+	}
+	/**
+	 * Initialize the given Action from a ResourceBundle.
+	 */
+	public static void initAction(IAction a, String prefix, ResourceBundle bundle) {
+		
+		String labelKey= "label"; //$NON-NLS-1$
+		String tooltipKey= "tooltip"; //$NON-NLS-1$
+		String imageKey= "image"; //$NON-NLS-1$
+		String descriptionKey= "description"; //$NON-NLS-1$
+		
+		if (prefix != null && prefix.length() > 0) {
+			labelKey= prefix + labelKey;
+			tooltipKey= prefix + tooltipKey;
+			imageKey= prefix + imageKey;
+			descriptionKey= prefix + descriptionKey;
+		}
+	
+		String s = Policy.bind(labelKey, bundle);
+		if(s != null)
+			a.setText(s);
+		s = Policy.bind(tooltipKey, bundle);
+		if(s != null)
+			a.setToolTipText(s);
+		s = Policy.bind(descriptionKey, bundle);
+		if(s != null)
+			a.setDescription(s);
+	
+		String relPath= Policy.bind(imageKey, bundle);
+		if (relPath != null && ! relPath.equals(imageKey) && relPath.trim().length() > 0) {
+		
+			String cPath;
+			String dPath;
+			String ePath;
+		
+			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
+				String path= relPath.substring(1);
+				cPath= 'c' + path;
+				dPath= 'd' + path;
+				ePath= 'e' + path;
+			} else {
+				cPath= "clcl16/" + relPath; //$NON-NLS-1$
+				dPath= "dlcl16/" + relPath; //$NON-NLS-1$
+				ePath= "elcl16/" + relPath; //$NON-NLS-1$
+			}
+		
+			ImageDescriptor id= TeamImages.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
+			if (id != null)
+				a.setDisabledImageDescriptor(id);
+			id= TeamUIPlugin.getImageDescriptor(cPath);
+			if (id != null)
+				a.setHoverImageDescriptor(id);
+			id= TeamUIPlugin.getImageDescriptor(ePath);
+			if (id != null)
+				a.setImageDescriptor(id);
+		}
 	}
 }
