@@ -50,6 +50,14 @@ public final class AntDebugUtil {
         }
     }
     
+    private static Location getLocation(Target target) {
+        try {//succeeds with Ant newer than 1.6.2
+            return target.getLocation();
+        } catch (NoSuchMethodError e) {
+            return Location.UNKNOWN_LOCATION;
+        }
+    }
+    
     public static String getFileName(Location location) {
         try {//succeeds with Ant newer than 1.6
             return location.getFileName();
@@ -66,6 +74,10 @@ public final class AntDebugUtil {
                 index= lastIndex; //only the filename is known
             }
             if (index != -1) {
+            //bug 84403
+                //if (locationString.startsWith("file:")) { //$NON-NLS-1$
+                  //  return FileUtils.newFileUtils().fromURI(locationString);
+                //}
                 //remove file:
                 return locationString.substring(5, index);
             }
@@ -102,7 +114,7 @@ public final class AntDebugUtil {
          	Target stackTarget;
          	for (int i = startIndex; i <= dependancyStackDepth; i++) {
          		stackTarget= (Target) buildSequence.get(i);
-         		appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation()); //$NON-NLS-1$
+         		appendToStack(stackRepresentation, stackTarget.getName(), "", getLocation(stackTarget)); //$NON-NLS-1$
          	}
          }
     }

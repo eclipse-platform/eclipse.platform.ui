@@ -357,13 +357,15 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		}
 		super.targetStarted(event);
 		fTargetExecuting= event.getTarget();
-		if (event.getTarget().getName().equals(fTargetToExecute)) {
+		if (event.getTarget().equals(fTargetToExecute)) {
 		    //the dependancies of the target to execute have been met
 		    //prepare for the next target
 		    Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
 		    if (!targets.isEmpty()) {
 		        fTargetToExecute= (Target) event.getProject().getTargets().get(targets.remove(0));
-		    }
+		    } else {
+		        fTargetToExecute= null;
+            }
 		}
 	}
     
