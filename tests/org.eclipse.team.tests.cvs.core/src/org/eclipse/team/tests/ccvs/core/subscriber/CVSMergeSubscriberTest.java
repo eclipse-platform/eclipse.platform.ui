@@ -437,7 +437,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		markAsMerged(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt"});
 		
 		// check the sync states
-		assertSyncEquals("testUnmergableConflicts", subscriber, project, 
+		assertSyncEquals("testMarkAsMerged", subscriber, project, 
 			 new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt"}, 
 			 true, new int[] {
 				SyncInfo.IN_SYNC,
