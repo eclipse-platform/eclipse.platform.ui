@@ -21,6 +21,9 @@ import java.util.Calendar;
  * @since 3.0
  */
 public class GlobalVariables {
+	
+	/** The type of the selection variables. */
+	public static final String SELECTION= "selection"; //$NON-NLS-1$
 
 	/**
 	 * The cursor variable determines the cursor placement after template edition.
@@ -55,7 +58,7 @@ public class GlobalVariables {
 			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable("selection"); //$NON-NLS-1$
+			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			else
@@ -79,7 +82,7 @@ public class GlobalVariables {
 			super(NAME, TemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable("selection"); //$NON-NLS-1$
+			String selection= context.getVariable(SELECTION); //$NON-NLS-1$
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			else

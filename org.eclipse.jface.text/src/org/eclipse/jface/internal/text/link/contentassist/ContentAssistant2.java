@@ -12,7 +12,10 @@
 package org.eclipse.jface.internal.text.link.contentassist;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -693,8 +696,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private int fCompletionPosition;
 	private String[] fProposalStrings;
 	private ICompletionProposal[] fProposals;
-	/** Whether a proposal was chosen the last time a proposal popup was shown. */
-	private boolean fWasChosen;
+	private final List fProposalListeners= new ArrayList();
 	
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1301,7 +1303,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @see IContentAssist#showPossibleCompletions
 	 */
 	public String showPossibleCompletions() {
-		setProposalChosen(false);
 		return fProposalPopup.showProposals(false);
 	}
 	
@@ -1521,7 +1522,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	public void setCompletions(ICompletionProposal[] proposals) {
 		fProposals= proposals;
-		setProposalChosen(false);
 	}
 	
 	/*
@@ -1549,27 +1549,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * Returns a hint whether a proposal was chosen the last time a popup selector was shown.
-	 * 
-	 * @return <code>true</code> if a proposal was chosen and inserted the last time 
-	 * {@link #showPossibleCompletions()} was called, <code>false</code> otherwise or if no proposal
-	 * has been shown so far
-	 */
-	public boolean wasProposalChosen() {
-		return fWasChosen;
-	}
-
-	/**
-	 * Sets the <code>wasChosen</code> flag which indicates whether a proposal was selected the last
-	 * time a proposal popup was shown.
-	 * 
-	 * @param wasChosen the new value of the <code>wasChosen</code> flag.
-	 */
-	protected void setProposalChosen(boolean wasChosen) {
-		fWasChosen= wasChosen;
-	}
-
-	/**
 	 * Returns whether any popups controlled by the receiver have the input focus.
 	 * 
 	 * @return <code>true</code> if any of the managed popups have the focus, <code>false</code> otherwise
@@ -1585,6 +1564,31 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	public String completePrefix() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @param proposal
+	 */
+	public void fireProposalChosen(ICompletionProposal proposal) {
+		for (Iterator it= fProposalListeners.iterator(); it.hasNext();) {
+			IProposalListener listener= (IProposalListener) it.next();
+			listener.proposalChosen(proposal);
+		}
+		
+	}
+
+	/**
+	 * @param listener
+	 */
+	public void removeProposalListener(IProposalListener listener) {
+		fProposalListeners.remove(listener);
+	}
+
+	/**
+	 * @param listener
+	 */
+	public void addProposalListener(IProposalListener listener) {
+		fProposalListeners.add(listener);
 	}
 }
 

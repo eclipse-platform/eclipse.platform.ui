@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.internal.text.link.contentassist.ContentAssistant2;
+import org.eclipse.jface.internal.text.link.contentassist.IProposalListener;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -394,13 +395,8 @@ public class LinkedUIControl {
 				case 0x0A:
 				// Ctrl+Enter on WinXP
 				case 0x0D:
-					if (fAssistant != null && fAssistant.wasProposalChosen()) {
-						// don't exit as it was really just the proposal that was chosen
-						next();
-						event.doit= false;
-						break;
-//					} else if ((fExitPosition != null && fExitPosition.includes(offset)) || !fEnvironment.anyPositionContains(offset)) {
-					} else if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
+//					if ((fExitPosition != null && fExitPosition.includes(offset)) || !fEnvironment.anyPositionContains(offset)) {
+					if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
 						// outside any edit box or on exit position -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedListener.EXIT_ALL);
 						break;
@@ -486,6 +482,16 @@ public class LinkedUIControl {
 		}
 
 	}
+	
+	private class ProposalListener implements IProposalListener {
+		
+		/*
+		 * @see org.eclipse.jface.internal.text.link.contentassist.IProposalListener#proposalChosen(org.eclipse.jface.text.contentassist.ICompletionProposal)
+		 */
+		public void proposalChosen(ICompletionProposal proposal) {
+			next();
+		}
+	}
 
 	/** The current viewer. */
 	private LinkedUITarget fCurrentTarget;
@@ -505,6 +511,8 @@ public class LinkedUIControl {
 	private MySelectionListener fSelectionListener= new MySelectionListener();
 	/** The styled text listener. */
 	private CaretListener fCaretListener= new CaretListener();
+	/** The content assist listener. */
+	private ProposalListener fProposalListener= new ProposalListener();
 	
 	/** The last caret position, used by fCaretListener. */
 	private final Position fCaretPosition= new Position(0, 0);
@@ -600,6 +608,7 @@ public class LinkedUIControl {
 		fEnvironment.addLinkedListener(fLinkedListener);
 
 		fAssistant= new ContentAssistant2();
+		fAssistant.addProposalListener(fProposalListener);
 		// TODO find a way to set up content assistant.
 //		fAssistant.setDocumentPartitioning(IJavaPartitions.JAVA_PARTITIONING);
 
@@ -880,6 +889,7 @@ public class LinkedUIControl {
 		Assert.isNotNull(viewer);
 
 		fAssistant.uninstall();
+		fAssistant.removeProposalListener(fProposalListener);
 
 		StyledText text= fCurrentTarget.fWidget;
 		fCurrentTarget.fWidget= null;

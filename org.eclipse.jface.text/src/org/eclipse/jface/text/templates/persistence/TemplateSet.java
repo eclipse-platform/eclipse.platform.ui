@@ -125,6 +125,9 @@ public class TemplateSet {
 
 				String name= getAttributeValue(attributes, NAME_ATTRIBUTE);
 				String description= getAttributeValue(attributes, DESCRIPTION_ATTRIBUTE);
+				if (name == null || description == null)
+					continue;
+				
 				if (doTranslations) {
 					description= translateString(description, bundle);
 				} 

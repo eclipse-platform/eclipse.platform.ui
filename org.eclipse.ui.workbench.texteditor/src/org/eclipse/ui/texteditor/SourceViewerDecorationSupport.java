@@ -84,6 +84,10 @@ public class SourceViewerDecorationSupport {
 		 * {@inheritdoc}
 		 */
 		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (length == 0) {
+				fgIBeamStrategy.draw(gc, textWidget, offset, length, color);
+				return;
+			}
 			if (gc != null) {
 				
 				Point left= textWidget.getLocationAtOffset(offset);

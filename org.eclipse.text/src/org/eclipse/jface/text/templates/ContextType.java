@@ -74,14 +74,14 @@ public class ContextType {
 	 * 
 	 * @param resolver the varibable to be removed
 	 */
-	public void removeVariable(TemplateVariableResolver resolver) {
+	public void removeResolver(TemplateVariableResolver resolver) {
 		fResolvers.remove(resolver.getType());
 	}
 
 	/**
 	 * Removes all template variables from the context type.
 	 */
-	public void removeAllVariables() {
+	public void removeAllResolvers() {
 		fResolvers.clear();
 	}
 
@@ -153,8 +153,9 @@ public class ContextType {
 			
 			String type= variable.getType();
 			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
-			if (resolver != null)
-				resolver.resolve(variable, context);
+			if (resolver == null)
+				resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
+			resolver.resolve(variable, context);
 			
 			String value= variable.getDefaultValue();
 			

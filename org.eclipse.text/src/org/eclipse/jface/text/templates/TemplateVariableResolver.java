@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
+import org.eclipse.jface.text.Assert;
+
 /**
  * A <code>TemplateVariableResolver</code> resolves <code>TemplateVariables</code>
  * of a certain type inside a <code>TemplateContext</code>.
@@ -17,13 +19,13 @@ package org.eclipse.jface.text.templates;
  * @see TemplateVariable
  * @since 3.0
  */
-public abstract class TemplateVariableResolver {
+public class TemplateVariableResolver {
 
 	/** Type of this resolver. */
-	private final String fType;
+	private String fType;
 
 	/** Description of the type resolved by this resolver. */
-	private final String fDescription;
+	private String fDescription;
 	
 	/**
 	 * Creates an instance of <code>TemplateVariableResolver</code>.
@@ -32,8 +34,16 @@ public abstract class TemplateVariableResolver {
 	 * @param description the description for the type
 	 */
 	protected TemplateVariableResolver(String type, String description) {
-	 	fType= type;
-	 	fDescription= description;   
+	 	setType(type);   
+	 	setDescription(description);
+	}
+	
+	/**
+	 * Creates an empty instance. This constructor exists only so resolvers can
+	 * be contributed via an extension point.
+	 */
+	protected TemplateVariableResolver() {
+		
 	}
 	
 	/**
@@ -58,11 +68,15 @@ public abstract class TemplateVariableResolver {
 	 * Returns an instance of the type resolved by the receiver available in <code>context</code>.
 	 * To resolve means to provide a binding to a concrete text object (a
 	 * <code>String</code>) in the given context.
+	 * <p>
+	 * The default implementation looks up the type in the context.</p>
 	 * 
 	 * @param context the context in which to resolve the type
 	 * @return the name of the text object of this type, or <code>null</code> if not evaluatable
 	 */
-	protected abstract String resolve(TemplateContext context);
+	protected String resolve(TemplateContext context) {
+		return context.getVariable(getType());
+	}
 	
 	/**
 	 * Returns all possible bindings available in <code>context</code>. The default
@@ -115,5 +129,27 @@ public abstract class TemplateVariableResolver {
 	 */
 	protected boolean isUnambiguous(TemplateContext context) {
 		return false;
+	}
+	
+	/**
+	 * Sets the description. This method is public due to implementation
+	 * details and may not be called by clients outside the framework.
+	 * 
+	 * @param description the description of this resolver
+	 */
+	public final void setDescription(String description) {
+		Assert.isNotNull(description);
+		fDescription= description;
+	}
+	
+	/**
+	 * Sets the type. This method is public due to implementation
+	 * details and may not be called by clients outside the framework.
+	 * 
+	 * @param type the type of this resolver
+	 */
+	public final void setType(String type) {
+		Assert.isNotNull(type);
+		fType= type;
 	}
 }

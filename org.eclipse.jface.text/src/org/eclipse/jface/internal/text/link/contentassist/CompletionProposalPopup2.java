@@ -384,7 +384,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				fContentAssistant.showContextInformation(info, position);
 			}
 			
-			fContentAssistant.setProposalChosen(true);
+			fContentAssistant.fireProposalChosen(p);
 		
 		} finally {
 			if (target != null)
@@ -695,7 +695,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 						
 					case '\n': // Ctrl-Enter on w2k
 					case '\r': // Enter
-//						e.doit= false;
+						e.doit= false;
 						selectProposalWithMask(e.stateMask);
 						break;
 						
