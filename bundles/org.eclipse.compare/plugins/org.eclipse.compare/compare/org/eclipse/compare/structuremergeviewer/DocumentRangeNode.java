@@ -166,7 +166,7 @@ public class DocumentRangeNode
 				fBaseDocument.addPosition(p);
 				fAppendPosition= p;
 			} catch (BadLocationException ex) {
-				System.out.println("setAppendPosition: BadLocationException");
+				// ignore
 			}
 		} else {
 			fAppendPosition= new Position(pos);
@@ -188,7 +188,7 @@ public class DocumentRangeNode
 					fBaseDocument.addPosition(p);
 					fAppendPosition= p;
 				} catch (BadLocationException ex) {
-					System.out.println("setAppendPosition: BadLocationException");
+					// ignore
 				}
 			} else {
 				fAppendPosition= new Position(fBaseDocument.getLength());
@@ -220,13 +220,11 @@ public class DocumentRangeNode
 	 */
 	private Position findCorrespondingPosition(DocumentRangeNode otherParent, DocumentRangeNode child) {
 
-		//System.out.println("findCorrespondingPosition " + child);
 		// we try to find a predecessor of left Node which exists on the right side
 
 		if (child != null && fChildren != null) {
 			int ix= otherParent.fChildren.indexOf(child);
 			if (ix >= 0) {
-				//System.out.println("  found at position " + ix);
 
 				for (int i= ix - 1; i >= 0; i--) {
 					DocumentRangeNode c1= (DocumentRangeNode) otherParent.fChildren.get(i);
@@ -273,10 +271,9 @@ public class DocumentRangeNode
 		Position p= findCorrespondingPosition(parent, child);
 		if (p != null) {
 			try {
-				//System.out.println("inserting <"+s+"> at " + p.getOffset());
 				fBaseDocument.replace(p.getOffset(), p.getLength(), s);
 			} catch (BadLocationException ex) {
-				System.out.println("BadLocationException " + ex);
+				// ignore
 			}
 		}
 	}
@@ -289,7 +286,7 @@ public class DocumentRangeNode
 		try {
 			s= fBaseDocument.get(fRange.getOffset(), fRange.getLength());
 		} catch (BadLocationException ex) {
-			s= "";
+			s= ""; //$NON-NLS-1$
 		}
 		return new ByteArrayInputStream(s.getBytes());
 	}
@@ -307,7 +304,7 @@ public class DocumentRangeNode
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
 
 		DocumentRangeNode src= null;
-		String srcContents= "";
+		String srcContents= ""; //$NON-NLS-1$
 		
 		if (other != null) {
 			src= (DocumentRangeNode) child;

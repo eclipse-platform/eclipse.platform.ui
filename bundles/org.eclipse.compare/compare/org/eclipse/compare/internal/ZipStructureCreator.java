@@ -145,7 +145,7 @@ public class ZipStructureCreator implements IStructureCreator {
 	private String fTitle;
 
 	public ZipStructureCreator() {
-		this("Zip Archive Compare");
+		this(Utilities.getString("ZipStructureCreator.name")); //$NON-NLS-1$
 	}
 	
 	public ZipStructureCreator(String title) {
@@ -172,13 +172,12 @@ public class ZipStructureCreator implements IStructureCreator {
 			return null;
 
 		ZipInputStream zip= new ZipInputStream(is);
-		ZipFolder root= new ZipFolder("");
+		ZipFolder root= new ZipFolder(""); //$NON-NLS-1$
 		try {
 			for (;;) {
 				ZipEntry entry= zip.getNextEntry();
 				if (entry == null)
 					break;
-				//System.out.println(entry.getName() + ": " + entry.getSize() + " " + entry.getCompressedSize());
 
 				ZipFile ze= root.createContainer(entry.getName());
 				if (ze != null) {
@@ -219,7 +218,7 @@ public class ZipStructureCreator implements IStructureCreator {
 			byte[] bytes= ((ZipFile)o).getBytes();
 			if (bytes != null)
 				return new String(bytes);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -235,7 +234,7 @@ public class ZipStructureCreator implements IStructureCreator {
 	 * Throws <code>AssertionFailedException</code> since we cannot update a zip archive.
 	 */
 	public void save(IStructureComparator structure, Object input) {
-		Assert.isTrue(false, "cannot update zip archive");
+		Assert.isTrue(false); // Cannot update zip archive
 	}
 	
 	public IStructureComparator locate(Object path, Object source) {

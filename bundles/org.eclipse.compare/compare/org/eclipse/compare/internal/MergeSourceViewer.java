@@ -30,14 +30,14 @@ import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 public class MergeSourceViewer extends SourceViewer
 						implements ISelectionChangedListener, ITextListener, IMenuListener {
 								
-	public static final String UNDO_ID= "undo";
-	public static final String REDO_ID= "redo";
-	public static final String CUT_ID= "cut";
-	public static final String COPY_ID= "copy";
-	public static final String PASTE_ID= "paste";
-	public static final String DELETE_ID= "delete";
-	public static final String SELECT_ALL_ID= "selectAll";
-	public static final String SAVE_ID= "save";
+	public static final String UNDO_ID= "undo"; //$NON-NLS-1$
+	public static final String REDO_ID= "redo"; //$NON-NLS-1$
+	public static final String CUT_ID= "cut"; //$NON-NLS-1$
+	public static final String COPY_ID= "copy"; //$NON-NLS-1$
+	public static final String PASTE_ID= "paste"; //$NON-NLS-1$
+	public static final String DELETE_ID= "delete"; //$NON-NLS-1$
+	public static final String SELECT_ALL_ID= "selectAll"; //$NON-NLS-1$
+	public static final String SAVE_ID= "save"; //$NON-NLS-1$
 
 	class TextOperationAction extends MergeViewerAction {
 		
@@ -64,11 +64,12 @@ public class MergeSourceViewer extends SourceViewer
 	}
 
 	private ResourceBundle fResourceBundle;
-	private IRegion fRegion;
+	private Position fRegion;
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
 	
 	private boolean fInitialized= true;
+	private boolean fAddSaveAction= true;
 	
 	
 	public MergeSourceViewer(Composite parent, ResourceBundle bundle) {
@@ -82,7 +83,11 @@ public class MergeSourceViewer extends SourceViewer
 		StyledText te= getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
 	}
-		
+	
+	public void hideSaveAction() {
+		fAddSaveAction= false;
+	}
+	
 	public void setFont(Font font) {
 		StyledText te= getTextWidget();
 		if (te != null)
@@ -105,11 +110,11 @@ public class MergeSourceViewer extends SourceViewer
 		return fEnabled;
 	}
 
-	public void setRegion(IRegion region) {
+	public void setRegion(Position region) {
 		fRegion= region;
 	}
 	
-	public IRegion getRegion() {
+	public Position getRegion() {
 		return fRegion;
 	}
 	
@@ -292,7 +297,7 @@ public class MergeSourceViewer extends SourceViewer
 			if (action.isSelectionDependent())
 				addSelectionChangedListener(this);
 				
-			Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			
+			Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			 //$NON-NLS-1$ //$NON-NLS-2$
 			fActions.put(actionId, action);
 		}
 		if (action.isEditableDependent() && !isEditable())
@@ -341,25 +346,26 @@ public class MergeSourceViewer extends SourceViewer
 	 */
 	public void menuAboutToShow(IMenuManager menu) {
 		
-		menu.add(new Separator("undo"));
+		menu.add(new Separator("undo")); //$NON-NLS-1$
 		addMenu(menu, UNDO_ID);
 		addMenu(menu, REDO_ID);
 	
-		menu.add(new Separator("ccp"));
+		menu.add(new Separator("ccp")); //$NON-NLS-1$
 		addMenu(menu, CUT_ID);
 		addMenu(menu, COPY_ID);
 		addMenu(menu, PASTE_ID);
 		addMenu(menu, DELETE_ID);
 		addMenu(menu, SELECT_ALL_ID);
 
-		menu.add(new Separator("edit"));
-		menu.add(new Separator("find"));
+		menu.add(new Separator("edit")); //$NON-NLS-1$
+		menu.add(new Separator("find")); //$NON-NLS-1$
 		//addMenu(menu, FIND_ID);
 		
-		menu.add(new Separator("save"));
-		addMenu(menu, SAVE_ID);
+		menu.add(new Separator("save")); //$NON-NLS-1$
+		if (fAddSaveAction)
+			addMenu(menu, SAVE_ID);
 		
-		menu.add(new Separator("rest"));
+		menu.add(new Separator("rest")); //$NON-NLS-1$
 	}
 	
 	private void addMenu(IMenuManager menu, String actionId) {

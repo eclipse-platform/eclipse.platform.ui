@@ -15,6 +15,6 @@ import org.eclipse.compare.*;
 public class ShowPseudoConflicts extends ChangePropertyAction {
 
 	public ShowPseudoConflicts(ResourceBundle bundle, CompareConfiguration cc) {
-		super(bundle, cc, "action.ShowPseudoConflicts.", CompareConfiguration.SHOW_PSEUDO_CONFLICTS);
+		super(bundle, cc, "action.ShowPseudoConflicts.", CompareConfiguration.SHOW_PSEUDO_CONFLICTS); //$NON-NLS-1$
 	}
 }

@@ -7,6 +7,7 @@ package org.eclipse.compare.structuremergeviewer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.ToolBarManager;
@@ -33,7 +34,7 @@ import org.eclipse.compare.internal.*;
  */
 public class StructureDiffViewer extends DiffTreeViewer {
 	
-	private static final String SMART= "SMART";
+	private static final String SMART= "SMART"; //$NON-NLS-1$
 	
 	private Differencer fDifferencer;
 	private boolean fThreeWay= false;
@@ -103,7 +104,11 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	public void setStructureCreator(IStructureCreator structureCreator) {
 		if (fStructureCreator != structureCreator) {
 			fStructureCreator= structureCreator;
-		
+			
+			Control tree= getControl();
+			if (tree != null && !tree.isDisposed())
+				tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
+			
 			if (fStructureCreator != null) {
 				if (fSmartAction != null)
 					fSmartAction.setEnabled(fStructureCreator.canRewriteTree());
@@ -314,8 +319,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		super.createToolItems(toolBarManager);
 		
-		fSmartAction= new ChangePropertyAction(getBundle(), getCompareConfiguration(), "action.Smart.", SMART);
-		toolBarManager.appendToGroup("modes", fSmartAction);
+		fSmartAction= new ChangePropertyAction(getBundle(), getCompareConfiguration(), "action.Smart.", SMART); //$NON-NLS-1$
+		toolBarManager.appendToGroup("modes", fSmartAction); //$NON-NLS-1$
 	}
 	
 	/**

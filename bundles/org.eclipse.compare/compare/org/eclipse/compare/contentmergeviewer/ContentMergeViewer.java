@@ -60,7 +60,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		
 		SaveAction(boolean left) {
 			super(true, false, false);
-			Utilities.initAction(this, getResourceBundle(), "action.save.");
+			Utilities.initAction(this, getResourceBundle(), "action.save."); //$NON-NLS-1$
 		}
 			
 		public void run() {
@@ -308,7 +308,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	 * @return the viewer's name
 	 */
 	public String getTitle() {
-		return "Content Compare";
+		return Utilities.getString(getResourceBundle(), "title"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -505,9 +505,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 				Shell shell= fComposite.getShell();
 				
 				MessageDialog dialog= new MessageDialog(shell,
-					"Save Resource",
+					Utilities.getString(getResourceBundle(), "saveDialog.title"), //$NON-NLS-1$
 					null, 	// accept the default window icon
-					"Resource has been modified. Save changes?",
+					Utilities.getString(getResourceBundle(), "saveDialog.message"), //$NON-NLS-1$
 					MessageDialog.QUESTION,
 					new String[] {
 						IDialogConstants.YES_LABEL,
@@ -639,9 +639,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			tbm.removeAll();
 			
 			// define groups
-			tbm.add(new Separator("modes"));
-			tbm.add(new Separator("merge"));			
-			tbm.add(new Separator("navigation"));
+			tbm.add(new Separator("modes")); //$NON-NLS-1$
+			tbm.add(new Separator("merge"));			 //$NON-NLS-1$
+			tbm.add(new Separator("navigation")); //$NON-NLS-1$
 			
 			CompareConfiguration cc= getCompareConfiguration();
 		
@@ -652,8 +652,8 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 							copy(true);
 						}
 					};
-				Utilities.initAction(fCopyLeftToRightAction, getResourceBundle(), "action.CopyLeftToRight.");
-				tbm.appendToGroup("merge", fCopyLeftToRightAction);
+				Utilities.initAction(fCopyLeftToRightAction, getResourceBundle(), "action.CopyLeftToRight."); //$NON-NLS-1$
+				tbm.appendToGroup("merge", fCopyLeftToRightAction); //$NON-NLS-1$
 			}
 			
 			if (cc.isLeftEditable()) {
@@ -663,15 +663,15 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 							copy(false);
 						}
 					};
-				Utilities.initAction(fCopyRightToLeftAction, getResourceBundle(), "action.CopyRightToLeft.");
-				tbm.appendToGroup("merge", fCopyRightToLeftAction);
+				Utilities.initAction(fCopyRightToLeftAction, getResourceBundle(), "action.CopyRightToLeft."); //$NON-NLS-1$
+				tbm.appendToGroup("merge", fCopyRightToLeftAction); //$NON-NLS-1$
 			}
 			
-			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED);
+			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
 			a.setChecked(fAncestorEnabled);
 			fAncestorItem= new ActionContributionItem(a);
 			//fAncestorItem.setVisible(false);
-			tbm.appendToGroup("modes", fAncestorItem);
+			tbm.appendToGroup("modes", fAncestorItem); //$NON-NLS-1$
 			
 			createToolItems(tbm);
 			updateToolItems();

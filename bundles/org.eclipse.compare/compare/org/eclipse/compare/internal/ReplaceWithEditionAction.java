@@ -22,7 +22,7 @@ import org.eclipse.compare.*;
 
 public class ReplaceWithEditionAction implements IActionDelegate {
 		
-	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ReplaceWithEditionAction";
+	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ReplaceWithEditionAction"; //$NON-NLS-1$
 
 	private ISelection fSelection;
 	
@@ -54,7 +54,7 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 	void replaceFromHistory(IFile file) {
 				
 		ResourceBundle bundle= ResourceBundle.getBundle(BUNDLE_NAME);
-		String title= Utilities.getString(bundle, "title");
+		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
 		
 		Shell parent= CompareUIPlugin.getShell();
 		
@@ -86,7 +86,7 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 				}
 			}
 		} else {
-			String msg= Utilities.getString(bundle, "noLocalHistoryError");
+			String msg= Utilities.getString(bundle, "noLocalHistoryError"); //$NON-NLS-1$
 			MessageDialog.openInformation(parent, title, msg);
 		}
 	}

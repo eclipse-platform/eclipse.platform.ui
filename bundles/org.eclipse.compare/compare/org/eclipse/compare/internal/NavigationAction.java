@@ -15,7 +15,7 @@ public class NavigationAction extends Action {
 	private CompareEditorInput fCompareEditorInput;
 
 	public NavigationAction(ResourceBundle bundle, boolean next) {
-		Utilities.initAction(this, bundle, next ? "action.Next." : "action.Previous.");
+		Utilities.initAction(this, bundle, next ? "action.Next." : "action.Previous."); //$NON-NLS-2$ //$NON-NLS-1$
 		fNext= next;
 	}
 

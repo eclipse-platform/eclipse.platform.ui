@@ -28,9 +28,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 
 public class CompareDialog extends Dialog implements IPropertyChangeListener {
-	
-	private static final String COMMIT_LABEL= "Commit";
-	
+		
 	private CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
 
@@ -57,7 +55,7 @@ public class CompareDialog extends Dialog implements IPropertyChangeListener {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		fCommitButton= createButton(parent, IDialogConstants.OK_ID, COMMIT_LABEL, true);
+		fCommitButton= createButton(parent, IDialogConstants.OK_ID, Utilities.getString("CompareDialog.commitAction.label"), true); //$NON-NLS-1$
 		fCommitButton.setEnabled(false);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -125,8 +123,8 @@ public class CompareDialog extends Dialog implements IPropertyChangeListener {
 			} catch (InvocationTargetException x) {
 				//String title= getResourceString("Error.save.title");
 				//String msg= getResourceString("Error.save.message");
-				String title= "Save Error";
-				String msg= "Can't save ";
+				String title= Utilities.getString("CompareDialog.saveErrorTitle"); //$NON-NLS-1$
+				String msg= Utilities.getString("CompareDialog.saveErrorMessage"); //$NON-NLS-1$
 				MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());
 			}
 		}

@@ -13,18 +13,15 @@ import org.eclipse.jface.resource.JFaceResources;import org.eclipse.ui.IWorkbe
 
 public class ComparePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 		
-	private static final String PREFIX= CompareUIPlugin.PLUGIN_ID + ".";
-	public static final String SYNCHRONIZE_SCROLLING= PREFIX + "SynchronizeScrolling";
-	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts";
-	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane";
-	public static final String TEXT_FONT= PREFIX + "TextFont";
-
-	private ResourceBundle fResourceBundle;
+	private static final String PREFIX= CompareUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+	public static final String SYNCHRONIZE_SCROLLING= PREFIX + "SynchronizeScrolling"; //$NON-NLS-1$
+	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts"; //$NON-NLS-1$
+	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
+	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 
 
 	public ComparePreferencePage() {
 		super(GRID);
-		fResourceBundle= CompareUIPlugin.getResourceBundle();
 	}
 	
 	public static void initDefaults(IPreferenceStore store) {
@@ -53,31 +50,27 @@ public class ComparePreferencePage extends FieldEditorPreferencePage implements 
 			
 		{
 			BooleanFieldEditor editor= new BooleanFieldEditor(SYNCHRONIZE_SCROLLING,
-				getResourceString(SYNCHRONIZE_SCROLLING), BooleanFieldEditor.DEFAULT, parent);
+				Utilities.getString("ComparePreferences.synchronizeScrolling.label"), BooleanFieldEditor.DEFAULT, parent); //$NON-NLS-1$
 			addField(editor);	
 		}
 		
 		// three way merging
 		{
 			BooleanFieldEditor editor= new BooleanFieldEditor(SHOW_PSEUDO_CONFLICTS,
-				getResourceString(SHOW_PSEUDO_CONFLICTS), BooleanFieldEditor.DEFAULT, parent);
+				Utilities.getString("ComparePreferences.showPseudoConflicts.label"), BooleanFieldEditor.DEFAULT, parent); //$NON-NLS-1$
 			addField(editor);	
 		}
 		
 		{
 			BooleanFieldEditor editor= new BooleanFieldEditor(INITIALLY_SHOW_ANCESTOR_PANE,
-				getResourceString(INITIALLY_SHOW_ANCESTOR_PANE), BooleanFieldEditor.DEFAULT, parent);
+				Utilities.getString("ComparePreferences.initiallyShowAncestorPane.label"), BooleanFieldEditor.DEFAULT, parent); //$NON-NLS-1$
 			addField(editor);	
 		}
 		
 		{
-			FontFieldEditor editor= new FontFieldEditor(TEXT_FONT, getResourceString(TEXT_FONT), parent);
+			FontFieldEditor editor= new FontFieldEditor(TEXT_FONT,
+				Utilities.getString("ComparePreferences.textFont.label"), parent); //$NON-NLS-1$
 			addField(editor);
 		}
-	}
-	
-	private String getResourceString(String key) {
-		int pos= key.lastIndexOf(".");
-		return Utilities.getString(fResourceBundle, key.substring(pos+1) + ".label", key);
 	}
 }

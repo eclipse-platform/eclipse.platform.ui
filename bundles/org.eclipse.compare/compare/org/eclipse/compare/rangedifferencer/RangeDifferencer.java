@@ -108,7 +108,7 @@ public final class RangeDifferencer {
 				col= row + k - origin;
 				edit.fRightStart= row;
 				edit.fLeftStart= col;
-				Assert.isTrue(k >= 0 && k <= maxDiagonal, "Indices out of range");
+				Assert.isTrue(k >= 0 && k <= maxDiagonal);
 				script[k]= edit;
 
 				// slide down the diagonal as far as possible 
@@ -117,7 +117,7 @@ public final class RangeDifferencer {
 					++col;
 				}
 
-				Assert.isTrue(k >= 0 && k <= maxDiagonal, "unreasonable value for diagonal index");
+				Assert.isTrue(k >= 0 && k <= maxDiagonal); // Unreasonable value for diagonal index
 				lastDiagonal[k]= row;
 
 				if (row == rightSize && col == leftSize) {
@@ -382,7 +382,7 @@ public final class RangeDifferencer {
 		int kind= RangeDifference.ERROR;
 		RangeDifference last= (RangeDifference) diff3.get(diff3.size() - 1);
 
-		Assert.isTrue((myIter.getCount() != 0 || yourIter.getCount() != 0), "at least one range array must be non-empty");
+		Assert.isTrue((myIter.getCount() != 0 || yourIter.getCount() != 0));	// At least one range array must be non-empty
 		//
 		// find corresponding lines to fChangeRangeStart/End in right and left
 		//

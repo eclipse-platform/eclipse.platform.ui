@@ -91,7 +91,7 @@ public class DiffTreeViewer extends TreeViewer {
 		public String getText(Object element) {
 			if (element instanceof IDiffElement)
 				return ((IDiffElement)element).getName();
-			return "<null>";
+			return Utilities.getString(fBundle, "defaultLabel"); //$NON-NLS-1$
 		}
 	
 		public Image getImage(Object element) {
@@ -174,14 +174,14 @@ public class DiffTreeViewer extends TreeViewer {
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
 		
-		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
+		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 
 		
 		tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
 
 		Composite parent= tree.getParent();
 		
-		fBundle= ResourceBundle.getBundle("org.eclipse.compare.structuremergeviewer.DiffTreeViewerResources");
+		fBundle= ResourceBundle.getBundle("org.eclipse.compare.structuremergeviewer.DiffTreeViewerResources"); //$NON-NLS-1$
 		
 		// register for notification with the CompareConfiguration 
 		fCompareConfiguration= configuration;
@@ -225,9 +225,9 @@ public class DiffTreeViewer extends TreeViewer {
 		if (tbm != null) {
 			tbm.removeAll();
 			
-			tbm.add(new Separator("merge"));
-			tbm.add(new Separator("modes"));
-			tbm.add(new Separator("navigation"));
+			tbm.add(new Separator("merge")); //$NON-NLS-1$
+			tbm.add(new Separator("modes")); //$NON-NLS-1$
+			tbm.add(new Separator("navigation")); //$NON-NLS-1$
 			
 			createToolItems(tbm);
 			updateActions();
@@ -253,7 +253,10 @@ public class DiffTreeViewer extends TreeViewer {
 	 * @return the viewer's name
 	 */
 	public String getTitle() {
-		return "Structure Compare";
+		String title= Utilities.getString(fBundle, "title", null); //$NON-NLS-1$
+		if (title == null)
+			title= Utilities.getString("DiffTreeViewer.title"); //$NON-NLS-1$
+		return title;
 	}
 	
 	/**
@@ -373,16 +376,16 @@ public class DiffTreeViewer extends TreeViewer {
 				navigate(true);
 			}
 		};
-		Utilities.initAction(fNextAction, fBundle, "action.NextDiff.");
-		toolbarManager.appendToGroup("navigation", fNextAction);
+		Utilities.initAction(fNextAction, fBundle, "action.NextDiff."); //$NON-NLS-1$
+		toolbarManager.appendToGroup("navigation", fNextAction); //$NON-NLS-1$
 
 		fPreviousAction= new Action() {
 			public void run() {
 				navigate(false);
 			}
 		};
-		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff.");
-		toolbarManager.appendToGroup("navigation", fPreviousAction);
+		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff."); //$NON-NLS-1$
+		toolbarManager.appendToGroup("navigation", fPreviousAction); //$NON-NLS-1$
 	}
 	
 	/**

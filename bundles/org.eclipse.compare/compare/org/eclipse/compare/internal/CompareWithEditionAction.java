@@ -22,7 +22,6 @@ import org.eclipse.compare.*;
 
 public class CompareWithEditionAction implements IActionDelegate {
 		
-	private static final String ACTION_LABEL= "Compare with Edition";
 	private ISelection fSelection;
 	
 
@@ -58,7 +57,7 @@ public class CompareWithEditionAction implements IActionDelegate {
 		try {
 			states= file.getHistory(null);
 		} catch (CoreException ex) {		
-			MessageDialog.openError(parent, ACTION_LABEL, ex.getMessage());
+			MessageDialog.openError(parent, Utilities.getString("CompareWithEditionDialog.action.label"), ex.getMessage()); //$NON-NLS-1$
 			return;
 		}
 		
@@ -70,12 +69,14 @@ public class CompareWithEditionAction implements IActionDelegate {
 			for (int i= 0; i < states.length; i++)
 				editions[i]= new HistoryItem(base, states[i]);
 
-			ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.compare.internal.CompareWithEditionAction");
+			ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.compare.internal.CompareWithEditionAction"); //$NON-NLS-1$
 			CompareWithEditionDialog d= new CompareWithEditionDialog(parent, bundle);
 
 			d.selectEdition(base, editions, null);			
 		} else
-			MessageDialog.openInformation(parent, ACTION_LABEL, "No local editions available for selected resource.");
+			MessageDialog.openInformation(parent,
+				Utilities.getString("CompareWithEditionDialog.action.label"), //$NON-NLS-1$
+				Utilities.getString("CompareWithEditionDialog.noEditionMessage")); //$NON-NLS-1$
 	}
 }
 

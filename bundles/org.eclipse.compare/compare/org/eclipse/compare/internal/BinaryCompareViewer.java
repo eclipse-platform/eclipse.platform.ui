@@ -22,7 +22,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  */
 public class BinaryCompareViewer extends AbstractViewer {
 
-	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.BinaryCompareViewerResources";
+	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.BinaryCompareViewerResources"; //$NON-NLS-1$
 
 	private static final int EOF= -1;
 	private Text fControl;
@@ -36,7 +36,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 
 		fControl= new Text(parent, SWT.NONE);
 		fControl.setEditable(false);
-		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title"));
+		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		CompareNavigator.hookNavigation(fControl);
 	}
 
@@ -61,7 +61,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 						int l= left.read();
 						int r= right.read();
 						if (l != r) {
-							String format= Utilities.getString(fBundle, "diffMessageFormat", "diffMessageFormat {0}");
+							String format= Utilities.getString(fBundle, "diffMessageFormat"); //$NON-NLS-1$
 							String msg= MessageFormat.format(format, new String[] { Integer.toString(pos) } );
 							fControl.setText(msg);
 							break;
@@ -71,16 +71,16 @@ public class BinaryCompareViewer extends AbstractViewer {
 						pos++;
 					}
 				} else if (left == null && right == null) {
-					fControl.setText(Utilities.getString(fBundle, "deleteConflictMessage"));
+					fControl.setText(Utilities.getString(fBundle, "deleteConflictMessage")); //$NON-NLS-1$
 				} else if (left == null) {
-					fControl.setText(Utilities.getString(fBundle, "addedMessage"));
+					fControl.setText(Utilities.getString(fBundle, "addedMessage")); //$NON-NLS-1$
 				} else if (right == null) {
-					fControl.setText(Utilities.getString(fBundle, "deletedMessage"));
+					fControl.setText(Utilities.getString(fBundle, "deletedMessage")); //$NON-NLS-1$
 				}
 			} catch (CoreException ex) {
-				fControl.setText(Utilities.getString(fBundle, "errorMessage"));
+				fControl.setText(Utilities.getString(fBundle, "errorMessage")); //$NON-NLS-1$
 			} catch (IOException ex) {
-				fControl.setText(Utilities.getString(fBundle, "errorMessage"));
+				fControl.setText(Utilities.getString(fBundle, "errorMessage")); //$NON-NLS-1$
 			} finally {
 				if (left != null) {
 					try {

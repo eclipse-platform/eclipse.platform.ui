@@ -1,16 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ======================================================================= -->
 <!-- Compare UI Plugin                                                       -->
 <!-- ======================================================================= -->
 
 <plugin
-	name="Compare Support"
+	name="%pluginName"
 	id="org.eclipse.compare"
 	version="0.9"
 	provider-name="Object Technology International, Inc."
 	class="org.eclipse.compare.internal.CompareUIPlugin">
-	
+
 	<requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
@@ -25,26 +25,26 @@
 <!-- Compare extension point definitions -->
 
 	<extension-point
-		name="Structure Creator"
+		name="%structureCreators"
 		id="structureCreators"/>
 		
 	<extension-point
-		name="Structure Merge Viewer"
+		name="%structureMergeViewers"
 		id="structureMergeViewers"/>
 		
 	<extension-point
-		name="Content Merge Viewer"
+		name="%contentMergeViewers"
 		id="contentMergeViewers"/>
 
 	<extension-point
-		name="Content Viewer"
+		name="%contentViewers"
 		id="contentViewers"/>
 
 <!-- Extensions -->
 
 	<extension point="org.eclipse.ui.editors">
     	<editor id="org.eclipse.compare.CompareEditor"
-      		name="Default Compare Editor"
+      		name="%defaultCompareEditor.name"
  			icon="icons/full/cview16/compare_view.gif"     	  
       		class="org.eclipse.compare.internal.CompareEditor"
 			contributorClass="org.eclipse.compare.internal.CompareEditorContributor">

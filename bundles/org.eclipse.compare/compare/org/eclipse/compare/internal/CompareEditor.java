@@ -33,7 +33,7 @@ import org.eclipse.compare.*;
  */
 public class CompareEditor extends EditorPart implements IPropertyChangeListener {
 	
-	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY";
+	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
 	
@@ -51,7 +51,7 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		
 		if (!(input instanceof CompareEditorInput))
-			throw new PartInitException("Invalid Input: Must be CompareEditorInput");
+			throw new PartInitException(Utilities.getString("CompareEditor.invalidInput")); //$NON-NLS-1$
 				
 		CompareEditorInput cei= (CompareEditorInput) input;
 			
@@ -122,7 +122,7 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	 * @see IEditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
-		Assert.isTrue(false, "Save As not supported for CompareEditor");
+		Assert.isTrue(false); // Save As not supported for CompareEditor
 	}
 	
 	/*
@@ -143,7 +143,9 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws CoreException {
-				if (input instanceof CompareEditorInput)
+				if (input instanceof ResourceCompareInput)
+					((ResourceCompareInput)input).performSave(pm);				
+				else if (input instanceof CompareEditorInput)
 					((CompareEditorInput)input).save(pm);
 			}
 		};
@@ -161,8 +163,8 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		} catch (InvocationTargetException x) {
 			//String title= getResourceString("Error.save.title");
 			//String msg= getResourceString("Error.save.message");
-			String title= "Save Error";
-			String msg= "Can't save ";
+			String title= Utilities.getString("CompareEditor.saveError.title"); //$NON-NLS-1$
+			String msg= Utilities.getString("CompareEditor.cantSaveError"); //$NON-NLS-1$
 			MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());
 		}
 	}	

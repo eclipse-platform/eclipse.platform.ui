@@ -32,13 +32,13 @@ public class TokenComparator implements ITokenComparator {
 		if (string != null)
 			fText= string;
 		else
-			fText= "";
+			fText= ""; //$NON-NLS-1$
 		
 		fStarts= new int[fText.length()];
 		fLengths= new int[fText.length()];
 		fCount= 0;
 		
-		StringTokenizer tokenizer= new StringTokenizer(fText, " \t\n\r", true);
+		StringTokenizer tokenizer= new StringTokenizer(fText, " \t\n\r", true); //$NON-NLS-1$
 		
 		for (int pos= 0; tokenizer.hasMoreElements();) {
 			fStarts[fCount]= pos;
@@ -99,14 +99,10 @@ public class TokenComparator implements ITokenComparator {
 	 * @return the contents of the specified token range as a String
 	 */
 	public String extract(int start, int length) {
-		if (start >= fStarts.length)
-			System.out.println("oops");
 		int startPos= fStarts[start];
 		int endPos= 0;
 		if (length > 0) {
 			int e= start + length-1;
-			if (e >= fStarts.length)
-				System.out.println("oops");
 			endPos= fStarts[e] + fLengths[e];
 		} else {
 			endPos= fStarts[start];

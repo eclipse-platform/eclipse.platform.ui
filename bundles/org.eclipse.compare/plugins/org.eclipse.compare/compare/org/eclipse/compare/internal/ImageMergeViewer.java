@@ -24,7 +24,7 @@ import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
  */
 public class ImageMergeViewer extends ContentMergeViewer {
 	
-	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ImageMergeViewerResources";
+	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ImageMergeViewerResources"; //$NON-NLS-1$
 		
 	private Object fAncestorImage;
 	private Object fLeftImage;
@@ -38,7 +38,7 @@ public class ImageMergeViewer extends ContentMergeViewer {
 	public ImageMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(styles, ResourceBundle.getBundle(BUNDLE_NAME), mp);
 		buildControl(parent);
-		String title= Utilities.getString(getResourceBundle(), "title");
+		String title= Utilities.getString(getResourceBundle(), "title"); //$NON-NLS-1$
 		getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, title);
 	}
 

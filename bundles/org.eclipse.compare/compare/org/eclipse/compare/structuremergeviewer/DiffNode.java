@@ -4,11 +4,14 @@
  */
 package org.eclipse.compare.structuremergeviewer;
 
+import java.text.MessageFormat;
+
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.util.ListenerList;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.Utilities;
 
 /**
  * Diff node are used as the compare result of the differencing engine.
@@ -187,7 +190,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		if (s1 == null && s2 == null) {
 			if (fAncestor != null)
 				return fAncestor.getName();
-			return "<no name>";
+			return Utilities.getString("DiffNode.noName"); //$NON-NLS-1$
 		}
 
 		if (s1 == null)
@@ -197,10 +200,9 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 
 		if (s1.equals(s2))
 			return s1;
-		StringBuffer sb= new StringBuffer(s1);
-		sb.append(" / ");
-		sb.append(s2);
-		return sb.toString();
+			
+		String fmt= Utilities.getString("DiffNode.nameFormat"); //$NON-NLS-1$
+		return MessageFormat.format(fmt, new String[] { s1, s2 });
 	}
 
 	/* (non Javadoc)

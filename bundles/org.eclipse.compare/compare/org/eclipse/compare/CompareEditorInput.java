@@ -91,11 +91,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	/**
 	 * The name of the "dirty" property.
 	 */
-	public static final String DIRTY_STATE= "DIRTY_STATE";
+	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
 	
 	private static boolean PR1GB0P4S= true;
 	
-	private static final String COMPARE_EDITOR_IMAGE_NAME= "cview16/compare_view.gif";
+	private static final String COMPARE_EDITOR_IMAGE_NAME= "cview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
 	
 	private Splitter fComposite;
@@ -108,7 +108,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private String fMessage;
 	private ISelection fSelection2;
 	private Object fInput;
-	private String fTitle= "Compare";
+	private String fTitle;
 	private ListenerList fListenerList= new ListenerList();
 	private CompareNavigator fNavigator;
 	private boolean fDirty= false;
@@ -446,7 +446,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		}
 		
 		// 
-		fComposite.setData("Nav",
+		fComposite.setData("Nav", //$NON-NLS-1$
 			new CompareViewerSwitchingPane[] {
 				fStructureInputPane,
 				fStructurePane1,

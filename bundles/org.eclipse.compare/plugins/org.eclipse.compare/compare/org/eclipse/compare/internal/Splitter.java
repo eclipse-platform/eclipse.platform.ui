@@ -9,7 +9,7 @@ import org.eclipse.swt.custom.SashForm;
 
 public class Splitter extends SashForm {
 	
-	private static final String VISIBILITY= "org.eclipse.compare.internal.visibility";
+	private static final String VISIBILITY= "org.eclipse.compare.internal.visibility"; //$NON-NLS-1$
 	
 
 	public Splitter(Composite parent, int style) {

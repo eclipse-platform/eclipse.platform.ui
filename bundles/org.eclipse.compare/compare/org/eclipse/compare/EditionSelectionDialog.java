@@ -128,7 +128,7 @@ public class EditionSelectionDialog extends Dialog {
 					}
 				}
 				if (fContent == null)
-					fContent= "";
+					fContent= ""; //$NON-NLS-1$
 			}
 			return fContent;
 		}
@@ -209,18 +209,18 @@ public class EditionSelectionDialog extends Dialog {
 		
 		fBundle= bundle;
 	
-		fTargetIsRight= "right".equals(Utilities.getString(fBundle, "targetSide", "right"));
-		fReplaceMode= "replace".equals(Utilities.getString(fBundle, "mode", "replace"));
+		fTargetIsRight= "right".equals(Utilities.getString(fBundle, "targetSide", "right")); //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-3$
+		fReplaceMode= "replace".equals(Utilities.getString(fBundle, "mode", "replace")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 									    
 		fCompareConfiguration= new CompareConfiguration();
 		fCompareConfiguration.setLeftEditable(false);
 		fCompareConfiguration.setRightEditable(false);
 				
-		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif");
+		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif"); //$NON-NLS-2$ //$NON-NLS-1$
 		ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
 		if (id != null)
 			fDateImage= id.createImage();
-		iconName= Utilities.getString(fBundle, "timeIcon", "obj16/resource_obj.gif");
+		iconName= Utilities.getString(fBundle, "timeIcon", "obj16/resource_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 		id= CompareUIPlugin.getImageDescriptor(iconName);
 		if (id != null)
 			fTimeImage= id.createImage();
@@ -396,7 +396,7 @@ public class EditionSelectionDialog extends Dialog {
  	 * @return a label the target side of a compare viewer
   	 */
 	protected String getTargetLabel(ITypedElement target, ITypedElement item) {
-		String format= Utilities.getString(fBundle, "targetLabel", "targetLabel");
+		String format= Utilities.getString(fBundle, "targetLabel"); //$NON-NLS-1$
 		return MessageFormat.format(format, new Object[] { target.getName() });
 	}
 	
@@ -415,7 +415,7 @@ public class EditionSelectionDialog extends Dialog {
  	 * @return a label the edition side of a compare viewer
   	 */
 	protected String getEditionLabel(ITypedElement selectedEdition, ITypedElement item) {
-		String label= Utilities.getString(fBundle, "editionLabel", "editionLabel");
+		String label= Utilities.getString(fBundle, "editionLabel"); //$NON-NLS-1$
 
 		if (selectedEdition instanceof IModificationDate) {
 			long modDate= ((IModificationDate)selectedEdition).getModificationDate();
@@ -430,8 +430,8 @@ public class EditionSelectionDialog extends Dialog {
 	 * Returns the size initialized with the constructor.
 	 */
 	protected Point getInitialSize() {
-		Point size= new Point(Utilities.getInteger(fBundle, "width", 0),
-					Utilities.getInteger(fBundle, "height", 0));
+		Point size= new Point(Utilities.getInteger(fBundle, "width", 0), //$NON-NLS-1$
+					Utilities.getInteger(fBundle, "height", 0)); //$NON-NLS-1$
 		
 		Shell shell= getParentShell();
 		if (shell != null) {
@@ -453,7 +453,7 @@ public class EditionSelectionDialog extends Dialog {
  	 */
 	protected synchronized Control createDialogArea(Composite parent) {
 		
-		getShell().setText(Utilities.getString(fBundle, "title", "title"));
+		getShell().setText(Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		
 		Splitter vsplitter= new Splitter(parent,  SWT.VERTICAL);
 		vsplitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
@@ -473,14 +473,14 @@ public class EditionSelectionDialog extends Dialog {
 		if (fReplaceMode) {
 			fEditionPane= new Pane(vsplitter, SWT.NONE);
 			
-			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat", "treeTitleFormat");
+			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
 			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
 			fEditionPane.setText(title);
 		} else {
 			Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 			
 			fMemberPane= new Pane(hsplitter, SWT.NONE);
-			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle"));
+			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle")); //$NON-NLS-1$
 			fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
 			fMemberTable.addSelectionListener(
 				new SelectionAdapter() {
@@ -528,7 +528,7 @@ public class EditionSelectionDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", IDialogConstants.OK_LABEL);
+		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", IDialogConstants.OK_LABEL); //$NON-NLS-1$
 		fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
 		fCommitButton.setEnabled(false);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -599,13 +599,13 @@ public class EditionSelectionDialog extends Dialog {
 			if (fMemberTable != null) {
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
-					ti.setText(Utilities.getString(fBundle, "noAdditionalMembersMessage"));
+					ti.setText(Utilities.getString(fBundle, "noAdditionalMembersMessage")); //$NON-NLS-1$
 				}
 				return;
 			}			
 			if (fEditionTree != null && !fEditionTree.isDisposed() && fEditionTree.getItemCount() == 0) {
 				TreeItem ti= new TreeItem(fEditionTree, SWT.NONE);
-				ti.setText(Utilities.getString(fBundle, "notFoundInLocalHistoryMessage"));
+				ti.setText(Utilities.getString(fBundle, "notFoundInLocalHistoryMessage")); //$NON-NLS-1$
 			}
 			return;
 		}
@@ -683,11 +683,11 @@ public class EditionSelectionDialog extends Dialog {
 			
 			String formatKey;
 			if (day == today)
-				formatKey= "todayFormat";
+				formatKey= "todayFormat"; //$NON-NLS-1$
 			else if (day == today-1)
-				formatKey= "yesterdayFormat";
+				formatKey= "yesterdayFormat"; //$NON-NLS-1$
 			else
-				formatKey= "dayFormat";
+				formatKey= "dayFormat"; //$NON-NLS-1$
 			String pattern= Utilities.getString(fBundle, formatKey);
 			if (pattern != null)
 				df= MessageFormat.format(pattern, new Object[] { df });
@@ -719,7 +719,7 @@ public class EditionSelectionDialog extends Dialog {
 				fCurrentEditions= editions;
 				fEditionTree.removeAll();
 				
-				String pattern= Utilities.getString(fBundle, "treeTitleFormat");
+				String pattern= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
 				String title= MessageFormat.format(pattern, new Object[] { ((Item)w).getText() });
 				fEditionPane.setText(title);
 				

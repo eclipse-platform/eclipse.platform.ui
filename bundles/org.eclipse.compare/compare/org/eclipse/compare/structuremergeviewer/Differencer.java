@@ -6,6 +6,7 @@ package org.eclipse.compare.structuremergeviewer;
 
 import java.io.*;
 import java.util.*;
+import java.text.MessageFormat;
 
 import org.eclipse.jface.util.Assert;
 
@@ -14,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.Utilities;
 
 
 /**
@@ -139,39 +141,39 @@ public class Differencer {
 			if (name == null && fRight instanceof ITypedElement)
 				name= ((ITypedElement)fRight).getName();
 			if (name == null)
-				name= "???";
+				name= "???"; //$NON-NLS-1$
 			
 			for (int i= 0; i < level; i++)
-				System.out.print("  ");
+				System.out.print("  "); //$NON-NLS-1$
 			
 			System.out.println(getDiffType(fCode) + name);
 		}
 		private String getDiffType(int code) {
-			String dir= " ";
+			String dir= " "; //$NON-NLS-1$
 			switch (code & DIRECTION_MASK) {
 			case LEFT:
-				dir= ">";
+				dir= ">"; //$NON-NLS-1$
 				break;
 			case RIGHT:
-				dir= "<";
+				dir= "<"; //$NON-NLS-1$
 				break;
 			case CONFLICTING:
-				dir= "!";
+				dir= "!"; //$NON-NLS-1$
 				break;
 			}
-			String change= "=";
+			String change= "="; //$NON-NLS-1$
 			switch (code & CHANGE_TYPE_MASK) {
 			case ADDITION:
-				change= "+";
+				change= "+"; //$NON-NLS-1$
 				break;
 			case DELETION:
-				change= "-";
+				change= "-"; //$NON-NLS-1$
 				break;
 			case CHANGE:
-				change= "#";
+				change= "#"; //$NON-NLS-1$
 				break;
 			}
-			return dir + change + " ";
+			return dir + change + " "; //$NON-NLS-1$
 		}
 	} 
 	
@@ -274,7 +276,7 @@ public class Differencer {
 				if (pm != null) {
 					
 					if (pm.isCanceled())
-						throw new OperationCanceledException("Compare cancelled");
+						throw new OperationCanceledException();
 						
 					updateProgress(pm, keyChild);
 				}
@@ -505,7 +507,9 @@ public class Differencer {
 	protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
 		if (node instanceof ITypedElement) {
 			String name= ((ITypedElement)node).getName();
-			progressMonitor.subTask("Comparing " + name);
+			String fmt= Utilities.getString("Differencer.progressFormat"); //$NON-NLS-1$
+			String msg= MessageFormat.format(fmt, new String[] { name });
+			progressMonitor.subTask(msg);
 			//progressMonitor.worked(1);
 		}
 	}

@@ -58,6 +58,6 @@ public class TextViewer extends AbstractViewer {
 			} catch (CoreException ex) {
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

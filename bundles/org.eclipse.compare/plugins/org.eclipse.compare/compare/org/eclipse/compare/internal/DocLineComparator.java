@@ -85,7 +85,7 @@ public class DocLineComparator implements IRangeComparator {
 				//System.out.println("extract("+fDocument.getLength()+"): " + startPos + " " + endPos);
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class DocLineComparator implements IRangeComparator {
 			} catch(BadLocationException e) {
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

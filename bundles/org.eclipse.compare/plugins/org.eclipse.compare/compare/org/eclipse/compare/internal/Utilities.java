@@ -183,9 +183,9 @@ public class Utilities {
 	public static String getIconPath(Display display) {
 		if (display == null)
 			display= Display.getCurrent();
-		String path= "icons/basic/";
+		String path= "icons/basic/"; //$NON-NLS-1$
 		if (display != null && display.getIconDepth() > 4)
-			path= "icons/full/";
+			path= "icons/full/"; //$NON-NLS-1$
 		return path;
 	}
 	
@@ -194,10 +194,10 @@ public class Utilities {
 	 */
 	public static void initAction(IAction a, ResourceBundle bundle, String prefix) {
 		
-		String labelKey= "label";
-		String tooltipKey= "tooltip";
-		String imageKey= "image";
-		String descriptionKey= "description";
+		String labelKey= "label"; //$NON-NLS-1$
+		String tooltipKey= "tooltip"; //$NON-NLS-1$
+		String imageKey= "image"; //$NON-NLS-1$
+		String descriptionKey= "description"; //$NON-NLS-1$
 		
 		if (prefix != null && prefix.length() > 0) {
 			labelKey= prefix + labelKey;
@@ -217,15 +217,15 @@ public class Utilities {
 			String dPath;
 			String ePath;
 			
-			if (relPath.indexOf("/") >= 0) {
+			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
 				String path= relPath.substring(1);
 				cPath= 'c' + path;
 				dPath= 'd' + path;
 				ePath= 'e' + path;
 			} else {
-				cPath= "clcl16/" + relPath;
-				dPath= "dlcl16/" + relPath;
-				ePath= "elcl16/" + relPath;
+				cPath= "clcl16/" + relPath; //$NON-NLS-1$
+				dPath= "dlcl16/" + relPath; //$NON-NLS-1$
+				ePath= "elcl16/" + relPath; //$NON-NLS-1$
 			}
 			
 			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
@@ -251,6 +251,14 @@ public class Utilities {
 		return dfltValue;
 	}
 	
+	public static String getString(String key) {
+		try {
+			return CompareUIPlugin.getResourceBundle().getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
+	}
+
 	public static String getString(ResourceBundle bundle, String key) {
 		return getString(bundle, key, key);
 	}

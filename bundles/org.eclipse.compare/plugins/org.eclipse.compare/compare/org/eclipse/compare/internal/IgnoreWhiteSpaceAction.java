@@ -15,6 +15,6 @@ import org.eclipse.compare.*;
 public class IgnoreWhiteSpaceAction extends ChangePropertyAction {
 
 	public IgnoreWhiteSpaceAction(ResourceBundle bundle, CompareConfiguration cc) {
-		super(bundle, cc, "action.IgnoreWhiteSpace.", CompareConfiguration.IGNORE_WHITESPACE);
+		super(bundle, cc, "action.IgnoreWhiteSpace.", CompareConfiguration.IGNORE_WHITESPACE); //$NON-NLS-1$
 	}
 }

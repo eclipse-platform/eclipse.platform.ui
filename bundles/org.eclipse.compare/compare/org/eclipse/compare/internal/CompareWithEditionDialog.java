@@ -14,6 +14,6 @@ public class CompareWithEditionDialog extends EditionSelectionDialog {
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.CANCEL_ID, "Close", false);
+		createButton(parent, IDialogConstants.CANCEL_ID, Utilities.getString("CompareWithEditionDialog.closeButton.label"), false); //$NON-NLS-1$
 	}
 }

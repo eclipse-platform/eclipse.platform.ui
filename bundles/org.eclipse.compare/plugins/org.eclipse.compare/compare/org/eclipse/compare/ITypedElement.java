@@ -21,18 +21,18 @@ public interface ITypedElement {
 	 * Type for a folder input. Folders are comparison
 	 * elements that have no contents, only a name and children.
 	 */
-	public static final String FOLDER_TYPE= "FOLDER";
+	public static final String FOLDER_TYPE= "FOLDER"; //$NON-NLS-1$
 
 	/**
 	 * Type for an element whose actual type is text.
 	 */
-	public static final String TEXT_TYPE= "txt";
+	public static final String TEXT_TYPE= "txt"; //$NON-NLS-1$
 
 	/**
 	 * Type for an element whose actual type could not
 	 * be determined.
 	 */
-	public static final String UNKNOWN_TYPE= "???";
+	public static final String UNKNOWN_TYPE= "???"; //$NON-NLS-1$
 
 	/**
 	 * Returns the name of this object.

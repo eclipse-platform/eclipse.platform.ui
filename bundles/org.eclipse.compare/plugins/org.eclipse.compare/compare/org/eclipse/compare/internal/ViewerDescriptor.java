@@ -17,8 +17,8 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class ViewerDescriptor implements IViewerDescriptor {
 
-	private final static String CLASS_ATTRIBUTE= "class";
-	private final static String EXTENSIONS_ATTRIBUTE= "extensions";
+	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
+	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 
 	private IConfigurationElement fConfiguration;
 	private IViewerCreator fViewerCreator;

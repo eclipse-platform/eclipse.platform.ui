@@ -30,15 +30,9 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
  */
 public class ResourceNode extends BufferedContent
 			implements IStructureComparator, ITypedElement, IEditableContent, IModificationDate {
-	
-	private static final int NOTHING= 0;	// nothing to do
-	private static final int UPDATE= 1;	// need to save content
-	private static final int DELETE= 2;	// need to delete file
-		
+			
 	private IResource fResource;
 	private ArrayList fChildren;
-	private String fName;
-	private int fAction= NOTHING;	// what to do on commit
 		
 	
 	/**
@@ -84,7 +78,7 @@ public class ResourceNode extends BufferedContent
 	public String getName() {
 		if (fResource != null)
 			return fResource.getName();
-		return fName;
+		return null;
 	}
 		
 	/* (non Javadoc)
@@ -97,11 +91,6 @@ public class ResourceNode extends BufferedContent
 			String s= fResource.getFileExtension();
 			if (s != null)
 				return s;
-		}
-		if (fName != null) {
-			int pos= fName.lastIndexOf('.');
-			if (pos >= 0)
-				return fName.substring(pos+1);
 		}
 		return ITypedElement.UNKNOWN_TYPE;
 	}

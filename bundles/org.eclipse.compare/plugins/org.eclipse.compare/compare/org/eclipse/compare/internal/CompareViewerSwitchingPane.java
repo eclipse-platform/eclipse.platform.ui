@@ -268,7 +268,7 @@ public abstract class CompareViewerSwitchingPane extends Pane
 			}	
 		}
 			
-		setText(title != null ? title : "");
+		setText(title != null ? title : ""); //$NON-NLS-1$
 	}
 
 	public Object getInput() {

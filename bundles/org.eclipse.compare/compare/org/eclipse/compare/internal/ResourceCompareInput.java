@@ -4,10 +4,12 @@
  */
 package org.eclipse.compare.internal;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -21,6 +23,7 @@ class ResourceCompareInput extends CompareEditorInput {
 	private static final boolean NORMALIZE_CASE= true;
 	
 	private boolean fThreeWay= false;
+	private Object fRoot;
 	private IStructureComparator fAncestor;
 	private IStructureComparator fLeft;
 	private IStructureComparator fRight;
@@ -110,13 +113,13 @@ class ResourceCompareInput extends CompareEditorInput {
 	private IStructureComparator getStructure(IResource input) {
 		
 		if (input instanceof IContainer)
-			return new ResourceNode(input);
+			return new BufferedResourceNode(input);
 			
 		if (input instanceof IFile) {
-			ResourceNode rn= new ResourceNode(input);
+			IStructureComparator rn= new BufferedResourceNode(input);
 			IFile file= (IFile) input;
 			String type= normalizeCase(file.getFileExtension());
-			if ("JAR".equals(type) || "ZIP".equals(type))
+			if ("JAR".equals(type) || "ZIP".equals(type)) //$NON-NLS-2$ //$NON-NLS-1$
 				return new ZipStructureCreator().getStructure(rn);
 			return rn;
 		}
@@ -130,42 +133,74 @@ class ResourceCompareInput extends CompareEditorInput {
 				
 		CompareConfiguration cc= (CompareConfiguration) getCompareConfiguration();
 	
-		String leftLabel= fLeftResource.getName();
-		cc.setLeftLabel(leftLabel);
-		cc.setLeftImage(CompareUIPlugin.getImage(fLeftResource));
-		
-		String rightLabel= fRightResource.getName();
-		cc.setRightLabel(rightLabel);
-		cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
-		
-		StringBuffer title= new StringBuffer();
-		title.append("Compare (");
-		if (fThreeWay) {			
-			String ancestorLabel= fAncestorResource.getName();
-			cc.setAncestorLabel(ancestorLabel);
-			cc.setAncestorImage(CompareUIPlugin.getImage(fAncestorResource));
-			title.append(ancestorLabel);
-			title.append("-");
-		}
-		title.append(leftLabel);
-		title.append("-");
-		title.append(rightLabel);
-		title.append(")");
-		setTitle(title.toString());
-			
-		try {													
-			pm.beginTask("Operation in Progress...", IProgressMonitor.UNKNOWN);
+		try {									
+			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
+			String leftLabel= fLeftResource.getName();
+			cc.setLeftLabel(leftLabel);
+			cc.setLeftImage(CompareUIPlugin.getImage(fLeftResource));
+			
+			String rightLabel= fRightResource.getName();
+			cc.setRightLabel(rightLabel);
+			cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
+			
+			String title;
+			if (fThreeWay) {			
+				String ancestorLabel= fAncestorResource.getName();
+				cc.setAncestorLabel(ancestorLabel);
+				cc.setAncestorImage(CompareUIPlugin.getImage(fAncestorResource));
+				String format= Utilities.getString("ResourceCompare.threeWay.title"); //$NON-NLS-1$
+				title= MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel} );
+			} else {
+				String format= Utilities.getString("ResourceCompare.twoWay.title"); //$NON-NLS-1$
+				title= MessageFormat.format(format, new String[] {leftLabel, rightLabel} );
+			}
+			setTitle(title);
+			
 			Differencer d= new Differencer() {
 				protected Object visit(Object parent, int description, Object ancestor, Object left, Object right) {
 					return new MyDiffNode((IDiffContainer) parent, description, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
 				}
 			};
 			
-			return d.findDifferences(fThreeWay, pm, null, fAncestor, fLeft, fRight);
-		
+			fRoot= d.findDifferences(fThreeWay, pm, null, fAncestor, fLeft, fRight);
+			return fRoot;
+			
 		} finally {
 			pm.done();
+		}
+	}
+		
+	void performSave(IProgressMonitor pm) throws CoreException {
+		if (fRoot instanceof DiffNode) {
+			try {
+				commit(pm, (DiffNode) fRoot);
+			} finally {	
+				setDirty(false);
+			}
+		}
+	}
+	
+	/*
+	 * Recursively walks the diff tree and commits all changes.
+	 */
+	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
+		
+		ITypedElement left= node.getLeft();
+		if (left instanceof BufferedResourceNode)
+			((BufferedResourceNode) left).commit(pm);
+			
+		ITypedElement right= node.getRight();
+		if (right instanceof BufferedResourceNode)
+			((BufferedResourceNode) right).commit(pm);
+
+		IDiffElement[] children= node.getChildren();
+		if (children != null) {
+			for (int i= 0; i < children.length; i++) {
+				IDiffElement element= children[i];
+				if (element instanceof DiffNode)
+					commit(pm, (DiffNode) element);
+			}
 		}
 	}
 	

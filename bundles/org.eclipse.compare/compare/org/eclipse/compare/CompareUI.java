@@ -40,7 +40,7 @@ public final class CompareUI {
  	 * on the top level SWT control of a viewer, it is used as a title in the pane's
  	 * title bar.
  	 */
-	public static final String COMPARE_VIEWER_TITLE= "org.eclipse.compare.CompareUI.CompareViewerTitle";
+	public static final String COMPARE_VIEWER_TITLE= "org.eclipse.compare.CompareUI.CompareViewerTitle"; //$NON-NLS-1$
 	
 	/* (non Javadoc)
 	 * non inatiatiable!

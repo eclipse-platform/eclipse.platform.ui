@@ -51,24 +51,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			
 	private static boolean NORMALIZE_CASE= true;
 
-	private final static String CLASS_ATTRIBUTE= "class";
-	private final static String EXTENSIONS_ATTRIBUTE= "extensions";
+	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
+	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 
-	public static final String PLUGIN_ID= "org.eclipse.compare";
+	public static final String PLUGIN_ID= "org.eclipse.compare"; //$NON-NLS-1$
 
-	private static final String STRUCTURE_CREATOR_EXTENSION_POINT= "structureCreators";
-	private static final String STRUCTURE_MERGEVIEWER_EXTENSION_POINT= "structureMergeViewers";
-	private static final String CONTENT_MERGEVIEWER_EXTENSION_POINT= "contentMergeViewers";
-	private static final String CONTENT_VIEWER_EXTENSION_POINT= "contentViewers";
+	private static final String STRUCTURE_CREATOR_EXTENSION_POINT= "structureCreators"; //$NON-NLS-1$
+	private static final String STRUCTURE_MERGEVIEWER_EXTENSION_POINT= "structureMergeViewers"; //$NON-NLS-1$
+	private static final String CONTENT_MERGEVIEWER_EXTENSION_POINT= "contentMergeViewers"; //$NON-NLS-1$
+	private static final String CONTENT_VIEWER_EXTENSION_POINT= "contentViewers"; //$NON-NLS-1$
 	
-	private static final String COMPARE_EDITOR= PLUGIN_ID + ".CompareEditor";
+	private static final String COMPARE_EDITOR= PLUGIN_ID + ".CompareEditor"; //$NON-NLS-1$
 	
-	private static final String COMPARE= "Compare";
-	private static final String COMPARE_FAILED= "Compare failed";
-	private static final String PROBLEMS_OPENING_EDITOR= "Problems Opening Editor";
-	private static final String NO_DIFFERENCES= "There are no differences between the selected inputs.";
-	private static final String CANT_FIND_WORKBENCH_PAGE= "Can't find active workbench page";
-
 	/** Maps type to icons */
 	private static Map fgImages= new Hashtable(10);
 	/** Maps type to ImageDescriptors */
@@ -271,10 +265,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				try {
 					activePage.openEditor(input, COMPARE_EDITOR);
 				} catch (PartInitException e) {
-					MessageDialog.openError(getShell(), PROBLEMS_OPENING_EDITOR, e.getMessage());
+					MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
 				}
 			} else {
-				MessageDialog.openError(getShell(), PROBLEMS_OPENING_EDITOR, CANT_FIND_WORKBENCH_PAGE);
+				MessageDialog.openError(getShell(),
+						Utilities.getString("CompareUIPlugin.openEditorError"), //$NON-NLS-1$
+						Utilities.getString("CompareUIPlugin.noActiveWorkbenchPage")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -306,12 +302,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			
 			String message= input.getMessage();
 			if (message != null) {
-				MessageDialog.openError(shell, COMPARE_FAILED, message);
+				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), message); //$NON-NLS-1$
 				return false;
 			}
 			
 			if (input.getCompareResult() == null) {
-				MessageDialog.openInformation(shell, COMPARE, NO_DIFFERENCES);
+				MessageDialog.openInformation(shell, Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences")); //$NON-NLS-2$ //$NON-NLS-1$
 				return false;
 			}
 			
@@ -320,7 +316,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		} catch (InterruptedException x) {
 			// cancelled by user		
 		} catch (InvocationTargetException x) {
-			MessageDialog.openError(shell, COMPARE_FAILED, x.getTargetException().getMessage());
+			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), x.getTargetException().getMessage()); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -399,7 +395,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						dispose= true;
 					}
 				} else {
-					id= (ImageDescriptor) fgImageDescriptors.get(normalizeCase("file"));
+					id= (ImageDescriptor) fgImageDescriptors.get(normalizeCase("file")); //$NON-NLS-1$
 					image= id.createImage();
 					dispose= true;
 				}
@@ -449,7 +445,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private static Image createWorkbenchImage(String type) {
 		IEditorRegistry er= getDefault().getWorkbench().getEditorRegistry();
-		ImageDescriptor id= er.getImageDescriptor("foo." + type);
+		ImageDescriptor id= er.getImageDescriptor("foo." + type); //$NON-NLS-1$
 		return id.createImage();
 	}
 	
@@ -461,7 +457,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void registerStructureCreator(String types, IStructureCreatorDescriptor descriptor) {
 		if (types != null) {
-			StringTokenizer tokenizer= new StringTokenizer(types, ",");
+			StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreElements()) {
 				String extension= tokenizer.nextToken().trim();
 				fgStructureCreators.put(normalizeCase(extension), descriptor);
@@ -487,7 +483,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param the descriptor to register
 	 */
 	public static void registerStructureViewerDescriptor(String types, IViewerDescriptor descriptor) {
-		StringTokenizer tokenizer= new StringTokenizer(types, ",");
+		StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String extension= tokenizer.nextToken().trim();
 			fgStructureViewerDescriptors.put(normalizeCase(extension), descriptor);
@@ -501,7 +497,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param descriptor the descriptor to register
 	 */
 	public static void registerContentMergeViewerDescriptor(String types, IViewerDescriptor descriptor) {
-		StringTokenizer tokenizer= new StringTokenizer(types, ",");
+		StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String extension= tokenizer.nextToken().trim();
 			fgContentMergeViewerDescriptors.put(normalizeCase(extension), descriptor);
@@ -515,7 +511,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param descriptor the descriptor to register
 	 */
 	public static void registerContentViewerDescriptor(String types, IViewerDescriptor descriptor) {
-		StringTokenizer tokenizer= new StringTokenizer(types, ",");
+		StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String extension= tokenizer.nextToken().trim();
 			fgContentViewerDescriptors.put(normalizeCase(extension), descriptor);
@@ -624,7 +620,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			if ((leftType == null && right_text) || (left_text && rightType == null) || (left_text && right_text))
 				type= ITypedElement.TEXT_TYPE;
 			else
-				type= "binary";
+				type= "binary"; //$NON-NLS-1$
 			
 			IViewerDescriptor vd= (IViewerDescriptor) fgContentMergeViewerDescriptors.get(normalizeCase(type));
 			if (vd != null)

@@ -128,13 +128,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.SAVE_ID
 	};
 		
-	private static final String MY_UPDATER= "my_updater";
+	private static final String MY_UPDATER= "my_updater"; //$NON-NLS-1$
 	
-	private static final String SYNC_SCROLLING= "SYNC_SCROLLING";
+	private static final String SYNC_SCROLLING= "SYNC_SCROLLING"; //$NON-NLS-1$
 	
 	private static final String TEXT_FONT= ComparePreferencePage.TEXT_FONT;
 	
-	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources";
+	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
 		
 	// constants
 	/** Width of left and right vertical bar */
@@ -374,7 +374,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
 		
 		String platform= SWT.getPlatform();
-		fIsMotif= "motif".equals(platform);
+		fIsMotif= "motif".equals(platform); //$NON-NLS-1$
 		
 		if (fIsMotif)
 			fMarginWidth= 0;
@@ -389,7 +389,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			ps.addPropertyChangeListener(fPreferenceChangeListener);
 			
 			updateFont(ps, parent);
-			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
+			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 			fSynchronizedScrolling= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 		}
 		
@@ -437,10 +437,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
-	public String getTitle() {
-		return "Text Compare";
-	}
-
 	/**
 	 * Configures the passed text viewer.
 	 * This method is called after the three text viewers have been created for the
@@ -642,6 +638,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		final MergeSourceViewer part= new MergeSourceViewer(parent, getResourceBundle());
 		final StyledText te= part.getTextWidget();
 		
+		if (!fConfirmSave)
+			part.hideSaveAction();
+		
 		te.addPaintListener(
 			new PaintListener() {
 				public void paintControl(PaintEvent e) {
@@ -826,7 +825,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				} catch (CoreException ex) {
 				}
 
-				newDoc= new Document(s != null ? s : "");
+				newDoc= new Document(s != null ? s : ""); //$NON-NLS-1$
 				IDocumentPartitioner partitioner= getDocumentPartitioner();
 				if (partitioner != null) {
 					newDoc.setDocumentPartitioner(partitioner);
@@ -837,7 +836,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		boolean enabled= true;
 		if (newDoc == null) {
-			newDoc= new Document("");
+			newDoc= new Document(""); //$NON-NLS-1$
 			enabled= false;
 		}
 		
@@ -861,17 +860,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			// install new document
 			if (newDoc != null) {
 						
-				IRegion region= null;
-				if (o instanceof IDocumentRange) {
-					Position range= ((IDocumentRange) o).getRange();
-					if (range != null)
-						region= new Region(range.getOffset(), range.getLength());
-				}
+				Position range= null;
+				if (o instanceof IDocumentRange)
+					range= ((IDocumentRange) o).getRange();
 					
-				tp.setRegion(region);
+				tp.setRegion(range);
 				if (fSubDoc) {
-					if (region != null) {
-						IRegion r= normalizeDocumentRegion(newDoc, region);
+					if (range != null) {
+						IRegion r= normalizeDocumentRegion(newDoc, toRegion(range));
 						tp.setDocument(newDoc, r.getOffset(), r.getLength());
 					} else
 						tp.setDocument(newDoc);
@@ -883,17 +879,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 		} else {	// just different range
 			
-			IRegion region= null;
-			if (o instanceof IDocumentRange) {
-				Position range= ((IDocumentRange) o).getRange();
-				if (range != null)
-					region= new Region(range.getOffset(), range.getLength());
-			}
+			Position range= null;
+			if (o instanceof IDocumentRange)
+				range= ((IDocumentRange) o).getRange();
 				
-			tp.setRegion(region);
+			tp.setRegion(range);
 			if (fSubDoc) {
-				if (region != null) {
-					IRegion r= normalizeDocumentRegion(tp.getDocument(), region);
+				if (range != null) {
+					IRegion r= normalizeDocumentRegion(tp.getDocument(), toRegion(range));
 					tp.setVisibleRegion(r.getOffset(), r.getLength());
 				}
 			}			
@@ -1038,6 +1031,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		setCurrentDiff(d, false);	// don't select or reveal
 	}
 
+	private static IRegion toRegion(Position position) {
+		if (position != null)
+			return new Region(position.getOffset(), position.getLength());
+		return null;
+	}
+	
 	//---- the differencing
 	
 	/**
@@ -1057,10 +1056,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (lDoc == null || rDoc == null)
 			return;
 			
-		IRegion aRegion= null;
-		IRegion lRegion= fLeft.getRegion();
-		IRegion rRegion= fRight.getRegion();
-		
+		Position aRegion= null;
+		Position lRegion= fLeft.getRegion();
+		Position rRegion= fRight.getRegion();
+				
 		boolean threeWay= isThreeWay();
 		
 		if (threeWay) {
@@ -1074,11 +1073,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		boolean ignoreWhiteSpace= Utilities.getBoolean(getCompareConfiguration(), CompareConfiguration.IGNORE_WHITESPACE, false);		
 		
-		DocLineComparator sright= new DocLineComparator(rDoc, rRegion, ignoreWhiteSpace);
-		DocLineComparator sleft= new DocLineComparator(lDoc, lRegion, ignoreWhiteSpace);
+		DocLineComparator sright= new DocLineComparator(rDoc, toRegion(rRegion), ignoreWhiteSpace);
+		DocLineComparator sleft= new DocLineComparator(lDoc, toRegion(lRegion), ignoreWhiteSpace);
 		DocLineComparator sancestor= null;
 		if (aDoc != null)
-			sancestor= new DocLineComparator(aDoc, aRegion, ignoreWhiteSpace);
+			sancestor= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
 			
 		if (!fSubDoc && rRegion != null && lRegion != null) {
 			// we have to add a diff for the ignored lines
@@ -1121,8 +1120,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 		if (e == null) {
 			ResourceBundle bundle= getResourceBundle();
-			String title= Utilities.getString(bundle, "tooComplexError.title");
-			String format= Utilities.getString(bundle, "tooComplexError.format");
+			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
+			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
 			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 
@@ -1532,18 +1531,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				navigate(true, true, true);
 			}
 		};
-		Utilities.initAction(a, getResourceBundle(), "action.NextDiff.");
+		Utilities.initAction(a, getResourceBundle(), "action.NextDiff."); //$NON-NLS-1$
 		fNextItem= new ActionContributionItem(a);
-		tbm.appendToGroup("navigation", fNextItem);
+		tbm.appendToGroup("navigation", fNextItem); //$NON-NLS-1$
 		
 		a= new Action() {
 			public void run() {
 				navigate(false, true, true);
 			}
 		};
-		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff.");
+		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff."); //$NON-NLS-1$
 		fPreviousItem= new ActionContributionItem(a);
-		tbm.appendToGroup("navigation", fPreviousItem);
+		tbm.appendToGroup("navigation", fPreviousItem); //$NON-NLS-1$
 
 		
 		CompareConfiguration cc= getCompareConfiguration();
@@ -1554,9 +1553,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					copyDiffLeftToRight();
 				}
 			};
-			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffLeftToRight.");
+			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffLeftToRight."); //$NON-NLS-1$
 			fCopyDiffLeftToRightItem= new ActionContributionItem(a);
-			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem);
+			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem); //$NON-NLS-1$
 		}
 		
 		if (cc.isLeftEditable()) {
@@ -1565,9 +1564,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					copyDiffRightToLeft();
 				}
 			};
-			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffRightToLeft.");
+			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffRightToLeft."); //$NON-NLS-1$
 			fCopyDiffRightToLeftItem= new ActionContributionItem(a);
-			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem);
+			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
 		}
 	}
 	
@@ -2172,7 +2171,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fRight.setEnabled(true);
 			} else {
 				// delete
-				fRight.getTextWidget().setText("");
+				fRight.getTextWidget().setText(""); //$NON-NLS-1$
 				fRight.setEnabled(false);
 			}
 			fRightLineCount= fRight.getLineCount();
@@ -2186,7 +2185,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fLeft.setEnabled(true);
 			} else {
 				// delete
-				fLeft.getTextWidget().setText("");
+				fLeft.getTextWidget().setText(""); //$NON-NLS-1$
 				fLeft.setEnabled(false);
 			}
 			fLeftLineCount= fLeft.getLineCount();
