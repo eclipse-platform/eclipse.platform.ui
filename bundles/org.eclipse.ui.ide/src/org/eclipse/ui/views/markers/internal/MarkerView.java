@@ -32,22 +32,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -58,7 +45,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -75,9 +71,6 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
-
-import org.eclipse.ui.internal.UIPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 
 public abstract class MarkerView extends TableView {
 
@@ -117,7 +110,7 @@ public abstract class MarkerView extends TableView {
 						
 			// Refresh everything if markers were added or removed
 			if (refreshNeeded) {
-				totalMarkers = -1;
+				markerCountDirty = true;
 				refresh();
 			}
 		}
@@ -139,7 +132,8 @@ public abstract class MarkerView extends TableView {
 	};
 	
 	private MarkerList currentMarkers = new MarkerList();
-	private int totalMarkers = -1;
+	private int totalMarkers = 0;
+	private boolean markerCountDirty = true;
 
 	Job uiJob = new UIJob(Messages.getString("MarkerView.refreshProgress")) { //$NON-NLS-1$
 		public IStatus runInUIThread(IProgressMonitor monitor) {						
@@ -173,9 +167,10 @@ public abstract class MarkerView extends TableView {
 					currentMarkers = MarkerList.compute(getFilter(), innerMonitor, true);
 					
 					if (innerMonitor.isCanceled()) return;								
-					if (totalMarkers == -1) {
+					if (markerCountDirty) {
 						innerMonitor.subTask(REFRESHING_MARKER_COUNTS);
-						totalMarkers = MarkerList.compute(getMarkerTypes()).length; 
+						totalMarkers = MarkerList.compute(getMarkerTypes()).length;
+						markerCountDirty = false;
 					}
 				}
 			}, subMonitor);
@@ -209,11 +204,6 @@ public abstract class MarkerView extends TableView {
 		if (monitor.isCanceled()) return;
 		
 		uiJob.schedule();
-		try {
-			uiJob.join();
-		} catch (InterruptedException e) {
-			monitor.done();
-		}
 		
 		monitor.done();
 	}
@@ -709,21 +699,8 @@ public abstract class MarkerView extends TableView {
 	}
 	
 	int getTotalMarkers() {
-		if (totalMarkers != -1) {
-			Assert.isTrue(totalMarkers >= currentMarkers.getItemCount());
-		}
-		if (totalMarkers == -1) {
-			try {
-				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) throws CoreException {
-						totalMarkers = MarkerList.compute(getMarkerTypes()).length;				
-					}
-				}, new NullProgressMonitor());
-			} catch (CoreException e) {
-				UIPlugin.getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
-			}
+		Assert.isTrue(totalMarkers >= currentMarkers.getItemCount());
 
-		}
 		return totalMarkers;
 	}
 
