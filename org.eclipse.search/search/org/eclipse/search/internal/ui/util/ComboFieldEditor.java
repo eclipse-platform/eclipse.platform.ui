@@ -140,7 +140,7 @@ public class ComboFieldEditor extends FieldEditor {
 			for (int i= 0; i < fEntryNamesAndValues.length; i++) {
 				fCombo.add(fEntryNamesAndValues[i][0], i);
 			}
-			
+			fCombo.setFont(parent.getFont());
 			fCombo.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					String oldValue= fValue;
