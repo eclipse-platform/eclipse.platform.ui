@@ -11,9 +11,9 @@
 package org.eclipse.core.internal.jobs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -137,14 +137,20 @@ class DeadlockDetector {
 	 * purposes only.
 	 */
 	public void ensureGraphIntegrity(Thread owner, ISchedulingRule rule) {
-		int threadIndex = lockThreads.indexOf(owner);
-		if (threadIndex < 0)
-			return;
-
-		for (int j = 0; j < graph[threadIndex].length; j++) {
-			if ((graph[threadIndex][j] != NO_STATE) && (!(locks.get(j) instanceof ILock)) && (!rule.isConflicting((ISchedulingRule) locks.get(j)))) {
-				graph[threadIndex][j] = NO_STATE;
-				removeExtraRows(threadIndex, j);
+		try {
+			int threadIndex = lockThreads.indexOf(owner);
+			if (threadIndex < 0)
+				return;
+			for (int j = 0; j < graph[threadIndex].length; j++) {
+				if ((graph[threadIndex][j] != NO_STATE) && (!(locks.get(j) instanceof ILock)) && (!rule.isConflicting((ISchedulingRule) locks.get(j)))) {
+					graph[threadIndex][j] = NO_STATE;
+					removeExtraRows(threadIndex, j);
+				}
+			}
+		} catch (RuntimeException e) {
+			if (JobManager.DEBUG_LOCKS) {
+				Policy.debug(false, "Error while ensuring graph integrity: "); //$NON-NLS-1$
+				e.printStackTrace();
 			}
 		}
 	}
@@ -241,8 +247,8 @@ class DeadlockDetector {
 	 * The given lock was aquired by the given thread.
 	 */
 	void lockAcquired(Thread owner, ISchedulingRule lock) {
-		//		if (!(lock instanceof ILock))
-		//			ensureGraphIntegrity(owner, lock);
+		if (!(lock instanceof ILock))
+			ensureGraphIntegrity(owner, lock);
 		int lockIndex = indexOf(lock);
 		int threadIndex = indexOf(owner);
 		if (resize)
@@ -283,6 +289,8 @@ class DeadlockDetector {
 			graph[threadIndex][lockIndex] = NO_STATE;
 			return;
 		}
+		if (!JobManager.DEBUG_LOCKS && graph[threadIndex][lockIndex] == NO_STATE)
+			return;
 		graph[threadIndex][lockIndex]--;
 		Assert.isTrue(graph[threadIndex][lockIndex] > -1, "More releases than acquires for thread " + owner.getName() + " and lock " + lock); //$NON-NLS-1$ //$NON-NLS-2$
 		if (graph[threadIndex][lockIndex] == NO_STATE)
@@ -318,14 +326,12 @@ class DeadlockDetector {
 	 * Update the graph.
 	 */
 	void lockWaitStart(Thread client, ISchedulingRule lock) {
-		//		if (!(lock instanceof ILock))
-		//			ensureGraphIntegrity(client, lock);
+		if (!(lock instanceof ILock))
+			ensureGraphIntegrity(client, lock);
 		setToWait(client, lock);
 		int lockIndex = indexOf(lock);
 		int[] temp = new int[lockThreads.size()];
-		for (int i = 0; i < temp.length; i++) {
-			temp[i] = 0;
-		}
+		Arrays.fill(temp, 0);
 		checkWaitCycles(temp, lockIndex);
 		temp = null;
 	}
@@ -336,10 +342,16 @@ class DeadlockDetector {
 	void lockWaitStop(Thread owner, ISchedulingRule lock) {
 		int lockIndex = getTrueLockIndex(lock);
 		int threadIndex = lockThreads.indexOf(owner);
-		if (threadIndex < 0)
-			Assert.isTrue(false, "Thread " + owner.getName() + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
-		if (lockIndex < 0)
-			Assert.isTrue(false, "Lock " + lock + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
+		if (threadIndex < 0) {
+			if (JobManager.DEBUG_LOCKS)
+				System.out.println("Thread " + owner.getName() + " was already removed.");//$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (lockIndex < 0) {
+			if (JobManager.DEBUG_LOCKS)
+				System.out.println("Lock " + lock + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
 		if (graph[threadIndex][lockIndex] != WAITING_FOR_LOCK)
 			Assert.isTrue(false, "Thread " + owner.getName() + " was not waiting for lock " + lock.toString() + " so it could not time out."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		graph[threadIndex][lockIndex] = NO_STATE;
