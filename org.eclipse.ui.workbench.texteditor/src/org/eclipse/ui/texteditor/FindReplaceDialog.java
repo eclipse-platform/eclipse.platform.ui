@@ -12,6 +12,7 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.text.BreakIterator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -1478,18 +1479,19 @@ class FindReplaceDialog extends Dialog {
 	 * string is a letter.
 	 * 
 	 * @param str
-	 * @return <code>true</code> if the given string is a worf
+	 * @return <code>true</code> if the given string is a word
 	 * @since 3.0
 	 */
 	private boolean isWord(String str) {
 		if (str == null)
 			return false;
 		
-		for (int i= 0, length= str.length(); i < length; i++) {
-			if (!Character.isLetter(str.charAt(i)))
-				return false;
-		}
-		return true; 
+		BreakIterator wordIterator= BreakIterator.getWordInstance();
+		wordIterator.setText(str);
+		int first= wordIterator.first();
+		if (first > 0)
+			return false;
+		return wordIterator.next() == str.length();
 	}
 	
 	/**
