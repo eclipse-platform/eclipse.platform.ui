@@ -37,22 +37,29 @@ import org.eclipse.jface.util.Assert;
  * @see #ICoolBarManager
  * @since 3.0
  */
-public class CoolBarManager extends ContributionManager implements ICoolBarManager {
+public class CoolBarManager extends ContributionManager implements
+        ICoolBarManager {
 
     /**
      * The number of widgets above which the cool bar should have its redraw
      * disabled. This is to reduce flicker.
      */
     private static final int REDRAW_LIMIT = 3;
-    /**
-     * The cool bar items style; <code>SWT.NONE</code> by default.
-     */
-    private int itemStyle = SWT.NONE;
 
     /**
      * A separator created by the end user.
      */
     public final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
+
+    /**
+     * The original creation order of the contribution items.
+     */
+    private ArrayList cbItemsCreationOrder = new ArrayList();
+
+    /**
+     * MenuManager for cool bar pop-up menu, or null if none.
+     */
+    private MenuManager contextMenuManager = null;
 
     /**
      * The cool bar control; <code>null</code> before creation and after
@@ -61,14 +68,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     private CoolBar coolBar = null;
 
     /**
-     * MenuManager for cool bar pop-up menu, or null if none.
+     * The cool bar items style; <code>SWT.NONE</code> by default.
      */
-    private MenuManager contextMenuManager = null;
-
-    /**
-     * The original creation order of the contribution items.
-     */
-    private ArrayList cbItemsCreationOrder = new ArrayList();
+    private int itemStyle = SWT.NONE;
 
     /**
      * Creates a new cool bar manager with the default style. Equivalent to
@@ -76,19 +78,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
      */
     public CoolBarManager() {
         // do nothing
-    }
-
-    /**
-     * Creates a cool bar manager with the given SWT style. Calling <code>createControl</code>
-     * will create the cool bar control.
-     * 
-     * @param style
-     *            the cool bar item style; see
-     *            {@link org.eclipse.swt.widgets.CoolBar CoolBar}for for valid
-     *            style bits
-     */
-    public CoolBarManager(int style) {
-        itemStyle = style;
     }
 
     /**
@@ -106,6 +95,19 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         itemStyle = coolBar.getStyle();
     }
 
+    /**
+     * Creates a cool bar manager with the given SWT style. Calling <code>createControl</code>
+     * will create the cool bar control.
+     * 
+     * @param style
+     *            the cool bar item style; see
+     *            {@link org.eclipse.swt.widgets.CoolBar CoolBar}for for valid
+     *            style bits
+     */
+    public CoolBarManager(int style) {
+        itemStyle = style;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -114,6 +116,79 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     public void add(IToolBarManager toolBarManager) {
         Assert.isNotNull(toolBarManager);
         super.add(new ToolBarContributionItem(toolBarManager));
+    }
+
+    /**
+     * Colapses consecutive separators and removes a separator from the
+     * beginning and end of the list.
+     * 
+     * @param contributionList
+     *            the list of contributions
+     */
+    private ArrayList adjustContributionList(ArrayList contributionList) {
+        IContributionItem item;
+        // Fist remove a separator if it is the first element of the list
+        if (contributionList.size() != 0) {
+            item = (IContributionItem) contributionList.get(0);
+            if (item.isSeparator()) {
+                contributionList.remove(0);
+            }
+
+            ListIterator iterator = contributionList.listIterator();
+            // collapse consecutive separators
+            while (iterator.hasNext()) {
+                item = (IContributionItem) iterator.next();
+                if (item.isSeparator()) {
+                    while (iterator.hasNext()) {
+                        item = (IContributionItem) iterator.next();
+                        if (item.isSeparator()) {
+                            iterator.remove();
+                        } else {
+                            break;
+                        }
+                    }
+
+                }
+            }
+            // Now check last element to see if there is a separator
+            item = (IContributionItem) contributionList.get(contributionList
+                    .size() - 1);
+            if (item.isSeparator()) {
+                contributionList.remove(contributionList.size() - 1);
+            }
+        }
+        return contributionList;
+
+    }
+
+    /**
+     * Positions the list iterator to the end of all the separators. Calling
+     * <code>next()</code> the iterator should return the immediate object
+     * following the last separator.
+     * 
+     * @param iterator
+     *            the list iterator.
+     */
+    private void collapseSeparators(ListIterator iterator) {
+
+        while (iterator.hasNext()) {
+            IContributionItem item = (IContributionItem) iterator.next();
+            if (!item.isSeparator()) {
+                iterator.previous();
+                return;
+            }
+        }
+    }
+
+    /**
+     * Returns whether the cool bar control has been created and not yet
+     * disposed.
+     * 
+     * @return <code>true</code> if the control has been created and not yet
+     *         disposed, <code>false</code> otherwise
+     */
+    private boolean coolBarExist() {
+        return coolBar != null && !coolBar.isDisposed();
     }
 
     /**
@@ -139,35 +214,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
             update(false);
         }
         return coolBar;
-    }
-
-    /**
-     * Subclasses may extend this <code>ContributionManager</code> method,
-     * but must call <code>super.itemAdded</code>.
-     * 
-     * @see org.eclipse.jface.action.ContributionManager#itemAdded(org.eclipse.jface.action.IContributionItem)
-     */
-    protected void itemAdded(IContributionItem item) {
-        Assert.isNotNull(item);
-        super.itemAdded(item);
-        int insertedAt = indexOf(item);
-        cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0), cbItemsCreationOrder.size()),
-                item);
-    }
-
-    /**
-     * Restores the canonical order of this cool bar manager. The canonical
-     * order is the order in which the contribution items where added.
-     */
-    public void resetLayout() {
-        for (ListIterator iterator = cbItemsCreationOrder.listIterator(); iterator.hasNext();) {
-            IContributionItem item = (IContributionItem) iterator.next();
-            // if its a user separator then do not include in original order.
-            if ((item.getId() != null) && (item.getId().equals(USER_SEPARATOR))) {
-                iterator.remove();
-            }
-        }
-        setLayout(cbItemsCreationOrder);
     }
 
     /**
@@ -199,44 +245,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     }
 
     /**
-     * Returns whether the cool bar control has been created and not yet
-     * disposed.
-     * 
-     * @return <code>true</code> if the control has been created and not yet
-     *         disposed, <code>false</code> otherwise
-     */
-    private boolean coolBarExist() {
-        return coolBar != null && !coolBar.isDisposed();
-    }
-
-    /**
-     * Returns the cool bar control for this manager.
-     * 
-     * @return the cool bar control, or <code>null</code> if none
-     */
-    public CoolBar getControl() {
-        return coolBar;
-    }
-
-    /**
-     * Finds the cool item associated with the given contribution item.
-     * 
-     * @param item
-     *            the contribution item
-     * @return the associated cool item, or <code>null</code> if not found
-     */
-    private CoolItem findCoolItem(IContributionItem item) {
-        if (coolBar == null) return null;
-        CoolItem[] items = coolBar.getItems();
-        for (int i = 0; i < items.length; i++) {
-            CoolItem coolItem = items[i];
-            IContributionItem data = (IContributionItem) coolItem.getData();
-            if (data != null && data.equals(item)) return coolItem;
-        }
-        return null;
-    }
-
-    /**
      * Disposes the given cool item.
      * 
      * @param item
@@ -258,52 +266,21 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     }
 
     /**
-     * Subclasses may extend this <code>ContributionManager</code> method,
-     * but must call <code>super.itemRemoved</code>.
+     * Finds the cool item associated with the given contribution item.
      * 
-     * @see org.eclipse.jface.action.ContributionManager#itemRemoved(org.eclipse.jface.action.IContributionItem)
+     * @param item
+     *            the contribution item
+     * @return the associated cool item, or <code>null</code> if not found
      */
-    protected void itemRemoved(IContributionItem item) {
-        Assert.isNotNull(item);
-        super.itemRemoved(item);
-        CoolItem coolItem = findCoolItem(item);
-        if (coolItem != null) {
-            coolItem.setData(null);
+    private CoolItem findCoolItem(IContributionItem item) {
+        if (coolBar == null) return null;
+        CoolItem[] items = coolBar.getItems();
+        for (int i = 0; i < items.length; i++) {
+            CoolItem coolItem = items[i];
+            IContributionItem data = (IContributionItem) coolItem.getData();
+            if (data != null && data.equals(item)) return coolItem;
         }
-    }
-
-    /**
-     * Sets the tab order of the coolbar to the visual order of its items.
-     */
-    /* package */void updateTabOrder() {
-        if (coolBar != null) {
-            CoolItem[] items = coolBar.getItems();
-            if (items != null) {
-                ArrayList children = new ArrayList(items.length);
-                for (int i = 0; i < items.length; i++) {
-                    if ((items[i].getControl() != null) && (!items[i].getControl().isDisposed())) {
-                        children.add(items[i].getControl());
-                    }
-                }
-                // Convert array
-                Control[] childrenArray = new Control[0];
-                childrenArray = (Control[]) children.toArray(childrenArray);
-
-                if (childrenArray != null) {
-                    coolBar.setTabList(childrenArray);
-                }
-
-            }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
-     */
-    public int getStyle() {
-        return itemStyle;
+        return null;
     }
 
     /**
@@ -335,6 +312,41 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     }
 
     /**
+     * Returns the control of the Menu Manager. If the menu manager does not
+     * have a control then one is created.
+     * 
+     * @return menu control associated with manager, or null if none
+     */
+    private Menu getContextMenuControl() {
+        if ((contextMenuManager != null) && (coolBar != null)) {
+            Menu menuWidget = contextMenuManager.getMenu();
+            if ((menuWidget == null) || (menuWidget.isDisposed())) {
+                menuWidget = contextMenuManager.createContextMenu(coolBar);
+            }
+            return menuWidget;
+        }
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
+     */
+    public IMenuManager getContextMenuManager() {
+        return contextMenuManager;
+    }
+
+    /**
+     * Returns the cool bar control for this manager.
+     * 
+     * @return the cool bar control, or <code>null</code> if none
+     */
+    public CoolBar getControl() {
+        return coolBar;
+    }
+
+    /**
      * Returns an array list of all the contribution items in the manager.
      * 
      * @return an array list of contribution items.
@@ -346,6 +358,77 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
             list.add(cbItems[i]);
         }
         return list;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
+     */
+    public boolean getLockLayout() {
+        if (!coolBarExist()) { return false; }
+        return coolBar.getLocked();
+    }
+
+    /**
+     * Returns the number of rows that should be displayed visually.
+     * 
+     * @param items
+     *            the array of contributin items
+     * @return the number of rows
+     */
+    private int getNumRows(IContributionItem[] items) {
+        int numRows = 1;
+        boolean separatorFound = false;
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].isSeparator()) {
+                separatorFound = true;
+            }
+            if ((separatorFound) && (items[i].isVisible())
+                    && (!items[i].isGroupMarker()) && (!items[i].isSeparator())) {
+                numRows++;
+                separatorFound = false;
+            }
+        }
+        return numRows;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.ICoolBarManager#getStyle()
+     */
+    public int getStyle() {
+        return itemStyle;
+    }
+
+    /**
+     * Subclasses may extend this <code>ContributionManager</code> method,
+     * but must call <code>super.itemAdded</code>.
+     * 
+     * @see org.eclipse.jface.action.ContributionManager#itemAdded(org.eclipse.jface.action.IContributionItem)
+     */
+    protected void itemAdded(IContributionItem item) {
+        Assert.isNotNull(item);
+        super.itemAdded(item);
+        int insertedAt = indexOf(item);
+        cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0),
+                cbItemsCreationOrder.size()), item);
+    }
+
+    /**
+     * Subclasses may extend this <code>ContributionManager</code> method,
+     * but must call <code>super.itemRemoved</code>.
+     * 
+     * @see org.eclipse.jface.action.ContributionManager#itemRemoved(org.eclipse.jface.action.IContributionItem)
+     */
+    protected void itemRemoved(IContributionItem item) {
+        Assert.isNotNull(item);
+        super.itemRemoved(item);
+        CoolItem coolItem = findCoolItem(item);
+        if (coolItem != null) {
+            coolItem.setData(null);
+        }
     }
 
     /**
@@ -382,137 +465,22 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         }
     }
 
-    /**
-     * Relocates the given contribution item to the specified index.
-     * 
-     * @param cbItem
-     *            the conribution item to relocate
-     * @param index
-     *            the index to locate this item
-     * @param contributionList
-     *            the current list of conrtributions
-     * @param itemLocation
+    /*
+     * Used for debuging. Prints all the items in the internal structures.
      */
-    private void relocate(IContributionItem cbItem, int index, ArrayList contributionList,
-            HashMap itemLocation) {
-
-        if (!(itemLocation.get(cbItem) instanceof Integer)) return;
-        int targetRow = ((Integer) itemLocation.get(cbItem)).intValue();
-
-        int cbInternalIndex = contributionList.indexOf(cbItem);
-
-        //	by default add to end of list
-        int insertAt = contributionList.size();
-        // Find the row to place this item in.
-        ListIterator iterator = contributionList.listIterator();
-        // bypass any separators at the begining
-        collapseSeparators(iterator);
-        int currentRow = -1;
-        while (iterator.hasNext()) {
-
-            currentRow++;
-            if (currentRow == targetRow) {
-                // We found the row to insert the item
-                int virtualIndex = 0;
-                insertAt = iterator.nextIndex();
-                // first check the position of the current element (item)
-                // then get the next element
-                while (iterator.hasNext()) {
-                    IContributionItem item = (IContributionItem) iterator.next();
-                    Integer itemRow = (Integer) itemLocation.get(item);
-                    if (item.isSeparator()) break;
-                    // if the item has an associate widget
-                    if ((itemRow != null) && (itemRow.intValue() == targetRow)) {
-                        // if the next element is the index we are looking for
-                        // then break
-                        if (virtualIndex >= index) break;
-                        virtualIndex++;
-
-                    }
-                    insertAt++;
-                }
-                // If we don't need to move it then we return
-                if (cbInternalIndex == insertAt) return;
-                break;
-            }
-            nextRow(iterator, true);
-        }
-        contributionList.remove(cbItem);
-
-        // Adjust insertAt index
-        if (cbInternalIndex < insertAt) {
-            insertAt--;
-        }
-
-        // if we didn't find the row then add a new row
-        if (currentRow != targetRow) {
-            contributionList.add(new Separator(USER_SEPARATOR));
-            insertAt = contributionList.size();
-        }
-        insertAt = Math.min(insertAt, contributionList.size());
-        contributionList.add(insertAt, cbItem);
-
-    }
-
-    /**
-     * Positions the list iterator to the end of all the separators. Calling
-     * <code>next()</code> the iterator should return the immediate object
-     * following the last separator.
-     * 
-     * @param iterator
-     *            the list iterator.
-     */
-    private void collapseSeparators(ListIterator iterator) {
-
-        while (iterator.hasNext()) {
-            IContributionItem item = (IContributionItem) iterator.next();
-            if (!item.isSeparator()) {
-                iterator.previous();
-                return;
-            }
-        }
-    }
-
-    /**
-     * Colapses consecutive separators and removes a separator from the
-     * beginning and end of the list.
-     * 
-     * @param contributionList
-     *            the list of contributions
-     */
-    private ArrayList adjustContributionList(ArrayList contributionList) {
-        IContributionItem item;
-        // Fist remove a separator if it is the first element of the list
-        if (contributionList.size() != 0) {
-            item = (IContributionItem) contributionList.get(0);
+    private void printContributions(ArrayList contributionList) {
+        int index = 0;
+        System.out.println("----------------------------------\n"); //$NON-NLS-1$
+        for (Iterator i = contributionList.iterator(); i.hasNext(); index++) {
+            IContributionItem item = (IContributionItem) i.next();
             if (item.isSeparator()) {
-                contributionList.remove(0);
-            }
-
-            ListIterator iterator = contributionList.listIterator();
-            // collapse consecutive separators
-            while (iterator.hasNext()) {
-                item = (IContributionItem) iterator.next();
-                if (item.isSeparator()) {
-                    while (iterator.hasNext()) {
-                        item = (IContributionItem) iterator.next();
-                        if (item.isSeparator()) {
-                            iterator.remove();
-                        } else {
-                            break;
-                        }
-                    }
-
-                }
-            }
-            // Now check last element to see if there is a separator
-            item = (IContributionItem) contributionList.get(contributionList.size() - 1);
-            if (item.isSeparator()) {
-                contributionList.remove(contributionList.size() - 1);
+                System.out.println("Separator"); //$NON-NLS-1$
+            } else {
+                System.out.println(index + ". Item id: " + item.getId()
+                        + " - is Visible: " //$NON-NLS-1$//$NON-NLS-2$
+                        + item.isVisible());
             }
         }
-        return contributionList;
-
     }
 
     /**
@@ -550,7 +518,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         for (int i = 0; i < coolItems.length; i++) {
             CoolItem coolItem = coolItems[i];
             if (coolItem.getData() instanceof IContributionItem) {
-                IContributionItem cbItem = (IContributionItem) coolItem.getData();
+                IContributionItem cbItem = (IContributionItem) coolItem
+                        .getData();
                 displayedItems.add(Math.min(i, displayedItems.size()), cbItem);
             }
         }
@@ -571,7 +540,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         while (rowIterator.hasNext()) {
             // Scan row
             while (rowIterator.hasNext()) {
-                IContributionItem cbItem = (IContributionItem) rowIterator.next();
+                IContributionItem cbItem = (IContributionItem) rowIterator
+                        .next();
                 if (displayedItems.contains(cbItem)) {
                     existingVisibleRows.add(new Integer(numRow));
                     break;
@@ -593,7 +563,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         HashMap itemLocation = new HashMap();
         for (ListIterator locationIterator = displayedItems.listIterator(); locationIterator
                 .hasNext();) {
-            IContributionItem item = (IContributionItem) locationIterator.next();
+            IContributionItem item = (IContributionItem) locationIterator
+                    .next();
             if (item.isSeparator()) {
                 if (existingRows.hasNext()) {
                     Integer value = (Integer) existingRows.next();
@@ -608,7 +579,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
         }
 
         // Insert the contribution items in their correct location
-        for (ListIterator iterator = displayedItems.listIterator(); iterator.hasNext();) {
+        for (ListIterator iterator = displayedItems.listIterator(); iterator
+                .hasNext();) {
             IContributionItem cbItem = (IContributionItem) iterator.next();
             if (cbItem.isSeparator()) {
                 coolItemIndex = 0;
@@ -621,28 +593,146 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 
         if (contributionList.size() != 0) {
             contributionList = adjustContributionList(contributionList);
-            IContributionItem[] array = new IContributionItem[contributionList.size() - 1];
+            IContributionItem[] array = new IContributionItem[contributionList
+                    .size() - 1];
             array = (IContributionItem[]) contributionList.toArray(array);
             internalSetItems(array);
         }
 
     }
 
-    /*
-     * Used for debuging. Prints all the items in the internal structures.
+    /**
+     * Relocates the given contribution item to the specified index.
+     * 
+     * @param cbItem
+     *            the conribution item to relocate
+     * @param index
+     *            the index to locate this item
+     * @param contributionList
+     *            the current list of conrtributions
+     * @param itemLocation
      */
-    private void printContributions(ArrayList contributionList) {
-        int index = 0;
-        System.out.println("----------------------------------\n"); //$NON-NLS-1$
-        for (Iterator i = contributionList.iterator(); i.hasNext(); index++) {
-            IContributionItem item = (IContributionItem) i.next();
-            if (item.isSeparator()) {
-                System.out.println("Separator"); //$NON-NLS-1$
-            } else {
-                System.out.println(index + ". Item id: " + item.getId() + " - is Visible: " //$NON-NLS-1$//$NON-NLS-2$
-                        + item.isVisible());
+    private void relocate(IContributionItem cbItem, int index,
+            ArrayList contributionList, HashMap itemLocation) {
+
+        if (!(itemLocation.get(cbItem) instanceof Integer)) return;
+        int targetRow = ((Integer) itemLocation.get(cbItem)).intValue();
+
+        int cbInternalIndex = contributionList.indexOf(cbItem);
+
+        //	by default add to end of list
+        int insertAt = contributionList.size();
+        // Find the row to place this item in.
+        ListIterator iterator = contributionList.listIterator();
+        // bypass any separators at the begining
+        collapseSeparators(iterator);
+        int currentRow = -1;
+        while (iterator.hasNext()) {
+
+            currentRow++;
+            if (currentRow == targetRow) {
+                // We found the row to insert the item
+                int virtualIndex = 0;
+                insertAt = iterator.nextIndex();
+                // first check the position of the current element (item)
+                // then get the next element
+                while (iterator.hasNext()) {
+                    IContributionItem item = (IContributionItem) iterator
+                            .next();
+                    Integer itemRow = (Integer) itemLocation.get(item);
+                    if (item.isSeparator()) break;
+                    // if the item has an associate widget
+                    if ((itemRow != null) && (itemRow.intValue() == targetRow)) {
+                        // if the next element is the index we are looking for
+                        // then break
+                        if (virtualIndex >= index) break;
+                        virtualIndex++;
+
+                    }
+                    insertAt++;
+                }
+                // If we don't need to move it then we return
+                if (cbInternalIndex == insertAt) return;
+                break;
+            }
+            nextRow(iterator, true);
+        }
+        contributionList.remove(cbItem);
+
+        // Adjust insertAt index
+        if (cbInternalIndex < insertAt) {
+            insertAt--;
+        }
+
+        // if we didn't find the row then add a new row
+        if (currentRow != targetRow) {
+            contributionList.add(new Separator(USER_SEPARATOR));
+            insertAt = contributionList.size();
+        }
+        insertAt = Math.min(insertAt, contributionList.size());
+        contributionList.add(insertAt, cbItem);
+
+    }
+
+    /**
+     * Restores the canonical order of this cool bar manager. The canonical
+     * order is the order in which the contribution items where added.
+     */
+    public void resetLayout() {
+        for (ListIterator iterator = cbItemsCreationOrder.listIterator(); iterator
+                .hasNext();) {
+            IContributionItem item = (IContributionItem) iterator.next();
+            // if its a user separator then do not include in original order.
+            if ((item.getId() != null) && (item.getId().equals(USER_SEPARATOR))) {
+                iterator.remove();
             }
         }
+        setLayout(cbItemsCreationOrder);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.ICoolBarManager#setContextMenuManager(org.eclipse.jface.action.IMenuManager)
+     */
+    public void setContextMenuManager(IMenuManager contextMenuManager) {
+        this.contextMenuManager = (MenuManager) contextMenuManager;
+        if (coolBar != null) {
+            coolBar.setMenu(getContextMenuControl());
+        }
+    }
+
+    /**
+     * Replaces the internal data structure with the given new order. Then
+     * force and update.
+     * 
+     * @param newLayout
+     *            a list of new order of contribution items.
+     */
+    public void setLayout(ArrayList newLayout) {
+        IContributionItem[] newItems = new IContributionItem[0];
+        newItems = (IContributionItem[]) newLayout.toArray(newItems);
+        // dispose of all the cool items on the cool bar manager
+        if (coolBar != null) {
+            CoolItem[] coolItems = coolBar.getItems();
+            for (int i = 0; i < coolItems.length; i++) {
+                dispose(coolItems[i]);
+            }
+        }
+        // Set the internal structure to this order
+        internalSetItems(newItems);
+        // Force and update
+        update(true);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
+     */
+    public void setLockLayout(boolean value) {
+        if (!coolBarExist()) { return; }
+        coolBar.setLocked(value);
     }
 
     /**
@@ -678,7 +768,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
                 if (item.isVisible()) {
                     visibleItems.add(item);
                 }
-                System.out.println("Visible items: " + visibleItems);
             }
 
             /*
@@ -736,7 +825,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
                 // Retrieve the corresponding contribution item from SWT's
                 // data.
                 if (sourceIndex < coolItems.length) {
-                    destinationItem = (IContributionItem) coolItems[sourceIndex].getData();
+                    destinationItem = (IContributionItem) coolItems[sourceIndex]
+                            .getData();
                 } else {
                     destinationItem = null;
                 }
@@ -748,7 +838,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
                         destinationIndex++;
                         continue;
 
-                    } else if ((destinationItem.isSeparator()) && (sourceItem.isSeparator())) {
+                    } else if ((destinationItem.isSeparator())
+                            && (sourceItem.isSeparator())) {
                         coolItems[sourceIndex].setData(sourceItem);
                         sourceIndex++;
                         destinationIndex++;
@@ -797,8 +888,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
                 if (item.isSeparator()) {
                     foundSeparator = true;
                 }
-                if ((!item.isSeparator()) && (!item.isGroupMarker()) && (item.isVisible())
-                        && (coolItem != null) && (foundSeparator)) {
+                if ((!item.isSeparator()) && (!item.isGroupMarker())
+                        && (item.isVisible()) && (coolItem != null)
+                        && (foundSeparator)) {
                     wrapIndices[j] = coolBar.indexOf(coolItem);
                     j++;
                     foundSeparator = false;
@@ -829,106 +921,28 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
     }
 
     /**
-     * Returns the number of rows that should be displayed visually.
-     * 
-     * @param items
-     *            the array of contributin items
-     * @return the number of rows
+     * Sets the tab order of the coolbar to the visual order of its items.
      */
-    private int getNumRows(IContributionItem[] items) {
-        int numRows = 1;
-        boolean separatorFound = false;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].isSeparator()) {
-                separatorFound = true;
-            }
-            if ((separatorFound) && (items[i].isVisible()) && (!items[i].isGroupMarker())
-                    && (!items[i].isSeparator())) {
-                numRows++;
-                separatorFound = false;
-            }
-        }
-        return numRows;
-    }
-
-    /**
-     * Returns the control of the Menu Manager. If the menu manager does not
-     * have a control then one is created.
-     * 
-     * @return menu control associated with manager, or null if none
-     */
-    private Menu getContextMenuControl() {
-        if ((contextMenuManager != null) && (coolBar != null)) {
-            Menu menuWidget = contextMenuManager.getMenu();
-            if ((menuWidget == null) || (menuWidget.isDisposed())) {
-                menuWidget = contextMenuManager.createContextMenu(coolBar);
-            }
-            return menuWidget;
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
-     */
-    public IMenuManager getContextMenuManager() {
-        return contextMenuManager;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#setContextMenuManager(org.eclipse.jface.action.IMenuManager)
-     */
-    public void setContextMenuManager(IMenuManager contextMenuManager) {
-        this.contextMenuManager = (MenuManager) contextMenuManager;
+    /* package */void updateTabOrder() {
         if (coolBar != null) {
-            coolBar.setMenu(getContextMenuControl());
-        }
-    }
+            CoolItem[] items = coolBar.getItems();
+            if (items != null) {
+                ArrayList children = new ArrayList(items.length);
+                for (int i = 0; i < items.length; i++) {
+                    if ((items[i].getControl() != null)
+                            && (!items[i].getControl().isDisposed())) {
+                        children.add(items[i].getControl());
+                    }
+                }
+                // Convert array
+                Control[] childrenArray = new Control[0];
+                childrenArray = (Control[]) children.toArray(childrenArray);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
-     */
-    public boolean getLockLayout() {
-        if (!coolBarExist()) { return false; }
-        return coolBar.getLocked();
-    }
+                if (childrenArray != null) {
+                    coolBar.setTabList(childrenArray);
+                }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
-     */
-    public void setLockLayout(boolean value) {
-        if (!coolBarExist()) { return; }
-        coolBar.setLocked(value);
-    }
-
-    /**
-     * Replaces the internal data structure with the given new order. Then
-     * force and update.
-     * 
-     * @param newLayout
-     *            a list of new order of contribution items.
-     */
-    public void setLayout(ArrayList newLayout) {
-        IContributionItem[] newItems = new IContributionItem[0];
-        newItems = (IContributionItem[]) newLayout.toArray(newItems);
-        // dispose of all the cool items on the cool bar manager
-        if (coolBar != null) {
-            CoolItem[] coolItems = coolBar.getItems();
-            for (int i = 0; i < coolItems.length; i++) {
-                dispose(coolItems[i]);
             }
         }
-        // Set the internal structure to this order
-        internalSetItems(newItems);
-        // Force and update
-        update(true);
     }
 }

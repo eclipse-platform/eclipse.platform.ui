@@ -289,7 +289,8 @@ public class ToolBarContributionItem extends ContributionItem {
         int visibleItemCount = 0;
         while (visibleItemCount < toolCount) {
             Rectangle toolBounds = tools[visibleItemCount].getBounds();
-            Point point = toolBar.toDisplay(new Point(toolBounds.x, toolBounds.y));
+            Point point = toolBar.toDisplay(new Point(toolBounds.x,
+                    toolBounds.y));
             toolBounds.x = point.x;
             toolBounds.y = point.y;
             // stop if the tool is at least partially hidden by the drop down
@@ -313,7 +314,8 @@ public class ToolBarContributionItem extends ContributionItem {
                         ((ActionContributionItem) data).getAction());
                 chevronMenuManager.add(contribution);
             } else if (data instanceof SubContributionItem) {
-                IContributionItem innerData = ((SubContributionItem) data).getInnerItem();
+                IContributionItem innerData = ((SubContributionItem) data)
+                        .getInnerItem();
                 if (innerData instanceof ActionContributionItem) {
                     ActionContributionItem contribution = new ActionContributionItem(
                             ((ActionContributionItem) innerData).getAction());
@@ -348,7 +350,8 @@ public class ToolBarContributionItem extends ContributionItem {
                     ToolBar innerToolBar = toolBarManager.getControl();
                     if (innerToolBar != null) {
                         innerToolBar.setMenu(null);
-                        Menu innerParentMenu = innerToolBar.getParent().getMenu();
+                        Menu innerParentMenu = innerToolBar.getParent()
+                                .getMenu();
                         if (innerParentMenu != null) {
                             innerParentMenu.removeListener(SWT.Hide, this);
                         }
@@ -366,6 +369,32 @@ public class ToolBarContributionItem extends ContributionItem {
      */
     private void handleWidgetDispose(DisposeEvent event) {
         coolItem = null;
+    }
+
+    /**
+     * A contribution item is visible iff its internal state is visible <em>or</em>
+     * the tool bar manager contains something other than group markers and
+     * separators.
+     * 
+     * @return <code>true</code> if the tool bar manager contains something
+     *         other than group marks and separators, and the internal state is
+     *         set to be visible.
+     */
+    public boolean isVisible() {
+        boolean visibleItem = false;
+        if (toolBarManager != null) {
+            IContributionItem[] contributionItems = toolBarManager.getItems();
+            for (int i = 0; i < contributionItems.length; i++) {
+                IContributionItem contributionItem = contributionItems[i];
+                if ((!contributionItem.isGroupMarker())
+                        && (!contributionItem.isSeparator())) {
+                    visibleItem = true;
+                    break;
+                }
+            }
+        }
+
+        return visibleItem || super.isVisible();
     }
 
     /*
@@ -469,7 +498,8 @@ public class ToolBarContributionItem extends ContributionItem {
      */
     public void update(String propertyName) {
         if (coolItem != null) {
-            if ((propertyName == null) || propertyName.equals(ICoolBarManager.SIZE)) {
+            if ((propertyName == null)
+                    || propertyName.equals(ICoolBarManager.SIZE)) {
                 updateSize(true);
             }
         }
@@ -498,7 +528,8 @@ public class ToolBarContributionItem extends ContributionItem {
                 }
             }
             ToolBar toolBar = (ToolBar) coolItem.getControl();
-            if ((toolBar == null) || (toolBar.isDisposed()) || (toolBar.getItemCount() <= 0)) {
+            if ((toolBar == null) || (toolBar.isDisposed())
+                    || (toolBar.getItemCount() <= 0)) {
                 // if the toolbar does not contain any items then dispose of
                 // coolItem
                 coolItem.setData(null);
@@ -513,9 +544,11 @@ public class ToolBarContributionItem extends ContributionItem {
             } else {
                 // If the toolbar item exists then adjust the size of the cool
                 // item
-                Point toolBarSize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+                Point toolBarSize = toolBar.computeSize(SWT.DEFAULT,
+                        SWT.DEFAULT);
                 // Set the preffered size to the size of the toolbar plus trim
-                Point prefferedSize = coolItem.computeSize(toolBarSize.x, toolBarSize.y);
+                Point prefferedSize = coolItem.computeSize(toolBarSize.x,
+                        toolBarSize.y);
                 coolItem.setPreferredSize(prefferedSize);
                 // note setMinimumSize must be called before setSize, see PR
                 // 15565
