@@ -63,6 +63,14 @@ JAR is also added to the classpath.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="eclipseRuntime" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this extra classpath entry requires the context of the Eclipse runtime to be relevant.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
