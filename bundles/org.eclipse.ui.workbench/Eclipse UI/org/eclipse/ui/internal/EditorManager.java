@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -1018,8 +1018,7 @@ public class EditorManager {
 	public static boolean saveAll(List dirtyEditors,boolean confirm,final IWorkbenchWindow window) {
 		if (confirm) {
 			// Convert the list into an element collection.
-			AdaptableList input = new AdaptableList();
-			input.add(dirtyEditors.iterator());
+			AdaptableList input = new AdaptableList(dirtyEditors);
 		
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(window.getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);

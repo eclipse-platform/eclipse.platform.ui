@@ -12,8 +12,11 @@ package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -45,14 +48,12 @@ public class FileSystemElement implements IAdaptable {
 	private boolean isDirectory = false;
 	private FileSystemElement parent;
 
-	private final static AdaptableList EMPTY_LIST = new AdaptableList(0);
-
-	private WorkbenchAdapter workbenchAdapter = new WorkbenchAdapter() {
+	private IWorkbenchAdapter workbenchAdapter = new IWorkbenchAdapter() {
 		/**
 		 *	Answer the children property of this element
 		 */
 		public Object[] getChildren(Object o) {
-			return getFolders().getChildren(o);
+			return getFolders().toArray();
 		}
 		/**
 		 * Returns the parent of this element
@@ -66,16 +67,16 @@ public class FileSystemElement implements IAdaptable {
 		public String getLabel(Object o) {
 			return name;
 		}
-	/**
-	 * Returns an image descriptor for this file system element
-	 */
-	public ImageDescriptor getImageDescriptor(Object object) {
-		if (isDirectory()) {
-			return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-		} else {
-			return WorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor(name);
+		/**
+		 * Returns an image descriptor for this file system element
+		 */
+		public ImageDescriptor getImageDescriptor(Object object) {
+			if (isDirectory()) {
+				return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+			} else {
+				return WorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor(name);
+			}
 		}
-	}
 };
 /**
  * Creates a new <code>FileSystemElement</code> and initializes it
@@ -127,11 +128,13 @@ public String getFileNameExtension() {
  *  files property is null. 
  *  This method should not be used to add children
  *  to the receiver. Use addChild(FileSystemElement) instead.
- * @issue AdaptableList is not API
  */
 public AdaptableList getFiles() {
 	
-	if (files == null) return EMPTY_LIST;
+	if (files == null) {
+		// lazily initialize (can't share result since it's modifiable)
+		files = new AdaptableList(0);
+	}
 	return files;
 }
 /**
@@ -147,10 +150,12 @@ public Object getFileSystemObject() {
  * of this folder.  Answer an empty list if the folders property is null.
  * This method should not be used to add children
  * to the receiver. Use addChild(FileSystemElement) instead.
- * @issue AdaptableList is not API
  */
 public AdaptableList getFolders() {
-	if (folders == null) return EMPTY_LIST;
+	if (folders == null) {
+		// lazily initialize (can't share result since it's modifiable)
+		folders = new AdaptableList(0);
+	}
 	return folders;
 }
 /**
