@@ -102,17 +102,4 @@ public class TargetNode extends AntNode {
 	public boolean isErrorNode() {
 		return isErrorNode;
 	}
-	
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.view.elements.AntNode#getName()
-	 */
-	public String getName() {
-		StringBuffer name= new StringBuffer(super.getName());
-		if (this.equals(getProject().getDefaultTarget())) {
-			name.append(AntViewElementsMessages.getString("TargetNode.default")); //$NON-NLS-1$
-		} 
-		
-		return name.toString();
-	}
-
 }

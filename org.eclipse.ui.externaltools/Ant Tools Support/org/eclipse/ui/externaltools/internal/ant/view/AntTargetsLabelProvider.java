@@ -23,8 +23,12 @@ public class AntTargetsLabelProvider implements ILabelProvider {
 
 	public String getText(Object element) {
 		if (element instanceof TargetNode) {
-			StringBuffer buffer= new StringBuffer(element.toString());
-			buffer.append(" [").append(((TargetNode) element).getProject().getName()).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
+			TargetNode node= (TargetNode) element;
+			StringBuffer buffer= new StringBuffer(node.getName());
+			if (node.equals(node.getProject().getDefaultTarget())) {
+				buffer.append(AntViewMessages.getString("TargetNode.default")); //$NON-NLS-1$
+			} 
+			buffer.append(" [").append(node.getProject().getName()).append(']'); //$NON-NLS-1$
 			return buffer.toString();
 		}
 		return element.toString();

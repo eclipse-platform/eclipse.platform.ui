@@ -53,7 +53,16 @@ public class AntViewLabelProvider implements ILabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		return element.toString();
+		if (element instanceof TargetNode) {
+			TargetNode node= (TargetNode)element;
+			StringBuffer name= new StringBuffer(node.getName());
+			if (node.equals(node.getProject().getDefaultTarget())) {
+				name.append(AntViewMessages.getString("TargetNode.default")); //$NON-NLS-1$
+			} 
+			return name.toString();
+		} else {
+			return element.toString();
+		}
 	}
 
 	/**
