@@ -78,7 +78,10 @@ public class MissingFeature implements IFeature {
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
 		if (reference != null) {
-			return reference.getVersionedIdentifier();
+			try {
+				return reference.getVersionedIdentifier();
+			} catch (CoreException e) {
+			}
 		}
 		return id;
 	}

@@ -69,8 +69,11 @@ public class FeatureHierarchyElement {
 
 	public boolean isFalseUpdate() {
 		if (oldFeatureRef != null && newFeatureRef != null) {
-			return oldFeatureRef.getVersionedIdentifier().equals(
+			try {
+				return oldFeatureRef.getVersionedIdentifier().equals(
 					newFeatureRef.getVersionedIdentifier());
+			} catch (CoreException e) {
+			}
 		}
 		return false;
 	}
@@ -146,10 +149,14 @@ public class FeatureHierarchyElement {
 				String iname = ((IIncludedFeatureReference)newFeatureRef).getName();
 				if (iname!=null) return iname;
 			}
-			VersionedIdentifier vid =
+			try {
+				VersionedIdentifier vid =
 					newFeatureRef.getVersionedIdentifier();
-			return vid.toString();
+				return vid.toString();
+			} catch (CoreException e2) {
+			}
 		}
+		return null;		
 	}
 	/**
 	 * Computes label from the feature.
@@ -225,6 +232,7 @@ public class FeatureHierarchyElement {
 		Object[] newChildren = getIncludedFeatures(newFeature);
 		boolean optionalChildren=false;
 
+		try {
 			if (oldFeature != null) {
 				oldChildren = getIncludedFeatures(oldFeature);
 			}
@@ -238,12 +246,15 @@ public class FeatureHierarchyElement {
 					for (int j = 0; j < oldChildren.length; j++) {
 						IFeatureReference cref =
 							(IFeatureReference) oldChildren[j];
-						if (cref
-							.getVersionedIdentifier()
-							.getIdentifier()
-							.equals(newId)) {
-							oldRef = cref;
-							break;
+							try {
+								if (cref
+									.getVersionedIdentifier()
+									.getIdentifier()
+									.equals(newId)) {
+									oldRef = cref;
+									break;
+								}
+							} catch (CoreException ex) {
 						}
 					}
 				}
@@ -284,7 +295,8 @@ public class FeatureHierarchyElement {
 				if (element.isOptional() || element.hasOptionalChildren())
 					optionalChildren=true;
 			}
-
+			} catch (CoreException e) {
+			}
 		return optionalChildren;
 	}
 	private static boolean hasOlderVersion(IFeatureReference newRef) {

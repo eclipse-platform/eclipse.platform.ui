@@ -60,9 +60,10 @@ public interface IFeatureReference extends IAdaptable {
 	 * Returns the feature identifier.
 	 * 
 	 * @return the feature identifier.
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	public VersionedIdentifier getVersionedIdentifier();
+	public VersionedIdentifier getVersionedIdentifier() throws CoreException;
 
 	/**
 	 * Sets the feature reference URL.

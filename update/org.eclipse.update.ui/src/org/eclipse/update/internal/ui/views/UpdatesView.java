@@ -265,8 +265,11 @@ public class UpdatesView
 			}
 			if (obj instanceof FeatureReferenceAdapter) {
 				IFeatureReference feature = ((FeatureReferenceAdapter) obj).getFeatureReference();
-				VersionedIdentifier versionedIdentifier =
-					(feature != null) ? feature.getVersionedIdentifier() : null;
+				VersionedIdentifier versionedIdentifier = null;
+					try {
+						versionedIdentifier = (feature != null) ? feature.getVersionedIdentifier() : null;
+					} catch (CoreException e) {
+					}
 				String version = "";
 				if (versionedIdentifier != null)
 					version = versionedIdentifier.getVersion().toString();
@@ -275,8 +278,8 @@ public class UpdatesView
 			}			
 			if (obj instanceof IFeatureAdapter) {
 				IFeature feature = getFeature((IFeatureAdapter) obj);
-				VersionedIdentifier versionedIdentifier =
-					(feature != null) ? feature.getVersionedIdentifier() : null;
+				VersionedIdentifier versionedIdentifier = null;
+					versionedIdentifier = (feature != null) ? feature.getVersionedIdentifier() : null;
 				String version = "";
 				if (versionedIdentifier != null)
 					version = versionedIdentifier.getVersion().toString();
