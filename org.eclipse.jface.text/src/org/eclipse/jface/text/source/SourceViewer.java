@@ -504,7 +504,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	public boolean canDoOperation(int operation) {
 		
-		if (getTextWidget() == null || !redraws())
+		if (getTextWidget() == null || (!redraws() && operation != FORMAT))
 			return false;
 		
 		if (operation == CONTENTASSIST_PROPOSALS)
@@ -625,7 +625,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	public void doOperation(int operation) {
 
-		if (getTextWidget() == null || !redraws())
+		if (getTextWidget() == null || (!redraws() && operation != FORMAT))
 			return;
 
 		switch (operation) {
@@ -654,7 +654,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					}
 					try {
 						setRedraw(false);
-//						startSequentialRewriteMode(false);
+						startSequentialRewriteMode(false);
 						target.beginCompoundChange();
 
 						final IDocument document= getDocument();
@@ -667,13 +667,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 							fContentFormatter.format(document, region);
 
 					} finally {
+
 						target.endCompoundChange();
+						stopSequentialRewriteMode();
+						setRedraw(true);
 
 						restoreSelection();
 						context.dispose();
-
-//						stopSequentialRewriteMode();
-						setRedraw(true);
 					}
 					return;
 				}

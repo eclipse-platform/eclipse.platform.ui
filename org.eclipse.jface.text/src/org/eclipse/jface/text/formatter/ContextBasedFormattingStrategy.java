@@ -14,11 +14,7 @@ package org.eclipse.jface.text.formatter;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.swt.custom.StyledText;
-
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
@@ -33,42 +29,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * @since 3.0
  */
 public abstract class ContextBasedFormattingStrategy implements IFormattingStrategy, IFormattingStrategyExtension {
-
-	/**
-	 * Returns the line delimiter used in the document.
-	 * 
-	 * @param document
-	 *                  Document to get the used line delimiter from
-	 * @return The line delimiter used in the document
-	 */
-	protected static String getLineDelimiter(IDocument document) {
-
-		String delimiter= null;
-
-		try {
-			delimiter= document.getLineDelimiter(0);
-		} catch (BadLocationException exception) {
-			// Should not happen
-		}
-
-		if (delimiter == null) {
-
-			final String system= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			final String[] delimiters= document.getLegalLineDelimiters();
-
-			for (int index= 0; index < delimiters.length; index++) {
-
-				if (delimiters[index].equals(system)) {
-					delimiter= system;
-					break;
-				}
-			}
-
-			if (delimiter == null)
-				delimiter= delimiters.length > 0 ? delimiters[0] : system;
-		}
-		return delimiter;
-	}
 
 	/** The current preferences to apply */
 	private Map fCurrentPreference= null;
@@ -94,9 +54,6 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	 */
 	public void format() {
 
-		final StyledText text= fViewer.getTextWidget();
-
-		Assert.isLegal(text != null && !text.isDisposed());
 		Assert.isLegal(fPreferences.size() > 0);
 
 		fCurrentPreference= (Map)fPreferences.removeFirst();
