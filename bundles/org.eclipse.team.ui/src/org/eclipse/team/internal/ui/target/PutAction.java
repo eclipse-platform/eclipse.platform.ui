@@ -28,7 +28,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * Action for checking in the selected resources
  */
-public class PutAction extends TeamAction {
+public class PutAction extends TargetAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -60,21 +60,16 @@ public class PutAction extends TeamAction {
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			try {
-				TargetProvider provider = TargetManager.getProvider(resource.getProject());			
-				if(provider == null)
-					return false;
-				if(! provider.canGet(resource))
-					return false;	//if one can't don't allow for any
-			} catch (TeamException e) {
-				TeamPlugin.log(IStatus.ERROR, Policy.bind("PutAction.Exception_getting_provider_2"), e); //$NON-NLS-1$
+			TargetProvider provider = TargetManager.getProvider(resource.getProject());			
+			if(provider == null)
 				return false;
-			}
+			if(! provider.canGet(resource))
+				return false;	//if one can't don't allow for any
 		}
 		return true;
 	}

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -187,9 +188,14 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 				try {
 					action.setEnabled(isEnabled());
 				} catch (TeamException e) {
-					action.setEnabled(false);
-					// We should not open a dialog when determining menu enablements so log it instead
-					TeamPlugin.log(e.getStatus());
+					if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+						// Enable the action to allow the user to discover the problem
+						action.setEnabled(true);
+					} else {
+						action.setEnabled(false);
+						// We should not open a dialog when determining menu enablements so log it instead
+						TeamPlugin.log(e.getStatus());
+					}
 				}
 			}
 		}

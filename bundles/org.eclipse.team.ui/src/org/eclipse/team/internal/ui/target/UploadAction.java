@@ -42,17 +42,12 @@ public class UploadAction extends TargetAction {
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			try {
-				TargetProvider provider = TargetManager.getProvider(resource.getProject());			
-				if(provider == null)
-					return false;
-				if(! provider.canPut(resource))
-					return false;	//if one can't don't allow for any
-				// Don't want to go though the resources deeply to see if there are dirty children
-			} catch (TeamException e) {
-				TeamPlugin.log(IStatus.ERROR, Policy.bind("UploadAction.Exception_getting_provider"), e); //$NON-NLS-1$
+			TargetProvider provider = TargetManager.getProvider(resource.getProject());			
+			if(provider == null)
 				return false;
-			}
+			if(! provider.canPut(resource))
+				return false;	//if one can't don't allow for any
+			// Don't want to go though the resources deeply to see if there are dirty children
 		}
 		return true;
 	}
