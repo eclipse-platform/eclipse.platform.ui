@@ -20,9 +20,10 @@ import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.JarContentReference;
-import org.eclipse.update.core.FeatureContentProvider.ContentSelector;
+import org.eclipse.update.core.JarContentReference.ContentSelector;
 import org.eclipse.update.core.model.DefaultModelWriter;
 import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * An example feature content provider. It handles features packaged as
@@ -32,7 +33,7 @@ import org.eclipse.update.core.model.FeatureModel;
  * @since 2.0
  */
 
-public class BuildZipContentProvider extends FeatureContentProvider implements IFeatureContentProvider {
+public class BuildZipFeatureContentProvider extends FeatureContentProvider implements IFeatureContentProvider {
 
 	private JarContentReference baseReference;
 	private ContentReference generatedFeatureManifest;	
@@ -40,7 +41,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	private IPluginEntry currentPluginEntry;
 	private INonPluginEntry currentNonPluginEntry;
 	
-	public BuildZipContentProvider(URL base) {
+	public BuildZipFeatureContentProvider(URL base) {
 		super(base);
 		this.baseReference = new JarContentReference("build.zip",base);
 	}
@@ -115,12 +116,12 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	}
 
 	ContentReference getFeatureBuildManifest() throws Exception {
-		return peek(baseReference,"eclipse/buildmanifest.properties",null/*ContentSelector*/, null/*ProgressMonitor*/);
+		return baseReference.peek("eclipse/buildmanifest.properties",null/*ContentSelector*/, null/*ProgressMonitor*/);
 	}
 
 	ContentReference getPluginManifest(String pluginId, boolean isFragment) throws Exception {			
 		String manifestName = "eclipse/plugins/" + pluginId + "/" + (isFragment ? "fragment.xml" : "plugin.xml");
-		return peek(baseReference,manifestName, null/*ContentSelector*/, null/*ProgressMonitor*/);
+		return baseReference.peek(manifestName, null/*ContentSelector*/, null/*ProgressMonitor*/);
 	}
 	
 	void unpackFeatureEntryContent(FeatureModel feature, InstallMonitor monitor) throws IOException {
@@ -146,10 +147,10 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		};
 		
 		// unpack feature entry files
-		ContentReference[] refs = unpack(baseReference, selector, monitor);
+		ContentReference[] refs = baseReference.unpack(selector, monitor);
 		
 		// write out feature manifest (feature.xml);
-		File manifest = createLocalFile(null/*key*/,"feature.xml");
+		File manifest = UpdateManagerUtils.createLocalFile(null/*key*/,"feature.xml");
 		ContentReference manifestReference = new ContentReference("feature.xml", manifest);
 		DefaultModelWriter w = new DefaultModelWriter(feature);
 		FileOutputStream os = null;
@@ -194,7 +195,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		
 		// unpack plugin entry files
 		currentPluginEntry = plugin;
-		return peek(baseReference, selector, monitor);
+		return baseReference.peek(selector, monitor);
 	}
 		
 	ContentReference[] peekNonPluginEntryContent(INonPluginEntry data, InstallMonitor monitor) throws IOException {
@@ -220,7 +221,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		
 		// unpack non plugin entry files
 		currentNonPluginEntry = data;
-		return peek(baseReference, selector, monitor);
+		return baseReference.peek(selector, monitor);
 	}
 	
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {

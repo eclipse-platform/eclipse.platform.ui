@@ -59,6 +59,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	/*
 	 * @see ISiteContentProvider#getArchivesReferences(String)
 	 */
+	 // VK: should we provide default implementation ... return archiveId;
 	public abstract URL getArchiveReference(String archiveID) throws CoreException;
 
 	/**

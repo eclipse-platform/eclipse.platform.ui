@@ -35,7 +35,7 @@ public class BuildZipFeatureFactory
 	public IFeature createFeature(URL url, ISite site) throws CoreException {
 		try {
 			// create content provider for feature
-			BuildZipContentProvider cp = new BuildZipContentProvider(url);
+			BuildZipFeatureContentProvider cp = new BuildZipFeatureContentProvider(url);
 			Feature feature = null;
 			
 			// parse the feature
@@ -55,7 +55,7 @@ public class BuildZipFeatureFactory
 	/*
 	 * parse the build zip to reconstruct a feature model
 	 */
-	public FeatureModel parseFeature(BuildZipContentProvider cp) throws Exception {
+	public FeatureModel parseFeature(BuildZipFeatureContentProvider cp) throws Exception {
 		return (new BuildZipFeatureParser(this)).parse(cp);
 	}
 

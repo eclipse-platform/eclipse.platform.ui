@@ -31,6 +31,7 @@ public interface ISiteFactory {
 	 * @return a feature
 	 * @since 2.0 
 	 */
+	// VK: does the forceCreation make sense as API ??? (what does it mean to create a site?)
 
 	ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException;
 		

@@ -36,11 +36,11 @@ public class BuildZipFeatureParser {
 		this.factory = factory;
 	}
 	
-	public FeatureModel parse(BuildZipContentProvider cp) throws Exception {				
+	public FeatureModel parse(BuildZipFeatureContentProvider cp) throws Exception {				
 		return parseFeature(cp);
 	}
 	
-	private FeatureModel parseFeature(BuildZipContentProvider cp) throws Exception {		
+	private FeatureModel parseFeature(BuildZipFeatureContentProvider cp) throws Exception {		
 		
 		// get reference to the build manifest
 		ContentReference manifestRef = cp.getFeatureBuildManifest();
@@ -70,7 +70,7 @@ public class BuildZipFeatureParser {
 		return feature;
 	}
 	
-	private void parseFeatureEntry(BuildZipContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
+	private void parseFeatureEntry(BuildZipFeatureContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
 		
 		// parse out build zip file name. It is assumed to be in the
 		// form <package identifier>-<build date>-<target platform>.zip,
@@ -135,7 +135,7 @@ public class BuildZipFeatureParser {
 		feature.setCopyrightModel(copyright);
 	}	
 	
-	private void parsePluginEntries(BuildZipContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
+	private void parsePluginEntries(BuildZipFeatureContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
 		
 		Enumeration entries = manifest.keys();
 		String plugin;
@@ -159,13 +159,13 @@ public class BuildZipFeatureParser {
 		}		
 	}
 	
-	private void parseNonPluginEntries(BuildZipContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
+	private void parseNonPluginEntries(BuildZipFeatureContentProvider cp, FeatureModel feature, Properties manifest) throws Exception {
 		NonPluginEntryModel nonPluginEntry = factory.createNonPluginEntryModel();
 		nonPluginEntry.setIdentifier("root");
 		feature.addNonPluginEntryModel(nonPluginEntry);
 	}
 	
-	private String parsePluginVersionInManifest(BuildZipContentProvider cp, String pluginId, PluginEntryModel pluginEntry) {
+	private String parsePluginVersionInManifest(BuildZipFeatureContentProvider cp, String pluginId, PluginEntryModel pluginEntry) {
 
 		if (pluginParser == null)
 			pluginParser = new BuildZipPluginParser();

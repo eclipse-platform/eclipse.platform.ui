@@ -1,0 +1,85 @@
+package org.eclipse.update.examples.buildzip;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.BaseSiteFactory;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.core.model.SiteCategoryModel;
+
+public class BuildZipSiteFactory extends BaseSiteFactory {
+
+	/*
+	 * @see ISiteFactory#createSite(URL, boolean)
+	 */
+	public ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
+
+		Site site = null;
+		try {
+			// create site and add category
+			site = (Site) createSiteMapModel();
+			SiteCategoryModel category = createSiteCategoryModel();
+			category.setName("eclipse-builds");
+			category.setLabel("Eclipse Builds");
+			site.addCategoryModel(category);
+			
+			// set content provider
+			BuildZipSiteContentProvider contentProvider = new BuildZipSiteContentProvider(url);
+			site.setSiteContentProvider(contentProvider);
+						
+			// get all matching zip files on the site
+			FileFilter filter = new FileFilter() {
+				public boolean accept(File file) {
+					if (file.getName().endsWith(".zip")) {
+						try {
+							ZipFile zip = new ZipFile(file);
+							ZipEntry entry = zip.getEntry("eclipse/buildmanifest.properties");
+							if (entry == null)
+								return false;
+							else
+								return true;
+						} catch(IOException e) {
+							return false;
+						}
+					} else
+						return false;
+				}
+			};	
+			File file = new File(url.getFile());
+			File[] zips = file.listFiles(filter);
+
+			// create a refernece for each matching zip
+			FeatureReferenceModel ref = null;
+			for (int i = 0; i < zips.length; i++) {
+				ref = createFeatureReferenceModel();
+				ref.setType("org.eclipse.update.examples.zip");
+				ref.setSiteModel(site);
+				ref.setURLString(zips[i].toURL().toString());
+				ref.setCategoryNames(new String[]{"eclipse-builds"});
+				site.addFeatureReferenceModel(ref);
+			}
+		} catch (MalformedURLException e) {
+			throw new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples.buildzip",0,"Unable to create site",e));
+		}
+
+		return site;
+	}
+
+	
+}

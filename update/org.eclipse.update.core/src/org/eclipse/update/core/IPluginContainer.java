@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.*;
  * plug-ins.
  */
 //FIXME: javadoc
+// VK: why are we keeping this interface just for the 2 methods?
+//     is there ever a case where IPluginContainer is a useful
+//     general abstraction?
 
 public interface IPluginContainer extends IAdaptable {
 	/**

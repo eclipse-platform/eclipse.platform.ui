@@ -30,7 +30,7 @@
 	id="site.zip" 
 	point="org.eclipse.update.core.siteTypes">
 	<site-factory 
-		class="org.eclipse.update.examples.buildzip.ZipSiteFactory">
+		class="org.eclipse.update.examples.buildzip.BuildZipSiteFactory">
 	</site-factory>
 </extension>
 
