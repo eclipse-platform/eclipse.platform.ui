@@ -21,6 +21,7 @@ The resource navigator uses a working set to filter elements from the navigator 
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="workingSet" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

@@ -19,6 +19,7 @@ Note the accelerator configuration name presented to the user is the same as the
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="acceleratorConfiguration" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

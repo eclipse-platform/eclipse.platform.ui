@@ -15,6 +15,7 @@ An accelerator set is registered with an accelerator configuration (see the Acce
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="acceleratorSet" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

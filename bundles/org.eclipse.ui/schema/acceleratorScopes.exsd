@@ -15,6 +15,7 @@ An accelerator set declares what scope it is applicable for by listing the scope
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="acceleratorScope" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

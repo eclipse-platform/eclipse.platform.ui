@@ -15,6 +15,7 @@ These plugins are listed in the workbench preferences and the user may disable a
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="startup" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
