@@ -59,6 +59,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class AbstractAntUITest extends TestCase {
+	
+	public static String ANT_EDITOR_ID= "org.eclipse.ant.ui.internal.editor.AntEditor";
+	
 	private IDocument currentDocument;
 
 	public AbstractAntUITest(String name) {
