@@ -53,55 +53,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		
 	}
 
-	/**
-	 * Maps the localized modifier name to a code in the same
-	 * manner as #findModifier.
-	 * 
-	 * @param modifierName the modifier name
-	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 * @since 3.1
-	 */
-	protected static final int findLocalizedModifier(String modifierName) {
-		if (modifierName == null)
-			return 0;
-		
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
-			return SWT.CTRL;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
-			return SWT.SHIFT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
-			return SWT.ALT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
-			return SWT.COMMAND;
-
-		return 0;
-	}
-	
-	/**
-	 * Computes the state mask out of the given modifiers string.
-	 * 
-	 * @param modifiers a string containing modifiers
-	 * @return the state mask
-	 * @since 3.1
-	 */
-	protected static final int computeStateMask(String modifiers) {
-		if (modifiers == null)
-			return -1;
-	
-		if (modifiers.length() == 0)
-			return SWT.NONE;
-
-		int stateMask= 0;
-		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
-		while (modifierTokenizer.hasMoreTokens()) {
-			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
-			if (modifier == 0 || (stateMask & modifier) == modifier)
-				return -1;
-			stateMask= stateMask | modifier;
-		}
-		return stateMask;
-	}
-
 	
 	/**
 	 * Creates a text source viewer configuration.
@@ -176,5 +127,54 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IHyperlinkController getHyperlinkController(ISourceViewer sourceViewer) {
 		return new DefaultHyperlinkController(fPreferenceStore);
+	}
+	
+	/**
+	 * Maps the localized modifier name to a code in the same
+	 * manner as #findModifier.
+	 * 
+	 * @param modifierName the modifier name
+	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 * @since 3.1
+	 */
+	protected static final int findLocalizedModifier(String modifierName) {
+		if (modifierName == null)
+			return 0;
+		
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+			return SWT.CTRL;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+			return SWT.SHIFT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+			return SWT.ALT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+			return SWT.COMMAND;
+
+		return 0;
+	}
+	
+	/**
+	 * Computes the state mask out of the given modifiers string.
+	 * 
+	 * @param modifiers a string containing modifiers
+	 * @return the state mask
+	 * @since 3.1
+	 */
+	protected static final int computeStateMask(String modifiers) {
+		if (modifiers == null)
+			return -1;
+	
+		if (modifiers.length() == 0)
+			return SWT.NONE;
+
+		int stateMask= 0;
+		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
+		while (modifierTokenizer.hasMoreTokens()) {
+			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
+			if (modifier == 0 || (stateMask & modifier) == modifier)
+				return -1;
+			stateMask= stateMask | modifier;
+		}
+		return stateMask;
 	}
 }
