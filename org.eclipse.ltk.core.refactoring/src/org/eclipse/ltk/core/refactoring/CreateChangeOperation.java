@@ -133,7 +133,8 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Returns the outcome of the operation or <code>null</code> if an exception 
-	 * occurred when performing the operation.
+	 * occurred when performing the operation or the operation hasn't been
+	 * performed yet.
 	 * 
 	 * @return the created change or <code>null</code>
 	 */

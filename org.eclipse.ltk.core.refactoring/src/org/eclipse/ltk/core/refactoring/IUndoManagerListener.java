@@ -21,16 +21,18 @@ package org.eclipse.ltk.core.refactoring;
 public interface IUndoManagerListener {
 	
 	/**
-	 * This method is called by the undo manager if an undo change has been 
-	 * added.
+	 * This method is called by the undo manager if the undo stack has
+	 * changed (for example a undo object got added or the undo stack
+	 * got flushed).
 	 * 
 	 * @param manager the manager this listener is registered to
 	 */
 	public void undoStackChanged(IUndoManager manager);
 	
 	/**
-	 * This method is called by the undo manager if a redo change has been 
-	 * added.
+	 * This method is called by the undo manager if the redo stack has
+	 * changed (for example a redo object got added or the redo stack 
+	 * got flushed).
 	 * 
 	 * @param manager the manager this listener is registered to
 	 */
@@ -38,8 +40,7 @@ public interface IUndoManagerListener {
 	
 	/**
 	 * This method gets called by the undo manager if a change gets
-	 * executed for which a corresponding undo change will be pushed
-	 * onto the undo or redo stack.
+	 * executed in the context of the undo manager.
 	 * 
 	 * @param manager the manager this listener is registered to
 	 * @param change the change to be executed
@@ -48,7 +49,7 @@ public interface IUndoManagerListener {
 	
 	/**
 	 * This method gets called by the undo manager when a change has 
-	 * been executed. 
+	 * been executed in the context of the undo manager.
 	 * 
 	 * @param manager the manager this listener is registered to
 	 * @param change the change that has been executed

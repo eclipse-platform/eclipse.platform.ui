@@ -56,7 +56,8 @@ public class FileStatusContext extends RefactoringStatusContext {
 	/**
 	 * Returns the context's source region
 	 * 
-	 * @return the context's source region
+	 * @return the context's source region or <code>null</code> if no source region
+	 *  has been set
 	 */
 	public IRegion getTextRegion() {
 		return fSourceRegion;

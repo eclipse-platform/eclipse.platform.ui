@@ -12,7 +12,7 @@ package org.eclipse.ltk.core.refactoring;
 
 /**
  * This adapter class provides default implementations for the
- * methods described by the {@link IUndoManagerListener} interface.
+ * methods defined by the {@link IUndoManagerListener} interface.
  * <p>
  * This class may be subclassed by clients.
  * </p>

@@ -31,10 +31,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * as synthetic. A synthetic composite changes might not be rendered
  * in the refactoring preview tree to save display real-estate.
  * <p>
- * After a composite change has been executed the list of its children
- * will be empty.
- * </p>
- * <p>
  * Clients may subclass this class.
  * </p>
  * 
@@ -166,9 +162,14 @@ public class CompositeChange extends Change {
 	/**
 	 * Returns the children managed by this composite change. 
 	 * 
-	 * @return the children
+	 * @return the children of this change or an empty array if no
+	 *  children exist
 	 */
 	public Change[] getChildren() {
+		// This is false code. There is only one write access to fChanges in this
+		// code and this is in the private constructor CompositeChange(String name, List changes).
+		// And this one ensures that fChanges is not null. Code should be removed 
+		// after 3.0.
 		if (fChanges == null)
 			return null;
 		return (Change[])fChanges.toArray(new Change[fChanges.size()]);
@@ -242,7 +243,7 @@ public class CompositeChange extends Change {
 	 * children. If one of the children throws an exception the remaining children
 	 * will not receive the <code>perform</code> call. In this case the method <code>
 	 * getUndoUntilException</code> can be used to get an undo object containing the
-	 * undos of all executed children.
+	 * undo objects of all executed children.
 	 * </p>
 	 * <p>
 	 * Client are allowed to extend this method.

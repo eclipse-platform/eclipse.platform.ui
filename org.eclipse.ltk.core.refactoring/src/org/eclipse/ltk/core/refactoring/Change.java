@@ -34,7 +34,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  *       treated as invalid. Performing an invalid change isn't allowed and 
  *       results in an unspecified result. This method can be called multiple
  *       times.
- *   <li>then the method perform can be called. An disabled change should not
+ *   <li>then the method perform can be called. An disabled change must not
  *       be executed. The perform method can only be called once. After a change
  *       as been executed only the method <code>dispose</code> must be called.</li>
  *   <li>the method dispose has to be called either after the perform method
@@ -183,9 +183,6 @@ public abstract class Change implements IAdaptable {
 	 * This method is also called by the {@link IUndoManager UndoManager} to decide if
 	 * an undo or redo change is still valid and therefore can be executed.
 	 * </p>
-	 * <p>
-	 * This method can be called multiple times before a change gets executed.
-	 * </p>
 	 * 
 	 * @param pm a progress monitor.
 	 * 
@@ -200,7 +197,7 @@ public abstract class Change implements IAdaptable {
 	
 	/**
 	 * Performs this change. If this method is call on an invalid or disabled change 
-	 * object the result is unspecified. Change should in general not respond to
+	 * object the result is unspecified. Changes should in general not respond to
 	 * {@link IProgressMonitor#isCanceled()} since canceling a change tree in the
 	 * middle of its execution leaves the workspace in a half changed state.   
 	 * 

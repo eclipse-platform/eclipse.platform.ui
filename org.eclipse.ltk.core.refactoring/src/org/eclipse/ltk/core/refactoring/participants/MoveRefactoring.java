@@ -38,7 +38,7 @@ public class MoveRefactoring extends ProcessorBasedRefactoring {
 	/**
 	 * Returns the move processor associated with this move refactoring.
 	 * 
-	 * @return
+	 * @return returns the move processor associated with this move refactoring 
 	 */
 	public MoveProcessor getMoveProcessor() {
 		return fProcessor;

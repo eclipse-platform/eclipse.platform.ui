@@ -23,14 +23,14 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * A <code>RefactoringStatus</code> object represents the outcome of a
  * condition checking operation. It manages a list of <code>
  * RefactoringStatusEntry</code> objects. Each <code>RefactoringStatusEntry
- * </code> object describes one particilar problem detected during
+ * </code> object describes one particular problem detected during
  * condition checking.
  * <p>
  * Additionally a problem severity is managed. Severities are ordered as follows: 
  * <code>OK</code> &lt; <code>INFO</code> &lt; <code>WARNING</code> &lt; <code>
- * ERROR</code>. The status's problem severity is the maximum of the severities 
- * of all entries. If the status doesn't have any entry the status's severity 
- * is <code>OK</code>.
+ * ERROR</code> &lt; <code>FATAL</code>. The status's problem severity is the maximum 
+ * of the severities of all entries. If the status doesn't have any entry the status's 
+ * severity is <code>OK</code>.
  * </p>
  * <p> 
  * Note: this class is not intended to be extended by clients.
@@ -55,13 +55,11 @@ public class RefactoringStatus {
 
 	/** 
 	 * Status severity constant (value 2) indicating this status represents a warning.
-	 * This is used when the refactoring might cause confusion such as unintended overloading.
 	 */
 	public static final int WARNING= 2;
 
 	/** 
 	 * Status severity constant (value 3) indicating this status represents an error.
-	 * This is used when the refactoring will introduce compilation errors if executed.
 	 */
 	public static final int ERROR= 3;
 
@@ -123,8 +121,8 @@ public class RefactoringStatus {
 	/**
 	 * Returns the <code>RefactoringStatusEntry</code> at the specified index.
 	 * 
-	 * @param index the indes of the entry to return
-	 * @return the enrty at the specified index
+	 * @param index the index of the entry to return
+	 * @return the entry at the specified index
 	 * 
 	 * @throws IndexOutOfBoundsException if the index is out of range
 	 */
@@ -202,8 +200,7 @@ public class RefactoringStatus {
 	 * @param context the context. Can be <code>null</code>
 	 * @param pluginId the plug-in identifier. Can be <code>null</code> if argument <code>
 	 *  code</code> equals <code>NO_CODE</code>
-	 * @param code the problem code. Must be either <code>NO_CODE</code> or equals or greater
-	 *  than zero
+	 * @param code the problem code. Must be either <code>NO_CODE</code> or a positive integer
 	 * @param data application specific data
 	 * 
 	 * @return the newly created refactoring status
@@ -331,7 +328,7 @@ public class RefactoringStatus {
 	 * to a warning refactoring status, a warning status is mapped to an error refactoring 
 	 * status and an error or cancel status is mapped to a fatal refactoring status. An unknown
 	 * status is converted into a fatal error status as well. If the status is a <code>MultiStatus
-	 * </code> the first level of children of the status will be added as refactoring status 
+	 * </code> then the first level of children of the status will be added as refactoring status 
 	 * entries to the created refactoring status.
 	 * 
 	 * @param status the status to create a refactoring status from
@@ -507,7 +504,7 @@ public class RefactoringStatus {
 	 * @param pluginId the plug-in identifier of the entry. Can be <code>null</code> if 
 	 *  argument <code>code</code> equals <code>NO_CODE</code>
 	 * @param code the problem code of the entry. Must be either <code>NO_CODE</code> 
-	 *  or equals or greater than zero
+	 *  or a positive integer
 	 */
 	public void addEntry(int severity, String msg, RefactoringStatusContext context, String pluginId, int code) {
 		fEntries.add(new RefactoringStatusEntry(severity, msg, context, pluginId, code));
@@ -525,7 +522,7 @@ public class RefactoringStatus {
 	 * @param pluginId the plug-in identifier of the entry. Can be <code>null</code> if 
 	 *  argument <code>code</code> equals <code>NO_CODE</code>
 	 * @param code the problem code of the entry. Must be either <code>NO_CODE</code> 
-	 *  or equals or greater than zero
+	 *  or a positive integer
 	 * @param data application specific data of the entry
 	 */
 	public void addEntry(int severity, String msg, RefactoringStatusContext context, String pluginId, int code, Object data) {

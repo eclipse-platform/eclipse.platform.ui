@@ -221,7 +221,8 @@ public abstract class TextChange extends Change {
 	/**
 	 * Returns the root text edit.
 	 * 
-	 * @return the root text edit
+	 * @return the root text edit or <code>null</code> if no root edit has been
+	 *  set
 	 */
 	public TextEdit getEdit() {
 		return fEdit;
@@ -284,10 +285,6 @@ public abstract class TextChange extends Change {
 	 * aquireDocument}. It is up to the implementors of this method to decide what committing
 	 * a document means. Typically, the content of the document is written back to the file
 	 * system.
-	 * <p>
-	 * This method can be called more than once and the number of calls doesn't have to match
-	 * the number of calls to <code>aquireDocument</code> or <code>releaseDocument</code>.
-	 * </p>
 	 * 
 	 * @param document the document to commit
 	 * @param pm a progress monitor

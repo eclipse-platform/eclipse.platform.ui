@@ -27,6 +27,12 @@ import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
  * {@link CreateChangeOperation}. If created the second way the given create
  * change operation will be used to create the actual change to perform.
  * <p>
+ * If the change has been performed successfully (e.g. {@link #changeExecuted()} returns
+ * <code>true</code>) then the operation has called {@link Change#dispose()} as well
+ * to clear-up internal state in the change object. If it hasn't been executed the
+ * change is still intact and the client is responsible to dispose the change object.
+ * </p>
+ * <p>
  * If an undo change has been provided by the change to execute then the operation 
  * calls {@link Change#initializeValidationData(IProgressMonitor)} to initialize the 
  * undo change's validation data.
@@ -120,7 +126,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	 * Returns the change used by this operation. This is either the change passed to
 	 * the constructor or the one create by the <code>CreateChangeOperation</code>.
 	 * Method returns <code>null</code> if the create operation did not create
-	 * a corresponding change.
+	 * a corresponding change or hasn't been executed yet.
 	 * 
 	 * @return the change used by this operation or <code>null</code> if no change
 	 *  has been created
@@ -131,7 +137,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	
 	/**
 	 * Returns the undo change of the change performed by this operation. Returns
-	 * <code>null</code> if the change hasn't been performed or if the change
+	 * <code>null</code> if the change hasn't been performed yet or if the change
 	 * doesn't provide a undo.
 	 * 
 	 * @return the undo change of the performed change or <code>null</code>

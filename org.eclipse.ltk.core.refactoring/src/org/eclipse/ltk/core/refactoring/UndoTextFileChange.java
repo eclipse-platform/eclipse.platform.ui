@@ -107,7 +107,8 @@ public class UndoTextFileChange extends Change {
 	 * Subclasses may override it to create a different undo change.
 	 * </p>
 	 * @param edit the {@link UndoEdit undo edit} to create a undo change for
-	 * @param stampToRestore TODO
+	 * @param stampToRestore the content stamp to restore when the undo
+	 *  edit is executed.
 	 * 
 	 * @return the undo change
 	 * 

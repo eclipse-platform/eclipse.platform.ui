@@ -71,7 +71,7 @@ public class TextFileChange extends TextChange {
 	
 	/**
 	 * Creates a new <code>TextFileChange</code> for the given file.
-	 * s
+	 * 
 	 * @param name the change's name mainly used to render the change in the UI
 	 * @param file the file this text change operates on
 	 */
@@ -82,21 +82,20 @@ public class TextFileChange extends TextChange {
 	}
 	
 	/**
-	 * Sets the save state. If set to <code>true</code> the change will save the
-	 * content of the file back to disk.
+	 * Sets the save state. Must be one of <code>KEEP_SAVE_STATE</code>,
+	 * <code>FORCE_SAVE</code> or <code>LEAVE_DIRTY</code>.
 	 * 
-	 * @param saveMode whether or not the changes should be saved to disk
+	 * @param saveMode indicating how save is handled when the document
+	 *  gets committed
 	 */
 	public void setSaveMode(int saveMode) {
 		fSaveMode= saveMode;
 	}
 	
 	/**
-	 * Returns whether the change saves the changes back to disk.
+	 * Returns the save state set via {@link #setSaveMode(int)}.
 	 * 
-	 * @return <code>true</code> if the change saves the modified
-	 *  content back to disk; otherwise <code>false</code> is
-	 *  returned
+	 * @return the save state
 	 */
 	public int getSaveMode() {
 		return fSaveMode;

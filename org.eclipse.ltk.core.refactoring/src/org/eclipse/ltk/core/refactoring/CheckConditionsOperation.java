@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Operation that, when run, check preconditions of the {@link Refactoring}
+ * Operation that, when run, checks the preconditions of the {@link Refactoring}
  * passed on creation.
  * <p>
  * The operation should be executed via the run method offered by
@@ -45,7 +45,7 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	public final static int NONE=				0;
 	/** Flag indicating that only initial conditions will be checked*/
 	public final static int INITIAL_CONDITONS=	1 << 1;
-	/** Flag indicating that ony final conditiions will be checked */
+	/** Flag indicating that only final conditions will be checked */
 	public final static int FINAL_CONDITIONS=	1 << 2;
 	/** Flag indicating that all conditions will be checked */
 	public final static int ALL_CONDITIONS=		INITIAL_CONDITONS | FINAL_CONDITIONS;
@@ -89,7 +89,8 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Returns the outcome of the operation or <code>null</code> if an exception 
-	 * has occurred while performing the operation.
+	 * has occurred while performing the operation or if the operation hasn't
+	 * been performed yet.
 	 * 
 	 * @return the {@link RefactoringStatus} of the condition checking
 	 */

@@ -23,6 +23,10 @@ import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
 
 /**
  * A text change that operates directly on instances of {@link IDocument}.
+ * The document change uses a simple length compare to check if it
+ * is still valid. So as long as its length hasn't changed the text edits
+ * managed have a valid range and can be applied to the document. The
+ * same applies to the undo change returned from the perform method.
  * 
  * <p> 
  * Note: this class is not intended to be extended by clients.

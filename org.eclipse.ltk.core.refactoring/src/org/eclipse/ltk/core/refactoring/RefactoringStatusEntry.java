@@ -101,8 +101,7 @@ public class RefactoringStatusEntry {
 	 * @param context the context. Can be <code>null</code>
 	 * @param pluginId the plug-in identifier. Can be <code>null</code> if argument <code>
 	 *  code</code> equals <code>NO_CODE</code>
-	 * @param code the problem code. Must be either <code>NO_CODE</code> or equals or greater
-	 *  than zero
+	 * @param code the problem code. Must be either <code>NO_CODE</code> or a positive integer
 	 * @param data application specific data
 	 */
 	public RefactoringStatusEntry(int severity, String msg, RefactoringStatusContext context, String pluginId, int code, Object data) {

@@ -62,7 +62,8 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	/**
 	 * Return the refactoring status of the condition checking.
 	 * 
-	 * @return the refactoring status of the condition checking
+	 * @return the refactoring status of the condition checking or <code>null</code>
+	 *  if the operation hasn't been performed yet
 	 */
 	public RefactoringStatus getConditionStatus() {
 		return fPreconditionStatus;
@@ -70,7 +71,8 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	
 	/**
 	 * Returns the refactoring status of the change's validation checking
-	 * or <code>null</code> if no change could be created.  
+	 * or <code>null</code> if a change couldn't be created or the operation
+	 * hasn't been performed yet.  
 	 *
 	 * @return the refactoring status of the change's validation checking
 	 */

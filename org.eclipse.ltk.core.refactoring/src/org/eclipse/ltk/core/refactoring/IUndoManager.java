@@ -60,7 +60,7 @@ public interface IUndoManager {
 	 * Adds a new undo change to this undo manager.
 	 * 
 	 * @param name the name presented on the undo stack for the provided
-	 *  undo change. The name must be human readable
+	 *  undo change. The name must be human readable.
 	 * @param change the undo change
 	 */
 	public void addUndo(String name, Change change);
@@ -78,7 +78,7 @@ public interface IUndoManager {
 	 * Returns the name of the top most undo.
 	 * 
 	 * @return the top most undo name. Returns <code>null</code> if there 
-	 * aren't any changes to undo
+	 * aren't any changes to undo.
 	 */
 	public String peekUndoName();
 	
@@ -117,7 +117,7 @@ public interface IUndoManager {
 	 * Redo the top most redo change.
 	 * 
 	 * @param query a proceed query to decide how to proceed if the validation
-	 *  checking of the undo change to perform returns a non OK status. If
+	 *  checking of the redo change to perform returns a non OK status. If
 	 *  <code>null</code> is passed in the the undo proceeds if the status
 	 *  is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing

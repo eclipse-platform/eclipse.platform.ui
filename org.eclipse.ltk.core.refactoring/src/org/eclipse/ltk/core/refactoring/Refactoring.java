@@ -39,11 +39,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *       the new name of a element in the case of a rename refactoring). It is up
  *       to a concrete implementation to provide corresponding API.
  *   <li>{@link #checkFinalConditions(IProgressMonitor)} is called. The method 
- *       can be called more than once. The method is not called if  
+ *       can be called more than once. The method must not be called if  
  *       {@link #checkInitialConditions(IProgressMonitor)} returns a refactoring
  *       status of severity {@link RefactoringStatus#FATAL}.</li>
- *   <li>{@link #createChange(IProgressMonitor)} is called. The method is only 
- *       called once and is not called if one of the condition checking methods
+ *   <li>{@link #createChange(IProgressMonitor)} is called. The method must only 
+ *       called once and should not be called if one of the condition checking methods
  *       return a refactoring status of severity {@link RefactoringStatus#FATAL}.
  *       </li>
  * </ul>
@@ -106,10 +106,10 @@ public abstract class Refactoring extends PlatformObject {
 	 * @param pm a progress monitor to report progress
 	 * 
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
-	 *  the refactoring is considered as not being executable.
+	 *  the refactoring has to be considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during condition checking.
-	 *  If this happens then the condition checking is interpreted as failed
+	 *  If this happens then the condition checking has to be interpreted as failed
 	 * 
 	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 
@@ -134,7 +134,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * method is typically called by the UI to perform an initial checks after an 
 	 * action has been executed.
 	 * <p>
-	 * The refactoring is considered as not being executable if the returned status
+	 * The refactoring has to be considered as not being executable if the returned status
 	 * has the severity of <code>RefactoringStatus#FATAL</code>.
 	 * </p>
 	 * <p>
@@ -147,10 +147,10 @@ public abstract class Refactoring extends PlatformObject {
 	 *  progress.
 	 * 
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
-	 *  the refactoring is considered as not being executable.
+	 *  the refactoring has to be considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during initial condition checking.
-	 *  If this happens then the initial condition checking is interpreted as failed
+	 *  If this happens then the initial condition checking has to be interpreted as failed
 	 * 
 	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 
@@ -164,7 +164,7 @@ public abstract class Refactoring extends PlatformObject {
 	 * provided all input necessary to perform the refactoring this method is called 
 	 * to check the remaining preconditions.
 	 * <p>
-	 * The refactoring is considered as not being executable if the returned status
+	 * The refactoring has to be considered as not being executable if the returned status
 	 * has the severity of <code>RefactoringStatus#FATAL</code>.
 	 * </p>
 	 * <p>
@@ -189,7 +189,8 @@ public abstract class Refactoring extends PlatformObject {
 	//---- change creation ------------------------------------------------------
 		
 	/**
-	 * Creates a {@link Change} object that performs the actual refactoring.
+	 * Creates a {@link Change} object that performs the actual workspace
+	 * transformation.
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
@@ -201,17 +202,6 @@ public abstract class Refactoring extends PlatformObject {
 	 * @throws OperationCanceledException if the condition checking got cancelled
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
-
-	/**
-	 * Returns the scheduling rule associated with this refactoring element.
-	 * This scheduling rule should be used whenever one of the refactoring's
-	 * method is executed inside a {@linkplain org.eclipse.core.resources.IWorkspaceRunnable
-	 * work space runnable} or when the change created by this refactoring is
-	 * performed.
-	 * 
-	 * @return the scheduling rule associated with this refactoring
-	 */
-	/* public abstract ISchedulingRule getSchedulingRule(); */
 	
 	/**
 	 * {@inheritDoc}
