@@ -46,11 +46,16 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 */
 	private Clipboard clipboard;
 
+	/**
+	 * Associated paste action. May be <code>null</code>
+	 */
+	private PasteAction pasteAction;
 
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
+ * @param clipboard a platform clipboard
  */
 public CopyAction(Shell shell, Clipboard clipboard) {
 	super(ResourceNavigatorMessages.getString("CopyAction.title")); //$NON-NLS-1$
@@ -62,6 +67,19 @@ public CopyAction(Shell shell, Clipboard clipboard) {
 	setId(CopyAction.ID);
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.COPY_ACTION);
 }
+/**
+ * Creates a new action.
+ *
+ * @param shell the shell for any dialogs
+ * @param clipboard a platform clipboard
+ * @param pasteAction a paste action
+ * 
+ * @since 2.0
+ */
+public CopyAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
+	this(shell, clipboard);
+	this.pasteAction = pasteAction;
+}	
 /**
  * The <code>CopyAction</code> implementation of this method defined 
  * on <code>IAction</code> copies the selected resources to the 
@@ -92,6 +110,11 @@ public void run(){
 			ResourceTransfer.getInstance(), 
 			FileTransfer.getInstance(), 
 			TextTransfer.getInstance()});
+			
+	// update the enablement of the paste action
+	// workaround since the clipboard does not suppot callbacks
+	if (pasteAction != null && pasteAction.getStructuredSelection() != null) 
+		pasteAction.selectionChanged(pasteAction.getStructuredSelection());
 }
 
 /**

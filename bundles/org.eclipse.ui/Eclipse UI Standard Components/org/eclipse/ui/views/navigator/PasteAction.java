@@ -157,12 +157,14 @@ protected boolean updateSelection(IStructuredSelection selection) {
 				return false;
 		}
 	}
-	if (targetResource != null && resourceData != null) {
-		// don't try to copy to self
-		for (int i = 0; i < resourceData.length; i++) {
-			if (targetResource.equals(resourceData[i]))
-				return false;
-		}
+	if (targetResource != null && 
+		targetResource.getType() == IResource.FOLDER && 
+		resourceData != null) {
+			// don't try to copy folder to self
+			for (int i = 0; i < resourceData.length; i++) {
+				if (targetResource.equals(resourceData[i]))
+					return false;
+			}
 	}
 	return true;
 }

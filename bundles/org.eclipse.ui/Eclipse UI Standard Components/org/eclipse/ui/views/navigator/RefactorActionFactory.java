@@ -62,8 +62,8 @@ public class RefactorActionFactory
 	public void makeActions() {
 
 		Shell shell = getShell();
-		copyAction = new CopyAction(shell, clipboard);
 		pasteAction = new PasteAction(shell, clipboard);
+		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		moveResourceAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 		moveProjectAction = new MoveProjectAction(shell);
 		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);

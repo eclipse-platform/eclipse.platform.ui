@@ -43,8 +43,8 @@ public class RefactorActionGroup extends ActionGroup {
 		TreeViewer treeViewer = (TreeViewer) navigator.getResourceViewer();
 		Shell shell = navigator.getSite().getShell();
 		clipboard = new Clipboard(shell.getDisplay());
-		copyAction = new CopyAction(shell, clipboard);
 		pasteAction = new PasteAction(shell, clipboard);
+		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		moveResourceAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 		moveProjectAction = new MoveProjectAction(shell);
 		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);
