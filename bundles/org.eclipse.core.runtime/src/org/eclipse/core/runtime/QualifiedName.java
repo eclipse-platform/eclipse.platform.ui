@@ -103,6 +103,6 @@ public int hashCode() {
  * debug purposes only.
  */
 public String toString() {
-	return "QualifiedName(" + (getQualifier() == null ? "null" : getQualifier()) + ',' + getLocalName() + ')'; //$NON-NLS-1$ //$NON-NLS-2$
+	return (getQualifier() == null ? "" : getQualifier() + ':') + getLocalName(); //$NON-NLS-1$
 }
 }
