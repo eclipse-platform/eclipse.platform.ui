@@ -12,7 +12,7 @@ public class TreeTest extends ViewerTest {
 
 	TreeViewer viewer;
 
-	private int TEST_COUNT = 1000;
+	static int TEST_COUNT = 1000;
 
 	public TreeTest(String testName, int tagging) {
 		super(testName, tagging);
