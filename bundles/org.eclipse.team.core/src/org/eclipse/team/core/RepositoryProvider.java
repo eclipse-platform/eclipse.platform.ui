@@ -229,8 +229,6 @@ public abstract class RepositoryProvider implements IProjectNature {
 					}			
 				}
 			}
-		} catch(ClassCastException e) {
-			TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_assigned_to_the_project_must_be_a_subclass_of_RepositoryProvider___2") + id, e)); //$NON-NLS-1$
 		} catch(CoreException ex) {
 			// would happen if provider nature id is not registered with the resources plugin
 			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3") + id, ex)); //$NON-NLS-1$
