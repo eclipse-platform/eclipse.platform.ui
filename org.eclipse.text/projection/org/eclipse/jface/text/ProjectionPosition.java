@@ -19,7 +19,7 @@ package org.eclipse.jface.text;
 public class ProjectionPosition extends Position {
 	
 	/** The projection document. */
-	private IDocument fProjectionDocument;
+//	private IDocument fProjectionDocument;
 	/** The corresponding fragment. */
 	private Fragment fFragment;
 	
@@ -32,7 +32,7 @@ public class ProjectionPosition extends Position {
 	 */
 	public ProjectionPosition(IDocument projectionDocument, int offset, int length) {
 		super(offset, length);
-		fProjectionDocument= projectionDocument;
+//		fProjectionDocument= projectionDocument;
 	}
 	
 	/**

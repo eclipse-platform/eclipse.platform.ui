@@ -26,11 +26,11 @@ public class CoordinatesTranslator implements IDocumentInformationMapping {
 	/** The parent document */
 	private IDocument fParentDocument;
 	/** The position category used to manage the projected regions of the parent document */
-	private String fParentCategory;
+//	private String fParentCategory;
 	/** The projection document */
 	private ProjectionDocument fProjectionDocument;
 	/** The position category to manage the fragments of the projection document. */
-	private String fProjectionCategory;
+//	private String fProjectionCategory;
 	
 	/**
 	 * Creates a new mapping between the given parent document and the given projection document.
@@ -42,9 +42,9 @@ public class CoordinatesTranslator implements IDocumentInformationMapping {
 	 */
 	public CoordinatesTranslator(IDocument parent, String parentCategory, ProjectionDocument projection, String projectionCategory) {
 		fParentDocument= parent;
-		fParentCategory= parentCategory;
+//		fParentCategory= parentCategory;
 		fProjectionDocument= projection;
-		fProjectionCategory= projectionCategory;
+//		fProjectionCategory= projectionCategory;
 	}
 	
 	/*
