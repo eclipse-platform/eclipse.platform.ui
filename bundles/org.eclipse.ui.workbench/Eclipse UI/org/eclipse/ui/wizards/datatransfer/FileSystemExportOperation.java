@@ -104,13 +104,13 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 	 *  @return int
 	 *  @param resource org.eclipse.core.resources.IResource
 	 */
-	protected int countChildrenOf(IResource resource) throws CoreException {
-		if (resource.getType() == IResource.FILE)
+	protected int countChildrenOf(IResource parentResource) throws CoreException {
+		if (parentResource.getType() == IResource.FILE)
 			return 1;
 
 		int count = 0;
-		if (resource.isAccessible()) {
-			IResource[] children = ((IContainer) resource).members();
+		if (parentResource.isAccessible()) {
+			IResource[] children = ((IContainer) parentResource).members();
 			for (int i = 0; i < children.length; i++)
 				count += countChildrenOf(children[i]);
 		}
@@ -136,10 +136,10 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 	 *  Create the directories required for exporting the passed resource,
 	 *  based upon its container hierarchy
 	 *
-	 *  @param resource org.eclipse.core.resources.IResource
+	 *  @param childResource org.eclipse.core.resources.IResource
 	 */
-	protected void createLeadupDirectoriesFor(IResource resource) {
-		IPath resourcePath = resource.getFullPath().removeLastSegments(1);
+	protected void createLeadupDirectoriesFor(IResource childResource) {
+		IPath resourcePath = childResource.getFullPath().removeLastSegments(1);
 
 		for (int i = 0; i < resourcePath.segmentCount(); i++) {
 			path = path.append(resourcePath.segment(i));
@@ -348,8 +348,8 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 	 *	Export the resources that were previously specified for export
 	 *	(or if a single resource was specified then export it recursively)
 	 */
-	public void run(IProgressMonitor monitor) throws InterruptedException {
-		this.monitor = monitor;
+	public void run(IProgressMonitor progressMonitor) throws InterruptedException {
+		this.monitor = progressMonitor;
 
 		if (resource != null) {
 			if (createLeadupStructure)
