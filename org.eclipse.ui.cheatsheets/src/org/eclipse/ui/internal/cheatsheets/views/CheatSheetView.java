@@ -9,21 +9,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
+import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.part.ViewPart;
 
 public class CheatSheetView extends ViewPart {
 
-	//booleans
 	private boolean actionBarContributed = false;
-	private URL contentURL;
 	private CheatSheetExpandRestoreAction expandRestoreAction;
-
-	private IMemento memento;
-
-	//Composites
-	private Composite parent;
 	private CheatSheetViewer viewer;
+	private IMemento memento;
 
 	private void contributeToActionBars() {
 		//here you have to assemble the same list as the list added to the help menu bar.
@@ -36,13 +31,13 @@ public class CheatSheetView extends ViewPart {
 		IToolBarManager tbmanager = bars.getToolBarManager();
 	
 		// fields
-		String skipfileName = "icons/full/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
-		URL skipurl = CheatSheetPlugin.getPlugin().find(new Path(skipfileName));
-		ImageDescriptor skipTask = ImageDescriptor.createFromURL(skipurl);
+		String collapseExpandFile = "icons/full/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
+		URL collapseExpandURL = CheatSheetPlugin.getPlugin().find(new Path(collapseExpandFile));
+		ImageDescriptor collapseExpandImage = ImageDescriptor.createFromURL(collapseExpandURL);
 	
 		expandRestoreAction = new CheatSheetExpandRestoreAction(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP), false, viewer);
 		expandRestoreAction.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP));
-		expandRestoreAction.setImageDescriptor(skipTask);
+		expandRestoreAction.setImageDescriptor(collapseExpandImage);
 		tbmanager.add(expandRestoreAction);
 
 		viewer.setExpandRestoreAction(expandRestoreAction);
@@ -73,8 +68,6 @@ public class CheatSheetView extends ViewPart {
 	 * @param parent the parent control
 	 */
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
-		
 		viewer = new CheatSheetViewer();
 		viewer.createPartControl(parent);
 	
@@ -84,8 +77,6 @@ public class CheatSheetView extends ViewPart {
 		}
 		if (memento != null) {
 			restoreState(memento);
-//TODO: need to handle memento 
-//			initCheatSheetView();
 		}
 	}
 
@@ -94,9 +85,6 @@ public class CheatSheetView extends ViewPart {
 	 */
 	public void dispose() {
 		super.dispose();
-	
-		if (parent != null)
-			parent.dispose();
 
 		if(viewer != null)
 			viewer.dispose();
@@ -135,13 +123,24 @@ public class CheatSheetView extends ViewPart {
 	 * Restore the view state
 	 */
 	private void restoreState(IMemento memento) {
-		IMemento contentMemento = memento.getChild(ICheatSheetResource.URL_MEMENTO);
+		IMemento contentMemento = memento.getChild(ICheatSheetResource.MEMENTO);
 		if (contentMemento != null) {
-			try {
-				URL fileURL = new URL(contentMemento.getString(ICheatSheetResource.URL_ID));
-				contentURL = fileURL;
-			} catch (MalformedURLException mue) {
+			String id = contentMemento.getString(ICheatSheetResource.MEMENTO_ID);
+			String name = contentMemento.getString(ICheatSheetResource.MEMENTO_NAME);
+			
+			// Using an if/else if here because at a point in time there was a different
+			// attribute used. As a result an if/else could cause setInput(null) to be
+			// invoked but this would throw an IllegalArgumentException. 
+			if(name != null) {
+				try {
+				URL fileURL = new URL(contentMemento.getString(ICheatSheetResource.MEMENTO_URL));
+				setInput(id, name, fileURL);
+				} catch (MalformedURLException mue) {
+				}
+			} else if (id != null) {
+				setInput(id);
 			}
+
 		}
 	}
 
@@ -149,18 +148,27 @@ public class CheatSheetView extends ViewPart {
 	 * Method declared on IViewPart.
 	 */
 	public void saveState(IMemento memento) {
-		//System.out.println("Saving the state of the cheat Sheet view!!!");
-		if (contentURL != null) {
-			IMemento contentMemento = memento.createChild(ICheatSheetResource.URL_MEMENTO);
-			contentMemento.putString(ICheatSheetResource.URL_ID, contentURL.toString());
-			//System.out.println("The memento got the string.");
-			//System.out.println("Here is teh memento String saved: "+contentMemento.getString("contentURL"));
-			//Get the plugin save location:
-			//			IPath savePath = Platform.getPluginStateLocation(CheatSheetPlugin.getPlugin());
+		if(viewer != null) {
+			CheatSheetElement element = viewer.getContent();
 
-			if(viewer != null) {
-				viewer.saveCurrentSheet();
+			if(element == null) {
+				// Currently no cheat sheet is being displayed so just return 
+				return;
 			}
+
+			IMemento contentMemento = memento.createChild(ICheatSheetResource.MEMENTO);
+
+			CheatSheetElement tempElement = CheatSheetRegistryReader.getInstance().findCheatSheet(element.getID());
+			if(tempElement != null) {
+				contentMemento.putString(ICheatSheetResource.MEMENTO_ID, element.getID());
+			} else {
+				contentMemento.putString(ICheatSheetResource.MEMENTO_ID, element.getID());
+				contentMemento.putString(ICheatSheetResource.MEMENTO_NAME, element.getLabel(null));
+				contentMemento.putString(ICheatSheetResource.MEMENTO_URL, element.getContentFile());
+			}
+
+			// Make sure the current cheat sheet is saved
+			viewer.saveCurrentSheet();
 		}
 	}
 

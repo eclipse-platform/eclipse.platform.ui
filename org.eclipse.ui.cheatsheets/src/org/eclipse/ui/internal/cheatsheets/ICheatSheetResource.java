@@ -29,8 +29,10 @@ public interface ICheatSheetResource {
 	public static final String CHEAT_SHEET_HELP_PAGE="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm";//$NON-NLS-1$
 
 	// Memento info
-	public static final String URL_MEMENTO = "contentURLMemento"; //$NON-NLS-1$
-	public static final String URL_ID = "contentURL"; //$NON-NLS-1$
+	public static final String MEMENTO = "cheatSheetMemento"; //$NON-NLS-1$
+	public static final String MEMENTO_ID = "id"; //$NON-NLS-1$
+	public static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
+	public static final String MEMENTO_URL = "url"; //$NON-NLS-1$
 
 
 
