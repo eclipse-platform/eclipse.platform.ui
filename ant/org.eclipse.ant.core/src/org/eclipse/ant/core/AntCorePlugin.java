@@ -137,7 +137,7 @@ public class AntCorePlugin extends Plugin {
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
+	 * @param descriptor the plug-in descriptor for the
 	 *   Ant Core plug-in
 	 */
 	public AntCorePlugin(IPluginDescriptor descriptor) {
@@ -159,9 +159,11 @@ public class AntCorePlugin extends Plugin {
 	/**
 	 * Given an extension point name, extract its extensions and return them
 	 * as a List.
+	 * @param pointName The name of the extension point
+	 * @return The list of the extensions
 	 */
-	private List extractExtensions(String point) {
-		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
+	private List extractExtensions(String pointName) {
+		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(pointName);
 		if (extensionPoint == null) {
 			return null;
 		}
@@ -186,6 +188,7 @@ public class AntCorePlugin extends Plugin {
 	 * headless parameter.
 	 * This method is public for testing purposes only. It should not
 	 * be called outside of the Ant integration framework.
+	 * @param headless Whether or not to mark that the plug-in is running headless or not
 	 */
 	public void setRunningHeadless(boolean headless) {
 		preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES), extractExtensions(PT_PROPERTIES), headless);

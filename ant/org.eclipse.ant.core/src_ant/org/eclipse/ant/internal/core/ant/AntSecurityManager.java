@@ -32,7 +32,7 @@ public class AntSecurityManager extends SecurityManager {
 	protected AntSecurityManager(SecurityManager securityManager) {
 		this.securityManager= securityManager;
 	}
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkExit(int)
 	 */
 	public void checkExit(int status) {
@@ -43,7 +43,7 @@ public class AntSecurityManager extends SecurityManager {
 		//not really an exception case.
 		throw new AntSecurityException();
 	}
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccept(java.lang.String, int)
 	 */
 	public void checkAccept(String host, int port) {
@@ -52,7 +52,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.Thread)
 	 */
 	public void checkAccess(Thread t) {
@@ -61,7 +61,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
 	 */
 	public void checkAccess(ThreadGroup g) {
@@ -70,7 +70,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkAwtEventQueueAccess()
 	 */
 	public void checkAwtEventQueueAccess() {
@@ -79,7 +79,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int, java.lang.Object)
 	 */
 	public void checkConnect(String host, int port, Object context) {
@@ -88,7 +88,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int)
 	 */
 	public void checkConnect(String host, int port) {
@@ -97,7 +97,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkCreateClassLoader()
 	 */
 	public void checkCreateClassLoader() {
@@ -106,7 +106,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkDelete(java.lang.String)
 	 */
 	public void checkDelete(String file) {
@@ -115,7 +115,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkExec(java.lang.String)
 	 */
 	public void checkExec(String cmd) {
@@ -124,7 +124,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkLink(java.lang.String)
 	 */
 	public void checkLink(String lib) {
@@ -133,7 +133,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkListen(int)
 	 */
 	public void checkListen(int port) {
@@ -142,7 +142,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkMemberAccess(java.lang.Class, int)
 	 */
 	public void checkMemberAccess(Class clazz, int which) {
@@ -165,7 +165,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress)
 	 */
 	public void checkMulticast(InetAddress maddr) {
@@ -174,7 +174,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPackageAccess(java.lang.String)
 	 */
 	public void checkPackageAccess(String pkg) {
@@ -183,7 +183,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPackageDefinition(java.lang.String)
 	 */
 	public void checkPackageDefinition(String pkg) {
@@ -192,7 +192,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
 	 */
 	public void checkPermission(Permission perm, Object context) {
@@ -201,7 +201,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
 	public void checkPermission(Permission perm) {
@@ -210,7 +210,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPrintJobAccess()
 	 */
 	public void checkPrintJobAccess() {
@@ -219,7 +219,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPropertiesAccess()
 	 */
 	public void checkPropertiesAccess() {
@@ -228,7 +228,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
 	 */
 	public void checkPropertyAccess(String key) {
@@ -237,7 +237,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.io.FileDescriptor)
 	 */
 	public void checkRead(FileDescriptor fd) {
@@ -246,7 +246,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String, java.lang.Object)
 	 */
 	public void checkRead(String file, Object context) {
@@ -255,7 +255,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkRead(java.lang.String)
 	 */
 	public void checkRead(String file) {
@@ -264,7 +264,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSecurityAccess(java.lang.String)
 	 */
 	public void checkSecurityAccess(String target) {
@@ -273,7 +273,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSetFactory()
 	 */
 	public void checkSetFactory() {
@@ -282,7 +282,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkSystemClipboardAccess()
 	 */
 	public void checkSystemClipboardAccess() {
@@ -291,7 +291,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
 	 */
 	public boolean checkTopLevelWindow(Object window) {
@@ -301,7 +301,7 @@ public class AntSecurityManager extends SecurityManager {
 		return super.checkTopLevelWindow(window);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
 	 */
 	public void checkWrite(FileDescriptor fd) {
@@ -310,7 +310,7 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#checkWrite(java.lang.String)
 	 */
 	public void checkWrite(String file) {
@@ -330,7 +330,7 @@ public class AntSecurityManager extends SecurityManager {
 		return super.getInCheck();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#getSecurityContext()
 	 */
 	public Object getSecurityContext() {
@@ -340,7 +340,7 @@ public class AntSecurityManager extends SecurityManager {
 		return super.getSecurityContext();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.SecurityManager#getThreadGroup()
 	 */
 	public ThreadGroup getThreadGroup() {

@@ -183,7 +183,7 @@ public class InternalAntRunner {
 	/**
 	 * Adds a build listener.
 	 * 
-	 * @param buildListener a build listener
+	 * @param classNames the fully qualified names of the build listeners to be added
 	 */
 	public void addBuildListeners(List classNames) {
 		if (buildListeners == null) {
@@ -194,13 +194,15 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds a build logger.
+	 * @param className The fully qualified name of the build logger to add
 	 */
 	public void addBuildLogger(String className) {
 		loggerClassname = className;
 	}
 
 	/**
-	 * Adds user properties.
+	 * Adds user properties to the current collection of user properties.
+	 * @param properties The user properties to be added
 	 */
 	public void addUserProperties(Map properties) {
 		if (userProperties == null) {
@@ -213,6 +215,7 @@ public class InternalAntRunner {
 	
 	/**
 	 * Adds user property files.
+	 * @param additionalPropertyFiles The property files to add
 	 * @since 2.1
 	 */
 	public void addPropertyFiles(String[] additionalPropertyFiles) {
@@ -319,6 +322,7 @@ public class InternalAntRunner {
 	/**
 	 * Parses the build file and adds necessary information into
 	 * the given project.
+	 * @param project The project to configure
 	 */
 	private void parseBuildFile(Project project) {
 		File buildFile = new File(getBuildFileLocation());
@@ -339,6 +343,7 @@ public class InternalAntRunner {
 	 * target, where the first element is the name, the
 	 * second element is the description, the third element is the
 	 * project name, and the last elements is an array of dependencies.
+	 * @return a list of lists representing the targets
 	 */
 	public List getTargets() {
 		try {
@@ -501,6 +506,7 @@ public class InternalAntRunner {
 	/**
 	 * Logs a message with the client that lists the target names and optional descriptions
 	 * 
+	 * @param project the enclosing target
 	 * @param names the targets names
 	 * @param descriptions the corresponding descriptions
 	 * @param heading the message heading
@@ -532,15 +538,15 @@ public class InternalAntRunner {
 	 * Invokes the building of a project object and executes a build using either a given
 	 * target or the default target. This method is called if running in
 	 * headless mode.
-	 * @see org.eclipse.ant.core.AntRunner.run(Object)
+	 * @see org.eclipse.ant.core.AntRunner#run(Object)
 	 * @param argArray the command line arguments
-	 * @exception execution exceptions
+	 * @exception Exception execution exceptions
 	 */
 	public void run(Object argArray) throws Exception {
 		run(getArrayList((String[]) argArray));
 	}
 
-	/**
+	/*
 	 * Note that the list passed to this method must support
 	 * List#remove(Object)	 */
 	private void run(List argList) {

@@ -96,6 +96,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	/**
 	 * When a preference changes, update the in-memory cache of the preference.
+	 * @param event The property change event that has occurred.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
@@ -465,7 +466,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 
-	/**
+	/*
 	 * Computes the extra classpath entries defined plugins and fragments.
 	 */
 	protected void computeDefaultExtraClasspathEntries(List entries) {
@@ -505,7 +506,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 	}
 	
-	/**
+	/*
 	 * Scan the Ant property extensions for properties to set.
 	 * 
 	 * @since 3.0
@@ -550,6 +551,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * May return <code>null</code> if no tools.jar is found (e.g. the path
 	 * points to a JRE install).
 	 * 
+	 * @param javaHomePath path for Java home
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
 	 * @since 3.0
 	 */
@@ -698,7 +700,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return orderedPluginClassLoaders;
 	}
 
-	/**
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private String[] computePrerequisiteOrderPlugins(IPluginDescriptor[] plugins) {
@@ -750,7 +752,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return computeNodeOrder(prereqArray);
 	}
 	
-	/**
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private String[] computeNodeOrder(String[][] specs) {
@@ -771,7 +773,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 	
-	/**
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private void removeArcs(String[][] mappings, List roots, Map counts) {
@@ -788,7 +790,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 	}
 	
-	/**
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private List findRootNodes(Map counts) {
@@ -802,7 +804,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 	
-	/**
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private Map computeCounts(String[][] mappings) {
@@ -930,7 +932,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the user defined custom types.
 	 * To commit the changes, updatePluginPreferences must be
 	 * called.
-	 * @param tasks
+	 * @param types The custom types
 	 */
 	public void setCustomTypes(Type[] types) {
 		oldCustomTypes= customTypes;
@@ -942,7 +944,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * To commit the changes, updatePluginPreferences must be
 	 * called.
 	 * 
-	 * @param the urls defining the Ant classpath
+	 * @param urls the urls defining the Ant classpath
 	 * @deprecated use setAdditionalEntries(IAntClasspathEntry)[]
 	 */
 	public void setCustomURLs(URL[] urls) {
@@ -958,7 +960,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes,
 	 * updatePluginPreferences must be called.
 	 * 
-	 * @param the urls defining the Ant classpath
+	 * @param urls the urls defining the Ant classpath
 	 * @deprecated use setAntHomeEntires(IAntClasspathEntry[])
 	 */
 	public void setAntURLs(URL[] urls) {
@@ -974,7 +976,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the custom property files specified for Ant builds. To commit the
 	 * changes, updatePluginPreferences must be called.
 	 * 
-	 * @param the absolute paths defining the property files to use.
+	 * @param paths the absolute paths defining the property files to use.
 	 */
 	public void setCustomPropertyFiles(String[] paths) {
 		customPropertyFiles = paths;
@@ -984,7 +986,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the custom user properties specified for Ant builds. To commit the
 	 * changes, updatePluginPreferences must be called.
 	 * 
-	 * @param the properties defining the Ant properties
+	 * @param properties the properties defining the Ant properties
 	 */
 	public void setCustomProperties(Property[] properties) {
 		oldCustomProperties= customProperties;
@@ -1047,7 +1049,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 
-	/**
+	/*
 	 * Convert a list of tokens into an array using "," as the tokenizer.
 	 */
 	protected String[] getArrayFromString(String list) {
@@ -1215,7 +1217,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the string that defines the Ant home set by the user.
 	 * May be set to <code>null</code>.
 	 * 
-	 * @param the fully qualified path to Ant home
+	 * @param antHome the fully qualified path to Ant home
 	 */
 	public void setAntHome(String antHome) {
 		this.antHome= antHome;
@@ -1258,7 +1260,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the set of classpath entries that compose the libraries added to the
 	 * Ant runtime classpath from the Ant home location.
 	 * 
-	 * @param the set of ant home classpath entries
+	 * @param entries the set of ant home classpath entries
 	 * @since 3.0
 	 */
 	public void setAntHomeClasspathEntries(IAntClasspathEntry[] entries) {
@@ -1269,7 +1271,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Sets the set of classpath entries that the user has added to the 
 	 * Ant runtime classpath.
 	 * 
-	 * @param the set of user classpath entries
+	 * @param entries the set of user classpath entries
 	 * @since 3.0
 	 */
 	public void setAdditionalClasspathEntries(IAntClasspathEntry[] entries) {

@@ -87,7 +87,8 @@ public class TargetInfo {
 	public boolean isDefault() {
 		return isDefault;
 	}
-	/**
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
@@ -98,18 +99,17 @@ public class TargetInfo {
 		return getName().equals(other.getName());
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return getName();
 	}
-
 }

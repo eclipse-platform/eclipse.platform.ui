@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.core;
 
-
-
 /**
  * Represents a Ant property.
  * @since 2.1
@@ -155,7 +153,7 @@ public class Property {
 		this.loader= loader;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

@@ -97,7 +97,7 @@ public class ProgressBuildListener implements BuildListener {
 		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
@@ -136,7 +136,7 @@ public class ProgressBuildListener implements BuildListener {
 		return result;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
@@ -151,7 +151,7 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
@@ -194,7 +194,7 @@ public class ProgressBuildListener implements BuildListener {
 		return monitors;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetFinished(BuildEvent event) {
@@ -215,7 +215,7 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
@@ -244,7 +244,7 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskFinished(BuildEvent event) {
@@ -262,7 +262,7 @@ public class ProgressBuildListener implements BuildListener {
 		currentTaskThread= null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {

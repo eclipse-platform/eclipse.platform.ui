@@ -22,7 +22,7 @@ public interface IAntPropertyValueProvider {
 	 * Returns a value that the Ant entry point will use to set the
 	 * value of the Ant property.
 	 *
-	 * @param propertyName the Ant property to set
+	 * @param antPropertyName the Ant property to set
 	 * @return the value for the property, 
 	 *    or <code>null</code> if the property should not be set
 	 */

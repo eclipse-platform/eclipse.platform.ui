@@ -83,7 +83,7 @@ public class AntRunner implements IPlatformRunnable {
 		this.arguments = getArray(arguments);
 	}
 
-	/**
+	/*
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
 	private String[] getArray(String args) {
@@ -190,6 +190,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * 
 	 * @see TargetInfo
 	 * @since 2.1
+	 * @throws CoreException Thrown if problem is encountered determining the targets
 	 */
 	public synchronized TargetInfo[] getAvailableTargets() throws CoreException {
 		Class classInternalAntRunner= null;
@@ -272,6 +273,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
+	 * @throws CoreException Thrown if a build is already occuring or if an exception occurs during the build
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (buildRunning) {
@@ -375,7 +377,7 @@ public class AntRunner implements IPlatformRunnable {
 		}
 	}
 
-	/**
+	/*
 	 * Handles exceptions that are loaded by the Ant Class Loader by
 	 * asking the Internal Ant Runner class for the correct error message.
 	 * 
@@ -431,6 +433,7 @@ public class AntRunner implements IPlatformRunnable {
 
 	/**
 	 * Runs the build file.
+	 * @throws CoreException Thrown if a build is already occuring or if an exception occurs during the build
 	 */
 	public void run() throws CoreException {
 		run(/*IProgressMonitor*/null);
@@ -497,7 +500,7 @@ public class AntRunner implements IPlatformRunnable {
 		}
 	}
 	
-	/**
+	/*
 	 * Removes any Xerces JARs from the URLs that will compose the classpath
 	 * to resolve targets in the Ant buildfile.
 	 * Used for the case when the Ant build will occur in a separate VM (where the Xerces
@@ -538,7 +541,7 @@ public class AntRunner implements IPlatformRunnable {
 	
 	/**
 	 * Sets the user specified property files.
-	 * @param array of property file paths
+	 * @param propertyFiles array of property file paths
 	 * @since 2.1
 	 */
 	public void setPropertyFiles(String[] propertyFiles) {
@@ -547,7 +550,7 @@ public class AntRunner implements IPlatformRunnable {
 
 	/**
 	 * Sets the custom classpath to use for this build
-	 * @param array of URLs that define the custom classpath
+	 * @param customClasspath array of URLs that define the custom classpath
 	 */
 	public void setCustomClasspath(URL[] customClasspath) {
 		this.customClasspath = customClasspath;
@@ -555,7 +558,7 @@ public class AntRunner implements IPlatformRunnable {
 	
 	/**
 	 * Sets the Ant home to use for this build
-	 * @param String specifying the Ant home to use
+	 * @param antHome String specifying the Ant home to use
 	 * @since 2.1
 	 */
  	public void setAntHome(String antHome) {
