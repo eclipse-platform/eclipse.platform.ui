@@ -99,8 +99,8 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				String title = (event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH ?
-						Policy.bind("RefreshCompleteDialog.4a", participant.getName()) : //$NON-NLS-1$
-							Policy.bind("RefreshCompleteDialog.4", participant.getName()) //$NON-NLS-1$
+						Policy.bind("RefreshCompleteDialog.4a", Utils.getTypeName(participant)) : //$NON-NLS-1$
+							Policy.bind("RefreshCompleteDialog.4", Utils.getTypeName(participant)) //$NON-NLS-1$
 							);
 				MessageDialog.openInformation(Utils.getShell(null), title, event.getStatus().getMessage());
 			}
