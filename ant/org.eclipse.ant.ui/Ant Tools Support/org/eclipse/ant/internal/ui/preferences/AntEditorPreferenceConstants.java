@@ -90,13 +90,76 @@ public class AntEditorPreferenceConstants {
 	 * key.
 	 * </p>
 	 */
-	public final static String EDITOR_SPACES_FOR_TABS= "spacesForTabs"; //$NON-NLS-1$
+	public final static String EDITOR_SPACES_FOR_TABS= "spaces_for_tabs"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies the tab size for the Ant formatter.
+	 * <p>
+	 * Value is of type <code>int</code>.
+	 * </p>
+	 */
+	public static final String FORMATTER_TAB_SIZE= "formatter_tab_size"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies if the Ant formatter uses spaces for tabs.
+	 * <p>
+	 * Value is of type <code>boolean</code>. If <code>true</code> spaces instead of tabs are used
+	 * when formatting. If <code>false</code> the formatter inserts a tab character for indenting.
+	 * </p>
+	 */
+	public static String FORMATTER_TAB_CHAR= "formatter_tab_char"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies if the Ant formatter aligns the final
+	 * &quote&gt&quote in multi-line element tags
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> the final
+	 * &quote&gt&quote in multi-line element tags are aligned by the formatter.
+	 * </p>
+	 */
+	public static final String FORMATTER_ALIGN= "formatter_align"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies the maximum line length for the Ant formatter.
+	 * <p>
+	 * Value is of type <code>int</code>.
+	 * </p>
+	 */
+	public static final String FORMATTER_MAX_LINE_LENGTH= "formatter_max_line_length"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies if the Ant formatter will delete blank lines.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> blank lines are deleted
+	 * by the formatter.
+	 * </p>
+	 */
+	public static final String FORMATTER_DELETE_BLANK_LINES= "formatter_delete_blank_lines"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies if the Ant formatter should format comments.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> comments are formatted
+	 * in the editor.
+	 * </p>
+	 */
+	public static final String FORMATTER_COMMENTS= "formatter_comments"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies if the Ant formatter should wrap elements that are longer than
+	 * the maximum line length.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> long elements are wrapped
+	 * when formatting in the editor.
+	 * </p>
+	 */
+	public static final String FORMATTER_WRAP_LONG= "formatter_wrap_long"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
 	 * fully validate the current Ant build file to check for errors.
 	 */
-	public static final String VALIDATE_BUILDFILES = "validate_Buildfiles"; //$NON-NLS-1$
+	public static final String VALIDATE_BUILDFILES= "validate_Buildfiles"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -109,6 +172,15 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
 		store.setDefault(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
+		
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, true);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 80);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES, false);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_COMMENTS, false);
+		store.setDefault(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, false);
+		
 		store.setDefault(AntEditorPreferenceConstants.VALIDATE_BUILDFILES, false);
 	}
 }

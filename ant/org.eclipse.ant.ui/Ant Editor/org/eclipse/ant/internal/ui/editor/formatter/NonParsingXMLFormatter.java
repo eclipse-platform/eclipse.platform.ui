@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) John-Mason P. Shackelford and others.
+ * Copyright (c) 2004 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ * 	   IBM Corporation - bug 52076
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.formatter;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.Assert;
 
 public class NonParsingXMLFormatter {
@@ -110,9 +112,6 @@ public class NonParsingXMLFormatter {
         }
     }
 
-    /**
-     *  
-     */
     private static abstract class TagReader {
 
         protected Reader reader;
@@ -154,12 +153,8 @@ public class NonParsingXMLFormatter {
         public boolean startsOnNewline() {
             return true;
         }
-
     }
 
-    /**
-     *  
-     */
     private static class TagReaderFactory {
 
         // Warning: the order of the Array is important!
@@ -189,9 +184,7 @@ public class NonParsingXMLFormatter {
             // else
             textNodeReader.setReader(reader);
             return textNodeReader;
-
         }
-
     }
 
     private static class TextReader extends TagReader {
@@ -204,10 +197,16 @@ public class NonParsingXMLFormatter {
             this.complete = false;
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#getStartOfTag()
+         */
         public String getStartOfTag() {
             return ""; //$NON-NLS-1$
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#isTextNode()
+         */
         public boolean isTextNode() {
             return this.isTextNode;
         }
@@ -252,15 +251,16 @@ public class NonParsingXMLFormatter {
             return node.toString();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ant.internal.ui.editor.format.NonParsingXMLFormatter.TagReader#requiresInitialIndent()
+        /* (non-Javadoc)
+         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#requiresInitialIndent()
          */
         public boolean requiresInitialIndent() {
             return false;
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.ant.internal.ui.editor.formatter.NonParsingXMLFormatter.TagReader#startsOnNewline()
+         */
         public boolean startsOnNewline() {
             return false;
         }
@@ -290,7 +290,6 @@ public class NonParsingXMLFormatter {
             } else {
                 return 0;
             }
-
         }
 
         public String getStartOfTag() {
@@ -330,11 +329,6 @@ public class NonParsingXMLFormatter {
 
     private FormattingPreferences prefs;
 
-    /**
-     * @param reader
-     * @param out
-     * @throws IOException
-     */
     private void copyNode(Reader reader, StringBuffer out) throws IOException {
 
         TagReader tag = TagReaderFactory.createTagReaderFor(reader);
@@ -387,24 +381,16 @@ public class NonParsingXMLFormatter {
             }
             reader.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           AntUIPlugin.log(e);
         }
         return formattedXml.toString();
     }
 
-    /**
-     * @param out
-     * @return
-     */
     private boolean hasNewlineAlready(StringBuffer out) {
         return out.lastIndexOf("\n") == formattedXml.length() - 1 //$NON-NLS-1$
                || out.lastIndexOf("\r") == formattedXml.length() - 1; //$NON-NLS-1$
     }
 
-    /**
-     * @return
-     */
     private String indent() {
         StringBuffer indent = new StringBuffer(30);
         for (int i = 0; i < depth; i++) {
@@ -413,18 +399,11 @@ public class NonParsingXMLFormatter {
         return indent.toString();
     }
 
-    /**
-     * @param prefs
-     */
     public void setFormattingPreferences(FormattingPreferences prefs) {
         this.prefs = prefs;
     }
 
-    /**
-     * @param documentText
-     */
     public void setText(String documentText) {
         this.documentText = documentText;
     }
-
 }

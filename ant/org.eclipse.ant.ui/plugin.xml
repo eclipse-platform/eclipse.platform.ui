@@ -176,6 +176,12 @@
             class="org.eclipse.ant.internal.ui.preferences.AntEditorPreferencePage"
             id="org.eclipse.ant.ui.AntEditorPreferencePage">
       </page>
+      <page
+            name="%PreferencePage.antCodeFormatterPreferences"
+            category="org.eclipse.ant.ui.AntPreferencePage"
+            class="org.eclipse.ant.internal.ui.preferences.AntCodeFormatterPreferencePage"
+            id="org.eclipse.ant.ui.AntCodeFormatterPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">

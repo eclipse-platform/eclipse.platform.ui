@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) John-Mason P. Shackelford and others.
+ * Copyright (c) 2004 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,69 +7,38 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ * 	   IBM Corporation - bug 52076
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 public class FormattingPreferences {
-    private String canonicalIndent;
-
-    private boolean useTabs;
-
-    private int tabWitdth;
-
-    private int printMargin;
-
-    private boolean useElementWrapping;
-
-    /**
-     * @return
-     */
+	
+	IPreferenceStore fPrefs= AntUIPlugin.getDefault().getPreferenceStore();
+   
     public String getCanonicalIndent() {
-        if (this.canonicalIndent == null) {
-            if (this.useTabs) {
-                this.canonicalIndent = "\t"; //$NON-NLS-1$
-            } else {
-                String tab = ""; //$NON-NLS-1$
-                for (int i = 0; i < this.tabWitdth; i++) {
-                    tab = tab.concat(" "); //$NON-NLS-1$
-                }
-                this.canonicalIndent = tab;
+       String canonicalIndent;
+        if (fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR)) {
+            canonicalIndent = "\t"; //$NON-NLS-1$
+        } else {
+            String tab = ""; //$NON-NLS-1$
+            for (int i = 0; i < fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE); i++) {
+                tab = tab.concat(" "); //$NON-NLS-1$
             }
+            canonicalIndent = tab;
         }
-        return this.canonicalIndent;
+        
+        return canonicalIndent;
     }
-
-    // TODO connect to ant preferences and remove this method (?)
-    public void useHorizontalTabs() {
-        this.useTabs = true;
-    }
-
-    // TODO connect to ant preferences and remove this method (?)
-    public void useSpacesForTab(int tabWidth) {
-        this.useTabs = false;
-        this.tabWitdth = tabWidth;
-    }
-
-    // TODO connect to ant preferences and remove this method (?)
-    public void setPrintMargin(int column) {
-        this.printMargin = column;
-    }
-    /**
-     * @return Returns the printMargin.
-     */
-    public int getPrintMargin() {
-        return this.printMargin;
+    
+    public int getMaximumLineWidth() {
+        return fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH);
     }  
     
-    /**
-     * @return
-     */
     public boolean useElementWrapping() {
-        return this.useElementWrapping;
-    }
-
-    // TODO connect to ant preferences and remove this method (?)
-    public void setUseElementWrapping(boolean useElementWrapping) {
-        this.useElementWrapping = useElementWrapping;
+        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG);
     }
 }

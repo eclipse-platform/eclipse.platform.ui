@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) John-Mason P. Shackelford and others.
+ * Copyright (c) 2004 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ * 	   IBM Corporation - bug 52076
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.formatter;
@@ -56,23 +57,17 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         IDocument document = getViewer().getDocument();
 
         try {
-
-            // TODO connect to preferences
             FormattingPreferences prefs = new FormattingPreferences();
-            prefs.useSpacesForTab(4);
-            prefs.setPrintMargin(80);
-            prefs.setUseElementWrapping(true);
-
             String formatted = formatElement(document, partition, lineIndent, prefs);
 
             String partitionText = document.get(partition.getOffset(), partition.getLength());
 
-            if (formatted != null && !formatted.equals(partitionText))
-                    document.replace(partition.getOffset(), partition.getLength(), formatted);
+            if (formatted != null && !formatted.equals(partitionText)) {
+            	document.replace(partition.getOffset(), partition.getLength(), formatted);
+            }
 
         } catch (BadLocationException e) {
         }
-
     }
 
     private String formatElement(IDocument document, TypedPosition partition, String indentation, FormattingPreferences prefs) throws BadLocationException {
@@ -89,7 +84,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
             int partitionLineOffset = partition.getOffset() - line.getOffset();
 
             // do we have a good candidate for a wrap?
-            if (line.getLength() > prefs.getPrintMargin()) {
+            if (line.getLength() > prefs.getMaximumLineWidth()) {
 
                 List attributes = getAttributes(partitionText);
                 if (attributes.size() > 1) {
