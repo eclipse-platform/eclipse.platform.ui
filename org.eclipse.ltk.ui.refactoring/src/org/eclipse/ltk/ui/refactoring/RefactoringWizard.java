@@ -86,7 +86,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Flag (value 2) indicating that a normal wizard based user interface consisting
 	 * of a back, next, finish and cancel button should be used to present
 	 * this refactoring wizard. This flag can't be specified together with
-	 * the flag {@link #DIALOG_BASED_UESR_INTERFACE}.
+	 * the flag {@link #DIALOG_BASED_USER_INTERFACE}.
 	 */
 	public static final int WIZARD_BASED_USER_INTERFACE= 1 << 1;
 	
@@ -100,7 +100,12 @@ public abstract class RefactoringWizard extends Wizard {
 	 * pages. This flag can't be specified together with the flag 
 	 * {@link #WIZARD_BASED_USER_INTERFACE}.
 	 */
-	public static final int DIALOG_BASED_UESR_INTERFACE= 1 << 2;
+	public static final int DIALOG_BASED_USER_INTERFACE= 1 << 2;
+	
+	/**
+	 * @deprecated Use {@link #DIALOG_BASED_USER_INTERFACE} instead.
+	 */
+	public static final int DIALOG_BASED_UESR_INTERFACE= DIALOG_BASED_USER_INTERFACE;
 	
 	/**
 	 * Flag (value 8) indicating that the finish and cancel button should be named
@@ -159,9 +164,9 @@ public abstract class RefactoringWizard extends Wizard {
 	public RefactoringWizard(Refactoring refactoring, int flags) {
 		Assert.isNotNull(refactoring);
 		Assert.isTrue(flags < LAST);
-		if ((flags & DIALOG_BASED_UESR_INTERFACE) == 0) 
+		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0) 
 			flags |= WIZARD_BASED_USER_INTERFACE;
-		Assert.isTrue((flags & DIALOG_BASED_UESR_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
+		Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
 		fRefactoring= refactoring;
 		fFlags= flags;
 		setNeedsProgressMonitor(true);
