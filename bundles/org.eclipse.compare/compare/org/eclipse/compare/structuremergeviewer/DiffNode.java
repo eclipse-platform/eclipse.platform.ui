@@ -246,6 +246,16 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		return ITypedElement.UNKNOWN_TYPE;
 	}
 
+	/**
+	 * Sets the ancestor input to the given value.
+	 *
+	 * @param ancestor the new value for the ancestor input
+	 * @since 3.0
+	 */
+	public void setAncestor(ITypedElement ancestor) {
+	    fAncestor= ancestor;
+	}
+	
 	/* (non Javadoc)
 	 * see ICompareInput.getAncestor
 	 */
