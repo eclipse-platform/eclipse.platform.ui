@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -68,7 +69,7 @@ public class ZoomTestCase extends UITestCase {
 	protected void zoom(IWorkbenchPart part) {
 		if (part == null)
 			throw new NullPointerException();
-		page.toggleZoom(part);
+		page.toggleZoom(((PartSite) part.getSite()).getPane().getPartReference());
 		Assert.assertTrue(page.isZoomed());		
 	}
 	// open the given file in an editor
