@@ -11,7 +11,6 @@ Contributors:
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -66,19 +65,16 @@ public class SpecificFolderResourceComponent extends ResourceComponent {
 	/* (non-Javadoc)
 	 * Method declared on ResourceComponent.
 	 */
-	protected boolean validateResourceListSelection() {
+	protected void validateResourceListSelection() {
 		if (resourceList == null)
-			return true;
+			return;
 			
 		IStructuredSelection sel = (IStructuredSelection) resourceList.getSelection();
 		IResource resource = (IResource) sel.getFirstElement();
 		if (resource == null || resource.getType() == IResource.FILE) {
-			getPage().setMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
+			getPage().setErrorMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired")); //$NON-NLS-1$
 			setIsValid(false);
-			return false;
 		}
-		
-		return true;
 	}
 	
 	

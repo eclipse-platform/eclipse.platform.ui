@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsModelMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.variable.*;
 import org.eclipse.ui.externaltools.internal.variable.DefaultVariableExpander;
 import org.eclipse.ui.externaltools.internal.variable.IVariableComponent;
 import org.eclipse.ui.externaltools.internal.variable.IVariableExpander;
@@ -115,7 +116,7 @@ public class ExternalToolVariable {
 	 * Default variable component implementation which does not
 	 * allow variable value editing visually.
 	 */	
-	private static final class DefaultVariableComponent implements IVariableComponent {
+	private static final class DefaultVariableComponent extends AbstractVariableComponent {
 		private boolean showError = false;
 		private Label message = null;
 		
@@ -143,32 +144,6 @@ public class ExternalToolVariable {
 				message.setText(ExternalToolsModelMessages.getString("ExternalToolVariable.componentErrorMessage")); //$NON-NLS-1$
 				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 			}
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public String getVariableValue() {
-			return null;
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public boolean isValid() {
-			return true;
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public void setVariableValue(String varValue) {
-		}
-
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public void validate() {
 		}
 	}
 }

@@ -20,19 +20,14 @@ import org.eclipse.jface.dialogs.IMessageProvider;
  * </p>
  */
 public interface IGroupDialogPage extends IMessageProvider {
-
+	
 	/**
-	 * Sets the message for this page with an indication of what type
-	 * of message it is.
-	 * <p>
-	 * The valid message types are one of <code>NONE</code>, 
-	 * <code>INFORMATION</code>, <code>WARNING</code>, or <code>ERROR</code>.
-	 * </p>
+	 * Sets the error message for this page
 	 *
-	 * @param newMessage the message, or <code>null</code> to clear the message
-	 * @param newType the message type
+	 * @param errorMessage the message, or <code>null</code> to clear the
+	 * message
 	 */
-	public void setMessage(String newMessage, int newType);
+	public void setErrorMessage(String errorMessage);
 
 	/**
 	 * Updates the page's valid state using the group's

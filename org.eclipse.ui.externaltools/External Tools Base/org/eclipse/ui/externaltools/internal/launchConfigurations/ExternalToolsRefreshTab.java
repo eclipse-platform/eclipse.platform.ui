@@ -203,12 +203,12 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 			}
 		}
 	}
-
+	
 	/**
-	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#setMessage(java.lang.String, int)
+	 * @see IGroupDialogPage#setErrorMessage(String)
 	 */
-	public void setMessage(String newMessage, int newType) {
-		setMessage(newMessage);
+	public void setErrorMessage(String errorMessage) {
+		super.setErrorMessage(errorMessage);
 	}
 
 	/**
@@ -234,6 +234,14 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	public Image getImage() {
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_ACTION_REFRESH);
+	}
+
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		return getErrorMessage() == null;
+	}
+	
+	public boolean canSave() {
+		return getErrorMessage() == null;
 	}
 
 }

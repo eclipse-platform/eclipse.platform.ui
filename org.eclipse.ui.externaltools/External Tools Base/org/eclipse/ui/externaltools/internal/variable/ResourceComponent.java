@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -19,14 +18,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -37,11 +33,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * This class is not intended to be extended by clients.
  * </p>
  */
-public class ResourceComponent implements IVariableComponent {
-	private IGroupDialogPage page;
-	private boolean isValid = true;
-	
-	protected Group mainGroup;
+public class ResourceComponent extends AbstractVariableComponent {
 	protected Button selectedResourceButton;
 	protected Button specificResourceButton;
 	protected TreeViewer resourceList;
@@ -58,19 +50,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * Method declared on IVariableComponent.
 	 */
 	public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
-		this.page = page;
-		
-		// main composite
-		mainGroup = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		mainGroup.setLayout(layout);
-		mainGroup.setLayoutData(gridData);
-		mainGroup.setFont(parent.getFont());
-		mainGroup.setText(ToolUtil.buildVariableTag(varTag, null));
+		super.createContents(parent, varTag, page); // Creates the main group and sets the page
 		
 		createSelectedResourceOption();
 		createSpecificResourceOption();
@@ -92,9 +72,8 @@ public class ResourceComponent implements IVariableComponent {
 		resourceList = new TreeViewer(tree);
 		resourceList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				validateResourceListSelection();
 				selectedResource= (IResource) ((IStructuredSelection)event.getSelection()).getFirstElement();
-				page.updateValidState();
+				validate();
 			}
 		});
 		resourceList.setContentProvider(new WorkbenchContentProvider());
@@ -130,7 +109,7 @@ public class ResourceComponent implements IVariableComponent {
 		specificResourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateResourceListEnablement();
-				page.updateValidState();
+				getPage().updateValidState();
 			}
 		});
 	}
@@ -140,13 +119,6 @@ public class ResourceComponent implements IVariableComponent {
 	 */
 	public Control getControl() {
 		return mainGroup;
-	}
-
-	/**
-	 * Returns the dialog page this component is part of
-	 */
-	protected final IGroupDialogPage getPage() {
-		return page;
 	}
 	
 	/* (non-Javadoc)
@@ -174,34 +146,13 @@ public class ResourceComponent implements IVariableComponent {
 		return 10;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IVariableComponent.
-	 */
-	public boolean isValid() {
-		return isValid;
-	}
-
-	/**
-	 * Sets whether the component's values are all valid.
-	 * Updates the components's page valid state. No action
-	 * taken if new valid state same as current one.
-	 * 
-	 * @param isValid <code>true</code> if all values valid,
-	 * 		<code>false</code> otherwise
-	 */
-	protected final void setIsValid(boolean isValid) {
-		if (this.isValid != isValid) {
-			this.isValid = isValid;
-			this.page.updateValidState();
-		}
-	}
-	
 	/**
 	 * Updates the enablement of the resource list if needed
 	 */
 	private void updateResourceListEnablement() {
 		if (specificResourceButton != null && resourceList != null) {
 			resourceList.getTree().setEnabled(specificResourceButton.getSelection());
+			validate();
 		}
 	}
 	
@@ -242,32 +193,26 @@ public class ResourceComponent implements IVariableComponent {
 	 * Method declared on IVariableComponent.
 	 */
 	public void validate() {
+		getPage().setErrorMessage(null);
+		setIsValid(true);
 		if (specificResourceButton != null && specificResourceButton.getSelection()) {
 			validateResourceListSelection();
 		}
-
-		getPage().setMessage(null, IMessageProvider.NONE);
-		setIsValid(true);
+		getPage().updateValidState();
 	}
 
 	/**
-	 * Returns whether that the resource list selection is valid.
-	 * If the list was not created, returns <code>true</code>.
-	 * 
-	 * @return <code>true</code> to continue validating other
-	 * 	fields, <code>false</code> to stop.
+	 * Validates the resource selection list. If no resource is selected, the
+	 * component is updated with an error message and isValid is set
+	 * <code>false</code>
 	 */
-	private boolean validateResourceListSelection() {
+	private void validateResourceListSelection() {
 		if (resourceList == null) {
-			return true;
+			return;
 		}
-
 		if (resourceList.getSelection().isEmpty()) {
-			getPage().setMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
+			getPage().setErrorMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired")); //$NON-NLS-1$
 			setIsValid(false);
-			return false;
 		}
-		
-		return true;
 	}
 }

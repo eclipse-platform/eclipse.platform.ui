@@ -450,6 +450,7 @@
 		<variable
 			tag="working_set"
 			description="%working_set.description"
+			componentClass="org.eclipse.ui.externaltools.internal.variable.WorkingSetComponent"
 			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkingSetExpander">
 		</variable>
 	</extension>

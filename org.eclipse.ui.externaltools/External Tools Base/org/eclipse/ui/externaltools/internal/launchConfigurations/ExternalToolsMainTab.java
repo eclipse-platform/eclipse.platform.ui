@@ -579,8 +579,9 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getToolVariableRegistry().getVariables();
 			form= new ExternalToolVariableForm(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Choose_a_variable__11"), variables); //$NON-NLS-1$
 			form.createContents(composite, new IGroupDialogPage() {
-				public void setMessage(String newMessage, int newType) {
-					VariableSelectionDialog.this.setMessage(newMessage);
+				
+				public void setErrorMessage(String errorMessage) {
+					VariableSelectionDialog.this.setMessage(errorMessage);
 				}
 
 				public void updateValidState() {
