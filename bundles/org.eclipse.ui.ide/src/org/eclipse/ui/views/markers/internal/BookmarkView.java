@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.markers;
+package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -37,18 +37,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.markers.internal.BookmarkFilter;
-import org.eclipse.ui.views.markers.internal.ConcreteMarker;
-import org.eclipse.ui.views.markers.internal.DialogBookmarkFilter;
-import org.eclipse.ui.views.markers.internal.FieldCreationTime;
-import org.eclipse.ui.views.markers.internal.FieldFolder;
-import org.eclipse.ui.views.markers.internal.FieldLineNumber;
-import org.eclipse.ui.views.markers.internal.FieldMessage;
-import org.eclipse.ui.views.markers.internal.FieldResource;
-import org.eclipse.ui.views.markers.internal.IField;
-import org.eclipse.ui.views.markers.internal.MarkerFilter;
-import org.eclipse.ui.views.markers.internal.MarkerView;
-import org.eclipse.ui.views.markers.internal.Messages;
 
 public class BookmarkView extends MarkerView {
 

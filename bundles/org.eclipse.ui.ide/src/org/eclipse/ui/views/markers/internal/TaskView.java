@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.markers;
+package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -47,26 +47,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.markers.internal.ActionAddGlobalTask;
-import org.eclipse.ui.views.markers.internal.ActionDeleteCompleted;
-import org.eclipse.ui.views.markers.internal.ActionMarkCompleted;
-import org.eclipse.ui.views.markers.internal.ActionTaskProperties;
-import org.eclipse.ui.views.markers.internal.ConcreteMarker;
-import org.eclipse.ui.views.markers.internal.DialogMarkerFilter;
-import org.eclipse.ui.views.markers.internal.DialogTaskFilter;
-import org.eclipse.ui.views.markers.internal.FieldCreationTime;
-import org.eclipse.ui.views.markers.internal.FieldDone;
-import org.eclipse.ui.views.markers.internal.FieldFolder;
-import org.eclipse.ui.views.markers.internal.FieldLineNumber;
-import org.eclipse.ui.views.markers.internal.FieldMessage;
-import org.eclipse.ui.views.markers.internal.FieldPriority;
-import org.eclipse.ui.views.markers.internal.FieldResource;
-import org.eclipse.ui.views.markers.internal.IField;
-import org.eclipse.ui.views.markers.internal.MarkerFilter;
-import org.eclipse.ui.views.markers.internal.MarkerView;
-import org.eclipse.ui.views.markers.internal.Messages;
-import org.eclipse.ui.views.markers.internal.TaskFilter;
-import org.eclipse.ui.views.markers.internal.Util;
 
 public class TaskView extends MarkerView {
 
