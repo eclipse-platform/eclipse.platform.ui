@@ -14,22 +14,13 @@ package org.eclipse.ui.console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -55,7 +46,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.1
  *
  */
-public class IOConsole extends AbstractConsole implements IDocumentListener {
+public class IOConsole extends AbstractConsole {
     	
 	/**
 	 * Property constant indicating the font of this console has changed. 
@@ -83,10 +74,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant indicating that all queued output has been processed and that
-	 * all streams connected to this console have been closed.
+	 * Property constant indicating that all streams connected to this console have been closed
+	 * and that all queued output has been processed.
 	 */
-	public static final String P_CONSOLE_STREAMS_CLOSED = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
+	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant indicating that the auto scrolling should be turned on (or off)
@@ -123,11 +114,6 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * A value of <=0 means does not have a fixed width.
      */
     private int consoleWidth = -1;
-    
-    /**
-     * Collection of compiled pattern match listeners
-     */
-    private ArrayList patterns = new ArrayList();
         
     /**
      * Map of client defined attributes
@@ -139,18 +125,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * is appended.
      */
     private boolean autoScroll = true;
-    
-    /**
-     * Set to <code>true</code> when the partitioner completes the
-     * processing of buffered output.
-     */
-    private boolean partitionerFinished = false;
-    
-    /**
-     * Job used for regular experssion matching
-     */
-    private MatchJob matchJob = new MatchJob();
-    
+        
     /**
      * A collection of open streams connected to this console.
      */
@@ -175,7 +150,6 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         Document document = new Document();
         document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         partitioner.connect(document);
-        document.addDocumentListener(this);
     }
     
     /**
@@ -396,7 +370,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      */
     private void checkFinished() {
         if (openStreams.isEmpty()) {
-            partitioner.consoleFinished();
+            partitioner.streamsClosed();
         }
     }
     
@@ -418,19 +392,6 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     void streamClosed(IOConsoleInputStream stream) {
         openStreams.remove(stream);
         checkFinished();
-    }
-    
-    /**
-     * Notification from the document partitioner that all pending partitions have been 
-     * processed and the console's lifecycle is complete.
-     * TODO: this method is not intended for clients to call - it is an implementation
-     *  detail.
-     */
-    public void partitionerFinished() {
-        partitionerFinished = true;
-        if (matchJob != null) {
-            matchJob.schedule();
-        }
     }
     
     /**
@@ -491,230 +452,35 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      */
     protected void dispose() {
         super.dispose();
-        matchJob.cancel();
         partitioner.disconnect();
         try {
             inputStream.close();
         } catch (IOException ioe) {
         }
         inputStream = null;
-        synchronized (patterns) {
-            Iterator iterator = patterns.iterator();
-            while (iterator.hasNext()) {
-                CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
-                notifier.dispose();
-            }
-            patterns.clear();
-        }
         synchronized(attributes) {
             attributes.clear();
         }
-        matchJob = null;
     }
     
     /**
      * Adds the given pattern match listener to this console. The listener will
      * be connected and receive match notifications.
      * 
-     * @param matchListener the pattern match listener to add
+     * @param listener the listener to add
      */
-    public void addPatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized(patterns) {
-            // TODO: check for dups
-            if (matchListener == null || matchListener.getPattern() == null) {
-                throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
-            }
-            
-            Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
-            String qualifier = matchListener.getLineQualifier();
-            Pattern qPattern = null;
-            if (qualifier != null) {
-            	qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
-            }
-            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
-            patterns.add(notifier);
-            matchListener.connect(this);
-            matchJob.schedule(100);
-        }
+    public void addPatternMatchListener(IPatternMatchListener listener) {
+        partitioner.addPatternMatchListener(listener);
     }
     
     /**
      * Removes the given pattern match listener from this console. The listener will be
      * disconnected and will no longer receive match notifications.
      * 
-     * @param matchListener the pattern match listener to remove.
+     * @param listener the pattern match listener to remove.
      */
-    public void removePatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized(patterns){
-            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
-                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
-                if (element.listener == matchListener) {
-                    iter.remove();
-                    matchListener.disconnect();
-                }
-            }
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-     */
-    public void documentAboutToBeChanged(DocumentEvent event) {
-        
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-     */
-    public void documentChanged(DocumentEvent event) {
-    	if (event.getOffset() == 0 && event.getText().length() == 0) {
-    		// buffer has been emptied, reset match listeners
-    		synchronized (patterns) {
-    			Iterator iter = patterns.iterator();
-    			while (iter.hasNext()) {
-    				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
-    				notifier.end = 0;
-    			}
-    		}
-    	}
-    	if (matchJob != null) {
-    	    matchJob.schedule(50);
-    	}
-    }
-    
-    private class CompiledPatternMatchListener {
-        Pattern pattern;
-        Pattern qualifier;
-        IPatternMatchListener listener;
-        int end = 0;
-        
-        CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
-            this.pattern = pattern;
-            this.listener = matchListener;
-            this.qualifier = qualifier;
-        }
-        
-        public void dispose() {
-            listener.disconnect();
-            pattern = null;
-            qualifier = null;
-            listener = null;
-        }
-    }
-    
-    private class MatchJob extends Job {
-        
-        MatchJob() {
-            super("Match Job"); //$NON-NLS-1$
-            setSystem(true);
-        }
-                
-        protected IStatus run(IProgressMonitor monitor) {
-        	IDocument doc = getDocument();
-        	String text = null;
-        	int prevBaseOffset = -1;
-        	if (doc != null && !monitor.isCanceled()) {
-        	    boolean allDone = partitionerFinished;
-	        	int endOfSearch = doc.getLength();
-	        	int indexOfLastChar = endOfSearch;
-	        	if (indexOfLastChar > 0) {
-	        		indexOfLastChar--;
-	        	}
-	        	int lastLineToSearch = 0;
-	        	int offsetOfLastLineToSearch = 0;
-	        	try {
-	        		lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
-	        		offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
-	        	} catch (BadLocationException e) {
-	        		// perhaps the buffer was re-set 
-	        		return Status.OK_STATUS;
-	        	}
-	        	for (int i = 0; i < patterns.size(); i++) {
-	        	    if (monitor.isCanceled()) {
-	        	        break;
-	        	    }
-	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
-	        		int baseOffset = notifier.end;
-					int lengthToSearch = endOfSearch - baseOffset;
-					if (lengthToSearch > 0) {
-						try {
-							if (prevBaseOffset != baseOffset) {
-								// reuse the text string if possible
-								text = doc.get(baseOffset, lengthToSearch);
-							}
-							Matcher reg = notifier.pattern.matcher(text);
-							Matcher quick = null;
-							if (notifier.qualifier != null) {
-								quick = notifier.qualifier.matcher(text);
-							}
-							int startOfNextSearch = 0;
-							int endOfLastMatch = -1;
-							int lineOfLastMatch = -1;
-							while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
-								if (quick != null) {
-									if (quick.find(startOfNextSearch)) {
-										// start searching on the beginning of the line where the potential
-										// match was found, or after the last match on the same line
-										int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
-										if (lineOfLastMatch == matchLine) {
-											startOfNextSearch = endOfLastMatch;
-										} else {
-											startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
-										}
-									} else {
-										startOfNextSearch = lengthToSearch;
-									}
-								}
-								if (startOfNextSearch < lengthToSearch) {
-									if (reg.find(startOfNextSearch)) {
-										endOfLastMatch = reg.end();
-										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
-										int regStart = reg.start();
-										IPatternMatchListener listener = notifier.listener;
-										if (listener != null && !monitor.isCanceled()) {
-										    listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, endOfLastMatch - regStart));
-										}
-										startOfNextSearch = endOfLastMatch;
-									} else {
-										startOfNextSearch = lengthToSearch;
-									}
-								}
-							}
-							// update start of next search to the last line searched
-							// or the end of the last match if it was on the line that
-							// was last searched
-							if (lastLineToSearch == lineOfLastMatch) {
-								notifier.end = baseOffset + endOfLastMatch;
-							} else {
-								notifier.end = offsetOfLastLineToSearch;
-							}
-		        		} catch (BadLocationException e) {
-		        			ConsolePlugin.log(e);
-		            	}
-					}
-					prevBaseOffset = baseOffset;
-					if (allDone) {
-						int lastLineOfDoc = doc.getNumberOfLines() - 1;
-						try {
-							if (doc.getLineLength(lastLineOfDoc) == 0) {
-								// if the last line is empty, do not consider it
-								lastLineOfDoc--;
-							}
-						} catch (BadLocationException e) {
-						    ConsolePlugin.log(e);
-							allDone = false;
-						}
-						allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
-					}
-		        }
-	        	if (allDone && !monitor.isCanceled()) {
-	        	    firePropertyChange(this, IOConsole.P_CONSOLE_STREAMS_CLOSED, null, null);
-	        	    cancel(); // cancels this job if it has already been re-scheduled
-	        	}
-        	}
-            return Status.OK_STATUS;
-        } 
-
+    public void removePatternMatchListener(IPatternMatchListener listener) {
+        partitioner.removePatternMatchListener(listener);
     }
     
     /**

@@ -226,7 +226,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		    viewer.setConsoleWidth(console.getConsoleWidth()); 
 		} else if (property.equals(IConsoleConstants.CONSOLE_FONT)) {
 		    viewer.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
-		} else if (property.equals(IOConsole.P_CONSOLE_STREAMS_CLOSED)) {
+		} else if (property.equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
 		    viewer.setReadOnly();
 		} else if (property.equals(IOConsole.P_AUTO_SCROLL)) {
 		    setAutoScroll(console.getAutoScroll());

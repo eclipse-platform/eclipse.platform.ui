@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.console;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,6 +36,8 @@ import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.console.IPatternMatchListener;
+import org.eclipse.ui.console.PatternMatchEvent;
 
 /**
  * Partitions an IOConsole's document
@@ -60,6 +64,19 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * Job that appends pending partitions to the document.
 	 */
 	private DocumentUpdaterJob updateJob;
+	/**
+	 * Regular expression matching job 
+	 */
+	private MatchJob matchJob;
+    /**
+     * Collection of compiled pattern match listeners
+     */
+    private ArrayList patterns = new ArrayList();	
+    /**
+     * Set to <code>true</code> when the partitioner completes the
+     * processing of buffered output.
+     */
+    private boolean partitionerFinished = false;    
 	/**
 	 * The input stream attached to this document.
 	 */
@@ -108,6 +125,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		pendingPartitions = new ArrayList();
 		inputPartitions = new ArrayList();
 		updateJob = new DocumentUpdaterJob();
+		matchJob = new MatchJob();
 		updateJob.setSystem(true);
 		connected = true;
 	}
@@ -130,7 +148,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		});
 	}
 	
-    public void consoleFinished() {
+	/**
+	 * Notification from the console that all of its streams have been closed.
+	 */
+    public void streamsClosed() {
         consoleClosedPartition = new PendingPartition(null, null);
         synchronized (pendingPartitions) {
             pendingPartitions.add(consoleClosedPartition);
@@ -143,6 +164,15 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
 	 */
 	public void disconnect() {
+	    matchJob.cancel();
+        synchronized (patterns) {
+            Iterator iterator = patterns.iterator();
+            while (iterator.hasNext()) {
+                CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
+                notifier.dispose();
+            }
+            patterns.clear();
+        }	    
 		document = null;
 		partitions.clear();
 		connected = false;
@@ -283,6 +313,15 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 						p.setOffset(offset);
 						offset += p.getLength();
 					}
+					
+		    		// buffer has been emptied, reset match listeners
+		    		synchronized (patterns) {
+		    			Iterator iter = patterns.iterator();
+		    			while (iter.hasNext()) {
+		    				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
+		    				notifier.end = 0;
+		    			}
+		    		}					
 				} catch (BadLocationException e) {
 				}  
 			}
@@ -461,8 +500,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			            setUpdateInProgress(false);
 			        }
 			        if (notifyClosed) {
-		                console.partitionerFinished();
+		                partitionerFinished();
 		            }
+			        matchJob.schedule(50);
 			    }
 			});
 			
@@ -482,6 +522,193 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
         }
 	}
 
+    /**
+     * Notification that all pending partitions have been processed.
+     */
+    private void partitionerFinished() {
+        partitionerFinished = true;
+        if (matchJob != null) {
+            matchJob.schedule();
+        }
+    }
+    /**
+     * Adds the given pattern match listener to this console. The listener will
+     * be connected and receive match notifications.
+     * 
+     * @param matchListener the pattern match listener to add
+     */
+    public void addPatternMatchListener(IPatternMatchListener matchListener) {
+        synchronized(patterns) {
+            // TODO: check for dups
+            if (matchListener == null || matchListener.getPattern() == null) {
+                throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
+            }
+            
+            Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
+            String qualifier = matchListener.getLineQualifier();
+            Pattern qPattern = null;
+            if (qualifier != null) {
+            	qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
+            }
+            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
+            patterns.add(notifier);
+            matchListener.connect(console);
+            matchJob.schedule(100);
+        }
+    }
+    
+    /**
+     * Removes the given pattern match listener from this console. The listener will be
+     * disconnected and will no longer receive match notifications.
+     * 
+     * @param matchListener the pattern match listener to remove.
+     */
+    public void removePatternMatchListener(IPatternMatchListener matchListener) {
+        synchronized(patterns){
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
+                if (element.listener == matchListener) {
+                    iter.remove();
+                    matchListener.disconnect();
+                }
+            }
+        }
+    }	
+	
+    private class CompiledPatternMatchListener {
+        Pattern pattern;
+        Pattern qualifier;
+        IPatternMatchListener listener;
+        int end = 0;
+        
+        CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
+            this.pattern = pattern;
+            this.listener = matchListener;
+            this.qualifier = qualifier;
+        }
+        
+        public void dispose() {
+            listener.disconnect();
+            pattern = null;
+            qualifier = null;
+            listener = null;
+        }
+    }
+    
+    private class MatchJob extends Job {
+        
+        MatchJob() {
+            super("Match Job"); //$NON-NLS-1$
+            setSystem(true);
+        }
+                
+        protected IStatus run(IProgressMonitor monitor) {
+        	IDocument doc = getDocument();
+        	String text = null;
+        	int prevBaseOffset = -1;
+        	if (doc != null && !monitor.isCanceled()) {
+        	    boolean allDone = partitionerFinished;
+	        	int endOfSearch = doc.getLength();
+	        	int indexOfLastChar = endOfSearch;
+	        	if (indexOfLastChar > 0) {
+	        		indexOfLastChar--;
+	        	}
+	        	int lastLineToSearch = 0;
+	        	int offsetOfLastLineToSearch = 0;
+	        	try {
+	        		lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
+	        		offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
+	        	} catch (BadLocationException e) {
+	        		// perhaps the buffer was re-set 
+	        		return Status.OK_STATUS;
+	        	}
+	        	for (int i = 0; i < patterns.size(); i++) {
+	        	    if (monitor.isCanceled()) {
+	        	        break;
+	        	    }
+	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
+	        		int baseOffset = notifier.end;
+					int lengthToSearch = endOfSearch - baseOffset;
+					if (lengthToSearch > 0) {
+						try {
+							if (prevBaseOffset != baseOffset) {
+								// reuse the text string if possible
+								text = doc.get(baseOffset, lengthToSearch);
+							}
+							Matcher reg = notifier.pattern.matcher(text);
+							Matcher quick = null;
+							if (notifier.qualifier != null) {
+								quick = notifier.qualifier.matcher(text);
+							}
+							int startOfNextSearch = 0;
+							int endOfLastMatch = -1;
+							int lineOfLastMatch = -1;
+							while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
+								if (quick != null) {
+									if (quick.find(startOfNextSearch)) {
+										// start searching on the beginning of the line where the potential
+										// match was found, or after the last match on the same line
+										int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
+										if (lineOfLastMatch == matchLine) {
+											startOfNextSearch = endOfLastMatch;
+										} else {
+											startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
+										}
+									} else {
+										startOfNextSearch = lengthToSearch;
+									}
+								}
+								if (startOfNextSearch < lengthToSearch) {
+									if (reg.find(startOfNextSearch)) {
+										endOfLastMatch = reg.end();
+										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
+										int regStart = reg.start();
+										IPatternMatchListener listener = notifier.listener;
+										if (listener != null && !monitor.isCanceled()) {
+										    listener.matchFound(new PatternMatchEvent(console, baseOffset + regStart, endOfLastMatch - regStart));
+										}
+										startOfNextSearch = endOfLastMatch;
+									} else {
+										startOfNextSearch = lengthToSearch;
+									}
+								}
+							}
+							// update start of next search to the last line searched
+							// or the end of the last match if it was on the line that
+							// was last searched
+							if (lastLineToSearch == lineOfLastMatch) {
+								notifier.end = baseOffset + endOfLastMatch;
+							} else {
+								notifier.end = offsetOfLastLineToSearch;
+							}
+		        		} catch (BadLocationException e) {
+		        			ConsolePlugin.log(e);
+		            	}
+					}
+					prevBaseOffset = baseOffset;
+					if (allDone) {
+						int lastLineOfDoc = doc.getNumberOfLines() - 1;
+						try {
+							if (doc.getLineLength(lastLineOfDoc) == 0) {
+								// if the last line is empty, do not consider it
+								lastLineOfDoc--;
+							}
+						} catch (BadLocationException e) {
+						    ConsolePlugin.log(e);
+							allDone = false;
+						}
+						allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
+					}
+		        }
+	        	if (allDone && !monitor.isCanceled()) {
+	        	    console.firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+	        	    cancel(); // cancels this job if it has already been re-scheduled
+	        	}
+        	}
+            return Status.OK_STATUS;
+        } 
+
+    }	
     
 	
 }
