@@ -414,7 +414,7 @@ public class DecoratorManager
 	 */
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] elements = event.getElements();
-		
+		scheduler.clearResults();
 		//If the elements are not specified send out a general update
 		if(elements == null)
 			fireListeners(event);
@@ -665,8 +665,11 @@ public class DecoratorManager
 	public void update(String decoratorId) {
 
 		IBaseLabelProvider provider = getBaseLabelProvider(decoratorId);
-		if(provider != null)
+		if(provider != null){
+			scheduler.clearResults();
 			fireListeners(new LabelProviderChangedEvent(provider));
+		}
+			
 	}
 
 }

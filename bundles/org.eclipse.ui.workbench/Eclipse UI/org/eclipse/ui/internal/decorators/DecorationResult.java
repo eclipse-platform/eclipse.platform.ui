@@ -76,4 +76,28 @@ class DecorationResult {
 	}
 
 
+	/**
+	 * Get the descriptor array for the receiver.
+	 * @return ImageDescriptor[]
+	 */
+	ImageDescriptor[] getDescriptors() {
+		return descriptors;
+	}
+
+	/**
+	 * Get the prefixes for the receiver.
+	 * @return List
+	 */
+	List getPrefixes() {
+		return prefixes;
+	}
+
+	/**
+	 * Get the suffixes for the receiver.
+	 * @return List
+	 */
+	List getSuffixes() {
+		return suffixes;
+	}
+
 }

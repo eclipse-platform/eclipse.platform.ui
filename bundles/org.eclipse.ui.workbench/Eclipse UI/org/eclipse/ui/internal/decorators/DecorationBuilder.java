@@ -103,5 +103,20 @@ class DecorationBuilder implements IDecoration {
 	boolean hasValue() {
 		return valueSet;
 	}
+	
+	/**
+	 * Apply the previously calculates result to the receiver.
+	 * @param result
+	 */
+	void applyResult(DecorationResult result){
+		prefixes.addAll(result.getPrefixes());
+		suffixes.addAll(result.getSuffixes());
+		ImageDescriptor [] resultDescriptors = result.getDescriptors();
+		for(int i = 0; i < descriptors.length; i ++){
+			if(resultDescriptors[i] != null)
+				descriptors[i] = resultDescriptors[i];
+		}
+		valueSet = true;
+	}
 
 }

@@ -27,13 +27,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class DecorationScheduler implements IResourceChangeListener {
 
 	// When decorations are computed they are added to this cache via decorated() method
-	private Map resultCache = Collections.synchronizedMap(new HashMap());
+	private Map resultCache = new HashMap();
 
 	// Objects that need an icon and text computed for display to the user
 	private List awaitingDecoration = new ArrayList();
 
 	// Objects that are awaiting a label update.
-	private List pendingUpdate = Collections.synchronizedList(new ArrayList());
+	private Set pendingUpdate = new HashSet();
+
+	private Object resultLock = new Object();
 
 	private Map awaitingDecorationValues = new HashMap();
 
@@ -78,7 +80,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement,false);
+			queueForDecoration(element, adaptedElement, false);
 			return text;
 		} else
 			return decoration.decorateWithText(text);
@@ -112,7 +114,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			awaitingDecoration.add(element);
 			//Notify the receiver as the next method is
 			//synchronized on the receiver.
-			notify();
+			notifyAll();
 		}
 
 	}
@@ -139,7 +141,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement,false);
+			queueForDecoration(element, adaptedElement, false);
 			return image;
 		} else
 			return decoration.decorateWithOverlays(
@@ -161,16 +163,22 @@ public class DecorationScheduler implements IResourceChangeListener {
 
 					if (pendingUpdate.isEmpty())
 						return;
-					//Get the elements awaiting update and then
-					//clear the list
-					Object[] elements =
-						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
-					pendingUpdate.clear();
-					decoratorManager.fireListeners(
-						new LabelProviderChangedEvent(
-							decoratorManager,
-							elements));
-					resultCache.clear();
+					synchronized (resultLock) {
+						//Get the elements awaiting update and then
+						//clear the list
+						Object[] elements =
+							pendingUpdate.toArray(
+								new Object[pendingUpdate.size()]);
+						pendingUpdate.clear();
+						decoratorManager.fireListeners(
+							new LabelProviderChangedEvent(
+								decoratorManager,
+								elements));
+						//Other decoration requests may have occured due to
+						//updates. Only clear the results if there are none pending.
+						if (awaitingDecoration.isEmpty())
+							resultCache.clear();
+					}
 				}
 			});
 
@@ -244,7 +252,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			if (shutdown)
 				return null;
 
-			if (awaitingDecoration.isEmpty()) {
+			while (!shutdown && awaitingDecoration.isEmpty()) {
 				wait();
 			}
 			// We were awakened.
@@ -279,61 +287,87 @@ public class DecorationScheduler implements IResourceChangeListener {
 						return;
 					}
 
-					//Don't decorate if there is already a pending result
-					if (!resultCache.containsKey(reference.getElement())) {
+					//Synchronize on the result lock as we want to
+					//be sure that we do not try and decorate during
+					//label update servicing.
+					synchronized (resultLock) {
+						//Don't decorate if there is already a pending result
+						if (resultCache.containsKey(reference.getElement())) {
+							//The result may be due to calculating an adaptable.
+							//Be sure the update is sent regardless.
+							pendingUpdate.add(reference.getElement());
+						} else {
 
-						//Just build for the resource first
-						Object adapted = reference.getAdaptedElement();
+							//Just build for the resource first
+							Object adapted = reference.getAdaptedElement();
 
-						if (adapted != null) {
+							if (adapted != null) {
+								if (resultCache.containsKey(adapted)) {
+									//If we already calculated the adapted one reuse the result
+									cacheResult.applyResult(
+										(DecorationResult) resultCache.get(
+											adapted));
+								} else {
+									decoratorManager
+										.getLightweightManager()
+										.getDecorations(
+										adapted,
+										cacheResult);
+									if (cacheResult.hasValue()) {
+										resultCache.put(
+											adapted,
+											cacheResult.createResult());
+									}
+								}
+							}
+
+							//Now add in the results for the main object
+
 							decoratorManager
 								.getLightweightManager()
 								.getDecorations(
-								adapted,
+								reference.getElement(),
 								cacheResult);
-							if (cacheResult.hasValue()) {
-								resultCache.put(
-									adapted,
-									cacheResult.createResult());
 
-							}
+							//If we should update regardless then put a result anyways
+							if (cacheResult.hasValue()
+								|| reference.shouldForceUpdate()) {
+
+								//Only add something to look up if it is interesting
+								if (cacheResult.hasValue()) {
+									resultCache.put(
+										reference.getElement(),
+										cacheResult.createResult());
+								}
+
+								//Add an update for only the original element to 
+								//prevent multiple updates and clear the cache.
+								pendingUpdate.add(reference.getElement());
+							};
 						}
-
-						//Now add in the results for the main object
-
-						decoratorManager
-							.getLightweightManager()
-							.getDecorations(
-							reference.getElement(),
-							cacheResult);
-
-						//If we should update regardless then put a result anyways
-						if (cacheResult.hasValue()
-							|| reference.shouldForceUpdate()) {
-								
-							//Only add something to look up if it is interesting
-							if (cacheResult.hasValue()) {
-								resultCache.put(
-									reference.getElement(),
-									cacheResult.createResult());
-							}
-
-							//Add an update for only the original element to 
-							//prevent multiple updates and clear the cache.
-							pendingUpdate.add(reference.getElement());
-							cacheResult.clearContents();
-						};
 					}
-
-					// notify that decoration is ready
+					//	notify that decoration is ready
 					if (awaitingDecoration.isEmpty()) {
 						decorated();
 					}
+
 				}
 			};
 		};
 
 		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration"); //$NON-NLS-1$
+		decoratorUpdateThread.setDaemon(true);
 		decoratorUpdateThread.setPriority(Thread.MIN_PRIORITY);
+	}
+
+	/**
+	 * An external update request has been made. Clear the results as
+	 * they are likely obsolete now.
+	 */
+	void clearResults() {
+		synchronized(resultLock){
+			resultCache.clear();
+		}
+		
 	}
 }
