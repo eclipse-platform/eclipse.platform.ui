@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.jface.preference.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.help.*;
 
 /**
@@ -41,7 +41,7 @@ public void run() {
 	PreferenceManager pm = WorkbenchPlugin.getDefault().getPreferenceManager();
 	
 	if (pm != null) {
-		PreferenceDialog d = new PreferenceDialog(window.getShell(), pm);
+		PreferenceDialog d = new WorkbenchPreferenceDialog(window.getShell(), pm);
 		d.create();
 		WorkbenchHelp.setHelp(d.getShell(), IHelpContextIds.PREFERENCE_DIALOG);
 		d.open();	
