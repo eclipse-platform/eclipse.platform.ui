@@ -1,17 +1,14 @@
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.forms.ActivityConstraints;
-import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
-import org.eclipse.update.internal.ui.model.PendingChange;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.forms.*;
+import org.eclipse.update.internal.ui.model.*;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
@@ -55,19 +52,19 @@ public class FeatureStateAction extends Action {
 					if (isConfigured) {
 						restartNeeded =
 							addPendingChange(
-								PendingChange.UNCONFIGURE,
-								PendingChange.CONFIGURE);
+								PendingOperation.UNCONFIGURE,
+								PendingOperation.CONFIGURE);
 					} else {
 						restartNeeded =
 							addPendingChange(
-								PendingChange.CONFIGURE,
-								PendingChange.UNCONFIGURE);
+								PendingOperation.CONFIGURE,
+								PendingOperation.UNCONFIGURE);
 					}
 					if (restartNeeded)
 						UpdateUI.informRestartNeeded();
 
 					SiteManager.getLocalSite().save();
-					UpdateUI.getDefault().getUpdateModel().fireObjectChanged(adapter, "");
+					UpdateManager.getOperationsManager().fireObjectChanged(adapter, "");
 				} catch (CoreException e) {
 					revert(isConfigured);
 					UpdateUI.logException(e);
@@ -89,13 +86,13 @@ public class FeatureStateAction extends Action {
 	}
 
 	private boolean addPendingChange(int newJobType, int obsoleteJobType) {
-		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-		PendingChange job = model.findPendingChange(feature);
+		OperationsManager opmgr = UpdateManager.getOperationsManager();
+		PendingOperation job = opmgr.findPendingChange(feature);
 		if (job != null && obsoleteJobType == job.getJobType()) {
-			model.removePendingChange(job);
+			opmgr.removePendingChange(job);
 			return false;
 		} else {
-			model.addPendingChange(new PendingChange(feature, newJobType));
+			opmgr.addPendingChange(new PendingOperation(feature, newJobType));
 			return true;
 		}
 	}
