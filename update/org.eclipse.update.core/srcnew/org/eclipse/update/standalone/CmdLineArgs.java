@@ -9,12 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.standalone;
-import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
 
 public class CmdLineArgs {
 	private HashMap options = new HashMap();
