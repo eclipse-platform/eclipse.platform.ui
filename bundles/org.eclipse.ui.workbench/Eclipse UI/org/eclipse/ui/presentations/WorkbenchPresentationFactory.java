@@ -45,12 +45,12 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
             return new EditorPresentation(parent, site, flags);
         case ROLE_DOCKED_VIEW:
             return new PartTabFolderPresentation(parent, site, flags);
-        case ROLE_FAST_VIEW:
+        //case ROLE_FAST_VIEW:
             // TODO 
-            return new PartTabFolderPresentation(parent, site, flags);
-        case ROLE_DETACHED_VIEW:
+         //   return new PartTabFolderPresentation(parent, site, flags);
+        //case ROLE_DETACHED_VIEW:
             // TODO
-            return new PartTabFolderPresentation(parent, site, flags);
+            //return new PartTabFolderPresentation(parent, site, flags);
         default:
             throw new Error("not implemented");
         }

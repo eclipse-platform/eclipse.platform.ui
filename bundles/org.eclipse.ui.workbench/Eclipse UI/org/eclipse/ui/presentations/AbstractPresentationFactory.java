@@ -26,9 +26,9 @@ public abstract class AbstractPresentationFactory {
 
     public static final int ROLE_DOCKED_VIEW = 1;
 
-    public static final int ROLE_FAST_VIEW = 2;
+    //public static final int ROLE_FAST_VIEW = 2;
 
-    public static final int ROLE_DETACHED_VIEW = 3;
+    //public static final int ROLE_DETACHED_VIEW = 3;
 
     /**
      * Creates a part presentation.

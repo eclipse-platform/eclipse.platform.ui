@@ -48,7 +48,6 @@ public class BasicStackPresentation extends StackPresentation {
 	private IStackPresentationSite site;
 	private IPresentablePart current;
 	private boolean activeState = false;
-	private boolean assignFocusOnSelection = true;
 	private int tabPosition;
 	private MenuManager systemMenuManager = new MenuManager();
 	
@@ -397,10 +396,7 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 		oldPart.setVisible(false);
 		
-		assignFocusOnSelection = false;
-		
 		item.dispose();
-		assignFocusOnSelection = true;
 	}
 	
 	/* (non-Javadoc)
@@ -420,11 +416,7 @@ public class BasicStackPresentation extends StackPresentation {
 		if (current != null) {
 			tabFolder.setSelection(indexOf(current));
 			setControlSize();
-			current.setVisible(true);
-			
-			if (assignFocusOnSelection) {
-				current.setFocus();
-			}
+			current.setVisible(true);			
 		}
 	}
 	
