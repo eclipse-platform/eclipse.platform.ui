@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Implementation of the workbench plugin's preferences extension's customization element.
@@ -76,6 +77,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
 		//Temporary option to turn off the dialog font
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
+		
+		//Set the default theme.
+		store.setDefault(IPreferenceConstants.CURRENT_THEME_ID, IThemeManager.DEFAULT_THEME);
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }

@@ -146,9 +146,12 @@ public class WorkbenchThemeManager implements IThemeManager {
 		        oldTheme.removePropertyChangeListener(currentThemeListener);
 		    currentTheme.addPropertyChangeListener(currentThemeListener);	
 		    
-			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id == null ? "" : id); //$NON-NLS-1$
-			WorkbenchPlugin.getDefault().savePluginPreferences();
-			
+		    // update the preference if required.
+		    if (!WorkbenchPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.CURRENT_THEME_ID).equals(id)) {
+				WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id); //$NON-NLS-1$
+				WorkbenchPlugin.getDefault().savePluginPreferences();
+		    }	
+		    
 			//update the jface registries
 			{
 				ColorRegistry jfaceColors = JFaceResources.getColorRegistry();			
