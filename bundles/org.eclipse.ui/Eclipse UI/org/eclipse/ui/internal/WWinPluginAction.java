@@ -72,6 +72,7 @@ public class WWinPluginAction extends PluginAction
 			retargetAction.setEnabled(false);
 			setEnabled(false);
 			window.getPartService().addPartListener(retargetAction);
+			retargetAction.partActivated(window.getPartService().getActivePart());
 		} else {		
 			// if we retarget the handler will look after selection changes
 			window.getSelectionService().addSelectionListener(this);
