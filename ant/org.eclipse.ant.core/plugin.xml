@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.ant.core"
    name="%pluginName"
-   version="2.0.2"
+   version="2.1.0"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.ant.core.AntPlugin">
 <requires>
@@ -17,7 +17,7 @@
    <library name="antsupport.jar">
       <export name="*"/>
    </library>
-   <library name="jakarta-ant-1.3-optional.jar">
+   <library name="jakarta-ant-1.4.1-optional.jar">
       <export name="*"/>
    </library>
    <library name="NetComponents.jar">
@@ -62,6 +62,10 @@
    <antTask
          name="javac"
          class="org.eclipse.ant.core.EclipseJavac">
+   </antTask>
+   <antTask
+         name="copy"
+         class="org.eclipse.ant.core.EclipseCopy">
    </antTask>
    <antTask
          name="refreshLocal"

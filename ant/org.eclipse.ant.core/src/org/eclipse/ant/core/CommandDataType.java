@@ -14,8 +14,8 @@ import org.apache.tools.ant.types.*;
  * while working on projects.
  * <p>
  * The name of the builder must be specified.<br>
- * Is is posible to specify arguments with nested elements. It is also 
- * possible to reference this command using an reference id.
+ * It is posible to specify arguments with nested elements. It is also 
+ * possible to reference this command using a reference id.
  * <p><p>
  * Example:<p>
  *	&lt;command name="Main Builder" id="mainBuilder"&gt;

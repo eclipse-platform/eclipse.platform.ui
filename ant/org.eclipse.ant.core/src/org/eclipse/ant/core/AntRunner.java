@@ -126,7 +126,9 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	private boolean projectHelp = false;
 	
-	/**
+    private static String antVersion = null;
+    
+    /**
 	 * Adds a logger and all registered build listeners to an ant project.
 	 * 
 	 * @param project the project to add listeners to
@@ -320,37 +322,53 @@ private void printTargets(Vector names, Vector descriptions, String heading, int
  * @param project the project to list targets from
  */
 private void printTargets(Project project) {
-	// find the target with the longest name
-	int maxLength = 0;
-	Enumeration ptargets = project.getTargets().elements();
-	String targetName;
-	String targetDescription;
-	Target currentTarget;
-	// split the targets in top-level and sub-targets depending
-	// on the presence of a description
-	Vector topNames = new Vector();
-	Vector topDescriptions = new Vector();
-	Vector subNames = new Vector();
+    // find the target with the longest name
+    int maxLength = 0;
+    Enumeration ptargets = project.getTargets().elements();
+    String targetName;
+    String targetDescription;
+    Target currentTarget;
+    // split the targets in top-level and sub-targets depending
+    // on the presence of a description
+    Vector topNames = new Vector();
+    Vector topDescriptions = new Vector();
+    Vector subNames = new Vector();
 
-	while (ptargets.hasMoreElements()) {
-		currentTarget = (Target) ptargets.nextElement();
-		targetName = currentTarget.getName();
-		targetDescription = currentTarget.getDescription();
-		// maintain a sorted list of targets
-		if (targetDescription == null) {
-			int pos = findTargetPosition(subNames, targetName);
-			subNames.insertElementAt(targetName, pos);
-		} else {
-			int pos = findTargetPosition(topNames, targetName);
-			topNames.insertElementAt(targetName, pos);
-			topDescriptions.insertElementAt(targetDescription, pos);
-			if (targetName.length() > maxLength) {
-				maxLength = targetName.length();
-			}
-		}
-	}
-	printTargets(topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength);
-	printTargets(subNames, null, Policy.bind("label.subTargets"), 0);
+    while (ptargets.hasMoreElements()) {
+        currentTarget = (Target)ptargets.nextElement();
+        targetName = currentTarget.getName();
+        targetDescription = currentTarget.getDescription();
+        // maintain a sorted list of targets
+        if (targetDescription == null) {
+            int pos = findTargetPosition(subNames, targetName);
+            subNames.insertElementAt(targetName, pos);
+        } else {
+            int pos = findTargetPosition(topNames, targetName);
+            topNames.insertElementAt(targetName, pos);
+            topDescriptions.insertElementAt(targetDescription, pos);
+            if (targetName.length() > maxLength) {
+                maxLength = targetName.length();
+            }
+        }
+    }
+
+    String defaultTarget = project.getDefaultTarget();
+    if (defaultTarget != null && !"".equals(defaultTarget)) { // shouldn't need to check but...
+        Vector defaultName = new Vector();
+        Vector defaultDesc = null;
+        defaultName.addElement(defaultTarget);
+
+        int indexOfDefDesc = topNames.indexOf(defaultTarget);
+        if (indexOfDefDesc >= 0) {
+            defaultDesc = new Vector();
+            defaultDesc.addElement(topDescriptions.elementAt(indexOfDefDesc));
+        }
+        printTargets(defaultName, defaultDesc, Policy.bind("label.defaultTarget"), maxLength);
+
+    }
+
+    printTargets(topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength);
+    printTargets(subNames, null, Policy.bind("label.subTargets"), 0);
 }
 
 /**
@@ -386,27 +404,32 @@ private void printUsage() {
  * fronts.
  */
 private void printVersion() {
-	try {
-		Properties props = new Properties();
-		InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
-		props.load(in);
-		in.close();
+ 	logMessage(getAntVersion(), Project.MSG_INFO);
+}
 
-		String lSep = System.getProperty("line.separator");
-		StringBuffer msg = new StringBuffer();
-		msg.append(Policy.bind("usage.antVersion"));
-		msg.append(props.getProperty("VERSION") + " ");
-		msg.append(Policy.bind("usage.compiledOn"));
-		msg.append(props.getProperty("DATE"));
-		msg.append(lSep);
-		
-		logMessage(msg.toString(), Project.MSG_INFO);
-	} catch (IOException ioe) {
-		System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
-		System.err.println(ioe.getMessage());
-	} catch (NullPointerException npe) {
-		System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
-	}
+public synchronized static String getAntVersion() throws BuildException {
+    if (antVersion == null) {
+        try {
+            Properties props = new Properties();
+            InputStream in =
+                Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
+            props.load(in);
+            in.close();
+            
+            String lSep = System.getProperty("line.separator");
+            StringBuffer msg = new StringBuffer();
+            msg.append(Policy.bind("usage.antVersion"));
+            msg.append(props.getProperty("VERSION") + " ");
+            msg.append(Policy.bind("usage.compiledOn"));
+            msg.append(props.getProperty("DATE"));
+            antVersion = msg.toString();
+        } catch (IOException ioe) {
+            throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", ioe.getMessage()));
+        } catch (NullPointerException npe) {
+            throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", ""));
+        }
+    }
+    return antVersion;
 }
 
 /**
@@ -547,7 +570,7 @@ public Object run(Object argArray) throws Exception {
 	String[] args = (String[]) argArray;
 	processCommandLine(args);
 	try {
-		runBuild();
+		runBuild(null);
 	} catch (BuildException e) {
 		if (err != System.err)
 			printMessage(e);
@@ -578,55 +601,93 @@ public Object run(Object argArray, IAntRunnerListener listener) throws Exception
  * 
  * @exception BuildException thrown if there is a problem during building.
  */
-private void runBuild() throws BuildException {
-	if (!readyToRun)
-		return;
+private void runBuild(ClassLoader coreLoader) throws BuildException {
+
+    if (!readyToRun) {
+        return;
+    }
+
 	logMessage(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
-	EclipseProject project = new EclipseProject();
-	Throwable error = null;
-	try {
-		addBuildListeners(project);
-		project.fireBuildStarted();
-		project.init();
-		// set user-define properties
-		Enumeration e = definedProps.keys();
-		while (e.hasMoreElements()) {
-			String arg = (String) e.nextElement();
-			String value = (String) definedProps.get(arg);
-			project.setUserProperty(arg, value);
-		}
-		project.setUserProperty("ant.file", buildFile.getAbsolutePath());
-		// first use the ProjectHelper to create the project object
-		// from the given build file.
-		try {
-			Class.forName("javax.xml.parsers.SAXParserFactory");
-			ProjectHelper.configureProject(project, buildFile);
-		} catch (NoClassDefFoundError ncdfe) {
-			throw new BuildException(Policy.bind("exception.noParser"),ncdfe);
-		} catch (ClassNotFoundException cnfe) {
-			throw new BuildException(Policy.bind("exception.noParser"),cnfe);
-		} catch (NullPointerException npe) {
-			throw new BuildException(Policy.bind("exception.noParser"),npe);
-		}
 
-		// make sure that we have a target to execute
-		if (targets.size() == 0) 
-			targets.addElement(project.getDefaultTarget());
+    final EclipseProject project = new EclipseProject();
+    project.setCoreLoader(coreLoader);
+    
+    Throwable error = null;
 
-		if (projectHelp)
-			printTargets(project);
-		else
-			// actually do some work
-			project.executeTargets(targets);
-	} catch (RuntimeException exc) {
-		error = exc;
-		throw exc;
-	} catch (Error err) {
-		error = err;
-		throw err;
-	} finally {
-		project.fireBuildFinished(error);
-	}
+    try {
+        addBuildListeners(project);
+
+        PrintStream err = System.err;
+        PrintStream out = System.out;
+        SecurityManager oldsm = System.getSecurityManager();
+
+        try {
+            System.setOut(new PrintStream(new DemuxOutputStream(project, false)));
+            System.setErr(new PrintStream(new DemuxOutputStream(project, true)));
+            project.fireBuildStarted();
+            project.init();
+            project.setUserProperty("ant.version", getAntVersion());
+
+            // set user-define properties
+            Enumeration e = definedProps.keys();
+            while (e.hasMoreElements()) {
+                String arg = (String)e.nextElement();
+                String value = (String)definedProps.get(arg);
+                project.setUserProperty(arg, value);
+            }
+            
+            project.setUserProperty("ant.file" , buildFile.getAbsolutePath() );
+            
+            // first use the ProjectHelper to create the project object
+            // from the given build file.
+            try {
+                Class.forName("javax.xml.parsers.SAXParserFactory");
+                ProjectHelper.configureProject(project, buildFile);
+            } catch (NoClassDefFoundError ncdfe) {
+                throw new BuildException(Policy.bind("exception.noParser"), ncdfe);
+            } catch (ClassNotFoundException cnfe) {
+                throw new BuildException(Policy.bind("exception.noParser"), cnfe);
+            } catch (NullPointerException npe) {
+                throw new BuildException(Policy.bind("exception.noParser"), npe);
+            }
+            
+            // make sure that we have a target to execute
+            if (targets.size() == 0) {
+                targets.addElement(project.getDefaultTarget());
+            }
+            
+            if (!projectHelp) {
+                project.executeTargets(targets);
+            }
+        }
+        finally {
+            System.setOut(out);
+            System.setErr(err);
+        }
+        if (projectHelp) {
+            printDescription(project);
+            printTargets(project);
+        }
+    }
+    catch(RuntimeException exc) {
+        error = exc;
+        throw exc;
+    }
+    catch(Error err) {
+        error = err;
+        throw err;
+    }
+    finally {
+        project.fireBuildFinished(error);
+    }
+}
+/**
+ * Print the project description, if any
+ */
+private static void printDescription(Project project) {
+   if (project.getDescription() != null) {
+      System.out.println(project.getDescription());
+   }
 }
 
 /**

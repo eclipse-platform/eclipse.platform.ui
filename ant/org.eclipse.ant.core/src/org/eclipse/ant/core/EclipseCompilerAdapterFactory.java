@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Static helper functionality for finding the correct compiler adapter to use for the current
  * Javac task.  This class logically wrappers the standard Ant 
- * <code>CompilerAdapterFactory</code>.  It changes the behvaior to use the
+ * <code>CompilerAdapterFactory</code>.  It changes the behavior to use the
  * Ant plug-ins object class registry to find the compiler adapter class.  This is needed
  * because of the platform's class loading strategy (otherwise the Ant plug-in would likely not
  * be able to see the other classes).

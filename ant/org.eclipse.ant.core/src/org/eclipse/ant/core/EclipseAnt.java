@@ -62,6 +62,7 @@ package org.eclipse.ant.core;
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Ant;
+import org.apache.tools.ant.util.FileUtils;
 import java.io.*;
 import java.util.*;
 
@@ -81,13 +82,28 @@ import java.util.*;
  */
 public class EclipseAnt extends Ant {
 
-	private File dir = null;
-	private String antFile = null;
-	private String target = null;
-	private String output = null;
+    /** the basedir where is executed the build file */
+    private File dir = null;
+    
+    /** the build.xml file (can be absolute) in this case dir will be ignored */
+    private String antFile = null;
+    
+    /** the target to call if any */
+    private String target = null;
+    
+    /** the output */
+    private String output = null;
+    
+    /** should we inherit properties from the parent ? */
+    private boolean inheritAll = true;
+    
+    /** the properties to pass to the new project */
+    private Vector properties = new Vector();
+    
+    /** the temporary project created to run the build file */
+    private Project newProject;
+
 	private final static String DEFAULT_ANTFILE = "build.xml";
-	private Vector properties = new Vector();
-	private Project p1;
 
 /**
  * Creates and returns a new <code>Property</code> for the receiver's
@@ -96,14 +112,13 @@ public class EclipseAnt extends Ant {
  * @return the new property
  */
 public Property createProperty() {
-	if (p1 == null) {
-		reinit();
-	}
-
-	Property p=(Property)p1.createTask("property");
-	p.setUserProperty(true);
-	properties.addElement( p );
-	return p;
+    if (newProject == null) {
+        reinit();
+    }
+    Property p=(Property)newProject.createTask("property");
+    p.setUserProperty(true);
+    properties.addElement( p );
+    return p;
 }
 
 /**
@@ -112,58 +127,55 @@ public Property createProperty() {
  * @exception BuildException thrown if an execution problem occurs
  */
 public void execute() throws BuildException {
-	try {
-		if (p1 == null) {
-			reinit();
-		}
-	
-		if (dir == null) 
-			dir = project.getBaseDir();
+    try {
+        if (newProject == null) {
+            reinit();
+        }
+    
+        if (dir == null) {
+            dir = project.getBaseDir();
+        }
 
-		initializeProject();
+        initializeProject();
 
-		p1.setBaseDir(dir);
-		p1.setUserProperty("basedir" , dir.getAbsolutePath());
-		
-		// Override with local-defined properties
-		Enumeration e = properties.elements();
-		while (e.hasMoreElements()) {
-			Property p=(Property) e.nextElement();
-			p.execute();
-		}
-		
-		if (antFile == null) 
-			antFile = DEFAULT_ANTFILE;
+        newProject.setBaseDir(dir);
+        newProject.setUserProperty("basedir" , dir.getAbsolutePath());
+        
+        // Override with local-defined properties
+        Enumeration e = properties.elements();
+        while (e.hasMoreElements()) {
+            Property p=(Property) e.nextElement();
+            p.execute();
+        }
+        
+        if (antFile == null){
+            antFile = DEFAULT_ANTFILE;
+        }
 
-		File file = new File(antFile);
-		if (!file.isAbsolute()) {
-			antFile = (new File(dir, antFile)).getAbsolutePath();
-			file = (new File(antFile)) ;
-			if(!file.isFile() ) {
-			  throw new BuildException(Policy.bind("exception.buildFileNotFound",file.toString()));
-			}
-		}
+        File file = FileUtils.newFileUtils().resolveFile(dir, antFile);
+        antFile = file.getAbsolutePath();
 
-		p1.setUserProperty("ant.file", antFile );
-		ProjectHelper.configureProject(p1, new File(antFile));
-		
-		if (target == null) {
-			target = p1.getDefaultTarget();
-		}
+        newProject.setUserProperty( "ant.file" , antFile );
+        ProjectHelper.configureProject(newProject, new File(antFile));
+        
+        if (target == null) {
+            target = newProject.getDefaultTarget();
+        }
 
-		// Are we trying to call the target in which we are defined?
-		if (p1.getBaseDir().equals(project.getBaseDir()) &&
-			p1.getProperty("ant.file").equals(project.getProperty("ant.file")) &&
-			target.equals(this.getOwningTarget().getName())) { 
+        // Are we trying to call the target in which we are defined?
+        if (newProject.getBaseDir().equals(project.getBaseDir()) &&
+            newProject.getProperty("ant.file").equals(project.getProperty("ant.file")) &&
+            getOwningTarget() != null &&
+            target.equals(this.getOwningTarget().getName())) { 
 
-			throw new BuildException(Policy.bind("exception.antTaskCallingParentTarget"));
-		}
+            throw new BuildException(Policy.bind("exception.antTaskCallingParentTarget"));
+        }
 
-		p1.executeTarget(target);
-	} finally {
-		// help the gc
-		p1 = null;
-	}
+        newProject.executeTarget(target);
+    } finally {
+        // help the gc
+        newProject = null;
+    }
 }
 
 /**
@@ -174,89 +186,110 @@ public void init() {
 	// It has been changed so that it is possible to use Eclipse Ant tasks (such as eclipse.refreshLocal)
 	// in Ant scripts called by through an "ant" task. Indeed, only an EclipseProject knows how to find them.
 	// We need to check that it doesn't introduce new bugs.
-	p1 = new EclipseProject(); 
-	p1.setJavaVersionProperty();
-	p1.addTaskDefinition("property", 
-						 (Class)project.getTaskDefinitions().get("property"));
+	newProject = new EclipseProject();
+	newProject.setJavaVersionProperty();
+	newProject.addTaskDefinition("property", 
+                         (Class)project.getTaskDefinitions().get("property"));
 }
 
 /**
  * Initializes the target project.
  */
 private void initializeProject() {
-	Vector listeners = project.getBuildListeners();
-	for (int i = 0; i < listeners.size(); i++) {
-		p1.addBuildListener((BuildListener)listeners.elementAt(i));
-	}
+    Vector listeners = project.getBuildListeners();
+    for (int i = 0; i < listeners.size(); i++) {
+        newProject.addBuildListener((BuildListener)listeners.elementAt(i));
+    }
 
-	if (output != null) {
-		try {
-			PrintStream out = new PrintStream(new FileOutputStream(output));
-			DefaultLogger logger = new DefaultLogger();
-			logger.setMessageOutputLevel(Project.MSG_INFO);
-			logger.setOutputPrintStream(out);
-			logger.setErrorPrintStream(out);
-			p1.addBuildListener(logger);
-		} catch(IOException ex) {
-			log(Policy.bind("exception.cannotSetOutput",output));
-		}
-	}
+    if (output != null) {
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream(output));
+            DefaultLogger logger = new DefaultLogger();
+            logger.setMessageOutputLevel(Project.MSG_INFO);
+            logger.setOutputPrintStream(out);
+            logger.setErrorPrintStream(out);
+            newProject.addBuildListener(logger);
+        }
+        catch( IOException ex ) {
+            log(Policy.bind("exception.cannotSetOutput",output));
+        }
+    }
 
-	Hashtable taskdefs = project.getTaskDefinitions();
-	Enumeration et = taskdefs.keys();
-	while (et.hasMoreElements()) {
-		String taskName = (String) et.nextElement();
-		Class taskClass = (Class) taskdefs.get(taskName);
-		p1.addTaskDefinition(taskName, taskClass);
-	}
+    Hashtable taskdefs = project.getTaskDefinitions();
+    Enumeration et = taskdefs.keys();
+    while (et.hasMoreElements()) {
+        String taskName = (String) et.nextElement();
+        Class taskClass = (Class) taskdefs.get(taskName);
+        newProject.addTaskDefinition(taskName, taskClass);
+    }
 
-	Hashtable typedefs = project.getDataTypeDefinitions();
-	Enumeration e = typedefs.keys();
-	while (e.hasMoreElements()) {
-		String typeName = (String) e.nextElement();
-		Class typeClass = (Class) typedefs.get(typeName);
-		p1.addDataTypeDefinition(typeName, typeClass);
-	}
+    Hashtable typedefs = project.getDataTypeDefinitions();
+    Enumeration e = typedefs.keys();
+    while (e.hasMoreElements()) {
+        String typeName = (String) e.nextElement();
+        Class typeClass = (Class) typedefs.get(typeName);
+        newProject.addDataTypeDefinition(typeName, typeClass);
+    }
 
-	// set user-define properties
-	Hashtable prop1 = project.getProperties();
-	e = prop1.keys();
-	while (e.hasMoreElements()) {
-		String arg = (String) e.nextElement();
-		String value = (String) prop1.get(arg);
-		p1.setProperty(arg, value);
-	}
+    // set user-defined or all properties from calling project
+    Hashtable prop1;
+    if (inheritAll == true) {
+       prop1 = project.getProperties();
+    }
+    else {
+       prop1 = project.getUserProperties();
+
+       // set Java built-in properties separately,
+       // b/c we won't inherit them.
+       newProject.setSystemProperties();
+    }
+    
+    e = prop1.keys();
+    while (e.hasMoreElements()) {
+        String arg = (String) e.nextElement();
+        String value = (String) prop1.get(arg);
+        if (inheritAll == true){
+           newProject.setProperty(arg, value);
+        } else {
+           newProject.setUserProperty(arg, value);
+        }
+    }
 }
 
 /**
  * Reinitializes the receiver.
  */
 private void reinit() {
-	init();
-	for (int i=0; i<properties.size(); i++) {
-		Property p = (Property) properties.elementAt(i);
-		Property newP = (Property) p1.createTask("property");
-		newP.setName(p.getName());
-		if (p.getValue() != null) {
-			newP.setValue(p.getValue());
-		}
-		if (p.getFile() != null) {
-			newP.setFile(p.getFile());
-		} 
-		if (p.getResource() != null) {
-			newP.setResource(p.getResource());
-		}
-		properties.setElementAt(newP, i);
-	}
+    init();
+    for (int i=0; i<properties.size(); i++) {
+        Property p = (Property) properties.elementAt(i);
+        Property newP = (Property) newProject.createTask("property");
+        newP.setName(p.getName());
+        if (p.getValue() != null) {
+            newP.setValue(p.getValue());
+        }
+        if (p.getFile() != null) {
+            newP.setFile(p.getFile());
+        } 
+        if (p.getResource() != null) {
+            newP.setResource(p.getResource());
+        }
+        properties.setElementAt(newP, i);
+    }
 }
 
 /**
- * Sets the receiver's target <b>Ant</b> file.
+ * set the build file, it can be either absolute or relative.
+ * If it is absolute, <tt>dir</tt> will be ignored, if it is
+ * relative it will be resolved relative to <tt>dir</tt>.
  * 
  * @param s the <b>Ant</b> file location
  */
 public void setAntfile(String s) {
-	this.antFile = s;
+    // @note: it is a string and not a file to handle relative/absolute
+    // otherwise a relative file will be resolved based on the current
+    // basedir.
+    this.antFile = s;
 }
 
 /**
@@ -278,11 +311,36 @@ public void setOutput(String s) {
 }
 
 /**
- * Sets the receiver's <b>Ant</b> target to invoke.
+ * set the target to execute. If none is defined it will
+ * execute the default target of the build file
  * 
- * @param s the <b>Ant</b> target to invoke
+ * @param s the <b>Ant</b> target to execute
  */
 public void setTarget(String s) {
 	this.target = s;
+}
+protected void handleErrorOutput(String line) {
+    if (newProject != null) {
+        newProject.demuxOutput(line, true);
+    }
+    else {
+        super.handleErrorOutput(line);
+    }
+}
+protected void handleOutput(String line) {
+    if (newProject != null) {
+        newProject.demuxOutput(line, false);
+    }
+    else {
+        super.handleOutput(line);
+    }
+}
+/**
+ * If true, inherit all properties from parent Project
+ * If false, inherit only userProperties and those defined
+ * inside the ant call itself
+ */
+public void setInheritAll(boolean value) {
+   inheritAll = value;
 }
 }
