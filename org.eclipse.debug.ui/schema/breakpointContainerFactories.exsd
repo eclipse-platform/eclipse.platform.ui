@@ -80,7 +80,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.1
       </documentation>
    </annotation>
 
@@ -89,7 +89,18 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of an extension provided by the Debug UI plugin
+&lt;pre&gt;
+&lt;extension
+    point=&quot;org.eclipse.debug.ui.breakpointContainerFactories&quot;&gt;
+    &lt;breakpointContainerFactory
+     	class=&quot;org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactory&quot;
+    	id=&quot;org.eclipse.debug.ui.breakpointProjectContainerFactory&quot;
+    	label=&quot;Project&quot;
+    	icon=&quot;icons/full/obj16/prj_obj.gif&quot;/&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+In the above example, the supplied factory will be included in the list of options for grouping breakpoints (&quot;Group By &gt; Project&quot;). When the breakpoints view is set to group breakpoints by factory, it will query the given class, which extends AbstractBreakpointContainerFactory.
       </documentation>
    </annotation>
 
@@ -98,7 +109,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that extends the class &lt;b&gt;org.eclipse.debug.internal.ui.views.breakpoints.AbstractBreakpointContainerFactory&lt;/b&gt;.
       </documentation>
    </annotation>
 
@@ -107,7 +118,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         AbstractBreakpointContainerFactory is provided by the platform
       </documentation>
    </annotation>
 
@@ -116,7 +127,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
