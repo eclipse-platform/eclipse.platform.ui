@@ -53,7 +53,6 @@ public class VerifyDialog extends TitleAreaDialog {
 	
 	private Label  _queryLabel;
 	private Button _yesButton;
-	private Button _noButton;
 	private Button _checkList[];
 	private String _failureText;
 	
