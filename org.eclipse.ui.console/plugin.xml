@@ -20,7 +20,7 @@
       <import plugin="org.eclipse.core.expressions"/>
    </requires>
    <extension-point id="consolePatternMatchListeners" name="%ConsolePatternMatchListenerName" schema="schema/consolePatternMatchListeners.exsd"/>
-   <extension-point id="consolePageParticipant" name="%ConsolePageParticipantName" schema="schema/consolePageParticipant.exsd"/>
+   <extension-point id="consolePageParticipants" name="%ConsolePageParticipantName" schema="schema/consolePageParticipants.exsd"/>
    <extension-point id="consoleFactory" name="%ConsoleFactoryName" schema="schema/consoleFactory.exsd"/>
 
 

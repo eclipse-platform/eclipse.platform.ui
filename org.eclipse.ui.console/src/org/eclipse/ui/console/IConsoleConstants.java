@@ -75,11 +75,11 @@ public interface IConsoleConstants {
 
     /**
      * Console Page Participant extension point identifier
-     * (value <code>"consolePageParticipant"</code>).
+     * (value <code>"consolePageParticipants"</code>).
      * 
      * @since 3.1
      */
-    public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT = "consolePageParticipant"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT = "consolePageParticipants"; //$NON-NLS-1$
 
     /**
      * @since 3.1

@@ -2133,7 +2133,7 @@ M4 = Platform-specific fourth key
 	  </rendering>
    </extension>
    <extension
-         point="org.eclipse.ui.console.consolePageParticipant">
+         point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
             class="org.eclipse.debug.internal.ui.views.console.ProcessConsolePageParticipant"
             id="org.eclipse.debug.ui.processConsolePageParticipant">
