@@ -83,7 +83,7 @@ public class TextNavigationAction extends Action {
 	 * @since 3.0
 	 */
 	protected void fireSelectionChanged() {
-		fireSelectionChanged(fTextWidget.getSelection());
+		fireSelectionChanged(null);
 	}
 	
 	/**
