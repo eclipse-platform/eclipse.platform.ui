@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
  */
 class JFaceTextTemplateMessages {
 
-	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
+	private static final String RESOURCE_BUNDLE= JFaceTextTemplateMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	private JFaceTextTemplateMessages() {
