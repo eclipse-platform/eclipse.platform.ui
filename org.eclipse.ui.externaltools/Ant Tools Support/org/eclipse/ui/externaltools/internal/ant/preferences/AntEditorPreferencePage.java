@@ -203,35 +203,35 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
-		addTextField(appearanceComposite, label, AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, true);
+		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
+		addTextField(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, true);
 				
-		label= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
-		label= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
-		label= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, AntEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 				
-		label= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 
-		Label l= new Label(appearanceComposite, SWT.LEFT );
-		l.setFont(font);
+		Label label= new Label(appearanceComposite, SWT.LEFT );
+		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		l.setLayoutData(gd);
+		label.setLayoutData(gd);
 		
-		l= new Label(appearanceComposite, SWT.LEFT);
-		l.setFont(font);
-		l.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
+		label= new Label(appearanceComposite, SWT.LEFT);
+		label.setFont(font);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
-		l.setLayoutData(gd);
+		label.setLayoutData(gd);
 
 		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
 		editorComposite.setFont(font);
@@ -259,12 +259,12 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		l= new Label(stylesComposite, SWT.LEFT);
-		l.setFont(font);
-		l.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.color")); //$NON-NLS-1$
+		label= new Label(stylesComposite, SWT.LEFT);
+		label.setFont(font);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.color")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
-		l.setLayoutData(gd);
+		label.setLayoutData(gd);
 
 		fAppearanceColorEditor= new ColorEditor(stylesComposite);
 		Button foregroundColorButton= fAppearanceColorEditor.getButton();
@@ -437,9 +437,11 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
+		Font font= parent.getFont();
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		folder.setFont(font);
 		
 		TabItem item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.general")); //$NON-NLS-1$
@@ -539,9 +541,9 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		super.dispose();
 	}
 	
-	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
+	private Button addCheckBox(Composite parent, String labelText, String key, int indentation) {		
 		Button checkBox= new Button(parent, SWT.CHECK);
-		checkBox.setText(label);
+		checkBox.setText(labelText);
 		checkBox.setFont(parent.getFont());
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -555,15 +557,15 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return checkBox;
 	}
 	
-	private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+	private Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, boolean isNumber) {
 		Font font= composite.getFont();
 		
-		Label labelControl= new Label(composite, SWT.NONE);
-		labelControl.setText(label);
-		labelControl.setFont(font);
+		Label label= new Label(composite, SWT.NONE);
+		label.setText(labelText);
+		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
-		labelControl.setLayoutData(gd);
+		label.setLayoutData(gd);
 		
 		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
 		textControl.setFont(font);		
