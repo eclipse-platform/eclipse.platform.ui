@@ -1073,6 +1073,8 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 	// Read the bounds.
 	if("true".equals(memento.getString("maximized"))) {//$NON-NLS-2$//$NON-NLS-1$
 		getShell().setMaximized(true);
+	} else if ("true".equals(memento.getString("minimized"))) {
+		//Do not restore minimized state.
 	} else {
 		Integer bigInt;
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
@@ -1220,6 +1222,8 @@ public IStatus saveState(IMemento memento) {
 	// Save the bounds.
 	if(getShell().getMaximized()) {
 		memento.putString("maximized","true");//$NON-NLS-2$//$NON-NLS-1$
+	} else if(getShell().getMinimized()) {
+		memento.putString("minimized","true");//$NON-NLS-2$//$NON-NLS-1$
 	} else {
 		Rectangle bounds = getShell().getBounds();
 		memento.putInteger(IWorkbenchConstants.TAG_X, bounds.x);
