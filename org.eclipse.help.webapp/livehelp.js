@@ -1,6 +1,9 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 function liveAction(pluginId, className, argument)
 {
-		//debug;
 		var url=""+location;
 		var i=url.indexOf("help:");
 		if(i<0)
