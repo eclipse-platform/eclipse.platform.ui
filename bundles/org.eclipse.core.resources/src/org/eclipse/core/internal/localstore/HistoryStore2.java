@@ -96,7 +96,6 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
-	private static final String INDEX_STORE = ".buckets"; //$NON-NLS-1$
 	private BlobStore blobStore;
 	private Set blobsToRemove = new HashSet();
 	private BucketTree tree;
@@ -112,7 +111,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#addState(IPath, File, long, boolean)
 	 */
-	public IFileState addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+	public synchronized IFileState addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
 		if (Policy.DEBUG_HISTORY)
 			System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!isValid(localFile))
@@ -130,7 +129,7 @@ public class HistoryStore2 implements IHistoryStore {
 		return new FileState(this, key, lastModified, uuid);
 	}
 
-	public Set allFiles(IPath root, int depth, IProgressMonitor monitor) {
+	public synchronized Set allFiles(IPath root, int depth, IProgressMonitor monitor) {
 		final Set allFiles = new HashSet();
 		try {
 			tree.accept(new Bucket.Visitor() {
@@ -148,7 +147,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * Applies the clean-up policy to an entry.
 	 */
-	void applyPolicy(HistoryEntry fileEntry, int maxStates, long minTimeStamp) {
+	private void applyPolicy(HistoryEntry fileEntry, int maxStates, long minTimeStamp) {
 		for (int i = 0; i < fileEntry.getOccurrences(); i++) {
 			if (i < maxStates && fileEntry.getTimestamp(i) >= minTimeStamp)
 				continue;
@@ -175,7 +174,7 @@ public class HistoryStore2 implements IHistoryStore {
 		tree.getCurrent().save();
 	}
 
-	public void clean(IProgressMonitor monitor) {
+	public synchronized  void clean(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
 			IWorkspaceDescription description = workspace.internalGetDescription();
@@ -206,7 +205,7 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
-	public void copyHistory(IResource sourceResource, IResource destinationResource, boolean moving) {
+	public synchronized void copyHistory(IResource sourceResource, IResource destinationResource, boolean moving) {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
 		if (sourceResource == null || destinationResource == null) {
@@ -247,7 +246,7 @@ public class HistoryStore2 implements IHistoryStore {
 	public boolean exists(IFileState target) {
 		return blobStore.fileFor(((FileState) target).getUUID()).exists();
 	}
-
+	
 	public InputStream getContents(IFileState target) throws CoreException {
 		if (!target.exists()) {
 			String message = Messages.history_notValid;
@@ -259,8 +258,8 @@ public class HistoryStore2 implements IHistoryStore {
 	public File getFileFor(IFileState state) {
 		return blobStore.fileFor(((FileState) state).getUUID());
 	}
-
-	public IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
+	
+	public synchronized IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
 		try {
 			tree.loadBucketFor(filePath);
 			HistoryBucket currentBucket = (HistoryBucket) tree.getCurrent();
@@ -300,7 +299,7 @@ public class HistoryStore2 implements IHistoryStore {
 		return result;
 	}
 
-	public void remove(IPath root, IProgressMonitor monitor) {
+	public synchronized void remove(IPath root, IProgressMonitor monitor) {
 		try {
 			final Set tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
@@ -320,7 +319,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#removeGarbage()
 	 */
-	public void removeGarbage() {
+	public synchronized void removeGarbage() {
 		try {
 			final Set tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
@@ -340,7 +339,7 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
-	public void shutdown(IProgressMonitor monitor) throws CoreException {
+	public synchronized void shutdown(IProgressMonitor monitor) throws CoreException {
 		tree.close();
 	}
 
