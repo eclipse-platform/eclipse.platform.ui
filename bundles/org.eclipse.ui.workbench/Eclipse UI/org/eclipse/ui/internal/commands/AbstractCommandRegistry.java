@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.api.ICommandRegistry;
-import org.eclipse.ui.internal.commands.api.ICommandRegistryEvent;
-import org.eclipse.ui.internal.commands.api.ICommandRegistryListener;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistryEvent;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistryListener;
 
 abstract class AbstractCommandRegistry implements ICommandRegistry {
 
@@ -66,7 +66,7 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 		return imageBindingDefinitions;
 	}
 	
-	public List getKeyBindingDefinitions() {
+	public List getKeySequenceBindingDefinitions() {
 		return keyBindingDefinitions;
 	}
 

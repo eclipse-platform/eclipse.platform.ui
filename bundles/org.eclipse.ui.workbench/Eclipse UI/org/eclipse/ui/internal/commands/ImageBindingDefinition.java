@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ImageBindingDefinition implements IImageBindingDefinition {

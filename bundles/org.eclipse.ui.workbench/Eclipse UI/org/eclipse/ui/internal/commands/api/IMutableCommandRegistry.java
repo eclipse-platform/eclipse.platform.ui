@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.commands.api;
 
 import java.util.List;
 
+import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
+
 public interface IMutableCommandRegistry extends ICommandRegistry {
 
 	void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions);

@@ -104,7 +104,7 @@ public interface IActivity extends Comparable {
 	/**
 	 * <p>
 	 * Returns the identifier of the parent of the activity represented by this 
-	 * handle, suitable for display to the user.
+	 * handle.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute 

@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
+import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class CategoryDefinition implements ICategoryDefinition {

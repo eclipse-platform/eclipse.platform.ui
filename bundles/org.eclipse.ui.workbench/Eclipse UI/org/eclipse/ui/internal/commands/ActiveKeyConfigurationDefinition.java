@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 // TODO private

@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.ICommandDefinition;
+import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class CommandDefinition implements ICommandDefinition {

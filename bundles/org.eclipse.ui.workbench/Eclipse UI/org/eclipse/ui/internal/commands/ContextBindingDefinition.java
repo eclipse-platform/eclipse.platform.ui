@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextBindingDefinition implements IContextBindingDefinition {

@@ -20,13 +20,13 @@ import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
-import org.eclipse.ui.internal.commands.api.ICommandDefinition;
-import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
+import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
+import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -433,7 +433,6 @@ final class Persistence {
 
 		memento.putString(TAG_CATEGORY_ID, commandDefinition.getCategoryId());
 		memento.putString(TAG_DESCRIPTION, commandDefinition.getDescription());
-		memento.putString(TAG_HELP_ID, commandDefinition.getHelpId());
 		memento.putString(TAG_ID, commandDefinition.getId());
 		memento.putString(TAG_NAME, commandDefinition.getName());
 		memento.putString(TAG_PLUGIN_ID, commandDefinition.getPluginId());

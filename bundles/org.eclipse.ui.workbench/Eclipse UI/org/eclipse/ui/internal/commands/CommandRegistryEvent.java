@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.ICommandRegistry;
-import org.eclipse.ui.internal.commands.api.ICommandRegistryEvent;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistryEvent;
 
 final class CommandRegistryEvent implements ICommandRegistryEvent {
 

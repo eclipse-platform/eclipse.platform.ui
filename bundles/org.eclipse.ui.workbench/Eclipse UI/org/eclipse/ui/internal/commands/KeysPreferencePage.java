@@ -59,14 +59,14 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
-import org.eclipse.ui.internal.commands.api.ICommandDefinition;
-import org.eclipse.ui.internal.commands.api.ICommandRegistry;
-import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
+import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
+import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
+import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -343,7 +343,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeyBindingDefinitions());
+			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeySequenceBindingDefinitions());
 
 			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
@@ -362,7 +362,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeyBindingDefinitions());
+			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeySequenceBindingDefinitions());
 
 			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
 				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
