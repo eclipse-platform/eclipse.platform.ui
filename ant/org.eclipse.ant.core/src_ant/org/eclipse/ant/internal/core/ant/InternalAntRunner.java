@@ -431,6 +431,7 @@ public class InternalAntRunner {
 		Throwable error = null;
 		PrintStream originalErr = System.err;
 		PrintStream originalOut = System.out;
+		boolean executeScript= true;
 		try {
 			getCurrentProject().init();
 			if (argList != null) {
@@ -438,7 +439,6 @@ public class InternalAntRunner {
 			}
 			addBuildListeners(getCurrentProject());
 			
-			boolean executeScript= true;
 			if (argList != null) {
 				executeScript= processCommandLine(argList);
 			}
@@ -491,7 +491,9 @@ public class InternalAntRunner {
 			if (fOut != originalOut) {
 				fOut.close();
 			}
-			fireBuildFinished(getCurrentProject(), error);
+			if (executeScript) {
+				fireBuildFinished(getCurrentProject(), error);
+			}
 		}
 	}
 	
@@ -556,9 +558,9 @@ public class InternalAntRunner {
 		
 		if(usingXmlLogger()) {
 			//generate the log file in the correct location
-			String fileName= project.getProperty("XmlLogger.file");
+			String fileName= project.getProperty("XmlLogger.file"); //$NON-NLS-1$
 			if (fileName == null) {
-				fileName= "log.xml";
+				fileName= "log.xml"; //$NON-NLS-1$
 			}
 			IPath path= new Path(fileName);
 			if (!path.isAbsolute()) {
@@ -568,10 +570,10 @@ public class InternalAntRunner {
 				path= path.append(fileName);
 			}
 		
-			project.setProperty("XmlLogger.file", path.toOSString());
+			project.setProperty("XmlLogger.file", path.toOSString()); //$NON-NLS-1$
 		}
 		if (error == null) {
-			logMessage(project, "BUILD SUCCESSFUL", Project.MSG_INFO);
+			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), Project.MSG_INFO); //$NON-NLS-1$
 		} else {
 			event.setException(error);
 		}
@@ -766,7 +768,7 @@ public class InternalAntRunner {
 
 		if (!commands.isEmpty()) {
 			//unrecognized args
-			logMessage(getCurrentProject(), MessageFormat.format("Unknown argument: {0}", new Object[]{commands.get(0)}), Project.MSG_ERR);
+			logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{commands.get(0)}), Project.MSG_ERR); //$NON-NLS-1$
 			printUsage();
 			return false;
 		}
