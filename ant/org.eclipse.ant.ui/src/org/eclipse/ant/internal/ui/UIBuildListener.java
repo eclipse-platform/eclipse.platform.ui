@@ -94,7 +94,7 @@ public class UIBuildListener implements AntRunnerListener {
 
 	public void messageLogged(String message,int priority) {
 		checkCanceled();
-        if (console != null)// && priority <= msgOutputLevel)
+        if ((console != null) && priority <= msgOutputLevel)
 			console.append(message + "\n");
 	}
 	private void removeMarkers() {
