@@ -17,7 +17,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
@@ -36,8 +35,8 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
     public void initializeFrom(ILaunchConfiguration configuration) {
         try {
             boolean captureOutput = configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
-            if (!captureOutput && configuration instanceof LaunchConfigurationWorkingCopy) {
-                LaunchConfigurationWorkingCopy copy = (LaunchConfigurationWorkingCopy) configuration;
+            if (!captureOutput && configuration instanceof ILaunchConfigurationWorkingCopy) {
+                ILaunchConfigurationWorkingCopy copy = (ILaunchConfigurationWorkingCopy) configuration;
                 copy.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, (String)null);
                 copy.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
                 copy.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
