@@ -298,28 +298,30 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 				final List computedElements= new ArrayList();
 				for (int i= 0; i < blockSize; i++) {
 					Object element= fElementQueue.remove(0);
-					if (element != null) {
-						if (element instanceof IStackFrame) {
-							synchronized (fCurrentStackFrameLock) {
-								fCurrentStackFrame= (IStackFrame) element;
-							}
-							// If a stack frame's thread has been resumed, make sure it is added to the collection
-							// of resumed threads. There's a (small) chance of a race condition here if
-							// the thread manages to resume after we check its suspended status and then
-							// suspend before we check the status for the next frame.
-							IThread thread= fCurrentStackFrame.getThread();
-							synchronized(resumedThreads) {
-								if (!thread.isTerminated() && !thread.isSuspended()) {
-									resumedThreads.add(thread);
-								}
+					if (element == null) {
+						break;
+					}
+					if (element instanceof IStackFrame) {
+						synchronized (fCurrentStackFrameLock) {
+							fCurrentStackFrame= (IStackFrame) element;
+						}
+						// If a stack frame's thread has been resumed, make sure it is added to the collection
+						// of resumed threads. There's a (small) chance of a race condition here if
+						// the thread manages to resume after we check its suspended status and then
+						// suspend before we check the status for the next frame.
+						IThread thread= fCurrentStackFrame.getThread();
+						synchronized(resumedThreads) {
+							if (!thread.isTerminated() && !thread.isSuspended()) {
+								resumedThreads.add(thread);
 							}
 						}
-						fLabelProvider.textComputed(element, fJobPresentation.getText(element));
+					} else {
 						synchronized (fCurrentStackFrameLock) {
 							fCurrentStackFrame= null;
 						}
-						computedElements.add(element);
 					}
+					fLabelProvider.textComputed(element, fJobPresentation.getText(element));
+					computedElements.add(element);
 				}
 				labelsComputed(computedElements.toArray());
 				monitor.worked(computedElements.size());
