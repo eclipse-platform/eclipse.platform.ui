@@ -131,7 +131,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		setAction("TerminateAll", new TerminateAllAction()); //$NON-NLS-1$
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		
-		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
+		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate())); //$NON-NLS-1$
 
 		IAction qAction = new ShowQualifiedAction(viewer);
 		qAction.setChecked(false);
@@ -223,10 +223,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
-		tbm.add(getAction("RemoveAll"));
+		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		tbm.add(getAction("ShowQualifiedNames"));
+		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 	}	
 
 	/**

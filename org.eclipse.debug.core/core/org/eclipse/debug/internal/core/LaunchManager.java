@@ -357,7 +357,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		// persist local index of launch configs
 		List configs = getLocalLaunchConfigurations();
-		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex");
+		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
 		persistIndex(configs, path);
 		
 		fLaunchConfigurationTypes.clear();
@@ -388,7 +388,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}	
 		// restore local launch configuration index	
-		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex");
+		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
 		restoreIndex(path);		
 	}
 	
