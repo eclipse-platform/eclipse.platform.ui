@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -244,7 +245,7 @@ public class AntView extends ViewPart {
 		targetToolBar= new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
 		targetForm.setTopRight(targetToolBar);
 		
-		targetViewer = new TableViewer(targetForm, SWT.H_SCROLL | SWT.V_SCROLL);
+		targetViewer = new TableViewer(targetForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		targetForm.setContent(targetViewer.getTable());
 		targetContentProvider = new AntTargetContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
@@ -338,25 +339,28 @@ public class AntView extends ViewPart {
 	}
 
 	/**
-	 * Activates the given target by adding it to the active targets viewer.
-	 * 
-	 * @param target the target to activate
+	 * Activates the selected targets by adding them to the active targets
+	 * viewer.
 	 */
-	public void activateTarget(TargetNode target) {
-		targetContentProvider.addTarget(target);
+	public void activateSelectedTargets() {
+		TreeItem[] items= projectViewer.getTree().getSelection();
+		for (int i = 0; i < items.length; i++) {
+			Object data = items[i].getData();
+			if (data instanceof TargetNode) {
+				targetContentProvider.addTarget((TargetNode) data);
+			}
+		}
 		targetViewer.refresh();
 	}
 
 	/**
-	 * Deactivates the given target by removing it from the active targets
+	 * Deactivates the selected targets by removing them from the active targets
 	 * viewer.
-	 *
-	 * @param target the target to deactivate
 	 */
 	public void deactivateSelectedTargets() {
 		int startIndex= targetViewer.getTable().getSelectionIndex();
 		int indices[]= targetViewer.getTable().getSelectionIndices();
-		for (int i = 0; i < indices.length; i++) {
+		for (int i = indices.length - 1; i >= 0; i--) {
 			targetContentProvider.removeTarget(indices[i]);
 		}
 		targetViewer.refresh();

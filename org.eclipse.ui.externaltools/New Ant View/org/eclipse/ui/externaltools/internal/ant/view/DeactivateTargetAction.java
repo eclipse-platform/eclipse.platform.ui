@@ -25,7 +25,8 @@ public class DeactivateTargetAction extends Action implements IUpdate {
 	 * Updates the enablement of this action based on the user's selection
 	 */
 	public void update() {
-		setEnabled(getSelectedTarget() != null);
+		IStructuredSelection selection= (IStructuredSelection) view.getTargetViewer().getSelection();
+		setEnabled(!selection.isEmpty());
 	}
 
 	/**

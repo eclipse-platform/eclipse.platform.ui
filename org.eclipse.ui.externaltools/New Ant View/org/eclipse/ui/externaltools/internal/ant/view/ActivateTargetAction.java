@@ -20,40 +20,26 @@ public class ActivateTargetAction extends Action implements IUpdate {
 	}
 	
 	public void run() {
-		TargetNode target= getSelectedTarget();
-		if (target == null) {
-			return;
-		}
-		view.activateTarget(target);
+		view.activateSelectedTargets();
 	}
 	
 	/**
 	 * Updates the enablement of this action based on the user's selection
 	 */
 	public void update() {
-		setEnabled(getSelectedTarget() != null);
-	}
-
-	/**
-	 * Returns the selected target in the project viewer or <code>null</code> if
-	 * no target is selected or more than one element is selected.
-	 *
-	 * @return TargetNode the selected target
-	 */
-	public TargetNode getSelectedTarget() {
+		boolean enabled= true;
 		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
 		if (selection.isEmpty()) {
-			return null;
+			enabled= false;
 		}
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object data= iter.next();
-			if (iter.hasNext() || !(data instanceof TargetNode) || ((TargetNode) data).isErrorNode()) {
-				// Only enable for single selection of a TargetNode
-				return null;
+			if (!(data instanceof TargetNode) || ((TargetNode) data).isErrorNode()) {
+				enabled= false;
 			}
 		}
-			return (TargetNode)selection.getFirstElement();
-		}
+		setEnabled(enabled);
+	}
 	
 }
