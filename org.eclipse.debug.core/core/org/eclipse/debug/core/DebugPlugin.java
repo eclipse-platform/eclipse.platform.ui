@@ -244,30 +244,16 @@ public class DebugPlugin extends Plugin {
 	 */
 	private DebugEvent[] filterEvents(DebugEvent[] events) {
 		if (hasEventFilters()) {
-			ArrayList filteredEvents = null;
-			boolean isFilteredEvent = false;
-			for (int i = 0; i < events.length; i++) {
-				if (isFiltered(events[i])) {
-					isFilteredEvent = true;
-				} else if (isFilteredEvent) {
-					if (filteredEvents == null) {
-						filteredEvents = new ArrayList(events.length - 1);
-					}
-					filteredEvents.add(events[i]);
+			Object[] filters = fEventFilters.getListeners();
+			for (int i = 0; i < filters.length; i++) {
+				events = ((IDebugEventFilter)filters[i]).filterDebugEvents(events);
+				if (events == null || events.length == 0) {
+					break;
 				}
 			}
-			if (isFilteredEvent) {
-				if (filteredEvents == null) {
-					return null;
-				} else {
-					return (DebugEvent[]) filteredEvents.toArray(new DebugEvent[filteredEvents.size()]);
-				}
-			} else {
-				return events;
-			}
-		} else {
-			return events;
+
 		}
+		return events;
 	}
 	
 	/**
@@ -494,24 +480,6 @@ public class DebugPlugin extends Plugin {
 				fEventFilters = null;
 			}
 		}
-	}	
-	
-	/**
-	 * Returns whether the given event is filtered.
-	 * 
-	 * @param event debug event
-	 * @return whether the given event is filtered
-	 */
-	private boolean isFiltered(DebugEvent event) {
-		if (fEventFilters != null) {
-			Object[] filters = fEventFilters.getListeners();
-			for (int i = 0; i < filters.length; i++) {
-				if (((IDebugEventFilter)filters[i]).filterDebugEvent(event)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}	
 	
 	/**

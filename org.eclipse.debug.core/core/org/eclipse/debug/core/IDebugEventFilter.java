@@ -18,15 +18,21 @@ package org.eclipse.debug.core;
  * (repeatedly) as the API evolves.
  * </p>
  * @see DebugPlugin
+ * @since 2.0
  */
 public interface IDebugEventFilter {
 
 	/**
-	 * Returns whether the given debug event is filtered.
-	 * When <code>true</code> is returned, the event is not
-	 * sent to registered debug event listeners.
+	 * Filters the given set of debug events, and returns the set of debug
+	 * events that should be fired to registered listeners - <code>null</code>
+	 * or an empty collection if no debug events should be fired.
+	 * <p>
+	 * When multiple event filters are registered, events are passed through
+	 * all filters. That is, the events returned from the first filter are
+	 * passed through the second filter, and so on.
+	 * </p>
 	 * 
-	 * @return  whether the given debug event is filtered
+	 * @return  the set of debug events to fire
 	 */
-	public boolean filterDebugEvent(DebugEvent event);
+	public DebugEvent[] filterDebugEvents(DebugEvent[] events);
 }
