@@ -138,6 +138,7 @@ public class IOConsoleOutputStream extends OutputStream {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
+        console.streamClosed(this);
         closed = true;
         console = null;
         partitioner = null;

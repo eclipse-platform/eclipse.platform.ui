@@ -271,7 +271,9 @@ public class IOConsoleInputStream extends InputStream {
     }
 
     /**
-     *  Disconnects the console from this stream. 
+     * Disconnects the console from this stream. 
+     * 
+     * TODO: do we need to distinguish between disconnect and close?
      */
     public synchronized void disconnect() {
         disconnected = true;
