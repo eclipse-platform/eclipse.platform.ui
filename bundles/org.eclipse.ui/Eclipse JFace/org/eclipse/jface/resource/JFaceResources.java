@@ -75,8 +75,6 @@ public class JFaceResources {
 	/**
 	 * The symbolic font name for the header font 
 	 * (value <code>"org.eclipse.jface.headerfont"</code>).
-	 * This value is subject to change and is not to be 
-	 * considered API yet.
 	 */
 	public static final String HEADER_FONT = "org.eclipse.jface.headerfont";//$NON-NLS-1$
 	
