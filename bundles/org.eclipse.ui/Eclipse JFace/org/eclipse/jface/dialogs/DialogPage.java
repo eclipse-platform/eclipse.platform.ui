@@ -291,13 +291,15 @@ protected void initializeDialogUnits(Control control) {
 }
 
 /**
- * Set the GridData on button to be one that is spaced for the
- * current dialog units.
- * @return GridData
- * @param Button
+ * Sets the <code>GridData</code> on the specified button to
+ * be one that is spaced for the current dialog page units. The
+ * method <code>initializeDialogUnits</code> must be called once
+ * before calling this method for the first time.
+ * 
+ * @param button the button to set the <code>GridData</code>
+ * @return the <code>GridData</code> set on the specified button
  */
-
-protected GridData setButtonLayoutData(Button button) {
+public GridData setButtonLayoutData(Button button) {
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
