@@ -23,10 +23,12 @@ package org.eclipse.jface.text;
  * in which they are used, the fields of a position are made publicly
  * accessible. Clients other than position updaters are not allowed to access
  * these public fields.
+ * </p>
  * <p>
- * Position can not be used as keys in hash tables as they override
+ * Positions cannot be used as keys in hash tables as they override
  * <code>equals</code> and <code>hashCode</code> as they would be value
  * objects.
+ * </p>
  * 
  * @see org.eclipse.jface.text.IDocument
  */
