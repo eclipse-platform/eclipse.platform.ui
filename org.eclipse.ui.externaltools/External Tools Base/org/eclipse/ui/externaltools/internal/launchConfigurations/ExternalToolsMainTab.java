@@ -483,7 +483,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			getShell(), 
 			ResourcesPlugin.getWorkspace().getRoot(),
 			false,
-			ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Select_a_directory__23")); //$NON-NLS-1$
+			ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.23")); //$NON-NLS-1$
 		containerDialog.open();
 		Object[] resource = containerDialog.getResult();
 		String text= null;
@@ -497,7 +497,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	
 	protected void handleFileWorkingDirectoryButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
-		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Select_a_directory__23")); //$NON-NLS-1$
+		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.23")); //$NON-NLS-1$
 		dialog.setFilterPath(workDirectoryField.getText());
 		String text= dialog.open();
 		if (text != null) {
