@@ -1,5 +1,10 @@
 package org.eclipse.ant.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.apache.tools.ant.util.regexp.RegexpMatcher;
 import org.apache.xerces.utils.regex.RegularExpression;
 import org.apache.xerces.utils.regex.Match;
