@@ -367,6 +367,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(ILaunch launch) {
+		launchAdded(launch);
 	}
 	
 	/**

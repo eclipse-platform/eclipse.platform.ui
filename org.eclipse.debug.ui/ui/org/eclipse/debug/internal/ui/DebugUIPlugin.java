@@ -621,38 +621,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(final ILaunch launch) {	
-		getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					if (getConsoleDocument(processes[i]) == null) {
-						ConsoleDocument doc= new ConsoleDocument(processes[i]);
-						doc.startReading();
-						setConsoleDocument(processes[i], doc);
-					}
-				}
-			}
-		});		
-	}
-
-	/**
-	 * Must not assume that will only be called from the UI thread.
-	 *
-	 * @see ILaunchListener#launchAdded(ILaunch)
-	 */
-	public void launchAdded(final ILaunch launch) {
-		updateHistories(launch);
-		
-		getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					ConsoleDocument doc= new ConsoleDocument(processes[i]);
-					doc.startReading();
-					setConsoleDocument(processes[i], doc);
-				}
-			}
-		});
 		
 		IProcess newProcess= null;
 		IDebugTarget target= launch.getDebugTarget();
@@ -665,6 +633,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			}
 		}
 		setCurrentProcess(newProcess);
+				
+		getStandardDisplay().syncExec(new Runnable () {
+			public void run() {
+				IProcess[] processes= launch.getProcesses();
+				for (int i= 0; i < processes.length; i++) {
+					if (getConsoleDocument(processes[i]) == null) {
+						ConsoleDocument doc= new ConsoleDocument(processes[i]);
+						doc.startReading();
+						setConsoleDocument(processes[i], doc);
+					}
+				}
+			}
+		});		
+				
+	}
+
+	/**
+	 * Must not assume that will only be called from the UI thread.
+	 *
+	 * @see ILaunchListener#launchAdded(ILaunch)
+	 */
+	public void launchAdded(final ILaunch launch) {
+		updateHistories(launch);
+		launchChanged(launch);
 	}
 	
 	protected void updateFavorites(ILaunchConfiguration config) {
