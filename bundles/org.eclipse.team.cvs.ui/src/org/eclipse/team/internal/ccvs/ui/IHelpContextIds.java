@@ -74,14 +74,14 @@ public interface IHelpContextIds {
 	// Viewers
 	public static final String CATCHUP_RELEASE_VIEWER = PREFIX + "catchup_release_viewer_context"; //$NON-NLS-1$
 
-	// Add to .cvsignor dialog
+	// Add to .cvsignore dialog
 	public static final String ADD_TO_CVSIGNORE = PREFIX + "add_to_cvsignore_context"; //$NON-NLS-1$
 
 	// Actions
 	public static final String GET_FILE_REVISION_ACTION = PREFIX + "get_file_revision_action_context"; //$NON-NLS-1$
 	public static final String GET_FILE_CONTENTS_ACTION = PREFIX + "get_file_contents_action_context"; //$NON-NLS-1$
 
-	// Team menu actions (not done: I think these are pure xml)
+	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$
 	public static final String TEAM_SYNCHRONIZE_OUTGOING_ACTION = PREFIX + "team_synchronize_outgoing_action_context"; //$NON-NLS-1$
 	public static final String TEAM_COMMIT_ACTION = PREFIX + "team_commit_action_context"; //$NON-NLS-1$
@@ -95,7 +95,7 @@ public interface IHelpContextIds {
 	public static final String TEAM_ADD_ACTION = PREFIX + "team_add_action_context"; //$NON-NLS-1$
 	public static final String TEAM_IGNORE_ACTION = PREFIX + "team_ignore_action_context"; //$NON-NLS-1$
 
-	// Sync view menu actions (not done)
+	// Sync view menu actions
 	public static final String SYNC_COMMIT_ACTION = PREFIX + "sync_commit_action_context"; //$NON-NLS-1$
 	public static final String SYNC_FORCED_COMMIT_ACTION = PREFIX + "sync_forced_commit_action_context"; //$NON-NLS-1$
 	public static final String SYNC_UPDATE_ACTION = PREFIX + "sync_update_action_context"; //$NON-NLS-1$
