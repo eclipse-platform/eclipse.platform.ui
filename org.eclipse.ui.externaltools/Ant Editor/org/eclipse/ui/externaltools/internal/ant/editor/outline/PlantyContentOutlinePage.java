@@ -110,7 +110,6 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 
 	}
     
-    
 	/**
 	 * The label provider for the objects shown in the outline view.
 	 */
@@ -150,7 +149,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
 			}
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+				if (tempElement.isErrorNode()) {
+					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR);
+				} else {
+					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+				}
+			}
+			
+			if (tempElement.isErrorNode()) {
+				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
 			}
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
@@ -259,8 +266,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			ExternalToolsPlugin.getDefault().log(e);
 			return null;
 		} catch (IOException e) {
-			ExternalToolsPlugin.getDefault().log(e);
-			return null;
+			XmlElement tempRootElement = tempHandler.getRootElement();
+			if (tempRootElement != null) {
+				return generateExceptionOutline(tempWholeDocumentString, e, tempRootElement);
+			} else {
+				ExternalToolsPlugin.getDefault().log(e);		
+			}
 		}
         
 		XmlElement tempRootElement = tempHandler.getRootElement();
@@ -273,6 +284,20 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}
                 
 		return tempElement;
+	}
+
+	private XmlElement generateExceptionOutline(String wholeDocumentString, Exception e, XmlElement rootElement) {
+		rootElement.setIsErrorNode(true);		
+		XmlElement inputElement = new XmlElement(""); //$NON-NLS-1$
+		
+		// Fix position of tags
+		fixTagLocations(rootElement, wholeDocumentString);
+		inputElement.addChildNode(rootElement);
+	
+		XmlElement errorNode= new XmlElement(e.getMessage());
+		errorNode.setIsErrorNode(true);
+		rootElement.addChildNode(errorNode);
+		return inputElement;
 	}
     
 	/**
@@ -341,10 +366,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			tempElement.setStartingColumn(tempLessThanIndex+1); // 0-based -> 1-based
 			tempElement.setStartingRow(tempStartingRow+1);
 			int tempStartingIndex = (tempStartingRow > 0 ? tempLineLengths[tempStartingRow-1] : 0);
-			tempStartingIndex = (isMsOs()) ? tempStartingIndex+tempStartingRow : tempStartingIndex; // add one char for ever \r
+			tempStartingIndex = (isLineSeparatorMulticharacter()) ? tempStartingIndex+tempStartingRow : tempStartingIndex; // add one char for ever \r
 			tempStartingIndex += tempLessThanIndex;
-			int tempOffset = findIndexOfSubstringAfterIndex(aWholeDocumentString, tempElement.getName(), tempStartingIndex)-1;
-			if(isMsOs()) {
+			int tempOffset = tempStartingIndex;
+			if (!tempElement.isErrorNode()) {
+				tempOffset= findIndexOfSubstringAfterIndex(aWholeDocumentString, tempElement.getName(), tempStartingIndex)-1;
+			}
+			if(isLineSeparatorMulticharacter()) {
 				tempOffset += tempStartingRow; // add one char for every \r
 			}
 			tempElement.setOffset(tempOffset);
@@ -366,7 +394,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				}
 				tempLength = findIndexOfSubstringAfterIndex(aWholeDocumentString, ">", tempStartingIndex)+1; //$NON-NLS-1$
 				tempLength -= tempOffset;
-				if(isMsOs()) {
+				if(isLineSeparatorMulticharacter()) {
 					tempLength += tempStartingRow; // add one char for every
 				}
 			}
@@ -376,9 +404,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	}
 
 	/**
-	 * Returns whether we are on a Microsoft OS.
+	 * Returns whether current line separator is multicharacter
 	 */
-	private boolean isMsOs() {
+	private boolean isLineSeparatorMulticharacter() {
 		String tempSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		if(tempSeparator.length() > 1) {
 			return true;

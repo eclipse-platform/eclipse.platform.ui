@@ -369,7 +369,15 @@ public class OutlinePreparingHandler extends DefaultHandler {
 			rootElement= new XmlElement(exception.getSystemId());
 		}
 		rootElement.setIsErrorNode(true);
-
+		
+		if (rootElement.getStartingRow() == 0) {
+			//an error occurred attempting to create the root element
+			if(locator != null) {
+				rootElement.setStartingColumn(locator.getColumnNumber());
+				rootElement.setStartingRow(locator.getLineNumber());
+			}
+		}
+		
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
