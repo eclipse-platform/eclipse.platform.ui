@@ -18,8 +18,12 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -253,7 +257,6 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	private IResource[] getStoredMembers(IResource local) throws TeamException {			
 		try {
 			if (local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
-				// TODO: Not very generic! 
 				IResource[] allChildren = ((IContainer)local).members(true /* include phantoms */);
 				List childrenWithSyncBytes = new ArrayList();
 				for (int i = 0; i < allChildren.length; i++) {
@@ -269,5 +272,61 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			throw TeamException.asTeamException(e);
 		}
 		return new IResource[0];
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#refresh(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IResource[] refresh(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+		IResource[] changedResources = null;
+		monitor.beginTask(null, 100);
+		// Wait indefinitely until buidl is done
+		while (isJobInFamilyRunning(ResourcesPlugin.FAMILY_AUTO_BUILD)
+				|| isJobInFamilyRunning(ResourcesPlugin.FAMILY_MANUAL_BUILD)) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Conitinue
+			}	
+			Policy.checkCanceled(monitor);
+		}
+		ISchedulingRule rule = getSchedulingRule(resource);
+		try {
+			Platform.getJobManager().beginRule(rule, monitor);
+			if (!resource.getProject().isAccessible()) {
+				// The project is closed so silently skip it
+				return new IResource[0];
+			}
+			changedResources = super.refresh(resource, depth, monitor);
+		} finally {
+			Platform.getJobManager().endRule(rule);
+			monitor.done();
+		}
+		if (changedResources == null) return new IResource[0];
+		return changedResources;
+	}
+	
+	/**
+	 * Return the scheduling rule that should be obtained for the given resource.
+	 * This method is invoked from <code>refresh(IResource, int, IProgressMonitor)</code>.
+	 * By default, the resource's project is returned. Subclasses may override.
+	 * @param resource the resource being refreshed
+	 * @return a scheduling rule or <code>null</code>
+	 */
+	protected ISchedulingRule getSchedulingRule(IResource resource) {
+		return resource.getProject();
+	}
+	
+	private boolean isJobInFamilyRunning(Object family) {
+		Job[] jobs = Platform.getJobManager().find(family);
+		if (jobs != null && jobs.length > 0) {
+			for (int i = 0; i < jobs.length; i++) {
+				Job job = jobs[i];
+				if (job.getState() != Job.NONE) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
