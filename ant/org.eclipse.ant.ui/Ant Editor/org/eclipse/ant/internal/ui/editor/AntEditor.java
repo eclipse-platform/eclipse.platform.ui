@@ -203,7 +203,7 @@ public class AntEditor extends TextEditor {
             try {
                 
                 int offset= reference.getOffset();
-                int length= reference.getLength();
+                int length= reference.getSelectionLength();
                 
                 if (offset < 0) {
                     return;
