@@ -95,6 +95,46 @@
 			command="org.eclipse.search.ui.openFileSearchPage"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
+		
+		<command
+			category="org.eclipse.ui.category.views"
+			id="org.eclipse.search.SearchResultView"
+			name="%ViewCommand.searchResultView.name"
+			description="%ViewCommand.searchResultView.description"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.SearchResultView"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		
+		<command
+			category="org.eclipse.ui.category.views"
+			id="org.eclipse.search.ui.views.SearchView"
+			name="%ViewCommand.searchView.name"
+			description="%ViewCommand.searchView.description"
+		/>
+		<keyBinding
+            string="Alt+Shift+Q S"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.views.SearchView"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			platform="carbon"
+			string="Alt+Shift+Q S"
+			scope="org.eclipse.ui.globalScope"
+			command=""
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			platform="carbon"
+			string="Command+Alt+Q S"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.views.SearchView"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
 	</extension>
 	
 	<!-- action sets -->
