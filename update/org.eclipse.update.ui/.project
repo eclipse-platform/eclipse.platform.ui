@@ -32,6 +32,5 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
-		<nature>org.eclipse.team.cvs.core.cvsnature</nature>
 	</natures>
 </projectDescription>

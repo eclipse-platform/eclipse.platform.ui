@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.update.win32</name>
+	<name>org.eclipse.update.core.win32</name>
 	<comment></comment>
 	<projects>
 		<project>org.eclipse.core.boot</project>
@@ -27,6 +27,5 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
-		<nature>org.eclipse.team.cvs.core.cvsnature</nature>
 	</natures>
 </projectDescription>
