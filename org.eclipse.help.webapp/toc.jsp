@@ -32,7 +32,8 @@ UL {
 }
 
 #root {
-	margin-left:8px;
+	margin-top:5px;
+	margin-left:24px;
 }
   
 UL.expanded {
@@ -41,6 +42,10 @@ UL.expanded {
 
 UL.collapsed { 
 	display: none;
+}
+
+LI { 
+	margin-top:3px; 
 }
 
 LI.expanded {
@@ -58,9 +63,10 @@ LI.leaf {
 
 A, A:visited, A:hover, A:link {
 	text-decoration:none; 
-	text-indent:15px;
 	color:WindowText; 
-	padding:0px;;
+	padding-left:15px;
+	padding-right:10px;
+	height:100%;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
@@ -101,19 +107,17 @@ A.book {
 	margin-left:-20px;
 }
 
-
-
 </style>  
     
 <base target="MainFrame">
 <script language="JavaScript" src="toc.js"></script>
  <script language="JavaScript">
  var extraStyle = "";
-  if (isMozilla)
-  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:15px;  }</style>";
-  else if (isIE)
- 	extraStyle =  "<style type='text/css'>A {height:18px; } </style>";
- 	
+ if (isMozilla)
+  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} </style>";
+ else if (isIE50)
+ 	 extraStyle = "<style type='text/css'>A{ height:10px;} </style>";
+ 
  document.write(extraStyle);
 </script>
 

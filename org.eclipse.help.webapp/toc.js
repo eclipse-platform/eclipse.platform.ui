@@ -2,6 +2,7 @@
 
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+var isIE50 = navigator.userAgent.toLowerCase().indexOf('msie 5.0') != -1;
 
 /**
  * Returns the node with specified tag
@@ -191,8 +192,9 @@ function highlightTopic(topic)
   		a.className = "activeLeaf";
   	else if (a.className == "node")
   		a.className = "activeNode";
-  		
-  	//a.blur();
+  
+  	if (isIE)
+  		a.hideFocus = "true";
   }
 }
 
