@@ -12,6 +12,7 @@ import org.eclipse.debug.core.model.IValue;
  * details.
  * 
  * @see IDebugModelPresentation
+ * @since 2.0
  */
 
 public interface IValueDetailListener {

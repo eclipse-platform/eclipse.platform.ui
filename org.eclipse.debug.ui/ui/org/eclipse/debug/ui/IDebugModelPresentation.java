@@ -169,6 +169,9 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * 
 	 * @param value the value for which a detailed description
 	 * 	is required
+	 * @param listener the listener to report the details to
+	 * 	asynchronously
+	 * @since 2.0
 	 */
 	void computeDetail(IValue value, IValueDetailListener listener);	
 

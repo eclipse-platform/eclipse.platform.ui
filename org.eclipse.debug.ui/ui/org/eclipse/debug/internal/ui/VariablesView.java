@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
@@ -35,6 +37,9 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -67,7 +72,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 * The model presentation used as the label provider for the tree viewer,
 	 * and also as the detail information provider for the detail pane.
 	 */
-	private IDebugModelPresentation fModelPresentation;
+	private DelegatingModelPresentation fModelPresentation;
 	
 	/**
 	 * The UI construct that provides a sliding sash between the variables tree
@@ -78,8 +83,20 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	/**
 	 * The detail pane viewer and its associated document.
 	 */
-	private TextViewer fDetailTextViewer;
+	private ISourceViewer fDetailViewer;
 	private IDocument fDetailDocument;
+	
+	/**
+	 * The identifier of the debug model that is/was being displayed
+	 * in this view. When the type of model being displayed changes,
+	 * the details area needs to be reconfigured.
+	 */
+	private String fDebugModelIdentifier;
+	
+	/**
+	 * The configuration being used in the details area
+	 */
+	private SourceViewerConfiguration fSourceViewerConfiguration;
 	
 	/**
 	 * Various listeners used to update the enabled state of actions and also to
@@ -148,7 +165,33 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		}
 
 		((VariablesContentProvider)getStructuredViewer().getContentProvider()).clearCache();
+		if (frame != null) {
+			setDebugModel(frame.getModelIdentifier());
+		}
 		getViewer().setInput(frame);
+		
+	}
+	
+	/**
+	 * Configures the details viewer for the debug model
+	 * currently being displayed
+	 */
+	protected void configureDetailsViewer() {
+		LazyModelPresentation mp = (LazyModelPresentation)fModelPresentation.getPresentation(getDebugModel());
+		SourceViewerConfiguration svc = null;
+		try {
+			svc = mp.newDetailsViewerConfiguration();
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(getSite().getShell(), "Error", "Unable to configure varible details area.", e.getStatus());
+		}
+		if (svc == null) {
+			svc = new SourceViewerConfiguration();
+			getDetailViewer().setEditable(false);
+		} else {
+			getDetailViewer().setEditable(true);
+		}
+		getDetailViewer().configure(svc);
+		setDetailViewerConfiguration(svc);
 	}
 	
 	/**
@@ -182,16 +225,17 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		vv.setUseHashlookup(true);
 		
 		// add text viewer
-		fDetailTextViewer = new TextViewer(getSashForm(), SWT.V_SCROLL | SWT.H_SCROLL);
-		getDetailTextViewer().setDocument(getDetailDocument());
+		setDetailViewer(new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL));
+		getDetailViewer().setDocument(getDetailDocument());
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
-		getDetailTextViewer().setEditable(false);
+		getDetailViewer().setEditable(false);
 		getSashForm().setMaximizedControl(vv.getControl());
 		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
-		getDetailTextViewer().getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
+		getDetailViewer().getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
+		getSite().setSelectionProvider(getDetailViewer().getSelectionProvider());
 				
 		// add a context menu to the detail area
-		createDetailContextMenu(getDetailTextViewer().getTextWidget());
+		createDetailContextMenu(getDetailViewer().getTextWidget());
 		
 		// listen to selection in debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
@@ -294,7 +338,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		menuControl.setMenu(menu);
 
 		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, getDetailTextViewer().getSelectionProvider());		
+		getSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, getDetailViewer().getSelectionProvider());		
 	}
 	
 	/**
@@ -323,7 +367,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
 		IActionBars actionBars= getViewSite().getActionBars();
-		TextViewerAction textAction= new TextViewerAction(getDetailTextViewer(), getDetailTextViewer().getTextOperationTarget().COPY);
+		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().COPY);
 		textAction.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, textAction);
 
@@ -492,8 +536,22 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		return fModelPresentation;
 	}
 	
-	protected ITextViewer getDetailTextViewer() {
-		return fDetailTextViewer;
+	/**
+	 * Sets the viewer used to display value details.
+	 * 
+	 * @param viewer source viewer
+	 */
+	private void setDetailViewer(ISourceViewer viewer) {
+		fDetailViewer = viewer;
+	}
+	
+	/**
+	 * Returns the viewer used to display value details
+	 * 
+	 * @return source viewer
+	 */
+	protected ISourceViewer getDetailViewer() {
+		return fDetailViewer;
 	}
 	
 	protected SashForm getSashForm() {
@@ -505,7 +563,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 */
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
-			return getDetailTextViewer().getFindReplaceTarget();
+			return getDetailViewer().getFindReplaceTarget();
+		}
+		if (ITextViewer.class.equals(required)) {
+			return getDetailViewer();
 		}
 		return super.getAdapter(required);
 	}
@@ -529,5 +590,51 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		}
 		return false;
 	}
+	
+	/**
+	 * Sets the identifier of the debug model being displayed
+	 * in this view, or <code>null</code> if none.
+	 * 
+	 * @param id debug model identifier of the type of debug
+	 *  elements being displayed in this view
+	 */
+	private void setDebugModel(String id) {
+		if (id != fDebugModelIdentifier) {
+			fDebugModelIdentifier = id;
+			configureDetailsViewer();
+		}
+	}
+	
+	/**
+	 * Returns the identifier of the debug model being displayed
+	 * in this view, or <code>null</code> if none.
+	 * 
+	 * @return debug model identifier
+	 */
+	protected String getDebugModel() {
+		return fDebugModelIdentifier;
+	}	
+	
+	
+	/**
+	 * Sets the current configuration being used in the
+	 * details area.
+	 * 
+	 * @param config source viewer configuration
+	 */
+	private void setDetailViewerConfiguration(SourceViewerConfiguration config) {
+		fSourceViewerConfiguration = config;
+	}
+	
+	/**
+	 * Returns the current configuration being used in the
+	 * details area.
+	 * 
+	 * @return source viewer configuration
+	 */	
+	protected SourceViewerConfiguration getDetailViewerConfiguration() {
+		return fSourceViewerConfiguration;
+	}	
+	
 }
 

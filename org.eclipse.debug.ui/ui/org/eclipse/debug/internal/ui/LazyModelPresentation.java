@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.Viewer;
@@ -171,5 +172,23 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	public String getDebugModelIdentifier() {
 		return fConfig.getAttribute("id"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Returns a new source viewer configuration for the details
+	 * area of the variables view, or <code>null</code> if
+	 * unspecified.
+	 * 
+	 * @return source viewer configuration or <code>null</code>
+	 * @exception CoreException if unable to create the specified
+	 * 	source viewer configuration
+	 */
+	public SourceViewerConfiguration newDetailsViewerConfiguration() throws CoreException {
+		String attr  = fConfig.getAttribute("detailsViewerConfiguration"); //$NON-NLS-1$
+		if (attr != null) {
+			return (SourceViewerConfiguration)fConfig.createExecutableExtension("detailsViewerConfiguration");
+		}
+		return null;
+	}
+	
 	
 }
