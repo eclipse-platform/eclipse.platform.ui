@@ -49,7 +49,9 @@ public class CVSDecorationRunnable implements Runnable {
 	private static int checkedOutLocation;
 	private static ImageDescriptor merged;
 	private static int mergedLocation;
-
+	private static ImageDescriptor newResource;
+	private static int newResourceLocation;
+	
 	// Provides resources to be decorated and is notified when decoration has been calculated
 	private IDecorationNotifier notifier;
 
@@ -63,10 +65,13 @@ public class CVSDecorationRunnable implements Runnable {
 		dirtyLocation = OverlayIcon.TOP_RIGHT;
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		checkedInLocation = OverlayIcon.BOTTOM_RIGHT;
-		checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+		//checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+		checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		checkedOutLocation = OverlayIcon.BOTTOM_RIGHT;
 		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
 		mergedLocation = OverlayIcon.BOTTOM_RIGHT;
+		newResource = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE));
+		newResourceLocation = OverlayIcon.BOTTOM_RIGHT;
 	}
 
 	/*
@@ -288,7 +293,8 @@ public class CVSDecorationRunnable implements Runnable {
 		boolean showDirty = store.getBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION);
 		boolean showHasRemote = store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
 		boolean showAdded = store.getBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION);
-		
+		boolean showNewResources = store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION);
+
 		if (showAdded && resource.getType() == IResource.FILE) {
 			try {
 				IPath location = resource.getLocation();
@@ -322,7 +328,30 @@ public class CVSDecorationRunnable implements Runnable {
 			overlays.add(checkedIn);
 			locations.add(new Integer(checkedInLocation));
 		}
-				
+		
+		// show newResource icon
+		if (showNewResources) {
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			try {
+				if (cvsResource.exists()) {
+					boolean isNewResource = false;
+					if (cvsResource.isFolder()) {
+						if (!((ICVSFolder)cvsResource).isCVSFolder()) {
+							isNewResource = true;
+						}
+					} else if (!cvsResource.isManaged()) {
+						isNewResource = true;
+					}
+					if (isNewResource) {
+						overlays.add(newResource);
+						locations.add(new Integer(newResourceLocation));
+					}
+				}
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
+		}
+		
 		if (!overlays.isEmpty()) {
 			Integer[] integers = (Integer[])locations.toArray(new Integer[locations.size()]);
 			int[] ints = new int[integers.length];
