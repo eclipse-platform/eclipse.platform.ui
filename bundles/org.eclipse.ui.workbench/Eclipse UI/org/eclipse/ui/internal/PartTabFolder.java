@@ -37,9 +37,10 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
+import org.eclipse.ui.internal.presentations.PartTabFolderSystemContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.presentations.IPresentablePart;
-import org.eclipse.ui.presentations.IPresentationSite;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -47,8 +48,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {
 	
 	private WorkbenchPage page;
-	private PartPane.PaneContribution paneContribution;
-
+	
 	private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 		public void selectPart(IPresentablePart toSelect) {			
 			presentationSelectionChanged(toSelect);
@@ -70,8 +70,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			if (pane != null) {			
 				DragUtil.performDrag(pane, 
 						Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds()),
-						initialLocation, true);
+						initialLocation, !keyboard);
 			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
+		 */
+		public void dragStart(Point initialPosition, boolean keyboard) {
+			DragUtil.performDrag(PartTabFolder.this, 
+					Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds()),
+					initialPosition, !keyboard);
 		}
 		
 		public void close(IPresentablePart part) {
@@ -100,13 +109,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			return isClosable(part);
 		}
 	};
-
+	
 	// inactiveCurrent is only used when restoring the persisted state of
 	// perspective on startup.
 	private LayoutPart current;
 	private LayoutPart inactiveCurrent;
 	private boolean active = false;
 	private int flags;
+	private PartTabFolderSystemContribution paneContribution = new PartTabFolderSystemContribution(presentationSite);
 		
 	private List children = new ArrayList(3);
 	
@@ -423,7 +433,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 
 		active = false;
-		
+	
 		updateSystemMenu();
 	}
 
@@ -546,8 +556,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		updateContainerVisibleTab();
 	}
 	
-	
-		/**
+	/**
 	 * Reparent a part. Also reparent visible children...
 	 */
 	public void reparent(Composite newParent) {
@@ -566,6 +575,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			next.reparent(newParent);
 		}		
 	}
+	
 	/**
 	 * See IVisualContainer#replace
 	 */
@@ -626,11 +636,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 		
 		Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
-		setState((expanded == null || expanded.intValue() != IPresentationSite.STATE_MINIMIZED) ? 
-				IPresentationSite.STATE_RESTORED : IPresentationSite.STATE_MINIMIZED);
+		setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? 
+				IStackPresentationSite.STATE_RESTORED : IStackPresentationSite.STATE_MINIMIZED);
 		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
+	
 	/**
 	 * @see IPersistable
 	 */
@@ -655,8 +666,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			childMem.putString(IWorkbenchConstants.TAG_CONTENT, next.getID());
 		}
 				
-		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) ? 
-				IPresentationSite.STATE_MINIMIZED : IPresentationSite.STATE_RESTORED);
+		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? 
+				IStackPresentationSite.STATE_MINIMIZED : IStackPresentationSite.STATE_RESTORED);
 		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
@@ -743,11 +754,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 */
 	public void setActive(boolean activeState) {
 		if (activeState) {
-			if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
-				setState(IPresentationSite.STATE_RESTORED);
+			if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
+				setState(IStackPresentationSite.STATE_RESTORED);
 			}
 			if (page.isZoomed()) {
-				presentationSite.setPresentationState(IPresentationSite.STATE_MAXIMIZED);
+				presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
 			}
 		}
 		
@@ -835,9 +846,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		super.setContainer(container);
 
-		if (presentationSite.getState() == IPresentationSite.STATE_MAXIMIZED) {
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
 			if (!page.isZoomed()) {
-				setState(IPresentationSite.STATE_RESTORED);
+				setState(IStackPresentationSite.STATE_RESTORED);
 			}
 		}
 	}
@@ -850,7 +861,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		int oldState = presentationSite.getState();
 		
 		if (current != null) {
-			if (newState == IPresentationSite.STATE_MAXIMIZED) {
+			if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
 				((PartPane) current).doZoom();
 			} else {
 				presentationSite.setPresentationState(newState);
@@ -862,20 +873,20 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			
 				updateControlBounds();
 				
-				if (oldState == IPresentationSite.STATE_MINIMIZED) {
+				if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
 					forceLayout();
 				}
 			}
 		}
 		
-		if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
 			page.refreshActiveView();
 		}
 	}
 	
 	public void setZoomed(boolean isZoomed) {
 		if (isZoomed) {
-			presentationSite.setPresentationState(IPresentationSite.STATE_MAXIMIZED);
+			presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
 		}
 	}
 	
@@ -883,7 +894,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		Rectangle bounds = getPresentation().getControl().getBounds();
 		int minimumHeight = getMinimumHeight();
 		
-		if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED && bounds.height != minimumHeight) {
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED && bounds.height != minimumHeight) {
 			bounds.width = getMinimumWidth();
 			bounds.height = minimumHeight;	
 			getPresentation().setBounds(bounds);
@@ -942,14 +953,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	}
 	
 	public boolean resizesVertically() {
-		return presentationSite.getState() != IPresentationSite.STATE_MINIMIZED;
+		return presentationSite.getState() != IStackPresentationSite.STATE_MINIMIZED;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
 	 */
 	public boolean allowsAutoFocus() {
-		if (presentationSite.getState() == IPresentationSite.STATE_MINIMIZED) {
+		if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
 			return false;
 		}
 		
@@ -982,7 +993,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 		
 		if (current != null && current instanceof PartPane) {
-			paneContribution = ((PartPane)PartTabFolder.this.current).createPaneContribution(); 
+			paneContribution = new PartTabFolderSystemContribution(presentationSite);
+			paneContribution.setCurrentPane((PartPane)current);
 			systemMenuManager.add(paneContribution);
 		}
 	}
