@@ -50,13 +50,10 @@ import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
-import org.eclipse.ui.internal.registry.ProjectImageRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -86,8 +83,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static WorkbenchPlugin inst;
 	// Manager that maps resources to descriptors of editors to use
 	private EditorRegistry editorRegistry;
-	// Manager that maps project nature ids to images
-	private ProjectImageRegistry projectImageRegistry;
 	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
 	// Manager for working sets (IWorkingSet)
@@ -113,10 +108,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
-	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
-	private MarkerImageProviderRegistry markerImageProviderRegistry;
 	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
@@ -188,18 +181,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return actionSetRegistry;
 	}
-	/**
-	 * Returns the capability registry for the workbench.
-	 * 
-	 * @return the capability registry
-	 */
-	public CapabilityRegistry getCapabilityRegistry() {
-		if (capabilityRegistry == null) {
-			capabilityRegistry = new CapabilityRegistry();
-			capabilityRegistry.load();
-		}
-		return capabilityRegistry;
-	}
+
 	/* Return the default instance of the receiver. This represents the runtime plugin.
 	 *
 	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
@@ -259,16 +241,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return factory;
 	}
 	/**
-	 * Returns the marker image provider registry for the workbench.
-	 *
-	 * @return the marker image provider registry
-	 */
-	public MarkerImageProviderRegistry getMarkerImageProviderRegistry() {
-		if (markerImageProviderRegistry == null)
-			markerImageProviderRegistry = new MarkerImageProviderRegistry();
-		return markerImageProviderRegistry;
-	}
-	/**
 	 * Return the perspective registry.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
@@ -323,17 +295,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return preferenceManager;
 	}
-	/**
-	 *Answers the manager that maps project nature ids to images
-	 */
 
-	public ProjectImageRegistry getProjectImageRegistry() {
-		if (projectImageRegistry == null) {
-			projectImageRegistry = new ProjectImageRegistry();
-			projectImageRegistry.load();
-		}
-		return projectImageRegistry;
-	}
 	/**
 	 * Returns the shared images for the workbench.
 	 *
