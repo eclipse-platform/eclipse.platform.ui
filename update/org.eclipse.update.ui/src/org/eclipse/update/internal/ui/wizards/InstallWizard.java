@@ -52,7 +52,7 @@ public class InstallWizard extends Wizard {
 		final IConfiguredSite targetSite =
 			(targetPage == null) ? null : targetPage.getTargetSite();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					successfulInstall = false;
 					makeConfigurationCurrent();
@@ -60,7 +60,7 @@ public class InstallWizard extends Wizard {
 					saveLocalSite();
 					successfulInstall = true;
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
+					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
@@ -138,15 +138,7 @@ public class InstallWizard extends Wizard {
 				site.remove(feature, monitor);
 			} else {
 				// we should do something here
-				String message = "Unable to locate configuration site for the feature";
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						UpdateUIPlugin.getPluginId(),
-						IStatus.OK,
-						message,
-						null);
-				throw new CoreException(status);
+				throwError("Unable to locate configuration site for the feature");
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
 			IFeature oldFeature = job.getOldFeature();
@@ -157,18 +149,29 @@ public class InstallWizard extends Wizard {
 			if (success)
 				targetSite.install(feature, getVerificationListener(), monitor);
 			else {
-				// FIXME should also throw error
-				return;
+				throwError("Update failure: cannot disable old version");
 			}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());
 		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
 			unconfigure(job.getFeature());
 		} else {
+			// should not be here
 			return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
+	}
+
+	private void throwError(String message) throws CoreException {
+		IStatus status =
+			new Status(
+				IStatus.ERROR,
+				UpdateUIPlugin.getPluginId(),
+				IStatus.OK,
+				message,
+				null);
+		throw new CoreException(status);
 	}
 
 	private IConfiguredSite findConfigSite(IFeature feature) throws CoreException {

@@ -40,6 +40,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 		for (int i = 0; i < descriptors.length; i++) {
 			categoryCombo.add(descriptors[i].getName());
 		}
+		categoryCombo.select(0);
 		categoryCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				descriptor = descriptors[categoryCombo.getSelectionIndex()];
