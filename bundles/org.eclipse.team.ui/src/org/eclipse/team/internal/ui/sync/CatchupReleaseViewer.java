@@ -63,7 +63,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**
@@ -448,7 +447,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 									}
 							});
 						} catch(InvocationTargetException e) {
-							ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("CatchupReleaseViewer.errorCopyAllRightToLeft"), null, null); //$NON-NLS-1$
+							ErrorDialog.openError(TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("CatchupReleaseViewer.errorCopyAllRightToLeft"), null, null); //$NON-NLS-1$
 						} catch(InterruptedException e) {
 						}														
 					}						

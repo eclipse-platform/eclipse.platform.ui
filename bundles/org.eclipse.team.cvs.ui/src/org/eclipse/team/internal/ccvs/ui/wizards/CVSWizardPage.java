@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -270,7 +269,7 @@ public abstract class CVSWizardPage extends WizardPage {
 		tree.setLabelProvider(
 			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
+				CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);

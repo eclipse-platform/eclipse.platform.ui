@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -46,7 +47,6 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Select the target parent folder and folder name for the 'Checkout Into" operation.
@@ -146,7 +146,7 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 	 */
 	private void initializeValues() {
 		nameField.setText(remoteFolder.getName());
-		tree.setInput(WorkbenchPlugin.getPluginWorkspace().getRoot());
+		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		recurse = true;
 		recurseCheck.setSelection(recurse);
 		filter = 0;
@@ -226,7 +226,7 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 	private IProject[] getProjects(String root, boolean unshared) throws CVSException {
 		List validTargets = new ArrayList();
 		try {
-			IResource[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().members();
+			IResource[] projects = ResourcesPlugin.getWorkspace().getRoot().members();
 			for (int i = 0; i < projects.length; i++) {
 				IResource resource = projects[i];
 				if (resource instanceof IProject) {

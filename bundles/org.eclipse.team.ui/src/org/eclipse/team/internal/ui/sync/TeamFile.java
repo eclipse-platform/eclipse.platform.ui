@@ -35,7 +35,6 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <b>Note:</b> This class/interface is part of an interim API that is still under 
@@ -250,7 +249,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 						saveChanges(new ByteArrayInputStream(contents));
 					}
 				} catch(CoreException e) {
-					ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", name), null, e.getStatus()); //$NON-NLS-1$
+					ErrorDialog.openError(TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", name), null, e.getStatus()); //$NON-NLS-1$
 				}
 				fireContentChanged();
 			}
