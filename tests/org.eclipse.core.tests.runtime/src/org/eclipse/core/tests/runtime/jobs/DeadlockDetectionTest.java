@@ -775,21 +775,27 @@ public class DeadlockDetectionTest extends TestCase {
 		status[0] = TestBarrier.STATUS_RUNNING;
 		status[1] = TestBarrier.STATUS_RUNNING;
 
-		//wait until the third job gets the rule
-		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
-		//let the job finish
-		status[2] = TestBarrier.STATUS_RUNNING;
-
-		//wait until the fourth job gets the rule
-		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_WAIT_FOR_RUN);
-		//let the job finish
-		status[3] = TestBarrier.STATUS_RUNNING;
-
-		//wait until all jobs are done
-		for (int i = 0; i < jobs.length; i++) {
-			waitForCompletion(jobs[i]);
+		//the third and fourth jobs will now compete in non-deterministic order
+		int runningCount = 0;
+		long waitStart = System.currentTimeMillis();
+		while (runningCount < 2) {
+			if (status[2] == TestBarrier.STATUS_WAIT_FOR_RUN) {
+				//the third job got the rule - let it finish
+				runningCount++;
+				status[2] = TestBarrier.STATUS_RUNNING;
+			}
+			if (status[3] == TestBarrier.STATUS_WAIT_FOR_RUN) {
+				//the fourth job got the rule - let it finish
+				runningCount++;
+				status[3] = TestBarrier.STATUS_RUNNING;
+			}
+			//timeout if the two jobs don't start within ten seconds
+			assertTrue("Timeout waiting for job to end", (System.currentTimeMillis()-waitStart) < 10000);
 		}
-
+		//wait until all jobs are done
+		for (int i = 0; i < jobs.length; i++) 
+			waitForCompletion(jobs[i]);
+		
 		for (int i = 0; i < jobs.length; i++) {
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
@@ -994,8 +1000,9 @@ public class DeadlockDetectionTest extends TestCase {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				//ignore
 			}
-			assertTrue("Timeout waiting for job to end.", ++i < 100);
+			assertTrue("Timeout waiting for job to end:" + job, ++i < 100);
 		}
 	}
 
