@@ -379,6 +379,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		}
 	}
 	
+	/**
+	 * Return a <code>Map</code> of launch configuration type IDs to <code>List</code>s of 
+	 * perspective IDs.  This map indicates which perspectives should have menu shortcuts present
+	 * for creating launch configurations of the listed configuration types.
+	 */
 	public Map getLaunchConfigurationShortcuts() {
 		return fLaunchConfigurationShortcuts;
 	}

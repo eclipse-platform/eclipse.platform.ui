@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -37,6 +38,7 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	private IWorkbenchWindow fWorkbenchWindow;
 	private List fActionItems;
 	private IAction fAction;
+	private ILaunchManager fLaunchManager;
 	
 	/**
 	 * @see IAction#run()
@@ -69,18 +71,21 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 			getActionItems().add(item);
 		}
 	}
+	
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
 		setActionItems(null);
 	}
+	
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
 	public Menu getMenu(Control parent) {
 		return null;
 	}
+	
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
@@ -88,6 +93,9 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		String activePerspID = getActivePerspectiveID();
 		Map shortcutMap = DebugUIPlugin.getDefault().getLaunchConfigurationShortcuts();
 	
+		// Look through the shortcut map and for each config type, see if the active perspective's
+		// ID is listed.  If it is, add a shortcut for creating a new configuration of that type
+		// to the menu
 		Menu menu= new Menu(parent);
 		int menuCount= 1;
 		Iterator keyIterator = shortcutMap.keySet().iterator();
@@ -95,20 +103,44 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 			String configTypeID = (String) keyIterator.next();
 			List perspList = (List) shortcutMap.get(configTypeID);
 			if ((perspList.contains(activePerspID)) || (perspList.contains("*"))) {  //$NON-NLS-1$
-				ILaunchConfigurationType configType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(configTypeID);
-				if (configType.supportsMode(getMode())) {
-					OpenLaunchConfigurationsAction openAction = null;
-					if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-						openAction = new OpenDebugConfigurations(configType);
-					} else {
-						openAction = new OpenRunConfigurations(configType);
-					}
-					createMenuForAction(menu, openAction, menuCount);
+				ILaunchConfigurationType configType = getLaunchManager().getLaunchConfigurationType(configTypeID);
+				if (populateMenu(configType, menu, menuCount)) {
 					menuCount++;
 				}
 			}
 		}
+		
+		// If NO configuration types listed the current perspective, add ALL configuration types
+		// to the menu.  This is to avoid an empty cascading menu.
+		if (menuCount == 1) {
+			ILaunchConfigurationType[] allConfigTypes = getLaunchManager().getLaunchConfigurationTypes();
+			for (int i = 0; i < allConfigTypes.length; i++) {
+				ILaunchConfigurationType configType = allConfigTypes[i];
+				if (populateMenu(configType, menu, menuCount)) {
+					menuCount++;
+				}
+			}
+		}
+		
 		return menu;
+	}
+	
+	/**
+	 * If the specified configuration type supports the current mode (run or debug), create a
+	 * shortcut action and add it to the specified menu.
+	 */
+	protected boolean populateMenu(ILaunchConfigurationType configType, Menu menu, int menuCount) {
+		if (configType.supportsMode(getMode())) {
+			OpenLaunchConfigurationsAction openAction = null;
+			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+				openAction = new OpenDebugConfigurations(configType);
+			} else {
+				openAction = new OpenRunConfigurations(configType);
+			}
+			createMenuForAction(menu, openAction, menuCount);
+			return true;
+		} 
+		return false;
 	}
 	
 	protected String getActivePerspectiveID() {
@@ -186,6 +218,17 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	
 	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
+	}
+	
+	/**
+	 * Lazily populate & return the current launch manager.  Lazy population is useful because this
+	 * can be called many times.
+	 */
+	protected ILaunchManager getLaunchManager() {
+		if (fLaunchManager == null) {
+			fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
+		}
+		return fLaunchManager;
 	}
 	
 	/**
