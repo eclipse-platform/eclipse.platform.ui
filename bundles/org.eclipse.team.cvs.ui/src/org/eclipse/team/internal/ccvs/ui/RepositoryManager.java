@@ -20,11 +20,17 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.ITeamManager;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.model.Tag;
 
 /**
@@ -77,12 +83,7 @@ public class RepositoryManager {
 		}
 		try {
 			result = CVSProviderPlugin.getProvider().createRepository(properties);
-			repositories.put(result.getLocation(), result);
-			Iterator it = listeners.iterator();
-			while (it.hasNext()) {
-				IRepositoryListener listener = (IRepositoryListener)it.next();
-				listener.repositoryAdded(result);
-			}
+			addRoot(result);
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return null;
@@ -120,6 +121,19 @@ public class RepositoryManager {
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
 			listener.tagAdded(tag, root);
+		}
+	}
+	/**
+	 * Add the given repository location to the list of known repository
+	 * locations. Listeners are notified.
+	 */
+	public void addRoot(ICVSRepositoryLocation root) {
+		if (repositories.get(root.getLocation()) != null) return;
+		repositories.put(root.getLocation(), root);
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			IRepositoryListener listener = (IRepositoryListener)it.next();
+			listener.repositoryAdded(root);
 		}
 	}
 	/**
@@ -210,6 +224,24 @@ public class RepositoryManager {
 			} catch (IOException e) {
 				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e));
 			}
+		} else {
+			// If the file did not exist, then prime the list of repositories with
+			// the providers with which the projects in the workspace are shared.
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			ITeamManager manager = TeamPlugin.getManager();
+			for (int i = 0; i < projects.length; i++) {
+				ITeamProvider provider = manager.getProvider(projects[i]);
+				if (provider instanceof CVSTeamProvider) {
+					CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+					ICVSRepositoryLocation result = cvsProvider.getRemoteResource(projects[i]).getRepository();
+					repositories.put(result.getLocation(), result);
+					Iterator it = listeners.iterator();
+					while (it.hasNext()) {
+						IRepositoryListener listener = (IRepositoryListener)it.next();
+						listener.repositoryAdded(result);
+					}
+				}
+			}
 		}
 	}
 	
@@ -245,13 +277,13 @@ public class RepositoryManager {
 			dos.writeUTF("" + root.getPort());
 			dos.writeUTF(root.getRootDirectory());
 			Tag[] branchTags = getKnownBranchTags(root);
-			dos.writeInt(branchTags.length - 1);
-			for (int i = 0; i < branchTags.length - 1; i++) {
+			dos.writeInt(branchTags.length);
+			for (int i = 0; i < branchTags.length; i++) {
 				dos.writeUTF(branchTags[i].getTag());
 			}
 			Tag[] versionTags = getKnownVersionTags(root);
-			dos.writeInt(versionTags.length - 1);
-			for (int i = 0; i < versionTags.length - 1; i++) {
+			dos.writeInt(versionTags.length);
+			for (int i = 0; i < versionTags.length; i++) {
 				dos.writeUTF(versionTags[i].getTag());
 			}
 		}
