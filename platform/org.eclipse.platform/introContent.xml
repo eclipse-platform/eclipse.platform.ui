@@ -121,7 +121,7 @@
         <link label="Migration from the previous release" url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented." id="migration">
           <text>Learn what you need to do to make your old code work in Eclipse 3.0</text>
         </link>
-        <link label="New Updates" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.update.ui&amp;class=org.eclipse.update.internal.ui.InstallWizardAction" id="updates">
+        <link label="New Updates" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.ide&amp;class=org.eclipse.ui.internal.ide.update.InstallWizardAction" id="updates">
           <text>Get the latest updates from Eclipse.org</text>
         </link>
         <link label="Eclipse community" url="http://www.eclipse.org" id="eclipse">
