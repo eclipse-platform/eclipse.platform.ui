@@ -559,7 +559,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		// work in progress START
 		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, false);
-		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, false);
+		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, true);
 		store.setDefault(ICVSUIConstants.USE_NEW_SYNCVIEW, false);
 		// work in progress END
 		
