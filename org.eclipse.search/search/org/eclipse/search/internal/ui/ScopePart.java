@@ -160,6 +160,10 @@ public class ScopePart {
 			} else if (!fUseProject.isEnabled()) {
 				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
 			}
+		} else if (fScope == ISearchPageContainer.SELECTION_SCOPE) {
+			if (!fUseSelection.isEnabled()) {
+				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+			}
 		}
 		switch (fScope) {
 			case ISearchPageContainer.WORKSPACE_SCOPE :
@@ -190,6 +194,7 @@ public class ScopePart {
 
 		updateSearchPageContainerActionPerformedEnablement();
 		fgSettingsStore.put(STORE_SCOPE, fScope);
+		
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
