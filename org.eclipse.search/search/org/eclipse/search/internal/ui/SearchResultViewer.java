@@ -56,6 +56,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -269,6 +270,8 @@ public class SearchResultViewer extends TableViewer {
 		enableActions();
 		if (getItemCount() > 0)
 			selectResult(getTable(), 0);
+
+		WorkbenchHelp.setHelp(getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
 
 	protected int getSelectedEntriesCount() {

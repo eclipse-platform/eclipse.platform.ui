@@ -263,6 +263,31 @@ public class SearchPlugin extends AbstractUIPlugin {
 	} 
 
 	/**
+	 * Returns the help context ID for the Search view
+	 * as provided by the current search page extension.
+	 * 
+	 * @since 3.0
+	 */
+	public String getSearchViewHelpContextId() {
+		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
+		if (currentSearch != null) {
+			String pageId= currentSearch.getPageId();
+			Iterator iter= getSearchPageDescriptors().iterator();
+			while (iter.hasNext()) {
+				SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+				if (desc.getId().equals(pageId)) {
+					String helpId= desc.getSearchViewHelpContextId();
+					if (helpId == null)
+						return ISearchHelpContextIds.SEARCH_VIEW;
+					else
+						return desc.getSearchViewHelpContextId();
+				}
+			}
+		}
+		return ISearchHelpContextIds.SEARCH_VIEW;
+	} 
+
+	/**
 	 * Creates all necessary search page nodes.
 	 */
 	private List createSearchPageDescriptors(IConfigurationElement[] elements) {

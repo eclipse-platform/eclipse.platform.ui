@@ -136,6 +136,13 @@ search all possible resources then &quot;*&quot; can be used.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="searchViewHelpContextId" type="string">
+            <annotation>
+               <documentation>
+                  an optional help context ID of the Search view displaying results of this page. If this attribute is missing then the default search help context ID (&lt;samp&gt;org.eclipse.search.search_view_context&lt;/samp&gt;) is used.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="showScopeSection" type="boolean">
             <annotation>
                <documentation>

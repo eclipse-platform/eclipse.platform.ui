@@ -51,6 +51,7 @@ class SearchPageDescriptor implements Comparable {
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
 	private final static String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
+	private final static String SEARCH_VIEW_HELP_CONTEXT_ID_ATTRIBUTE= "searchViewHelpContextId"; //$NON-NLS-1$
 	
 	public final static Point UNKNOWN_SIZE= new Point(SWT.DEFAULT, SWT.DEFAULT);
 
@@ -61,8 +62,6 @@ class SearchPageDescriptor implements Comparable {
 	
 	private static List fgEnabledPageIds;
 	
-	private IConfigurationElement fElement;
-	
 	private static class ExtensionScorePair {
 		public String extension;
 		public int score;
@@ -71,10 +70,10 @@ class SearchPageDescriptor implements Comparable {
 			this.score= score;
 		}
 	}
+
+	private IConfigurationElement fElement;
 	private List fExtensionScorePairs;
 	private int fWildcardScore= ISearchPageScoreComputer.UNKNOWN;
-	
-
 	
 	/**
 	 * Creates a new search page node with the given configuration element.
@@ -165,8 +164,7 @@ class SearchPageDescriptor implements Comparable {
 	/**
 	 * Returns the page's tab position relative to the other tabs.
 	 * @return	the tab position or <code>Integer.MAX_VALUE</code> if not defined in
-	 			the plugins.xml file
-	 *
+	 *			the plugins.xml file
 	 */
 	public int getTabPosition() {
 		int position= Integer.MAX_VALUE / 2;
@@ -183,6 +181,15 @@ class SearchPageDescriptor implements Comparable {
 
 	boolean isEnabled() {
 		return getEnabledPageIds().contains(getId());
+	}
+
+	/**
+	 * Returns the help context for help shown in search view.
+	 * 
+	 * @return the help context id or <code>null</code> if not defined
+	 */
+	public String getSearchViewHelpContextId() {
+		return fElement.getAttribute(SEARCH_VIEW_HELP_CONTEXT_ID_ATTRIBUTE);
 	}
 
 	static void setEnabled(Object[] enabledDescriptors) {

@@ -109,7 +109,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		
 		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
 		
-		WorkbenchHelp.setHelp(fViewer.getControl(), ISearchHelpContextIds.SEARCH_VIEW);
+		WorkbenchHelp.setHelp(fViewer.getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
 	
 	/**
