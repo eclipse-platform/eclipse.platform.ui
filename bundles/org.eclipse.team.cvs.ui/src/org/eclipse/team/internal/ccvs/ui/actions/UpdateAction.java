@@ -36,7 +36,7 @@ public class UpdateAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-			run(new IRunnableWithProgress() {
+		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {					
 					Hashtable table = getProviderMapping();
