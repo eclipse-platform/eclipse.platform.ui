@@ -1,46 +1,37 @@
-/*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/**********************************************************************
+ * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.core.runtime.NLS;
 
 /**
- * @since 3.0
+ * The ActivtyMessages are the messages used by the activities
+ * support.
+ *
  */
-public class ActivityMessages {
+public class ActivityMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ws.messages";//$NON-NLS-1$
+	
+	public static String ActivityEnabler_description;
+	public static String ActivityEnabler_activities;
+	public static String ActivityEnabler_selectAll;
+	public static String ActivityEnabler_deselectAll;
+	public static String ManagerTask;
+	public static String ManagerWindowSubTask;
+	public static String ManagerViewsSubTask;
+	public static String Perspective_showAll;
+	public static String activityPromptButton;
+	public static String activityPromptToolTip;
 
-    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ws.messages"; //$NON-NLS-1$
-
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
-
-    /**
-     * Get the value of String.
-     * 
-     * @param key
-     * @return String
-     */
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
-
-    /**
-     * Create the activity messages
-     */
-    private ActivityMessages() {
-
-    }
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, ActivityMessages.class);
+	}
 }

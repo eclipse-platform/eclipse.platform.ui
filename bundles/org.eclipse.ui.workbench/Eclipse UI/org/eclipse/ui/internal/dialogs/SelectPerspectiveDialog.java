@@ -152,7 +152,7 @@ public class SelectPerspectiveDialog extends Dialog implements
     private void createShowAllButton(Composite parent) {
         showAllButton = new Button(parent, SWT.CHECK);
         showAllButton
-                .setText(ActivityMessages.getString("Perspective.showAll")); //$NON-NLS-1$
+                .setText(ActivityMessages.Perspective_showAll);
         showAllButton.addSelectionListener(new SelectionAdapter() {
 
             /* (non-Javadoc)

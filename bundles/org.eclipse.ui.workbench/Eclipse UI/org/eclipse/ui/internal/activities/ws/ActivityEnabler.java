@@ -290,7 +290,7 @@ public class ActivityEnabler {
 		}
 
 		Label label = new Label(c, SWT.NONE);
-		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
+		label.setText(ActivityMessages.ActivityEnabler_activities); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 
@@ -322,8 +322,7 @@ public class ActivityEnabler {
 
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setFont(parent.getFont());
-		selectAllButton.setText(ActivityMessages
-				.getString("ActivityEnabler.selectAll"));//$NON-NLS-1$
+		selectAllButton.setText(ActivityMessages.ActivityEnabler_selectAll);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -338,8 +337,7 @@ public class ActivityEnabler {
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
 		deselectAllButton.setFont(parent.getFont());
-		deselectAllButton.setText(ActivityMessages
-				.getString("ActivityEnabler.deselectAll")); //$NON-NLS-1$
+		deselectAllButton.setText(ActivityMessages.ActivityEnabler_deselectAll); 
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -364,8 +362,7 @@ public class ActivityEnabler {
 
 		label = new Label(c, SWT.NONE);
 		label
-				.setText(ActivityMessages
-						.getString("ActivityEnabler.description")); //$NON-NLS-1$
+				.setText(ActivityMessages.ActivityEnabler_description);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 

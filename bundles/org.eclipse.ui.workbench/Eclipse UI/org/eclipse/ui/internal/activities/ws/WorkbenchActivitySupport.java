@@ -108,20 +108,17 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
                                             //two work units - updating the window bars, and updating view bars
                                             monitor
                                                     .beginTask(
-                                                            ActivityMessages
-                                                                    .getString("ManagerTask"), 2); //$NON-NLS-1$
+                                                            ActivityMessages.ManagerTask, 2);
 
                                             monitor
-                                                    .subTask(ActivityMessages
-                                                            .getString("ManagerWindowSubTask")); //$NON-NLS-1$
+                                                    .subTask(ActivityMessages.ManagerWindowSubTask); 
 
                                             //update window managers...
                                             updateWindowBars(window);
                                             monitor.worked(1);
 
                                             monitor
-                                                    .subTask(ActivityMessages
-                                                            .getString("ManagerViewsSubTask")); //$NON-NLS-1$
+                                                    .subTask(ActivityMessages.ManagerViewsSubTask); 
                                             // update all of the (realized) views in all of the pages
                                             IWorkbenchPage[] pages = window
                                                     .getPages();

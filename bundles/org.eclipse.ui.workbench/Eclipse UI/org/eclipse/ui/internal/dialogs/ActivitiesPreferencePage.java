@@ -45,10 +45,8 @@ public class ActivitiesPreferencePage extends PreferencePage implements
      */
     protected void createActivityPromptPref(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText(ActivityMessages
-                .getString("activityPromptButton")); //$NON-NLS-1$
-        activityPromptButton.setToolTipText(ActivityMessages
-                .getString("activityPromptToolTip")); //$NON-NLS-1$
+        activityPromptButton.setText(ActivityMessages.activityPromptButton); 
+        activityPromptButton.setToolTipText(ActivityMessages.activityPromptToolTip);
 
         activityPromptButton.setFont(composite.getFont());
         setActivityButtonState();
