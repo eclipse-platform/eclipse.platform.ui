@@ -14,9 +14,9 @@ Workbench window by the user customizing a perspective.
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonAction.exsd"/>
+   <include schemaLocation="commonAction.mxsd"/>
 
-   <include schemaLocation="commonExpression.exsd"/>
+   <include schemaLocation="commonExpression.mxsd"/>
 
    <element name="extension">
       <complexType>
