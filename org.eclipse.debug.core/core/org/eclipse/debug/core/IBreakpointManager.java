@@ -25,12 +25,13 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * <p>
  * Clients interested in breakpoint change notification may
  * register with the breakpoint manager - see
- * <code>IBreakpointListener</code>.
+ * <code>IBreakpointListener</code> and <code>IBreakpointsListener</code>
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @see IBreakpointListener
+ * @see org.eclipse.debug.core.IBreakpointListener
+ * @see org.eclipse.debug.core.IBreakpointsListener
  */
 public interface IBreakpointManager {
 	/**
