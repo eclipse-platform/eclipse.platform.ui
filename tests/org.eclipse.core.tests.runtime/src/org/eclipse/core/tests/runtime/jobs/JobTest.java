@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -11,6 +11,7 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
 import org.eclipse.core.internal.jobs.Worker;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -145,6 +146,24 @@ public class JobTest extends TestCase {
 				//should fail
 			}
 		}
+	}
+	/**
+	 * Tests the API methods Job.getProgressMonitor and Job.setProgressMonitor.
+	 */
+	public void testSetProgressMonitor() {
+		SubProgressMonitor monitor = new SubProgressMonitor(new NullProgressMonitor(), 10);
+		longJob.setProgressMonitor(monitor);
+		assertEquals("1.0", monitor, longJob.getProgressMonitor());
+		longJob.setProgressMonitor(null);
+		assertNull("1.1", longJob.getProgressMonitor());
+		
+		//can't change the monitor while job is waiting or running
+		longJob.schedule(100);
+		longJob.setProgressMonitor(monitor);
+		assertTrue("2.0", monitor != longJob.getProgressMonitor());
+		waitForStart(longJob);
+		longJob.setProgressMonitor(monitor);
+		assertTrue("2.1", monitor != longJob.getProgressMonitor());
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -24,14 +24,21 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * running job.  From an API point of view, this is the same as WAITING.
 	 */
 	public static final int BLOCKED = 0x08;
-
+	/** 
+	 * Job state code (value 16) indicating that a job has been removed from
+	 * the wait queue and is about to start running. From an API point of view, 
+	 * this is the same as RUNNING.
+	 */
+	public static final int ABOUT_TO_RUN = 0x10;
+	
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
+	
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
+	
 	private volatile int flags = Job.NONE;
-
 	private final int jobNumber = nextJobNumber++;
 	private List listeners;
 	private IProgressMonitor monitor;
@@ -101,14 +108,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final List getListeners() {
 		return listeners;
 	}
-	final IProgressMonitor getMonitor() {
-		return monitor;
-	}
 	protected String getName() {
 		return name;
 	}
 	protected int getPriority() {
 		return priority;
+	}
+	protected IProgressMonitor getProgressMonitor() {
+		return monitor;
 	}
 	protected IStatus getResult() {
 		return result;
@@ -122,8 +129,15 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	protected int getState() {
 		int state = flags & M_STATE;
-		//blocked state is equivalent to waiting state for clients
-		return state == BLOCKED ? Job.WAITING : state;
+		switch (state) {
+			//blocked state is equivalent to waiting state for clients
+			case BLOCKED:
+				return Job.WAITING;
+			case ABOUT_TO_RUN:
+				return Job.RUNNING;
+			default:
+				return state;
+		}
 	}
 	/* (non-javadoc)
 	 * @see Job.getThread
@@ -139,6 +153,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	final void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
+	}
+	/**
+	 * Same as setProgressMonitor but without state checking.  For
+	 * use by JobManager only.
+	 */
+	final void internalSetProgressMonitor(IProgressMonitor monitor) {
+		this.monitor = monitor;
 	}
 	/*
 	 * Must be called from JobManager#setRule
@@ -194,7 +215,6 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		next = previous = null;
 		return this;
 	}
-	protected abstract IStatus run(IProgressMonitor monitor);
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
@@ -204,11 +224,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (listeners.isEmpty())
 			listeners = null;
 	}
+	protected abstract IStatus run(IProgressMonitor monitor);
 	protected void schedule(long delay) {
 		manager.schedule(this, delay);
-	}
-	final void setMonitor(IProgressMonitor monitor) {
-		this.monitor = monitor;
 	}
 	protected void setName(String name) {
 		Assert.isNotNull(name);
@@ -232,6 +250,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			default :
 				throw new IllegalArgumentException(String.valueOf(newPriority));
 		}
+	}
+	protected void setProgressMonitor(IProgressMonitor monitor) {
+		//ignore if the job is waiting, sleeping, or running
+		if (getState() == Job.NONE)
+			this.monitor = monitor;
 	}
 	final void setResult(IStatus result) {
 		this.result = result;

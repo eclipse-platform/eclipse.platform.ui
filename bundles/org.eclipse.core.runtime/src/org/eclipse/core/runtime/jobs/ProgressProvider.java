@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,32 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public abstract class ProgressProvider {
 	/**
 	 * Provides a new progress monitor instance to be used by the given job.
+	 * The job might already have a monitor installed, but the progress
+	 * provider may decide to return a different one. 
+	 * 
+	 * @see #createProgressGroup
+	 * @see Job#getProgressMonitor
+	 * @see Job#setProgressMonitor
 	 * @param job the job to create a progress monitor for
 	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
 	 * is needed.
 	 */
 	public abstract IProgressMonitor createMonitor(Job job);
+	/**
+	 * Returns a progress monitor that can be used to provide
+	 * aggregated progress feedback on a set of running jobs.
+	 * This method implements <code>IJobManager.createProgressGroup</code>,
+	 * and must obey all rules specified in that contract.
+	 * <p>
+	 * This default implementation returns a new
+	 * <code>NullProgressMonitor</code>  Subclasses may override.
+	 * 
+	 * @see IJobManager#createProgressGroup
+	 * @return A progress monitor
+	 */
+	public IProgressMonitor createProgressGroup() {
+		return new NullProgressMonitor();
+	}
 	/**
 	 * Returns a progress monitor to use when none has been provided
 	 * by the client running the job.  

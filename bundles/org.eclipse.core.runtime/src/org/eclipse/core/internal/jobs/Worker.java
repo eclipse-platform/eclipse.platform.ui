@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class Worker extends Thread {
 				currentJob.setThread(this);
 				IStatus result = Status.OK_STATUS;
 				try {
-					result = currentJob.run(currentJob.getMonitor());
+					result = currentJob.run(currentJob.getProgressMonitor());
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,6 +215,20 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.getPriority();
 	}
 	/**
+	 * Returns the progress monitor for this job.  There is no 
+	 * guarantee that this wil be the same monitor instance provided
+	 * to <tt>setProgressMonitor</tt>.  While this job is running, this
+	 * method will return the same monitor instance that was passed
+	 * to the job's <tt>run</tt> method.
+	 * 
+	 * @see #setProgressMonitor
+	 * @see IJobManager#createProgressGroup
+	 * @return the progress monitor for this job, or <tt>null</tt>
+	 */
+	public final IProgressMonitor getProgressMonitor() {
+		return super.getProgressMonitor();
+	}
+	/**
 	 * Returns the result of this job's last run.
 	 * 
 	 * @return the result of this job's last run, or <code>null</code> if this
@@ -359,6 +373,27 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void setPriority(int i) {
 		super.setPriority(i);
+	}
+	/**
+	 * Sets the progress monitor that this job will use to report
+	 * progress the next time it runs.  The provided monitor must either be
+	 * a <tt>SubProgressMonitor</tt> whose parent is a monitor
+	 * created by the method <tt>IJobManager.createProgressGroup</tt>,
+	 * or <tt>null</tt>, to indicate that a default progress monitor should
+	 * be used.
+	 * <p>
+	 * The progress monitor can only be set when this job is in the <tt>NONE</tt>
+	 * state.  Attempts to set the monitor while a job is running, waiting,
+	 * or sleeping will be ignored. The monitor will be used only for
+	 * a single invocation of the job's <tt>run</tt> method, after which
+	 * the monitor will be discarded.
+	 * 
+	 * @see #getProgressMonitor
+	 * @see IJobManager#createProgressGroup
+	 * @param monitor The progress monitor to use for this job.
+	 */
+	public final void setProgressMonitor(SubProgressMonitor monitor) {
+		super.setProgressMonitor(monitor);
 	}
 	/**
 	 * Sets the scheduling rule to be used when scheduling this job.  This method

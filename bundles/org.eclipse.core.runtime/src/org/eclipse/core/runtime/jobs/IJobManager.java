@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,38 @@ public interface IJobManager {
 	 * @see Job#belongsTo(Object)
 	 */
 	public void cancel(Object family);
+	/**
+	 * Returns a progress monitor that can be used to provide
+	 * aggregated progress feedback on a set of running jobs. A user
+	 * interface will typically group all jobs in a progress group together,
+	 * providing progress feedback for individual jobs as well as aggregrated
+	 * progress for the entire group.  Jobs in the group may be run sequentially,
+	 * in parallel, or some combination of the two.
+	 * <p>
+	 * Recommended usage (this snippet runs two jobs in sequence in a 
+	 * single progress group):
+	 * <pre>
+	 *    Job parseJob, compileJob;
+	 *    IProgressMonitor pm = Platform.getJobManager().createProgressGroup();
+	 *    try {
+	 *       pm.beginTask("Building", 10);
+	 *       parseJob.setProgressMonitor(new SubProgressMonitor(pm, 5));
+	 *       parseJob.schedule();
+	 *       parseJob.join();
+	 *       compileJob.setProgressMonitor(new SubProgressMonitor(pm, 5));
+	 *       compileJob.schedule();
+	 *       compileJob.join();
+	 *    } finally {
+	 *       pm.done();
+	 *    }
+	 * </pre>
+	 * 
+	 * @see Job#setProgressMonitor
+	 * @see SubProgressMonitor
+	 * @return A progress monitor
+	 */
+	public IProgressMonitor createProgressGroup();
+		
 	/**
 	 * Returns the job that is currently running in this thread, or null if there
 	 * is no currently running job.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,9 @@ public class JobManager implements IJobManager {
 	public void addJobChangeListener(IJobChangeListener listener) {
 		jobListeners.add(listener);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#beginRule(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
 		implicitJobs.begin(rule, monitorFor(monitor));
 	}
@@ -122,10 +125,9 @@ public class JobManager implements IJobManager {
 				case Job.NONE :
 					return true;
 				case Job.RUNNING :
-					//cannot cancel a job that has already started
-					IProgressMonitor monitor = job.getMonitor();
-					if (monitor != null) {
-						monitor.setCanceled(true);
+					//cannot cancel a job that has already started (as opposed to ABOUT_TO_RUN)
+					if (job.internalGetState() == Job.RUNNING) {
+						job.getProgressMonitor().setCanceled(true);
 						return false;
 					}
 			}
@@ -173,6 +175,7 @@ public class JobManager implements IJobManager {
 					}
 					break;
 				case Job.RUNNING :
+				case InternalJob.ABOUT_TO_RUN :
 					running.remove(job);
 					break;
 				default :
@@ -190,6 +193,7 @@ public class JobManager implements IJobManager {
 					sleeping.enqueue(job);
 					break;
 				case Job.RUNNING :
+				case InternalJob.ABOUT_TO_RUN:
 					running.add(job);
 					break;
 				default :
@@ -206,9 +210,19 @@ public class JobManager implements IJobManager {
 			monitor = progressProvider.createMonitor(job);
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
-		((InternalJob) job).setMonitor(monitor);
 		return monitor;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#createProgressGroup()
+	 */
+	public IProgressMonitor createProgressGroup() {
+		if (progressProvider != null)
+			return progressProvider.createProgressGroup();
+		return new NullProgressMonitor() ;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#currentJob()
+	 */
 	public Job currentJob() {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
@@ -255,7 +269,7 @@ public class JobManager implements IJobManager {
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			job.setResult(result);
-			job.setMonitor(null);
+			job.internalSetProgressMonitor(null);
 			job.setThread(null);
 			changeState(job, Job.NONE);
 			blocked = job.previous();
@@ -280,6 +294,9 @@ public class JobManager implements IJobManager {
 		if (notify)
 			jobListeners.done((Job) job, result);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#endRule(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
 	public void endRule(ISchedulingRule rule) {
 		implicitJobs.end(rule);
 	}
@@ -474,7 +491,7 @@ public class JobManager implements IJobManager {
 			//the job to run must be in the running list before we exit
 			//the sync block, otherwise two jobs with conflicting rules could start at once
 			if (job != null) {
-				changeState(job, Job.RUNNING);
+				changeState(job, InternalJob.ABOUT_TO_RUN);
 				if (JobManager.DEBUG)
 					JobManager.debug("Starting job: " + job); //$NON-NLS-1$
 			}
@@ -645,8 +662,8 @@ public class JobManager implements IJobManager {
 		synchronized (lock) {
 			switch (job.getState()) {
 				case Job.RUNNING :
-					//cannot be paused if it is already running
-					if (job.getMonitor() != null)
+					//cannot be paused if it is already running (as opposed to ABOUT_TO_RUN)
+					if (job.internalGetState() == Job.RUNNING)
 						return false;
 					//job hasn't started running yet (aboutToRun listener)
 					break;
@@ -703,7 +720,9 @@ public class JobManager implements IJobManager {
 				jobListeners.aboutToRun(job);
 				//listeners may have canceled or put the job to sleep
 				if (job.getState() == Job.RUNNING) {
-					((InternalJob) job).setMonitor(createMonitor(job));
+					//change from ABOUT_TO_RUN to RUNNING
+					((InternalJob)job).internalSetState(Job.RUNNING);
+					((InternalJob) job).internalSetProgressMonitor(createMonitor(job));
 					jobListeners.running(job);
 					return job;
 				}
