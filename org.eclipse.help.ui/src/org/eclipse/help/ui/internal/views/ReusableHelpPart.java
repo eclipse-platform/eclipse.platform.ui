@@ -461,7 +461,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	
 	public void startSearch(String phrase) {
 		showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
-		FederatedSearchPart part = (FederatedSearchPart)findPart(IHelpUIConstants.HV_FSEARCH);
+		SearchPart part = (SearchPart)findPart(IHelpUIConstants.HV_FSEARCH);
 		if (part!=null)
 			part.startSearch(phrase);
 	}
@@ -574,11 +574,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		} else if (id.equals(HV_SEARCH_RESULT)) {
 			part = new DynamicHelpPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
-			part = new FederatedSearchResultsPart(parent, mform.getToolkit(), tbm);
+			part = new SearchResultsPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_SEE_ALSO)) {
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {
-			part = new FederatedSearchPart(parent, mform.getToolkit());
+			part = new SearchPart(parent, mform.getToolkit());
 		}
 		if (part != null) {
 			part.init(this, id);

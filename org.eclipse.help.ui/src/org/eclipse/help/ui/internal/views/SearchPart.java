@@ -27,7 +27,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 
-public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
+public class SearchPart extends AbstractFormPart implements IHelpPart,
 		IHelpUIConstants {
 	private ReusableHelpPart parent;
 
@@ -63,7 +63,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	 * @param toolkit
 	 * @param style
 	 */
-	public FederatedSearchPart(final Composite parent, FormToolkit toolkit) {
+	public SearchPart(final Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
@@ -80,7 +80,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 						}
 					});
 				} else
-					FederatedSearchPart.this.parent.showURL(HREF_SEARCH_HELP,
+					SearchPart.this.parent.showURL(HREF_SEARCH_HELP,
 							true);
 			}
 		});
@@ -181,7 +181,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	private void toggleSearchWordText() {
 		searchWordTextExpanded = !searchWordTextExpanded;
 		updateSearchWordText();
-		FederatedSearchPart.this.parent.reflow();
+		SearchPart.this.parent.reflow();
 		searchWordText.setFocus();
 	}
 
@@ -289,7 +289,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	private void doSearch(String text) {
 		ScopeSet set = scopeSetManager.getActiveSet();
 		ArrayList entries = new ArrayList();
-		final FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
+		final SearchResultsPart results = (SearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		ArrayList eds = new ArrayList();
 		for (int i = 0; i < engineDescriptors.size(); i++) {

@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 
 public class EngineResultSection {
-	private FederatedSearchResultsPart part;
+	private SearchResultsPart part;
 
 	private EngineDescriptor desc;
 
@@ -51,7 +51,7 @@ public class EngineResultSection {
 
 	private int resultOffset = 0;
 
-	public EngineResultSection(FederatedSearchResultsPart part,
+	public EngineResultSection(SearchResultsPart part,
 			EngineDescriptor desc) {
 		this.part = part;
 		this.desc = desc;

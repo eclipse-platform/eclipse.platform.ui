@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class FederatedSearchResultsPart extends AbstractFormPart implements
+public class SearchResultsPart extends AbstractFormPart implements
 		IHelpPart {
 	private ReusableHelpPart parent;
 
@@ -54,7 +54,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 	 * @param toolkit
 	 * @param style
 	 */
-	public FederatedSearchResultsPart(Composite parent, FormToolkit toolkit,
+	public SearchResultsPart(Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -93,6 +93,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 	}
 
 	private void contributeToToolBar(IToolBarManager tbm) {
+		/*
 		removeAllAction = new Action() {
 			public void run() {
 				clearResults();
@@ -104,6 +105,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 		removeAllAction.setId("removeAll");
 		tbm.insertBefore("back", removeAllAction);
 		tbm.insertAfter("removeAll", new Separator());
+		*/
 
 		showCategoriesAction = new Action() {
 			public void run() {
@@ -137,7 +139,6 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 			section.updateResults(false);
 		}
 		reflow();
-		markThisState();
 	}
 
 	boolean getShowCategories() {
@@ -210,19 +211,10 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		separator.setVisible(true);
-		markThisState();
 		for (int i = 0; i < eds.size(); i++) {
 			add((EngineDescriptor) eds.get(i));
 		}
 		reflow();
-	}
-
-	private void markThisState() {
-		/*
-		 * parent.addPageHistoryEntry(parent.getCurrentPageId(), new
-		 * FederatedSearchResultData(phrase, showDescriptionAction.isChecked(),
-		 * showCategoriesAction.isChecked()));
-		 */
 	}
 
 	private void asyncUpdateResults() {
@@ -335,15 +327,6 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements
 	}
 
 	public boolean setFormInput(Object input) {
-		if (input instanceof FederatedSearchResultData) {
-			FederatedSearchResultData data = (FederatedSearchResultData) input;
-			showCategoriesAction.setChecked(data.showCategories);
-			showDescriptionAction.setChecked(data.showDescription);
-			FederatedSearchPart part = (FederatedSearchPart) parent
-					.findPart(IHelpUIConstants.HV_FSEARCH);
-			part.startSearch(data.expression);
-			return true;
-		}
 		return false;
 	}
 }
