@@ -1191,8 +1191,7 @@ class FindReplaceDialog extends Dialog {
 	 * @return the status line manager of the active editor
 	 */
 	private IEditorStatusLine getStatusLineManager() {
-		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IWorkbenchWindow window= plugin.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 
