@@ -81,6 +81,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.ActivityServiceFactory;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityService;
 import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
@@ -279,18 +280,22 @@ public final class Workbench implements IWorkbench {
 		}
 		return testableObject;
 	}
-	
-	// TODO reduce visibility
-	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);
 
-	private IMutableActivityManager activityManager;
-	// TODO reduce visibility
-	ICommandManager commandManager;
-	private IRoleManager roleManager;
-	private WorkbenchActivityHelper activityHelper;
 	
+	private IMutableActivityManager activityManager;	
+	/* TODO private */ ICommandManager commandManager;
+	private IRoleManager roleManager;
+
+	// TODO
+	private final IActivityService activityService = ActivityServiceFactory.getMutableActivityService();	
+	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
+
 	private volatile boolean keyFilterDisabled;
 	private final Object keyFilterMutex = new Object();	
+
+	// TODO reduce visibility
+	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);	
+	private WorkbenchActivityHelper activityHelper;	
 	
 	public IActivityManager getActivityManager() {
 		return activityManager;
@@ -304,8 +309,10 @@ public final class Workbench implements IWorkbench {
 		return roleManager;
 	}		
 
-	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
-
+	public IActivityService getActivityService() {
+		return activityService;
+	}	
+	
 	public ICompoundActivityService getCompoundActivityService() {
 		return compoundActivityService;
 	}
