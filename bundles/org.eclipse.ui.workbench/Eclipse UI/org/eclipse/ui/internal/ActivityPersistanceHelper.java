@@ -121,12 +121,7 @@ class ActivityPersistanceHelper {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return;
-
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = support.getActivityManager();
 		Iterator values = activityManager.getDefinedActivityIds().iterator();
 		while (values.hasNext()) {

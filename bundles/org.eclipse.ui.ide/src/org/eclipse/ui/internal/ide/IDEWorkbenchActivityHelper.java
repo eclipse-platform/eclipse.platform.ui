@@ -87,27 +87,23 @@ public class IDEWorkbenchActivityHelper {
 
                     try {
                         IResourceDelta[] children = mainDelta.getAffectedChildren();
-                        IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+                        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+                        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
 
-                        if (workbenchActivitySupport != null) {
-	                        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-	
-	                        for (int i = 0; i < children.length; i++) {
-	                            IResourceDelta delta = children[i];
-	                            if (delta.getResource().getType() == IResource.PROJECT) {
-	                                IProject project = (IProject) delta.getResource();
-	                                String[] ids = project.getDescription().getNatureIds();
-	                                for (int j = 0; j < ids.length; j++) {
-	                                    IIdentifier identifier = activityManager.getIdentifier(ids[j]);
-	                                    Set activities = new HashSet(activityManager .getEnabledActivityIds());
-	                                    if (activities.addAll(identifier.getActivityIds())) {
-	                                    	workbenchActivitySupport.setEnabledActivityIds(activities);
-	                                    }
-	                                }
-	                            }
-	                        }
+                        for (int i = 0; i < children.length; i++) {
+                            IResourceDelta delta = children[i];
+                            if (delta.getResource().getType() == IResource.PROJECT) {
+                                IProject project = (IProject) delta.getResource();
+                                String[] ids = project.getDescription().getNatureIds();
+                                for (int j = 0; j < ids.length; j++) {
+                                    IIdentifier identifier = activityManager.getIdentifier(ids[j]);
+                                    Set activities = new HashSet(activityManager .getEnabledActivityIds());
+                                    if (activities.addAll(identifier.getActivityIds())) {
+                                    	workbenchActivitySupport.setEnabledActivityIds(activities);
+                                    }
+                                }
+                            }
                         }
-
                     } catch (CoreException exception) {
                         //Do nothing if there is a CoreException
                     }
