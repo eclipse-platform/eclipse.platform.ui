@@ -351,31 +351,25 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         JFaceResources.getFontRegistry().removeListener(this);
     }
 
-    private void closeStreams() {
+    private synchronized void closeStreams() {
         if (fStreamsClosed) {
             return;
         }
-        synchronized (fStreamListeners) {
-            for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
-                StreamListener listener = (StreamListener) i.next();
-                listener.closeStream();
-            }
+        for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
+            StreamListener listener = (StreamListener) i.next();
+            listener.closeStream();
         }
-        synchronized (fInput) {
-            try {
-                fInput.close();
-            } catch (IOException e) {
-            }
+        try {
+            fInput.close();
+        } catch (IOException e) {
         }
         fStreamsClosed  = true;
     }
 
-    private void disposeStreams() {
-        synchronized (fStreamListeners) {
-            for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
-                StreamListener listener = (StreamListener) i.next();
-                listener.dispose();
-            }
+    private synchronized void disposeStreams() {
+        for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
+            StreamListener listener = (StreamListener) i.next();
+            listener.dispose();
         }
         if (fFileOutputStream != null) {
 	        synchronized (fFileOutputStream) {
