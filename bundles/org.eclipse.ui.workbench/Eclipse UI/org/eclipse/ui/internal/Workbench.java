@@ -749,7 +749,7 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		IIntroRegistry introRegistry = getIntroRegistry();
+		IIntroRegistry introRegistry = WorkbenchPlugin.getDefault().getIntroRegistry();
 		if (introRegistry.getIntroCount() > 0) {
 		    IProduct product = Platform.getProduct();
 		    if (product != null) {		    		
@@ -1943,7 +1943,13 @@ public final class Workbench implements IWorkbench {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#showIntro(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public IIntroPart showIntro(IWorkbenchWindow preferredWindow) {
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow, boolean standby) {
+	    if (preferredWindow == null)
+	        preferredWindow = getActiveWorkbenchWindow();
+	    
+	    if (preferredWindow == null)
+	        return null;
+	    
 		if (getViewIntroAdapterPart() == null) {
 			createIntro((WorkbenchWindow) preferredWindow);
 		}
@@ -1974,6 +1980,9 @@ public final class Workbench implements IWorkbench {
 				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		boolean standbyNow = isIntroStandby(introPart);
+		if (standbyNow != standby)
+		    setIntroStandby(introPart, standby);
 		return introPart;
 	}
 
@@ -2008,8 +2017,7 @@ public final class Workbench implements IWorkbench {
 		
 		WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
 		try {
-			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);
-			setIntroStandby(introPart, false);
+			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);			
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_part"), e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
@@ -2043,7 +2051,7 @@ public final class Workbench implements IWorkbench {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#findIntro()
 	 */
-	public IIntroPart findIntro() {
+	public IIntroPart getIntro() {
 		return introPart;
 	}
 	
@@ -2087,7 +2095,7 @@ public final class Workbench implements IWorkbench {
 	 * @return the intro extension for this workbench.
 	 * @since 3.0
 	 */
-	/*package*/ IntroDescriptor getIntroDescriptor() {
+	public IntroDescriptor getIntroDescriptor() {
 		return introDescriptor;
 	}
 	
@@ -2099,12 +2107,16 @@ public final class Workbench implements IWorkbench {
 		return introDescriptor != null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#getIntroRegistry()
+	/**
+	 * This method exists as a test hook.  This method should NEVER be called
+	 * by clients.
 	 */
-	public IIntroRegistry getIntroRegistry() {
-		return WorkbenchPlugin.getDefault().getIntroRegistry();
-	}	
+	public void setIntroDescriptor(IntroDescriptor descriptor) {
+	    if (getIntro() != null) {
+	        closeIntro(getIntro());
+	    }
+	    introDescriptor = descriptor;
+	}
 	
 	/**
 	 * The currently active introPart in this workspace, <code>null</code> if none.

@@ -8,32 +8,29 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.part.intro;
+package org.eclipse.ui.internal.intro;
 
-import org.eclipse.ui.IMemento;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ui.IWorkbenchPartDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.part.WorkbenchPart;
 
 /**
+ * Describes an introduction extension.
  * 
  * <em>EXPERIMENTAL</em>
- * 
+ *  
  * @since 3.0
  */
-public abstract class IntroPart extends WorkbenchPart implements IIntroPart {
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroPart#getIntroSite()
-	 */
-	public IIntroSite getIntroSite() {
-		return (IIntroSite) getSite();
-	}
+public interface IIntroDescriptor extends IWorkbenchPartDescriptor {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+	/**
+	 * Creates an instance of the intro part defined in the descriptor.
 	 */
-	public void saveState(IMemento memento){
-	}	
+	IIntroPart createIntro() throws CoreException;		
+
+	/** 
+	 * @return the product id
+	 */
+	String getProductId();	
 }

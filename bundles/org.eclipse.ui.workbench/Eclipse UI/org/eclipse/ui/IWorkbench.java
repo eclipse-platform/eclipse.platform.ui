@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -427,7 +426,7 @@ public interface IWorkbench {
 	 * @return the <code>IIntroPart</code>, if any.
 	 * @since 3.0
 	 */
-	public IIntroPart findIntro();
+	public IIntroPart getIntro();
 	
 	/**
 	 * Show the intro part in the preferred window.  If the intro part is currently being shown in 
@@ -435,11 +434,13 @@ public interface IWorkbench {
 	 * 
 	 * <p><em>EXPERIMENTAL</em></p>
 	 * 
-	 * @param preferredWindow the preferred <code>IWorkbenchWindow</code>.
+	 * @param preferredWindow the preferred <code>IWorkbenchWindow</code>.  If 
+	 * <code>null</code>, then the currently active window is used.
+	 * @param standby whether to show the intro in standby mode or not.
 	 * @return the intro part, if one was available.
 	 * @since 3.0
 	 */
-	public IIntroPart showIntro(IWorkbenchWindow preferredWindow);
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow, boolean standby);
 	
 	/**
 	 * Controls the intro site mode.
@@ -464,23 +465,11 @@ public interface IWorkbench {
 	 * @return the activity state of the area.
 	 * @since 3.0
 	 */
-	boolean isIntroStandby(IIntroPart part);	
-	
-	/**
-	 * Returns the introduction registry for the workbench.
-	 * 
-	 * <p><em>EXPERIMENTAL</em></p> 
-	 * 
-	 * @return the workbench introduction registry
-	 * @since 3.0
-	 */
-	public IIntroRegistry getIntroRegistry();
+	boolean isIntroStandby(IIntroPart part);		
 	
 	/**
 	 * Return the theme manager for this workbench.
-	 * 
-	 * <p><em>EXPERIMENTAL</em></p>
-	 * 
+	 *  
 	 * @return the theme manager for this workbench
 	 * @since 3.0
 	 */

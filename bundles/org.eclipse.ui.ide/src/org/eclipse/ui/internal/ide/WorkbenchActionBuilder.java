@@ -46,6 +46,7 @@ import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.EditorWorkbook;
 import org.eclipse.ui.internal.EditorsDropDownAction;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -1191,7 +1192,7 @@ public final class WorkbenchActionBuilder {
 			registerGlobalAction(editorsDropDownAction);
 		}
 		
-		if (getWindow().getWorkbench().getIntroRegistry().getIntroCount() > 0) {
+		if (WorkbenchPlugin.getDefault().getIntroRegistry().getIntroCount() > 0) {
 			introAction = ActionFactory.INTRO.create(window);
 			registerGlobalAction(introAction);
 		}

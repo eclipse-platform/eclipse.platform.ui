@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.intro.IIntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;

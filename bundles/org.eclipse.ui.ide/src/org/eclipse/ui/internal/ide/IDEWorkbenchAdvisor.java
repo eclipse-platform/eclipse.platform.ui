@@ -1028,7 +1028,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 			
 			if (window != null) {
-				if (configurer.getWorkbench().showIntro(window) != null) {
+				if (configurer.getWorkbench().showIntro(window, false) != null) {
 					IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
 					return true;
 				}

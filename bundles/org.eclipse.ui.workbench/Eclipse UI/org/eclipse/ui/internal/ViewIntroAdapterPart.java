@@ -13,21 +13,18 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.ui.internal.intro.IntroMessages;
 
 /**
  * Simple view that will wrap an <code>IIntroPart</code>.
@@ -111,9 +108,9 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
-	public void init(IViewSite site) throws PartInitException {
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site);
 		Workbench workbench = (Workbench)site.getWorkbenchWindow().getWorkbench();
 		try {
@@ -123,7 +120,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 					firePropertyChange(propId);					
 				}});
 			introSite = new ViewIntroAdapterSite(site, workbench.getIntroDescriptor());
-			introPart.init(introSite);
+			introPart.init(introSite, memento);
 		} catch (CoreException e) {
 			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_proxy"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_proxy"), e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -135,4 +132,11 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	public void setFocus() {
 		introPart.setFocus();
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+     */
+    public void saveState(IMemento memento) {
+        introPart.saveState(memento);
+    }
 }

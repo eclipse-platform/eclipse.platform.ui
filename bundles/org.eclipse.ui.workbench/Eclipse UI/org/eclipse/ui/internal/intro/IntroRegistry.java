@@ -12,13 +12,13 @@ package org.eclipse.ui.internal.intro;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.intro.IIntroDescriptor;
 
 /**
  * <em>EXPERIMENTAL</em>
@@ -98,5 +98,17 @@ public class IntroRegistry implements IIntroRegistry {
             }
         }
         return descriptor;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.intro.IIntroRegistry#getIntro(java.lang.String)
+     */
+    public IIntroDescriptor getIntro(String id) {
+       for (Iterator i = intros.iterator(); i.hasNext();) {
+            IIntroDescriptor desc = (IIntroDescriptor) i.next();
+            if (desc.getId().equals(id)) 
+                return desc;
+        }
+    	return null;
     }
 }

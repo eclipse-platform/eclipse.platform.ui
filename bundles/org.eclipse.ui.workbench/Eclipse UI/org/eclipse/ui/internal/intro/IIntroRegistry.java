@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro;
 
-import org.eclipse.ui.intro.IIntroDescriptor;
 
 /**
  * <em>EXPERIMENTAL</em>
@@ -41,4 +40,12 @@ public interface IIntroRegistry {
 	 * or <code>null</code> if there is no such binding
 	 */
 	IIntroDescriptor getIntroForProduct(String productId);
+
+    /**
+     * Find an intro descriptor with the given identifier.
+     * 
+     * @param string the id
+     * @return the intro descriptor, or <code>null</code>
+     */
+	IIntroDescriptor getIntro(String id);
 }

@@ -13,6 +13,7 @@ package org.eclipse.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.util.PlatformUtil;
@@ -33,11 +34,12 @@ public class UiTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public UiTestSuite() {
+	    addTest(new IntroTestSuite());
 		addTest(new org.eclipse.ui.tests.api.ApiTestSuite());
 
 		if (!PlatformUtil.onLinux()) {
 			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
-		}
+		}		
 		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());
 		addTest(new org.eclipse.ui.tests.internal.InternalTestSuite());
 		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());

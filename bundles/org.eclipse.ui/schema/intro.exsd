@@ -24,10 +24,10 @@ Users are free to create any kind of SWT control as a client of the intro area. 
 
    <element name="extension">
       <complexType>
-         <choice>
-            <element ref="intro"/>
-            <element ref="introProductBinding"/>
-         </choice>
+         <sequence>
+            <element ref="intro" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="introProductBinding" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.intro;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
@@ -33,10 +34,12 @@ public interface IIntroPart extends IWorkbenchPart {
 	 * Primes the part with the intro site object immediately after the creation.
 	 * 
 	 * @param site the <code>IIntroSite</code>.
+	 * @param memento the <code>IIntroPart</code> state or <code>null</code> if 
+	 * there is no previous saved state
 	 * @throws PartInitException thrown if the <code>IIntroPart</code> was not initialized 
 	 * successfully.
 	 */
-	void init(IIntroSite site) throws PartInitException;
+	void init(IIntroSite site, IMemento memento) throws PartInitException;
 
 	/**
 	 * Notifies the part that the intro area has been made fullscreen or put on 
@@ -48,4 +51,11 @@ public interface IIntroPart extends IWorkbenchPart {
 	 * <code>IWorkbench.setIntroStandby(IIntroPart,boolean)</code> instead.
 	 */
 	void standbyStateChanged(boolean standby);
+
+    /**
+	 * Saves the object state within a memento.
+	 *
+	 * @param memento a memento to receive the object state
+	 */
+	void saveState(IMemento memento);
 }

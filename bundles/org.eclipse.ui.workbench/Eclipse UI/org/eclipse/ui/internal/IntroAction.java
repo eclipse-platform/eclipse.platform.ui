@@ -49,6 +49,6 @@ public class IntroAction extends Action implements ActionFactory.IWorkbenchActio
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		workbenchWindow.getWorkbench().showIntro(workbenchWindow);		
+		workbenchWindow.getWorkbench().showIntro(workbenchWindow, false);		
 	}
 }

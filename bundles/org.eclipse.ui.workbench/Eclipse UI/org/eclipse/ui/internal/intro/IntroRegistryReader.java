@@ -17,7 +17,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.intro.IIntroDescriptor;
 
 /**
  * <em>EXPERIMENTAL</em>

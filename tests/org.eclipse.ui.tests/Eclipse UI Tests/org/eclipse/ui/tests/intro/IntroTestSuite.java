@@ -8,28 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.intro;
+package org.eclipse.ui.tests.intro;
 
-import org.eclipse.core.runtime.CoreException;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import org.eclipse.ui.IWorkbenchPartDescriptor;
 
 /**
- * Describes an introduction extension.
- * 
- * <em>EXPERIMENTAL</em>
- *  
  * @since 3.0
  */
-public interface IIntroDescriptor extends IWorkbenchPartDescriptor {
-	
-	/**
-	 * Creates an instance of the intro part defined in the descriptor.
-	 */
-	IIntroPart createIntro() throws CoreException;		
+public class IntroTestSuite extends TestSuite {
 
-	/** 
-	 * @return the product id
-	 */
-	String getProductId();	
+
+	public static Test suite() {
+		return new IntroTestSuite();
+	}    
+	
+    /**
+     * 
+     */
+    public IntroTestSuite() {        
+		addTest(new TestSuite(IntroPartTest.class));
+		addTest(new TestSuite(IntroTest.class));
+    }
 }

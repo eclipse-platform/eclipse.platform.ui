@@ -910,4 +910,13 @@
       </imageprovider>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            name="Intro Test"
+            icon="next_nav.gif"
+            class="org.eclipse.ui.tests.intro.MockIntroPart"
+            id="org.eclipse.ui.testintro">
+      </intro>
+   </extension>   
 </plugin>
