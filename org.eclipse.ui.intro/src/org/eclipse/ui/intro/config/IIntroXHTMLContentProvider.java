@@ -26,7 +26,7 @@ public interface IIntroXHTMLContentProvider extends IIntroContentProvider {
      * for this method would be: <br>
      * 
      * <br>
-     * &ltdiv id=myContentProviderId> <br>
+     * &ltdiv id=myContentProviderDivId> <br>
      * &lt;contentProvider id=&quot;contentProviderId&quot;
      * class=&quot;xx.yy.IntroContentProvider&quot;
      * pluginId=&quot;xx.yy.id&quot;&gt; <br>
@@ -34,8 +34,10 @@ public interface IIntroXHTMLContentProvider extends IIntroContentProvider {
      * &lt/div&gt;
      * 
      * <br>
-     * The parent Element will be passed to allow for the implementation to add
-     * dynamic content by manipulating the Java XML DOM for the XHTML file.
+     * The parent Element will be passed to allow for adding dynamic content by
+     * manipulating the Java XML DOM for the XHTML file. In the above example,
+     * the DOM element representing the div with id=myContentProviderDivId would
+     * be the parent passed.
      * 
      * 
      * @param id

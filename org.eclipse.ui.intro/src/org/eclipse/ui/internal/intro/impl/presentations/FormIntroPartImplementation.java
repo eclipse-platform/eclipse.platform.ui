@@ -349,10 +349,8 @@ public class FormIntroPartImplementation extends
      *           boolean)
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
-        String pageId = ContentProviderManager.getInst()
-            .getContentProviderPageId(provider);
-        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
-            AbstractIntroElement.ABSTRACT_PAGE);
+        AbstractIntroPage page = ContentProviderManager.getInst()
+            .getContentProviderParentPage(provider);
         removeCachedPage(page);
         showPage(model.getCurrentPage());
     }

@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.widgets.*;
  * A content provider for dynamic intro content. It is initialized with the
  * content provider site because a typical content provider would need to update
  * its contents dynamically at runtime. And so, the site can be informed of a
- * need to redraw its content through a call to its reflow method.
+ * need to redraw its content through a call to its reflow(..) method.
  * <p>
  * The life cycle of an IIntroContentProvider is as follows:
  * <ul>
@@ -68,7 +68,7 @@ public interface IIntroContentProvider {
      * content becomes stale.
      * 
      * @param site
-     *            the site of this IIntroContentProvider
+     *                   the site of this IIntroContentProvider
      */
     public void init(IIntroContentProviderSite site);
 
@@ -79,11 +79,11 @@ public interface IIntroContentProvider {
      * render intro content.
      * 
      * @param id
-     *            the unique identifier of the content element. The same content
-     *            provider class can be reused for several elements and the id
-     *            can be used to tell them apart.
+     *                   the unique identifier of the content element. The same content
+     *                   provider class can be reused for several elements and the id
+     *                   can be used to tell them apart.
      * @param out
-     *            the output print writer to generate HTML content into
+     *                   the output print writer to generate HTML content into
      */
     public void createContent(String id, PrintWriter out);
 
@@ -92,12 +92,12 @@ public interface IIntroContentProvider {
      * Eclipse Forms are used to render intro content.
      * 
      * @param id
-     *            the unique identifier of the content element
+     *                   the unique identifier of the content element
      * @param parent
-     *            the parent composite that should be used when creating SWT
-     *            widgets
+     *                   the parent composite that should be used when creating SWT
+     *                   widgets
      * @param toolkit
-     *            the form toolkit that should be used when creating new widgets
+     *                   the form toolkit that should be used when creating new widgets
      */
     public void createContent(String id, Composite parent, FormToolkit toolkit);
 

@@ -41,10 +41,9 @@ public class HTMLCache {
     }
 
 
-    public String addPage(String pageId, String htmlString) {
+    public void addPage(String pageId, String htmlString) {
         if (!hasPage(pageId))
-            return (String) cache.get(pageId);
-        return null;
+            cache.put(pageId, htmlString);
     }
 
     public String getPage(String pageId) {

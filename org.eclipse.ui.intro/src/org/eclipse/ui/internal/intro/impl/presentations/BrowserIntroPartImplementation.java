@@ -198,25 +198,32 @@ public class BrowserIntroPartImplementation extends
      */
     private String generateXHTMLPage(AbstractIntroPage page,
             IIntroContentProviderSite site) {
-        // if page is an XHTML page, DOM is cached. Resolve dynamic content
-        // first, then XSLT tansform. Resolving dynamic content is done at the
-        // UI level.
+        // if page is an XHTML page, DOM is cloned, manipulated by dynamic
+        // content, passed threw XSLT tansform, and then discarded.
+        // Note: Resolving dynamic content is done at the UI level, consistant
+        // with SWT presentation.
         Document dom = resolveDynamicContent(page, site);
         return IntroContentParser.convertToString(dom);
     }
 
     /**
-     * Resolve the dynamic content in the page. Dynamic content tags are removed
-     * to prevent creating content twice, and to have clean xhtml.
+     * Resolve the dynamic content in the page. The DOM needs to be cloned
+     * because resolving dynamic content will alter the original page DOM. We
+     * want to keep initial page DOM intact in order to allow for regeneration
+     * of content on a reflow for dynamic content. In the cloned DOM, dynamic
+     * content tags are removed to once resolved to have clean xhtml. The cloned
+     * DOM is discarded once done.
      */
     private Document resolveDynamicContent(AbstractIntroPage page,
             IIntroContentProviderSite site) {
         Document dom = page.getResolvedDocument();
+        // work with cloned DOM and then discard.
+        Document clonedDom = (Document) dom.cloneNode(true);
         // get all content provider elements in DOM.
-        NodeList includes = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+        NodeList contentProviders = clonedDom.getElementsByTagNameNS("*", //$NON-NLS-1$
             IntroContentProvider.TAG_CONTENT_PROVIDER);
         // get the array version of the nodelist to work around DOM api design.
-        Node[] nodes = ModelUtil.getArray(includes);
+        Node[] nodes = ModelUtil.getArray(contentProviders);
         for (int i = 0; i < nodes.length; i++) {
             Element contentProviderElement = (Element) nodes[i];
             IntroContentProvider provider = new IntroContentProvider(
@@ -243,9 +250,8 @@ public class BrowserIntroPartImplementation extends
                 // INTRO: do it. 3.0 intro content style uses text element as
                 // alt text. We can load XHTML content here.
             }
-
         }
-        return dom;
+        return clonedDom;
     }
 
 
@@ -347,10 +353,8 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
-        String pageId = ContentProviderManager.getInst()
-            .getContentProviderPageId(provider);
-        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
-            AbstractIntroElement.ABSTRACT_PAGE);
+        AbstractIntroPage page = ContentProviderManager.getInst()
+            .getContentProviderParentPage(provider);
         HTMLCache.getInst().clearPage((page.getId()));
         updateContent();
     }
