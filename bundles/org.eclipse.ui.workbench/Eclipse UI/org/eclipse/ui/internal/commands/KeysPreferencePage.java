@@ -415,10 +415,6 @@ public class KeysPreferencePage
 
 		// The composite for this tab.
 		final Composite composite = new Composite(parent, SWT.NULL);
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.marginHeight = 5;
-		gridLayout.marginWidth = 5;
-		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// The multi key assit button.
@@ -461,6 +457,13 @@ public class KeysPreferencePage
 		gridData.horizontalSpan = 2;
 		checkBoxMultiKeyRocker.setLayoutData(gridData);
 
+		// Conigure the layout of the composite.
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginHeight = 5;
+		gridLayout.marginWidth = 5;
+		gridLayout.numColumns = 2;
+		composite.setLayout(gridLayout);
+		
 		return composite;
 	}
 
