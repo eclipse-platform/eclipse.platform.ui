@@ -1,26 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.help.ui"
-   name="%help_system_plugin_name"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.help.ui.internal.HelpUIPlugin">
+<plugin>
 
-   <runtime>
-      <library name=".">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.help.base"/>
-      <import plugin="org.eclipse.help.appserver"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.forms"/>
-   </requires>
-   <extension-point id="searchEngine" name="Search Engine" schema="schema/searchEngine.exsd"/>
-
+     <extension-point id="searchEngine" name="Search Engine" schema="schema/searchEngine.exsd"/>
 
 <!-- Default Help UI  -->
    <extension

@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.help"
-   name="%help_plugin_name"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.help.internal.HelpPlugin">
+<plugin>
 
-   <runtime>
-      <library name=".">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-   </requires>
-
-
-<!-- Extension points -->
    <extension-point id="contexts" name="%contexts_extension_point_name" schema="schema/contexts.exsd"/>
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.exsd"/>
    <extension-point id="contentProducer" name="%content_producer_extension_point_name" schema="schema/contentProducer.exsd"/>
