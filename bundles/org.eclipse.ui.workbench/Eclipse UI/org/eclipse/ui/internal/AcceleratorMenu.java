@@ -1,5 +1,7 @@
 package org.eclipse.ui.internal;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
@@ -133,6 +135,8 @@ public void removeVerifyListener(VerifyListener listener) {
 }
 
 public void setAccelerators(final int[] accelerators) {
+	if (Arrays.equals(this.accelerators, accelerators)) return;	
+	
 	if (accelerators == null) {
 		this.accelerators = null;
 	} else {
