@@ -82,10 +82,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			fViewer.restoreState(fMemento);
 		fMemento= null;
 		SearchManager.getDefault().addSearchChangeListener(fViewer);
-		Search search= SearchManager.getDefault().getCurrentSearch();
-		if (search != null)
-			fViewer.setPageId(search.getPageId());
-		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
+		fViewer.init();
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 
 		// Add selectAll action handlers.
