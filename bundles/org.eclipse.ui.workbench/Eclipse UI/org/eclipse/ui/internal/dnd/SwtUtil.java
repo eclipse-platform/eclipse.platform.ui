@@ -53,20 +53,29 @@ public class SwtUtil {
 	 * @return
 	 */
 	public static Control findControl(Control[] toSearch, Point locationToFind) {
-		for (int idx = 0; idx < toSearch.length; idx++) {
+		for (int idx = toSearch.length - 1; idx >= 0; idx--) {
 			Control next = toSearch[idx];
 			
-			Rectangle bounds = next.getBounds();
+			if (!next.isDisposed() && next.isVisible()) {
 			
-			if (bounds.contains(locationToFind)) {
-				if (next instanceof Composite) {
-					locationToFind.x += bounds.x;
-					locationToFind.y += bounds.y;
+				Rectangle bounds = next.getBounds();
+				
+				if (bounds.contains(locationToFind)) {
+					if (next instanceof Composite) {
+						locationToFind.x -= bounds.x;
+						locationToFind.y -= bounds.y;
+						
+						Control result = findControl((Composite)next, locationToFind);
 					
-					Control result = findControl((Composite)next, locationToFind);
+						locationToFind.x += bounds.x;
+						locationToFind.y += bounds.y;
+						
+						if (result != null) {
+							return result;
+						}
+					}
 					
-					locationToFind.x -= bounds.x;
-					locationToFind.y -= bounds.y;
+					return next;
 				}
 			}
 		}
