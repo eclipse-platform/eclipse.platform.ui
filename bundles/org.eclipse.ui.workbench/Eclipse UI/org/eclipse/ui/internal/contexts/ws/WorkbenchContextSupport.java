@@ -89,7 +89,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @return The tree of contexts to use; may be empty, but never
      *         <code>null</code>. The keys and values are both strings.
      */
-    public final Map createContextTreeFor(final Set contextIds) {
+    private final Map createContextTreeFor(final Set contextIds) {
         final Map contextTree = new HashMap();
         final IContextManager contextManager = getContextManager();
 
@@ -111,6 +111,86 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         }
 
         return contextTree;
+    }
+    
+    /**
+     * <p>
+     * Creates a tree of context identifiers, representing the hierarchical
+     * structure of the given contexts. The tree is structured as a mapping from
+     * child to parent. In this tree, the key binding specific filtering of
+     * contexts will have taken place.
+     * </p>
+     * <p>
+     * This method is intended for internal use only.
+     * </p>
+     * 
+     * @param contextIds
+     *            The set of context identifiers to be converted into a tree;
+     *            must not be <code>null</code>.
+     * @return The tree of contexts to use; may be empty, but never
+     *         <code>null</code>. The keys and values are both strings.
+     */
+    public final Map createFilteredContextTreeFor(final Set contextIds) {        
+        // Check to see whether a dialog or window is active.
+        boolean dialog = false;
+        boolean window = false;
+        Iterator contextIdItr = contextIds.iterator();
+        while (contextIdItr.hasNext()) {
+            final String contextId = (String) contextIdItr.next();
+            if (CONTEXT_ID_DIALOG.equals(contextId)) {
+                dialog = true;
+                continue;
+            }
+            if (CONTEXT_ID_WINDOW.equals(contextId)) {
+                window = true;
+                continue;
+            }
+        }
+
+        /*
+         * Remove all context identifiers for contexts whose parents are dialog
+         * or window, and the corresponding dialog or window context is not
+         * active.
+         */
+        try {
+            contextIdItr = contextIds.iterator();
+            while (contextIdItr.hasNext()) {
+                String contextId = (String) contextIdItr.next();
+                IContext context = mutableContextManager.getContext(contextId);
+                String parentId = context.getParentId();
+                while (parentId != null) {
+                    if (CONTEXT_ID_DIALOG.equals(parentId)) {
+                        if (!dialog) {
+                            contextIdItr.remove();
+                        }
+                        break;
+                    }
+                    if (CONTEXT_ID_WINDOW.equals(parentId)) {
+                        if (!window) {
+                            contextIdItr.remove();
+                        }
+                        break;
+                    }
+                    if (CONTEXT_ID_DIALOG_AND_WINDOW.equals(parentId)) {
+                        if ((!window) && (!dialog)) {
+                            contextIdItr.remove();
+                        }
+                        break;
+                    }
+
+                    context = mutableContextManager.getContext(parentId);
+                    parentId = context.getParentId();
+                }
+            }
+        } catch (NotDefinedException e) {
+            if (DEBUG) {
+                System.out.println("CONTEXTS >>> NotDefinedException('" //$NON-NLS-1$
+                        + e.getMessage()
+                        + "') while filtering dialog/window contexts"); //$NON-NLS-1$
+            }
+        }
+
+        return createContextTreeFor(contextIds);
     }
 
     /**
@@ -471,66 +551,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
                     enabledContextIds.add(contextId);
                     break;
-                }
-            }
-
-            // Check to see whether a dialog or window is active.
-            Iterator contextIdItr = enabledContextIds.iterator();
-            boolean dialog = false;
-            boolean window = false;
-            while (contextIdItr.hasNext()) {
-                final String contextId = (String) contextIdItr.next();
-                if (CONTEXT_ID_DIALOG.equals(contextId)) {
-                    dialog = true;
-                    continue;
-                }
-                if (CONTEXT_ID_WINDOW.equals(contextId)) {
-                    window = true;
-                    continue;
-                }
-            }
-
-            /*
-             * Remove all context identifiers for contexts whose parents are
-             * dialog or window, and the corresponding dialog or window context
-             * is not active.
-             */
-            try {
-                contextIdItr = enabledContextIds.iterator();
-                while (contextIdItr.hasNext()) {
-                    String contextId = (String) contextIdItr.next();
-                    IContext context = mutableContextManager
-                            .getContext(contextId);
-                    String parentId = context.getParentId();
-                    while (parentId != null) {
-                        if (CONTEXT_ID_DIALOG.equals(parentId)) {
-                            if (!dialog) {
-                                contextIdItr.remove();
-                            }
-                            break;
-                        }
-                        if (CONTEXT_ID_WINDOW.equals(parentId)) {
-                            if (!window) {
-                                contextIdItr.remove();
-                            }
-                            break;
-                        }
-                        if (CONTEXT_ID_DIALOG_AND_WINDOW.equals(parentId)) {
-                            if ((!window) && (!dialog)) {
-                                contextIdItr.remove();
-                            }
-                            break;
-                        }
-
-                        context = mutableContextManager.getContext(parentId);
-                        parentId = context.getParentId();
-                    }
-                }
-            } catch (NotDefinedException e) {
-                if (DEBUG) {
-                    System.out.println("CONTEXTS >>> NotDefinedException('" //$NON-NLS-1$
-                            + e.getMessage()
-                            + "') while filtering dialog/window contexts"); //$NON-NLS-1$
                 }
             }
 

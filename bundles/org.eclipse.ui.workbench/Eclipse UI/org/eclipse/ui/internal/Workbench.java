@@ -1789,7 +1789,7 @@ public final class Workbench implements IWorkbench {
         public final void contextManagerChanged(
                 final ContextManagerEvent contextManagerEvent) {
             final Set enabledContextIds = workbenchContextSupport.getContextManager().getEnabledContextIds();
-            final Map enabledContextTree = workbenchContextSupport.createContextTreeFor(enabledContextIds); 
+            final Map enabledContextTree = workbenchContextSupport.createFilteredContextTreeFor(enabledContextIds); 
             workbenchCommandSupport.setActiveContextIds(enabledContextTree);
         }
     };
