@@ -329,7 +329,8 @@ public final class BaseHelpSystem {
 			locale = Locale.getDefault().toString();
 		}
 		if (locale.startsWith("ar") || locale.startsWith("fa")
-				|| locale.startsWith("he") || locale.startsWith("iw")) {
+				|| locale.startsWith("he") || locale.startsWith("iw")
+				|| locale.startsWith("ur")) {
 			return true;
 		} else {
 			return false;
