@@ -38,8 +38,6 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
-import org.eclipse.debug.internal.core.stringsubstitution.StringVariableManager;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -362,16 +360,6 @@ public class DebugPlugin extends Plugin {
 			fLaunchManager = new LaunchManager();
 		}
 		return fLaunchManager;
-	}
-	
-	/**
-	 * Returns the string variable manager.
-	 * 
-	 * @return the string variable manager
-	 * @since 3.0
-	 */
-	public IStringVariableManager getStringVariableManager() {
-		return StringVariableManager.getDefault();
 	}
 	
 	/**

@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 

@@ -14,6 +14,7 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.help"/>
@@ -1290,7 +1291,7 @@
 	
 <!-- Dynamic (String Substitution) Variables -->	
    <extension
-         point="org.eclipse.debug.core.dynamicVariables">
+         point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="workspace_loc"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver"

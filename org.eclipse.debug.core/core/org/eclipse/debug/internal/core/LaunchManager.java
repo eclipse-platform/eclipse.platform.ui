@@ -63,6 +63,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -1560,7 +1561,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			Map.Entry entry= (Map.Entry) iter.next();
 			String value = (String) entry.getValue();
 			// translate any string substitution variables
-			String translated = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+			String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
 			env.put(entry.getKey(), translated);
 		}		
 		

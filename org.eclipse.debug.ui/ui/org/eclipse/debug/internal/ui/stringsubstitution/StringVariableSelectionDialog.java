@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.StringVariableManager;
+import org.eclipse.core.variables.IStringVariable;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +53,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		setTitle(StringSubstitutionMessages.getString("StringVariableSelectionDialog.2")); //$NON-NLS-1$
 		setMessage(StringSubstitutionMessages.getString("StringVariableSelectionDialog.3")); //$NON-NLS-1$
 		setMultipleSelection(false);
-		setElements(StringVariableManager.getDefault().getVariables());
+		setElements(VariablesPlugin.getDefault().getStringVariableManager().getVariables());
 	}
 	
 	/**

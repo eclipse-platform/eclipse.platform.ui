@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariable;
+import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
+import org.eclipse.core.variables.IDynamicVariable;
 
 /**
  * Resolves the <code>${workspace_loc}</code> variable. The variable resolves to the

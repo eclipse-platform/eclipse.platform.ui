@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariable;
+import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**

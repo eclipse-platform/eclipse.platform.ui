@@ -14,6 +14,7 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.variables"/>
    </requires>
 
 
@@ -28,8 +29,7 @@
    <extension-point id="statusHandlers" name="%statusHandlerExtensionPointName" schema="schema/statusHandlers.exsd"/>
    <extension-point id="watchExpressionDelegates" name="%watchExpressionDelegatesName" schema="schema/watchExpressionDelegates.exsd"/>
    <extension-point id="processFactories" name="%processFactoriesExtensionPointName" schema="schema/processFactories.exsd"/>
-   <extension-point id="valueVariables" name="%valueVariablesExtensionPointName" schema="schema/valueVariables.exsd"/>
-   <extension-point id="dynamicVariables" name="%dynamicVariablesExtensionPointName" schema="schema/dynamicVariables.exsd"/>
+
 <!-- Extensions -->
    <extension
          id="breakpointMarker"
