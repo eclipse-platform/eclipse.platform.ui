@@ -18,6 +18,8 @@ package org.eclipse.core.resources;
  * Any attributes can be added, but only the attributes that are 
  * supported by the platform will be used. These methods do not set the 
  * attributes in the file system.
+ * <p>
+ * This class is not intended to be subclassed. This class may be instantiated.
  * 
  * @author Red Hat Incorporated
  * @see IResource#getResourceAttributes()
@@ -29,6 +31,12 @@ public class ResourceAttributes {
 	private boolean readOnly = false;
 	private boolean archive = false;
 	
+	/**
+	 * Creates a new instance of <code>ResourceAttributes</code>.
+	 */
+	public ResourceAttributes() {
+		super();
+	}
 	/**
 	 * Returns whether this ResourceAttributes object is marked archive.
 	 *
@@ -94,9 +102,9 @@ public class ResourceAttributes {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
-	/* (non-Javadoc)
-	 * For debugging purposes only.
-	 * @see java.lang.Object#toString()
+	/**
+	 * Returns a string representation of the attributes, suitable 
+	 * for debugging purposes only.
 	 */
 	public String toString() {
 		return "ResourceAttributes(readOnly=" + readOnly + ",executable=" + executable + ",archive=" + archive + ')'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
