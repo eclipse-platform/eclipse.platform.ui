@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.ui.views;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -32,11 +31,13 @@ public class LaunchViewer extends TreeViewer {
 	 * Update the icons for all stack frame children of the given thread.
 	 */	
 	protected void updateStackFrameIcons(IThread parentThread) {
-		Widget parentItem= doFindItem(parentThread);
-		Item[] items= getItems((Item)parentItem);
-		for (int i = 0; i < items.length; i++) {
-			TreeItem treeItem = (TreeItem)items[i];
-			updateOneStackFrameIcon(treeItem, (IStackFrame)treeItem.getData());
+		Widget parentItem= findItem(parentThread);
+		if (parentItem != null) {
+			Item[] items= getItems((Item)parentItem);
+			for (int i = 0; i < items.length; i++) {
+				TreeItem treeItem = (TreeItem)items[i];
+				updateOneStackFrameIcon(treeItem, (IStackFrame)treeItem.getData());
+			}
 		}
 	}
 	
@@ -56,7 +57,7 @@ public class LaunchViewer extends TreeViewer {
 	 * @see StructuredViewer#refresh(Object)
 	 */
 	public void refresh(Object element) {
-		//@see bug 7965 - Debyg vuew refresh flicker
+		//@see bug 7965 - Debug view refresh flicker
 		getControl().setRedraw(false);
 		super.refresh(element);
 		getControl().setRedraw(true);
