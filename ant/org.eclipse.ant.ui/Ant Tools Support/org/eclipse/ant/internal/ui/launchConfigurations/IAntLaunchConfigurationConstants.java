@@ -60,6 +60,12 @@ public interface IAntLaunchConfigurationConstants {
 	 * displayed.
 	 */
 	public static final String ATTR_HIDE_INTERNAL_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_HIDE_INTERNAL_TARGETS"; //$NON-NLS-1$
+	/**
+	 * Integer attribute indicating which column targets should be sorted on. A
+	 * value of 0 indicates target name, 1 indicates target description, and -1
+	 * indicates no sort. Default value is -1.
+	 */
+	public static final String ATTR_SORT_TARGETS = IExternalToolConstants.PLUGIN_ID + "ATTR_SORT_TARGETS";
 
 
 	// ------- Launch configuration types --------

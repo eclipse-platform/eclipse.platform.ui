@@ -14,8 +14,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,6 +42,8 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -75,9 +75,58 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Text fTargetOrderText = null;
 	private Button fOrderButton = null;
 	private Button fFilterInternalTargets;
+	private Button fSortButton;
 	
 	private ILaunchConfiguration fLaunchConfiguration;
 	private AntTargetContentProvider fTargetContentProvider;
+	private int fSortColumn= 0;
+	
+	/**
+	 * Sort constants.
+	 */
+	public static int SORT_NONE= 0;
+	public static int SORT_NAME= 1;
+	public static int SORT_NAME_REVERSE= -1;
+	public static int SORT_DESCRIPTION= 2;
+	public static int SORT_DESCRIPTION_REVERSE= -2;
+	
+	private class AntTargetsSorter extends ViewerSorter {
+		/**
+		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (!(e1 instanceof TargetInfo && e2 instanceof TargetInfo)) {
+				return super.compare(viewer, e1, e2);
+			}
+			if (fSortColumn == SORT_NONE) {
+				return 0;
+			}
+			String string1, string2;
+			int result= 0;
+			if (fSortColumn == SORT_NAME || fSortColumn == SORT_NAME_REVERSE) {
+				string1= ((TargetInfo) e1).getName();
+				string2= ((TargetInfo) e2).getName();
+			} else {
+				string1= ((TargetInfo) e1).getDescription();
+				string2= ((TargetInfo) e2).getDescription();
+			}
+			if (string1 != null && string2 != null) {
+				result= getCollator().compare(string1, string2);
+			} else if (string1 == null) {
+				result= 1;
+			} else if (string2 == null) {
+				result= -1;
+			}
+			if (fSortColumn < 0) { // reverse sort
+				if (result == 0) {
+					result= -1;
+				} else {
+					result= -result;
+				}
+			}
+			return result;
+		}
+	}
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -96,6 +145,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		comp.setFont(font);
 		
 		createFilterInternalTargets(comp);
+		createSortTargets(comp);
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setFont(font);
@@ -155,6 +205,17 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	private void createSortTargets(Composite parent) {
+		fSortButton= new Button(parent, SWT.CHECK);
+		fSortButton.setText("&Sort targets");
+		fSortButton.setFont(parent.getFont());
+		fSortButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleSortTargetsSelected();
+			}
+		});
+	}
+	
 	private void handleFilterTargetsSelected() {
 		boolean filter= fFilterInternalTargets.getSelection();
 		fTargetContentProvider.setFilterInternalTargets(filter);
@@ -172,6 +233,26 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		// count's "hidden" reporting needs the content provider to be queried
 		// first to count how many targets are hidden.
 		updateSelectionCount();
+		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * The button to sort targets has been toggled.
+	 * Set the tab's sorting as appropriate.
+	 */
+	private void handleSortTargetsSelected() {
+		setSort(fSortButton.getSelection() ? SORT_NAME : SORT_NONE);
+	}
+	
+	/**
+	 * Sets the sorting of targets in this tab. See the sort constants defined
+	 * above.
+	 * 
+	 * @param column the column which should be sorted on
+	 */
+	public void setSort(int column) {
+		fSortColumn= column;
+		fTableViewer.refresh();
 		updateLaunchConfigurationDialog();
 	}
 
@@ -218,6 +299,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
 		fTargetContentProvider= new AntTargetContentProvider();
 		fTableViewer.setContentProvider(fTargetContentProvider);
+		fTableViewer.setSorter(new AntTargetsSorter());
 		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -237,6 +319,24 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				updateOrderedTargets(event.getElement(), event.getChecked());
 			}
 		});
+		
+		TableColumn[] columns= fTableViewer.getTable().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			final int index= i;
+			columns[index].addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (fSortButton.getSelection()) {
+						// index 0 => sort_name (1)
+						// index 1 => sort_description (2)
+						int column= index + 1;
+						if (column == fSortColumn) {
+							column= -column; // invert the sort when the same column is selected twice in a row
+						}
+						setSort(column);
+					}
+				}
+			});
+		}
 	}
 	
 	/**
@@ -346,18 +446,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 				
-			if (fAllTargets != null) {
-				Arrays.sort(fAllTargets, new Comparator() {
-					public int compare(Object o1, Object o2) {
-						TargetInfo t1= (TargetInfo)o1;
-						TargetInfo t2= (TargetInfo)o2;
-						return t1.getName().compareToIgnoreCase(t2.getName());
-					}
-					public boolean equals(Object obj) {
-						return false;
-					}
-				});
-			}
+//			if (fAllTargets != null) {
+//				Arrays.sort(fAllTargets, new Comparator() {
+//					public int compare(Object o1, Object o2) {
+//						TargetInfo t1= (TargetInfo)o1;
+//						TargetInfo t2= (TargetInfo)o2;
+//						return t1.getName().compareToIgnoreCase(t2.getName());
+//					}
+//					public boolean equals(Object obj) {
+//						return false;
+//					}
+//				});
+//			}
 		}
 		return fAllTargets;
 	}
@@ -383,6 +483,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 		fFilterInternalTargets.setSelection(hideInternal);
 		fTargetContentProvider.setFilterInternalTargets(hideInternal);
+		int sort= SORT_NONE;
+		try {
+			sort = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, sort);
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
+		}
+		fSortButton.setSelection(sort != SORT_NONE);
+		setSort(sort);
 		String configTargets= null;
 		String newLocation= null;
 		fOrderedTargets = new ArrayList();
@@ -456,6 +564,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
 		}
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortColumn);
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
