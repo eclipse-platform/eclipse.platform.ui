@@ -14,14 +14,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -29,6 +31,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
+import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
@@ -78,6 +81,14 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
+		
+		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty() == SearchPreferencePage.POTENTIAL_MATCH_BG_COLOR) 
+					if (fViewer != null)
+						fViewer.updatedPotentialMatchBgColor();
+			}
+		});
 		
 		WorkbenchHelp.setHelp(fViewer.getControl(), ISearchHelpContextIds.SEARCH_VIEW);
 	}
@@ -160,7 +171,46 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	public ISelection getSelection() {
 		return fViewer.getSelection();
 	}
-
+	/*
+	 * Implements method from ISearchResultView
+	 */
+	public void searchStarted(
+				String					pageId,
+				String					singularLabel,
+				String					pluralLabelPattern,
+				ImageDescriptor			imageDescriptor,
+				IActionGroupFactory		groupFactory,
+				ILabelProvider			labelProvider,
+				IAction					gotoAction,
+				IGroupByKeyComputer		groupByKeyComputer,
+				IRunnableWithProgress	operation) {
+
+
+		Assert.isNotNull(pageId);
+		Assert.isNotNull(pluralLabelPattern);
+		Assert.isNotNull(gotoAction);		
+
+		fResponse= new HashMap(500);
+		setGotoMarkerAction(gotoAction);
+
+		ILabelProvider oldLabelProvider= (ILabelProvider)fgLabelProviders.get(pageId);
+		if (oldLabelProvider != null)
+			oldLabelProvider.dispose();
+		fgLabelProviders.put(pageId, labelProvider);
+
+		SearchManager.getDefault().addNewSearch(		
+			new Search(
+				pageId,
+				singularLabel,
+				pluralLabelPattern,
+				null,
+				imageDescriptor,
+				fViewer.getGotoMarkerAction(),
+				groupFactory,
+				groupByKeyComputer,
+				operation));
+	};
+
 	/**
 	 * Implements method from ISearchResultView
 	 * @deprecated	As of build > 20011107, replaced by the new version with additonal parameter
@@ -178,8 +228,9 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		searchStarted(pageId, null, label, imageDescriptor, contributor, labelProvider, gotoAction, groupByKeyComputer, operation);
 	};
 
-	/*
+	/**
 	 * Implements method from ISearchResultView
+	 * @deprecated	As of build > 20020514
 	 */
 	public void searchStarted(
 				String					pageId,

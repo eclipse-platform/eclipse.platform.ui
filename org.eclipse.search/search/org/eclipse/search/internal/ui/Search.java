@@ -21,6 +21,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
@@ -37,10 +38,29 @@ public class Search extends Object {
 	private ArrayList fResults;
 	private IAction fGotoMarkerAction;
 	private IContextMenuContributor fContextMenuContributor;
+	private IActionGroupFactory fActionGroupFactory;
 	private IGroupByKeyComputer	fGroupByKeyComputer;
 	private IRunnableWithProgress fOperation;
 
 
+	public Search(String pageId, String singularLabel, String pluralLabelPattern, ILabelProvider labelProvider, ImageDescriptor imageDescriptor, IAction gotoMarkerAction, IActionGroupFactory groupFactory, IGroupByKeyComputer groupByKeyComputer, IRunnableWithProgress operation) {
+		fPageId= pageId;
+		fSingularLabel= singularLabel;
+		fPluralLabelPattern= pluralLabelPattern;
+		fImageDescriptor= imageDescriptor;
+		fLabelProvider= labelProvider;
+		fGotoMarkerAction= gotoMarkerAction;
+		fActionGroupFactory= groupFactory;
+		fGroupByKeyComputer= groupByKeyComputer;
+		fOperation= operation;
+		
+		if (fPluralLabelPattern == null)
+			fPluralLabelPattern= ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * @deprecated	As of build > 20020514
+	 */
 	public Search(String pageId, String singularLabel, String pluralLabelPattern, ILabelProvider labelProvider, ImageDescriptor imageDescriptor, IAction gotoMarkerAction, IContextMenuContributor contextMenuContributor, IGroupByKeyComputer groupByKeyComputer, IRunnableWithProgress operation) {
 		fPageId= pageId;
 		fSingularLabel= singularLabel;
@@ -162,8 +182,15 @@ public class Search extends Object {
 		return fGotoMarkerAction;
 	}
 
+	/**
+	 * @deprecated	As of build > 20020514 use #getActionGroupFactory
+	 */
 	IContextMenuContributor getContextMenuContributor() {
 		return fContextMenuContributor;
+	}
+	
+	IActionGroupFactory getActionGroupFactory() {
+		return fActionGroupFactory;
 	}
 	
 	public void removeResults() {

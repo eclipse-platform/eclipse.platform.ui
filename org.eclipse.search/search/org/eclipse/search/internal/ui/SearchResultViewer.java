@@ -9,11 +9,9 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -34,11 +32,16 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 
+import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
@@ -67,15 +70,17 @@ public class SearchResultViewer extends TableViewer {
 	private SearchDropDownAction fSearchDropDownAction;
 	private CopyToClipboardAction fCopyToClipboardAction;
 	private int fMarkerToShow;
-	private boolean fHandleNextSelectionChangedEvent= true;
+	private boolean fHandleSelectionChangedEvents= true;
 	private boolean fCurrentMatchRemoved= false;
 	private Color fPotentialMatchBgColor;
+	private ActionGroup fActionGroup;
 	
 	/*
 	 * These static fields will go away when support for 
 	 * multiple search will be implemented
 	 */
 	private static IContextMenuContributor fgContextMenuContributor;
+	private static IActionGroupFactory fgActionGroupFactory;	
 	private static IAction fgGotoMarkerAction;
 	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
@@ -114,7 +119,7 @@ public class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					handleSelectionChanged(true);
+					handleSelectionChanged();
 				}
 			}
 		);
@@ -152,7 +157,7 @@ public class SearchResultViewer extends TableViewer {
 		}
 	}
 
-	private void handleSelectionChanged(boolean updateMarkerToShow) {
+	private void handleSelectionChanged() {
 
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
@@ -161,14 +166,13 @@ public class SearchResultViewer extends TableViewer {
 		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fGotoMarkerAction.setEnabled(hasSingleSelection);
 		fRemoveMatchAction.setEnabled(hasSingleSelection);
-		if (updateMarkerToShow && fHandleNextSelectionChangedEvent) {
+
+		if (fHandleSelectionChangedEvents) {
 			fMarkerToShow= -1;
 			fCurrentMatchRemoved= false;
 		} else
-			fHandleNextSelectionChangedEvent= true;
+			fHandleSelectionChangedEvents= true;
 
-		if (!updateMarkerToShow)
-			fHandleNextSelectionChangedEvent= false;
 		updateStatusLine();
 	}
 
@@ -219,8 +223,10 @@ public class SearchResultViewer extends TableViewer {
 		fCurrentMatchRemoved= false;
 		updateTitle();
 		enableActions();
-		if (getItemCount() > 0)
+		if (getItemCount() > 0) {
 			selectResult(getTable(), 0);
+			fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
+		}
 	}
 
 	protected int getSelectedEntriesCount() {
@@ -247,11 +253,18 @@ public class SearchResultViewer extends TableViewer {
 	}
 	
 	void fillContextMenu(IMenuManager menu) {
+		ISelection selection= getSelection();
+		
+		if (fActionGroup != null) {
+			fActionGroup.setContext(new ActionContext(selection));
+			fActionGroup.fillContextMenu(menu);
+			fActionGroup.setContext(null);
+		}
 		
 		if (fgContextMenuContributor != null)
 			fgContextMenuContributor.fill(menu, this);
 		
-		if (!getSelection().isEmpty()) {
+		if (!selection.isEmpty()) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
@@ -264,9 +277,8 @@ public class SearchResultViewer extends TableViewer {
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveAllResultsAction());
 	
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
-		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
-
-
+		if (!selection.isEmpty())
+			menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
 	}
 
 
@@ -284,6 +296,21 @@ public class SearchResultViewer extends TableViewer {
 		fgContextMenuContributor= contributor;
 	}
 
+	void setActionGroupFactory(IActionGroupFactory groupFactory) {
+		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();		
+		if (fActionGroup != null) {
+			fActionGroup.dispose();
+			fActionGroup= null;
+		}
+			
+		if (groupFactory != null) {
+			fActionGroup= groupFactory.createActionGroup(fOuterPart);
+			if (actionBars != null)
+				fActionGroup.fillActionBars(actionBars);
+		}
+		if (actionBars != null)
+			actionBars.updateActionBars();
+	}
 
 	void setPageId(String pageId) {
 		fSortDropDownAction.setPageId(pageId);
@@ -437,9 +464,12 @@ public class SearchResultViewer extends TableViewer {
 	}
 		
 	private void selectResult(Table table, int index) {
-		table.setSelection(index);
-		table.showSelection();
-		handleSelectionChanged(false);
+		fHandleSelectionChangedEvents= false;
+		Object element= getElementAt(index);
+		if (element != null)
+			setSelection(new StructuredSelection(getElementAt(index)), true);
+		else
+			setSelection(StructuredSelection.EMPTY);
 	}
 
 	private void openCurrentSelection() {
@@ -512,13 +542,8 @@ public class SearchResultViewer extends TableViewer {
 	 */
 	protected void handleRemoveMatch(ISearchResultViewEntry entry) {
 		Widget item= findItem(entry);
-		if (entry.getMatchCount() == 0) {
-			if (item instanceof TableItem) {
-				TableItem ti= (TableItem)item;
-				disassociate(ti);
-				ti.dispose();
-			}
-		}
+		if (entry.getMatchCount() == 0)
+			remove(entry);
 		else
 			updateItem(item, entry);
 		updateStatusLine();

@@ -114,6 +114,8 @@ public class SearchManager implements IResourceChangeListener {
 		Iterator iter= fListeners.iterator();
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
+			viewer.setContextMenuTarget(null);
+			viewer.setActionGroupFactory(null);
 			viewer.setInput(null);
 		}
 	}
@@ -241,9 +243,12 @@ public class SearchManager implements IResourceChangeListener {
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				viewer.setGotoMarkerAction(search.getGotoMarkerAction());
-				viewer.setContextMenuTarget(search.getContextMenuContributor());
+				if (search.getContextMenuContributor() != null)
+					viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
+						if (search.getActionGroupFactory() != null)
+							viewer.setActionGroupFactory(search.getActionGroupFactory());
 						if (previousSearch != null && viewer == visibleViewer)
 							previousSearch.setSelection(viewer.getSelection());
 						viewer.setPageId(search.getPageId());
@@ -396,7 +401,11 @@ public class SearchManager implements IResourceChangeListener {
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
 			viewer.setPageId(search.getPageId());
-			viewer.setContextMenuTarget(search.getContextMenuContributor());
+			if (search.getContextMenuContributor() != null)
+				viewer.setContextMenuTarget(search.getContextMenuContributor());
+			if (search.getActionGroupFactory() != null) {
+				viewer.setActionGroupFactory(search.getActionGroupFactory());
+			}
 			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 			viewer.setInput(getCurrentResults());
 		}
