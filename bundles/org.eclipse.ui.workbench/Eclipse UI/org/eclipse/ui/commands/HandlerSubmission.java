@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.ui.commands;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
@@ -20,7 +21,9 @@ public final class HandlerSubmission implements Comparable {
 
     private final static int HASH_INITIAL = HandlerSubmission.class.getName()
             .hashCode();
-
+    
+    private Shell activeShell;
+    
     private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
@@ -37,6 +40,15 @@ public final class HandlerSubmission implements Comparable {
 
     private transient String string;
 
+    /**
+     * @deprecated
+     * 
+     * @param activeWorkbenchSite
+     * @param activeWorkbenchWindow
+     * @param commandId
+     * @param handler
+     * @param priority
+     */
     public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
             IWorkbenchWindow activeWorkbenchWindow, String commandId,
             IHandler handler, int priority) {
@@ -44,6 +56,18 @@ public final class HandlerSubmission implements Comparable {
                 throw new NullPointerException();
         this.activeWorkbenchSite = activeWorkbenchSite;
         this.activeWorkbenchWindow = activeWorkbenchWindow;
+        this.commandId = commandId;
+        this.handler = handler;
+        this.priority = priority;
+    }
+    
+    public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
+            String commandId,
+            IHandler handler, int priority, Shell activeShell) {
+        if (commandId == null || handler == null)
+                throw new NullPointerException();
+        this.activeShell = activeShell;
+        this.activeWorkbenchSite = activeWorkbenchSite;
         this.commandId = commandId;
         this.handler = handler;
         this.priority = priority;
@@ -59,15 +83,20 @@ public final class HandlerSubmission implements Comparable {
                     castedObject.activeWorkbenchWindow);
 
             if (compareTo == 0) {
-                compareTo = Util.compare(-priority, -castedObject.priority);
+                compareTo = Util.compare(activeShell,
+                        castedObject.activeShell);
 
-                if (compareTo == 0) {
-                    compareTo = Util.compare(commandId, castedObject.commandId);
-
-                    if (compareTo == 0)
-                            compareTo = Util.compare(handler,
-                                    castedObject.handler);
-                }
+	            if (compareTo == 0) {
+	                compareTo = Util.compare(-priority, -castedObject.priority);
+	
+	                if (compareTo == 0) {
+	                    compareTo = Util.compare(commandId, castedObject.commandId);
+	
+	                    if (compareTo == 0)
+	                            compareTo = Util.compare(handler,
+	                                    castedObject.handler);
+	                }
+	            }
             }
         }
 
@@ -93,10 +122,15 @@ public final class HandlerSubmission implements Comparable {
     public int getPriority() {
         return priority;
     }
+    
+    public Shell getActiveShell() {
+        return activeShell;
+    }
 
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activeWorkbenchSite);
             hashCode = hashCode * HASH_FACTOR
@@ -113,7 +147,9 @@ public final class HandlerSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activeWorkbenchSite="); //$NON-NLS-1$
+            stringBuffer.append("[activeShell="); //$NON-NLS-1$
+            stringBuffer.append(activeShell);
+            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchSite);
             stringBuffer.append(",activeWorkbenchWindow="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchWindow);

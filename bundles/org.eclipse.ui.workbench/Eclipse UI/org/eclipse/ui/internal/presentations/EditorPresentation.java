@@ -140,37 +140,20 @@ public class EditorPresentation extends BasicStackPresentation {
         tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
         final Shell shell = tabFolder.getShell();
         IWorkbenchWindow workbenchWindow = null;
-        /*
-        IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        for (int i = 0; i < workbenchWindows.length; i++) {
-            if (workbenchWindows[i].getShell() == shell) {
-                workbenchWindow = workbenchWindows[i];
-                break;
-            }
-        }
-        if (workbenchWindow != null) {
-        */
-            IHandler openEditorDropDownHandler = new AbstractHandler() {
+        IHandler openEditorDropDownHandler = new AbstractHandler() {
 
-                public void execute(Object parameter) throws ExecutionException {
-                    Rectangle clientArea = tabFolder.getClientArea();
-                    Point location = tabFolder.getDisplay().map(tabFolder,
-                            null, clientArea.x, clientArea.y);
-                    showList(shell, location.x, location.y);
-                }
-            };
-            openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
-                    workbenchWindow,
-                    "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-                    openEditorDropDownHandler, 1);
-            PlatformUI
-                    .getWorkbench()
-                    .getCommandSupport()
-                    .addHandlerSubmissions(
-                            Collections
-                                    .singletonList(openEditorDropDownHandlerSubmission));
-        //}
+            public void execute(Object parameter) throws ExecutionException {
+                Rectangle clientArea = tabFolder.getClientArea();
+                Point location = tabFolder.getDisplay().map(tabFolder, null,
+                        clientArea.x, clientArea.y);
+                showList(shell, location.x, location.y);
+            }
+        };
+        openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
+                "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
+                openEditorDropDownHandler, 1, shell);
+        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmissions(
+                Collections.singletonList(openEditorDropDownHandlerSubmission));
     }
 
     public void dispose() {
@@ -207,12 +190,14 @@ public class EditorPresentation extends BasicStackPresentation {
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf(title)).trim();
 
-            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
+            if (titleTooltip.endsWith("\\"))
+                    //$NON-NLS-1$
                     //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
 
-            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
+            if (titleTooltip.endsWith("/"))
+                    //$NON-NLS-1$
                     //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
@@ -349,11 +334,13 @@ public class EditorPresentation extends BasicStackPresentation {
     void close(IPresentablePart presentablePart) {
         getSite().close(presentablePart);
     }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getCurrentTitle()
-	 */
-	protected String getCurrentTitle() {
-		return "";
-	}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getCurrentTitle()
+     */
+    protected String getCurrentTitle() {
+        return "";
+    }
 }

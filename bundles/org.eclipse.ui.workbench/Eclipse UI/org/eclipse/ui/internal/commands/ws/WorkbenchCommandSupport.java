@@ -345,6 +345,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             && ((activeWorkbenchWindow2 != newWorkbenchWindow) || activeWorkbenchWindow2
                                     .getShell() != activeShell)) continue;
 
+                    Shell activeShell2 = handlerSubmission.getActiveShell();
+
+                    if (activeShell2 != null
+                            && activeShell2 != activeShell)
+                            continue;
+                    
                     if (bestHandlerSubmission == null)
                         bestHandlerSubmission = handlerSubmission;
                     else {
@@ -356,6 +362,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                     bestHandlerSubmission
                                             .getActiveWorkbenchWindow());
 
+                            if (compareTo == 0)
+                                compareTo = Util.compare(activeShell2,
+                                        bestHandlerSubmission
+                                        	.getActiveShell());
+                            
                             if (compareTo == 0)
                                     compareTo = Util.compare(-handlerSubmission
                                             .getPriority(),
