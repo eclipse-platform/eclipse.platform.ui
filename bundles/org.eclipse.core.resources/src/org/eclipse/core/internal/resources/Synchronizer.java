@@ -140,6 +140,10 @@ public void restore(IResource resource, IProgressMonitor monitor) throws CoreExc
 protected void restoreFromSave(IResource resource) throws CoreException {
 	IPath sourceLocation = workspace.getMetaArea().getSyncInfoLocationFor(resource);
 	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(sourceLocation);
+	java.io.File sourceFile = new java.io.File(sourceLocation.toOSString());
+	java.io.File tempFile = new java.io.File(tempLocation.toOSString());
+	if (!sourceFile.exists() && !tempFile.exists())
+		return;
 	try {
 		DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
 		try {
@@ -148,8 +152,6 @@ protected void restoreFromSave(IResource resource) throws CoreException {
 		} finally {
 			input.close();
 		}
-	} catch (FileNotFoundException e) {
-		// ignore if no sync info saved
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
@@ -157,6 +159,9 @@ protected void restoreFromSave(IResource resource) throws CoreException {
 }
 protected void restoreFromSnap(IResource resource) {
 	IPath sourceLocation = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource);
+	java.io.File sourceFile = new java.io.File(sourceLocation.toOSString());
+	if (!sourceFile.exists())
+		return;
 	try {
 		DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
 		try {
@@ -168,8 +173,8 @@ protected void restoreFromSnap(IResource resource) {
 		} finally {
 			input.close();
 		}
-	} catch (FileNotFoundException e) {
-		// ignore if no sync info saved.
+//	} catch (FileNotFoundException e) {
+//		// ignore if no sync info saved.
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
 		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$

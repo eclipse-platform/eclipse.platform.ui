@@ -18,13 +18,18 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
+	// constants
+	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
+	
 	// fields
-	protected IPath location;
-	protected IProject[] projects;
-	protected String[] natures;
-	protected ICommand[] buildSpec;
-	protected HashMap linkDescriptions;
-	protected String comment =""; //$NON-NLS-1$
+	protected IPath location = null;
+	protected IProject[] projects = EMPTY_PROJECT_ARRAY;
+	protected String[] natures = EMPTY_STRING_ARRAY;
+	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
+	protected HashMap linkDescriptions = null;
+	protected String comment = ""; //$NON-NLS-1$
 	protected boolean dirty = true;
 	
 	//flags to indicate when we are in the middle of reading or writing a workspace description
@@ -32,16 +37,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected static boolean isWriting = false;
 	protected static boolean isReading = false;
 	
-
-	// constants
-	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
-	
 public ProjectDescription() {
 	super();
-	buildSpec = EMPTY_COMMAND_ARRAY;
-	projects = EMPTY_PROJECT_ARRAY;
 }
 
 /**

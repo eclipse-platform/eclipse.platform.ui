@@ -447,7 +447,7 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	//hold onto any exceptions until after sync info is updated, then throw it
 	ResourceException error = null;
 	try {
-		description = (ProjectDescription)new ModelObjectReader().read(descriptionPath);
+		description = new ProjectDescriptionReader().read(descriptionPath);
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readProjectMeta", target.getName()); //$NON-NLS-1$
 		error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);

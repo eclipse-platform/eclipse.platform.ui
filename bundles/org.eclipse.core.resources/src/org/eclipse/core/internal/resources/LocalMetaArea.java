@@ -234,7 +234,7 @@ public ProjectDescription readOldDescription(IProject project) throws CoreExcept
 	IPath tempPath = getBackupLocationFor(path);
 	ProjectDescription description = null;
 	try {
-		description = (ProjectDescription)new ModelObjectReader().read(path, tempPath);
+		description = (ProjectDescription)new ProjectDescriptionReader().read(path, tempPath);
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
@@ -253,7 +253,7 @@ public WorkspaceDescription readOldWorkspace() {
 	IPath path = getOldWorkspaceDescriptionLocation();
 	IPath tempPath = getBackupLocationFor(path);
 	try {
-		WorkspaceDescription oldDescription = (WorkspaceDescription) new ModelObjectReader().read(path, tempPath);
+		WorkspaceDescription oldDescription = (WorkspaceDescription) new OldModelObjectReader().read(path, tempPath);
 		// if one of those files exist, get rid of them
 		Workspace.clear(path.toFile());
 		Workspace.clear(tempPath.toFile());		

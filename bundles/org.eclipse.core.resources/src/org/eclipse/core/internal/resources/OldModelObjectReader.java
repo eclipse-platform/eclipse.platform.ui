@@ -22,14 +22,15 @@ import org.eclipse.core.runtime.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 /**
- *
+ * This class contains legacy code only.  It is being used to read workspace
+ * descriptions which are obsolete.
  */
-public class ModelObjectReader implements IModelObjectConstants {
+public class OldModelObjectReader implements IModelObjectConstants {
 	/** constants */
 	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-public ModelObjectReader() {
+public OldModelObjectReader() {
 }
 protected Node getFirstChild(Node target, short type) {
 	NodeList list = target.getChildNodes();

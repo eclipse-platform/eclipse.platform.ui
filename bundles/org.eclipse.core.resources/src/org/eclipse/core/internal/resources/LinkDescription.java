@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Object for describing the characteristics of linked resources that are stored
@@ -35,6 +36,11 @@ public LinkDescription(String name, int type, IPath localLocation) {
 	this.type = type;
 	this.localLocation = localLocation;
 }
+public LinkDescription() {
+	this.name = ""; //$NON-NLS-1$
+	this.type = -1;
+	this.localLocation = Path.EMPTY;
+}
 public boolean equals(Object o) {
 	if (!(o.getClass() == LinkDescription.class))
 		return false;
@@ -52,5 +58,14 @@ public int getType() {
 }
 public int hashCode() {
 	return type + localLocation.hashCode();
+}
+public void setName (String name) {
+	this.name = name;
+}
+public void setType (int type) {
+	this.type = type;
+}
+public void setLocation(IPath location) {
+	this.localLocation = location;
 }
 }
