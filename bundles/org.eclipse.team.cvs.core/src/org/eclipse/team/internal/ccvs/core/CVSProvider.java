@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
@@ -30,6 +31,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 
@@ -215,7 +217,7 @@ public class CVSProvider implements ICVSProvider {
 	 * @see ICVSProvider#checkout(ICVSRemoteResource[], IProject[], IProgressMonitor)
 	 */
 	public void checkout(
-		final ICVSRemoteResource[] resources,
+		final ICVSRemoteFolder[] resources,
 		final IProject[] projects,
 		final IProgressMonitor monitor)
 		throws TeamException {
@@ -227,10 +229,10 @@ public class CVSProvider implements ICVSProvider {
 					try {
 						for (int i=0;i<resources.length;i++) {
 							IProject project = null;
-							RemoteResource resource = (RemoteResource)resources[i];
+							RemoteFolder resource = (RemoteFolder)resources[i];
 							if (projects != null) 
 								project = projects[i];
-							checkout(resource.getRepository(), project, resource.getRemotePath(), null, monitor);
+							checkout(resource.getRepository(), project, resource.getRemotePath(), resource.getTag(), monitor);
 						}
 					}
 					catch (TeamException e) {

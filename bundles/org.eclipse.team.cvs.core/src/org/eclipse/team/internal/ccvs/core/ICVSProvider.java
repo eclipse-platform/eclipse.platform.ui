@@ -68,7 +68,7 @@ public interface ICVSProvider {
 	 * be checked out into the corresponding project. If teh corresponding project is
 	 * null or if projects is null, the name of the remote resource is used as the name of the project.
 	 */
-	public void checkout(ICVSRemoteResource[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;
+	public void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Create a repository instance from the given properties.
