@@ -50,8 +50,7 @@ public abstract class PartPane extends LayoutPart
 			MenuItem item; 
 		
 			// Get various view states.
-			IWorkbenchPart part = partReference.getPart(true);
-			final boolean isFastView = (page.getActiveFastView() == part);
+			final boolean isFastView = (page.getActiveFastView() == partReference);
 			final boolean isZoomed = page.isZoomed();
 			boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
 		

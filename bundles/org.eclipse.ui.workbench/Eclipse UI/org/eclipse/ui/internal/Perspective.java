@@ -40,8 +40,8 @@ public class Perspective
 	private ArrayList showViewActionIds;
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
-	private IViewPart activeFastView;
-	private IViewPart previousActiveFastView;
+	private IViewReference activeFastView;
+	private IViewReference previousActiveFastView;
 	private IMemento memento;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
@@ -148,9 +148,9 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
  * Sets the fast view attribute.
  * Note: The page is expected to update action bars.
  */
-public void addFastView(IViewPart view) {
-	ViewPane pane = getPane(view);
-	if (!isFastView(view)) {
+public void addFastView(IViewReference ref) {
+	ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
+	if (!isFastView(ref)) {
 		// Only remove the part from the presentation if it
 		// is actually in the presentation.
 		if (presentation.hasPlaceholder(pane.getID()) ||
@@ -159,7 +159,7 @@ public void addFastView(IViewPart view) {
 		// We are drag-enabling the pane because it has been disabled
 		// when it was removed from the perspective presentation.
 		presentation.enableDrag(pane);
-		fastViews.add(view);
+		fastViews.add(ref);
 		pane.setFast(true);
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
@@ -172,13 +172,12 @@ public void addFastView(IViewPart view) {
  * @param part the part to bring to move forward
  * @return true if the part was brought to top, false if not.
  */
-public boolean bringToTop(IViewPart part) {
-	if (isFastView(part)) {
-		setActiveFastView(part);
+public boolean bringToTop(IViewReference ref) {
+	if (isFastView(ref)) {
+		setActiveFastView(ref);
 		return true;
 	} else {
-		ViewPane pane = getPane(part);
-		return presentation.bringPartToTop(pane);
+		return presentation.bringPartToTop(getPane(ref));
 	}
 }
 /**
@@ -203,8 +202,8 @@ private void checkDragLimit(SelectionEvent event) {
  */
 public boolean containsView(IViewPart view) {
 	String id = view.getSite().getId();
-	IViewPart test = findView(id);
-	return (view == test);
+	IViewReference ref = findView(id);
+	return (view == ref.getPart(false));
 }
 /**
  * Create the initial list of action sets.
@@ -246,10 +245,9 @@ public void dispose() {
 	
 
 	// Release each view.
-	IViewPart [] views = getViews();
-	int length = views.length;
-	for (int nX = 0; nX < length; nX ++) {
-		getViewFactory().releaseView(views[nX].getSite().getId());
+	IViewReference refs[] = getViewReferences();
+	for (int i = 0,length = refs.length; i < length; i ++) {
+		getViewFactory().releaseView(refs[i].getId());
 	}
 
 	// Dispose of the sash too...
@@ -263,12 +261,12 @@ public void dispose() {
 /**
  * See IWorkbenchPage@findView.
  */
-public IViewPart findView(String id) {
-	IViewPart [] views = getViews();
-	for (int nX = 0; nX < views.length; nX ++) {
-		IViewPart part = views[nX];
-		if (id.equals(part.getSite().getId()))
-			return part;
+public IViewReference findView(String id) {
+	IViewReference refs[] = getViewReferences();
+	for (int i = 0; i < refs.length; i ++) {
+		IViewReference ref = refs[i];
+		if (id.equals(ref.getId()))
+			return ref;
 	}
 	return null;
 }
@@ -278,8 +276,8 @@ public IViewPart findView(String id) {
 public IActionSetDescriptor[] getActionSets() {
 	int size = visibleActionSets.size();
 	IActionSetDescriptor [] array = new IActionSetDescriptor[size];
-	for (int nX = 0; nX < size; nX ++) {
-		array[nX] = (IActionSetDescriptor)visibleActionSets.get(nX);
+	for (int i = 0; i < size; i ++) {
+		array[i] = (IActionSetDescriptor)visibleActionSets.get(i);
 	}
 	return array;
 }
@@ -299,10 +297,10 @@ public IPerspectiveDescriptor getDesc() {
 /**
  * Returns the bounds of the given fast view.
  */
-/*package*/ Rectangle getFastViewBounds(IViewPart part) {
+/*package*/ Rectangle getFastViewBounds(IViewReference ref) {
 	// Copy the bounds of the page composite
 	Rectangle bounds = page.getClientComposite().getBounds();
-	ViewPane pane = (ViewPane)((ViewSite)part.getSite()).getPane();
+	ViewPane pane = getPane(ref);
 	// get the width ratio of the fast view
 	float ratio = getFastViewWidthRatio(pane.getID());
 	// Compute the actual width of the fast view.
@@ -312,10 +310,9 @@ public IPerspectiveDescriptor getDesc() {
 /**
  * Returns the docked views.
  */
-public IViewPart [] getFastViews() {
-	int size = fastViews.size();
-	IViewPart [] array = new IViewPart[size];
-	array = (IViewPart [])fastViews.toArray(array);
+public IViewReference [] getFastViews() {
+	IViewReference array[] = new IViewReference[fastViews.size()];
+	fastViews.toArray(array);
 	return array;
 }
 /**
@@ -326,11 +323,10 @@ public ArrayList getNewWizardActionIds() {
 	return newWizardActionIds;
 }
 /**
- * Returns the pane for a view.
+ * Returns the pane for a view reference.
  */
-private ViewPane getPane(IViewPart view) {
-	ViewSite site = (ViewSite)view.getSite();
-	return (ViewPane)site.getPane();
+private ViewPane getPane(IViewReference ref) {
+	return (ViewPane)((WorkbenchPartReference)ref).getPane();
 }
 /**
  * Returns the perspective actions for this page.
@@ -376,7 +372,7 @@ public CoolBarLayout getToolBarLayout() {
 /**
  * Returns the last active fast view.
  */
-/*package*/ IViewPart getPreviousActiveFastView() {
+/*package*/ IViewReference getPreviousActiveFastView() {
 	return previousActiveFastView;	
 }
 /**
@@ -407,10 +403,8 @@ public IViewReference [] getViewReferences() {
 
 	// Copy fast views.
 	int nView = 0;
-	for (int i = 0; i < fastViews.size(); i ++) {
-		ViewSite site = (ViewSite)((IViewPart)fastViews.get(i)).getSite();
-		ViewPane pane = (ViewPane)site.getPane();
-		resultArray[nView] = pane.getViewReference();
+	for (int i = 0; i < fastViews.size(); i++) {
+		resultArray[nView] = (IViewReference)fastViews.get(i);
 		++ nView;
 	}
 	
@@ -422,38 +416,6 @@ public IViewReference [] getViewReferences() {
 	}
 	
 	return resultArray;
-}
-/**
- * See IWorkbenchPage.
- */
-public IViewPart [] getViews() {
-	// Get normal views.
-	if(presentation == null)
-		return new IViewPart[0];
-	
-	List resVector = new ArrayList(5);
-	presentation.collectViewPanes(resVector);
-
-	// Create a view array.
-	int nFastViews = fastViews.size();
-	int nNormalViews = resVector.size();
-	IViewPart [] resArray = new IViewPart[nNormalViews + nFastViews];
-
-	// Copy fast views.
-	int nView = 0;
-	for (int nX = 0; nX < nFastViews; nX ++) {
-		resArray[nView] = (IViewPart)fastViews.get(nX);
-		++ nView;
-	}
-	
-	// Copy normal views.
-	for (int nX = 0; nX < nNormalViews; nX ++) {
-		ViewPane pane = (ViewPane)resVector.get(nX);
-		resArray[nView] = (IViewPart)pane.getViewReference().getPart(true);
-		++ nView;
-	}
-	
-	return resArray;
 }
 /**
  * @see IWorkbenchPage
@@ -488,11 +450,11 @@ protected void hideEditorArea() {
  * Hides a fast view. The view shrinks equally <code>steps</code> times
  * before disappearing completely.
  */
-private void hideFastView(IViewPart part, int steps) {
-	setFastViewIconSelection(part, false);
+private void hideFastView(IViewReference ref, int steps) {
+	setFastViewIconSelection(ref, false);
 
 	// Get pane.
-	ViewPane pane = getPane(part);
+	ViewPane pane = getPane(ref);
 	// Hide the right side sash first
 	if (fastViewSash != null)
 		fastViewSash.setBounds(0, 0, 0, 0);
@@ -502,8 +464,8 @@ private void hideFastView(IViewPart part, int steps) {
 		// Slide it off screen.
 		Rectangle bounds = pane.getBounds();
 		int increment = bounds.width / steps;
-		for (int nX = 0; nX <= bounds.width - 2; nX += increment) {
-			ctrl.setLocation(-nX, bounds.y);
+		for (int i = 0; i <= bounds.width - 2; i += increment) {
+			ctrl.setLocation(-i, bounds.y);
 			ctrl.getParent().update();
 		}
 	}
@@ -519,19 +481,15 @@ void hideFastViewSash() {
 	if (fastViewSash != null)
 		fastViewSash.setBounds(0, 0, 0, 0);
 }
-/**
- * See IWorkbenchPage
- */
-public boolean hideView(IViewPart view) {
+public boolean hideView(IViewReference ref) {
 	// If the view is locked just return.
-	ViewSite site = (ViewSite)view.getSite();
-	ViewPane pane = (ViewPane)site.getPane();
+	ViewPane pane = getPane(ref);
 	
 	// Remove the view from the current presentation.
-	if (isFastView(view)) {
-		fastViews.remove(view);
+	if (isFastView(ref)) {
+		fastViews.remove(ref);
 		pane.setFast(false);		//force an update of the toolbar
-		if (activeFastView == view)
+		if (activeFastView == ref)
 			setActiveFastView(null);
 		pane.getControl().setEnabled(true);
 	} else { 
@@ -539,7 +497,7 @@ public boolean hideView(IViewPart view) {
 	}
 	
 	// Dispose view if ref count == 0.
-	getViewFactory().releaseView(site.getId());
+	getViewFactory().releaseView(ref.getId());
 	return true;
 }
 /*
@@ -551,8 +509,8 @@ protected boolean isEditorAreaVisible() {
 /**
  * Returns true if a view is fast.
  */
-public boolean isFastView(IViewPart part) {
-	return fastViews.contains(part);
+public boolean isFastView(IViewReference ref) {
+	return fastViews.contains(ref);
 }
 /**
  * Creates a new presentation from a persistence file.
@@ -660,7 +618,7 @@ protected void onActivate() {
 	// Make sure the control for the fastviews are create so they can
 	// be activated.
 	for (int i = 0; i < fastViews.size(); i++){
-		ViewPane pane = getPane((IViewPart)fastViews.get(i));
+		ViewPane pane = getPane((IViewReference)fastViews.get(i));
 		Control ctrl = pane.getControl();
 		if (ctrl == null) {
 			pane.createControl(getClientComposite());
@@ -692,7 +650,7 @@ protected void onDeactivate() {
 
 	// Update fast views.
 	for (int i = 0; i < fastViews.size(); i++){
-		ViewPane pane = getPane((IViewPart)fastViews.get(i));
+		ViewPane pane = getPane((IViewReference)fastViews.get(i));
 		presentation.disableDrag(pane);
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
@@ -704,19 +662,19 @@ protected void onDeactivate() {
  */
 public void partActivated(IWorkbenchPart activePart) {
 	// If a fastview is open close it.
-	if (activeFastView != null && activeFastView != activePart)
+	if (activeFastView != null && activeFastView.getPart(false) != activePart)
 		setActiveFastView(null);
 }
 /**
  * Sets the fast view attribute.
  * Note: The page is expected to update action bars.
  */
-public void removeFastView(IViewPart view) {
-	ViewPane pane = getPane(view);
-	if (isFastView(view)) {
-		if (activeFastView == view)
+public void removeFastView(IViewReference ref) {
+	ViewPane pane = getPane(ref);
+	if (isFastView(ref)) {
+		if (activeFastView == ref)
 			setActiveFastView(null);
-		fastViews.remove(view);
+		fastViews.remove(ref);
 		pane.setFast(false);
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
@@ -831,7 +789,7 @@ public IStatus restoreState() {
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 
 		// Create and open the view.
-		IViewReference ref = viewFactory.getView(viewID);
+		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(viewID);
 		if(ref == null) {
 			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
 			result.add(new Status(
@@ -839,17 +797,24 @@ public IStatus restoreState() {
 				WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
 				null));
 			continue;
-		}		
+		}
+		if(ref.getPane() == null) {
+			ref.setPane(new ViewPane((IViewReference)ref,page));
+		}
 		page.addPart(ref);
-		IStatus restoreStatus = viewFactory.restoreView(ref);
-		result.add(restoreStatus);
-		if(restoreStatus.getSeverity() == IStatus.OK) {
-			IViewPart view = (IViewPart)ref.getPart(true);
-			ViewSite site = (ViewSite)view.getSite();
-			ViewPane pane = (ViewPane)site.getPane();			
-			pres.replacePlaceholderWithPart(pane);
+		if(pres.isPartVisible(ref.getId())) {
+			IStatus restoreStatus = viewFactory.restoreView((IViewReference)ref);
+			result.add(restoreStatus);
+			if(restoreStatus.getSeverity() == IStatus.OK) {
+				IViewPart view = (IViewPart)ref.getPart(true);
+				ViewSite site = (ViewSite)view.getSite();
+				ViewPane pane = (ViewPane)site.getPane();			
+				pres.replacePlaceholderWithPart(pane);
+			} else {
+				page.removePart(ref);
+			}
 		} else {
-			page.removePart(ref);
+			pres.replacePlaceholderWithPart(ref.getPane());			
 		}
 	}
 
@@ -884,7 +849,7 @@ public IStatus restoreState() {
 			IStatus restoreStatus = viewFactory.restoreView(ref);
 			result.add(restoreStatus);
 			if(restoreStatus.getSeverity() == IStatus.OK) {
-				fastViews.add(ref.getPart(true));
+				fastViews.add(ref);
 			} else {
 				page.removePart(ref);
 			}
@@ -1101,9 +1066,9 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
 		enum = fastViews.iterator();
 		while (enum.hasNext()) {
-			IViewPart view = (IViewPart)enum.next();
+			IViewReference ref = (IViewReference)enum.next();
 			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
-			String id = view.getSite().getId();
+			String id = ref.getId();
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 			float ratio = getFastViewWidthRatio(id);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
@@ -1153,15 +1118,15 @@ public void setActionSets(IActionSetDescriptor[] newArray) {
 	
 	visibleActionSets.clear();
 	int newSize = newArray.length;
-	for (int nX = 0; nX < newSize; nX ++) {
-		visibleActionSets.add(newArray[nX]);
+	for (int i = 0; i < newSize; i ++) {
+		visibleActionSets.add(newArray[i]);
 	}
 }
 /**
  * Return the active fast view or null if there are no
  * fast views or if there are all minimized.
  */
-public IViewPart getActiveFastView() {
+public IViewReference getActiveFastView() {
 	return activeFastView;
 }
 /**
@@ -1169,8 +1134,8 @@ public IViewPart getActiveFastView() {
  * it shrinks equally <code>steps</code> times before disappearing
  * completely. Then, <code>view</code> becomes active and is shown.
  */
-/*package*/ void setActiveFastView(IViewPart view, int steps) {
-	if (activeFastView == view)
+/*package*/ void setActiveFastView(IViewReference ref, int steps) {
+	if (activeFastView == ref)
 		return;
 		
 	if (activeFastView != null)
@@ -1183,7 +1148,7 @@ public IViewPart getActiveFastView() {
 		}
 		hideFastView(activeFastView, steps);
 	}
-	activeFastView = view;
+	activeFastView = ref;
 	if (activeFastView != null) {
 		showFastView(activeFastView);
 	}
@@ -1191,8 +1156,8 @@ public IViewPart getActiveFastView() {
 /**
  * Sets the active fast view.
  */
-/*package*/ void setActiveFastView(IViewPart view) {
-	setActiveFastView(view, FASTVIEW_HIDE_STEPS);
+/*package*/ void setActiveFastView(IViewReference ref) {
+	setActiveFastView(ref, FASTVIEW_HIDE_STEPS);
 }
 /**
  * Sets the visibility of all fast view pins.
@@ -1200,20 +1165,19 @@ public IViewPart getActiveFastView() {
 private void setAllPinsVisible(boolean visible) {
 	Iterator iter = fastViews.iterator();
 	while (iter.hasNext()) {
-		IViewPart view = (IViewPart)iter.next();
-		ViewPane pane = getPane(view);
+		ViewPane pane = getPane((IViewReference)iter.next());
 		pane.setFast(visible);
 	}
 }
 /**
  * Sets the selection for the shortcut bar icon representing the givevn fast view.
  */
-private void setFastViewIconSelection(IViewPart part, boolean selected) {
+private void setFastViewIconSelection(IViewReference ref, boolean selected) {
 	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 	ToolBar bar = window.getShortcutBar().getControl();
 	ToolItem[] items = bar.getItems();
 	for(int i=0; i<items.length; i++) {
-		if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == part) {
+		if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == ref) {
 			items[i].setSelection(selected);
 		}
 	}	
@@ -1276,9 +1240,9 @@ protected void showEditorArea() {
 /**
  * Shows a fast view.
  */
-void showFastView(IViewPart part) {
+void showFastView(IViewReference ref) {
 	// Get pane.
-	ViewPane pane = getPane(part);
+	ViewPane pane = getPane(ref);
 
 	// Create the control first
 	Control ctrl = pane.getControl();
@@ -1290,7 +1254,7 @@ void showFastView(IViewPart part) {
 	// Show pane fast.
 	ctrl.setEnabled(true); // Add focus support.
 	Composite parent = ctrl.getParent();
-	Rectangle bounds = getFastViewBounds(part);
+	Rectangle bounds = getFastViewBounds(ref);
 
 	pane.setBounds(bounds);
 	pane.moveAbove(null);
@@ -1314,7 +1278,7 @@ void showFastView(IViewPart part) {
 	fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
 	fastViewSash.moveAbove(null);
 	
-	setFastViewIconSelection(part, true);
+	setFastViewIconSelection(ref, true);
 }
 /**
  * See IWorkbenchPage.
@@ -1343,20 +1307,17 @@ public IViewPart showView(String viewID)
 	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 	if (presentation.hasPlaceholder(viewID)) {
 		presentation.addPart(pane);
-	}
-	else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
+	} else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
 		presentation.addPart(pane);
-	}
 	/*
 	 * Detached window no longer supported - remove when confirmed
 	 *
-	 * else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
-	 * 	presentation.addDetachedPart(pane);
-	 * }
+	 * } else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
+	 * 	   presentation.addDetachedPart(pane);
 	 */
-	else {
-		showFastView(part);
-		addFastView(part);
+	} else {
+		showFastView(ref);
+		addFastView(ref);
 		//Refresh the part as there might have been an error when showing
 	}
 	return part;
@@ -1365,11 +1326,11 @@ public IViewPart showView(String viewID)
  * Toggles the visibility of a fast view.  If the view is active it
  * is deactivated.  Otherwise, it is activated.
  */
-public void toggleFastView(IViewPart view) {
-	if (view == activeFastView) {
+public void toggleFastView(IViewReference ref) {
+	if (ref == activeFastView) {
 		setActiveFastView(null);
 	} else {
-		setActiveFastView(view);
+		setActiveFastView(ref);
 	}
 }
 }

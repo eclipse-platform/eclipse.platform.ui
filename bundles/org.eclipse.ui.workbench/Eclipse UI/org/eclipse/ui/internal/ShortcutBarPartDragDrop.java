@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IViewPart;
 
 public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListener, MouseMoveListener{
@@ -48,10 +49,10 @@ public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListen
 	 * represented by the icon being dragged.
 	 */
 	protected Rectangle getSourceBounds() {
-		IViewPart part = (IViewPart) draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
-		WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
+		IViewReference ref = (IViewReference) draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
+		WorkbenchPage page = (WorkbenchPage)ref.getPage();
 		Perspective persp = page.getActivePerspective();
-		Rectangle rect =  persp.getFastViewBounds(part);
+		Rectangle rect = persp.getFastViewBounds(ref);
 		return rect;
 	}
 	/*

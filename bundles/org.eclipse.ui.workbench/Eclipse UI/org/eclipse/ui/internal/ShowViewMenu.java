@@ -193,9 +193,9 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 	
 	public void pageOpened(IWorkbenchPage page) {
 		ArrayList parts = getParts(page); // adds an entry to openedViews
-		IViewPart[] views = page.getViews();
+		IViewReference[] views = page.getViewReferences();
 		for (int i = 0; i < views.length; i++) {
-			String id = views[i].getSite().getId();
+			String id = views[i].getId();
 			if (parts.indexOf(id) < 0)
 				parts.add(id);
 		}

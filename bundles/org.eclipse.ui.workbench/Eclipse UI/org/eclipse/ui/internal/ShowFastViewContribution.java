@@ -10,6 +10,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -37,19 +38,19 @@ public class ShowFastViewContribution extends ContributionItem {
 			return;
 
 		// Get views.
-		IViewPart[] views = page.getFastViews();
+		IViewReference[] refs = page.getFastViews();
 
 		// Create tool item for each view.
-		int size = views.length;
+		int size = refs.length;
 		for (int nX = 0; nX < size; nX++) {
-			final IViewPart view = views[nX];
+			final IViewReference ref = refs[nX];
 			final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
-			item.setImage(view.getTitleImage());
-			item.setToolTipText(view.getTitle());
-			item.setData(FAST_VIEW, view);
+			item.setImage(ref.getTitleImage());
+			item.setToolTipText(ref.getTitle());
+			item.setData(FAST_VIEW, ref);
 			
 			// Select the active fast view's icon.
-			if (view == ((WorkbenchPage)window.getActivePage()).getActiveFastView()) {
+			if (ref == ((WorkbenchPage)window.getActivePage()).getActiveFastView()) {
 				item.setSelection(true);
 			} else {
 				item.setSelection(false);
@@ -57,7 +58,7 @@ public class ShowFastViewContribution extends ContributionItem {
 			
 			item.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					showView(view);
+					showView(ref);
 				}
 			});
 			index++;
@@ -72,8 +73,8 @@ public class ShowFastViewContribution extends ContributionItem {
 	/**
 	 * Open a view.
 	 */
-	private void showView(IViewPart view) {
-		WorkbenchPage page = (WorkbenchPage) view.getSite().getPage();
-		page.toggleFastView(view);
+	private void showView(IViewReference ref) {
+		WorkbenchPage page = (WorkbenchPage)ref.getPage();
+		page.toggleFastView(ref);
 	}
 }

@@ -320,7 +320,7 @@ public void activate(IWorkbenchPart part) {
 		return;
 		
 	// If zoomed, unzoom.
-	if (isZoomed() && partChangeAffectsZoom(part))
+	if (isZoomed() && partChangeAffectsZoom(getReference(part)))
 		zoomOut();
 	
 	if(part instanceof MultiEditor) { 
@@ -356,21 +356,21 @@ private void activatePart(final IWorkbenchPart part) {
 /**
  * Add a fast view.
  */
-public void addFastView(IViewPart view) {
+public void addFastView(IViewReference ref) {
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return;
 		
 	// If view is zoomed unzoom.
-	if (isZoomed() && partChangeAffectsZoom(view))
+	if (isZoomed() && partChangeAffectsZoom(ref))
 		zoomOut();
 
 	// Do real work.	
-	persp.addFastView(view);
+	persp.addFastView(ref);
 
 	// The view is now invisible.
 	// If it is active then deactivate it.
-	if (view == activePart) {
+	if (ref.getPart(false) == activePart) {
 		activate(activationList.getActive());
 	}
 		
@@ -439,7 +439,7 @@ public void bringToTop(IWorkbenchPart part) {
 		return;
 		
 	// If zoomed then ignore.
-	if (isZoomed() && partChangeAffectsZoom(part))
+	if (isZoomed() && partChangeAffectsZoom(getReference(part)))
 		return;
 
 	// Move part.
@@ -452,7 +452,8 @@ public void bringToTop(IWorkbenchPart part) {
 			lastActiveEditor = null;
 		}
 	} else if (part instanceof IViewPart) {
-		broughtToTop = persp.bringToTop((IViewPart)part);
+		IViewReference ref = (IViewReference)getReference(part);
+		broughtToTop = persp.bringToTop(ref);
 	}
 	if (broughtToTop) {
 		firePartBroughtToTop(part);
@@ -545,7 +546,10 @@ private IViewPart busyShowView(String viewID, boolean activate)
 		return null;
 
 	// If this view is already visible just return.
-	IViewPart view = persp.findView(viewID);
+	IViewReference ref = persp.findView(viewID);
+	IViewPart view = null;
+	if(ref != null)
+		view = ref.getView(true);
 	if (view != null) {
 		if (activate)
 			activate(view);
@@ -854,18 +858,11 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
 		window.firePerspectiveOpened(this, desc);
-		IViewReference refs[] = viewFactory.getViews();
-		IViewPart parts[] = persp.getViews();
-		for (int i = 0; i < parts.length; i++) {
-			IViewReference ref = null;
-			for (int j = 0; j < refs.length; j++) {
-				if(parts[i] == refs[j].getPart(false)) {
-					ref = refs[j];
-					break;
-				}
-			}
+		IViewReference refs[] = persp.getViewReferences();
+		for (int i = 0; i < refs.length; i++) {
+			IViewReference ref = refs[i];
 			if(ref != null)
-				addPart(ref);
+				addPart(ref);			
 		}
 		return persp;
 	} catch (WorkbenchException e) {
@@ -989,7 +986,7 @@ public void dispose() {
  */
 private void disposePerspective(Perspective persp) {
 	// Get views.
-	IViewPart [] views = persp.getViews();
+	IViewReference refs[] = persp.getViewReferences();
 	
 	// Get rid of perspective.
 	perspList.remove(persp);
@@ -997,12 +994,13 @@ private void disposePerspective(Perspective persp) {
 	persp.dispose();
 
 	// Loop through the views.
-	for (int nX = 0; nX < views.length; nX ++) {
-		IViewPart view = views[nX];
+	for (int i = 0; i < refs.length; i ++) {
+		IViewReference ref = refs[i];
 		
-		// If the part is no longer reference then dispose it.
-		boolean exists = viewFactory.hasView(view.getSite().getId());
-		if (!exists) {
+		//If the part is no longer reference then dispose it.
+		boolean exists = viewFactory.hasView(ref.getId());
+		IViewPart view = (IViewPart)ref.getPart(false);
+		if (!exists && view != null) {
 			firePartClosed(view);
 			activationList.remove(view);
 			disposePart(view);
@@ -1056,8 +1054,11 @@ public Perspective findPerspective(IPerspectiveDescriptor desc) {
  */
 public IViewPart findView(String id) {
 	Perspective persp = getActivePerspective();
-	if (persp != null)
-		return persp.findView(id);
+	if (persp == null)
+		return null;
+	IViewReference ref = persp.findView(id);
+	if(ref != null)
+		return ref.getView(true);
 	else
 		return null;
 }
@@ -1199,12 +1200,12 @@ public IEditorReference[] getEditorReferences() {
 /**
  * Returns the docked views.
  */
-public IViewPart [] getFastViews() {
+public IViewReference [] getFastViews() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
 		return persp.getFastViews();
 	else
-		return new IViewPart[0];
+		return new IViewReference[0];
 }
 /**
  * @see IWorkbenchPage
@@ -1339,10 +1340,14 @@ public IViewReference[] getViewReferences() {
  */
 public IViewPart [] getViews() {
 	Perspective persp = getActivePerspective();
-	if (persp != null)
-		return persp.getViews();
-	else
-		return new IViewPart[0];
+	if (persp != null) {
+		IViewReference refs[] = persp.getViewReferences();
+		IViewPart parts[] = new IViewPart[refs.length];
+		for (int i = 0; i < refs.length; i++)
+			parts[i] = refs[i].getView(true);
+		return parts;
+	}
+	return new IViewPart[0];
 }
 /**
  * See IWorkbenchPage.
@@ -1372,6 +1377,12 @@ public void hideActionSet(String actionSetID) {
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
 	}
 }
+
+public void hideView(IViewReference ref) {
+	if(ref.getPart(false) == null)
+		return;
+	hideView((IViewPart)ref.getPart(false));
+}
 /**
  * See IPerspective
  */
@@ -1382,7 +1393,8 @@ public void hideView(IViewPart view) {
 		return;
 		
 	// If part is added / removed always unzoom.
-	if (isZoomed() && !isFastView(view))
+	IViewReference ref = (IViewReference)getReference(view);
+	if (isZoomed() && !isFastView(ref))
 		zoomOut();
 		
 	// Confirm.
@@ -1399,7 +1411,7 @@ public void hideView(IViewPart view) {
 	}
 		
 	// Hide the part.  
-	persp.hideView(view);
+	persp.hideView(ref);
 	
 
 	// If the part is no longer reference then dispose it.
@@ -1487,10 +1499,10 @@ public boolean isEditorAreaVisible() {
 /**
  * Returns whether the view is fast.
  */
-public boolean isFastView(IViewPart part) {
+public boolean isFastView(IViewReference ref) {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
-		return persp.isFastView(part);
+		return persp.isFastView(ref);
 	else
 		return false;
 }
@@ -1498,7 +1510,7 @@ public boolean isFastView(IViewPart part) {
  * Return the active fast view or null if there are no
  * fast views or if there are all minimized.
  */
-public IViewPart getActiveFastView() {
+public IViewReference getActiveFastView() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
 		return persp.getActiveFastView();
@@ -1541,7 +1553,7 @@ private boolean needToZoomOut(IWorkbenchPart part) {
 	}
 	// part is a view
 	if(part instanceof IViewPart) {
-		if(isFastView((IViewPart)part) || part.equals(getActivePart()))
+		if(isFastView((IViewReference)getReference(part)) || part.equals(getActivePart()))
 			return false;
 		else
 			return true;
@@ -1813,8 +1825,8 @@ public void openSystemEditor(IFile input)
  *      - the part is not a fast view
  *      - the part and the zoom part are not in the same editor workbook
  */
-private boolean partChangeAffectsZoom(IWorkbenchPart part) {
-	PartPane pane = ((PartSite)part.getSite()).getPane();
+private boolean partChangeAffectsZoom(IWorkbenchPartReference ref) {
+	PartPane pane = ((WorkbenchPartReference)ref).getPane();
 	if (pane instanceof MultiEditorInnerPane)
 		pane = ((MultiEditorInnerPane)pane).getParentPane();
 	return getActivePerspective().getPresentation().partChangeAffectsZoom(pane);
@@ -1822,7 +1834,7 @@ private boolean partChangeAffectsZoom(IWorkbenchPart part) {
 /**
  * Removes a fast view.
  */
-public void removeFastView(IViewPart view) {
+public void removeFastView(IViewReference ref) {
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return;
@@ -1832,7 +1844,7 @@ public void removeFastView(IViewPart view) {
 		zoomOut();
 
 	// Do real work.	
-	persp.removeFastView(view);
+	persp.removeFastView(ref);
 
 	// Notify listeners.
 	window.getShortcutBar().update(true);
@@ -1998,7 +2010,10 @@ public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescri
 	
 		// Restore active part.
 		if (activePartID != null) {
-			IViewPart view = activePerspective.findView(activePartID);
+			IViewReference ref = activePerspective.findView(activePartID);
+			IViewPart view = null;
+			if(ref != null);
+				view = ref.getView(true);
 			if (view != null)
 				activePart = view;
 		}
@@ -2395,12 +2410,12 @@ private IViewPart showView(final String viewID, final boolean activate)
  * Toggles the visibility of a fast view.  If the view is active it
  * is deactivated.  Otherwise, it is activated.
  */
-public void toggleFastView(IViewPart part) {
+public void toggleFastView(IViewReference ref) {
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
-		persp.toggleFastView(part);
+		persp.toggleFastView(ref);
 		// if the fast view has been deactivated
-		if (part != persp.getActiveFastView()) {
+		if (ref != persp.getActiveFastView()) {
 			setActivePart(activationList.getPreviouslyActive());
 		}
 	}
@@ -2428,7 +2443,7 @@ public void toggleZoom(IWorkbenchPart part) {
 		zoomOut();
 		return;
 	} else {
-		persp.getPresentation().zoomIn(part);
+		persp.getPresentation().zoomIn(getReference(part));
 		activate(part);
 	}
 }
@@ -2471,13 +2486,11 @@ private void updateTabList(IWorkbenchPart part) {
  * The title of the given part has changed.
  * For views, updates the fast view button if necessary.
  */
-public void updateTitle(IWorkbenchPart part) {
-	if (part instanceof IViewPart) {
-		if (isFastView((IViewPart) part)) {
-			// Would be more efficient to just update label of single tool item
-			// but we don't have access to it from here.
-			window.getShortcutBar().update(true);
-		}
+public void updateTitle(IViewReference ref) {
+	if (isFastView(ref)) {
+		// Would be more efficient to just update label of single tool item
+		// but we don't have access to it from here.
+		window.getShortcutBar().update(true);
 	}
 }
 /**
@@ -2545,7 +2558,7 @@ public IWorkbenchPartReference[] getSortedParts() {
 	return activationList.getParts();
 }
 
-private IWorkbenchPartReference getReference(IWorkbenchPart part) {
+public IWorkbenchPartReference getReference(IWorkbenchPart part) {
 	PartPane pane = ((PartSite)part.getSite()).getPane();
 	if(pane instanceof MultiEditorInnerPane) {
 		MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
@@ -2621,14 +2634,14 @@ private class ActivationList {
 	 * filter fast views and views from other perspectives.
 	 */	
 	private IWorkbenchPart getActive(int start) {
-		IViewPart[] views = getViews();
+		IWorkbenchPartReference[] views = getViewReferences();
 		for (int i = start; i >= 0; i--) {
 			IWorkbenchPartReference ref = (IWorkbenchPartReference)parts.get(i);
 			if(ref instanceof IViewReference) {
 				if(!((IViewReference)ref).isFastView()) {
 					for (int j = 0; j < views.length; j++) {
-						if(views[j] == ref.getPart(true)) {
-							return views[j];
+						if(views[j] == ref) {
+							return ref.getPart(true);
 						}
 					}
 				}
@@ -2686,14 +2699,14 @@ private class ActivationList {
 	 * Return a list with all parts (editors and views).
 	 */
 	private IWorkbenchPartReference[] getParts() {
-		IViewPart[] views = getViews();
+		IWorkbenchPartReference[] views = getViewReferences();
 		ArrayList resultList = new ArrayList(parts.size());
 		for (Iterator iterator = parts.iterator(); iterator.hasNext();) {
 			IWorkbenchPartReference ref = (IWorkbenchPartReference)iterator.next();
 			if(ref instanceof IViewReference) {
 				//Filter views from other perspectives
 				for (int i = 0; i < views.length; i++) {
-					if(views[i] == ref.getPart(true)) {
+					if(views[i] == ref) {
 						resultList.add(ref);
 						break;
 					}

@@ -91,7 +91,7 @@ protected void updateState() {
 	}
 	// enable iff there is at least one other part to switch to
 	// (the editor area counts as one entry)
-	int count = page.getViews().length;
+	int count = page.getViewReferences().length;
 	if (page.getSortedEditors().length > 0) {
 		++count;
 	}

@@ -450,6 +450,8 @@ private CTabItem getTab(LayoutPart child) {
  * Returns the visible child.
  */
 public LayoutPart getVisiblePart() {
+	if(current == null)
+		return inactiveCurrent;
 	return current;
 }
 public int indexOf (LayoutPart item) {

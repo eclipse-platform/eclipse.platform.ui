@@ -1110,26 +1110,17 @@ public class EditorManager {
 	}
 	
 	private class Editor extends WorkbenchPartReference implements IEditorReference {
-		private IEditorPart part;
+
 		private IMemento editorMemento;
 		private String name;
-		private String title;
 		private String factoryId;
 		private boolean pinned = false;
-		private String editorId;
-		private PartPane pane;
-		private ImageDescriptor imageDescritor;
-		private String tooltip;
-		private Image image;
 		
-		Editor(String editorId,IMemento memento,String name,String title,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
+		Editor(String id,IMemento memento,String name,String title,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
+			init(id,title,tooltip,desc);
 			this.editorMemento = memento;
 			this.name = name;
 			this.factoryId = factoryId;
-			this.editorId = editorId;
-			this.imageDescritor = desc;
-			this.tooltip = tooltip;
-			this.title = title;
 			this.pinned = pinned;			
 			//make it backward compatible.
 			if(this.name == null)
@@ -1138,19 +1129,9 @@ public class EditorManager {
 		Editor() {
 			this.name = name;
 		}
-		public void dispose() {
-			if(image != null && imageDescritor != null) {
-				ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-				if(image != null) {
-					int count = imageCache.removeRef(imageDescritor);
-					if(count <= 0)
-						image.dispose();				
-				}
-				imageDescritor = null;
-				image = null;
-			}
-		}
+
 		public String getFactoryId() {
+			IEditorPart part = getEditor(false);
 			if(part != null) {
 				IPersistableElement persistable = part.getEditorInput().getPersistable();
 				if(persistable != null)
@@ -1161,7 +1142,7 @@ public class EditorManager {
 		}
 		public String getName() {
 			if(part != null)
-				return part.getEditorInput().getName();
+				return getEditor(false).getEditorInput().getName();
 			return name;
 		}
 		public String getRegisteredName() {
@@ -1174,7 +1155,7 @@ public class EditorManager {
 		}
 		public IEditorPart getEditor(boolean restore) {
 			if(part != null)
-				return part;
+				return (IEditorPart)part;
 			if(!restore || editorMemento == null)
 				return null;
 			
@@ -1192,89 +1173,42 @@ public class EditorManager {
 						IStatus.WARNING | IStatus.ERROR);
 				} 
 			}
-			setPane(this.pane);
-			this.pane = null;	
-			editorMemento = null;
-			tooltip = null;
-			return part;
+			setPane(getPane());
+			releaseReferences(); 
+			return (IEditorPart)part;
 		}
-		public void setPart(IEditorPart part) {
-			this.part = part;
+		public void releaseReferences() {
+			super.releaseReferences();
+			editorMemento = null;
+			name = null;
+			factoryId = null;
+		}
+			
+		public void setPart(IWorkbenchPart part) {
 			super.setPart(part);
 			EditorSite site = (EditorSite)part.getSite();
 			if(site != null) {
-				site.setPane(this.pane);
 				site.setReuseEditor(!pinned);
-				this.pane = null;
 			}
-		}
+		}			
 		public IMemento getMemento() {
 			return editorMemento;
 		}
 		public boolean isDirty() {
 			if(part == null)
 				return false;
-			return part.isDirty();
+			return ((IEditorPart)part).isDirty();
 		}
 		public boolean isPinned() {
 			if(part != null)
-				return !((EditorSite)part.getEditorSite()).getReuseEditor();
+				return !((EditorSite)((IEditorPart)part).getEditorSite()).getReuseEditor();
 			return pinned;
 		}
 		public void setPinned(boolean pinned) {
 			this.pinned = pinned;
 		}		
-		public String getTitle() {
-			String result = title;
-			if(part != null)
-				result = part.getTitle();
-			if(result == null)
-				result = new String();
-			return result;
-		}
-		public Image getTitleImage() {
-			if(part != null)
-				return part.getTitleImage();
-			if(image != null)
-				return image;
-			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-			image = (Image)imageCache.get(imageDescritor);
-			if(image != null) {
-				imageCache.addRef(imageDescritor);
-				return image;
-			}
-			image = imageDescritor.createImage();
-			imageCache.put(imageDescritor,image);
-			return image;		
-		}
-		public String getId() {
-			if(part != null)
-				return part.getSite().getId();
-			return editorId;
-		}
-		public void setPane(PartPane pane) {
-			if(pane == null)
-				return;
-			if(part != null) {
-				PartSite site = (PartSite)part.getSite();
-				site.setPane(pane);
-			} else {
-				this.pane = pane;
-			}
-		}
-		public PartPane getPane() {
-			PartPane result;
-			if(part != null)
-				result = ((PartSite)part.getSite()).getPane();
-			else 
-				result = pane;
-			return result;
-		}
-		public String getTitleToolTip() {
-			if(part != null)
-				return part.getTitleToolTip();
-			else
-				return tooltip;
+		public IWorkbenchPage getPage() {
+			return page;
 		}
 	}
 }

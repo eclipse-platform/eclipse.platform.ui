@@ -1271,8 +1271,8 @@ private void showShortcutBarPopup(MouseEvent e) {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
-						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
-						getActiveWorkbenchPage().hideView(view);
+						IViewReference ref = (IViewReference)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().hideView(ref);
 					}
 				}
 			});
@@ -1282,8 +1282,8 @@ private void showShortcutBarPopup(MouseEvent e) {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
-						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
-						getActiveWorkbenchPage().removeFastView(view);
+						IViewReference ref = (IViewReference)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().removeFastView(ref);
 					}
 				}
 			});

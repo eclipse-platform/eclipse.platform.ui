@@ -121,8 +121,12 @@ public static void selectAndReveal(IResource resource, IWorkbenchWindow window) 
 
 	// get all the view and editor parts
 	List parts = new ArrayList();
-	parts.addAll(Arrays.asList(page.getViews()));
-	IEditorReference refs[] = page.getEditorReferences();
+	IWorkbenchPartReference refs[] = page.getViewReferences();
+	for (int i = 0; i < refs.length; i++) {
+		if(refs[i].getPart(false) != null)
+			parts.add(refs[i].getPart(false));
+	}	
+	refs = page.getEditorReferences();
 	for (int i = 0; i < refs.length; i++) {
 		if(refs[i].getPart(false) != null)
 			parts.add(refs[i].getPart(false));

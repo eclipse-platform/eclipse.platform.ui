@@ -10,9 +10,12 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
@@ -127,9 +130,14 @@ public IStatus restoreView(final IViewReference ref) {
 				return;
 			}
 		
-			ViewPane pane = new ViewPane(ref, page);
+			PartPane pane = ((ViewReference)ref).getPane();
+			if(pane == null) {
+				pane = new ViewPane(ref,page);
+				((ViewReference)ref).setPane(pane);
+			}
 			site.setPane(pane);
-			site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
+			site.setActionBars(new ViewActionBars(page.getActionBars(), (ViewPane)pane));
+			site.getPane().createChildControl();
 			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 		}
 		public void handleException(Throwable e) {
@@ -253,36 +261,36 @@ public void releaseView(String id) {
 
 private class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-	private IViewPart part;
-	private String viewId;
-
 	public ViewReference(String id) {
-		viewId = id;
+		ViewDescriptor desc = (ViewDescriptor)viewReg.find(id);
+		ImageDescriptor iDesc = null;
+		String title = null;
+		if(desc != null) {
+			iDesc = desc.getImageDescriptor();
+			title = desc.getLabel();
+		}
+		init(id,title,null,iDesc);
 	}
+
 	/**
 	 * @see IViewReference#isFastView()
 	 */
 	public boolean isFastView() {
-		return ((WorkbenchPage)part.getSite().getPage()).isFastView(part);
+		return page.isFastView(this);
 	}
 	public IViewPart getView(boolean restore) {
 		return (IViewPart)getPart(restore);
-	}
-	public void setPart(IWorkbenchPart part) {
-		super.setPart(part);
-		this.part = (IViewPart)part;
 	}
 	public String getRegisteredName() {
 		if(part != null)
 			return part.getSite().getRegisteredName();
 			
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewDescriptor desc = reg.find(viewId);
+		IViewDescriptor desc = reg.find(getId());
 		if(desc != null)
 			return desc.getLabel();	
 		return getTitle();
 	}
-	
 	/**
 	 * @see IWorkbenchPartReference#getPart(boolean)
 	 */
@@ -290,56 +298,25 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 		if(part != null)
 			return part;
 		if(restore) {
-			restoreView(this);
-		/*
-		 * Views are not lazy created so this code will not run for now.
-		 */
-			
-//			if(status.getSeverity() == IStatus.ERROR) {
-//				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-//				if(!workbench.isStarting()) {
-//					ErrorDialog.openError(
-//						window.getShell(),
-//						WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
-//						WorkbenchMessages.format("EditorManager.unableToRestoreEditorMessage",new String[]{getName()}), //$NON-NLS-1$
-//						status,
-//						IStatus.WARNING | IStatus.ERROR);
-//				} 
-//			}			
+			IStatus status = restoreView(this);
+			if(status.getSeverity() == IStatus.ERROR) {
+				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
+				if(!workbench.isStarting()) {
+					ErrorDialog.openError(
+						page.getWorkbenchWindow().getShell(),
+						WorkbenchMessages.getString("ViewFactory.unableToRestoreViewTitle"), //$NON-NLS-1$
+						WorkbenchMessages.format("ViewFactory.unableToRestoreViewMessage",new String[]{getTitle()}), //$NON-NLS-1$
+						status,
+						IStatus.WARNING | IStatus.ERROR);
+				} 
+			} else {
+				releaseReferences();
+			}			
 		}
 		return part;
 	}
-	/**
-	 * @see IWorkbenchPartReference#getTitle()
-	 */
-	public String getTitle() {
-		return part.getTitle();
-	}
-	/**
-	 * @see IWorkbenchPartReference#getTitleImage()
-	 */
-	public Image getTitleImage() {
-		return part.getTitleImage();
-	}
-	/**
-	 * @see IWorkbenchPartReference#getId()
-	 */	
-	public String getId() {
-		if(part != null) {
-			if(part.getSite() == null)
-				return viewId;
-			return part.getSite().getId();
-		}
-		return viewId;
-	}
-	public void setPane(PartPane pane) {
-		((PartSite)part.getSite()).setPane(pane);
-	}
-	public PartPane getPane() {
-		return ((PartSite)part.getSite()).getPane();
-	}
-	public String getTitleToolTip() {
-		return part.getTitleToolTip();
+	public IWorkbenchPage getPage() {
+		return page;
 	}
 }
 
