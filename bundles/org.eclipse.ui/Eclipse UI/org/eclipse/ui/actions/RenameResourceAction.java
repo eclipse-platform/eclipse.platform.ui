@@ -10,11 +10,11 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -299,13 +299,6 @@ private void queryNewResourceNameInline(final IResource resource) {
 			}
 		}
 	});
-	// handle case where mouse click occurs on same line as edited item, 
-	// but outside textEditor bounds
-	textEditorParent.addListener(SWT.MouseDown, new Listener() {
-		public void handleEvent (Event e) {
-			saveChangesAndDispose(resource);
-		}
-	});
 	textEditor.addFocusListener(new FocusAdapter() {
 		public void focusLost(FocusEvent fe) {
 			saveChangesAndDispose(resource);
@@ -378,24 +371,32 @@ protected void runWithNewPath(IPath path, IResource resource) {
  * Save the changes and dispose of the text widget.
  * @param resource - the resource to move.
  */
-private void saveChangesAndDispose(IResource resource) {
+private void saveChangesAndDispose(final IResource resource) {
 	//Cache the resource to avoid selection loss after disposal
 	inlinedResource = resource;
-
-	String newName = textEditor.getText();
-	//Dispose the text widget regardless
-	disposeTextWidget();
-	if (!newName.equals(resource.getName())) {
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-		IStatus status = workspace.validateName(newName, resource.getType());
-		if (!status.isOK()) {
-			displayError(status.getMessage());
+	final String newName = textEditor.getText();
+	// Run this in an async to make sure that the operation that triggered
+	// this action is completed.  Otherwise this leads to problems when the
+	// icon of the item being renamed is clicked (i.e., which causes the rename
+	// text widget to lose focus and trigger this method).
+	Runnable query = new Runnable() {
+		public void run() {
+			//Dispose the text widget regardless
+			disposeTextWidget();
+			if (!newName.equals(resource.getName())) {
+				IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+				IStatus status = workspace.validateName(newName, resource.getType());
+				if (!status.isOK()) {
+					displayError(status.getMessage());
+				}
+				else {
+					IPath newPath = resource.getFullPath().removeLastSegments(1).append(newName);
+					runWithNewPath(newPath, resource);
+				}
+			}
 		}
-		else {
-			IPath newPath = resource.getFullPath().removeLastSegments(1).append(newName);
-			runWithNewPath(newPath, resource);
-		}
-	}
+	};
+	getTree().getShell().getDisplay().asyncExec(query);
 	inlinedResource = null;
 }
 /**
