@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -40,7 +35,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -55,11 +49,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class AntPropertiesBlock {
 	
@@ -79,8 +70,6 @@ public class AntPropertiesBlock {
 	private final AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
 
 	private IDialogSettings dialogSettings;
-	
-	private boolean showExternal= false;
 	
 	private boolean tablesEnabled= true;
 	
@@ -106,6 +95,23 @@ public class AntPropertiesBlock {
 	};
 	
 	/**
+	 * Key listener that delegates for key pressed events.
+	 */
+	private KeyAdapter keyListener= new KeyAdapter() {
+		public void keyPressed(KeyEvent event) {
+			if (event.getSource() == propertyTableViewer) {
+				if (removeButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(propertyTableViewer);
+				}
+			} else if (event.getSource() == fileTableViewer) {
+				if (removeFileButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(fileTableViewer);
+				}
+			}
+		}	
+	};
+	
+	/**
 	 * Selection changed listener that delegates selection events.
 	 */
 	private ISelectionChangedListener tableListener= new ISelectionChangedListener() {
@@ -126,36 +132,10 @@ public class AntPropertiesBlock {
 
 	private void addPropertyFile() {
 		
-		ViewerFilter filter= new PropertyFileFilter(Arrays.asList(getPropertyFiles()));
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(propertyTableViewer.getControl().getShell(), lp, cp);
-		dialog.setTitle(AntPreferencesMessages.getString("AntPropertiesBlock.12"));  //$NON-NLS-1$
-		dialog.setMessage(AntPreferencesMessages.getString("AntPropertiesBlock.13")); //$NON-NLS-1$
-		dialog.addFilter(filter);
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-
-		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
-			public IStatus validate(Object[] selection) {
-				if (selection.length == 0) {
-					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-				}
-				for (int i= 0; i < selection.length; i++) {
-					if (!(selection[i] instanceof IFile)) {
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-					}
-					IFile file= (IFile)selection[i];
-					if (!"properties".equalsIgnoreCase(file.getFileExtension())) { //$NON-NLS-1$
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-					}
-				}
-				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-			}			
-		};
-		dialog.setValidator(validator);
-		
+		AntPropertiesFileSelectionDialog dialog= new AntPropertiesFileSelectionDialog(propertyTableViewer.getControl().getShell(), lp, cp, Arrays.asList(getPropertyFiles()));
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
 			for (int i = 0; i < elements.length; i++) {
@@ -165,12 +145,6 @@ public class AntPropertiesBlock {
 			}
 			container.update();
 		}
-		
-	}
-
-	public AntPropertiesBlock(IAntBlockContainer container, boolean showExternal) {
-		this.container= container; 
-		this.showExternal= showExternal;
 	}
 	
 	public void createControl(Composite top, String propertyLabel, String propertyFileLabel) {
@@ -193,13 +167,7 @@ public class AntPropertiesBlock {
 			}
 		});
 		
-		propertyTableViewer.getTable().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (removeButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
-					remove(propertyTableViewer);
-				}
-			}
-		});	
+		propertyTableViewer.getTable().addKeyListener(keyListener);	
 		
 		createButtonGroup(top);
 
@@ -211,13 +179,7 @@ public class AntPropertiesBlock {
 		label.setText(propertyFileLabel);
 
 		fileTableViewer= createTableViewer(top);
-		fileTableViewer.getTable().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (removeFileButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
-					remove(fileTableViewer);
-				}
-			}
-		});	
+		fileTableViewer.getTable().addKeyListener(keyListener);	
 		createButtonGroup(top);
 	}
 	
@@ -263,16 +225,8 @@ public class AntPropertiesBlock {
 			editButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.2"));  //$NON-NLS-1$
 			removeButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.3"));  //$NON-NLS-1$
 		} else {
-			if (showExternal) {
-				addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.4")); //$NON-NLS-1$
-			}
-			String label;
-			if (showExternal) {
-				label= AntPreferencesMessages.getString("AntPropertiesBlock.14"); //$NON-NLS-1$
-			} else {
-				label= AntPreferencesMessages.getString("AntPropertiesBlock.4"); //$NON-NLS-1$
-			}
-			addExternalFileButton= createPushButton(parent, label);
+			addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.4")); //$NON-NLS-1$
+			addExternalFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.14")); //$NON-NLS-1$
 			removeFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeFileButton")); //$NON-NLS-1$
 		}
 	}
@@ -300,7 +254,7 @@ public class AntPropertiesBlock {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
 		FileDialog dialog = new FileDialog(fileTableViewer.getControl().getShell(), SWT.MULTI);
-		dialog.setFilterExtensions(new String[] { "*.properties" }); //$NON-NLS-1$;
+		dialog.setFilterExtensions(new String[] { "*.properties", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$;
 		dialog.setFilterPath(lastUsedPath);
 
 		String result = dialog.open();
