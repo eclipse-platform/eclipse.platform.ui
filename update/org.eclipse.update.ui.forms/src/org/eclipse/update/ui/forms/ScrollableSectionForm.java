@@ -11,7 +11,14 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 
-public class ScrollableForm extends Form {
+/**
+ * This version of the section form adds scrolling
+ * capability. However, scrolling can be disabled
+ * using 'setScrollable' method. For this reason,
+ * this class can be used instead of the SectionForm.
+ */
+
+public class ScrollableSectionForm extends SectionForm {
 	private Composite container;
 	private boolean verticalFit;
 	private boolean scrollable=true;
@@ -21,7 +28,7 @@ public class ScrollableForm extends Form {
 	private static final int VBAR_INCREMENT = 10;
 	private static final int VPAGE_INCREMENT = 40;
 
-public ScrollableForm() {
+public ScrollableSectionForm() {
 }
 public Control createControl(Composite parent) {
 	container = createParent(parent);

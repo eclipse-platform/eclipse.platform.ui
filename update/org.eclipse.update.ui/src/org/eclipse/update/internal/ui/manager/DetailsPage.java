@@ -9,7 +9,7 @@ public class DetailsPage extends UpdateFormPage {
 		super(view, title);
 	}
 	
-	public Form createForm() {
+	public IForm createForm() {
 		return new DetailsForm(this);
 	}
 }

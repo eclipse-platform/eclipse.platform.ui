@@ -41,8 +41,10 @@ import org.eclipse.swt.SWT;
 
 public class HTMLTableLayout extends Layout {
 	public int numColumns = 1;
-	public int marginWidth = 5;
-	public int marginHeight = 5;
+	public int leftMargin = 5;
+	public int rightMargin = 5;
+	public int topMargin = 5;
+	public int bottomMargin = 5;
 	public int horizontalSpacing = 5;
 	public int verticalSpacing = 5;
 	public boolean makeColumnsEqualWidth = false;
@@ -136,7 +138,7 @@ public class HTMLTableLayout extends Layout {
 		else {
 			columnWidths = new int [numColumns];
 			if (makeColumnsEqualWidth) {
-				int colSpace = tableWidth - 2*marginWidth;
+				int colSpace = tableWidth - leftMargin - rightMargin;
 				colSpace -= (numColumns-1)*horizontalSpacing;
 				int col = colSpace/numColumns;
 				for (int i=0; i<numColumns; i++) {
@@ -151,14 +153,14 @@ public class HTMLTableLayout extends Layout {
 			   }
 			}
 		}
-		int x = marginWidth;
-		int y = marginHeight;
+		int x = 0;
+		int y = topMargin;
 		// assign widths 
 		for (int i=0; i<grid.size(); i++) {
 			TableData [] row = (TableData [])grid.elementAt(i);
 			// assign widths, calculate heights
 			int rowHeight = 0;
-			x = marginWidth;
+			x = leftMargin;
 			for (int j=0; j<numColumns; j++) {
 				TableData td = row[j];
 				if (td.isItemData==false) {
@@ -191,7 +193,7 @@ public class HTMLTableLayout extends Layout {
 	}
 	
 int [] calculateExtraSpace(int tableWidth, int maxWidth, int minWidth) {
-	int fixedPart = marginWidth + marginWidth + (numColumns-1)*horizontalSpacing;
+	int fixedPart = leftMargin + rightMargin + (numColumns-1)*horizontalSpacing;
 	int D = maxWidth - minWidth;
 	int W = tableWidth -fixedPart - minWidth;
 	
@@ -386,7 +388,7 @@ private TableData [] createEmptyRow() {
 		else {
 			columnWidths = new int [numColumns];
 			if (makeColumnsEqualWidth) {
-				int colSpace = tableWidth - 2*marginWidth;
+				int colSpace = tableWidth - leftMargin - rightMargin;
 				colSpace -= (numColumns-1)*horizontalSpacing;
 				int col = colSpace/numColumns;
 				for (int i=0; i<numColumns; i++) {
@@ -403,8 +405,8 @@ private TableData [] createEmptyRow() {
 		}
 		int totalWidth=0;
 		int totalHeight=0;
-		int x = marginWidth;
-		int y = marginHeight;
+		int x = leftMargin;
+		int y = topMargin;
 		// compute widths 
 		for (int i=0; i<grid.size(); i++) {
 			TableData [] row = (TableData [])grid.elementAt(i);
@@ -427,8 +429,7 @@ private TableData [] createEmptyRow() {
 			}
 			y += rowHeight + verticalSpacing;
 		}
-		totalHeight = y + marginHeight;
-		//System.out.println("tableWidth="+tableWidth+", parentWidth="+parentWidth);
+		totalHeight = y + bottomMargin;
 		return new Point(tableWidth, totalHeight);
 	}
 
@@ -452,7 +453,7 @@ private TableData [] createEmptyRow() {
 			   minimumWidth += minColumnWidths[i];
 		}
 		// add margins
-		minimumWidth += marginWidth + marginWidth;
+		minimumWidth += leftMargin + rightMargin;
 		return minimumWidth;
 	}
 	
@@ -465,7 +466,7 @@ private TableData [] createEmptyRow() {
 			maximumWidth += maxColumnWidths[i];
 		}
 		// add margins
-		maximumWidth += marginWidth + marginWidth;
+		maximumWidth += leftMargin + rightMargin;
 		return maximumWidth;
 	}
 	

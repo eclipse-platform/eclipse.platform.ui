@@ -22,7 +22,7 @@ public static void main (String [] args) {
 			int swidth = ssize.width;
 			HTMLTableLayout layout = (HTMLTableLayout)c.getLayout();
 			Point size = layout.computeSize(c, swidth, SWT.DEFAULT, true);
-			if (size.x < swidth) size.x = swidth;
+			//if (size.x < swidth) size.x = swidth;
 			Rectangle trim = c.computeTrim(0, 0, size.x, size.y);
 			size = new Point(trim.width, trim.height);
 			/*
@@ -40,11 +40,16 @@ public static void main (String [] args) {
      //layout.horizontalSpacing = 0;
      c.setLayout(layout);
      
-     Label label = new Label(c, SWT.NULL);
+     Label label;
+     CLabel clabel;
+     
+     label = new Label(c, SWT.NULL);
      label.setText("Single line1");
      
-     label = new Label(c, SWT.WRAP);
-     label.setText("This is a much longer text that I want wrapped,"+
+     //label = new Label(c, SWT.WRAP);
+     Text text = new Text(c, SWT.MULTI | SWT.WRAP);
+     text.setEditable(false);
+     text.setText("This is a much longer text that I want wrapped,"+
      " but depending on the window size it can be rendered completely.");
      
      Button b = new Button(c, SWT.PUSH);

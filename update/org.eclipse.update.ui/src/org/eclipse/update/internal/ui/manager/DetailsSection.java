@@ -154,7 +154,7 @@ private void inputChanged(IFeature feature) {
 	infoLinkURL = feature.getInfoURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
 	nameLabel.getParent().layout(true);
-	((ScrollableForm)getPage().getForm()).update();
+	((ScrollableSectionForm)getPage().getForm()).update();
 	if (feature.getSite() instanceof ILocalSite) {
 		doButton.setText("Uninstall");
 	}

@@ -16,10 +16,10 @@ private DetailsSection detailsSection;
 	}
 	
 public void initialize(Object modelObject) {
-	setTitle("Feature Details");
+	setHeadingText("Feature Details");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	super.initialize(modelObject);
-	getControl().layout(true);
+	((Composite)getControl()).layout(true);
 }
 
 public void createFormClient(Composite parent) {

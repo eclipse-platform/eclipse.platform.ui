@@ -6,32 +6,35 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.swt.SWT;
 
-public class MainForm extends UpdateForm {
+public class MainForm extends UpdateWebForm {
 	
-	private PopularSitesSection bookmarkSection;
-	
-class EmptySection extends FormSection {
-	public EmptySection() {
-		setAddSeparator(false);
-		setTitleAsHyperlink(true);
-	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		return null;
-	}
+public MainForm(UpdateFormPage page) {
+	super(page);
 }
 
-	public MainForm(UpdateFormPage page) {
-		super(page);
-		setVerticalFit(true);
-	}
-	
 public void initialize(Object modelObject) {
-	setTitle("Welcome to Eclipse Update");
+	setHeadingText("Welcome to Eclipse Update");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	super.initialize(modelObject);
-	getControl().layout(true);
+	//((Composite)getControl()).layout(true);
 }
+
+protected int getNumColumns() {
+	return 1;
+}
+
+protected void createClient(Composite parent) {
+	//Composite container = factory.createComposite(parent);
+	Composite container = new Composite(parent, SWT.NULL);
+	HTMLTableLayout layout = new HTMLTableLayout();
+	container.setLayout(layout);
+	Label label = factory.createLabel(container, null, SWT.WRAP);
+	label.setText("Some random text to be first in the form");
+}
+
+/*
 
 public void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
@@ -112,4 +115,5 @@ private void showView(String viewId) {
 	catch (PartInitException e) {
 	}
 }
+*/
 }

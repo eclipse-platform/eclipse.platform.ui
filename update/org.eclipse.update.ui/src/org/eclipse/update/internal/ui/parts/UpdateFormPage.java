@@ -5,7 +5,7 @@ import org.eclipse.jface.action.*;
 
 
 public abstract class UpdateFormPage implements IUpdateFormPage {
-	private Form form;
+	private IForm form;
 	private Control control;
 	private MultiPageView view;
 	private String title;
@@ -29,7 +29,7 @@ public boolean contextMenuAboutToShow(IMenuManager manager) {
 	return true;
 }
 
-protected abstract Form createForm();
+protected abstract IForm createForm();
 
 public void createControl(Composite parent) {
 	control = form.createControl(parent);
@@ -49,7 +49,7 @@ public MultiPageView getView() {
 	return view;
 }
 
-public Form getForm() {
+public IForm getForm() {
 	return form;
 }
 
@@ -90,6 +90,7 @@ public String toString() {
 }
 
 public void init(Object model) {
+	form.initialize(model);
 }
 
 public void update() {

@@ -9,7 +9,7 @@ public class MainPage extends UpdateFormPage {
 		super(view, title);
 	}
 	
-	public Form createForm() {
+	public IForm createForm() {
 		return new MainForm(this);
 	}
 }

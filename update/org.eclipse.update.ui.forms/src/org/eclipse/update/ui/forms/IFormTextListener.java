@@ -5,6 +5,6 @@ package org.eclipse.update.ui.forms;
  */
 
 public interface IFormTextListener {
-	public void textValueChanged(FormText text);
-	public void textDirty(FormText text);
+	public void textValueChanged(FormEntry text);
+	public void textDirty(FormEntry text);
 }

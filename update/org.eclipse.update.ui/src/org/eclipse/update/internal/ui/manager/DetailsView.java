@@ -38,12 +38,12 @@ abstract class UpdateAction extends Action implements IUpdate {
 	}
 	
 public void createPages() {
-	if (SWT.getPlatform().equals("win32")==false) {
-		firstPageId = HOME_PAGE;
-		formWorkbook.setFirstPageSelected(false);
-		MainPage mainPage =
-			new MainPage(this, "Update Home");
-		addPage(HOME_PAGE, mainPage);
+	firstPageId = HOME_PAGE;
+	formWorkbook.setFirstPageSelected(false);
+	MainPage mainPage =
+		new MainPage(this, "Update Home");
+	addPage(HOME_PAGE, mainPage);
+/*
 		DetailsPage detailsPage = 
 			new DetailsPage(this, "Details");
 		addPage(DETAILS_PAGE, detailsPage);
@@ -54,6 +54,7 @@ public void createPages() {
 		firstPageId = BROWSER_PAGE;
 	   	addPage(BROWSER_PAGE, browser);
 	}
+*/
 }
 	
 public void showURL(String url) {
@@ -142,13 +143,14 @@ private void makeActions() {
 	forwardAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_H);
 	forwardAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_D);
 	forwardAction.setEnabled(false);
-	
+/*	
 	if (SWT.getPlatform().equals("win32")) {
 		EmbeddedBrowser browser = 
   	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
   	 	browser.addUpdate(backAction);
   	 	browser.addUpdate(forwardAction);
 	}
+*/
 }
 
 private void fillActionBars() {

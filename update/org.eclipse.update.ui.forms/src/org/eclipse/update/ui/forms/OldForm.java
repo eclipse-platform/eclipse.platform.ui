@@ -16,7 +16,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 
-public class Form implements PaintListener, IPropertyChangeListener {
+public class OldForm implements PaintListener, IPropertyChangeListener {
 	private String title;
 	private Vector sections;
 	private Composite control;
@@ -58,7 +58,7 @@ public class Form implements PaintListener, IPropertyChangeListener {
 	private Image headingImage;
 	private boolean headingVisible=true;
 
-public Form() {
+public OldForm() {
 	factory = new FormWidgetFactory();
    	titleFont = JFaceResources.getHeaderFont();
    	JFaceResources.getFontRegistry().addListener(this);

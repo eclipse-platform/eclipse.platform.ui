@@ -1,97 +1,130 @@
 package org.eclipse.update.ui.forms;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+
+/**
+ * FormText is a windowless control that
+ * draws text in the provided context.
  */
 
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import java.text.*;
 
-public class FormText {
-	private Text text;
-	private String value;
-	private boolean dirty;
-	private Vector listeners=new Vector();
-	boolean ignoreModify=false;
+public class FormText extends Canvas {
+	private Image backgroundImage;
+	private String text="";
+	private int textMarginWidth=5;
+	private int textMarginHeight=5;
 
-public FormText(Text text) {
-	this.text = text;
-	this.value = text.getText();
-	addListeners();
-}
-public void addFormTextListener(IFormTextListener listener) {
-	listeners.addElement(listener);
-}
-private void addListeners() {
-	text.addKeyListener(new KeyAdapter() {
-		public void keyReleased(KeyEvent e) {
-			keyReleaseOccured(e);
-		}
-	});
-	text.addModifyListener(new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			editOccured(e);
-		}
-	});
-	text.addFocusListener (new FocusAdapter() {
-		public void focusLost(FocusEvent e) {
-			if (dirty) commit();
-		}
-	});
-}
-public void commit() {
-	if (dirty) {
-		value = text.getText();
-		//notify
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			((IFormTextListener) iter.next()).textValueChanged(this);
-		}
+	public FormText(Composite parent, int style) {
+		super(parent, style);
+		addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				paint(e);
+			}
+		});
 	}
-	dirty = false;
-}
-protected void editOccured(ModifyEvent e) {
-	if (ignoreModify) return;
-	dirty = true;
-	for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-		((IFormTextListener) iter.next()).textDirty(this);
+	public String getText() {
+		return text;
 	}
-}
-
-public Text getControl() {
-	return text;
-}
-public java.lang.String getValue() {
-	return value;
-}
-public boolean isDirty() {
-	return dirty;
-}
-protected void keyReleaseOccured(KeyEvent e) {
-	if (e.character == '\r') {
-		// commit value
-		if (dirty) commit();
+	public void setText(String text) {
+		this.text = text;
 	}
-	else if (e.character == '\u001b') { // Escape character
-		text.setText(value); // restore old
-		dirty= false;
+	
+	public Image getBackgroundImage() {
+		return backgroundImage;
 	}
-}
-public void removeFormTextListener(IFormTextListener listener) {
-	listeners.removeElement(listener);
-}
-public void setDirty(boolean newDirty) {
-	dirty = newDirty;
-}
-public void setValue(String value) {
-	if (text!=null) text.setText(value);
-	this.value = value;
-}
+	
+	public void setBackgroundImage(Image image) {
+		this.backgroundImage = image;
+	}
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		int innerWidth = wHint;
+		if (innerWidth!=SWT.DEFAULT)
+		   innerWidth -= textMarginWidth*2;
+		Point textSize = computeTextSize(innerWidth, hHint);
+		int textWidth = textSize.x + 2*textMarginWidth;
+		int textHeight = textSize.y + 2*textMarginHeight;
+		return new Point(textWidth, textHeight);
+	}
+	private Point computeTextSize(int wHint, int hHint) {
+		Point extent;
+		GC gc = new GC(this);
+		
+		gc.setFont(getFont());
+		if ((getStyle() & SWT.WRAP)!=0 && wHint != SWT.DEFAULT) {
+			extent = computeWrapSize(gc, wHint);
+		}
+		else {
+			extent = gc.textExtent(getText());
+		}
+		gc.dispose();
+		return extent;
+	}
+	
+	private Point computeWrapSize(GC gc, int width) {
+		BreakIterator wb = BreakIterator.getWordInstance();
+		wb.setText(text);
+		FontMetrics fm = gc.getFontMetrics();
+		int lineHeight = fm.getHeight();
 
-public void setValue(String value, boolean blockNotification) {
-	ignoreModify = blockNotification;
-	setValue(value);
-	ignoreModify = false;
-}
+		int saved = 0;
+		int last = 0;
+		int height = lineHeight;
+		System.out.println("Width hint: "+width);
+		for (int loc = wb.first();
+			     loc != BreakIterator.DONE;
+			     loc = wb.next()) {
+		   String word = text.substring(saved, loc);
+		   Point extent = gc.textExtent(word);
+		   if (extent.x > width) {
+		   		// overflow
+		   		saved = last;
+		   		height += extent.y;
+		   }
+		   last = loc;
+		}
+		return new Point(width, height);
+		
+	}
+	private void paint(PaintEvent e) {
+		GC gc = e.gc;
+		Point size = getSize();
+		if (backgroundImage!=null) {
+	       gc.drawImage(backgroundImage, 0, 0);
+		}
+	   	gc.setFont(getFont());
+	   	if ((getStyle() & SWT.WRAP)!=0) {
+	  		BreakIterator wb = BreakIterator.getWordInstance();
+			wb.setText(text);
+			FontMetrics fm = gc.getFontMetrics();
+			int lineHeight = fm.getHeight();
 
+			int saved = 0;
+			int last = 0;
+			int y = textMarginHeight;
+			int width = size.x - textMarginWidth*2;
+			for (int loc = wb.first();
+			     loc != BreakIterator.DONE;
+			     loc = wb.next()) {
+		   		String line = text.substring(saved, loc);
+		   		Point extent = gc.textExtent(line);
+		   		if (extent.x > width) {
+		   			// overflow
+		   			String prevLine = text.substring(saved, last);
+		   			gc.drawString(prevLine, textMarginWidth, y, true);
+		   			saved = last;
+		   			y += lineHeight;
+		   		}
+		   		last = loc;
+			}
+			// paint last line
+			String lastLine = text.substring(saved, last);
+			gc.drawString(lastLine, textMarginWidth, y, true);
+	   	}
+	   	else {
+		   gc.drawText(getText(), textMarginWidth, textMarginHeight, true);
+	   	}
+	}
 }
