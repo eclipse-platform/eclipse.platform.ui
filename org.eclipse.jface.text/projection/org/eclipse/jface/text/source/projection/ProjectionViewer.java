@@ -676,9 +676,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			synchronized (fLock) {
 				run= fPendingRequests.isEmpty();
 			}
-			if (run)
-				catchupWithProjectionAnnotationModel(event);
-			else
+			if (run) {
+				
+				try {
+					catchupWithProjectionAnnotationModel(event);
+				} catch (BadLocationException x) {
+					throw new IllegalArgumentException();
+				}
+				
+			} else
 				postCatchupRequest(event);
 		} else {
 			postCatchupRequest(event);
@@ -701,17 +707,29 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						display.asyncExec(new Runnable() {
 							public void run() {
 								Iterator e= fPendingRequests.iterator();
-								while (true) {
-									AnnotationModelEvent ame= null;
-									synchronized (fLock) {
-										if (e.hasNext()) {
-											ame= (AnnotationModelEvent) e.next();
-										} else {
+								try {
+									while (true) {
+										AnnotationModelEvent ame= null;
+										synchronized (fLock) {
+											if (e.hasNext()) {
+												ame= (AnnotationModelEvent) e.next();
+											} else {
+												fPendingRequests.clear();
+												return;
+											}
+										}
+										catchupWithProjectionAnnotationModel(ame);
+									}
+								} catch (BadLocationException x) {
+									try {
+										catchupWithProjectionAnnotationModel(null);
+									} catch (BadLocationException x1) {
+										throw new IllegalArgumentException();
+									} finally {
+										synchronized (fLock) {
 											fPendingRequests.clear();
-											return;
 										}
 									}
-									catchupWithProjectionAnnotationModel(ame);
 								}
 							}
 						});
@@ -727,46 +745,43 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * this is identical to a world change event.
 	 * 
 	 * @param event the annotation model event or <code>null</code>
+	 * @exception BadLocationException in case the annotation model event is no longer in sync with the document
 	 */
-	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) {
-		try {
-			if (event == null) {
-				
+	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) throws BadLocationException {
+		if (event == null) {
+			
+			fPendingAnnotationWorldChange= false;
+			reinitializeProjection();
+			
+		} else if (event.isWorldChange()) {
+			
+			if (event.isValid()) {
 				fPendingAnnotationWorldChange= false;
 				reinitializeProjection();
-				
-			} else if (event.isWorldChange()) {
-				
+			} else
+				fPendingAnnotationWorldChange= true;
+			
+		} else {
+			
+			if (fPendingAnnotationWorldChange) {
 				if (event.isValid()) {
 					fPendingAnnotationWorldChange= false;
 					reinitializeProjection();
-				} else
-					fPendingAnnotationWorldChange= true;
-				
+				}
 			} else {
 				
-				if (fPendingAnnotationWorldChange) {
-					if (event.isValid()) {
-						fPendingAnnotationWorldChange= false;
-						reinitializeProjection();
-					}
-				} else {
-					
-					boolean fireRedraw= true;
-					
-					processDeletions(event, fireRedraw);
-					processAdditions(event, fireRedraw);
-					processModifications(event, fireRedraw);
-					
-					if (!fireRedraw) {
-						//TODO compute minimal scope for invalidation
-						invalidateTextPresentation();
-					}
-				}
+				boolean fireRedraw= true;
 				
+				processDeletions(event, fireRedraw);
+				processAdditions(event, fireRedraw);
+				processModifications(event, fireRedraw);
+				
+				if (!fireRedraw) {
+					//TODO compute minimal scope for invalidation
+					invalidateTextPresentation();
+				}
 			}
-		} catch (BadLocationException e) {
-			throw new IllegalArgumentException();
+			
 		}
 	}
 	
