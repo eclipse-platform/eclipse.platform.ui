@@ -523,6 +523,16 @@ function keyDownHandler(e)
   	if (key == 39) { // Right arrow, expand
 		var clickedNode = getTarget(e);
   		if (!clickedNode) return;
+  		if (isIE){
+			if(clickedNode.id!=null){
+				if(clickedNode.id.charAt(0)=='b'){
+					if(clickedNode.name!="opened"){
+						loadTOC(clickedNode.name);
+						return true;
+					}
+				}
+			}
+		}
 
   		var plus_minus = getPlusMinus(clickedNode);
   		if (plus_minus != null)
@@ -536,6 +546,19 @@ function keyDownHandler(e)
   	} else if (key == 37) { // Left arrow,collapse
 		var clickedNode = getTarget(e);
   		if (!clickedNode) return;
+  		
+  		if(clickedNode.id!=null){
+  			if(clickedNode.id.charAt(0)=='b'){
+				if(clickedNode.name=="opened"){
+					loadTOC(" ");
+					return true;
+				}
+				else{ 	
+					return true;
+				}
+			}
+			
+		}
 
   		var plus_minus = getPlusMinus(clickedNode);
   		if (plus_minus != null)

@@ -191,7 +191,7 @@ if (data.isIE()){
 		if(isSelected) {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt="<%=ServletResources.getString("bookOpen", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt="<%=ServletResources.getString("bookOpen", request)%>"><a id="b<%=toc%>" name="opened" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
 <%
 			// Only generate the selected toc
 			data.generateToc(toc, out);
@@ -202,7 +202,7 @@ if (data.isIE()){
 		} else {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" name="<%=data.getTocHref(toc)%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
 		}
 %>
