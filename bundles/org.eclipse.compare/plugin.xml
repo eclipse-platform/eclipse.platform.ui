@@ -114,6 +114,7 @@
             id="org.eclipse.compare.internal.ComparePreferencePage">
       </page>
    </extension>
+   
 <!-- commands and their bindings -->
    <extension
          point="org.eclipse.ui.commands">
@@ -125,76 +126,41 @@
       <command
             name="%Command.copyRightToLeft.name"
             description="%Command.copyRightToLeft.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.copyRightToLeft">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.copyRightToLeft"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.copyLeftToRight.name"
             description="%Command.copyLeftToRight.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.copyLeftToRight">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.copyLeftToRight"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.copyAllRightToLeft.name"
             description="%Command.copyAllRightToLeft.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.copyAllRightToLeft">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.copyAllRightToLeft"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.copyAllLeftToRight.name"
             description="%Command.copyAllLeftToRight.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.copyAllLeftToRight">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.copyAllLeftToRight"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.selectNextChange.name"
             description="%Command.selectNextChange.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.selectNextChange">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.selectNextChange"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.selectPreviousChange.name"
             description="%Command.selectPreviousChange.description"
-            category="org.eclipse.compare.ui.category.compare"
+            categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.selectPreviousChange">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.compare.selectPreviousChange"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
    </extension>
+   
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
