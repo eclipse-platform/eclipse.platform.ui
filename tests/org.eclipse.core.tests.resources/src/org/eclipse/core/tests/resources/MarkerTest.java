@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.*;
 public class MarkerTest extends ResourceTest {
 
 	public static final String TRANSIENT_MARKER = "org.eclipse.core.tests.resources.transientmarker";
+	public static final String TEST_PROBLEM_MARKER = "org.eclipse.core.tests.resources.testproblem";
 
 	/** The collection of resources used for testing. */
 	IResource[] resources;
@@ -112,18 +113,18 @@ public class MarkerTest extends ResourceTest {
 		long stop;
 
 		// cleanup old resources and create our own
-		IResource[] resources = null;
+		IResource[] testResources = null;
 		try {
 			getWorkspace().getRoot().delete(false, getMonitor());
-			resources = createLargeHierarchy();
+			testResources = createLargeHierarchy();
 		} catch (CoreException e) {
 			fail("0.0", e);
 		}
 
 		// header info
 		final int markersPerResource = 20;
-		final int numMarkers = resources.length * markersPerResource;
-		display("\nNumber of resources: " + resources.length);
+		final int numMarkers = testResources.length * markersPerResource;
+		display("\nNumber of resources: " + testResources.length);
 		display("Markers per resource: " + markersPerResource);
 		display("Total Number of Markers: " + numMarkers);
 
@@ -348,9 +349,9 @@ public class MarkerTest extends ResourceTest {
 		result.add("/");
 		new MarkerTest().addChildren(result, Path.ROOT, 3, 4);
 		String[] names = (String[]) result.toArray(new String[result.size()]);
-		IResource[] resources = buildResources(getWorkspace().getRoot(), names);
-		ensureExistsInWorkspace(resources, true);
-		return resources;
+		IResource[] created = buildResources(getWorkspace().getRoot(), names);
+		ensureExistsInWorkspace(created, true);
+		return created;
 	}
 
 	protected IMarker[] createMarkers(IResource[] hosts, String type) throws CoreException {
@@ -706,6 +707,62 @@ public class MarkerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
+	}
+	
+	/**
+	 * Tests public API method IMarker#isSubTypeOf
+	 */
+	public void testIsSubTypeOf() {
+		IProject project = getWorkspace().getRoot().getProject("testisSubType");
+		IMarker marker, task, problem, testProblem, invalid;
+		
+		final String INVALID_MARKER = "does.not.exist.at.AllMarker";
+		
+		try {
+			ensureExistsInWorkspace(project, true);
+			marker= project.createMarker(IMarker.MARKER);
+			task = project.createMarker(IMarker.TASK);
+			problem = project.createMarker(IMarker.PROBLEM);
+			testProblem  = project.createMarker(TEST_PROBLEM_MARKER);
+			invalid = project.createMarker(INVALID_MARKER);
+			
+			assertTrue("1.0", marker.isSubtypeOf(IMarker.MARKER));
+			assertTrue("1.1", !marker.isSubtypeOf(IMarker.TASK));
+			assertTrue("1.2", !marker.isSubtypeOf(IMarker.PROBLEM));
+			assertTrue("1.3", !marker.isSubtypeOf(TEST_PROBLEM_MARKER));
+			assertTrue("1.4", !marker.isSubtypeOf(INVALID_MARKER));
+
+			assertTrue("2.0", task.isSubtypeOf(IMarker.MARKER));
+			assertTrue("2.1", task.isSubtypeOf(IMarker.TASK));
+			assertTrue("2.2", !task.isSubtypeOf(IMarker.PROBLEM));
+			assertTrue("2.3", !task.isSubtypeOf(TEST_PROBLEM_MARKER));
+			assertTrue("2.4", !task.isSubtypeOf(INVALID_MARKER));
+
+			assertTrue("3.0", problem.isSubtypeOf(IMarker.MARKER));
+			assertTrue("3.1", !problem.isSubtypeOf(IMarker.TASK));
+			assertTrue("3.2", problem.isSubtypeOf(IMarker.PROBLEM));
+			assertTrue("3.3", !problem.isSubtypeOf(TEST_PROBLEM_MARKER));
+			assertTrue("3.4", !problem.isSubtypeOf(INVALID_MARKER));
+
+			assertTrue("4.0", testProblem.isSubtypeOf(IMarker.MARKER));
+			assertTrue("4.1", !testProblem.isSubtypeOf(IMarker.TASK));
+			assertTrue("4.2", testProblem.isSubtypeOf(IMarker.PROBLEM));
+			assertTrue("4.3", testProblem.isSubtypeOf(TEST_PROBLEM_MARKER));
+			assertTrue("4.4", !testProblem.isSubtypeOf(INVALID_MARKER));
+
+			// behaviour with an undefined marker type is not specified, but
+			// test current behaviour to give us advance warning of accidental
+			// behavioural change
+			assertTrue("5.0", !invalid.isSubtypeOf(IMarker.MARKER));
+			assertTrue("5.1", !invalid.isSubtypeOf(IMarker.TASK));
+			assertTrue("5.2", !invalid.isSubtypeOf(IMarker.PROBLEM));
+			assertTrue("5.3", !invalid.isSubtypeOf(TEST_PROBLEM_MARKER));
+			assertTrue("5.4", invalid.isSubtypeOf(INVALID_MARKER));
+
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		
 	}
 
 	/**

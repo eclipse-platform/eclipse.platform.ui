@@ -92,6 +92,9 @@
   <extension id="transientmarker" point="org.eclipse.core.resources.markers">
     <super type="org.eclipse.core.resources.marker"/>
   </extension>   
+  <extension id="testproblem" point="org.eclipse.core.resources.markers">
+    <super type="org.eclipse.core.resources.problemmarker"/>
+  </extension>   
 
   <extension point="org.eclipse.core.resources.builders" id="deltaverifierbuilder" name="Delta Verifier">
     <builder>

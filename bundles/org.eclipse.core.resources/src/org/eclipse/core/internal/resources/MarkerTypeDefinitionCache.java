@@ -15,41 +15,94 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 
 public class MarkerTypeDefinitionCache {
+	static class MarkerTypeDefinition {
+		boolean isPersistent = false;
+		Set superTypes;
 
-	// cache of the marker definitions
+		MarkerTypeDefinition(IExtension ext) {
+			IConfigurationElement[] elements = ext.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement element = elements[i];
+				// supertype
+				final String elementName = element.getName();
+				if (elementName.equalsIgnoreCase("super")) { //$NON-NLS-1$
+					String aType = element.getAttribute("type"); //$NON-NLS-1$
+					if (aType != null) {
+						if (superTypes == null)
+							superTypes = new HashSet(8);
+						//note that all marker type names will be in the intern table
+						//already because there is invariably a constant to describe
+						//the type name
+						superTypes.add(aType.intern());
+					}
+				}
+				// persistent
+				if (elementName.equalsIgnoreCase("persistent")) { //$NON-NLS-1$
+					String bool = element.getAttribute("value"); //$NON-NLS-1$
+					if (bool != null)
+						this.isPersistent = Boolean.valueOf(bool).booleanValue();
+				}
+				// XXX: legacy code for support of <transient> tag. remove later.
+				if (elementName.equalsIgnoreCase("transient")) { //$NON-NLS-1$
+					String bool = element.getAttribute("value"); //$NON-NLS-1$
+					if (bool != null)
+						this.isPersistent = !Boolean.valueOf(bool).booleanValue();
+				}
+			}
+		}
+	}
+
+	/**
+	 * The marker type definitions.  Maps String (markerId) -> MarkerTypeDefinition
+	 */
 	protected HashMap definitions;
-
-	/** Cache of marker type hierachies */
-	protected HashMap lookup;
 
 	/** Constructs a new type cache.
 	 */
 	public MarkerTypeDefinitionCache() {
-		initializeCache();
-	}
-
-	private void computeSuperTypes(String id) {
-		Set entry = new HashSet(5);
-		List queue = new ArrayList(5);
-		queue.add(id);
-		while (!queue.isEmpty()) {
-			String type = (String) queue.remove(0);
-			entry.add(type);
-			MarkerTypeDefinition def = (MarkerTypeDefinition) definitions.get(type);
-			if (def != null) {
-				Set newEntries = def.getSuperTypes();
-				if (newEntries != null)
-					queue.addAll(newEntries);
-			}
-		}
-		lookup.put(id, entry);
-	}
-
-	private void initializeCache() {
 		loadDefinitions();
-		lookup = new HashMap(definitions.size());
-		for (Iterator i = definitions.keySet().iterator(); i.hasNext();)
-			computeSuperTypes((String) i.next());
+		HashSet toCompute = new HashSet(definitions.keySet());
+		for (Iterator i = definitions.keySet().iterator(); i.hasNext();) {
+			String markerId = (String) i.next();
+			if (toCompute.contains(markerId))
+				computeSuperTypes(markerId, toCompute);
+		}
+	}
+
+	/**
+	 * Computes the transitive set of super types of the given marker type.
+	 * @param markerId The type to compute super types for
+	 * @param toCompute The set of types that have not yet had their
+	 * supertypes computed.
+	 * @return The transitive set of super types for this marker, or null
+	 * if this marker is not defined or has no super types.
+	 */
+	private Set computeSuperTypes(String markerId, Set toCompute) {
+		MarkerTypeDefinition def = (MarkerTypeDefinition) definitions.get(markerId);
+		if (def == null || def.superTypes == null) {
+			//nothing to do if there are no supertypes
+			toCompute.remove(markerId);
+			return null;
+		}
+		Set transitiveSuperTypes = new HashSet(def.superTypes);
+		for (Iterator it = def.superTypes.iterator(); it.hasNext();) {
+			String superId = (String) it.next();
+			Set toAdd = null;
+			if (toCompute.contains(superId)) {
+				//this type's super types have not been compute yet. Do recursive call
+				toAdd = computeSuperTypes(superId, toCompute);
+			} else {
+				// we have already computed this super type's super types (or it doesn't exist)
+				MarkerTypeDefinition parentDef = (MarkerTypeDefinition) definitions.get(superId);
+				if (parentDef != null)
+					toAdd = parentDef.superTypes;
+			}
+			if (toAdd != null)
+				transitiveSuperTypes.addAll(toAdd);
+		}
+		def.superTypes = transitiveSuperTypes;
+		toCompute.remove(markerId);
+		return transitiveSuperTypes;
 	}
 
 	/**
@@ -57,15 +110,18 @@ public class MarkerTypeDefinitionCache {
 	 */
 	public boolean isPersistent(String type) {
 		MarkerTypeDefinition def = (MarkerTypeDefinition) definitions.get(type);
-		return def != null && def.persistent();
+		return def != null && def.isPersistent;
 	}
 
 	/**
 	 * Returns true if the given target class has the specified type as a super type.
 	 */
 	public boolean isSubtype(String type, String superType) {
-		Set entry = (Set) lookup.get(type);
-		return entry != null && entry.contains(superType);
+		//types are considered super types of themselves
+		if (type.equals(superType))
+			return true;
+		MarkerTypeDefinition def = (MarkerTypeDefinition) definitions.get(type);
+		return def != null && def.superTypes != null && def.superTypes.contains(superType);
 	}
 
 	private void loadDefinitions() {
@@ -73,6 +129,6 @@ public class MarkerTypeDefinitionCache {
 		IExtension[] types = point.getExtensions();
 		definitions = new HashMap(types.length);
 		for (int i = 0; i < types.length; i++)
-			definitions.put(types[i].getUniqueIdentifier(), new MarkerTypeDefinition(types[i]));
+			definitions.put(types[i].getUniqueIdentifier().intern(), new MarkerTypeDefinition(types[i]));
 	}
 }
