@@ -191,8 +191,8 @@ public void checkpoint(boolean build);
  * </p>
  * <p>
  * Cycles and ambiguities are handled by elimination.  Projects involved
- * in cycles are simply cut out of the orderd list and returned in an undefined
- * order.  Closed and non-existant projects are ignored and do not appear
+ * in cycles are simply cut out of the ordered list and returned in an undefined
+ * order.  Closed and non-existent projects are ignored and do not appear
  * in the returned value at all.
  * </p>
  *

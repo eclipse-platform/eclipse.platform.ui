@@ -304,7 +304,7 @@ public static String[][] computeNodeOrder(String[][] specs) {
 	return result;
 }
 /**
- * @see IProject
+ * Method declared on IWorkspace
  */
 public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 	List prereqs = new ArrayList(6);
