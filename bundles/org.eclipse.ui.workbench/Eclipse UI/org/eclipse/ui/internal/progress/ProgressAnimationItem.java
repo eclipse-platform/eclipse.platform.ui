@@ -173,7 +173,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolButton.setImage(im);
 		toolButton.setToolTipText(tt);
 		toolbar.setVisible(true);
-		toolbar.redraw();
+		toolbar.getParent().layout(); // must layout
 	}
 	
 	/*
