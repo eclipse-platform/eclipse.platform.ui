@@ -233,6 +233,47 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 			fail("1.6", e);
 		}
 	}
+	/**
+	 * Test copying a linked folder into a child of its alias.
+	 */
+	public void testCopyToChild() {
+		//copying link to child should fail
+		IFolder copyDest = fLinkOverlap1.getFolder("CopyDest");
+		try {
+			fLinkOverlap2.copy(copyDest.getFullPath(), IResource.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		//moving link to child should fail
+		try {
+			fLinkOverlap2.move(copyDest.getFullPath(), IResource.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		
+		//copy to self should fail
+		IFolder copyDest2 = fLinkOverlap2.getFolder(copyDest.getName());
+		try {
+			copyDest.create(IResource.NONE, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.3");
+		}
+		try {
+			copyDest.copy(copyDest2.getFullPath(), IResource.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		//moving link to self should fail
+		try {
+			copyDest.move(copyDest2.getFullPath(), IResource.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+	}
 	public void testCreateDeleteFile() {
 		//file in linked folder
 		try {
