@@ -108,13 +108,12 @@
 			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
 		</view>
 	</extension>
-	
-	<extension point="org.eclipse.ant.core.antObjects">
-		<antObject
-			name="org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"
-			class="org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"
-			library="lib/antbuilder.jar">
-		</antObject>
-	</extension>
+
+    <extension point="org.eclipse.ant.core.extraClasspathEntries">
+     	<extraClasspathEntry
+         	library="lib/antbuilder.jar">
+      	</extraClasspathEntry>
+    </extension>
+
 
 </plugin>
