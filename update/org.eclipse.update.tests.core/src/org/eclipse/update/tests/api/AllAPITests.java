@@ -22,6 +22,7 @@ public class AllAPITests extends UpdateManagerTestCase {
 		suite.setName("API Tests");
 
 		suite.addTest(new TestSuite(TestSiteAPI.class));
+		suite.addTest(new TestSuite(TestSiteManagerAPI.class));		
 		suite.addTest(new TestSuite(TestDefaultExecutableFeatureAPI.class));
 		suite.addTest(new TestSuite(TestDefaultPackageFeatureAPI.class));
 		suite.addTest(new TestSuite(TestPluginContainerAPI.class));

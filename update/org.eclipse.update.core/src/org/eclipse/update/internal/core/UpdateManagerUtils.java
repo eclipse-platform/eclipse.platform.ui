@@ -51,7 +51,7 @@ public class UpdateManagerUtils {
 	public static String getResourceString(String infoURL,ResourceBundle bundle){
 		String result = null;
 		if (infoURL!=null){
-			result = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(infoURL,bundle);
+			result = UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(infoURL,bundle);
 		}
 		return result;
 	};

@@ -38,7 +38,7 @@ public class UpdateManagerPlugin extends Plugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static UpdateManagerPlugin getDefault() {
+	public static UpdateManagerPlugin getPlugin() {
 		return plugin;
 	}
 
@@ -54,7 +54,7 @@ public class UpdateManagerPlugin extends Plugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle= UpdateManagerPlugin.getDefault().getResourceBundle();
+		ResourceBundle bundle= UpdateManagerPlugin.getPlugin().getResourceBundle();
 		try {
 			return bundle.getString(key);
 		} catch (MissingResourceException e) {

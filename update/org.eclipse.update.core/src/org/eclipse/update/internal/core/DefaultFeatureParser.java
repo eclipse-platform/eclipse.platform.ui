@@ -61,7 +61,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Start parsing:"+feature.getURL().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing:"+feature.getURL().toExternalForm());
 		}
 
 
@@ -72,7 +72,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getDefault().debug(e.getLocalizedMessage()+":"+feature.getURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+feature.getURL().toExternalForm());
 			}
 		}
 		
@@ -86,7 +86,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		throws SAXException {
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
+			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
 		}
 		
 		String tag = localName.trim();
@@ -137,7 +137,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * process the Feature info
 	 */
 	private void processFeature(Attributes attributes){
-		// if the type doesn';t exist ask the site for default type
+		// if the type doesn't exist ask the site for default type
 		String id = attributes.getValue("id");
 		String ver= attributes.getValue("version");
 		// TODO:
@@ -169,9 +169,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End process Feature tag: id:"+id+" ver:"+ver+" label:"+label+" provider:"+provider);
-			UpdateManagerPlugin.getDefault().debug("End process Feature tag: image:"+imageURL);
-			UpdateManagerPlugin.getDefault().debug("End process Feature tag: ws:"+ws+" os:"+os+" nl:"+nl); 
+			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: id:"+id+" ver:"+ver+" label:"+label+" provider:"+provider);
+			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: image:"+imageURL);
+			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: ws:"+ws+" os:"+os+" nl:"+nl); 
 		}
 	}
 	
@@ -184,10 +184,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);
 		Info inf = new Info(url);
 
-
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Processed Info: url:"+infoURL);
+			UpdateManagerPlugin.getPlugin().debug("Processed Info: url:"+infoURL);
 		}
 		
 		return inf;
@@ -207,7 +206,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Processed URLInfo: url:"+infoURL+" label:"+label);
+			UpdateManagerPlugin.getPlugin().debug("Processed URLInfo: url:"+infoURL+" label:"+label);
 		}
 
 		
@@ -275,9 +274,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Processed Plugin: id:"+id+" ver:"+ver+" fragment:"+fragment);
-			UpdateManagerPlugin.getDefault().debug("Processed Plugin: os:"+os+" ws:"+ws+" nl:"+nl);			
-			UpdateManagerPlugin.getDefault().debug("Processed Plugin: download size:"+download_size+" install size:"+install_size);
+			UpdateManagerPlugin.getPlugin().debug("Processed Plugin: id:"+id+" ver:"+ver+" fragment:"+fragment);
+			UpdateManagerPlugin.getPlugin().debug("Processed Plugin: os:"+os+" ws:"+ws+" nl:"+nl);			
+			UpdateManagerPlugin.getPlugin().debug("Processed Plugin: download size:"+download_size+" install size:"+install_size);
 		}
 
 	
@@ -305,7 +304,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				
 				// DEBUG:		
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-					UpdateManagerPlugin.getDefault().debug("Found Description Text");
+					UpdateManagerPlugin.getPlugin().debug("Found Description Text");
 				}
 			}
 
@@ -314,7 +313,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 				// DEBUG:		
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-					UpdateManagerPlugin.getDefault().debug("Found Copyright Text");
+					UpdateManagerPlugin.getPlugin().debug("Found Copyright Text");
 				}
 				
 			}
@@ -324,7 +323,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 				// DEBUG:		
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-					UpdateManagerPlugin.getDefault().debug("Found License Text");
+					UpdateManagerPlugin.getPlugin().debug("Found License Text");
 				}
 				
 			}
@@ -333,7 +332,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End Element:"+uri+":"+localName+":"+qName);
+			UpdateManagerPlugin.getPlugin().debug("End Element:"+uri+":"+localName+":"+qName);
 		}
 	}
 

@@ -197,13 +197,11 @@ public abstract class AbstractFeature implements IFeature {
 	 * @see IFeature#getDiscoveryInfos()
 	 */
 	public IInfo[] getDiscoveryInfos() {
-		if (discoveryInfos == null && !isInitialized)
-			init();
-
 		IInfo[] result = null;
-		// FIXME:
-		if (discoveryInfos != null && !discoveryInfos.isEmpty()) {
-			result = (IInfo[]) discoveryInfos.toArray(new IInfo[discoveryInfos.size()]);
+		if (discoveryInfos == null && !isInitialized)init();
+		if (!(discoveryInfos == null || discoveryInfos.isEmpty())) {
+			result = new IInfo[discoveryInfos.size()];
+			discoveryInfos.toArray(result);
 		}
 		return result;
 	}
@@ -493,9 +491,8 @@ public abstract class AbstractFeature implements IFeature {
 					InputStream sourceArchiveStream =
 						((AbstractSite) getSite()).getInputStream(this, archiveIDToInstall[i]);
 					if (sourceArchiveStream != null) {
-						// FIXME: what name should the local file have ? the id of the site.xml ?
-						// should it be a random file name ?
-						// it should be the regular plugins/id_ver as the Temp site is OUR site
+						// the name of teh file in teh temp directory
+						// should be the regular plugins/id_ver as the Temp site is OUR site
 						String newFile =
 							tempSite.getURL().getPath()
 								+ tempSite.DEFAULT_PLUGIN_PATH
@@ -627,13 +624,10 @@ public abstract class AbstractFeature implements IFeature {
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = null;
-		//FIXME: not pretty code
-		if (pluginEntries == null && !isInitialized)
-			init();
-		if (pluginEntries != null && !pluginEntries.isEmpty()) {
-			result =
-				(IPluginEntry[]) (pluginEntries
-					.toArray(new IPluginEntry[pluginEntries.size()]));
+		if (pluginEntries == null && !isInitialized) init();
+		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
+			result =new IPluginEntry[pluginEntries.size()];
+			pluginEntries.toArray(result);
 		}
 		return result;
 	}

@@ -45,7 +45,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Start parsing:"+site.getURL().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing:"+site.getURL().toExternalForm());
 		}
 		
 		try {
@@ -55,7 +55,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getDefault().debug(e.getLocalizedMessage()+":"+site.getURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+site.getURL().toExternalForm());
 			}
 		}		
 		parser.parse(new InputSource(this.siteStream));
@@ -69,7 +69,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
+			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:"+uri+" local Name:"+localName+" qName:"+qName);
 		}
 
 		String tag = localName.trim();
@@ -114,7 +114,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End process Site tag: infoURL:"+infoURL);
+			UpdateManagerPlugin.getPlugin().debug("End process Site tag: infoURL:"+infoURL);
 		}
 		
 		
@@ -150,7 +150,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End Processing Feature Tag: id:"+id+" ver:"+ver+" type:"+type+" url"+url.toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("End Processing Feature Tag: id:"+id+" ver:"+ver+" type:"+type+" url"+url.toExternalForm());
 		}
 		
 	}
@@ -167,7 +167,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End processing Archive: id:"+id+" ver:"+urlString);
+			UpdateManagerPlugin.getPlugin().debug("End processing Archive: id:"+id+" ver:"+urlString);
 		}
 		
 	}	
@@ -184,7 +184,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End processing CategoryDef: name:"+name+" label:"+label);
+			UpdateManagerPlugin.getPlugin().debug("End processing CategoryDef: name:"+name+" label:"+label);
 		}
 		
 	}
@@ -205,7 +205,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
-			UpdateManagerPlugin.getDefault().debug("End Element:"+arg0+":"+arg1+":"+arg2);
+			UpdateManagerPlugin.getPlugin().debug("End Element:"+arg0+":"+arg1+":"+arg2);
 		}
 		
 	}

@@ -69,11 +69,10 @@ public class URLSite extends AbstractSite {
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		// FIXME: I do not like this pattern... either go all teh way Array
-		// or find better pattern
 		IPluginEntry[] result = null;
-		if (!pluginEntries.isEmpty()){
-			result = (IPluginEntry[])pluginEntries.toArray(new IPluginEntry[0]);
+		if (!(pluginEntries==null || pluginEntries.isEmpty())){
+			result = new IPluginEntry[pluginEntries.size()];
+			pluginEntries.toArray(result);
 		}
 		return result;
 	}

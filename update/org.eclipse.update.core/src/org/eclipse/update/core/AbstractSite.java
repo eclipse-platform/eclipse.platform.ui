@@ -188,9 +188,9 @@ public abstract class AbstractSite implements ISite {
 		IFeature[] result = null;
 		if (isManageable){
 			if (features==null) initializeSite();
-			//FIXME: I do not like this pattern.. List or Array ???
 			if (!(features==null || features.isEmpty())){
-				result = (IFeature[])features.toArray(new IFeature[features.size()]);
+				result = new IFeature[features.size()];
+				features.toArray(result);
 			}
 		}
 		return result;
@@ -215,9 +215,9 @@ public abstract class AbstractSite implements ISite {
 		IInfo[] result = null;
 		if (isManageable){
 			if (archives==null) initializeSite();
-			//FIXME: I do not like this pattern.. List or Array ???
 			if (!(archives==null || archives.isEmpty())){
-				result = (IInfo[])archives.toArray(new IInfo[archives.size()]);
+				result = new IInfo[archives.size()];
+				archives.toArray(result);
 			}
 		}
 		return result;
