@@ -1479,7 +1479,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				IFile file = (IFile)resource;
 				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
 					IPath configPath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-					configPath.append(file.getFullPath());
+					configPath = configPath.append(file.getFullPath());
 					ILaunchConfiguration handle = new LaunchConfiguration(configPath);
 					switch (delta.getKind()) {						
 						case IResourceDelta.ADDED :
