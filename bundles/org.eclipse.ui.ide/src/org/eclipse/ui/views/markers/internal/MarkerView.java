@@ -212,6 +212,11 @@ public abstract class MarkerView extends TableView {
 		if (monitor.isCanceled()) return;
 		
 		uiJob.schedule();
+		try {
+			uiJob.join();
+		} catch (InterruptedException e) {
+			monitor.done();
+		}
 		
 		monitor.done();
 	}
