@@ -123,31 +123,35 @@ public class BranchWizardPage extends CVSWizardPage {
 	}
 	
 	private void updateEnablement() {
+		boolean complete = true;
 		String branch = branchText.getText();
-		if (branch.length() == 0) {
-			setErrorMessage(null);
-			setPageComplete(false);
-			return;
-		}
-		IStatus status = CVSTag.validateTagName(branch);
-		if (status.isOK()) {
-			setErrorMessage(null);
-		} else {
-			setErrorMessage(status.getMessage());
-			setPageComplete(false);
-			return;
-		}
 		
-		if(versionText!=null) {
-			status = CVSTag.validateTagName(versionText.getText());
-			if (status.isOK()) {
-				setErrorMessage(null);
+		if (branch.length() == 0) {
+			setMessage(null);
+			complete = false;
+		} else {
+			IStatus status = CVSTag.validateTagName(branch);
+			if (!status.isOK()) {
+				setMessage(status.getMessage(), WARNING_MESSAGE);
+				complete = false;
 			} else {
-				setErrorMessage(status.getMessage());
-				setPageComplete(false);
-				return;
+				if(versionText!=null) {
+					status = CVSTag.validateTagName(versionText.getText());
+					if (!status.isOK()) {
+						setMessage(status.getMessage(), WARNING_MESSAGE);
+						complete = false;
+					} else {
+						if(versionText.getText().equals(branch)) {
+							setMessage(Policy.bind("BranchWizard.branchAndVersionMustBeDifferent"), WARNING_MESSAGE); //$NON-NLS-1$
+							complete = false;
+						}
+					}
+				}
 			}
 		}
-		setPageComplete(true);
+		if(complete) {
+			setMessage(null);
+		}
+		setPageComplete(complete);
 	}
 }
