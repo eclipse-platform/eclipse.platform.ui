@@ -114,24 +114,25 @@ public class EmbeddedHelpView extends ViewPart {
 
 			// only add actions for windows.
 			// when we have an embedded browser on linux, remove the if()
-			if (System.getProperty("os.name").startsWith("Win"))
+			if (System.getProperty("os.name").startsWith("Win")){
 				addContributions();
 
-			vSash = new Sash(viewContainer, SWT.VERTICAL);
-			vSash.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent event) {
-					if (event.detail != SWT.DRAG) {
-						vSash.setBounds(event.x, event.y, event.width, event.height);
-						layout();
+				vSash = new Sash(viewContainer, SWT.VERTICAL);
+				vSash.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent event) {
+						if (event.detail != SWT.DRAG) {
+							vSash.setBounds(event.x, event.y, event.width, event.height);
+							layout();
+						}
 					}
-				}
-			});
+				});
+			}
 			viewContainer.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent event) {
 					shellResized();
 				}
 			});
-
+			
 			// update parts
 			navigationViewer.setInput(infoSet);
 
@@ -283,7 +284,8 @@ public class EmbeddedHelpView extends ViewPart {
 	* positions of the sashes..events.SelectionEvent
 	*/
 	void layout() {
-
+		if(vSash==null) // Linux
+			return;
 		Rectangle viewContainerBounds = viewContainer.getClientArea();
 		Rectangle vSashBounds = vSash.getBounds();
 		viewsWidthPercentage =
@@ -361,6 +363,11 @@ public class EmbeddedHelpView extends ViewPart {
 
 		/* Get the client area for the shell */
 		Rectangle viewContainerBounds = viewContainer.getClientArea();
+		
+		if(vSash==null){ // Linux
+			navigationViewer.getControl().setBounds(viewContainerBounds);
+			return;
+		}
 
 		/* Position the sash according to same proportions as before*/
 		vSash.setLocation(
