@@ -101,7 +101,7 @@
       &lt;extension point=&quot;org.eclipse.core.runtime.adapters&quot;&gt;
          &lt;factory 
             class=&quot;com.xyz.MyFileAdapterFactory&quot; 
-            adaptableType=&quot;org.eclipse.core.resources.IFile&quot; 
+            adaptableType=&quot;org.eclipse.core.resources.IFile&quot;&gt;
             &lt;adapter type=&quot;com.xyz.MyFile&quot;/&gt;
          &lt;/factory&gt;
       &lt;/extension&gt;
