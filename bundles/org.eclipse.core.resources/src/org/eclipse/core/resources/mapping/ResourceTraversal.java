@@ -60,7 +60,7 @@ public class ResourceTraversal {
 	}
 
 	/**
-	 * Visit the resources of this traversal to the depth specified
+	 * Visit the resources of this traversal.
 	 * 
 	 * @param visitor a resource visitor
 	 * @exception CoreException if this method fails. Reasons include:

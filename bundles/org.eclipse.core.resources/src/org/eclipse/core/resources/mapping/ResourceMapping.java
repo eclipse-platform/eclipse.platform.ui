@@ -19,12 +19,19 @@ import org.eclipse.core.runtime.*;
  * bridge between a logical element and the physical resource(s) into which it
  * is stored but does not provide more comprehensive model access or
  * manipulations.
- * 
+ * <p>
+ * Mappings provide two means of model traversal. The <code>accept</code> method
+ * can be used to visit the resources that constitute the model object. Alternatively,
+ * a set or traversals can be obtained by calling <code>getTraversals</code>. A traversal
+ * contains a set of resources and a depth. This allows clients (such a repository providers)
+ * to do optimal traversals of the resources w.r.t. the operation that is being performed
+ * on the model object.
  * <p>
  * NOTE: This API is work in progress and will likely change before the final API freeze.
  * </p>
  * 
  * @see IResource
+ * @see ResourceTraversal
  * @since 3.1
  */
 public abstract class ResourceMapping extends PlatformObject {
@@ -52,21 +59,17 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * simply a set of resources and the depth to which they are to be
 	 * traversed. This method returns an array of traversals in order to provide
 	 * flexibility in describing the traversals that constitute a model element.
-	 * A depth is included to allow the clients of a mapping (most likely
-	 * repository providers) an opportunity to optimize the operation and also
-	 * ensure that resources that were or have become members of the model
-	 * element are included in the operation.
 	 * <p>
-	 * Subclasses must ensure, as much as possible, that
-	 * all resources that are or may be members of the model element are
-	 * included. For instance, a model element should return the same list of
+	 * Subclasses should, when possible, include
+	 * all resources that are or may be members of the model element. 
+     * For instance, a model element should return the same list of
 	 * resources regardless of the existance of the files on the file system.
 	 * For example, if a logical resource called "form" maps to "/p1/form.xml"
 	 * and "/p1/form.java" then whether form.xml or form.java existed, they
 	 * should be returned by this method.
 	 *</p><p>
 	 * In some cases, it may not be possible for a model element to know all the
-	 * resources that may consitite the element without accessing the state of
+	 * resources that may constitute the element without accessing the state of
 	 * the model element in another location (e.g. a repository). This method is
 	 * provided with a context which, when provided, gives access to
 	 * the members of correcponding remote containers and the contenst of
@@ -92,7 +95,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
 
     /**
-	 * Accepts the given visitor for the resources in this maping.
+	 * Accepts the given visitor for the resources in this mapping.
 	 * The visitor's <code>visit</code> method is called for each resource
 	 * in this mapping. 
 	 * 
