@@ -15,6 +15,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.internal.core.*;
 
 /**
@@ -76,6 +77,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @see RepositoryProvider#unmap(IProject)
 	 */
 	public static void map(IProject project, String id) throws TeamException {
+		ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(project);
 		try {
 			// Obtain a scheduling rule on the project before obtaining the
 			// mappingLock. This is required because a caller of getProvider
@@ -83,7 +85,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			// getProvider itself does not (and can not) obtain a scheduling rule.
 			// Thus, the locking order is always scheduling rule followed by 
 			// mappingLock.
-			Platform.getJobManager().beginRule(project, null);
+			Platform.getJobManager().beginRule(rule, null);
 			try {
 				mappingLock.acquire();
 				RepositoryProvider existingProvider = null;
@@ -120,17 +122,19 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				
 				provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
 				
-				TeamHookDispatcher.setProviderRuleFactory(project, provider.getRuleFactory());
-	
 				//adding the nature would've caused project description delta, so trigger one
 				project.touch(null);
+				
+				// Set the rule factory for the provider after the touch
+				// so the touch does not fail due to incomptible modify rules
+				TeamHookDispatcher.setProviderRuleFactory(project, provider.getRuleFactory());
 			} finally {
 				mappingLock.release();
 			}
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		} finally {
-			Platform.getJobManager().endRule(project);
+			Platform.getJobManager().endRule(rule);
 		}
 	}	
 
@@ -209,9 +213,10 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @throws TeamException The project isn't associated with any repository provider.
 	 */
 	public static void unmap(IProject project) throws TeamException {
+		ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(project);
 		try{
 			// See the map(IProject, String) method for a description of lock ordering
-			Platform.getJobManager().beginRule(project, null);
+			Platform.getJobManager().beginRule(rule, null);
 			try {
 				mappingLock.acquire();
 				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
@@ -238,17 +243,19 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				
 				if (provider != null) provider.deconfigured();
 				
-				TeamHookDispatcher.setProviderRuleFactory(project, null);
-				
 				//removing the nature would've caused project description delta, so trigger one
 				project.touch(null);
+				
+				// Change the rule factory after the touch in order to
+				// avoid rule incompatibility
+				TeamHookDispatcher.setProviderRuleFactory(project, null);
 			} finally {
 				mappingLock.release();
 			}
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		} finally {
-			Platform.getJobManager().endRule(project);
+			Platform.getJobManager().endRule(rule);
 		}
 	}	
 	
