@@ -841,6 +841,11 @@ public class R21BasicStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.Presentation#setBounds(org.eclipse.swt.graphics.Rectangle)
      */
     public void setBounds(Rectangle bounds) {
+        if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
+        	bounds = Geometry.copy(bounds);
+        	bounds.height = computeMinimumSize().y;
+        }
+    	
         paneFolder.getControl().setBounds(bounds);
         setControlSize();
     }
@@ -849,7 +854,11 @@ public class R21BasicStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.Presentation#computeMinimumSize()
      */
     public Point computeMinimumSize() {
-        return Geometry.getSize(paneFolder.computeTrim(0, 0, 0, 0));
+        Point result = Geometry.getSize(paneFolder.computeTrim(0, 0, 0, 0));
+        
+        result.x += 100;
+        
+        return result;
     }
 
     /* (non-Javadoc)
