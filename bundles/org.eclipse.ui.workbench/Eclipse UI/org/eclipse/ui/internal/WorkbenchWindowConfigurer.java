@@ -139,13 +139,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * This implementation keeps track of of cool bar items
 	 */
 	class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
-	    
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-	    public IWorkbenchWindow getWindow() {
-	        return WorkbenchWindowConfigurer.this.getWindow();
-	    }
 	
 		/**
 		 * Returns whether the given id is for a cool item.

@@ -75,7 +75,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -310,12 +309,6 @@ public class CustomizePerspectiveDialog extends Dialog {
 			this.coolBarManager = coolBarManager;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public IWorkbenchWindow getWindow() {
-		    return window;
-		}
 		/*
 		 *  (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#getMenuManager()
