@@ -8,6 +8,33 @@
 </head>
 <body>
 
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
+November 27, 2001
+<h3>
+What's new in this drop</h3>
+<ul>
+<li>Procedural Debug API - new debug element interfaces have been defined to support the notion of registers,
+register groups, memory blocks, and memory block retrieval:
+	<ul>
+	<li>IRegister - a register in a register group</li>
+	<li>IRegisterGroup - register groups are available from each stack frame (that supports registers)</li>
+	<li>IMemoryBlock - a contiguos block of bytes from memory allocated by a running program</li>
+	<li>IMemoryBlockRetrieval - support to retrieve arbitrary blocks of memory from a running program</li>
+	</ul>
+</li>
+</ul>
+
+<h3>
+Problem Reports Fixed</h3>
+
+<A HREF="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1720">1720</A>: Issue: breakpoint manager breaks lazy plug-in load rule (1GK<br>
+
+<h3>
+Problem Reports Closed</h3>
+
+<A HREF="http://bugs.eclipse.org/bugs/show_bug.cgi?id=6097">6097</A>: The inspector is not refresh<br>
 
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
