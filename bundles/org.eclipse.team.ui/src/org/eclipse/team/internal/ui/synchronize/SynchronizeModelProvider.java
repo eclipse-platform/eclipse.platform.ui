@@ -441,7 +441,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 
 	protected void calculateProperties(ISynchronizeModelElement element, boolean clear) {
-		element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, isConflicting(element));
+		element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, clear ? false : isConflicting(element));
 		propagateProblemMarkers(element, clear);
 		updateParentLabels(element);
 	}
