@@ -25,7 +25,7 @@ public class NullBuildLogger implements BuildLogger {
 	
 	/**
 	 * An exception that has already been logged.	 */
-	private Throwable fHandledException= null;
+	protected Throwable fHandledException= null;
 	
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
@@ -162,7 +162,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * Converts a Ant project's priority level to a priority
 	 * level used by the Log Console.
 	 */
-	private int toConsolePriority(int antPriority) {
+	protected int toConsolePriority(int antPriority) {
 		switch (antPriority) {
 			case Project.MSG_ERR:
 				return LogConsoleDocument.MSG_ERR;

@@ -8,8 +8,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Task;
+import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.console.FileLink;
+import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org
 	.eclipse
 	.ui
@@ -34,6 +43,7 @@ import org
 	.ant
 	.launchConfigurations
 	.AntStreamsProxy;
+import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 	
 /**
@@ -44,6 +54,11 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * Associated process - discovered on creation via process id
 	 */
 	private AntProcess fProcess = null;
+	
+	/**
+	 * Current length of output
+	 */
+	private int fLength = 0;
 
 	public AntProcessBuildLogger() {
 		super();
@@ -52,7 +67,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/**
 	 * @see org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger#logMessage(java.lang.String, int)
 	 */
-	protected void logMessage(String message, int priority) {
+	protected void logMessage(String message, BuildEvent event) {
+		int priority = toConsolePriority(event.getPriority()); 
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
@@ -79,9 +95,53 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			case LogConsoleDocument.MSG_VERBOSE:
 				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
 				break;
-		}	
+		}
+		message += "\n";
+		IConsoleHyperlink link = getHyperLink(message, event);
+		if (link != null) {
+			fProcess.getConsole().addLink(link);
+		}
 		monitor.append(message);
-		monitor.append("\n");	
+		fLength += message.length();	
+	}
+	
+	/**
+	 * Returns a hyperlink for the given build event, or <code>null</code> if
+	 * none.
+	 * 
+	 * @param event	 * @return hyper link, or <code>null</code>	 */
+	protected IConsoleHyperlink getHyperLink(String message, BuildEvent event) {
+		Task task = event.getTask();
+		if (task != null) {
+			Location location = task.getLocation();
+			if (location != null) {
+				String path = location.toString().trim();
+				// format is file:F:L: where F is file path, and L is line number
+				int index = path.indexOf(':');
+				if (index >= 0) {
+					// remove "file:"
+					path = path.substring(index + 1);
+					index = path.lastIndexOf(':');
+					if (index == path.length() - 1) {
+						// remove trailing ':'
+						path = path.substring(0, index);
+						index = path.lastIndexOf(':');
+					}
+					// split file and line number
+					String fileName = path.substring(0, index);
+					String lineNumber = path.substring(index + 1);
+					IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+					if (file.exists()) {
+						try {
+							int line = Integer.valueOf(lineNumber).intValue();
+							return new FileLink(fLength, message.length(), file, "org.eclipse.ui.DefaultTextEditor", -1, -1, line);
+						} catch (NumberFormatException e) {
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -110,4 +170,26 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		super.buildStarted(event);
 	}
 
+	/**
+	 * @see BuildListener#messageLogged(BuildEvent)
+	 */
+	public void messageLogged(BuildEvent event) {
+		logMessage(event.getMessage(), event);
+	}
+	
+	protected void handleException(BuildEvent event) {
+		Throwable exception = event.getException();
+		if (exception == null || exception == fHandledException
+		|| exception instanceof OperationCanceledException
+		|| exception instanceof AntSecurityException) {
+			return;
+		}
+		fHandledException= exception;
+		logMessage(
+			ToolMessages.format(
+				"NullBuildLogger.buildException", //$NON-NLS-1$
+				new String[] { exception.toString()}),
+				event);	
+	}
+		
 }

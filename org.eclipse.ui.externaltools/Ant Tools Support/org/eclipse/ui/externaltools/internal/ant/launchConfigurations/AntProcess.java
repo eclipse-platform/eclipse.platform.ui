@@ -16,6 +16,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
@@ -34,6 +35,7 @@ public class AntProcess implements IProcess {
 	private ILaunch fLaunch = null;
 	private Map fAttributes = null;
 	private boolean fTerminated = false;
+	private IConsole fConsole = null;
 	
 	public AntProcess(String label, ILaunch launch, Map attributes) {
 		fLabel = label;
@@ -122,5 +124,22 @@ public class AntProcess implements IProcess {
 	public void terminate() throws DebugException {
 	}
 
+	/**
+	 * Returns the console associated with this process, or <code>null</code> if
+	 * none.
+	 * 
+	 * @return console, or <code>null</code>
+	 */
+	public IConsole getConsole() {
+		return fConsole;
+	}
+	
+	/**
+	 * Sets the console associated with this process.
+	 * 
+	 * @param console	 */
+	protected void setConsole(IConsole console) {
+		fConsole = console;
+	}
 }
 

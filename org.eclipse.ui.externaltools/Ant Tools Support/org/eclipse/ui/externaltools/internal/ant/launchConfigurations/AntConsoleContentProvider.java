@@ -41,12 +41,13 @@ public class AntConsoleContentProvider extends ConsoleContentProvider {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.internal.ui.views.console.IConsole)
 	 */
-	public void connect(IProcess process, IConsole document) {
+	public void connect(IProcess process, IConsole console) {
 		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
-		document.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
-		document.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
-		document.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);		
-		super.connect(process, document);
+		((AntProcess)process).setConsole(console);
+		console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
+		console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
+		console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);		
+		super.connect(process, console);
 	}
 
 }
