@@ -331,7 +331,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		newButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
-		copyButton = createButton(buttonArea, "Copy...");
+		copyButton = createButton(buttonArea, "&Copy...");
 		editButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
@@ -430,7 +430,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), debugModelPresentation);
 		dialog.setTitle("Copy configuration");
-		dialog.setMessage("Choose a configuration to copy");
+		dialog.setMessage("&Choose a configuration to copy:");
 		dialog.setElements(configurations.toArray());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
