@@ -2,9 +2,10 @@
 <plugin
    id="org.eclipse.ui.workbench"
    name="%pluginName"
-   version="2.1.1"
+   version="2.1.2"
    provider-name="%providerName"
    class="org.eclipse.ui.internal.WorkbenchPlugin">
+
    <runtime>
       <library name="workbench.jar">
          <export name="*"/>
@@ -20,4 +21,6 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.swt" export="true"/>
    </requires>
+
+
 </plugin>
