@@ -8,6 +8,7 @@ package org.eclipse.update.examples.buildzip;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.BaseFeatureFactory;
@@ -30,9 +31,9 @@ public class BuildZipFeatureFactory
 	implements IFeatureFactory {
 
 	/*
-	 * @see IFeatureFactory#createFeature(URL, ISite)
+	 * @see IFeatureFactory#createFeature(URL, ISite, IProgressMonitor)
 	 */
-	public IFeature createFeature(URL url, ISite site) throws CoreException {
+	public IFeature createFeature(URL url, ISite site, IProgressMonitor monitor) throws CoreException {
 		try {
 			// create content provider for feature
 			BuildZipFeatureContentProvider cp = new BuildZipFeatureContentProvider(url);

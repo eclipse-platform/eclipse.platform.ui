@@ -248,10 +248,19 @@ public class SiteFTP implements ISite {
 	}
 
 	/**
+	 * @see org.eclipse.update.core.ISite#createFeature(java.lang.String, java.net.URL, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IFeature createFeature(String type, URL url, IProgressMonitor monitor) throws CoreException {
+		return null;
+	}
+
+
+	/**
 	 * @see org.eclipse.update.core.ISite#getRawFeatureReferences()
 	 */
 	public ISiteFeatureReference[] getRawFeatureReferences() {
 		return null;
 	}
+
 
 }
