@@ -20,7 +20,6 @@ import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -74,7 +73,11 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	protected Button envRemoveButton;
 	
 	protected SimpleVariableContentProvider variableContentProvider= new SimpleVariableContentProvider();
-	 
+	
+	protected static final String NAME_LABEL= DebugPreferencesMessages.getString("SimpleVariablePreferencePage.10"); //$NON-NLS-1$
+	protected static final String VALUE_LABEL = DebugPreferencesMessages.getString("SimpleVariablePreferencePage.11"); //$NON-NLS-1$
+	protected static final String DESCRIPTION_LABEL = DebugPreferencesMessages.getString("SimpleVariablePreferencePage.12"); //$NON-NLS-1$
+	
 	protected static String[] variableTableColumnProperties= {
 		"variable", //$NON-NLS-1$
 		"value", //$NON-NLS-1$
@@ -83,7 +86,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	protected String[] variableTableColumnHeaders= {
 		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.3"), //$NON-NLS-1$
 		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.4"), //$NON-NLS-1$
-		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15") //$NON-NLS-1$
+		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.5") //$NON-NLS-1$
 	};
 	protected ColumnLayoutData[] variableTableColumnLayouts= {
 		new ColumnWeightData(25),
@@ -92,7 +95,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	};
 	
 	public SimpleVariablePreferencePage() {
-		setDescription(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.5")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.6")); //$NON-NLS-1$
 	}
 
 	/**
@@ -231,17 +234,17 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void handleAddButtonPressed() {
-		InputDialog dialog= new InputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.10"), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.11"), null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, null, null); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
-		String name= dialog.getValue().trim();
-		if (name.length() > 0) {
-			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, null, null);
-			if (editVariable(variable)) {
-				variableContentProvider.addVariable(variable);
-				variableTable.refresh();
-			}
+		String name= dialog.getValue(NAME_LABEL);
+		if (name != null && name.length() > 0) {
+			String value= dialog.getValue(VALUE_LABEL);
+			String description= dialog.getValue(DESCRIPTION_LABEL);
+			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description);
+			variableContentProvider.addVariable(variable);
+			variableTable.refresh();
 		}
 	}
 	
@@ -251,23 +254,26 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (variable == null) {
 			return;
 		}
-		editVariable(variable);
-	}
-	
-	/**
-	 * Prompt the user to edit the selection variable.
-	 * @param variable the variable to edit
-	 * @return <code>true</code> if the user confirmed the edit,
-	 * 	<code>false</code> if the user cancelled.
-	 */
-	private boolean editVariable(ISimpleLaunchVariable variable) {
-		InputDialog dialog= new InputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.12"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {variable.getName()}), variable.getValue(), null); //$NON-NLS-1$ //$NON-NLS-2$
-		if (dialog.open() != Dialog.OK) {
-			return false;
+		String value= variable.getValue();
+		if (value == null) {
+			value= ""; //$NON-NLS-1$
 		}
-		variable.setValue(dialog.getValue());
-		variableTable.update(variable, null);
-		return true;
+		String description= variable.getDescription();
+		if (description == null) {
+			description= ""; //$NON-NLS-1$
+		}
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {variable.getName()}), new String[] {VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {value, description}, null); //$NON-NLS-1$
+		if (dialog.open() == Dialog.OK) {
+			value= dialog.getValue(VALUE_LABEL);
+			if (value != null) {
+				variable.setValue(value);
+			}
+			description= dialog.getValue(DESCRIPTION_LABEL);
+			if (description != null) {
+				variable.setDescription(description);
+			}
+			variableTable.update(variable, null);
+		}
 	}
 	
 	/**
