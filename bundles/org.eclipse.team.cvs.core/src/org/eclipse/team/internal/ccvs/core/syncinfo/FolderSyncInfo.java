@@ -9,6 +9,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Value (immutable) object that represents workspace state information about the contents of a
@@ -125,11 +126,11 @@ public class FolderSyncInfo {
 		String result;
 		
 		try {
-			result = getRoot().substring(getRoot().indexOf("@")+1);
-			result = result.substring(result.indexOf(":")+1);
-			result = result + "/" + getRepository();
+			result = getRoot().substring(getRoot().indexOf("@")+1); //$NON-NLS-1$
+			result = result.substring(result.indexOf(":")+1); //$NON-NLS-1$
+			result = result + "/" + getRepository(); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException e) {
-			throw new CVSException("Maleformed root");
+			throw new CVSException(Policy.bind("FolderSyncInfo_Maleformed_root_4")); //$NON-NLS-1$
 		}
 		
 		return result;

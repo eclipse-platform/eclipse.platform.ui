@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -91,39 +90,39 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			}			
 		});
 		
-		createLabel(composite, "Example:", 1);
+		createLabel(composite, Policy.bind("Example__1"), 1); //$NON-NLS-1$
 		Text example = new Text(composite, SWT.BORDER);
 		example.setEditable(false);
 		example.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createLabel(composite, "", 1); // spacer
+		createLabel(composite, "", 1); // spacer //$NON-NLS-1$
 		return new TextPair(format, example);
 	}
 	
 	protected void updateExamples() {
-		String example = "";
+		String example = ""; //$NON-NLS-1$
 		Map bindings = new HashMap();
 		try {
-			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				
-			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0");
-			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString("file.txt",null));
-			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34");
+			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				 //$NON-NLS-1$
+			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0"); //$NON-NLS-1$
+			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString("file.txt",null)); //$NON-NLS-1$
+			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34"); //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, "org.eclipse.project1");
+			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, "org.eclipse.project1"); //$NON-NLS-1$
 		} catch(CVSException e) {
 			example = e.getMessage();
 		}
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "file.txt");
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "file.txt"); //$NON-NLS-1$
 		setTextFormatExample(bindings);
 		bindings.remove(CVSDecoratorConfiguration.RESOURCE_NAME);
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "folder");
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "folder"); //$NON-NLS-1$
 		setFolderFormatExample(bindings);
 		bindings.remove(CVSDecoratorConfiguration.RESOURCE_NAME);
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "Project");
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "Project"); //$NON-NLS-1$
 		setProjectFormatExample(bindings);
 	}
 	
@@ -145,20 +144,20 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		fileTextGroup.setLayoutData(data);
-		fileTextGroup.setText("Text Labels");
-		createLabel(fileTextGroup, "Select the format for file, folders, and project text labels:", 3);
+		fileTextGroup.setText(Policy.bind("Text_Labels_12")); //$NON-NLS-1$
+		createLabel(fileTextGroup, Policy.bind("Select_the_format_for_file,_folders,_and_project_text_labels__13"), 3); //$NON-NLS-1$
 
-		TextPair format = createFormatEditorControl(fileTextGroup, "&File Format:", "Add &Variables...", getFileBindingDescriptions());
+		TextPair format = createFormatEditorControl(fileTextGroup, Policy.bind("&File_Format__14"), Policy.bind("Add_&Variables_15"), getFileBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		fileTextFormat = format.t1;
 		fileTextFormatExample = format.t2;
-		format = createFormatEditorControl(fileTextGroup, "F&older Format:", "Add Varia&bles...", getFolderBindingDescriptions());
+		format = createFormatEditorControl(fileTextGroup, Policy.bind("F&older_Format__16"), Policy.bind("Add_Varia&bles_17"), getFolderBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		folderTextFormat = format.t1;
 		folderTextFormatExample = format.t2;
-		format = createFormatEditorControl(fileTextGroup, "&Project Format:", "Add Variable&s...", getFolderBindingDescriptions());
+		format = createFormatEditorControl(fileTextGroup, Policy.bind("&Project_Format__18"), Policy.bind("Add_Variable&s_19"), getFolderBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		projectTextFormat = format.t1;
 		projectTextFormatExample = format.t2;
 
-		createLabel(fileTextGroup, "&Label decoration for outgoing:", 1);
+		createLabel(fileTextGroup, Policy.bind("&Label_decoration_for_outgoing__20"), 1); //$NON-NLS-1$
 		dirtyFlag = new Text(fileTextGroup, SWT.BORDER);
 		dirtyFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirtyFlag.addModifyListener(new ModifyListener() {
@@ -166,9 +165,9 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				updateExamples();
 			}
 		});
-		createLabel(fileTextGroup, "", 1); // spacer
+		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
 		
-		createLabel(fileTextGroup, "Label decorat&ion for added:", 1);
+		createLabel(fileTextGroup, Policy.bind("Label_decorat&ion_for_added__22"), 1); //$NON-NLS-1$
 		addedFlag = new Text(fileTextGroup, SWT.BORDER);
 		addedFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addedFlag.addModifyListener(new ModifyListener() {
@@ -177,7 +176,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			}
 		});
 
-		createLabel(fileTextGroup, "", 1); // spacer
+		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
 		
 		// image decoration options
 		
@@ -187,12 +186,12 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
-		imageGroup.setText("Icon Overlays");
-		imageShowDirty = createCheckBox(imageGroup, "Sho&w outgoing");
-		imageShowHasRemote = createCheckBox(imageGroup, "Show has &remote");
-		imageShowAdded = createCheckBox(imageGroup, "S&how is added");
+		imageGroup.setText(Policy.bind("Icon_Overlays_24")); //$NON-NLS-1$
+		imageShowDirty = createCheckBox(imageGroup, Policy.bind("Sho&w_outgoing_25")); //$NON-NLS-1$
+		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
+		imageShowAdded = createCheckBox(imageGroup, Policy.bind("S&how_is_added_27")); //$NON-NLS-1$
 		
-		showDirty = createCheckBox(composite, "&Compute deep outgoing state for folders (disabling this will improve decorator performance)");
+		showDirty = createCheckBox(composite, Policy.bind("&Compute_deep_outgoing_state_for_folders_(disabling_this_will_improve_decorator_performance)_28")); //$NON-NLS-1$
 				
 		initializeValues();
 		return composite;
@@ -323,7 +322,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		ILabelProvider labelProvider = new LabelProvider() {
 			public String getText(Object element) {
-				return ((StringPair)element).s1 + " - " + ((StringPair)element).s2;
+				return ((StringPair)element).s1 + " - " + ((StringPair)element).s2; //$NON-NLS-1$
 			}
 		};
 		
@@ -348,39 +347,39 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				this,
 				contentsProvider,
 				labelProvider,
-				"Select the &variables to add to the decoration format:");
-		dialog.setTitle("Add Variables");
+				Policy.bind("Select_the_&variables_to_add_to_the_decoration_format__30")); //$NON-NLS-1$
+		dialog.setTitle(Policy.bind("Add_Variables_31")); //$NON-NLS-1$
 		if (dialog.open() != dialog.OK)
 			return;
 	
 		Object[] result = dialog.getResult();
 		
 		for (int i = 0; i < result.length; i++) {
-			target.insert("{"+((StringPair)result[i]).s1 +"}");
+			target.insert("{"+((StringPair)result[i]).s1 +"}"); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 	}
 	
 	private Map getFolderBindingDescriptions() {
 		Map bindings = new HashMap();
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "name of the resource being decorated");
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "the tag applied to the resource (version, branch, or date)");
-		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, "the repository location's hostname");
-		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, "the connection method (e.g. pserver, ssh)");
-		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, "user name for the connection");
-		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, "repository home directory on server");
-		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, "root relative directory");
-		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, "flag indicating that the folder has a child resource with outgoing changes");
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, Policy.bind("name_of_the_resource_being_decorated_34")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, Policy.bind("the_tag_applied_to_the_resource_(version,_branch,_or_date)_35")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, Policy.bind("the_repository_location__s_hostname_36")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, Policy.bind("the_connection_method_(e.g._pserver,_ssh)_37")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, Policy.bind("user_name_for_the_connection_38")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, Policy.bind("repository_home_directory_on_server_39")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, Policy.bind("root_relative_directory_40")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, Policy.bind("flag_indicating_that_the_folder_has_a_child_resource_with_outgoing_changes_41")); //$NON-NLS-1$
 		return bindings;
 	}
 	
 	private Map getFileBindingDescriptions() {
 		Map bindings = new HashMap();
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "name of the resource being decorated");
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "the tag applied to the resource");
-		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, "keyword subsitution rule for the resource");
-		bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "last revision loaded into workspace");
-		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, "flag indicating that the file has outgoing changes");
-		bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, "flag indicating that the file has been added to the server");
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, Policy.bind("name_of_the_resource_being_decorated_42")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, Policy.bind("the_tag_applied_to_the_resource_43")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, Policy.bind("keyword_subsitution_rule_for_the_resource_44")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.FILE_REVISION, Policy.bind("last_revision_loaded_into_workspace_45")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, Policy.bind("flag_indicating_that_the_file_has_outgoing_changes_46")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, Policy.bind("flag_indicating_that_the_file_has_been_added_to_the_server_47")); //$NON-NLS-1$
 		return bindings;
 	}
 }

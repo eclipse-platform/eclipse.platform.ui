@@ -118,7 +118,7 @@ public class CVSDecorationRunnable implements Runnable {
 
 	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty, ITeamProvider provider) {
 		Map bindings = new HashMap(3);
-		String format = "";
+		String format = ""; //$NON-NLS-1$
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		
 		IPath resourceLocation = resource.getLocation();
@@ -214,7 +214,7 @@ public class CVSDecorationRunnable implements Runnable {
 	}
 
 	private boolean isDirty(IResource resource) {
-		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null));
+		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {

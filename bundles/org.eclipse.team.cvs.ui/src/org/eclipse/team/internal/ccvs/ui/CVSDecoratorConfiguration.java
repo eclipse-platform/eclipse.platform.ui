@@ -13,58 +13,34 @@ import org.eclipse.team.ccvs.core.CVSStatus;
 public class CVSDecoratorConfiguration {
 
 	// bindings for 
-	public static final String RESOURCE_NAME = "name";
-	public static final String RESOURCE_TAG = "tag";
-	public static final String FILE_REVISION = "revision";
-	public static final String FILE_KEYWORD = "keyword";
+	public static final String RESOURCE_NAME = "name"; //$NON-NLS-1$
+	public static final String RESOURCE_TAG = "tag"; //$NON-NLS-1$
+	public static final String FILE_REVISION = "revision"; //$NON-NLS-1$
+	public static final String FILE_KEYWORD = "keyword"; //$NON-NLS-1$
 	
 	// bindings for repository location
-	public static final String REMOTELOCATION_METHOD = "method";
-	public static final String REMOTELOCATION_USER = "user";
-	public static final String REMOTELOCATION_HOST = "host";
-	public static final String REMOTELOCATION_ROOT = "root";
-	public static final String REMOTELOCATION_REPOSITORY = "repository";
+	public static final String REMOTELOCATION_METHOD = "method"; //$NON-NLS-1$
+	public static final String REMOTELOCATION_USER = "user"; //$NON-NLS-1$
+	public static final String REMOTELOCATION_HOST = "host"; //$NON-NLS-1$
+	public static final String REMOTELOCATION_ROOT = "root"; //$NON-NLS-1$
+	public static final String REMOTELOCATION_REPOSITORY = "repository"; //$NON-NLS-1$
 	
 	// bindings for resource states
-	public static final String DIRTY_FLAG = "dirty_flag";
-	public static final String ADDED_FLAG = "added_flag";
-	public static final String DEFAULT_DIRTY_FLAG = ">";
-	public static final String DEFAULT_ADDED_FLAG = "*";
+	public static final String DIRTY_FLAG = "dirty_flag"; //$NON-NLS-1$
+	public static final String ADDED_FLAG = "added_flag"; //$NON-NLS-1$
+	public static final String DEFAULT_DIRTY_FLAG = ">"; //$NON-NLS-1$
+	public static final String DEFAULT_ADDED_FLAG = "*"; //$NON-NLS-1$
 	
 	// default text decoration formats
-	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag}";
-	public static final String DEFAULT_FOLDERTEXTFORMAT = "{dirty_flag}{name}  {tag}";
-	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name}  {tag} [{host}]";
+	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag}"; //$NON-NLS-1$
+	public static final String DEFAULT_FOLDERTEXTFORMAT = "{dirty_flag}{name}  {tag}"; //$NON-NLS-1$
+	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name}  {tag} [{host}]"; //$NON-NLS-1$
 
 	// prefix characters that can be removed if the following binding is not found
 	private static final char KEYWORD_SEPSPACE = ' ';
 	private static final char KEYWORD_SEPCOLON = ':';
 	private static final char KEYWORD_SEPAT = '@';
-	
-	/**
-	 *  Answers if the given format specification for a file is valid.
-	 */
-	public static IStatus validateFileTextFormat(String format) {
-		if (format == null)
-			return new CVSStatus(CVSStatus.ERROR, "format cannot be null");
-		if (format.equals(""))
-			return new CVSStatus(CVSStatus.ERROR, "format cannot be empty");		
 		
-		return new CVSStatus(CVSStatus.OK, "ok");
-	}
-	
-	/**
-	 *  Answers if the given format specification for a folder/project is valid.
-	 */
-	public static IStatus validateContainerTextFormat(String format) {
-		if (format == null)
-			return new CVSStatus(CVSStatus.ERROR, "format cannot be null");
-		if (format.equals(""))
-			return new CVSStatus(CVSStatus.ERROR, "format cannot be empty");		
-		
-		return new CVSStatus(CVSStatus.OK, "ok");
-	}
-	
 	public static String bind(String format, Map bindings) {
 		StringBuffer output = new StringBuffer(80);
 		int length = format.length();

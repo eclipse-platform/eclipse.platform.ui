@@ -63,7 +63,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private boolean shutdown = false;
 	
 	public CVSDecorator() {
-		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
+		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
 		
@@ -298,7 +298,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		StringBuffer buffer = new StringBuffer();
 		boolean isBinary = false;
 		if(keyword!=null) {
-			if (keyword.equals("-kb")) {
+			if (keyword.equals("-kb")) { //$NON-NLS-1$
 				isBinary = true;
 			}
 		} else {
@@ -309,8 +309,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			buffer.append(Policy.bind("CVSFilePropertiesPage.binary")); 
 		} else {
 			buffer.append(Policy.bind("CVSFilePropertiesPage.text"));
-			if(keyword!=null && !keyword.equals("-ko") && !"".equals(keyword)) {
-				buffer.append(" " + keyword);
+			if(keyword!=null && !keyword.equals("-ko") && !"".equals(keyword)) { //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(" " + keyword); //$NON-NLS-1$
 			}
 		}		
 		return buffer.toString();

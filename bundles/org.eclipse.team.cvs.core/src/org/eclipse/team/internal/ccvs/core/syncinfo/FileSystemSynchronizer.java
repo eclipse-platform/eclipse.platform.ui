@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * The FileSystemSynchronizer stores sync information to be compatible with CVS command line
@@ -97,7 +98,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 					}
 				}
 			} catch(CVSException e) {
-				TeamPlugin.log(IStatus.ERROR, "Error loading from CVS/Entries file", e);
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("FileSystemSynchronizer_Error_loading_from_CVS/Entries_file_1"), e); //$NON-NLS-1$
 				return null;
 			}
 			return idInfo;
@@ -122,7 +123,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 					cache.put(cacheInfo);
 				}
 			} catch(CVSException e) {
-				TeamPlugin.log(IStatus.ERROR, "Error loading from .cvsignore file", e);
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("FileSystemSynchronizer_Error_loading_from_.cvsignore_file_2"), e); //$NON-NLS-1$
 				return null;
 			}
 			return idInfo;
@@ -148,7 +149,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 					return new CacheData(folder, info, CACHE_EXPIRATION_MINUTES);
 				}
 			} catch(CVSException e) {
-				TeamPlugin.log(IStatus.ERROR, "Error loading from CVS/Entries file", e);
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("FileSystemSynchronizer_Error_loading_from_CVS/Root,Repository_files_3"), e); //$NON-NLS-1$
 				return null;
 			}
 		}
@@ -229,7 +230,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 							handleMetaChange(file.getParentFile(), resources[i].getParent(), false);
 						} else if(name.equals(SyncFileUtil.IGNORE_FILE)) {
 							handleMetaChange(file, resource, true);
-						} else if(!name.equals("CVS")) {
+						} else if(!name.equals("CVS")) { //$NON-NLS-1$
 							delta.add(resources[i]);
 						}
 					}
@@ -418,7 +419,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 				resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}		
 		} catch(CoreException e) {
-			throw new CVSException(IStatus.ERROR, 0, "Error reloading sync information", e);
+			throw new CVSException(IStatus.ERROR, 0, Policy.bind("FileSystemSynchronizer_Error_reloading_sync_information_5"), e); //$NON-NLS-1$
 		}
 	}
 	

@@ -30,31 +30,31 @@ public class SyncFileUtil {
 
 	// All possible files available in the CVS subdir
 	
-	public static final String REPOSITORY = "Repository";
-	public static final String ROOT = "Root";
-	public static final String STATIC = "Entries.Static";	
-	public static final String TAG = "Tag";	
-	public static final String ENTRIES = "Entries";
-	public static final String PERMISSIONS = "Permissions";
-	public static final String ENTRIES_LOG="Entries.Log";
+	public static final String REPOSITORY = "Repository"; //$NON-NLS-1$
+	public static final String ROOT = "Root"; //$NON-NLS-1$
+	public static final String STATIC = "Entries.Static";	 //$NON-NLS-1$
+	public static final String TAG = "Tag";	 //$NON-NLS-1$
+	public static final String ENTRIES = "Entries"; //$NON-NLS-1$
+	public static final String PERMISSIONS = "Permissions"; //$NON-NLS-1$
+	public static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
 	
 	// the local workspace file that contains pattern for ignored resources
 	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
-	private static final String FOLDER_TAG="D";
+	private static final String FOLDER_TAG="D"; //$NON-NLS-1$
 	
 	// Command characters found in the Entries.log file
-	private static final String ADD_TAG="A ";
-	private static final String REMOVE_TAG="R ";
+	private static final String ADD_TAG="A "; //$NON-NLS-1$
+	private static final String REMOVE_TAG="R "; //$NON-NLS-1$
 
 	// file and folder patterns that are ignored by default by the CVS server on import.
 	public static final String[] PREDEFINED_IGNORE_PATTERNS = {
-		"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK", 
-		"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so",
-		"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm",
-		"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS"};
+		"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK",  //$NON-NLS-1$ 
+		"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so", //$NON-NLS-1$ 
+		"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm", //$NON-NLS-1$ 
+		"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS"}; //$NON-NLS-1$
 
 
 	/**
@@ -83,7 +83,7 @@ public class SyncFileUtil {
 		
 		for (int i = 0; i < entries.length; i++) {
 			String line = entries[i];
-			if(!FOLDER_TAG.equals(line) && !"".equals(line)) {
+			if(!FOLDER_TAG.equals(line) && !"".equals(line)) { //$NON-NLS-1$
 				ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
 				infos.put(info.getName(), info);			
 			}
@@ -91,11 +91,11 @@ public class SyncFileUtil {
 
 		if (permissions != null) {
 			for (int i = 0; i < permissions.length; i++) {
-				if ("".equals(permissions[i])) {
+				if ("".equals(permissions[i])) { //$NON-NLS-1$
 					continue;
 				}
 				String line = permissions[i];
-				EmptyTokenizer tokenizer = new EmptyTokenizer(line,"/");
+				EmptyTokenizer tokenizer = new EmptyTokenizer(line,"/"); //$NON-NLS-1$
 				String name = tokenizer.nextToken();
 				String perms = tokenizer.nextToken();
 				ResourceSyncInfo info = (ResourceSyncInfo) infos.get(name);
@@ -123,18 +123,18 @@ public class SyncFileUtil {
 			if(!entriesLogFile.exists()) {
 				entriesLogFile.createNewFile();
 			}
-			String line = prefix + info.getEntryLine(true) +"\n";
+			String line = prefix + info.getEntryLine(true) +"\n"; //$NON-NLS-1$
 			out = new FileOutputStream(entriesLogFile.getAbsolutePath(), true);
 			out.write(line.getBytes());
 		} catch(IOException e) {
-			throw new CVSException(IStatus.ERROR, 0, "Error writing to Entries.log.", e);
+			throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Error_writing_to_Entries.log_48"), e); //$NON-NLS-1$
 		} finally {
 			try {
 				if(out!=null) {
 					out.close();
 				}
 			} catch(IOException e) {
-				throw new CVSException(IStatus.ERROR, 0, "Cannot close Entries.log.", e);
+				throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Cannot_close_Entries.log_49"), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -146,13 +146,13 @@ public class SyncFileUtil {
 		if(file.isDirectory()) {
 			writeEntriesLog(file, new ResourceSyncInfo(file.getName()), REMOVE_TAG);		
 		} else {
-			writeEntriesLog(file, new ResourceSyncInfo(file.getName(), "0", "", "", null, ""), REMOVE_TAG);		
+			writeEntriesLog(file, new ResourceSyncInfo(file.getName(), "0", "", "", null, ""), REMOVE_TAG);		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 	
 	public static boolean isMetaFile(File file) {
 		File parent = file.getParentFile();
-		if(parent!=null&&parent.getName().equals("CVS")) {
+		if(parent!=null&&parent.getName().equals("CVS")) { //$NON-NLS-1$
 			return true;
 		} else {
 			return false;
@@ -233,7 +233,7 @@ public class SyncFileUtil {
 			writeLine(parent, TAG, null);
 		}
 		if(info.getIsStatic()) {
-			writeLine(parent, STATIC, ""); // touch file
+			writeLine(parent, STATIC, ""); // touch file //$NON-NLS-1$
 		} else {
 			writeLine(parent, STATIC, null);
 		}
@@ -264,7 +264,7 @@ public class SyncFileUtil {
 		if (contents == null) {
 			return null;
 		} else if (contents.length == 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
 			return contents[0];
 		}
@@ -282,7 +282,7 @@ public class SyncFileUtil {
 	}	
 	
 	public static File getCVSSubdirectory(File folder) {
-		return new File(folder, "CVS");
+		return new File(folder, "CVS"); //$NON-NLS-1$
 	}
 	
 	public static void mergeEntriesLogFiles(File root) throws CVSException {
@@ -335,7 +335,7 @@ public class SyncFileUtil {
 			}		
 		} catch(CoreException e) {
 			// XXX Should we throw or log?
-			throw new CVSException(IStatus.ERROR, 0, "Error reloading sync information", e);
+			throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Error_reloading_sync_information_58"), e); //$NON-NLS-1$
 		}
 		
 	}
@@ -371,7 +371,7 @@ public class SyncFileUtil {
 		try {
 			fileWriter = new BufferedWriter(new FileWriter(file));
 			for (int i = 0; i<content.length; i++) {
-				fileWriter.write(content[i] + "\n");				
+				fileWriter.write(content[i] + "\n");				 //$NON-NLS-1$
 			}
 			fileWriter.close();
 		} catch (IOException e) {
@@ -387,18 +387,18 @@ public class SyncFileUtil {
 				cvsignore.createNewFile();
 			}
 			String line = pattern == null ? file.getName() : pattern;
-			line += "\n";
+			line += "\n"; //$NON-NLS-1$
 			out = new FileOutputStream(cvsignore.getAbsolutePath(), true /*append*/);
 			out.write(line.getBytes());
 		} catch(IOException e) {
-			throw new CVSException(IStatus.ERROR, 0, "Error writing to .cvsignore.", e);
+			throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Error_writing_to_.cvsignore_61"), e); //$NON-NLS-1$
 		} finally {
 			try {
 				if(out!=null) {
 					out.close();
 				}
 			} catch(IOException e) {
-				throw new CVSException(IStatus.ERROR, 0, "Cannot close .cvsignore.", e);
+				throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Cannot_close_.cvsignore_62"), e); //$NON-NLS-1$
 			}
 		}
 	}

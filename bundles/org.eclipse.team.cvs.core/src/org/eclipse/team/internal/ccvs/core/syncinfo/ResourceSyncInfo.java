@@ -10,6 +10,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Value (immutable) object that represents workspace state information about a resource contained in
@@ -29,28 +30,28 @@ public class ResourceSyncInfo {
 	private boolean isDirectory = false;
 	
 	// utility constants
-	private static final String DIRECTORY_PREFIX = "D/";
-	public static final String BINARY_TAG = "-kb";
-	private static final String SEPERATOR = "/";
+	private static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
+	public static final String BINARY_TAG = "-kb"; //$NON-NLS-1$
+	private static final String SEPERATOR = "/"; //$NON-NLS-1$
 	
 	// Timestamp constants used to identify special cases
-	public static final String DUMMY_TIMESTAMP = "dummy timestamp";
-	public static final String RESULT_OF_MERGE = "Result of merge+";
+	public static final String DUMMY_TIMESTAMP = "dummy timestamp"; //$NON-NLS-1$
+	public static final String RESULT_OF_MERGE = "Result of merge+"; //$NON-NLS-1$
 	
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
-	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r";
+	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
 	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
 	// XXX Should this be private
-	public static final String DELETED_PREFIX = "-";
+	public static final String DELETED_PREFIX = "-"; //$NON-NLS-1$
 	private boolean isDeleted = false;
 	
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been comitted to the repo. Is visible so that clients can create sync infos
 	// for new files.
-	public static final String ADDED_REVISION = "0";
+	public static final String ADDED_REVISION = "0"; //$NON-NLS-1$
 	
 	// fields describing the synchronization of a resource in CVS parlance
 	private String name;
@@ -171,7 +172,7 @@ public class ResourceSyncInfo {
 		
 		if(isDirectory) {
 			result.append(DIRECTORY_PREFIX);
-			result.append(name + "////");
+			result.append(name + "////"); //$NON-NLS-1$
 		} else {
 			result.append(SEPERATOR);
 			result.append(name);
@@ -188,7 +189,7 @@ public class ResourceSyncInfo {
 				result.append(timeStamp);
 			}
 			result.append(SEPERATOR);
-			result.append(keywordMode == null ? "" : keywordMode);
+			result.append(keywordMode == null ? "" : keywordMode); //$NON-NLS-1$
 			result.append(SEPERATOR);
 			if (tag != null) {
 				result.append(tag.toEntryLineFormat(true));
@@ -325,19 +326,19 @@ public class ResourceSyncInfo {
 		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPERATOR);
 
 		if(tokenizer.countTokens() != 5) {
-			throw new CVSException("Malformed entry line: " + entryLine);
+			throw new CVSException(Policy.bind("Malformed_entry_line___11") + entryLine); //$NON-NLS-1$
 		}
 		
 		name = tokenizer.nextToken();
 		
 		if(name.length()==0) {
-			throw new CVSException("Malformed entry line, missing name: " + entryLine);
+			throw new CVSException(Policy.bind("Malformed_entry_line,_missing_name___12") + entryLine); //$NON-NLS-1$
 		}
 		
 		String rev = tokenizer.nextToken();
 		
 		if(rev.length()==0 && !isDirectory()) {
-			throw new CVSException("Malformed entry line, missing revision: " + entryLine);
+			throw new CVSException(Policy.bind("Malformed_entry_line,_missing_revision___13") + entryLine); //$NON-NLS-1$
 		} else {
 			setRevision(rev);
 		}
