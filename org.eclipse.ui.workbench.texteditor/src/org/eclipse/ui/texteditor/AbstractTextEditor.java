@@ -3720,12 +3720,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLineUp.", this, true); //$NON-NLS-1$
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLineDown.", this, false); //$NON-NLS-1$
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
@@ -3745,7 +3745,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
 		setAction(ITextEditorActionConstants.SMART_ENTER, action);
 		
-		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, true); //$NON-NLS-1$
+		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
