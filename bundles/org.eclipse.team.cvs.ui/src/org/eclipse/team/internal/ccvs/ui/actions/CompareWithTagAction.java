@@ -15,13 +15,17 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class CompareWithTagAction extends WorkspaceAction {
 
@@ -37,17 +41,13 @@ public class CompareWithTagAction extends WorkspaceAction {
 		}
 		// Create the synchronize view participant
 		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
-		CompareParticipant participant = new CompareParticipant(s);
-		// Show the participant in the view
-		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
-		manager.addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
-		ISynchronizeView view = manager.showSynchronizeViewInActivePage(null);
-		if (view != null) {
-			view.display(participant);
-			participant.refreshWithRemote(s.roots());
-		} else {
-			CVSUIPlugin.openError(getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
+		CompareParticipant participant = (CompareParticipant)SubscriberParticipant.find(s);
+		boolean addParticipant = false;
+		if(participant == null) {
+			participant = new CompareParticipant(s);
+			addParticipant = true;
 		}
+		participant.refreshWithRemote(s.roots(), addParticipant);
 	}
 
 	protected CVSTag promptForTag(IResource[] resources) {

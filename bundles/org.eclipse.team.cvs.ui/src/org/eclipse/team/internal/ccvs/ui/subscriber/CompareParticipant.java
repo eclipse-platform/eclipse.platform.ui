@@ -24,8 +24,6 @@ import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 public class CompareParticipant extends SubscriberParticipant {
-
-	public final static String ID = "org.eclipse.team.cvs.ui.compare-participant"; //$NON-NLS-1$
 	
 	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
 		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
@@ -47,7 +45,7 @@ public class CompareParticipant extends SubscriberParticipant {
 	protected void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
 		try {
-			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
+			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);

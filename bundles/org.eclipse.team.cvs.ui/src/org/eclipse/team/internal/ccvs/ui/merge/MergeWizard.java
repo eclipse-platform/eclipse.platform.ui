@@ -21,10 +21,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -65,18 +62,13 @@ public class MergeWizard extends Wizard {
 		CVSTag endTag = endPage.getTag();				
 		
 		CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-		MergeSynchronizeParticipant participant = new MergeSynchronizeParticipant(s);
-		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
-		manager.addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-		
-		ISynchronizeView view = manager.showSynchronizeViewInActivePage(null);
-		if(view != null) {
-			view.display(participant);
-			participant.refreshWithRemote(s.roots());
-		} else {
-			CVSUIPlugin.openError(getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
-		}
+		MergeSynchronizeParticipant participant = (MergeSynchronizeParticipant)SubscriberParticipant.find(s);
+		boolean addParticipant = false;
+		if(participant == null) {
+			participant = new MergeSynchronizeParticipant(s);
+			addParticipant = true;
+		}						
+		participant.refreshWithRemote(s.roots(), addParticipant);		
 		return true;
 	}
 	
