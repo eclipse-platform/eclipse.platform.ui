@@ -78,12 +78,15 @@ public abstract class AbstractBreakpointGroupAction extends AbstractBreakpointsV
 		Iterator iter = fGroupContainers.iterator();
 		while (iter.hasNext()) {
 			BreakpointGroupContainer container = (BreakpointGroupContainer) iter.next();
-			IBreakpoint[] children = container.getBreakpoints();
-			for (int i = 0; i < children.length; i++) {
-				breakpoints.add(children[0]);
+			if (container.getName().equals(group)) {
+				IBreakpoint[] children = container.getBreakpoints();
+				for (int i = 0; i < children.length; i++) {
+					breakpoints.add(children[i]);
+				}
+				break;
 			}
 		}
-	    return (IBreakpoint[]) breakpoints.toArray(new IBreakpoint[0]);
+	    return (IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]);
 	}
 
 }
