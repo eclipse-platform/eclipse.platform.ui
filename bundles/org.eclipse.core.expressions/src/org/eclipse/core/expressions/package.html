@@ -162,18 +162,27 @@ exception.</p><p><u><i>Resolve expression</i></u></p>
 <p>The adapt expression can by used to adapt the object to be inspected
 to an object of a different type using the adapter mechanism provided by
 the platform. The example below adapts the object to be inspected to an
-IMethod and then checks if the method is private:</p>
-<blockquote><pre>&lt;adapt type="org.eclipse.jdt.core.IMethod"&gt;
+IType and then checks if the type is public:</p>
+<blockquote><pre>&lt;adapt type="org.eclipse.jdt.core.IType"&gt;
     &lt;test property="org.demo.isPrivate"/&gt;
 &lt;/adapt&gt;</pre></blockquote>
 <p>Like the with expression the adapt expression changes the object to
 inspect for all its children. The new object is the one returned from
 IAdapter.getAdapter(). If the adaption fails, the expression evaluates
 to false.</p>
+<p>The adapt expression is implemented based on the IAdapterManager API <code>hasAdapter(Object,
+String)</code> and <code>getAdapter(Object, String)</code>. This ensures that the right class loader is taken to convert the type name into a corresponding Class object. However, using this API requires that the adapter factory providing the actual adapter is registered in XML using the extension point &quot;org.eclipse.core.runtime.adapters&quot;. Assuming that there is an adapter that converts resources with the extension .java into type objects the adapter must be declared in XML to make the above adapt expression work correctly. The corresponding adapter definition looks like this</p>
+<blockquote><pre>&lt;extension point=&quot;org.eclipse.core.runtime.adapters&quot;&gt;
+  &lt;factory 
+    class=&quot;org.demo.MyAdapterFactory&quot; 
+    adaptableType=&quot;org.eclipse.core.resources.IFile&quot;&gt;
+    &lt;adapter type=&quot;org.eclipse.jdt.core.IType&quot;/&gt;
+  &lt;/factory&gt;
+&lt;/extension&gt;</pre></blockquote>
 <p><u><i>SytemTest expression</i></u></p>
 <p>There is a special XML element to test system properties.</p>
 <blockquote>
-<p><code>&lt;systemTest property="os.name" value="Windows XP"/&gt; <br>
+<p><code>&lt;systemTest property="os.name" value="Windows XP"/&gt;<br>
 &lt;systemTest property="os.version" value="5.1"/&gt;</code></p>
 </blockquote>
 <p><u><i>Dealing with collection of elements</i></u></p>
