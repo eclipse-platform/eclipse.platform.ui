@@ -5,7 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.DebugEvent;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Control;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Control;
 
 public abstract class BasicContentProvider implements IStructuredContentProvider {
 

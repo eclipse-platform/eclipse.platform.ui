@@ -1,7 +1,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
  
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -20,9 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Manages contributed launch configuration tabs

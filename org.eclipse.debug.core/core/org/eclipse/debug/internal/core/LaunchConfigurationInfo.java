@@ -1,11 +1,16 @@
 package org.eclipse.debug.internal.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -20,11 +25,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 /**
  * The information associated with a launch configuration

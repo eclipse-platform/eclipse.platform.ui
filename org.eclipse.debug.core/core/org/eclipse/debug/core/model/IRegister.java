@@ -1,10 +1,11 @@
 package org.eclipse.debug.core.model;
 
-import org.eclipse.debug.core.DebugException;
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.debug.core.DebugException;
  
 /**
  * Some debug architectures provide access to registers.

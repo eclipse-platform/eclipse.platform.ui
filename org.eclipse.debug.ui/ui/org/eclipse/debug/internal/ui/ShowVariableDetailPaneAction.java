@@ -1,5 +1,10 @@
 package org.eclipse.debug.internal.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;

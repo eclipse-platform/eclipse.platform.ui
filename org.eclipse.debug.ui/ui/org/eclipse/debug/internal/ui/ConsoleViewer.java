@@ -5,7 +5,10 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;

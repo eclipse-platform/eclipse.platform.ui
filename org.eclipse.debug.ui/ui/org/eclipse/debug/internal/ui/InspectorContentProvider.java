@@ -5,11 +5,18 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 
 public class InspectorContentProvider extends BasicContentProvider implements ITreeContentProvider, IDebugEventListener {
 	

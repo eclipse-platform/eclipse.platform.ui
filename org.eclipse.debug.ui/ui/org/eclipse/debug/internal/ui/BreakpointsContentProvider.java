@@ -6,7 +6,10 @@ package org.eclipse.debug.internal.ui;
  */
  
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.TableViewer;
 

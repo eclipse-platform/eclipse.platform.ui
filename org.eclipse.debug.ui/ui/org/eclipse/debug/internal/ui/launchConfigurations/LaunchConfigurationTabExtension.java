@@ -1,14 +1,13 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.internal.core.LaunchManager;
-
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
 
 /**
  * Proxy to a launch configuration tab element

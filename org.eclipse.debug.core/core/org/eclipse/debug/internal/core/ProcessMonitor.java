@@ -5,13 +5,10 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.*;
-
 /**
  * Monitors a system process, wiating for it to terminate, and
  * then notifies the associated runtime process.
  */
-
 public class ProcessMonitor {
 	/**
 	 * The underlying <code>java.lang.Process</code> being monitored.

@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui;
  * stored at the given key. The type indicates type of the stored preferences
  *
  * The preference store is loaded by the plugin (DebugUIPlugin).
- * @See DebugUIPlugin.initializeDefaultPreferences() - for initialization of the store
+ * @see DebugUIPlugin.initializeDefaultPreferences(IPreferenceStore) - for initialization of the store
  */
 public interface IDebugPreferenceConstants {
 

@@ -7,8 +7,20 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui.*;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.swt.graphics.Image;import org.eclipse.ui.*;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DefaultLabelProvider;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.InspectItem;
+import org.eclipse.debug.internal.ui.InspectorView;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 
 /**
  * This class provides utilities for clients of the debug UI.
