@@ -114,4 +114,11 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
 		return super.getTargetAttributeValueProposals(document, textToSearch, prefix, attributeName);
 	}
+	/**
+	 * Since the testing occurs without necessarily having an associated viewer, return
+	 * a dummy value.
+	 */
+	protected char getPreviousChar() {
+		return '?';
+	}
 }

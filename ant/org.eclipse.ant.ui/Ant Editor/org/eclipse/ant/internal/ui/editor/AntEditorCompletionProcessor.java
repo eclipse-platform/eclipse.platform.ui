@@ -77,8 +77,19 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
  
  	private Comparator proposalComparator= new Comparator() {
 		public int compare(Object o1, Object o2) {
-			String string1 = ((ICompletionProposal)o1).getDisplayString();
-			String string2 = ((ICompletionProposal)o2).getDisplayString();
+			AntCompletionProposal p1= (AntCompletionProposal) o1;
+			AntCompletionProposal p2= (AntCompletionProposal) o2;
+			int type1= p1.getType();
+			int type2= p2.getType();
+			if (type1 != type2) {
+				if (type1 > type2) {
+					return 1;
+				}  else {
+					return -1;
+				}
+			}
+			String string1 = p1.getDisplayString();
+			String string2 = p2.getDisplayString();
 			return string1.compareToIgnoreCase(string2);
 		}
  	};
@@ -264,10 +275,13 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             	}
 				break;
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
-                proposals= getClosingTaskProposals(getOpenElementName(), prefix);
-            	if (proposals.length == 0) {
+                ICompletionProposal proposal= getClosingTaskProposal(getOpenElementName(), prefix, true);
+            	if (proposal == null) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.30"); //$NON-NLS-1$
-            	}
+				   proposals= new ICompletionProposal[0];
+            	} else {
+	            	proposals= new ICompletionProposal[]{proposal};
+	            }
                 break;
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             	String textToSearch= document.get().substring(0, cursorPosition-prefix.length());
@@ -294,9 +308,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			case PROPOSAL_MODE_NONE :
             default :
                 proposals= new ICompletionProposal[0];
-            	if (proposals.length == 0) {
-				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
-            	}
+            	errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
         } 
         Arrays.sort(proposals, proposalComparator);
         if (proposals.length > 0) {
@@ -565,12 +577,13 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      */
     protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
         List proposals = new ArrayList(250);
+        ICompletionProposal proposal;
         if (parentName == null) {
             String rootElementName= "project"; //$NON-NLS-1$
 			IElement rootElement = dtd.getElement(rootElementName);
 			if(rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
 				additionalProposalOffset= 0;
-				ICompletionProposal proposal = newCompletionProposal(document, prefix, rootElementName);
+				proposal = newCompletionProposal(document, prefix, rootElementName);
 				proposals.add(proposal);
 			}
         } //else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
@@ -593,7 +606,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				IDfm dfm = parent.getDfm();
 				String[] accepts = dfm.getAccepts();
 				String elementName;
-				ICompletionProposal proposal;
 				for (int i = 0; i < accepts.length; i++) {
 					additionalProposalOffset= 0;
 					elementName = accepts[i];
@@ -605,6 +617,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			} else {
 				//TODO check for a task or type that has been defined and is not in the dtd
 			}
+        }
+        
+        proposal= getClosingTaskProposal(getOpenElementName(), prefix, false);
+        if (proposal != null) {
+        	proposals.add(proposal);
         }
         
        return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -632,30 +649,50 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-     * Returns the one possible completion for the specified unclosed task .
+     * Returns the one possible completion for the specified unclosed task.
      * 
      * @param openElementName the task that hasn't been closed 
      * last
      * @param prefix The prefix that the one possible proposal should start 
      * with. The prefix may be an empty string.
-     * @return array which may contain either one or none proposals
+     * @return the proposal or <code>null</code> if no closing proposal available
      */
-    private ICompletionProposal[] getClosingTaskProposals(String openElementName, String prefix) {
-		ICompletionProposal[] proposals= null;
+    private ICompletionProposal getClosingTaskProposal(String openElementName, String prefix, boolean closingMode) {
+    	char previousChar = getPreviousChar();
+		ICompletionProposal proposal= null;
         if(openElementName != null) {
             if(prefix.length() == 0 || openElementName.toLowerCase().startsWith(prefix)) {
-                String replaceString = openElementName;
-                proposals= new ICompletionProposal[1];
-                proposals[0]= new AntCompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, AntCompletionProposal.TASK_PROPOSAL);
+                StringBuffer replaceString = new StringBuffer();
+                if (!closingMode) {
+                	if (previousChar != '/') {
+	                	if (previousChar != '<') {
+	                		replaceString.append('<');
+	                	}
+	                	replaceString.append('/');
+	                }
+                }
+                replaceString.append(openElementName);
+                replaceString.append('>');
+                proposal= new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, openElementName, AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
             }
         }
-        if (proposals == null) {
-        	proposals= new ICompletionProposal[0];
-        }
-        return proposals;
+       
+        return proposal;
     }
 
-    /**
+	protected char getPreviousChar() {
+		ITextSelection selection = (ITextSelection)viewer.getSelectionProvider().getSelection();
+    	int offset= selection.getOffset();
+    	char previousChar= '?';
+    	try {
+			previousChar= viewer.getDocument().getChar(offset-1);
+		} catch (BadLocationException e) {
+			
+		}
+		return previousChar;
+	}
+
+	/**
      * Returns the replacement string for the specified task name.
      */
     private String getTaskProposalReplacementString(String aTaskName, boolean hasNested) {

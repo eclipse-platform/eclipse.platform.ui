@@ -23,8 +23,9 @@ import org.eclipse.swt.graphics.Point;
 
 public class AntCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
 
-	public static final int TASK_PROPOSAL= 0;
-	public static final int PROPERTY_PROPOSAL= 1;
+	public static final int TAG_CLOSING_PROPOSAL= 0;
+	public static final int TASK_PROPOSAL= 1;
+	public static final int PROPERTY_PROPOSAL= 2;
 	
 	/** The string to be displayed in the completion proposal popup */
 	private String fDisplayString;
@@ -53,6 +54,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param image the image to display for this proposal
 	 * @param displayString the string to be displayed for the proposal
 	 * @param additionalProposalInfo the additional information associated with this proposal
+	 * @param type the type of this proposal
 	 */
 	public AntCompletionProposal(String replacementString, int replacementOffset, int replacementLength, int cursorPosition, Image image, String displayString, String additionalProposalInfo, int type) {
 		fReplacementString= replacementString;
@@ -95,10 +97,9 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 			enteredText = document.get(fReplacementOffset, offset-fReplacementOffset);
 		} catch (BadLocationException e) {
 		}
-		if (fType == TASK_PROPOSAL && enteredText.startsWith("<")) { //$NON-NLS-1$
+		if ((fType == TASK_PROPOSAL || fType == TAG_CLOSING_PROPOSAL) && enteredText.startsWith("<")) { //$NON-NLS-1$
 			enteredText= enteredText.substring(1);
-		}
-		if (fType == PROPERTY_PROPOSAL) {
+		} else if (fType == PROPERTY_PROPOSAL) {
 			if(enteredText.startsWith("${")) { //$NON-NLS-1$
 				enteredText= enteredText.substring(2);
 			}
@@ -169,4 +170,10 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		return getDisplayString();
 	}
 
+	/**
+	 * @return Returns the type of the completion proposal
+	 */
+	public int getType() {
+		return fType;
+	}
 }
