@@ -59,6 +59,9 @@
                <documentation>
                   The name of the class.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="IScope"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -76,6 +79,9 @@
                <documentation>
                   The name of the class.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="AbstractPreferenceInitializer"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
