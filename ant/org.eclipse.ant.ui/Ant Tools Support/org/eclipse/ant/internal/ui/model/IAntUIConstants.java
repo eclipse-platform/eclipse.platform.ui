@@ -99,7 +99,7 @@ public interface IAntUIConstants {
 	/**
 	 * Size of left-hand column for right-justified task name.
 	 * Used for Ant Build logging.
-	 * @see org.eclipse.ant.ui.internal.antsupport.logger.AntProcessBuildLogger#logMessage(String, org.apache.tools.ant.BuildEvent, int)
+	 * @see org.eclipse.ant.internal.ui.antsupport.logger.AntProcessBuildLogger#logMessage(String, BuildEvent, int)
 	  */
 	public static final int LEFT_COLUMN_SIZE = 15;
 	

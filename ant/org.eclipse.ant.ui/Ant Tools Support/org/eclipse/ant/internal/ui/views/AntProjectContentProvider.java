@@ -55,10 +55,10 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 	}
 	
 	/**
-	 * Adds the given buildfile to the tree. Has no effect if the given build
-	 * file is already present in the tree.
+	 * Adds the project to the tree. Has no effect if a project with the same buildfile name
+	 * is already present in the tree.
 	 * 
-	 * @param buildFileName the string representing the path to a build file
+	 * @param project The project to add
 	 */
 	public void addProject(ProjectNode project) {
 		ProjectNode[] projects= getRootNode().getProjects();

@@ -104,10 +104,10 @@ public class TaskLinkManager {
 	 * Registers a hyperlink for the given process and task name. The given
 	 * region is relative to the beginning of the line (not the document).
 	 * 
-	 * @param process
-	 * @param link
-	 * @param region
-	 * @param taskName
+	 * @param process the process associated with the link
+	 * @param link the link for the process
+	 * @param region The region within the line
+	 * @param message The message related to the link
 	 */
 	public static synchronized void addTaskHyperlink(IProcess process, IConsoleHyperlink link, IRegion region, String message) {
 		if (fgProcessToNewLines != null) {

@@ -142,7 +142,7 @@ public class ProjectNode extends AntNode {
 	/**
 	 * Sets this project's error node state
 	 * 
-	 * @param boolean whether or not an error occurred while parsing this node
+	 * @param isErrorNode whether or not an error occurred while parsing this node
 	 */
 	public void setIsErrorNode(boolean isErrorNode) {
 		this.isErrorNode= isErrorNode;

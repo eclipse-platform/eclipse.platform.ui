@@ -147,7 +147,7 @@ public class AntUIImages {
 	 *		This may mean the same package directory as the package holding this class.
 	 *		The images are declared using this.getClass() to ensure they are looked up via
 	 *		this plugin class.
-	 *	@see JFace's ImageRegistry
+	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(AntUIPlugin.getStandardDisplay());

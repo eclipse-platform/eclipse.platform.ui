@@ -65,7 +65,7 @@ public final class AntUtil {
 	/**
 	 * Returns a single-string of the strings for storage.
 	 * 
-	 * @param targets the array of strings
+	 * @param strings the array of strings
 	 * @return a single-string representation of the strings or
 	 * <code>null</code> if the array is empty.
 	 */
@@ -206,7 +206,7 @@ public final class AntUtil {
 	 * Returns the list of urls that define the custom classpath for the Ant
 	 * build, or <code>null</code> if the global classpath is to be used.
 	 *
-	 * @param configuration launch configuration
+	 * @param config launch configuration
 	 * @return a list of <code>URL</code>
 	 *
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
@@ -244,9 +244,9 @@ public final class AntUtil {
 	 * Adds the Ant home entries and additional entries to the provided lists.
 	 * If no custom classpath is set, no entries are added to the lists.
 	 *
-	 * @param configuration launch configuration
-	 * @param list to add the Ant home entries to
-	 * @param list to add the additional entries to
+	 * @param config launch configuration
+	 * @param antHomeEntries list to add the Ant home entries to
+	 * @param additionalEntries list to add the additional entries to
 	 *
 	 */
 	public static void getCustomClasspaths(ILaunchConfiguration config, List antHomeEntries, List additionalEntries) {
@@ -406,7 +406,7 @@ public final class AntUtil {
 	 * @param path
 	 * @param buildFileParent
 	 * @return file or <code>null</code>
-	 * @see IWorkspaceRoot.findFilesForLocation(IPath)
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public static IFile getFileForLocation(String path, File buildFileParent) {
 		IPath filePath= new Path(path);

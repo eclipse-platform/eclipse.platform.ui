@@ -22,10 +22,8 @@ public class TargetNode extends AntNode {
 	private boolean isErrorNode= false;
 	
 	/**
-	 * Creates a new target node with the given parent node, name, and target
-	 * dependencies
+	 * Creates a new target node with the given name, and description
 	 * 
-	 * @param parent the new node's parent
 	 * @param name the new node's name
 	 * @param description the target description or <code>null</code> if the
 	 * target has no description
@@ -68,7 +66,7 @@ public class TargetNode extends AntNode {
 	/**
 	 * Sets this target's error node state
 	 *
-	 * @param boolean whether or not an error occurred while parsing this node
+	 * @param isErrorNode whether or not an error occurred while parsing this node
 	 */
 	public void setIsErrorNode(boolean isErrorNode) {
 		this.isErrorNode= isErrorNode;
