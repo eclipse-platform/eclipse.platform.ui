@@ -386,7 +386,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/**
 	 * Creates a separator between buttons
 	 * @param parent
-	 * @return
+	 * @return a separator
 	 */
 	private Label createSeparator(Composite parent) {
 		Label separator= new Label(parent, SWT.NONE);
@@ -411,6 +411,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/**
      * Correctly resizes the table so no phantom columns appear
+     * 
+	 * @param parent the parent control
+	 * @param buttons the buttons
+	 * @param table the table
+	 * @param column1 the first column
+	 * @param column2 the second column
+	 * @param column3 the third column
      */
     private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3) {
         parent.addControlListener(new ControlAdapter() {
@@ -684,13 +691,22 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 
 		if (!file.exists() || confirmOverwrite(file)) {
+			OutputStream output= null;
 			try {
-				OutputStream output= new BufferedOutputStream(new FileOutputStream(file));
+				output= new BufferedOutputStream(new FileOutputStream(file));
 				TemplateReaderWriter writer= new TemplateReaderWriter();
 				writer.save(templates, output);
-			} catch (Exception e) {
+				output.close();
+			} catch (IOException e) {
+				if (output != null) {
+					try {
+						output.close();
+					} catch (IOException e2) {
+						// ignore 
+					}
+				}
 				openWriteErrorDialog(e);
-			}		
+			}
 		}
 	}
 
