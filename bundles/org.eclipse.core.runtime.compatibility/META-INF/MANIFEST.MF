@@ -26,7 +26,7 @@ Provide-Package:
  org.eclipse.core.runtime.model,
  org.eclipse.core.internal.plugins
 Require-Bundle: 
- org.eclipse.core.runtime.osgi,
+ org.eclipse.core.runtime; provide-packages=true,
  org.apache.xerces;optional=true
 Export-Package:
  org.eclipse.core.internal.plugins
