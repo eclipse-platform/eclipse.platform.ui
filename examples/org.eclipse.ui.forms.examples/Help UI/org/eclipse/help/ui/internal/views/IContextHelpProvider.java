@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Widget;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface IContextHelpProvider {
+	int NONE = 0x0;
 	int SELECTION = 0x1;
 	
 	int getContextHelpChangeMask();
