@@ -39,12 +39,14 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	private static final String ELEMENT_SCOPE = "scope"; //$NON-NLS-1$
+	private static final String ELEMENT_MODIFIER = "modifier"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private static IPreferencesService instance;
 	static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
+	private ListenerList modifyListeners = new ListenerList();
 
 	/*
 	 * Create and return an IStatus object with ERROR severity and the
@@ -88,6 +90,21 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
 	}
 
+	private void initializeModifyListeners() {
+		modifyListeners = new ListenerList();
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
+		if (point == null)
+			return;
+		IExtension[] extensions = point.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+			for (int j = 0; j < elements.length; j++)
+				if (ELEMENT_MODIFIER.equalsIgnoreCase(elements[j].getName()))
+					addModifyListener(elements[j]);
+		}
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
+	}
+
 	static void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
 	}
@@ -109,6 +126,29 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	/*
 	 * Abstracted into a separate method to prepare for dynamic awareness.
 	 */
+	private void addModifyListener(IConfigurationElement element) {
+		String key = element.getAttribute(ATTRIBUTE_CLASS);
+		if (key == null) {
+			String message = NLS.bind(Messages.preferences_missingClassAttribute, element.getDeclaringExtension().getUniqueIdentifier());
+			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, null));
+			return;
+		}
+		try {
+			Object listener = element.createExecutableExtension(ATTRIBUTE_CLASS);
+			if (!(listener instanceof PreferenceModifyListener)) {
+				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_classCastListener, null));
+				return;
+			}
+			modifyListeners.add(listener);
+		} catch (CoreException e) {
+			log(e.getStatus());
+			return ;
+		}
+	}
+
+	/*
+	 * Abstracted into a separate method to prepare for dynamic awareness.
+	 */
 	static void scopeRemoved(String key) {
 		IEclipsePreferences node = (IEclipsePreferences) root.node(key);
 		root.removeNode(node);
@@ -118,6 +158,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private PreferencesService() {
 		super();
 		initializeScopes();
+		initializeModifyListeners();
 	}
 
 	/*
@@ -132,6 +173,8 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			Policy.debug("Applying exported preferences: " + ((ExportedPreferences) preferences).toDeepDebugString()); //$NON-NLS-1$
 
 		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Messages.preferences_applyProblems, null);
+
+		IEclipsePreferences modifiedNode = firePreApplyEvent(preferences);
 
 		// create a visitor to apply the given set of preferences
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
@@ -182,14 +225,14 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 		try {
 			// start by visiting the root
-			preferences.accept(visitor);
+			modifiedNode.accept(visitor);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_applyProblems, e));
 		}
 
 		// save the prefs
 		try {
-			getRootNode().node(preferences.absolutePath()).flush();
+			getRootNode().node(modifiedNode.absolutePath()).flush();
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_saveProblems, e));
 		}
@@ -339,7 +382,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				scope = (IScope) ((IConfigurationElement) value).createExecutableExtension(ATTRIBUTE_CLASS);
 				scopeRegistry.put(name, scope);
 			} catch (ClassCastException e) {
-				log(createStatusError(Messages.preferences_classCast, e));
+				log(createStatusError(Messages.preferences_classCastScope, e));
 				return new EclipsePreferences(root, name);
 			} catch (CoreException e) {
 				log(e.getStatus());
@@ -635,6 +678,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas = event.getExtensionDeltas(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
+		if (deltas.length == 0) 
+			return;
+		// dynamically adjust the registered scopes
 		for (int i = 0; i < deltas.length; i++) {
 			IConfigurationElement[] elements = deltas[i].getExtension().getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
@@ -650,6 +696,8 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				}
 			}
 		}
+		// initialize the preference modify listeners
+		initializeModifyListeners();
 	}
 
 	/*
@@ -788,7 +836,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					continue;
 				// get the child node
 				String childPath = nodeFullPath.substring(treePath.length());
-				// todo make relative
+				childPath = EclipsePreferences.makeRelative(childPath);
 				if (tree.nodeExists(childPath))
 					copyFromTo(tree.node(childPath), result.node(childPath), (String[]) mapping.get(nodePath), 0);
 			}
@@ -968,7 +1016,13 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		ArrayList trees = new ArrayList();
 		for (int i = 0; i < filters.length; i++)
 			trees.add(trimTree(tree, filters[i]));
+		// merge the union of the matching filters
 		IEclipsePreferences toApply = mergeTrees((IEclipsePreferences[]) trees.toArray(new IEclipsePreferences[trees.size()]));
+		
+		// fire an event to give people a chance to modify the tree
+		toApply = firePreApplyEvent(toApply);
+		
+		// actually apply the settings
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				String[] keys = node.keys();
@@ -979,5 +1033,27 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			}
 		};
 		toApply.accept(visitor);
+	}
+	
+	/*
+	 * Give clients a chance to modify the tree before it is applied globally 
+	 */
+	private IEclipsePreferences firePreApplyEvent(IEclipsePreferences tree) {
+		final IEclipsePreferences[] result = new IEclipsePreferences[] {tree};
+		Object[] listeners = modifyListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final PreferenceModifyListener listener = (PreferenceModifyListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already logged in Platform#run()
+				}
+
+				public void run() throws Exception {
+					result[0] = listener.preApply(result[0]);
+				}
+			};
+			Platform.run(job);
+		}
+		return result[0];
 	}
 }

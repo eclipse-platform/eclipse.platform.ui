@@ -15,6 +15,7 @@
          <sequence>
             <element ref="scope" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="initializer" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="modifier" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -90,6 +91,26 @@
       </complexType>
    </element>
 
+   <element name="modifier">
+      <annotation>
+         <documentation>
+            Element which defines the class to use for preference modification listening.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.preferences.PreferenceModifyListener"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -110,6 +131,7 @@
       &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
          &lt;scope name=&quot;foo&quot; class=&quot;com.example.FooPrefs&quot;/&gt;
          &lt;initializer class=&quot;com.example.MyPreferenceInitializer&quot;/&gt;
+         &lt;modifier class=&quot;com.example.MyModifyListener&quot;/&gt;
       &lt;/extension&gt;
    &lt;/pre&gt;
 &lt;/p&gt;

@@ -132,10 +132,11 @@ public class Messages extends NLS {
 	public static String plugin_shutdownProblems;
 	public static String plugin_startupProblems;
 	public static String plugin_unableToResolve;
-	public static String preferences_applyProblems;
-	public static String preferences_classCast;
 
 	// Preferences
+	public static String preferences_applyProblems;
+	public static String preferences_classCastScope;
+	public static String preferences_classCastListener;
 	public static String preferences_errorWriting;
 	public static String preferences_exportProblems;
 	public static String preferences_failedDelete;
@@ -144,6 +145,7 @@ public class Messages extends NLS {
 	public static String preferences_incompatible;
 	public static String preferences_invalidExtensionSuperclass;
 	public static String preferences_loadException;
+	public static String preferences_missingClassAttribute;
 	public static String preferences_missingScopeAttribute;
 	public static String preferences_removedNode;
 	public static String preferences_removeExported;

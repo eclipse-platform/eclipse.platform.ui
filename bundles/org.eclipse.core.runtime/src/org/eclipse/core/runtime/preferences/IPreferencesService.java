@@ -462,11 +462,17 @@ public interface IPreferencesService {
 	 * remove it from the global tree before adding any preferences
 	 * contained in it or its children. The given preferences object
 	 * must not be <code>null</code>.
+	 * <p>
+	 * Before the tree is applied to the global preference tree,
+	 * the registered <code>PreferenceModifyListener</code> objects
+	 * are called and given the opportunity to modify the tree.
+	 * </p>
 	 * 
 	 * @param preferences the preferences to apply globally
 	 * @return status object indicating sucess or failure
 	 * @throws IllegalArgumentException if the preferences are <code>null</code>
 	 * @throws CoreException if there are problems applying the preferences
+	 * @see PreferenceModifyListener
 	 */
 	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException;
 
@@ -580,10 +586,6 @@ public interface IPreferencesService {
 	 * Return a list of filters which match the given tree and is a subset of the given
 	 * filter list. If the specified list of filters is <code>null</code>, empty, or there 
 	 * are no matches, then return an empty list.
-	 * <p>
-	 * <em>Note:</em> This is interim API and will likely change shape before the 
-	 * final 3.1 release.
-	 * </p>
 	 * 
 	 * @param node the tree to match against
 	 * @param filters the list of filters to match against
@@ -602,8 +604,9 @@ public interface IPreferencesService {
 	 * If the list of filters is <code>null</code> or empty then do nothing.
 	 * </p>
 	 * <p>
-	 * <em>Note:</em> This is interim API and will likely change shape before the 
-	 * final 3.1 release.
+	 * Before the tree is applied to the global preference tree,
+	 * the registered <code>PreferenceModifyListener</code> objects
+	 * are called and given the opportunity to modify the tree.
 	 * </p>
 	 * 
 	 * @param node the tree to consider applying
@@ -612,6 +615,7 @@ public interface IPreferencesService {
 	 * @see #applyPreferences(IExportedPreferences)
 	 * @see #readPreferences(InputStream)
 	 * @see IPreferenceFilter
+	 * @see PreferenceModifyListener
 	 * @since 3.1
 	 */
 	public void applyPreferences(IEclipsePreferences node, IPreferenceFilter[] filters) throws CoreException;
