@@ -166,12 +166,12 @@ public class EditorCoolBar {
 	
 				}			
 			});
-			Point p1 = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point p2 = bookMarkItem.computeSize(p1.x, p1.y);
-			int minWidth = bookMarkToolBar.getItem(0).getWidth();
-			bookMarkItem.setMinimumSize(minWidth, p2.y);
-			bookMarkItem.setPreferredSize(p2);
 		}
+		Point size = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		size = bookMarkItem.computeSize(size.x, size.y);
+		int minWidth = bookMarkToolBar.getItem(0).getWidth();
+		bookMarkItem.setMinimumSize(minWidth, size.y);
+		bookMarkItem.setPreferredSize(size);		
 	}	
 	
 	public void updateEmptyEditorLabel() {
@@ -467,6 +467,8 @@ public class EditorCoolBar {
 	
 	public void dispose() {
 		getManager().removeListener(shortcutListener);
+		closeEditorList();
+		closeShortcutList();
 		coolBar.dispose();
 		coolBar = null;
 	}
@@ -689,6 +691,8 @@ public class EditorCoolBar {
 		}
 	
 		public void destroyControl() {
+			if(shortcutTable == null)
+				return;
 			ViewForm parent = (ViewForm) shortcutTable.getParent();
 			parent.setContent(null);
 			parent.dispose();
