@@ -364,6 +364,8 @@ public class DecoratorManager
 	 * the preference.
 	 */
 	public void updateForEnablementChange() {
+		//Clear any results that may be around as all labels have changed
+		scheduler.clearResults();
 		fireListeners(new LabelProviderChangedEvent(this));
 		writeDecoratorsPreference();
 	}
