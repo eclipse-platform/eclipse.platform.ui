@@ -276,8 +276,14 @@ public class MergeSourceViewer extends SourceViewer
 				line= 0;
 
 			int cp= getTopIndex();
-			if (cp != line)
-				setTopIndex(line + getDocumentRegionOffset());
+			if (cp != line) {
+				if (line >= srcViewSize-srcExtentSize) {
+					// workaround for PR 1GBB34N: ITPJUI:WIN2000 - Compare Viewer doesn't scroll to last line
+					getTextWidget().setTopIndex(line + getDocumentRegionOffset());
+				} else {
+					setTopIndex(line + getDocumentRegionOffset());
+				}
+			}
 		}
 	}
 	

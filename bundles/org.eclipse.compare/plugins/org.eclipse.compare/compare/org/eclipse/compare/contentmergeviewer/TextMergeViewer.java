@@ -2425,7 +2425,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 		
 	private void scrollVertical(int virtualPos, MergeSourceViewer allBut) {
-		
+				
 		if (virtualPos < 0)
 			virtualPos= virtualPos;
 		
@@ -2511,14 +2511,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private void updateVScrollBar() {
 		
 		if (Utilities.okToUse(fVScrollBar) && fSynchronizedScrolling /* && fVScrollBar.isVisible() */) {
+			int selection= fVScrollBar.getSelection();
 			int virtualHeight= getVirtualHeight();
 			int viewPortHeight= getViewportHeight();
-			fVScrollBar.setPageIncrement(viewPortHeight-1);
-			fVScrollBar.setMaximum(virtualHeight);	// XXX: sometimes the last line isn't visible
-			if (viewPortHeight > virtualHeight)
-				fVScrollBar.setThumb(virtualHeight);
-			else
-				fVScrollBar.setThumb(viewPortHeight);				
+			int pageIncrement= viewPortHeight-1;
+			int thumb= (viewPortHeight > virtualHeight) ? virtualHeight : viewPortHeight;
+						
+//			fVScrollBar.setPageIncrement(pageIncrement);
+//			fVScrollBar.setMaximum(virtualHeight);	// XXX: sometimes the last line isn't visible
+//			fVScrollBar.setThumb(thumb);
+				
+			fVScrollBar.setValues(selection, 0, virtualHeight, thumb, 1, pageIncrement);
 		}			
 	}
 	

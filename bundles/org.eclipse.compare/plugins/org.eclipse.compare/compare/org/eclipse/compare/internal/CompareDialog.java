@@ -109,7 +109,7 @@ public class CompareDialog extends Dialog implements IPropertyChangeListener {
 						
 			WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor pm) throws CoreException {
-					fCompareEditorInput.save(pm);
+					fCompareEditorInput.saveChanges(pm);
 				}
 			};
 						
@@ -121,8 +121,6 @@ public class CompareDialog extends Dialog implements IPropertyChangeListener {
 			} catch (InterruptedException x) {
 			} catch (OperationCanceledException x) {
 			} catch (InvocationTargetException x) {
-				//String title= getResourceString("Error.save.title");
-				//String msg= getResourceString("Error.save.message");
 				String title= Utilities.getString("CompareDialog.saveErrorTitle"); //$NON-NLS-1$
 				String msg= Utilities.getString("CompareDialog.saveErrorMessage"); //$NON-NLS-1$
 				MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());

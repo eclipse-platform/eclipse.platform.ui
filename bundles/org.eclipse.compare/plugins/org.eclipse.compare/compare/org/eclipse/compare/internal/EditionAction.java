@@ -25,12 +25,12 @@ import org.eclipse.compare.*;
 public class EditionAction implements IActionDelegate {
 
 	private ISelection fSelection;
-	private ResourceBundle fBundle;
+	private String fBundleName;
 	private boolean fReplaceMode;
 	
 	EditionAction(boolean replaceMode, String bundleName) {
 		fReplaceMode= replaceMode;
-		fBundle= ResourceBundle.getBundle(bundleName);
+		fBundleName= bundleName;
 	}
 
 	public void selectionChanged(IAction a, ISelection s) {
@@ -60,7 +60,8 @@ public class EditionAction implements IActionDelegate {
 
 	private void doFromHistory(final IFile file) {
 						
-		String title= Utilities.getString(fBundle, "title"); //$NON-NLS-1$
+		final ResourceBundle bundle= ResourceBundle.getBundle(fBundleName);
+		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
 	
 		Shell parentShell= CompareUIPlugin.getShell();
 		
@@ -73,7 +74,7 @@ public class EditionAction implements IActionDelegate {
 		}
 		
 		if (states == null || states.length <= 0) {
-			String msg= Utilities.getString(fBundle, "noLocalHistoryError"); //$NON-NLS-1$
+			String msg= Utilities.getString(bundle, "noLocalHistoryError"); //$NON-NLS-1$
 			MessageDialog.openInformation(parentShell, title, msg);
 			return;
 		}
@@ -86,7 +87,7 @@ public class EditionAction implements IActionDelegate {
 			editions[i+1]= new HistoryItem(base, states[i]);
 
 		if (fReplaceMode) {
-			EditionSelectionDialog d= new EditionSelectionDialog(parentShell, fBundle);
+			EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
 			d.setHideIdenticalEntries(false);
 
 			final ITypedElement ti= d.selectEdition(base, editions, null);			
@@ -95,7 +96,7 @@ public class EditionAction implements IActionDelegate {
 				WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 					public void execute(IProgressMonitor pm) throws InvocationTargetException {
 						try {
-							String taskName= Utilities.getString(fBundle, "taskName"); //$NON-NLS-1$
+							String taskName= Utilities.getString(bundle, "taskName"); //$NON-NLS-1$
 							pm.beginTask(taskName, IProgressMonitor.UNKNOWN);
 							InputStream is= ((IStreamContentAccessor)ti).getContents();
 							file.setContents(is, false, true, pm);
@@ -116,11 +117,11 @@ public class EditionAction implements IActionDelegate {
 					
 				} catch (InvocationTargetException x) {
 					String reason= x.getTargetException().getMessage();
-					MessageDialog.openError(parentShell, title, Utilities.getFormattedString(fBundle, "replaceError", reason));	//$NON-NLS-1$
+					MessageDialog.openError(parentShell, title, Utilities.getFormattedString(bundle, "replaceError", reason));	//$NON-NLS-1$
 				}
 			}
 		} else {
-			CompareWithEditionDialog d= new CompareWithEditionDialog(parentShell, fBundle);
+			CompareWithEditionDialog d= new CompareWithEditionDialog(parentShell, bundle);
 			d.setHideIdenticalEntries(false);
 
 			d.selectEdition(base, editions, null);			
