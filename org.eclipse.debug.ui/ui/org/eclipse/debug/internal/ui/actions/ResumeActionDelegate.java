@@ -12,8 +12,11 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import java.util.Iterator;
+
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ResumeActionDelegate extends AbstractListenerActionDelegate {
@@ -22,12 +25,31 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) throws DebugException {
-		if (object instanceof ISuspendResume) {
-			ISuspendResume resume = (ISuspendResume)object;
-			if(resume.canResume()) {
-				resume.resume();
-			}
-		}
+	    if (isEnabledFor(object)) {
+	        ISuspendResume resume = (ISuspendResume)object;
+			resume.resume();
+	    } else {
+	        doActionForAllThreads(object);
+	    }
+	}
+	
+	/**
+	 * Resumes all threads in the target associated with the given element
+	 * 
+	 * @param object debug element
+	 * @throws DebugException on failure
+	 */
+	protected void doActionForAllThreads(Object object) throws DebugException {
+	    if (isEnabledForAllThreads(object)) {
+	        IDebugElement debugElement = (IDebugElement) object;
+	        IThread[] threads = debugElement.getDebugTarget().getThreads();
+	        for (int i = 0; i < threads.length; i++) {
+	            IThread thread = threads[i];
+	            if (thread.canResume()) {
+	                thread.resume();
+	            }
+	        }
+	    }
 	}
 	
 	/**
@@ -48,19 +70,37 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getEnableStateForSelection(IStructuredSelection)
 	 */
 	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
-		boolean enabled = false;
+	    if (selection.isEmpty()) {
+	        return false;
+	    }
 		for (Iterator i = selection.iterator(); i.hasNext(); ) {
 			Object element = i.next();
-			if (!(element instanceof ISuspendResume)) {
-				return false; //all elements should be IStructuredSelection
-			}
-			if (!enabled && isEnabledFor(element)) {
-				enabled = true;
+			if (!(isEnabledFor(element) || isEnabledForAllThreads(element))) {
+				return false;
 			}
 		}
-		return enabled;
+		return true;
 	}
 
+	/**
+	 * Returns whether 'resume all threads' should be enabled for the given element.
+	 */
+	protected boolean isEnabledForAllThreads(Object element) {
+		if (element instanceof IDebugElement) {
+            IDebugElement debugElement = (IDebugElement) element;
+            try {
+                IThread[] threads = debugElement.getDebugTarget().getThreads();
+                for (int i = 0; i < threads.length; i++) {
+                    if (threads[i].canResume()) {
+                        return true;
+                    }
+                }
+            } catch (DebugException e) {
+            }
+        }
+		return false;
+	}
+	
 	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
