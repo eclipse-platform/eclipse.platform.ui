@@ -183,14 +183,17 @@ public class RemoteFolderTreeBuilder {
 		
 		// Create a remote folder tree corresponding to the local resource
 		RemoteFolderTree remote = new RemoteFolderTree(parent, repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
-		
+		// Above should be replaces by the following (after M3)
+//		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
+
+
 		// Create a List to contain the created children
 		List children = new ArrayList();
 		
 		// Build the child folders corresponding to local folders base
 		ICVSFolder[] folders = local.getFolders();
 		for (int i=0;i<folders.length;i++) {
-			if (folders[i].isCVSFolder()) {
+			if (folders[i].isManaged() && folders[i].isCVSFolder()) {
 				children.add(buildBaseTree(remote, folders[i], monitor));
 			}
 		}
