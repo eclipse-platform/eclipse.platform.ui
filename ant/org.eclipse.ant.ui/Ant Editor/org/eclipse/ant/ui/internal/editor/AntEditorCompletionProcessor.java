@@ -542,7 +542,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 rootElementName = lastDefaultHandler.rootElementName;
         	}
 			if (rootElementName == null) {
-				rootElementName = aPrefix + "project"; //$NON-NLS-1$
+				rootElementName = "project"; //$NON-NLS-1$
 			}
 			IElement rootElement = dtd.getElement(rootElementName);
 			if(rootElement != null && rootElementName.startsWith(aPrefix)) {
