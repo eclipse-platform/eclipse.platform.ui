@@ -27,7 +27,7 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 		// Verify lifecycle.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.contains(delegate, 
+		assertTrue(delegate.callHistory.contains(
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	

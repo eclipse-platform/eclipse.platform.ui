@@ -6,11 +6,12 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.junit.util.*;
 
 /**
  * Tests the IPageService class.
  */
-public class IPageServiceTest extends AbstractTestCase 
+public class IPageServiceTest extends UITestCase 
 	implements IPageListener, org.eclipse.ui.IPerspectiveListener
 {
 	private IWorkbenchWindow fWindow;

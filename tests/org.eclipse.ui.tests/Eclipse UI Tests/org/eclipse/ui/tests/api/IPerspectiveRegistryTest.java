@@ -19,7 +19,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testFindPerspectiveWithId()
 	{		
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithId( pers.getId() );
 		assertNotNull( suspect );
@@ -31,7 +31,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testFindPerspectiveWithLabel()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithLabel( pers.getLabel() );
 		assertNotNull( suspect );
@@ -52,7 +52,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testSetDefaultPerspective()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );			
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( fReg.getPerspectives() );			
 		fReg.setDefaultPerspective( pers.getId() );
 		
 		assertEquals( pers.getId(), fReg.getDefaultPerspective() );

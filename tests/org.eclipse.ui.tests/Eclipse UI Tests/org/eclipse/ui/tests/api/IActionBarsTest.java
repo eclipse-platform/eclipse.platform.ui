@@ -8,7 +8,7 @@ import org.eclipse.ui.junit.util.*;
 /**
  * Test the lifecycle of an action delegate.
  */
-public class IActionBarsTest extends AbstractTestCase {
+public class IActionBarsTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
 	protected IWorkbenchPage fPage;

@@ -14,7 +14,7 @@ public class IEditorDescriptorTest extends TestCase {
 	
 	public void setUp()
 	{
-		IFileEditorMapping mapping = ( IFileEditorMapping )ArrayUtil.pick( 
+		IFileEditorMapping mapping = ( IFileEditorMapping )ArrayUtil.pickRandom( 
 				PlatformUI.getWorkbench().getEditorRegistry().getFileEditorMappings() 
 			);
 		fEditors = mapping.getEditors();

@@ -3,11 +3,12 @@ package org.eclipse.ui.tests.api;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.junit.util.*;
 
 /**
  * Tests the IPageListener class.
  */
-public class IPageListenerTest extends AbstractTestCase 
+public class IPageListenerTest extends UITestCase 
 	implements IPageListener
 {
 	private IWorkbenchWindow fWindow;

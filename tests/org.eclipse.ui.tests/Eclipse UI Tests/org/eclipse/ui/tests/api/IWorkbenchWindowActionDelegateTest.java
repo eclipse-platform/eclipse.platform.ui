@@ -23,7 +23,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		// Verify lifecycle.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.contains(delegate, 
+		assertTrue(delegate.callHistory.contains( 
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	
@@ -42,7 +42,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		removeAction();
 		
 		// Verify lifecycle.
-		assertTrue(delegate.callHistory.contains(delegate, "dispose"));
+		assertTrue(delegate.callHistory.contains("dispose"));
 	}
 	
 	/**

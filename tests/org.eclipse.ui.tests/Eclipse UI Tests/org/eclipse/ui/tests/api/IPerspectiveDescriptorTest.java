@@ -16,7 +16,7 @@ public class IPerspectiveDescriptorTest extends TestCase {
 	
 	public void setUp()
 	{
-		fPer = ( IPerspectiveDescriptor )ArrayUtil.pick( PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives() );
+		fPer = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives() );
 		//fPer.
 	}
 	

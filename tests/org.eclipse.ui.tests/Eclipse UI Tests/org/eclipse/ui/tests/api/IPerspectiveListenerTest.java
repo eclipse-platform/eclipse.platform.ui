@@ -2,8 +2,9 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
 import junit.framework.*;
+import org.eclipse.ui.junit.util.*;
 
-public class IPerspectiveListenerTest extends AbstractTestCase implements IPerspectiveListener {
+public class IPerspectiveListenerTest extends UITestCase implements IPerspectiveListener {
 	private int fEvent;
 	private IWorkbenchWindow fWindow;
 	private IWorkbenchPage fPageMask;

@@ -36,7 +36,7 @@ public class IEditorRegistryTest extends TestCase {
 
 	public void testGetFileEditorMappings()
 	{
-		assertTrue( ArrayUtil.check( fReg.getFileEditorMappings() ) );
+		assertTrue( ArrayUtil.checkNotNull( fReg.getFileEditorMappings() ) );
 	}
 	
 	/**
@@ -231,7 +231,7 @@ public class IEditorRegistryTest extends TestCase {
 		((EditorRegistry)fReg).setFileEditorMappings( maps );				
 		//make sure the method was called only once
 		assertEquals( callTrace.verifyOrder( 
-			listener, new String[] { METHOD } ), true);
+			new String[] { METHOD } ), true);
 		
 		fReg.removePropertyListener( listener );
 		fReg.removePropertyListener( listener2 );

@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.junit.util.*;
 
-public class IWorkbenchWindowTest extends AbstractTestCase {
+public class IWorkbenchWindowTest extends UITestCase {
 
 	private IWorkbenchWindow fWin;
 
@@ -19,7 +19,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 
 	public void testClose() throws Throwable {		
 		assertEquals(fWin.close(), true);
-		assertEquals(ArrayUtil.has(fWorkbench.getWorkbenchWindows(), fWin), false);
+		assertEquals(ArrayUtil.contains(fWorkbench.getWorkbenchWindows(), fWin), false);
 	}
 
 	public void testGetActivePage() throws Throwable {
@@ -42,7 +42,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 	}
 
 	public void testSetActivePage() throws Throwable {
-		openTestPage(fWin, DEF_PAGETOTAL);
+		openTestPage(fWin, 5);
 		IWorkbenchPage[] pages = fWin.getPages();
 
 		for (int i = 0; i < pages.length; i++) {
@@ -65,7 +65,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 
 		domainPages = fWin.getPages();
 		for (int i = 0; i < pages.length; i++)
-			assertEquals(ArrayUtil.has(domainPages, pages[i]), true);
+			assertEquals(ArrayUtil.contains(domainPages, pages[i]), true);
 
 		closeAllPages(fWin);
 		assertEquals(fWin.getPages().length, 0);

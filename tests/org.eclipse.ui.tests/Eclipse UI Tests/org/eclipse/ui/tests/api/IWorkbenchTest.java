@@ -10,7 +10,7 @@ import org.eclipse.ui.junit.util.*;
 /**
  * Tests the IWorkbench interface.
  */
-public class IWorkbenchTest extends AbstractTestCase {
+public class IWorkbenchTest extends UITestCase {
 
 	public IWorkbenchTest(String testName) {
 		super(testName);
@@ -72,7 +72,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 	public void testGetWorkbenchWindows() throws Throwable {
 		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
-		assertEquals(ArrayUtil.check(wins), true);
+		assertEquals(ArrayUtil.checkNotNull(wins), true);
 		int oldTotal = wins.length;
 		int num = 3;
 
@@ -82,7 +82,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 		wins = fWorkbench.getWorkbenchWindows();
 		for (int i = 0; i < num; i++)
-			assertTrue(ArrayUtil.has(wins, newWins[i]));
+			assertTrue(ArrayUtil.contains(wins, newWins[i]));
 
 		assertEquals(wins.length, oldTotal + num);
 

@@ -8,7 +8,7 @@ import org.eclipse.ui.junit.util.*;
 /**
  * Test the lifecycle of an action delegate.
  */
-public abstract class IActionDelegateTest extends AbstractTestCase {
+public abstract class IActionDelegateTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
 	protected IWorkbenchPage fPage;
@@ -32,7 +32,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		runAction();
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.contains(delegate, "run"));
+		assertTrue(delegate.callHistory.contains("run"));
 	}
 	
 	public void testSelectionChanged() throws Throwable {
@@ -47,7 +47,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		// Now fire a selection.
 		delegate.callHistory.clear();		
 		fireSelection();
-		assertTrue(delegate.callHistory.contains(delegate, "selectionChanged"));
+		assertTrue(delegate.callHistory.contains("selectionChanged"));
 	}
 	
 	/**

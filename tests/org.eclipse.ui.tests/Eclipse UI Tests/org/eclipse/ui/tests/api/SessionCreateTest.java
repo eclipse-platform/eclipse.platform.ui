@@ -8,7 +8,7 @@ import org.eclipse.ui.junit.util.*;
  * presistance tests.
  * 
 */
-public class SessionCreateTest extends AbstractTestCase {
+public class SessionCreateTest extends UITestCase {
 	
 	private IWorkbenchWindow [] oldWindows;
 	public static String TEST_PROJ = "sessionTest";

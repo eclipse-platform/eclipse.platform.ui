@@ -45,7 +45,7 @@ public class IFileEditorMappingTest extends TestCase {
 		
 		for( int i = 0; i < fMappings.length; i ++ ){
 			editors = fMappings[ i ].getEditors();
-			assertTrue( ArrayUtil.check( editors ) == true );
+			assertTrue( ArrayUtil.checkNotNull( editors ) == true );
 		}
 	}
 
