@@ -387,6 +387,7 @@ public void setToolTipText(String text);
  * This is a bitwise OR of zero or more SWT key modifier masks
  * (i.e. SWT.CTRL or SWT.ALT) and a character code.
  * For example, for Ctrl+Z, use <code>SWT.CTRL | 'Z'</code>.
+ * Use 0 for no accelerator.
  * 
  * @param int the keycode to be accepted.
  */
