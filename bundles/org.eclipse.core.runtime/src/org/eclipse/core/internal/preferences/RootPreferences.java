@@ -26,6 +26,7 @@ public class RootPreferences extends EclipsePreferences {
 	public RootPreferences() {
 		super(null, ""); //$NON-NLS-1$
 	}
+
 	/*
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
@@ -47,8 +48,8 @@ public class RootPreferences extends EclipsePreferences {
 			throw exception;
 	}
 	
-	/* (non-Javadoc)
-	 * @see EclipsePreferences#getChild(java.lang.String)
+	/*
+	 * @see EclipsePreferences#getChild(String)
 	 */
 	protected synchronized IEclipsePreferences getChild(String key) {
 		Object value = null;
@@ -65,7 +66,7 @@ public class RootPreferences extends EclipsePreferences {
 		return child;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see EclipsePreferences#getChildren()
 	 */
 	protected synchronized IEclipsePreferences[] getChildren() {
@@ -78,7 +79,7 @@ public class RootPreferences extends EclipsePreferences {
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
+	 * @see IEclipsePreferences#node(IPath)
 	 */
 	public IEclipsePreferences node(IPath path) {
 		if (path.segmentCount() == 0)
