@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.commands.ws.ShowViewHandler;
+import org.eclipse.ui.internal.handlers.ShowViewHandler;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;

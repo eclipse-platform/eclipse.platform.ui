@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands.ws;
+package org.eclipse.ui.internal.handlers;
 
 import java.util.Map;
 
