@@ -30,7 +30,6 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
