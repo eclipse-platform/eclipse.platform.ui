@@ -21,7 +21,7 @@
 		/>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
-		<copy todir=${dest}/icons">
+		<copy todir= "${dest}/icons">
 			<fileset dir="icons"/>
 		</copy>		
 		<zip zipfile="${dest}/texteditorsrc.jar">
