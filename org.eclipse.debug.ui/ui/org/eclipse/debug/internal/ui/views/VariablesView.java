@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.AddToInspectorAction;
 import org.eclipse.debug.internal.ui.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.ControlAction;
 import org.eclipse.debug.internal.ui.CopyVariablesToClipboardActionDelegate;

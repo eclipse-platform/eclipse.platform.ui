@@ -19,7 +19,7 @@ import org.eclipse.ui.IViewPart;
  * <li>Debug view</li>
  * <li>Breakpoint view</li>
  * <li>Variable view</li>
- * <li>Inspector view</li>
+ * <li>Expression view</li>
  * <li>Console view</li>
  * </ul>
  * <p>

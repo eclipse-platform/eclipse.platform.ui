@@ -79,13 +79,6 @@
          id="org.eclipse.debug.ui.VariableView">
    </view>
    <view
-         name="%InspectorView.name"
-         icon="icons/full/cview16/watchlist_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.InspectorView"
-         id="org.eclipse.debug.ui.InspectorView">
-   </view>
-   <view
          name="%ExpressionView.name"
          icon="icons/full/cview16/watchlist_view.gif"
          category="org.eclipse.debug.ui"

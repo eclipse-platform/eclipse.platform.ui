@@ -32,7 +32,6 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		toolsFolder.addView(IDebugUIConstants.ID_VARIABLE_VIEW);	
 		toolsFolder.addView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 		toolsFolder.addView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-		toolsFolder.addView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 		
 		IFolderLayout outlineFolder= layout.createFolder(IInternalDebugUIConstants.ID_OUTLINE_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.75, layout.getEditorArea());
 		outlineFolder.addView(IPageLayout.ID_PROP_SHEET);
@@ -52,7 +51,6 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IDebugUIConstants.ID_VARIABLE_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_EXPRESSION_VIEW);
-		layout.addShowViewShortcut(IDebugUIConstants.ID_INSPECTOR_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_CONSOLE_VIEW);

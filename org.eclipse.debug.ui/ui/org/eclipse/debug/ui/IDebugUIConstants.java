@@ -187,13 +187,7 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String ID_EXPRESSION_VIEW= "org.eclipse.debug.ui.ExpressionView"; //$NON-NLS-1$
-	
-	/**
-	 * Inspector view identifier (value <code>"org.eclipse.debug.ui.InspectorView"</code>).
-	 * @deprecated the inspector view has been replaced by the expression view
-	 */
-	public static final String ID_INSPECTOR_VIEW= "org.eclipse.debug.ui.InspectorView"; //$NON-NLS-1$	
-	
+		
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
 	 */

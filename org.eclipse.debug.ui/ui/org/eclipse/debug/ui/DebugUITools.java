@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.InspectItem;
-import org.eclipse.debug.internal.ui.InspectorView;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -54,37 +53,6 @@ import org.eclipse.ui.PlatformUI;
 public class DebugUITools {
 
 	private static DefaultLabelProvider fgDefaultLabelProvider= new DefaultLabelProvider();
-
-	/**
-	 * Shows and selects the given value in an inspector view with the specified label.
-	 * If an inspector view is not in the current workbench page, an inspector view
-	 * is created. This method must be called in the UI thread.
-	 *
-	 * @param label a localized label to associate with the value in the inspector view 
-	 * @param value the value to display  
-	 */
-	public static void inspect(String label, IValue value) {
-		IWorkbenchPage p= DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-		if (p == null) {
-			return;
-		}
-		IWorkbenchPart activePart= p.getActivePart();
-		InspectorView view= (InspectorView) p.findView(IDebugUIConstants.ID_INSPECTOR_VIEW);
-		if (view == null) {
-			// open a new view
-			try {
-				view= (InspectorView) p.showView(IDebugUIConstants.ID_INSPECTOR_VIEW);
-			} catch (PartInitException e) {
-				DebugUIPlugin.logError(e);
-				return;
-			} finally {
-				p.activate(activePart);
-			}
-		}
-		InspectItem item = new InspectItem(label, value);
-		view.addToInspector(item);
-		p.bringToTop(view);
-	}
 	
 	/**
 	 * Returns the shared image managed under the given key. If there isn't any image
