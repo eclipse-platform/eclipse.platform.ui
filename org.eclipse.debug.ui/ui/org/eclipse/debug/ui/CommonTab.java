@@ -130,15 +130,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	};
 	
 	/**
-	 * Selection listener that simply updates the owning launch configuration dialog.
-	 */
-	private SelectionAdapter fBasicSelectionListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-	};
-	
-	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
