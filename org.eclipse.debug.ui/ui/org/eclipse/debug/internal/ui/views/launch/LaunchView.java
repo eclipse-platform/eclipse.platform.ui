@@ -611,7 +611,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		setActive(page.findView(getSite().getId()) != null);
-		fContextListener.perspectiveChanged(page, changeId);
+		if (fContextListener != null) {
+			fContextListener.perspectiveChanged(page, changeId);
+		}
 	}
 
 	/* (non-Javadoc)
