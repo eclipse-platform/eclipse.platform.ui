@@ -139,4 +139,19 @@
             class="org.eclipse.core.tools.runtime.EventsView"
             id="org.eclipse.core.tools.runtime.EventsView"/>
    </extension>
+   	<extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.core.tools.contribution2"
+            objectClass="org.eclipse.jdt.core.IJavaElement">
+         <action
+               label="Find Unreferenced Methods"
+               class="org.eclipse.core.tools.search.FindUnusedMethodsAction"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.core.tools.search.FindUnusedMethodsAction">
+         </action>
+      </objectContribution>
+   </extension>
 </plugin>
