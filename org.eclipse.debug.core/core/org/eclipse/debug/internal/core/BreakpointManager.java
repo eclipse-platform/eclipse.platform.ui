@@ -577,7 +577,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			if (delta == null) {
 				return false;
 			}
-			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN) && 0 == (delta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				handleProjectResourceOpenStateChange(delta.getResource());
 				return false;
 			}
