@@ -83,6 +83,10 @@ public class DeepSize {
 		return counts;
 	}
 
+	/**
+	 * Adds an object to the ignore set. Returns true if the object
+	 * has already been ignored previously, and false otherwise.
+	 */
 	public static boolean ignore(Object o) {
 		return !ignoreSet.add(new ObjectWrapper(o));
 	}
