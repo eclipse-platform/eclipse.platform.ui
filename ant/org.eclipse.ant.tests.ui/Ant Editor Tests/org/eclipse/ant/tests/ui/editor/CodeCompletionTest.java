@@ -435,7 +435,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
-     * Tests how the processor determines the proposal mode.
+     * Tests that the processor correctly determines the attribute proposal mode
      */
     public void testDeterminingAttributeProposalMode() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
@@ -451,6 +451,21 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<property\n", 10, "");
         assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
+    }
+    
+    /**
+     * Tests that the processor correctly determines the attribute value proposal mode
+     */
+    public void testDeterminingAttributeValueProposalMode() {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+        int mode = processor.determineProposalMode("<project><property take=\"", 25, "");
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL, mode);
+        mode = processor.determineProposalMode("<property id=\"hu\" ", 14, "");
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL, mode);
+        mode = processor.determineProposalMode("<property id=\"hu\" \r\n ", 16, "hu");
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL, mode);
+        mode = processor.determineProposalMode("<property \n\t\tid=\"hu\" \r\n ", 19, "hu");
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL, mode);
     }
     
 	/**
@@ -679,7 +694,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	}
 	
 	/**
-     * Tests the code completion when a parse error orrurs in the project definition
+     * Tests the code completion when a parse error occurs in the project definition
      * bug 63151
      */
 	public void testBadProjectProposals() throws BadLocationException {
@@ -693,5 +708,41 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
     	assertTrue(proposals.length == 1); 
     	assertContains("name", proposals);
+	}
+	
+	/**
+     * Tests the code completion for attribute value proposals both with and without leading whitespace
+     */
+	public void testAttributeValueProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("javac.xml"));
+    	int lineNumber= 2;
+    	int columnNumber= 29;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 6); //boolean proposals 
+    	assertContains("false", proposals);
+    	
+    	lineNumber= 3;
+    	columnNumber= 19;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 6); //boolean proposals 
+    	assertContains("true", proposals);
+    	
+    	lineNumber= 4;
+    	columnNumber= 22;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 6); //boolean proposals 
+    	assertContains("no", proposals);
 	}
 }

@@ -1307,8 +1307,16 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         if(index > 0) {
             subString = subString.substring(index+1, subString.length());
         }
-        return subString;
+        return trimBeginning(subString);
     }
+    
+    private String trimBeginning(String toBeTrimmed) {
+		int i= 0;
+		while ((i != toBeTrimmed.length()) && Character.isWhitespace(toBeTrimmed.charAt(i))) {
+			i++;
+		}
+		return toBeTrimmed.substring(i);
+	}
 
 
     /**
