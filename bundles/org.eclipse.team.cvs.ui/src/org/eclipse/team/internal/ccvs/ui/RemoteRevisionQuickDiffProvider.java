@@ -201,10 +201,10 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 		}
 	
 		fCvsFile = getCVSFile();
-		if(fCvsFile != null) {
+		if(fCvsFile != null && fCvsFile.isManaged()) {
 			ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(fCvsFile.getIResource(), fCvsFile.getSyncInfo().getTag(), monitor);
 			IDocumentProvider docProvider= fEditor.getDocumentProvider();
-			if (docProvider instanceof IStorageDocumentProvider) {
+			if (remote != null && docProvider instanceof IStorageDocumentProvider) {
 				fDocumentProvider = docProvider;
 				IStorageDocumentProvider provider= (IStorageDocumentProvider) fDocumentProvider;			
 				String encoding= provider.getEncoding(fEditor.getEditorInput());
