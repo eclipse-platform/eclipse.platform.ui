@@ -263,7 +263,7 @@ protected StyleRange findPreviousRange(StyledText text){
 	int currentSelectionStart = text.getSelection().x;
 
 	for (int i = ranges.length - 1; i > -1; i--) {
-		if((ranges[i].start + ranges[i].length) <= currentSelectionStart)
+		if((ranges[i].start + ranges[i].length - 1) < currentSelectionStart)
 			return ranges[i];
 	}
 	return null;
@@ -350,6 +350,7 @@ protected AboutItem scan(String s) {
 		while (!found && i < max) {
 			found = Character.isWhitespace(s.charAt(i++));
 		}
+		if (i!=max) i--;
 		linkRanges.add(new int[] {start, i - start});
 		links.add(s.substring(start, i));
 		i = s.indexOf(ATT_HTTP, i);

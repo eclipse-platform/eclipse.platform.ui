@@ -41,7 +41,7 @@ public String getText() {
 public boolean isLinkAt(int offset) {
 	// Check if there is a link at the offset
 	for (int i = 0; i < linkRanges.length; i++){
-		if (offset > linkRanges[i][0] && offset <= linkRanges[i][0] + linkRanges[i][1]) {
+		if (offset >= linkRanges[i][0] && offset < linkRanges[i][0] + linkRanges[i][1]) {
 			return true;
 		}
 	}
@@ -54,7 +54,7 @@ public boolean isLinkAt(int offset) {
 public String getLinkAt(int offset) {
 	// Check if there is a link at the offset
 	for (int i = 0; i < linkRanges.length; i++){
-		if (offset > linkRanges[i][0] && offset <= linkRanges[i][0] + linkRanges[i][1]) {
+		if (offset >= linkRanges[i][0] && offset < linkRanges[i][0] + linkRanges[i][1]) {
 			return hrefs[i];
 		}
 	}
