@@ -31,7 +31,6 @@ import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeyFormatterFactory;
