@@ -428,7 +428,7 @@ public class XmlTagFormatter {
      * @param indent
      * @return
      */
-    public String format(String tagText, FormattingPreferences prefs,
+    public static String format(String tagText, FormattingPreferences prefs,
             String indent) {
 
         Tag tag;

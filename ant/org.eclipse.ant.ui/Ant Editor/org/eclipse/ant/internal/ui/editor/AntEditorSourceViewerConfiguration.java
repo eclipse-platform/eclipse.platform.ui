@@ -16,8 +16,6 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
-import org.eclipse.ant.internal.ui.editor.formatter.ContentFormatter3;
-import org.eclipse.ant.internal.ui.editor.formatter.XmlCommentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
@@ -43,7 +41,7 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
-import org.eclipse.jface.text.formatter.IFormattingStrategy;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -269,37 +267,20 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentFormatter(org.eclipse.jface.text.source.ISourceViewer)
      */
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-
-        ContentFormatter3 formatter = new ContentFormatter3();
-        formatter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-        
-        IFormattingStrategy indentationStrategy = new XmlDocumentFormattingStrategy(sourceViewer);        
-        formatter.setFormattingStrategy(indentationStrategy);
-        formatter.setFormattingStrategy(indentationStrategy,
-                IDocument.DEFAULT_CONTENT_TYPE);
-
-        // TODO This approach would make the formatter run much more quickly
-        // if these options aren't used; however this won't really work
-        // since the content formatter is probably configured only once at
-        // the start up of the editor. In order to make this work I'd need to
-        // listen to further changes from the preferences store and reconfigure
-        // the editor appropriately.
-        //        FormattingPreferences fp = new FormattingPreferences();
-        //        if (fp.formatElements()) {
-        IFormattingStrategy elementFormattingStrategy = new XmlElementFormattingStrategy(
-                sourceViewer);
-        formatter.setFormattingStrategy(elementFormattingStrategy,
-                AntEditorPartitionScanner.XML_TAG);
-        //        }
-        //        if(fp.formatComments()){
-        IFormattingStrategy commentFormattingStrategy = new XmlCommentFormattingStrategy(
-                sourceViewer);
-        formatter.setFormattingStrategy(commentFormattingStrategy,
-                AntEditorPartitionScanner.XML_COMMENT);
-        //        }
-
-        return formatter;
-    }
+		 
+		MultiPassContentFormatter formatter = new MultiPassContentFormatter(
+				getConfiguredDocumentPartitioning(sourceViewer),
+		         IDocument.DEFAULT_CONTENT_TYPE);
+		 
+		
+		formatter.setMasterStrategy(new XmlDocumentFormattingStrategy());
+		
+		formatter.setSlaveStrategy(new XmlElementFormattingStrategy(), AntEditorPartitionScanner.XML_TAG);
+		
+		//formatter.setSlaveStrategy(new XmlCommentFormattingStrategy(), AntEditorPartitionScanner.XML_COMMENT);
+		 
+		return formatter;
+	}
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoIndentStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)

@@ -79,7 +79,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
                 line.getOffset(), indentLength));
 
     }
-    
+
     /*
  	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
  	 */
