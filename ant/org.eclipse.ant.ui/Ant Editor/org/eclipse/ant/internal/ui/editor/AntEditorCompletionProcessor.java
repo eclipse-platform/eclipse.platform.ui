@@ -1126,7 +1126,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * Finds the enclosing target in respect to the cursor position and returns its name  
      * 
-     * @return the name of the enclosing target or <code>null</code> if not found.
+     * @return the name of the enclosing target or <code>null</code> if not found 
+	 * or the element is not contained in a target.
      */
  	private String getEnclosingTargetName(IDocument document, int aLineNumber, int aColumnNumber) {
 
