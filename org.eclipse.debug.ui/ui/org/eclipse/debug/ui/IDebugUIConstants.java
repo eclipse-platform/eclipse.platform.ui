@@ -197,6 +197,13 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
 
+	// Extension points
+	
+	/**
+	 * Extension point for launch configuration type images.
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages";
+	
 	// Debug Action images
 	
 	/**

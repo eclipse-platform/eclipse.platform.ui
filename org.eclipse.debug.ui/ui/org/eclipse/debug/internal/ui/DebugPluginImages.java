@@ -9,6 +9,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -32,6 +35,9 @@ public class DebugPluginImages {
 	 */
 	private static HashMap imageDescriptors;
 
+	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon";
+	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID";
+	
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
@@ -168,6 +174,26 @@ public class DebugPluginImages {
 				imageDescriptors.put(launcher.getIdentifier(), desc);
 			}
 		}
+		
+		// launch configuration types
+		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= pluginDescriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
+		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configElements.length; i++) {
+			IConfigurationElement configElement = configElements[i];
+			URL iconURL = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+			String iconPath = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ICON);
+			ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+			try {
+				iconURL = new URL(iconURL, iconPath);
+				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
+			} catch (MalformedURLException mue) {
+			}
+			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);			
+			imageRegistry.put(configTypeID, imageDescriptor);				
+			imageDescriptors.put(configTypeID, imageDescriptor);
+		}
+		
 	}
 
 	/**

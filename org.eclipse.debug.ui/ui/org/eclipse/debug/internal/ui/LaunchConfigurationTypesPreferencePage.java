@@ -12,7 +12,9 @@ import java.util.Map;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,8 +33,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class LaunchConfigurationTypesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -85,6 +89,24 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	 */
 	protected class FileTypeLabelProvider extends LabelProvider implements ITableLabelProvider {
 		
+		private Map fExtensionToImageMap;
+		
+		public FileTypeLabelProvider() {
+			initializeExtensionToImageMap();
+		}
+		
+		/**
+		 * Load a table of iamge descriptors keyed by the file extensions they apply to.
+		 */
+		private void initializeExtensionToImageMap() {
+			fExtensionToImageMap = new HashMap(5);
+			IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
+			for (int i = 0; i < array.length; i++) {
+				IFileEditorMapping mapping = array[i];
+				fExtensionToImageMap.put(mapping.getExtension(), mapping.getImageDescriptor());
+			}		
+		}
+		
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
@@ -106,8 +128,8 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
 		public Image getColumnImage(Object object, int column) {
-			// Implement later
-			return null;
+			ImageDescriptor imageDescriptor = (ImageDescriptor) fExtensionToImageMap.get((String)object);
+			return imageDescriptor.createImage(true);
 		}
 		
 		/**
@@ -152,7 +174,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	/**
 	 * Label provider for the configuration table viewer
 	 */
-	protected class ConfigTypeLabelProvider extends LabelProvider implements ITableLabelProvider {
+	protected class ConfigTypeLabelProvider extends LabelProvider implements ITableLabelProvider {		
 		
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
@@ -175,8 +197,8 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
 		public Image getColumnImage(Object object, int column) {
-			// Implement later
-			return null;
+			String configTypeID = ((ILaunchConfigurationType)object).getIdentifier();
+			return DebugUITools.getImage(configTypeID);
 		}
 		
 		/**
