@@ -514,9 +514,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
 		
-		// XXX: hook the "java" content assist action - this is a hack to get content
+		// XXX: hook the "Java" content assist action - this is a hack to get content
 		// assist to work with the retargetable content assist action in the java UI
-		getViewSite().getActionBars().setGlobalActionHandler("org.eclipse.jdt.ui.actions.ContentAssist", textAction);
+		getViewSite().getActionBars().setGlobalActionHandler("org.eclipse.jdt.ui.actions.ContentAssist", textAction); //$NON-NLS-1$
 		// Also hook CTRL-Space in case the java UI is not loaded/available
 		addVerifyKeyListener();
 		
