@@ -2133,17 +2133,6 @@ M4 = Platform-specific fourth key
 	  </rendering>
    </extension>
    <extension
-         point="org.eclipse.ui.console.consolePatternMatchListeners">
-      <consolePatternMatchListener
-            class="org.eclipse.debug.internal.ui.views.console.ConsoleLineNotifier"
-            id="org.eclipse.debug.ui.consoleLineNotifier"
-            regex=".*\r(\n?)|.*\n">
-         <enablement>
-            <instanceof value="org.eclipse.debug.internal.ui.views.console.ProcessConsole"/>
-         </enablement>
-      </consolePatternMatchListener>
-   </extension>
-   <extension
          point="org.eclipse.ui.console.consolePageParticipant">
       <consolePageParticipant
             class="org.eclipse.debug.internal.ui.views.console.ProcessConsolePageParticipant"
