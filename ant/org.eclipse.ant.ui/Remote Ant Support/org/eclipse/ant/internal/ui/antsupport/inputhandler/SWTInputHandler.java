@@ -42,7 +42,6 @@ public class SWTInputHandler extends DefaultInputHandler {
 	private FontMetrics fFontMetrics;
 	private InputRequest fRequest;
 	
-	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
 	 */
@@ -88,17 +87,14 @@ public class SWTInputHandler extends DefaultInputHandler {
 		fDialog.setText(title);
 		Label label= new Label(fDialog, SWT.WRAP);
 		label.setText(prompt);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
         
-        data.widthHint = convertHorizontalDLUsToPixels(300);
+        data.widthHint = convertHorizontalDLUsToPixels(300); //from IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH
         label.setLayoutData(data);
         label.setFont(fDialog.getFont());
         
         fText = new Text(fDialog, SWT.SINGLE | SWT.BORDER);
-        fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_FILL));
+        fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL| GridData.HORIZONTAL_ALIGN_FILL));
         fText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 validateInput();
@@ -106,12 +102,9 @@ public class SWTInputHandler extends DefaultInputHandler {
         });
 		
 		fErrorMessageText = new Text(fDialog, SWT.READ_ONLY);
-        fErrorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_FILL));
-        fErrorMessageText.setBackground(fErrorMessageText.getDisplay()
-                .getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        fErrorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        fErrorMessageText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
         
-		
 		createButtonBar(fDialog, result);
 		fDialog.pack();
 		fDialog.open();
@@ -140,16 +133,14 @@ public class SWTInputHandler extends DefaultInputHandler {
     
     protected Control createButtonBar(Composite parent, boolean[] result) {
         Composite composite = new Composite(parent, SWT.NONE);
-        // create a layout with spacing and margins appropriate for the font size.
         GridLayout layout = new GridLayout();
         layout.numColumns = 2; 
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-                | GridData.VERTICAL_ALIGN_CENTER);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
         composite.setLayoutData(data);
         composite.setFont(parent.getFont());
-        // Add the buttons to the button bar.
+       
         createButtonsForButtonBar(composite, result);
         return composite;
     }
@@ -174,8 +165,9 @@ public class SWTInputHandler extends DefaultInputHandler {
         //do this here because setting the text will set enablement on the ok
         // button
         fText.setFocus();
-        //TODO default value from the input request which appears to not be currently possible with the 
-        //Ant implementation
+        //TODO default value from the input request which appears to not be currently possible 
+        //with the Ant implementation
+        //http://issues.apache.org/bugzilla/show_bug.cgi?id=28621
         //if (value != null) {
           //  text.setText(value);
            // text.selectAll();
@@ -184,7 +176,7 @@ public class SWTInputHandler extends DefaultInputHandler {
     
     private void setButtonLayoutData(Button button) {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		int widthHint = convertHorizontalDLUsToPixels(61);
+		int widthHint = convertHorizontalDLUsToPixels(61); //from IDialogConstants.BUTTON_WIDTH
 		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		data.widthHint = Math.max(widthHint, minSize.x);
 		button.setLayoutData(data);
@@ -192,8 +184,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 
 	private int convertHorizontalDLUsToPixels(int dlus) {
         // round to the nearest pixel
-        return (fFontMetrics.getAverageCharWidth() * dlus + 4 / 2)
-                / 4;
+        return (fFontMetrics.getAverageCharWidth() * dlus + 4 / 2) / 4;
 	}
 
 	protected void initializeDialogUnits(Control control) {
