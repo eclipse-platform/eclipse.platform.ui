@@ -5,6 +5,7 @@ package org.eclipse.ui.wizards.datatransfer;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
@@ -20,6 +21,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -407,19 +409,7 @@ protected ITreeContentProvider getFolderProvider() {
 		}
 	};
 }
-/**
- * Returns this page's collection of currently-specified resources to be 
- * imported. This is the primary resource selection facility accessor for 
- * subclasses.
- *
- * Added here to allow access for inner classes.
- *
- * @return a collection of resources currently selected 
- * for export (element type: <code>IResource</code>)
- */
-protected List getSelectedResources() {
-	return super.getSelectedResources();
-}
+
 /**
  * Returns a File object representing the currently-named source directory iff
  * it exists as a valid directory, or <code>null</code> otherwise.
@@ -676,15 +666,44 @@ protected void setSourceName(String path) {
  * Update the tree to only select those elements that match the selected types
  */
 protected void setupSelectionsBasedOnSelectedTypes() {
+	
+	Map selectionMap = getFilteredElements();	
+	
+	
+	if(selectionMap != null)
+		updateSelections(selectionMap);
 
-	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-		public void run() {
+}
 
-			Map selectionMap = new Hashtable();
 
-			Iterator filesList = getSelectedResources().iterator();
+/**
+ * Get the elements selected by the select types dialog. If the progress
+ * is cancelled return null.
+ * @return Map - key FileSystem element, value Collection of FileSystemElement or null
+ */
+
+private Map getFilteredElements(){
+	
+	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());
+	
+	final Map selectionMap = new Hashtable();
+	
+	
+	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) throws InterruptedException{
+
+			monitor.beginTask("Filtering selection", IProgressMonitor.UNKNOWN);
+
+			List files = getSelectedResources(monitor);
+			if(files == null){
+				throw new InterruptedException();
+			}
+				
+			Iterator filesList = files.iterator();			
 
 			while (filesList.hasNext()) {
+				if(monitor.isCanceled())
+					throw new InterruptedException();
 				MinimizedFileSystemElement file = (MinimizedFileSystemElement) filesList.next();
 				if (isExportableExtension(file.getFileNameExtension())) {
 					List elements = new ArrayList();
@@ -695,11 +714,21 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 					selectionMap.put(parent, elements);
 				}
 			}
-			updateSelections(selectionMap);
 
 		}
-	});
-
+	};
+	
+	try{
+		dialog.run(true,true,runnable);
+		return selectionMap;
+	}
+	catch (InvocationTargetException exception){
+		//Couldn't start. Do nothing.
+	}
+	catch (InterruptedException exception){
+		//Got interrupted. Do nothing.
+	}
+	return null;
 }
 /* (non-Javadoc)
  * Method declared on IDialogPage. Set the selection up when it becomes visible.

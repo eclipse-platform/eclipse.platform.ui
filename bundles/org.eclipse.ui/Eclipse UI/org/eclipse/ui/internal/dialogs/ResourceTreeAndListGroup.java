@@ -4,14 +4,17 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 import java.util.*;
-import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Table;
 
 /**
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
@@ -303,13 +306,18 @@ private void expandTreeElement(final Object item) {
  * Add all of the selected children of nextEntry to result recursively.
  * This does not set any values in the checked state.
  * @param The treeElement being queried
- * @param addAll - a boolean to indicate if the checked state store needs to be queried
- * @param result - the collection we are adding to.
+ * @param addAll a boolean to indicate if the checked state store needs to be queried
+ * @param result the collection we are adding to.
+ * @param monitor IProgressMonitor or null that the cancel is polled for 
 */
 private void findAllSelectedListElements(
 	Object treeElement,
 	boolean addAll,
-	Collection result) {
+	Collection result,
+	IProgressMonitor monitor) {
+		
+	if(monitor.isCanceled())
+		return;
 
 	if (addAll) {
 		Object[] listItems = listContentProvider.getElements(treeElement);
@@ -325,13 +333,14 @@ private void findAllSelectedListElements(
 	for (int i = 0; i < treeChildren.length; i++) {
 		Object child = treeChildren[i];
 		if (addAll)
-			findAllSelectedListElements(child, true, result);
+			findAllSelectedListElements(child, true, result,monitor);
 		else { //Only continue for those with checked state
 			if (checkedStateStore.containsKey(child))
 				findAllSelectedListElements(
 					child,
 					whiteCheckedTreeItems.contains(child),
-					result);
+					result,
+					monitor);
 		}
 
 	}
@@ -360,11 +369,12 @@ private void findAllWhiteCheckedItems(Object treeElement, Collection result) {
 	}
 }
 /**
- *	Returns a flat list of all of the leaf elements which are checked.
- *
- *	@return all of the leaf elements which are checked
+ * Returns a flat list of all of the leaf elements which
+ * are checked. If monitor is cancelled then return null
+ * @param monitor IProgressMonitor or null
+ * @return all of the leaf elements which are checked
  */
-public List getAllCheckedListItems() {
+public List getAllCheckedListItems(IProgressMonitor monitor) {
 
 	List result = new ArrayList();
 
@@ -374,11 +384,25 @@ public List getAllCheckedListItems() {
 		findAllSelectedListElements(
 			children[i],
 			whiteCheckedTreeItems.contains(children[i]),
-			result);
+			result,
+			monitor);
 	}
 
-	return result;
+	if(monitor.isCanceled())
+		return null;
+	else
+		return result;
 }
+
+/**
+ *	Returns a flat list of all of the leaf elements which are checked.
+ *
+ *	@return all of the leaf elements which are checked
+ */
+public List getAllCheckedListItems() {
+	return getAllCheckedListItems(null);
+}
+
 /**
  *	Returns a list of all of the items that are white checked.
  * 	Any folders that are white checked are added and then any files
