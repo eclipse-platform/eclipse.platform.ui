@@ -93,12 +93,6 @@ public class JFaceResources {
 	 */
 	public static final String WINDOW_FONT = "org.eclipse.jface.windowfont"; //$NON-NLS-1$
 
-	/**
-	 * The symbolic font name for the small font (value <code>"org.eclipse.jface.smallfont"</code>).
-	 */
-
-	public static final String SMALL_FONT = "org.eclipse.jface.smallfont"; //$NON-NLS-1$
-
 	/*
 	 * (non-Javadoc) Declare a private constructor to block instantiation.
 	 */
@@ -142,19 +136,7 @@ public class JFaceResources {
 	public static ResourceBundle getBundle() {
 		return bundle;
 	}
-	
-	/**
-	 * Returns the JFace's small font. Convenience method equivalent to
-	 * 
-	 * <pre>
-	 *  JFaceResources.getFontRegistry().get(JFaceResources.SMALL_FONT)
-	 * </pre>
-	 * 
-	 * @return the font
-	 */
-	public static Font getSmallFont() {
-		return getFontRegistry().get(SMALL_FONT);
-	}
+
 	
 	/**
 	 * Returns the JFace's standard font. Convenience method equivalent to
