@@ -5,11 +5,15 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 class Checkout extends Command {
 	
@@ -55,6 +59,38 @@ class Checkout extends Command {
 		// (this could be changed to make it compatible)
 		sendHomeFolder(false);
 		
+	}
+	
+	/**
+	 * On sucessful finish, prune empty directories if 
+	 * the -P option was specified (or is implied by -D or -r)
+	 */
+	protected void finished(boolean success) throws CVSException {
+		// If we didn't succeed, don't do any post processing
+		if (!success)
+			return;
+		// If we are retrieving the modules file, ignore other options
+		if (Util.isOption(getLocalOptions(), "-c"))
+			return;
+		// If we are pruning (-P) or getting a sticky copy (-D or -r), then prune empty directories
+		if (Util.isOption(getLocalOptions(), Client.PRUNE_OPTION)
+				|| Util.isOption(getLocalOptions(), "-D")
+				|| Util.isOption(getLocalOptions(), "-r")) {
+			// Get the name of the resulting directory
+			String dir = Util.getOption(getLocalOptions(), "-d", false);
+			ICVSResource[] resources;
+			if (dir == null)
+				// Get the folders we want to work on from the arguments
+				resources = getWorkResources();
+			else
+				// Create the folder we want to work on from the -d option
+				resources = new ICVSResource[] {getRoot().getFolder(dir)};
+			// Delete empty directories
+			ICVSResourceVisitor visitor = new PruneFolderVisitor();
+			for (int i=0; i<resources.length; i++) {
+				resources[i].accept(visitor);
+			}
+		}	
 	}
 
 }

@@ -132,18 +132,27 @@ public class CVSProvider implements ICVSProvider {
 			
 			// Build the local options
 			List localOptions = new ArrayList();
+			// Add the option to load into a directory of a different name
 			String module = project.getName();
 			if (sourceModule != null) {
-				localOptions.add(Client.DEEP_OPTION);
+				localOptions.add("-d");
 				localOptions.add(module);
 				module = sourceModule;
 			}
-			// XXX Needs to be updated for date tags
-			if (tag != null) {
-				localOptions.add(Client.TAG_OPTION );
-				localOptions.add(tag.getName());
+			// Add the options related to the CVSTag
+			if (tag == null)
+				// Prune empty directories (since not implied as with -D or -r)
+				localOptions.add(Client.PRUNE_OPTION);
+			else {
+				if (tag.getType() == CVSTag.DATE) {
+					localOptions.add("-D");
+					localOptions.add(tag.getName());
+				} else {
+					localOptions.add(Client.TAG_OPTION );
+					localOptions.add(tag.getName());
+				}
 			}
-				
+			
 			// Perform a checkout
 			Client.execute(
 					Client.CHECKOUT,
