@@ -1,7 +1,7 @@
 <!-- Export a jar of .class files for the org.eclipse.debug.core Eclipse plugin
      along with other important plugin files to the "plugin-export" subdirectory
      of the target Eclipse installation -->
-<project name="org.eclipse.debug.core" default="export" basedir="..">
+<project name="Export debug.core" default="export" basedir="..">
 
 	<!-- Set the timestamp and important properties -->
 	<target name="init">

@@ -1,4 +1,4 @@
-<project name="exportplugins" default="Create extra JARs" basedir=".">
+<project name="Build Selfhosting JARs" default="Create extra JARs" basedir=".">
 	<target name="init">
 		<tstamp/>
 	</target>

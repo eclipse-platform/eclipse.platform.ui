@@ -1,4 +1,4 @@
-<project name="exportplugins" default="export to remote targets" basedir=".">
+<project name="Update targets" default="export to remote targets" basedir=".">
 	<target name="init">
 		<tstamp/>
 	</target>

@@ -7,7 +7,7 @@
     of the target Eclipse installation
 	As well the export of the plugin is copied to a target installation.
  -->
-<project name="org.eclipse.ui.externaltools" default="export" basedir="..">
+<project name="Update target" default="export" basedir="..">
 
 	<!-- Set the timestamp and important properties -->
 	<target name="init">
