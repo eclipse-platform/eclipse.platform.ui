@@ -13,8 +13,9 @@ org.eclipse.core.runtime/jobs=false
 org.eclipse.core.runtime/jobs/timing=false
 # Computes location of error on mismatched IJobManager.beginRule/endRule
 org.eclipse.core.runtime/jobs/beginend=false
-# Throws an IllegalStateException in the thread that caused deadlock
-# in addition to logging the deadlock in the .log file
+# Pedantic assertion checking on locks and deadlock reporting
+org.eclipse.core.runtime/jobs/locks=false
+# Throws an IllegalStateException when deadlock occurs
 org.eclipse.core.runtime/jobs/errorondeadlock=false
 
 # Prints time taken by Plugin constructors and startup() methods.

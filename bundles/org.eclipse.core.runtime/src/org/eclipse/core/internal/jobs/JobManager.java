@@ -35,10 +35,12 @@ public class JobManager implements IJobManager {
 	private static final String OPTION_DEBUG_JOBS_TIMING = Platform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = Platform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
 	private static final String OPTION_DEADLOCK_ERROR = Platform.PI_RUNTIME + "/jobs/errorondeadlock"; //$NON-NLS-1$
+	private static final String OPTION_LOCKS = Platform.PI_RUNTIME + "/jobs/locks"; //$NON-NLS-1$
 	static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS));
 	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS_TIMING));
 	static final boolean DEBUG_BEGIN_END= Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_BEGIN_END));
 	static final boolean DEBUG_DEADLOCK = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEADLOCK_ERROR));
+	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_LOCKS));
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private static JobManager instance;
 	/**

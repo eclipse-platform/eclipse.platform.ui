@@ -12,8 +12,9 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Stack;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
 
@@ -52,36 +53,6 @@ public class LockManager {
 			lock.setDepth(depth);
 		}
 	}
-	/**
-	 * Wrapper class for notifying lock listeners to handle exceptions in third
-	 * party code.
-	 */
-	private class SafeLockListener extends LockListener implements ISafeRunnable {
-		private Thread lockOwner;
-		private boolean wait;
-		private LockListener listener;
-		SafeLockListener(LockListener listener) {
-			this.listener = listener;
-		}
-		public void handleException(Throwable exception) {
-		}
-		public void run() throws Exception {
-			if (wait)
-				wait = listener.aboutToWait(lockOwner);
-			else
-				listener.aboutToRelease();
-		}
-		public void aboutToRelease() {
-			wait = false;
-			Platform.run(this);
-		}
-		public boolean aboutToWait(Thread lockOwner) {
-			this.lockOwner = lockOwner;
-			wait = true;
-			Platform.run(this);
-			return wait;
-		}
-	}
 
 	//the lock listener for this lock manager
 	protected LockListener lockListener;
@@ -104,15 +75,29 @@ public class LockManager {
 	 * Method declared on LockListener
 	 */
 	public void aboutToRelease() {
-		if (lockListener != null)
+		if (lockListener == null)
+			return;
+		try {
 			lockListener.aboutToRelease();
+		} catch (Exception e) {
+			handleException(e);
+		} catch (LinkageError e) {
+			handleException(e);
+		}
 	}
 	/* (non-Javadoc)
 	 * Method declared on LockListener
 	 */
 	public boolean aboutToWait(Thread lockOwner) {
-		if (lockListener != null)
+		if (lockListener == null)
+			return false;
+		try {
 			return lockListener.aboutToWait(lockOwner);
+		} catch (Exception e) {
+			handleException(e);
+		} catch (LinkageError e) {
+			handleException(e);
+		}
 		return false;
 	}
 	/**
@@ -131,7 +116,8 @@ public class LockManager {
 			locks.lockWaitStart(thread, lock);
 			if (locks.isDeadlocked()) {
 				Thread candidate = locks.resolutionCandidate(thread, lock);
-				locks.reportDeadlock(thread, lock, candidate);
+				if (JobManager.DEBUG_LOCKS)
+					locks.reportDeadlock(thread, lock, candidate);
 				if (JobManager.DEBUG_DEADLOCK)
 					throw new IllegalStateException("Deadlock detected. Caused by thread " + thread.getName() + '.'); //$NON-NLS-1$
 				ISchedulingRule[] toSuspend = locks.contestedLocksForThread(candidate);
@@ -152,74 +138,85 @@ public class LockManager {
 			}
 		}
 	}
-	/**
-	 * Returns true IFF the underlying graph is empty.
-	 * Used in debugging.
-	 */
-	public boolean isEmpty() {
-		return locks.isEmpty();
-	}
-	/**
-	 * Returns true IFF this thread either owns, or is waiting for, any locks.
-	 */
-	public boolean isLockOwner() {
-		//all job threads have to be treated as lock owners because UI thread 
-		//may try to join a job
-		Thread current = Thread.currentThread();
-		if (current instanceof Worker)
-			return true;
-		synchronized (locks) {
-			return locks.contains(Thread.currentThread());
+	private static void handleException(Throwable e) {
+		String message = Policy.bind("jobs.internalError"); //$NON-NLS-1$
+		IStatus status;
+		if (e instanceof CoreException) {
+			status = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
+			((MultiStatus) status).merge(((CoreException) e).getStatus());
+		} else {
+			status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
 		}
+		InternalPlatform.log(status);
 	}
-	/**
-	 * Creates and returns a new lock.
-	 */
-	public synchronized OrderedLock newLock() {
-		OrderedLock result = new OrderedLock(this);
-		return result;
+/**
+ * Returns true IFF the underlying graph is empty.
+ * Used in debugging.
+ */
+public boolean isEmpty() {
+	return locks.isEmpty();
+}
+/**
+ * Returns true IFF this thread either owns, or is waiting for, any locks.
+ */
+public boolean isLockOwner() {
+	//all job threads have to be treated as lock owners because UI thread 
+	//may try to join a job
+	Thread current = Thread.currentThread();
+	if (current instanceof Worker)
+		return true;
+	synchronized (locks) {
+		return locks.contains(Thread.currentThread());
 	}
-	/**
-	 * Releases all the acquires that were called on the given rule. Needs to be called only once.
-	 */
-	void removeLockCompletely(Thread thread, ISchedulingRule rule) {
-		synchronized (locks) {
-			locks.lockReleasedCompletely(thread, rule);
-		}
+}
+/**
+ * Creates and returns a new lock.
+ */
+public synchronized OrderedLock newLock() {
+	OrderedLock result = new OrderedLock(this);
+	return result;
+}
+/**
+ * Releases all the acquires that were called on the given rule. Needs to be called only once.
+ */
+void removeLockCompletely(Thread thread, ISchedulingRule rule) {
+	synchronized (locks) {
+		locks.lockReleasedCompletely(thread, rule);
 	}
-	/**
-	 * This thread has just released a lock.  Update graph.
-	 */
-	void removeLockThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			locks.lockReleased(thread, lock);
-		}
+}
+/**
+ * This thread has just released a lock.  Update graph.
+ */
+void removeLockThread(Thread thread, ISchedulingRule lock) {
+	synchronized (locks) {
+		locks.lockReleased(thread, lock);
 	}
-	/**
-	 * This thread has just stopped waiting for a lock. Update graph.
-	 */
-	void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
-		synchronized (locks) {
-			locks.lockWaitStop(thread, lock);
-		}
+}
+/**
+ * This thread has just stopped waiting for a lock. Update graph.
+ */
+void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
+	synchronized (locks) {
+		locks.lockWaitStop(thread, lock);
 	}
-	/**
-	 * Returns all the locks that were suspended while this thread was waiting to acquire another lock.
-	 */
-	void resumeSuspendedLocks(Thread owner) {
-		LockState[] toResume;
-		synchronized (suspendedLocks) {
-			Stack prevLocks = (Stack) suspendedLocks.get(owner);
-			if (prevLocks == null)
-				return;
-			toResume = (LockState[]) prevLocks.pop();
-			if (prevLocks.empty())
-				suspendedLocks.remove(owner);
-		}
-		for (int i = 0; i < toResume.length; i++)
-			toResume[i].resume();
+}
+/**
+ * Returns all the locks that were suspended while this thread was waiting to acquire another lock.
+ */
+void resumeSuspendedLocks(Thread owner) {
+	LockState[] toResume;
+	synchronized (suspendedLocks) {
+		Stack prevLocks = (Stack) suspendedLocks.get(owner);
+		if (prevLocks == null)
+			return;
+		toResume = (LockState[]) prevLocks.pop();
+		if (prevLocks.empty())
+			suspendedLocks.remove(owner);
 	}
-	public void setLockListener(LockListener listener) {
-		this.lockListener =  listener == null ? null : new SafeLockListener(listener);
-	}
+	for (int i = 0; i < toResume.length; i++)
+		toResume[i].resume();
+}
+public void setLockListener(LockListener listener) {
+	this.lockListener = listener;
+}
 }
