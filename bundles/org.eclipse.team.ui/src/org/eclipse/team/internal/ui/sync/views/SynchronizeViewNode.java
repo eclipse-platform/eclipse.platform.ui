@@ -110,7 +110,7 @@ public class SynchronizeViewNode implements IAdaptable, IActionFilter, ISynchron
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "SynchronizeViewNode for " + getResource().getFullPath().toString();
+		return "SynchronizeViewNode for " + getResource().getFullPath().toString(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -217,6 +217,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	abstract public byte[] getSyncBytes();
 
 	public String toString() {
-		return "Remote " + (isContainer() ? "Folder: " : "File: ") + getName();
+		return "Remote " + (isContainer() ? "Folder: " : "File: ") + getName(); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

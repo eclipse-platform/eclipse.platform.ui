@@ -563,7 +563,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 
 	public String toString() {
-		return super.toString() + " " + getRevision();
+		return super.toString() + " " + getRevision(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

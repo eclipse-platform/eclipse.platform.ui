@@ -17,6 +17,7 @@ import org.eclipse.team.core.subscribers.ComparisonCriteria;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * CVSRevisionNumberCompareCriteria
@@ -27,14 +28,14 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 	 * @see ComparisonCriteria#getName()
 	 */
 	public String getName() {		
-		return "Revision number comparison";
+		return Policy.bind("CVSRevisionNumberCompareCriteria.1"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see ComparisonCriteria#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.team.cvs.revisioncomparator";
+		return "org.eclipse.team.cvs.revisioncomparator"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

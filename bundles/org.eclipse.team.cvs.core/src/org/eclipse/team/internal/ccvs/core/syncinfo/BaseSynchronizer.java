@@ -53,7 +53,7 @@ public class BaseSynchronizer extends ResourceSynchronizer {
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#getSyncName()
 	 */
 	protected QualifiedName getSyncName() {
-		return new QualifiedName(CVSProviderPlugin.ID, "workspace"); // $NON-NLS-1$
+		return new QualifiedName(CVSProviderPlugin.ID, "workspace"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
