@@ -511,7 +511,8 @@ public class CVSWorkspaceRoot {
 		ICVSFolder parent = managed.getParent();
 		FolderSyncInfo syncInfo = parent.getFolderSyncInfo();
 		if (syncInfo == null) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
+			// The parent is managed so just indicate that there is no remote
+			return null;
 		}
 		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(parent.getFolderSyncInfo().getRoot());
 		RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
@@ -602,6 +603,18 @@ public class CVSWorkspaceRoot {
 		return getRemoteTree(resource, tag, false /* cache file contents hint */, progress);
 	}
 
+	/**
+	 * Return the remote tree that corresponds to the given local resource. Return
+	 * <code>null</code> if the remote tree doesn't exist remotely or if the local
+	 * resource is not mapped to a remote (i.e. is not managed by CVS).
+	 * 
+	 * @param resource the local resource
+	 * @param tag the tag to be queried remotely
+	 * @param cacheFileContentsHint hint which indicates whether file contents will be required
+	 * @param progress
+	 * @return the remote tree or <code>null</code>
+	 * @throws TeamException
+	 */
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, boolean cacheFileContentsHint, IProgressMonitor progress) throws TeamException {
 		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
