@@ -130,9 +130,6 @@ protected void createSourceGroup(Composite parent) {
 	sourceBrowseButton.addListener(SWT.Selection,this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-	createSpacer(parent);
-	createBoldLabel(parent,DataTransferMessages.getString("FileImport.whichTypesImport")); //$NON-NLS-1$
-
 	// source types group
 	Composite sourceTypesGroup = new Composite(parent,SWT.NONE);
 	layout = new GridLayout();

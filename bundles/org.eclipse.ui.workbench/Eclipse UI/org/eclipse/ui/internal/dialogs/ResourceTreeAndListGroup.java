@@ -42,6 +42,9 @@ public class ResourceTreeAndListGroup implements ICheckStateListener, ISelection
 	private	CheckboxTreeViewer	treeViewer;
 	private	CheckboxTableViewer	listViewer;
 	
+	//height hint for viewers
+	private static int PREFERRED_HEIGHT = 150;
+	
 /**
  *	Create an instance of this class.  Use this constructor if you wish to specify
  *	the width and/or height of the combined widget (to only hardcode one of the
@@ -53,21 +56,22 @@ public class ResourceTreeAndListGroup implements ICheckStateListener, ISelection
  *	@param childPropertyName java.lang.String
  *	@param parentPropertyName java.lang.String
  *	@param listPropertyName java.lang.String
- *	@param width int
- *	@param height int
+ *	@param useHeightHint If true then use the height hint
+ *				to make this group big enough
  */
 public ResourceTreeAndListGroup(
 	Composite parent,Object rootObject,
 	ITreeContentProvider treeContentProvider,ILabelProvider treeLabelProvider,
 	IStructuredContentProvider listContentProvider,ILabelProvider listLabelProvider,
-	int style,int width,int height) {
+	int style,
+	boolean useHeightHint) {
 
 	root = rootObject;
 	this.treeContentProvider = treeContentProvider;
 	this.listContentProvider = listContentProvider;
 	this.treeLabelProvider = treeLabelProvider;
 	this.listLabelProvider = listLabelProvider;
-	createContents(parent, width, height, style);
+	createContents(parent, style,useHeightHint);
 }
 /**
  * This method must be called just before this window becomes visible.
@@ -160,10 +164,9 @@ public void checkStateChanged(final CheckStateChangedEvent event) {
  *	Lay out and initialize self's visual components.
  *
  *	@param parent org.eclipse.swt.widgets.Composite
- *	@param width int
- *	@param height int
+ *	@param useHeightHint. If true yse the preferredHeight.
  */
-protected void createContents(Composite parent, int width, int height, int style) {
+protected void createContents(Composite parent, int style, boolean useHeightHint) {
 	// group pane
 	Composite composite = new Composite(parent,style);
 	composite.setFont(parent.getFont());
@@ -174,20 +177,20 @@ protected void createContents(Composite parent, int width, int height, int style
 	layout.marginWidth = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
-	createTreeViewer(composite, width/2, height);
-	createListViewer(composite, width/2, height);
+	
+	createTreeViewer(composite,useHeightHint);
+	createListViewer(composite,useHeightHint);
 	
 	initialize();
 }
 /**
  *	Create this group's list viewer.
  */
-protected void createListViewer(Composite parent, int width, int height) {
+protected void createListViewer(Composite parent, boolean useHeightHint) {
 	listViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_BOTH);
-	data.widthHint = width;
-	data.heightHint = height;
+	if(useHeightHint)
+		data.heightHint = PREFERRED_HEIGHT;
 	listViewer.getTable().setLayoutData(data);
 	listViewer.getTable().setFont(parent.getFont());
 	listViewer.setContentProvider(listContentProvider);
@@ -197,11 +200,11 @@ protected void createListViewer(Composite parent, int width, int height) {
 /**
  *	Create this group's tree viewer.
  */
-protected void createTreeViewer(Composite parent, int width, int height) {
+protected void createTreeViewer(Composite parent, boolean useHeightHint) {
 	Tree tree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_BOTH);
-	data.widthHint = width;
-	data.heightHint = height;
+	if(useHeightHint)
+		data.heightHint = PREFERRED_HEIGHT;
 	tree.setLayoutData(data);
 	tree.setFont(parent.getFont());
 	

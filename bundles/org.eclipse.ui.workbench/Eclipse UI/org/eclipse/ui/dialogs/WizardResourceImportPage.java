@@ -59,10 +59,6 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 	private Button containerBrowseButton;
 	protected ResourceTreeAndListGroup selectionGroup;
 
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 150;
-
-
 	//messages
 	private static final String EMPTY_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.specifyFolder"); //$NON-NLS-1$
 	private static final String INACCESSABLE_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.folderMustExist"); //$NON-NLS-1$
@@ -122,9 +118,6 @@ public void createControl(Composite parent) {
 
 	createSourceGroup(composite);
 
-	createSpacer(composite);
-
-	createPlainLabel(composite, WorkbenchMessages.getString("WizardImportPage.destinationLabel")); //$NON-NLS-1$
 	createDestinationGroup(composite);
 
 	createOptionsGroup(composite);
@@ -178,6 +171,8 @@ protected final void createDestinationGroup(Composite parent) {
  *	Create the import source selection widget
  */
 protected void createFileSelectionGroup(Composite parent) {
+	
+	int availableRows = availableRows(parent);
 
 	//Just create with a dummy root.
 	this.selectionGroup =
@@ -189,8 +184,7 @@ protected void createFileSelectionGroup(Composite parent) {
 			getFileProvider(),
 			new WorkbenchLabelProvider(),
 			SWT.NONE,
-			SIZING_SELECTION_WIDGET_WIDTH,
-			SIZING_SELECTION_WIDGET_HEIGHT);
+			availableRows > 50);
 
 	ICheckStateListener listener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {

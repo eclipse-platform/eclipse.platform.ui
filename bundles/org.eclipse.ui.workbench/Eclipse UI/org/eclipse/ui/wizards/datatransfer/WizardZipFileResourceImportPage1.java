@@ -104,10 +104,6 @@ public void createControl(Composite parent) {
  */
 protected void createOptionsGroup(Composite parent) {
 	
-	//create a spacer first
-	
-	createSpacer(parent);
-	
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(parent,SWT.CHECK);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$

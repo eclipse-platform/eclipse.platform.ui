@@ -63,8 +63,6 @@ public abstract class WizardExportResourcesPage
 	private ResourceTreeAndListGroup resourceGroup;
 	private Button typesToExportEditButton;
 
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 150;
 	// dialog store id constants
 	private static final String STORE_SELECTED_TYPES_ID = "WizardFileSystemExportPage1.STORE_SELECTED_TYPES_ID."; //$NON-NLS-1$
 
@@ -229,11 +227,9 @@ public abstract class WizardExportResourcesPage
 				GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(parent.getFont());
 
-		createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whatLabel")); //$NON-NLS-1$
 		createResourcesGroup(composite);
 		createButtonsGroup(composite);
 
-		createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whereLabel")); //$NON-NLS-1$
 		createDestinationGroup(composite);
 
 		createOptionsGroup(composite);
@@ -274,6 +270,8 @@ public abstract class WizardExportResourcesPage
 				input.add(projects[i]);
 		}
 
+		int availableRows = availableRows(parent);
+		
 		this.resourceGroup =
 			new ResourceTreeAndListGroup(
 				parent,
@@ -283,8 +281,7 @@ public abstract class WizardExportResourcesPage
 				getResourceProvider(IResource.FILE),
 				new WorkbenchLabelProvider(),
 				SWT.NONE,
-				SIZING_SELECTION_WIDGET_WIDTH,
-				SIZING_SELECTION_WIDGET_HEIGHT);
+				availableRows > 50);
 
 	}
 	/*
