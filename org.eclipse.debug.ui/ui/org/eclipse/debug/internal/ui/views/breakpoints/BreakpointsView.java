@@ -58,16 +58,23 @@ public class BreakpointsView extends AbstractDebugView {
 		}
 		public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		}
-		public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-			CheckboxTableViewer viewer= getCheckboxViewer();
-			for (int i = 0; i < breakpoints.length; i++) {
-				IBreakpoint breakpoint = breakpoints[i];
-				try {
-					viewer.setChecked(breakpoint, breakpoint.isEnabled());
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
+		public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				public void run() {
+					CheckboxTableViewer viewer= getCheckboxViewer();
+					for (int i = 0; i < breakpoints.length; i++) {
+						IBreakpoint breakpoint= breakpoints[i];
+						try {
+							boolean enabled= breakpoint.isEnabled();
+							if (viewer.getChecked(breakpoint) != enabled) {
+								viewer.setChecked(breakpoint, breakpoint.isEnabled());								
+							}
+						} catch (CoreException e) {
+							DebugUIPlugin.log(e);
+						}
+					}
 				}
-			}
+			});
 		}
 	};
 	
