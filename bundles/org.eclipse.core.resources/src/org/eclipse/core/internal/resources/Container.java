@@ -70,7 +70,7 @@ public IResource findMember(IPath path, boolean phantom) {
  */
 protected void fixupAfterMoveSource() throws CoreException {
 	super.fixupAfterMoveSource();
-	if (!synchronizing(getResourceInfo(false, false)))
+	if (!synchronizing(getResourceInfo(true, false)))
 		return;
 	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	for (int i = 0; i < members.length; i++)
