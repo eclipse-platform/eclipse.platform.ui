@@ -2,13 +2,14 @@ package org.eclipse.team.core.sync;
 
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
 /**
  * Interface for resources that are not local. 
  */
-public interface IRemoteResource {
+public interface IRemoteResource extends IAdaptable {
 
 	/**
 	 * Answers a string that describes the name of the remote resource. The name may be
