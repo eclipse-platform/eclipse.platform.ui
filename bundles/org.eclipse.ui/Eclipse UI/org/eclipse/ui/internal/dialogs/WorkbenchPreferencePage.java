@@ -42,6 +42,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button reuseEditors;
 	private IntegerFieldEditor reuseEditorsThreshold;
+	private Composite editorReuseGroup;
+	
 	private IntegerFieldEditor recentFilesEditor;
 
 	private Button doubleClickButton;
@@ -164,16 +166,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
 	private void createEditorReuseGroup(Composite composite) {
-		final Composite groupComposite = new Composite(composite, SWT.LEFT);
+		editorReuseGroup = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		groupComposite.setLayout(layout);
+		editorReuseGroup.setLayout(layout);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);		
+		editorReuseGroup.setLayoutData(gd);		
 		
-		reuseEditors = new Button(groupComposite, SWT.CHECK);
+		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
 		GridData reuseEditorsData = new GridData();
 		reuseEditorsData.horizontalSpan = layout.numColumns;
@@ -183,12 +185,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditors.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				reuseEditorsThreshold.getLabelControl(groupComposite).setEnabled(reuseEditors.getSelection());
-				reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
 			}
 		});
 		
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), groupComposite); //$NON-NLS-1$
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseGroup); //$NON-NLS-1$
 		
 		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		reuseEditorsThreshold.setPreferencePage(this);
@@ -197,8 +199,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
-		reuseEditorsThreshold.getLabelControl(groupComposite).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
@@ -407,6 +409,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
+		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+
 
 		recentFilesEditor.loadDefault();
 		
