@@ -189,6 +189,47 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="style" use="default" value="push">
+            <annotation>
+               <documentation>
+                  an attribute to define the user interface style type for the action. If omitted, then it is &lt;samp&gt;push&lt;/samp&gt; by default. The attribute value will be one of the following:
+    &lt;table border=&quot;0&quot; width=&quot;80%&quot;&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a regular menu item or tool item.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a cascading style menu item or as a drop down menu beside the tool item.&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="push">
+                  </enumeration>
+                  <enumeration value="radio">
+                  </enumeration>
+                  <enumeration value="toggle">
+                  </enumeration>
+                  <enumeration value="pulldown">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
          <attribute name="state" type="boolean">
             <annotation>
                <documentation>
@@ -267,47 +308,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
     &lt;/table&gt;
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="style" use="default" value="push">
-            <annotation>
-               <documentation>
-                  an attribute to define the user interface style type for the action. If omitted, then it is &lt;samp&gt;push&lt;/samp&gt; by default. The attribute value will be one of the following:
-    &lt;table border=&quot;0&quot; width=&quot;80%&quot;&gt;
-      &lt;tr&gt;
- &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot;&gt;- as a regular menu item or tool item.&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
- &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot;&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
- &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot;&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
- &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot;&gt;- as a cascading style menu item or as a drop down menu beside the tool item.&lt;/td&gt;
-      &lt;/tr&gt;
-    &lt;/table&gt;
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="push">
-                  </enumeration>
-                  <enumeration value="radio">
-                  </enumeration>
-                  <enumeration value="toggle">
-                  </enumeration>
-                  <enumeration value="pulldown">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>
@@ -448,19 +448,19 @@ If two or more actions are contributed to a menu or toolbar by a single extensio
 &lt;p&gt;
 The &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt; elements are mutually exclusive. The &lt;samp&gt;enablement&lt;/samp&gt; element can replace the &lt;samp&gt;selection&lt;/samp&gt; element using the sub-elements &lt;samp&gt;objectClass&lt;/samp&gt; and &lt;samp&gt;objectState&lt;/samp&gt;. For example, the following:
 &lt;pre&gt;
-	&lt;selection
-		class=&quot;org.eclipse.core.resources.IFile&quot;
-		name=&quot;*.java&quot;&gt;
-	&lt;/selection&gt;
+ &lt;selection
+  class=&quot;org.eclipse.core.resources.IFile&quot;
+  name=&quot;*.java&quot;&gt;
+ &lt;/selection&gt;
 &lt;/pre&gt;
 can be expressed using:
 &lt;pre&gt;
-	&lt;enablement&gt;
-		&lt;and&gt;
-			&lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
-			&lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
-		&lt;/and&gt;
-	&lt;/enablement&gt;
+ &lt;enablement&gt;
+  &lt;and&gt;
+   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
+  &lt;/and&gt;
+ &lt;/enablement&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>

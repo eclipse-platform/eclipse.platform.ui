@@ -48,19 +48,41 @@ The syntax is the same for the <samp>enablement</samp> and <samp>visibility</sam
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hoverIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(push|radio|toggle|pulldown) "push"</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pulldown&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;retarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allowLabelUpdate&nbsp;(true | false) "false"#IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(push|radio|toggle|pulldown) "push"</samp>
 <br><samp>&nbsp;&nbsp; &gt;</samp>
 <ul>
 <li><b>id</b> - a unique identifier used as a reference for this action.</li><li><b>label</b> - a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.</li><li><b>accelerator</b> - <b><font color="#FF0000">Deprecated:</font></b> Use the <samp>definitionId</samp> attribute instead.</li><li><b>definitionId</b> - the action definition unique identifier that this action is semantically similar to. Allows the key binding service to assign an accelerator key to this action. See the extension points <a href="org_eclipse_ui_actionDefinitions.html">org.eclipse.ui.actionDefinitions</a> and <a href="org_eclipse_ui_acceleratorSets.html">org.eclipse.ui.acceleratorSets</a> for more information.</li><li><b>menubarPath</b> - a slash-delimited path ('/') used to specify the location of this action in the menu bar.
 Each token in the path, except the last one, must represent a valid identifier of an existing menu in the hierarchy. The last token represents the named group into which this action will be added. If the path is omitted, this action will not appear in the menu bar.</li><li><b>toolbarPath</b> - a slash-delimited path ('/') that is used to specify the location of this action in the toolbar. The first token represents the toolbar identifier (with "Normal" being the default toolbar), while the second token is the named group within the toolbar that this action will be added to. If the group does not exist in the toolbar, it will be created.
 If toolbarPath is omitted, the action will not appear in the toolbar.</li><li><b>icon</b> - a relative path of an icon used to visually represent the action in its context.
-If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.</li><li><b>disabledIcon</b> - a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.</li><li><b>hoverIcon</b> - a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>tooltip</b> - a translatable text representing the action's tool tip. Only used if the action appears in the toolbar.</li><li><b>helpContextId</b> - a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.</li><li><b>state</b> - an optional attribute indicating the initial state (either <samp>true</samp> or <samp>false</samp>). Used only when the <samp>style</samp> attribute has the value <samp>radio</samp> or <samp>toggle</samp>.</li><li><b>pulldown</b> - <b><font color="#FF0000">Deprecated:</font></b> Use the <samp>style</samp> attribute with the value <samp>pulldown</samp>.</li><li><b>class</b> - a fully qualified name of a class which implements <samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp> or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>. The latter should be implemented in cases where the <samp>style</samp> attribute has the value <samp>pulldown</samp>. This class is the handler responsible for performing the action. If the <samp>retarget</samp> attribute is true, this attribute is ignored and should not be supplied.</li><li><b>retarget</b> - an optional attribute to retarget this action. When true, view and editor parts may supply a handler for this action using the standard mechanism for setting a global action handler on their site using this action's identifier. If this attribute is true, the <samp>class</samp> attribute should not be supplied.</li><li><b>allowLabelUpdate</b> - optional attribute indicating whether the retarget action allows the handler to override it's label and tooltip. Only applies if <samp>retarget</samp> attribute is true.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action. If specified and the condition is not met, the action is disabled. If omitted, the action enablement state is not affected. The following attribute formats are supported: 
+If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.</li><li><b>disabledIcon</b> - a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.</li><li><b>hoverIcon</b> - a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>tooltip</b> - a translatable text representing the action's tool tip. Only used if the action appears in the toolbar.</li><li><b>helpContextId</b> - a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.</li><li><b>style</b> - an attribute to define the user interface style type for the action. If omitted, then it is <samp>push</samp> by default. The attribute value will be one of the following:
+    <table border="0" width="80%">
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>push</b></td>
+        <td valign="top">- as a regular menu item or tool item.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>radio</b></td>
+        <td valign="top">- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the <samp>state</samp> attribute.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>toggle</b></td>
+        <td valign="top">- as a checked style menu item or as a toggle tool item. The initial value is specified by the <samp>state</samp> attribute.</td>
+      </tr>
+      <tr>
+ <td valign="top" width="25"></td>
+        <td valign="top" nowrap><b>pulldown</b></td>
+        <td valign="top">- as a cascading style menu item or as a drop down menu beside the tool item.</td>
+      </tr>
+    </table></li><li><b>state</b> - an optional attribute indicating the initial state (either <samp>true</samp> or <samp>false</samp>). Used only when the <samp>style</samp> attribute has the value <samp>radio</samp> or <samp>toggle</samp>.</li><li><b>pulldown</b> - <b><font color="#FF0000">Deprecated:</font></b> Use the <samp>style</samp> attribute with the value <samp>pulldown</samp>.</li><li><b>class</b> - a fully qualified name of a class which implements <samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp> or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>. The latter should be implemented in cases where the <samp>style</samp> attribute has the value <samp>pulldown</samp>. This class is the handler responsible for performing the action. If the <samp>retarget</samp> attribute is true, this attribute is ignored and should not be supplied.</li><li><b>retarget</b> - an optional attribute to retarget this action. When true, view and editor parts may supply a handler for this action using the standard mechanism for setting a global action handler on their site using this action's identifier. If this attribute is true, the <samp>class</samp> attribute should not be supplied.</li><li><b>allowLabelUpdate</b> - optional attribute indicating whether the retarget action allows the handler to override it's label and tooltip. Only applies if <samp>retarget</samp> attribute is true.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action. If specified and the condition is not met, the action is disabled. If omitted, the action enablement state is not affected. The following attribute formats are supported: 
     <table border="0" width="80%">
       <tr>
  <td valign="top" width="25"></td>
@@ -93,28 +115,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
  <td valign="top" width="25"></td>
         <td valign="top" nowrap><b>*</b></td>
         <td valign="top">- any number of items selected</td>
-      </tr>
-    </table></li><li><b>style</b> - an attribute to define the user interface style type for the action. If omitted, then it is <samp>push</samp> by default. The attribute value will be one of the following:
-    <table border="0" width="80%">
-      <tr>
- <td valign="top" width="25"></td>
-        <td valign="top" nowrap><b>push</b></td>
-        <td valign="top">- as a regular menu item or tool item.</td>
-      </tr>
-      <tr>
- <td valign="top" width="25"></td>
-        <td valign="top" nowrap><b>radio</b></td>
-        <td valign="top">- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the <samp>state</samp> attribute.</td>
-      </tr>
-      <tr>
- <td valign="top" width="25"></td>
-        <td valign="top" nowrap><b>toggle</b></td>
-        <td valign="top">- as a checked style menu item or as a toggle tool item. The initial value is specified by the <samp>state</samp> attribute.</td>
-      </tr>
-      <tr>
- <td valign="top" width="25"></td>
-        <td valign="top" nowrap><b>pulldown</b></td>
-        <td valign="top">- as a cascading style menu item or as a drop down menu beside the tool item.</td>
       </tr>
     </table></li></ul>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
