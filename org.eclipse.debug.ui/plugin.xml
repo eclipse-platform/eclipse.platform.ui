@@ -16,6 +16,7 @@
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.debug.core"/>
    </requires>
@@ -76,13 +77,6 @@
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.expression.ExpressionView"
             id="org.eclipse.debug.ui.ExpressionView">
-      </view>
-      <view
-            name="%ConsoleView.name"
-            icon="icons/full/cview16/console_view.gif"
-            category="org.eclipse.debug.ui"
-            class="org.eclipse.debug.internal.ui.console.ConsoleView"
-            id="org.eclipse.debug.ui.ConsoleView">
       </view>
    </extension>
    <extension
@@ -1005,8 +999,8 @@
       </viewerContribution>
 <!-- Contributions to Console View popup menu -->
       <viewerContribution
-            targetID="org.eclipse.debug.ui.ConsoleView"
-            id="org.eclipse.debug.ui.consoleview.popupMenu">
+            targetID="org.eclipse.ui.console.ConsoleView"
+            id="org.eclipse.ui.console.ConsoleView.popupMenu">
          <action
                label="%TerminateAction.label"
                icon="icons/full/clcl16/terminate_co.gif"
@@ -1101,14 +1095,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.fontDefinitions">
-      <fontDefinition
-            label="%ConsoleFontDefinition.label"
-            defaultsTo="org.eclipse.jface.textfont"
-            id="org.eclipse.debug.ui.ConsoleFont">
-         <description>
-            %ConsoleFontDefinition.description
-         </description>
-      </fontDefinition>
       <fontDefinition
             label="%DetailPaneFontDefinition.label"
             defaultsTo="org.eclipse.jface.textfont"

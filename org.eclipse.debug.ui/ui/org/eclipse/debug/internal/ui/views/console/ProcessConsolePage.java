@@ -24,12 +24,8 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.ClearOutputAction;
 import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.KeyBindingFollowHyperlinkAction;
-import org.eclipse.debug.internal.ui.actions.TextViewerAction;
-import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
-import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -61,6 +57,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.actions.ClearOutputAction;
+import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.console.actions.TextViewerGotoLineAction;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
@@ -346,15 +347,12 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		return fViewer;
 	}	
 
-	/**
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
-	 */
 	protected void configureToolBar(IToolBarManager mgr) {
-		mgr.appendToGroup(IDebugUIConstants.LAUNCH_GROUP, fTerminate);
-		mgr.appendToGroup(IDebugUIConstants.LAUNCH_GROUP, fRemoveTerminated);
+		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
+		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
 		//mgr.add(fProcessDropDownAction);
-		mgr.appendToGroup(IDebugUIConstants.OUTPUT_GROUP, fScrollLockAction);
-		mgr.appendToGroup(IDebugUIConstants.OUTPUT_GROUP, fClearOutputAction);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 	}
 
 	/**
@@ -393,8 +391,8 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		}
 	}
 	
-	/**
-	 * @see WorkbenchPart#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
@@ -412,8 +410,8 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		return null;
 	}	
 	
-	/**
-	 * @see IShowInSource#getShowInContext()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
 		IProcess process = getProcess();
@@ -431,8 +429,8 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		}
 	}
 	
-	/**
-	 * @see IShowInTargetList#getShowInTargetIds()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
 	 */
 	public String[] getShowInTargetIds() {
 		return new String[] {IDebugUIConstants.ID_DEBUG_VIEW};
@@ -480,5 +478,4 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 			findReplace.update();
 		}
 	}
-
 }

@@ -21,9 +21,9 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.console.AbstractConsole;
-import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.console.AbstractConsole;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -39,7 +39,7 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 	private IProcess fProcess = null;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#createPage(org.eclipse.debug.internal.ui.console.IConsoleView)
+	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
 	 */
 	public IPageBookViewPage createPage(IConsoleView view) {
 		return new ProcessConsolePage(view, this);
@@ -105,7 +105,7 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.AbstractConsole#dispose()
+	 * @see org.eclipse.ui.console.AbstractConsole#dispose()
 	 */
 	protected void dispose() {
 		super.dispose();
@@ -113,7 +113,7 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.AbstractConsole#init()
+	 * @see org.eclipse.ui.console.AbstractConsole#init()
 	 */
 	protected void init() {
 		super.init();

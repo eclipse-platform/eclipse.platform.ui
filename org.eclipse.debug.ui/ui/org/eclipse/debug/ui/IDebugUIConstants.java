@@ -238,6 +238,8 @@ public interface IDebugUIConstants {
 		
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
+	 * @deprecated Use org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW 
+	 * @since 3.0
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
 	
@@ -282,7 +284,8 @@ public interface IDebugUIConstants {
 	/** "Link with View" action image identifier. */
 	public static final String IMG_ACT_SYNCED= "IMG_ACT_SYNCED"; //$NON-NLS-1$
 	
-	/** Clear action image identifier. */
+	/** Clear action image identifier. 
+	 * @deprecated */
 	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
 	/** Display variable type names action image identifier. */

@@ -31,8 +31,8 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	private IProcess fProcess;
 	private IConsole fConsole;
 	
-	/**
-	 * @see IConsoleColorProvider#connect(IProcess, IConsole)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.ui.console.IConsole)
 	 */
 	public void connect(IProcess process, IConsole console) {
 		fProcess = process;
@@ -43,23 +43,23 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 		}
 	}
 
-	/**
-	 * @see IConsoleColorProvider#disconnect()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
 	public void disconnect() {
 		fConsole = null;
 		fProcess = null;
 	}
 
-	/**
-	 * @see IConsoleColorProvider#isReadOnly()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return fProcess == null || fProcess.isTerminated();
 	}
 
-	/**
-	 * @see IConsoleColorProvider#getColor(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(java.lang.String)
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM.equals(streamIdentifer)) {

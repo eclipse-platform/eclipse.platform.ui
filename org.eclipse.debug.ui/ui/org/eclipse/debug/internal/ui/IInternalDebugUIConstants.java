@@ -28,11 +28,9 @@ public interface IInternalDebugUIConstants {
 	
 	// tool images
 	public static final String IMG_LCL_COLLAPSE_ALL = "IMG_LCL_COLLAPSE_ALL"; //$NON-NLS-1$
-	public static final String IMG_LCL_PIN = "IMG_LCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_LCL_TERMINATE = "IMG_LCL_TERMINATE"; //$NON-NLS-1$
 	
 	// disabled local tool images
-	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_DLCL_LOCK= "IMG_DLCL_LOCK"; //$NON-NLS-1$
 	public static final String IMG_DLCL_DETAIL_PANE= "IMG_DLCL_DETAIL_PANE"; //$NON-NLS-1$
 	public static final String IMG_DLCL_CHANGE_VARIABLE_VALUE= "IMG_DLCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
@@ -42,12 +40,10 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_DETAIL_PANE_RIGHT= "IMG_DLCL_DETAIL_PANE_RIGHT"; //$NON-NLS-1$
 	public static final String IMG_DLCL_DETAIL_PANE_HIDE= "IMG_DLCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
 	public static final String IMG_DLCL_COLLAPSE_ALL = "IMG_DLCL_COLLAPSE_ALL"; //$NON-NLS-1$
-	public static final String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_DLCL_TERMINATE = "IMG_DLCL_TERMINATE"; //$NON-NLS-1$
 	public static final String IMG_DLCL_REMOVE_ALL = "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
 	
 	// enabled local tool images	
-	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_ELCL_LOCK= "IMG_ELCL_LOCK"; //$NON-NLS-1$
 	public static final String IMG_ELCL_DETAIL_PANE= "IMG_ELCL_DETAIL_PANE"; //$NON-NLS-1$
 	public static final String IMG_ELCL_CHANGE_VARIABLE_VALUE= "IMG_ELCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
@@ -57,7 +53,6 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_DETAIL_PANE_RIGHT= "IMG_ELCL_DETAIL_PANE_RIGHT"; //$NON-NLS-1$
 	public static final String IMG_ELCL_DETAIL_PANE_HIDE= "IMG_ELCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
 	public static final String IMG_ELCL_COLLAPSE_ALL = "IMG_ELCL_COLLAPSE_ALL"; //$NON-NLS-1$
-	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_ELCL_TERMINATE = "IMG_ELCL_TERMINATE"; //$NON-NLS-1$
 	
 	// object images
@@ -84,18 +79,10 @@ public interface IInternalDebugUIConstants {
 	public static final String ID_SOURCE_NOT_FOUND_EDITOR = "org.eclipse.debug.ui.NoSourceFoundEditor"; //$NON-NLS-1$
 	
 	/**
-	 * The name of the font to use for the Console. 
-	 * Since 2.1 this font is managed via the workbench font preference page
-	 * and is no longer stored as a debug preference.
-	 */ 
- 	public static final String CONSOLE_FONT= "org.eclipse.debug.ui.ConsoleFont"; //$NON-NLS-1$
-	
-	/**
 	 * The name of the font to use for detail panes. This font is managed via
 	 * the workbench font preference page.
 	 * 
 	 * @since 2.1
 	 */ 
-	public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$
-	
+	public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$	
 }

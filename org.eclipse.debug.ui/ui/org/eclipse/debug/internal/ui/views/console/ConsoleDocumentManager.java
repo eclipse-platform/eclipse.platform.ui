@@ -28,9 +28,6 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.console.IConsole;
-import org.eclipse.debug.internal.ui.console.IConsoleManager;
-import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
@@ -41,6 +38,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -73,7 +75,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	
 	protected void removeLaunch(ILaunch launch) {
 		IProcess[] processes= launch.getProcesses();
-		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager(); 
+		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
 		for (int i= 0; i < processes.length; i++) {
 			IProcess iProcess = processes[i];
 			IConsole console = getConsole(iProcess);
@@ -93,7 +95,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @return the console for the given process, or <code>null</code> if none
 	 */
 	private IConsole getConsole(IProcess process) {
-		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager(); 
+		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
 		IConsole[] consoles = manager.getConsoles();
 		for (int i = 0; i < consoles.length; i++) {
 			IConsole console = consoles[i];
@@ -131,7 +133,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 							} catch (CoreException e) {
 							}
 							ProcessConsole pc = new ProcessConsole(process);
-							DebugUIPlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
+							ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
 						}
 					}
 				}
@@ -226,11 +228,11 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				if (window != null) {
 					IWorkbenchPage page= window.getActivePage();
 					if (page != null) {
-						IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+						IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
 						if (consoleView == null) {
 							IWorkbenchPart activePart= page.getActivePart();
 							try {
-								consoleView = page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
+								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
 							} catch (PartInitException pie) {
 								DebugUIPlugin.log(pie);
 							}

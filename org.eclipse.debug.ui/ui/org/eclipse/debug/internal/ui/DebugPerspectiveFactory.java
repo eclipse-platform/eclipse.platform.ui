@@ -15,6 +15,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.console.IConsoleConstants;
 
 /**
  * The debug perspective factory.
@@ -27,7 +28,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		
 		IFolderLayout consoleFolder = layout.createFolder(IInternalDebugUIConstants.ID_CONSOLE_FOLDER_VIEW, IPageLayout.BOTTOM, (float)0.75, layout.getEditorArea());
-		consoleFolder.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
+		consoleFolder.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		consoleFolder.addView(IPageLayout.ID_TASK_LIST);
 		consoleFolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		consoleFolder.addPlaceholder(IPageLayout.ID_PROP_SHEET);
@@ -59,7 +60,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_EXPRESSION_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
-		layout.addShowViewShortcut(IDebugUIConstants.ID_CONSOLE_VIEW);
+		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 	}
 }

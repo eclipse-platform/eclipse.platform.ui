@@ -17,9 +17,9 @@ import org.eclipse.swt.graphics.Color;
 /**
  * Provides coloring for a console document. When a process is added to a
  * registered launch the debug plug-in creates a console document for the
- * process. By default, a document is created which is contected to the standard
+ * process. By default, a document is created which is connected to the standard
  * input, output, and error streams associated with the process. A client may
- * override the default coloring by specifying a custom content providier for a
+ * override the default coloring by specifying a custom content provider for a
  * process type. A proccess type is defined via the process attribute
  * <code>IProcess. ATTR_PROCESS_TYPE</code>.
  * <p>

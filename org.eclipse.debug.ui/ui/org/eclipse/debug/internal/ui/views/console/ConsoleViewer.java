@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.console;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.console.IConsoleConstants;
 
 public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener, LineStyleListener, Listener {
 	
@@ -113,7 +113,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 
-		getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
+		getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
 		getTextWidget().addLineStyleListener(this);
@@ -185,8 +185,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) ||
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB)) {
 				getTextWidget().redraw();
-		} else if (propertyName.equals(IInternalDebugUIConstants.CONSOLE_FONT)) {
-			getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
+		} else if (propertyName.equals(IConsoleConstants.CONSOLE_FONT)) {
+			getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		}
 	}
 	

@@ -60,8 +60,8 @@ public class FileLink implements IConsoleHyperlink {
 		fEditorId = editorId;
 	}
 
-	/**
-	 * @see IConsoleHyperlink#linkActivated()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkActivated()
 	 */
 	public void linkActivated() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
@@ -104,16 +104,15 @@ public class FileLink implements IConsoleHyperlink {
 		}
 	}
 
-	/**
-	 * @see IConsoleHyperlink#linkEntered()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkEntered()
 	 */
 	public void linkEntered() {
 	}
 
-	/**
-	 * @see IConsoleHyperlink#linkExited()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkExited()
 	 */
 	public void linkExited() {
 	}
-
 }

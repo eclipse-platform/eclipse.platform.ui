@@ -15,7 +15,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
  * A partition in a console document that represents a break after an input
- * partition. This represents a hard break that the user cannot backsapce/delete.
+ * partition. This represents a hard break that the user cannot backspace/delete.
  */
 public class BreakPartition extends StreamPartition {
 

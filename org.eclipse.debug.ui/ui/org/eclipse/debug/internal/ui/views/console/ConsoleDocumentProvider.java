@@ -23,7 +23,7 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 /**
  * Default document provider for the processes. By default a document is created
- * which is contected to the streams proxy of the associated process.
+ * which is connected to the streams proxy of the associated process.
  */
 public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 

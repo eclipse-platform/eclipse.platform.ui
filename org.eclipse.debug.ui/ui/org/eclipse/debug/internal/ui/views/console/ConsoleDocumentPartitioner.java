@@ -164,7 +164,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fPoll = false;
 	
 	/**
-	 * The associated docuemnt
+	 * The associated document
 	 */
 	private IDocument fDocument = null;
 	
@@ -762,7 +762,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 
 	/**
-	 * Sets whether a runnable has been submitted to update the console
+	 * Returns whether a runnable has been submitted to update the console
 	 * document.
 	 */
 	protected boolean isAppendInProgress() {
@@ -808,8 +808,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fSortedLineDelimiters;
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentPartitioner#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
 	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer) {
 		if (streamMonitor != null) {
@@ -821,8 +821,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentPartitioner#connect(org.eclipse.debug.core.model.IStreamsProxy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamsProxy)
 	 */
 	public void connect(IStreamsProxy streamsProxy) {
 		fProxy = streamsProxy;
@@ -838,8 +838,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fColorProvider;
 	}
 
-	/**
-	 * @see IConsole#addLink(IConsoleHyperlink, int, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.debug.ui.console.IConsoleHyperlink, int, int)
 	 */
 	public void addLink(IConsoleHyperlink link, int offset, int length) {
 		HyperlinkPosition hyperlinkPosition = new HyperlinkPosition(link, offset, length); 
@@ -854,14 +854,14 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsole#getDocument()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsole#getDocument()
 	 */
 	public IDocument getDocument() {
 		return fDocument;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsole#getProcess()
 	 */
 	public IProcess getProcess() {
@@ -878,7 +878,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		lineNotifier.connect(this);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsole#getRegion(org.eclipse.debug.ui.console.IConsoleHyperlink)
 	 */
 	public IRegion getRegion(IConsoleHyperlink link) {
@@ -894,5 +894,4 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		return null;
 	}
-
 }

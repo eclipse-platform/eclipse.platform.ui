@@ -41,14 +41,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.console.ConsoleManager;
-import org.eclipse.debug.internal.ui.console.IConsoleManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.launchVariables.ContextVariableComponentManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.ObjectBrowserManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -109,11 +106,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Singleton console document manager
 	 */
 	private ConsoleDocumentManager fConsoleDocumentManager = null;
-	
-	/**
-	 * Singleton console manager
-	 */
-	private IConsoleManager fConsoleManager = null;
 	
 	/**
 	 * Perspective manager
@@ -335,7 +327,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				public void run() {
 					//initialize the variable context manager
 					LaunchVariableContextManager.getDefault();
-					SelectedResourceManager.getDefault();
+					//SelectedResourceManager.getDefault();
 				}
 			});	
 	}
@@ -599,19 +591,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		return fConsoleDocumentManager;
 	}
-	
-	/**
-	 * Returns the console manager. The manager will be created lazily on 
-	 * the first access.
-	 * 
-	 * @return IConsoleManager
-	 */
-	public IConsoleManager getConsoleManager() {
-		if (fConsoleManager == null) {
-			fConsoleManager = new ConsoleManager();
-		}
-		return fConsoleManager;
-	}	
 	
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format,

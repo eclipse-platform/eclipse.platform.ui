@@ -10,6 +10,7 @@
 		<project>org.eclipse.debug.core</project>
 		<project>org.eclipse.help</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.console</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
