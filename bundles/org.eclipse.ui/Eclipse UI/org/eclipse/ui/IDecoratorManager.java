@@ -23,11 +23,11 @@ public interface IDecoratorManager extends ILabelDecorator {
 	ILabelDecorator getLabelDecorator();
 
 	/**
-	 * Returns the label decorator for the specified decoratorId if it
-	 * exists. Otherwise return null.
+	 * Returns the label decorator for the specified decorator if it
+	 * is enabled. Otherwise returns <code>null</code>.
 	 * 
-	 * @return ILabelDecorator
-	 * @param decoratorId String
+	 * @param decoratorId the decorator id
+	 * @return the label decorator
 	 */
 	ILabelDecorator getLabelDecorator(String decoratorId);
 
@@ -36,7 +36,7 @@ public interface IDecoratorManager extends ILabelDecorator {
 	 * 
 	 * @param decoratorId the decorator id
 	 * @return <code>true</code> if the decorator is enabled, or
-	 * <code>false</code> if not
+	 *   <code>false</code> if not
 	 */
 	boolean getEnabled(String decoratorId);
 
@@ -46,7 +46,7 @@ public interface IDecoratorManager extends ILabelDecorator {
 	 * @param decoratorId the decorator id
 	 * @param enabled <code>true</code> to enable the decorator, or
 	 * <code>false</code> to disable it
-	 * @throws CoreException if the decorator cannot be instanitated
+	 * @throws CoreException if the decorator cannot be instantiated
 	 */
 	void setEnabled(String decoratorId, boolean enabled) throws CoreException;
 
