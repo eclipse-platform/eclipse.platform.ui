@@ -33,7 +33,7 @@ public final class InternalPlatform {
 	private static IAdapterManager adapterManager;
 	private static JobManager jobManager;
 	private static PluginRegistry registry;
-	private static ExtensionRegistry extensionsRegistry;	
+	private static IExtensionRegistry extensionsRegistry;	
 	// registry index - used to store last modified times for
 	// registry caching
 	// ASSUMPTION:  Only the plugin registry in 'registry' above
@@ -835,7 +835,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		if (isDynamic()) {
 			resolveStatus = registry.incrementalResolve();
 			extensionsRegistry = new ExtensionRegistry(new ExtensionLinker());
-			addPluginListener(new ExtensionRegistryBuilder(extensionsRegistry,registry.getPluginDescriptors()));				
+			addPluginListener(new ExtensionRegistryBuilder((ExtensionRegistry) extensionsRegistry,registry.getPluginDescriptors()));				
 		} else {
 			resolveStatus = registry.resolve(true, true);
 			registry.markReadOnly();
