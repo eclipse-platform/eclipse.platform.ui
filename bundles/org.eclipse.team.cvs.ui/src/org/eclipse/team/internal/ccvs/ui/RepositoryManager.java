@@ -21,9 +21,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -38,6 +42,8 @@ import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 /**
  * This class is repsible for maintaining the UI's list of known repositories,
  * and a list of known tags within each of those repositories.
+ * 
+ * It also provides a number of useful methods for assisting in repository operations.
  */
 public class RepositoryManager {
 	private static final String STATE_FILE = ".repositoryManagerState";
@@ -49,6 +55,9 @@ public class RepositoryManager {
 	Hashtable versionTags = new Hashtable();
 	
 	List listeners = new ArrayList();
+
+	// The previously remembered comment
+	private static String previousComment = "";
 	
 	/**
 	 * Answer an array of all known remote roots.
@@ -376,5 +385,85 @@ public class RepositoryManager {
 	
 	public void remoteRepositoryListener(IRepositoryListener listener) {
 		listeners.remove(listener);
+	}
+	
+	/**
+	 * Commit the given resources to their associated providers.
+	 * Prompt for a release comment, which will be applied to all committed
+	 * resources. Persist the release comment for the next caller.
+	 * 
+	 * To do: should automatically handle outgoing additions, outgoing deletions.
+	 * 
+	 * What should happen with errors?
+	 * Should this do a workspace operation?
+	 * 
+	 * @param resources  the resources to commit
+	 * @param shell  the shell that will be the parent of the release comment dialog
+	 * @param monitor  the progress monitor
+	 */
+	public void commit(IResource[] resources, final Shell shell, IProgressMonitor monitor) throws TeamException {
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell);
+				dialog.setComment(previousComment);
+				int result = dialog.open();
+				if (result != ReleaseCommentDialog.OK) return;
+				previousComment = dialog.getComment();
+			}
+		});
+		
+		Hashtable table = getProviderMapping(resources);
+		Set keySet = table.keySet();
+		monitor.beginTask("", keySet.size() * 1000);
+		monitor.setTaskName(Policy.bind("CommitAction.committing"));
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			provider.setComment(previousComment);
+			List list = (List)table.get(provider);
+			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+			provider.checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+		}
+	}
+	
+	/**
+	 * Get the given resources from their associated providers.
+	 *
+	 * @param resources  the resources to commit
+	 * @param monitor  the progress monitor
+	 */
+	public void get(IResource[] resources, IProgressMonitor monitor) throws TeamException {
+		Hashtable table = getProviderMapping(resources);
+		Set keySet = table.keySet();
+		monitor.beginTask("", keySet.size() * 1000);
+		monitor.setTaskName(Policy.bind("GetAction.getting"));
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			provider.setComment(previousComment);
+			List list = (List)table.get(provider);
+			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+			provider.get(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+		}
+	}
+
+	/**
+	 * Helper method. Return a hashtable mapping provider to a list of resources
+	 * shared with that provider.
+	 */
+	private Hashtable getProviderMapping(IResource[] resources) {
+		Hashtable result = new Hashtable();
+		for (int i = 0; i < resources.length; i++) {
+			ITeamProvider provider = TeamPlugin.getManager().getProvider(resources[i].getProject());
+			List list = (List)result.get(provider);
+			if (list == null) {
+				list = new ArrayList();
+				result.put(provider, list);
+			}
+			list.add(resources[i]);
+		}
+		return result;
 	}
 }
