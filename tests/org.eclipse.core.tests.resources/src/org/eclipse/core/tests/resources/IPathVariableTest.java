@@ -139,7 +139,7 @@ public void testGetPathVariableNames() {
 	assertTrue("0.0", manager.getPathVariableNames().length == 0);
 
 	// add one
-	manager.setValue("one", Path.EMPTY);
+	manager.setValue("one", getRandomLocation());
 	names = manager.getPathVariableNames();
 	assertTrue("1.0", names.length == 1);
 	assertTrue("1.1", names[0].equals("one"));
@@ -194,7 +194,8 @@ public void testGetSetValue() {
 	// setting with value == null will remove
 	manager.setValue("one", null);
 	assertNull("4.0", manager.getValue("one"));
-	manager.setValue("two", null);
+	// setting with value == Path.EMPTY will remove
+	manager.setValue("two", Path.EMPTY);
 	assertNull("4.1", manager.getValue("two"));
 
 	// set values with bogus names 
