@@ -50,6 +50,10 @@ public class DragTestSuite extends TestSuite {
     public DragTestSuite() {
         String resNav = IPageLayout.ID_RES_NAV;
         String probView = IPageLayout.ID_PROBLEM_VIEW;
+        
+        // Commented out for now, see bug 76082.
+        if(SWT.getPlatform().equals("gtk") || SWT.getPlatform().equals("motif"))
+        	return;
 
         // Drag sources for views
         TestDragSource[] viewDragSources = new TestDragSource[] {
