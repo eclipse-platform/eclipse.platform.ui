@@ -196,6 +196,20 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Object element= getElement(file);
 			fireElementStateChangeFailed(element);
 		}
+
+		/*
+		 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferCreated(org.eclipse.core.filebuffers.IFileBuffer)
+		 */
+		public void bufferCreated(IFileBuffer buffer) {
+			// ignore
+		}
+
+		/*
+		 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferDisposed(org.eclipse.core.filebuffers.IFileBuffer)
+		 */
+		public void bufferDisposed(IFileBuffer buffer) {
+			// ignore
+		}
 	}
 
 
@@ -206,8 +220,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	private Map fFileInfoMap= new HashMap();
 	/** The list of element state listeners */
 	private List fElementStateListeners= new ArrayList();
-	/** The buffered file listener */
-	private IFileBufferListener fBufferedFileListener= new FileBufferListener();
+	/** The file buffer listener */
+	private IFileBufferListener fFileBufferListener= new FileBufferListener();
 	/** The progress monitor */
 	private IProgressMonitor fProgressMonitor;
 	
@@ -218,7 +232,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	public TextFileDocumentProvider(IDocumentProvider parentProvider) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.addFileBufferListener(fBufferedFileListener);
+		manager.addFileBufferListener(fFileBufferListener);
+		manager.setSynchronizationContext(new UISynchronizationContext());
 		if (parentProvider != null)
 			setParentDocumentProvider(parentProvider);
 	}
@@ -273,13 +288,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			
+			IFile file= input.getFile();
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.connect(input.getFile(), getProgressMonitor());
-			ITextFileBuffer f= manager.getTextFileBuffer(input.getFile());
+			manager.connect(file, getProgressMonitor());
+			manager.requestSynchronizationContext(file);
+			ITextFileBuffer f= manager.getTextFileBuffer(file);
 			
 			FileInfo info= createEmptyFileInfo();
 			info.fTextFileBuffer= f;
-			info.fModel= createAnnotationModel(input.getFile());
+			info.fModel= createAnnotationModel(file);
 			return info;
 		}
 		return null;
@@ -312,7 +329,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try {
-			manager.disconnect(info.fTextFileBuffer.getUnderlyingFile(), getProgressMonitor());
+			IFile file= info.fTextFileBuffer.getUnderlyingFile();
+			manager.releaseSynchronizationContext(file);
+			manager.disconnect(file, getProgressMonitor());
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
 		}
@@ -565,7 +584,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public boolean isSynchronized(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return !info.fTextFileBuffer.hasUnderlyingFileChanged();
+			return info.fTextFileBuffer.isSynchronized();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
 

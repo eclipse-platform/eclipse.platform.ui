@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -275,50 +274,17 @@ public class TextViewer extends Viewer implements
 		 * @see IDocumentListener#documentAboutToBeChanged
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
-			if (e.getDocument() == getVisibleDocument()) {
-				WidgetCommand command= new WidgetCommand();
-				
-				// TODO this will get us into trouble as soon as a Document starts to send out
-				// DocumentEvents in different threads, as the document ranges contained in an event
-				// are not accurate any more if e.g. two sequential events have their 
-				// documentAboutToBeChanged and documentChanged messages intermingled.
-				//
-				// What we need is a synchronized IDocument implementation that will guarantee that
-				// document changes are serialized and likewise the messages sent out. I.e. no other
-				// DocumentEvents get sent out between an aboutToBeChanged / changed pair of 
-				// messages.  
-				command.setEvent(e);
-				
-				// TODO possible memory leak: events that are never confirmed by a 
-				// documentChanged call will stay in the map forever.
-				synchronized (fWidgetCommands) {
-					// this assumes that the same DocumentEvent is never reused by an IDocument
-					fWidgetCommands.put(e, command);
-				}
-			}
+			if (e.getDocument() == getVisibleDocument())
+				fWidgetCommand.setEvent(e);
 		}
 		
 		/*
 		 * @see IDocumentListener#documentChanged
 		 */
 		public void documentChanged(final DocumentEvent e) {
-			final WidgetCommand command;
-			
-			synchronized (fWidgetCommands) {
-				command= (WidgetCommand) fWidgetCommands.remove(e);
-			}
-			
-			if (command != null) {
-				
-				Runnable runnable= new Runnable() {
-					public void run() {
-						updateTextListeners(command);
-						fLastSentSelectionChange= null;
-					}
-				};
-
-				runInUIThread(runnable);
-			}
+			if (fWidgetCommand.event == e)
+				updateTextListeners(fWidgetCommand);
+			fLastSentSelectionChange= null;
 		}
 	}
 	
@@ -1148,12 +1114,8 @@ public class TextViewer extends Viewer implements
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
 	private int fTopInset= 0;
-	/** 
-	 * List of the widget commands stored for incoming document changes.
-	 * Accesses to the map must synchronize on it.
-	 * @since 3.0
-	 */
-	private Map fWidgetCommands= new HashMap();
+	/** The most recent document modification as widget command */
+	private WidgetCommand fWidgetCommand= new WidgetCommand();	
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
 	/** Document listener */
@@ -2858,24 +2820,11 @@ public class TextViewer extends Viewer implements
 	 */
 	public final void invalidateTextPresentation() {
 		if (fVisibleDocument != null) {
-			
-			// clear stored commands as the entire document needs a refresh anyway
-			synchronized (fWidgetCommands) {
-				fWidgetCommands.clear();
-			}
-
-			final WidgetCommand command= new WidgetCommand();
-			command.event= null;
-			command.start= 0;
-			command.length= fVisibleDocument.getLength();
-			command.text= fVisibleDocument.get();
-			
-			// TODO not needed if this method is only called from UI thread
-			runInUIThread(new Runnable() {
-				public void run() {
-					updateTextListeners(command);
-				}
-			});
+			fWidgetCommand.event= null;
+			fWidgetCommand.start= 0;
+			fWidgetCommand.length= fVisibleDocument.getLength();
+			fWidgetCommand.text= fVisibleDocument.get();
+			updateTextListeners(fWidgetCommand);
 		}
 	}
 	
@@ -2892,30 +2841,16 @@ public class TextViewer extends Viewer implements
 			IRegion widgetRange= modelRange2WidgetRange(new Region(offset, length));
 			if (widgetRange != null) {
 				
-				// TODO should we clear the fWidgetCommand list of stored commands
-				// we really want to cancel just the commands in the invalidated Region
-				// but text ranges are not accurate anyway when having concurrent modifications
-				// (which we have if there are unprocessed WidgetCommands waiting if this method
-				// gets called).
-				
-				final WidgetCommand command= new WidgetCommand();
-				command.event= null;
-				command.start= widgetRange.getOffset();
-				command.length= widgetRange.getLength();
+				fWidgetCommand.event= null;
+				fWidgetCommand.start= widgetRange.getOffset();
+				fWidgetCommand.length= widgetRange.getLength();
 				
 				try {
-					command.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
+					fWidgetCommand.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
+					updateTextListeners(fWidgetCommand);
 				} catch (BadLocationException x) {
 					// can not happen because of previous checking
-					Assert.isTrue(false);
 				}
-				
-				// TODO not needed if this is method only called from UI thread
-				runInUIThread(new Runnable() {
-					public void run() {
-						updateTextListeners(command);
-					}
-				});
 			}
 		}
 	}
@@ -4144,24 +4079,11 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	private void fireRedrawChanged() {
-		// clear stored commands as no redraws are issued anyway
-		synchronized (fWidgetCommands) {
-			fWidgetCommands.clear();
-		}
-
-		final WidgetCommand command= new WidgetCommand();
-		command.event= null;
-		command.start= 0;
-		command.length= 0;
-		command.text= null;
-			
-		// TODO not needed if this method is only called from UI thread
-		runInUIThread(new Runnable() {
-			public void run() {
-				updateTextListeners(command);
-			}
-		});
-
+		fWidgetCommand.start= 0;
+		fWidgetCommand.length= 0;
+		fWidgetCommand.text= null;
+		fWidgetCommand.event= null;
+		updateTextListeners(fWidgetCommand);
 	}
 	
 	/**
@@ -4660,28 +4582,5 @@ public class TextViewer extends Viewer implements
 	 */
 	protected String getDocumentPartitioning() {
 		return fPartitioning;
-	}
-
-	/**
-	 * Runs <code>runnable</code> inline if called from a UI thread. If not, it is 
-	 * <code>asyncExce</code>'d in the display thread of this viewer's <code>StyledText</code>
-	 * widget.
-	 * 
-	 * @param runnable the <code>Runnable</code> to execute
-	 */
-	private void runInUIThread(Runnable runnable) {
-		Widget widget= fTextWidget;
-		if (widget == null)
-			return;
-				
-		Display widgetDisplay= widget.getDisplay();
-		Display threadDisplay= Display.getCurrent();
-
-		if (threadDisplay == widgetDisplay && widgetDisplay != null) { // run directly in UI thread
-			runnable.run();	
-		} else if (widgetDisplay != null) {
-			widgetDisplay.asyncExec(runnable);
-		} else
-			return;
 	}
 }
