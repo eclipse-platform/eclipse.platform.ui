@@ -234,6 +234,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestBug30015">
 		<run class="org.eclipse.core.tests.resources.session.TestBug30015"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestMasterTableCleanup">
+		<run class="org.eclipse.core.tests.resources.session.TestMasterTableCleanup"/>
+	</test>
 
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
