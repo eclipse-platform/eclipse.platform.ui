@@ -19,6 +19,7 @@ public class VersionedIdentifier {
 	private int minor = 0;
 	private int service = 0;
 	private String qualifier = ""; //$NON-NLS-1$
+	private String version;
 
 	private static final String VER_SEPARATOR = "."; //$NON-NLS-1$
 	private static final String ID_SEPARATOR = "_"; //$NON-NLS-1$
@@ -36,10 +37,23 @@ public class VersionedIdentifier {
 		int loc = s.lastIndexOf(ID_SEPARATOR);
 		if (loc != -1) {
 			this.identifier = s.substring(0, loc);
-			String version = s.substring(loc + 1);
+			version = s.substring(loc + 1);
 			parseVersion(version);
 		} else
 			this.identifier = s;
+	}
+	
+	public VersionedIdentifier(String id, String version) {
+		this(id+ID_SEPARATOR+version);
+		this.version = version;
+	}
+	
+	public String getVersion() {
+		return version;
+	}
+	
+	public String getIdentifier() {
+		return identifier;
 	}
 
 	public boolean equalIdentifiers(VersionedIdentifier id) {

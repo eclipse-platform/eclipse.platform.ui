@@ -30,18 +30,20 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
 	private URL resolvedURL; // this is the resolved URL used internally
 	private ISitePolicy policy;
 	private boolean updateable = true;
+	private ArrayList featureEntries = new ArrayList();
+	private ArrayList pluginEntries = new ArrayList();
 	private ArrayList features;
 	private ArrayList plugins;
 	private PlatformConfiguration parent;
 	private long changeStamp;
-	private boolean changeStampIsValid = false;
+	private boolean changeStampIsValid;
 	private long lastFeaturesChangeStamp;
 	private long featuresChangeStamp;
-	private boolean featuresChangeStampIsValid = false;
+	private boolean featuresChangeStampIsValid;
 	private long lastPluginsChangeStamp;
 	private long pluginsChangeStamp;
-	private boolean pluginsChangeStampIsValid = false;
-	private String linkFileName = null;
+	private boolean pluginsChangeStampIsValid;
+	private String linkFileName;
 
 	public SiteEntry() {
 	}
@@ -361,5 +363,21 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
 		changeStampIsValid = false;
 		pluginsChangeStampIsValid = false;
 		parent.invalidatePluginsChangeStamp();
+	}
+	
+	public void addFeatureEntry(IFeatureEntry feature) {
+		featureEntries.add(feature);
+	}
+	
+	public IFeatureEntry[] getFeatureEntries() {
+		return (IFeatureEntry[])featureEntries.toArray(new IFeatureEntry[featureEntries.size()]);
+	}
+	
+	public void addPluginEntry(PluginEntry plugin) {
+		pluginEntries.add(plugin);
+	}
+	
+	public PluginEntry[] getPluginEntries() {
+		return (PluginEntry[])pluginEntries.toArray(new PluginEntry[pluginEntries.size()]);
 	}
 }

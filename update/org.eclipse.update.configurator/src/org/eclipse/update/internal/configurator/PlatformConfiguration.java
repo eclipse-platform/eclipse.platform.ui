@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
@@ -35,7 +36,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private long lastPluginsChangeStamp;
 	private long pluginsChangeStamp;
 	private boolean pluginsChangeStampIsValid = false;
-	private boolean featureChangesConfigured = false;
 	private boolean transientConfig = false;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
@@ -43,7 +43,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static String cmdFeature = null;
 	private static String cmdApplication = null;
-	private static URL cmdPlugins = null;
 	private static boolean cmdInitialize = false;
 	private static boolean cmdFirstUse = false;
 	private static boolean cmdUpdate = false;
@@ -122,20 +121,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static URL installURL;
 	
 
-	private PlatformConfiguration(String configPath, URL pluginPath) throws IOException {
+	private PlatformConfiguration(String configPath) throws IOException {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
 		this.cfgdFeatures = new HashMap();
 		this.bootPlugins = new HashMap();
 
 		// initialize configuration
-		boolean createRootSite = (pluginPath == null);
-		initializeCurrent(configPath, createRootSite);
-
-		// merge in any plugin-path entries (converted to site(s))
-		if (pluginPath != null) {
-			updateConfigurationFromPlugins(pluginPath);
-		}
+		initializeCurrent(configPath);
 
 		// pick up any first-time default settings (relative to install location)
 		loadInitializationAttributes();
@@ -599,20 +592,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * Create and initialize the current platform configuration
 	 * @param cmdArgs command line arguments (startup and boot arguments are
 	 * already consumed)
-	 * @param r10plugins plugin-path URL as passed on the BootLoader.run(...)
-	 * or BootLoader.startup(...) method. Supported for R1.0 compatibility
 	 * @param r10apps application identifies as passed on the BootLoader.run(...)
 	 * method. Supported for R1.0 compatibility.
 	 */
-	public static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, URL installURL, String configPath) throws Exception {
+	public static synchronized String[] startup(String[] cmdArgs, String r10app, URL installURL, String configPath) throws Exception {
 		PlatformConfiguration.installURL = installURL;
 
-		// if BootLoader was invoked directly (rather than via Main), it is possible
-		// to have the plugin-path and application set in 2 ways: (1) via an explicit
-		// argument on the invocation method, or (2) via a command line argument (passed
-		// into this method as the argument String[]). If specified, the explicit
-		// values are used even if the command line arguments were specified as well.
-		cmdPlugins = r10plugins; // R1.0 compatibility
 		cmdApplication = r10app; // R1.0 compatibility
 
 		// process command line arguments
@@ -622,7 +607,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		// create current configuration
 		if (currentPlatformConfiguration == null)
-			currentPlatformConfiguration = new PlatformConfiguration(configPath, cmdPlugins);
+			currentPlatformConfiguration = new PlatformConfiguration(configPath);
 
 		// check if we will be forcing reconciliation
 		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
@@ -648,7 +633,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private synchronized void initializeCurrent(String configPath, boolean createRootSite) throws IOException {
+	private synchronized void initializeCurrent(String configPath) throws IOException {
 		// FIXME: commented out for now. Remove if not needed.
 		//boolean concurrentUse = false;
 
@@ -665,8 +650,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			getConfigurationLock(url);
 
 			resetInitializationConfiguration(url); // [20111]
-			if (createRootSite)
-				configureSite(getRootSite());
+
+			configureSite(getRootSite());
 			Utils.debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
 			configLocation = url;
 			verifyPath(configLocation);
@@ -711,8 +696,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				} catch (IOException ioe) {
 					cmdFirstUse = true;
 					// we are creating new configuration
-					if (createRootSite)
-						configureSite(getRootSite());
+					configureSite(getRootSite());
 				}
 			}
 		} finally {
@@ -946,93 +930,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		Utils.debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/*
-	 * compute site(s) from plugin-path and merge into specified configuration
-	 */
-	private void updateConfigurationFromPlugins(URL file) throws IOException {
-
-		// get the actual plugin path
-		URL[] pluginPath = Utils.getPluginPath(file);
-		if (pluginPath == null || pluginPath.length == 0)
-			return;
-
-		// create a temp configuration and populate it based on plugin path
-		PlatformConfiguration tempConfig = new PlatformConfiguration((URL) null);
-		for (int i = 0; i < pluginPath.length; i++) {
-			String entry = pluginPath[i].toExternalForm();
-			String sitePortion;
-			String pluginPortion;
-			int ix;
-			if (entry.endsWith("/")) { //$NON-NLS-1$
-				// assume directory path in the form <site>/plugins/
-				// look for -------------------------------^
-				ix = findEntrySeparator(entry, 2); // second from end
-				sitePortion = entry.substring(0, ix + 1);
-				pluginPortion = entry.substring(ix + 1);
-				if (!pluginPortion.equals("plugins/")) //$NON-NLS-1$
-					continue; // unsupported entry ... skip it ("fragments/" are handled)
-				pluginPortion = null;
-			} else {
-				// assume full path in the form <site>/<pluginsDir>/<some.plugin>/plugin.xml
-				// look for --------------------------^
-				ix = findEntrySeparator(entry, 3); // third from end
-				sitePortion = entry.substring(0, ix + 1);
-				pluginPortion = entry.substring(ix + 1);
-			}
-			if (ix == -1)
-				continue; // bad entry ... skip it
-
-			URL siteURL = null;
-			try {
-				siteURL = new URL(sitePortion);
-				if (siteURL.getProtocol().equals("file")) { //$NON-NLS-1$
-					File sf = new File(siteURL.getFile());
-					String sfn = sf.getAbsolutePath().replace(File.separatorChar, '/');
-					if (!sfn.endsWith("/")) //$NON-NLS-1$
-						sfn += "/"; //$NON-NLS-1$
-					siteURL = new URL("file:" + sfn); //$NON-NLS-1$
-				}
-			} catch (MalformedURLException e) {
-				continue; // bad entry ... skip it
-			}
-
-			// configure existing site or create a new one for the entry
-			ISiteEntry site = tempConfig.findConfiguredSite(siteURL);
-			ISitePolicy policy;
-			if (site == null) {
-				// new site
-				if (pluginPortion == null)
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, null);
-				else
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_INCLUDE, new String[] { pluginPortion });
-				site = tempConfig.createSiteEntry(siteURL, policy);
-				tempConfig.configureSite(site);
-			} else {
-				// existing site
-				policy = site.getSitePolicy();
-				if (policy.getType() == ISitePolicy.USER_EXCLUDE)
-					continue; // redundant entry ... skip it
-				if (pluginPortion == null) {
-					// directory entry ... change policy to exclusion (with empty list)
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, null);
-				} else {
-					// explicit entry ... add it to the inclusion list
-					ArrayList list = new ArrayList(Arrays.asList(policy.getList()));
-					list.add(pluginPortion);
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_INCLUDE, (String[]) list.toArray(new String[0]));
-				}
-				site.setSitePolicy(policy);
-			}
-		}
-
-		// merge resulting site(s) into the specified configuration
-		ISiteEntry[] tempSites = tempConfig.getConfiguredSites();
-		for (int i = 0; i < tempSites.length; i++) {
-			configureSite(tempSites[i], true /*replace*/
-			);
-		}
-	}
-
 	private void validateSites() {
 
 		// check to see if all sites are valid. Remove any sites that do not exist.
@@ -1183,6 +1080,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		SiteEntry root = (SiteEntry) getRootSite();
 		String rootUrlString = root.getURL().toExternalForm();
 		SiteEntry se = (SiteEntry) loadSite(props, CFG_SITE + ".0", null); //$NON-NLS-1$
+		
 		for (int i = 1; se != null; i++) {
 
 			// check if we are forcing "first use" processing with an existing
@@ -1681,26 +1579,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					cmdApplication = arg;
 			}
 
-			// R1.0 compatibility
-			// look for the plugins location to use.  Only use the value from the
-			// command line if the plugins location was not explicitly passed on
-			// BootLoader.run(...) or BootLoader.startup(...) invocation.
-			if (args[i - 1].equalsIgnoreCase(CMD_PLUGINS)) {
-				found = true;
-				// if the arg can be made into a URL use it. Otherwise assume that
-				// it is a file path so make a file URL.
-				try {
-					if (cmdPlugins == null)
-						cmdPlugins = new URL(arg);
-				} catch (MalformedURLException e) {
-					try {
-						cmdPlugins = new URL("file:" + arg.replace(File.separatorChar, '/')); //$NON-NLS-1$
-					} catch (MalformedURLException e2) {
-						throw e; // rethrow original exception
-					}
-				}
-			}
-
 			// done checking for args.  Remember where an arg was found
 			if (found) {
 				configArgs[configArgIndex++] = i - 1;
@@ -1721,16 +1599,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				passThruArgs[j++] = args[i];
 		}
 		return passThruArgs;
-	}
-
-	private static int findEntrySeparator(String pathEntry, int cnt) {
-		for (int i = pathEntry.length() - 1; i >= 0; i--) {
-			if (pathEntry.charAt(i) == '/') {
-				if (--cnt == 0)
-					return i;
-			}
-		}
-		return -1;
 	}
 
 	public static boolean supportsDetection(URL url) {

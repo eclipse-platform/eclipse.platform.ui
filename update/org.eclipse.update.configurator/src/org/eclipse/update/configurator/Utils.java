@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
+import org.eclipse.core.runtime.*;
 
 public class Utils {
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
@@ -94,4 +95,45 @@ public class Utils {
 		if (ConfigurationActivator.DEBUG)
 			System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Creates a CoreException from some other exception.
+	 * The type of the CoreException is <code>IStatus.ERROR</code>
+	 * If the exception passed as a parameter is also a CoreException,
+	 * the new CoreException will contain all the status of the passed
+	 * CoreException.
+	 * 
+	 * @see IStatus#ERROR
+	 * @param s exception string
+	 * @param e actual exception being reported
+	 * @return a CoreException
+	 * @since 2.0
+	 */
+	public static CoreException newCoreException(String s, Throwable e) {
+
+		// check the case of a multistatus
+		IStatus status;
+		if (e instanceof CoreException) {
+			if (s == null)
+				s = "";
+			status = new MultiStatus("org.eclipse.update.configurator", 0, s, e);
+			IStatus childrenStatus = ((CoreException) e).getStatus();
+			((MultiStatus) status).add(childrenStatus);
+			((MultiStatus) status).addAll(childrenStatus);
+		} else {
+			StringBuffer completeString = new StringBuffer("");
+			if (s != null)
+				completeString.append(s);
+			if (e != null) {
+				completeString.append(" [");
+				String msg = e.getLocalizedMessage();
+				completeString.append(msg!=null?msg:e.toString());
+				completeString.append("]");
+			}
+			status = new Status(IStatus.ERROR, "org.eclipse.update.configurator", 0, completeString.toString(), e);
+		}
+		return new CoreException(status); //$NON-NLS-1$
+	}
+
+	
 }

@@ -34,13 +34,13 @@ public class ConfigurationActivator implements BundleActivator {
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
 	private String[] allArgs;
-
-	// location used to put the generated manfests
-	private String cacheLocation = (String) System.getProperties().get("osgi.manifest.cache");
 	private Set ignore;
 	private BundleListener reconcilerListener;
 	private IPlatform platform;
 	private PlatformConfiguration configuration;
+	
+	// Location of the configuration data
+	private String configArea;
 	
 	//Need to store that because it is not provided by the platformConfiguration
 	private long lastTimeStamp;
@@ -72,11 +72,10 @@ public class ConfigurationActivator implements BundleActivator {
 	private void initialize() {
 		platform = acquirePlatform();
 		URL installURL = platform.getInstallURL();
-		String configPath = platform.getConfigurationMetadataLocation().toOSString();
+		configArea = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(allArgs, installURL, configPath);
-		
-		String configArea = (String) System.getProperty("osgi.configuration.area");
+		configuration = getPlatformConfiguration(allArgs, installURL, configArea);
+
 		try {
 			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + "/last.config.stamp"));
 			lastTimeStamp = stream.readLong();
@@ -94,19 +93,7 @@ public class ConfigurationActivator implements BundleActivator {
 		while (tokenizer.hasMoreTokens())
 			ignore.add(tokenizer.nextToken().trim());
 	}
-	private boolean shouldIgnore(String bundleName) {
-		if (ignore == null)
-			return false;
-		StringTokenizer tokenizer = new StringTokenizer(bundleName, "._");
-		String partialName = "";
-		while (tokenizer.hasMoreTokens()) {
-			partialName += tokenizer.nextToken();
-			if (ignore.contains(partialName))
-				return true;
-			partialName += ".";
-		}
-		return false;
-	}
+
 
 	private void obtainArgs() {
 		// all this is only to get the application args		
@@ -137,7 +124,6 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	private void writePlatformConfigurationTimeStamp() {
-		String configArea = (String) System.getProperty("osgi.configuration.area");
 		try {
 			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + "/last.config.stamp"));
 			stream.writeLong(configuration.getChangeStamp());
@@ -173,7 +159,7 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	private void installBundles() {
-		URL installURL = platform.getInstallURL();
+
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
 		if (reference != null)
@@ -247,19 +233,6 @@ public class ConfigurationActivator implements BundleActivator {
 		new Thread(postReconciler, "Post reconciler").start();
 	}
 
-	/*
-	 * Derives a file name corresponding to a path:
-	 * c:\autoexec.bat -> c__autoexec.bat
-	 */
-	private String computeFileName(String filePath) {
-		StringBuffer newName = new StringBuffer(filePath);
-		for (int i = 0; i < filePath.length(); i++) {
-			char c = newName.charAt(i);
-			if (c == ':' || c == '/' || c == '\\')
-				newName.setCharAt(i, '_');
-		}
-		return newName.toString();
-	}
 	/**
 	 * This is a major hack to try to get the reconciler application running. However we should find a way to not run it.
 	 * @param args
@@ -268,7 +241,7 @@ public class ConfigurationActivator implements BundleActivator {
 	 */
 	private PlatformConfiguration getPlatformConfiguration(String[] args, URL installURL, String configPath) {
 		try {
-			PlatformConfiguration.startup(args, null, null, installURL, configPath);
+			PlatformConfiguration.startup(args, null, installURL, configPath);
 		} catch (Exception e) {
 			if (platformTracker != null) {
 				String message = e.getMessage();
