@@ -963,7 +963,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	}
       }
 
-      if(!isValidPort(proxyPortText.getText())){
+      if(enableProxy.getSelection() && !isValidPort(proxyPortText.getText())){
       	return false;
       }
       
@@ -1023,7 +1023,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       }
     }
 
-    if(!isValidPort(proxyPortText.getText())){
+    if(enableProxy.getSelection() && !isValidPort(proxyPortText.getText())){
     	return;
     }
     
@@ -1103,7 +1103,7 @@ class ExportDialog extends Dialog {
     }
 
     createTargetFields(main);
-    Dialog.applyDialogFont(main); 
+    Dialog.applyDialogFont(main);
     return main;
   }
 
