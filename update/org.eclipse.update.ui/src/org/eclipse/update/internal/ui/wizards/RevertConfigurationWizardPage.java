@@ -6,8 +6,8 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.lang.reflect.*;
 import java.util.*;
+import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -24,14 +24,17 @@ import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.api.operations.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.views.*;
+
 
 public class RevertConfigurationWizardPage extends WizardPage {
 
 	private TableViewer activitiesViewer;
 	private TableViewer configViewer;
+	private InstallLogParser parser;
 
 	public RevertConfigurationWizardPage() {
 		super("RevertConfiguration"); //$NON-NLS-1$
@@ -42,6 +45,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		SashForm composite = new SashForm(parent, SWT.VERTICAL);
 		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createConfigurationsSection(composite);
 		createActivitiesSection(composite);
@@ -58,12 +62,13 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		tableContainer.setLayout(layout);
+		tableContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(tableContainer, SWT.NONE);
 		label.setText(UpdateUI.getString("RevertConfigurationWizardPage.label")); //$NON-NLS-1$
 
 		Table table = new Table(tableContainer, SWT.BORDER | SWT.V_SCROLL);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		configViewer = new TableViewer(table);
 		configViewer.setLabelProvider(new LabelProvider() {
@@ -82,14 +87,10 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			public Object[] getElements(Object element) {
 				ArrayList result = new ArrayList();
 				ILocalSite localSite = (ILocalSite) element;
-				IInstallConfiguration current =
-					localSite.getCurrentConfiguration();
-				long currTimeline = current.getTimeline();
-				IInstallConfiguration[] configurations =
-					localSite.getConfigurationHistory();
+				IInstallConfiguration current =	localSite.getCurrentConfiguration();
+				IInstallConfiguration[] configurations = localSite.getConfigurationHistory();
 				for (int i = configurations.length - 1; i >= 0; i--) {
-					if (configurations[i].getTimeline() == currTimeline
-						&& !current.equals(configurations[i])) {
+					if (!current.equals(configurations[i])) {
 						result.add(configurations[i]);
 					}
 				}
@@ -110,27 +111,17 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		configViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				IStructuredSelection ssel =
-					(IStructuredSelection) e.getSelection();
-				activitiesViewer.setInput(( ssel.getFirstElement()));
-			}
-		});
-
-		configViewer.setSorter(new ViewerSorter() {
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				IInstallConfiguration config1 = (IInstallConfiguration) e1;
-				IInstallConfiguration config2 = (IInstallConfiguration) e2;
-				if (config1
-					.getCreationDate()
-					.before(config2.getCreationDate())) {
-					return 1;
+				IStructuredSelection ssel =	(IStructuredSelection) e.getSelection();
+				InstallConfiguration currentConfig = (InstallConfiguration)ssel.getFirstElement();
+				TableItem[] items = activitiesViewer.getTable().getItems();
+				Color color = new Color(null, 238,238,255);
+				for (int i =0; i<items.length; i++){
+					IActivity activity = (IActivity)items[i].getData();
+					if (isInRevertConfiguration (activity, currentConfig))
+						items[i].setBackground(color);//activitiesViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+					else
+						items[i].setBackground(activitiesViewer.getControl().getBackground());
 				}
-				if (config1
-					.getCreationDate()
-					.after(config2.getCreationDate())) {
-					return -1;
-				}
-				return 0;
 			}
 		});
 
@@ -140,17 +131,36 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		}
 	}
 
+	private boolean isInRevertConfiguration(IActivity activity, IInstallConfiguration currentConfig){
+		boolean qualifies = false;
+		int currentConfigIndex = -1;
+		TableItem[] configs = configViewer.getTable().getItems();
+		for (int j = 0; j<configs.length; j++){
+			IInstallConfiguration config = (IInstallConfiguration)configs[j].getData();
+			if (config.equals(currentConfig)){
+				currentConfigIndex = j;
+			}
+			if (currentConfigIndex == j){//currentConfigIndex>=j || currentConfigIndex == -1){
+				qualifies = activity.getInstallConfiguration().equals(config);
+				if (qualifies)
+					return qualifies;
+			}
+		}
+		return qualifies;
+	}
 	private void createActivitiesSection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessVerticalSpace = true;
 		composite.setLayoutData(gd);
 
 		Label line = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 1;
 		line.setLayoutData(gd);
 
@@ -161,11 +171,16 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(8, 20, false));
-		layout.addColumnData(new ColumnWeightData(50, 160, false));
-		layout.addColumnData(new ColumnWeightData(50, 183, false));
-		layout.addColumnData(new ColumnWeightData(50, 100, false));
+		layout.addColumnData(new ColumnWeightData(50, 160, true));
+		layout.addColumnData(new ColumnWeightData(50, 183, true));
+		layout.addColumnData(new ColumnWeightData(50, 100, true));
 
 		activitiesViewer.getTable().setLayout(layout);
+		parser = new InstallLogParser();
+		parser.parseInstallationLog();
+//		InstallConfigElement[] ele = parser.getInstallConfigurations();
+//		return ele;
+		activitiesViewer.setInput(parser);
 	}
 
 	public boolean performFinish() {

@@ -115,7 +115,8 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public ConfigurationActivityModel[] getActivityModel() {
-		if (!initialized) initialize();
+		if (activities == null && !initialized) 
+			initialize();
 		if (activities == null)
 			return new ConfigurationActivityModel[0];
 		return (ConfigurationActivityModel[]) activities.toArray(arrayTypeFor(activities));

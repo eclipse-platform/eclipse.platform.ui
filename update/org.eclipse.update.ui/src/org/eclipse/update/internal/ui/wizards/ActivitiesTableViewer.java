@@ -6,6 +6,9 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
@@ -13,9 +16,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.views.*;
 
 
 /**
@@ -27,7 +31,20 @@ public class ActivitiesTableViewer{
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object element) {
-			return ((IInstallConfiguration) element).getActivities();
+			ArrayList result = new ArrayList();
+			
+			try {
+				IInstallConfiguration[] configurations = SiteManager.getLocalSite().getConfigurationHistory();
+				for (int i = 0; i<configurations.length; i++){
+					IActivity[] a = configurations[i].getActivities();
+					for (int j = 0; j<a.length; j++){
+						result.add(a[j]);
+					}
+				}
+			} catch (CoreException e) {
+				UpdateCore.log(e);
+			}
+			return result.toArray(new IActivity[result.size()]);
 		}
 	}
 
