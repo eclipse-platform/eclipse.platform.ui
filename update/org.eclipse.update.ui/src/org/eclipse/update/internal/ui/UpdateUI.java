@@ -86,7 +86,7 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		return window != null ? window.getShell() : null;
+		return window != null ? window.getShell() : getStandardDisplay().getActiveShell();
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -388,5 +388,19 @@ public class UpdateUI extends AbstractUIPlugin {
 	
 	public static void setRemindOnCancel(boolean remind) {
 		remindOnCancel = remind; 
+	}
+	
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated disaply. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display;
+		display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		return display;
 	}
 }

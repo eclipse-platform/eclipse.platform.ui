@@ -80,8 +80,8 @@ public class SchedulerStartup implements IStartup {
 			};
 
 	private class UpdateJobChangeAdapter extends JobChangeAdapter {
-		public void done(Job job, IStatus result) {
-			if (job == SchedulerStartup.this.job) {
+		public void done(IJobChangeEvent event) {
+			if (event.getJob() == SchedulerStartup.this.job) {
 				scheduleUpdateJob();
 			}
 		}

@@ -57,10 +57,6 @@ public class ResizableInstallWizardDialog extends WizardDialog {
 			return IDialogConstants.ABORT_ID;
 		}
 		
-		int returnValue = super.open();
-		
-		if (returnValue == IDialogConstants.OK_ID)
-			UpdateUI.requestRestart(((InstallWizard)getWizard()).isRestartNeeded());
-		return returnValue;
+		return super.open();
 	}
 }

@@ -522,7 +522,7 @@ public class UpdateUtils {
 
 	public static void downloadFeatureContent(
 		IFeature feature,
-		final IProgressMonitor progress)
+		IProgressMonitor progress)
 		throws InstallAbortedException, CoreException {
 
 		// only downloads our known feature types
@@ -534,15 +534,6 @@ public class UpdateUtils {
 			UpdateCore.debug(
 				"Downloading...:" + feature.getURL().toExternalForm()); //$NON-NLS-1$
 		}
-
-		IProgressMonitor pm = new NullProgressMonitor() {
-			public boolean isCanceled() {
-				return progress.isCanceled();
-			}
-		};
-
-		// make sure we have an InstallMonitor		
-		InstallMonitor monitor = new InstallMonitor(pm);
 
 		// Get source feature provider and verifier.
 		// Initialize target variables.
@@ -573,33 +564,85 @@ public class UpdateUtils {
 				sourceFeaturePluginEntries,
 				targetSitePluginEntries);
 		INonPluginEntry[] nonPluginsToInstall = feature.getNonPluginEntries();
-
-		// Download feature archive(s)
-		provider.getFeatureEntryArchiveReferences(monitor);
-		// Download plugin archives
-		for (int i = 0; i < pluginsToInstall.length; i++) {
-			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-		}
-
-		// Download non-plugin archives. Verification handled by optional install handler
-		for (int i = 0; i < nonPluginsToInstall.length; i++) {
-			provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
-		}
-
-		// Download child features
+		
 		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+//		if (optionalfeatures != null) {
+//			children =
+//				UpdateManagerUtils.optionalChildrenToInstall(
+//					children,
+//					optionalfeatures);
+//		}
 
-		// TODO: check if they are optional, and if they should be installed [2.0.1]
-		for (int i = 0; i < children.length; i++) {
-			IFeature childFeature = null;
-			try {
-				childFeature = children[i].getFeature(null);
-			} catch (CoreException e) {
-				UpdateCore.warn(null, e);
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = new InstallMonitor(new NullProgressMonitor());
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor) progress;
+		else
+			monitor = new InstallMonitor(progress);
+
+		try {
+			// determine number of monitor tasks
+			//   1 task1 for the feature jar (download)
+			// + n tasks for plugin entries (download for each)
+			// + m tasks per non-plugin data entry (download for each)
+			// TODO custom install handler  + 1 task for custom non-plugin entry handling (1 for all combined)
+			// + 3*x tasks for children features (3 subtasks per install)
+			int taskCount =
+					1
+					+ pluginsToInstall.length
+					+ nonPluginsToInstall.length
+//				+ 1
+					+ 3 * children.length;
+			monitor.beginTask("", taskCount); //$NON-NLS-1$
+			
+			// Download feature archive(s)
+			provider.getFeatureEntryArchiveReferences(monitor);
+			monitorWork(monitor,1);
+			
+			// Download plugin archives
+			for (int i = 0; i < pluginsToInstall.length; i++) {
+				provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
+				monitorWork(monitor,1);
 			}
-			if (childFeature != null) {
-				downloadFeatureContent(childFeature, monitor);
+
+			// Download non-plugin archives. Verification handled by optional install handler
+			for (int i = 0; i < nonPluginsToInstall.length; i++) {
+				provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
+				monitorWork(monitor,1);
 			}
+
+			// Download child features
+//		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+
+			// TODO: check if they are optional, and if they should be installed [2.0.1]
+			for (int i = 0; i < children.length; i++) {
+				IFeature childFeature = null;
+				try {
+					childFeature = children[i].getFeature(null);
+				} catch (CoreException e) {
+					UpdateCore.warn(null, e);
+				}
+				if (childFeature != null) {
+					SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
+					downloadFeatureContent(childFeature, subMonitor);
+				}
+			}
+		} finally {
+			if (monitor != null)
+				monitor.done();
 		}
 	}
+	
+	private static void monitorWork(IProgressMonitor monitor, int tick)
+	throws CoreException {
+	if (monitor != null) {
+		monitor.worked(tick);
+		if (monitor.isCanceled()) {
+			String msg = "download cancelled";//Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+			throw new InstallAbortedException(msg, null);
+		}
+	}
+}
 }

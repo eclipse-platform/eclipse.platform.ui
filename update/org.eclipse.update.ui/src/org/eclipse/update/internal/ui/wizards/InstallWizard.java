@@ -14,9 +14,12 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.progress.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
@@ -24,9 +27,9 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
-import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
+
 
 public class InstallWizard
 	extends Wizard
@@ -44,7 +47,39 @@ public class InstallWizard
 	private ArrayList jobs;
 	private boolean needsRestart;
 	private static boolean isRunning;
+	private IBatchOperation installOperation;
+	private Job job;
+	public static final Object jobFamily = new Object();
+	private IJobChangeListener jobListener;
 
+	private class UpdateJobChangeListener extends JobChangeAdapter {
+		public void done(IJobChangeEvent event) {
+			// the job listener is triggered when the download job is done, and it proceeds
+			// with the actual install
+			if (event.getJob() == InstallWizard.this.job && event.getResult() == Status.OK_STATUS) {
+				Platform.getJobManager().removeJobChangeListener(this);
+				Platform.getJobManager().cancel(job);
+				
+				final IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
+				UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						try {
+							progressService.busyCursorWhile( new IRunnableWithProgress() {
+								public void run(final IProgressMonitor monitor){
+									install(monitor);
+								}
+							});
+						} catch (InvocationTargetException e) {
+							UpdateUI.logException(e);
+						} catch (InterruptedException e) {
+							UpdateUI.logException(e, false);
+						}
+					}
+				});	
+			}
+		}
+	}
+		
 	public InstallWizard() {
 		this((UpdateSearchRequest) null);
 	}
@@ -81,105 +116,33 @@ public class InstallWizard
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		try {
-			final IInstallFeatureOperation[] selectedJobs =
-				reviewPage.getSelectedJobs();
-			installCount = 0;
+		IInstallFeatureOperation[] selectedJobs = reviewPage.getSelectedJobs();
 
-			saveSettings();
-			
-			// Check for duplication conflicts
-			ArrayList conflicts =
-				DuplicateConflictsValidator.computeDuplicateConflicts(
-					selectedJobs,
-					config);
-			if (conflicts != null) {
-				DuplicateConflictsDialog dialog =
-					new DuplicateConflictsDialog(getShell(), conflicts);
-				if (dialog.open() != 0)
-					return false;
-			}
-			
-			final IVerificationListener verificationListener =new JarVerificationService(
-					InstallWizard.this.getShell());
-			// ok to continue		
-			IRunnableWithProgress operation = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
-						// setup jobs with the correct environment
-					IInstallFeatureOperation[] operations =
-					new IInstallFeatureOperation[selectedJobs.length];
-					for (int i = 0; i < selectedJobs.length; i++) {
-						IInstallFeatureOperation job = selectedJobs[i];
-						IFeature[] unconfiguredOptionalFeatures = null;
-						IFeatureReference[] optionalFeatures = null;
-						if (UpdateUtils.hasOptionalFeatures(job.getFeature())) {
-							optionalFeatures =
-								optionalFeaturesPage
-									.getCheckedOptionalFeatures(
-									job);
-							unconfiguredOptionalFeatures =
-								optionalFeaturesPage
-									.getUnconfiguredOptionalFeatures(
-									job,
-									job.getTargetSite());
-						}
-						IInstallFeatureOperation op =
-							OperationsManager
-								.getOperationFactory()
-								.createInstallOperation(
-								job.getTargetSite(),
-								job.getFeature(),
-								optionalFeatures,
-								unconfiguredOptionalFeatures,
-								verificationListener);
-						operations[i] = op;
-					}
-					IOperation installOperation =
-						OperationsManager
-							.getOperationFactory()
-							.createBatchInstallOperation(
-							operations);
-					try {
-						needsRestart = installOperation.execute(monitor, InstallWizard.this);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} finally {
-						monitor.done();
-					}
-				}
-			};
-			
-			boolean retry;
-			do {
-				retry = false;
-				try {
-					getContainer().run(true, true, operation);
-				} catch (InvocationTargetException e) {
-					Throwable targetException = e.getTargetException();
-					if (targetException instanceof InstallAbortedException) {
-						return false;
-					}else if(targetException instanceof FeatureDownloadException){
-							FeatureDownloadException fde=(FeatureDownloadException)targetException;
-							retry =
-							MessageDialog.openQuestion(
-								getShell(),
-								UpdateUI.getString("InstallWizard.retryTitle"), //$NON-NLS-1$
-								fde.getMessage()+"\n" //$NON-NLS-1$
-									+ UpdateUI.getString("InstallWizard.retry")); //$NON-NLS-1$
-							if (retry)
-								continue;
-					}
-					UpdateUI.logException(e);
-					return false;
-				} catch (InterruptedException e) {
-					return false;
-				}
-			} while (retry);
-			return true;
-		} finally {
-			isRunning = false;
+		saveSettings();
+		
+		// Check for duplication conflicts
+		ArrayList conflicts = DuplicateConflictsValidator.computeDuplicateConflicts(selectedJobs, config);
+		if (conflicts != null) {
+			DuplicateConflictsDialog dialog = new DuplicateConflictsDialog(getShell(), conflicts);
+			if (dialog.open() != 0)
+				return false;
 		}
+		
+		if (Platform.getJobManager().find(jobFamily).length > 0) {
+			// another update/install job is running, need to wait to finish or cancel old job
+			boolean proceed = MessageDialog.openQuestion(
+					UpdateUI.getActiveWorkbenchShell(),
+					UpdateUI.getString("InstallWizard.anotherJobTitle"),
+					UpdateUI.getString("InstallWizard.anotherJob")); //$NON-NLS-1$
+			if (!proceed)
+				return false; // cancel this job, and let the old one go on
+		}
+		
+		// set the install operation
+		installOperation = getBatchInstallOperation(selectedJobs);
+		if (installOperation != null)
+			launchInBackground();
+		return true;
 	}
 
 	public void addPages() {
@@ -297,7 +260,7 @@ public class InstallWizard
 	private void preserveOriginatingURLs(
 		IFeature feature,
 		IFeatureReference[] optionalFeatures) {
-		// walk the hieararchy and preserve the originating URL
+		// walk the hierarchy and preserve the originating URL
 		// for all the optional features that are not chosen to
 		// be installed.
 		URL url = feature.getSite().getURL();
@@ -362,15 +325,6 @@ public class InstallWizard
 	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
 	public boolean beforeExecute(IOperation operation, Object data) {
-		//		if (operation instanceof IBatchOperation
-		//			&& data != null
-		//			&& data instanceof ArrayList) {
-		//
-		//			DuplicateConflictsDialog2 dialog =
-		//				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
-		//			if (dialog.open() != 0)
-		//				return false;
-		//		}
 		return true;
 	}
 	/* (non-Javadoc)
@@ -382,5 +336,138 @@ public class InstallWizard
 
 	public static synchronized boolean isRunning() {
 		return isRunning;
+	}
+	
+	private IBatchOperation getBatchInstallOperation(final IInstallFeatureOperation[] selectedJobs) {
+		final IVerificationListener verificationListener =new JarVerificationService(
+				//InstallWizard.this.getShell());
+				UpdateUI.getActiveWorkbenchShell());
+		
+		// setup jobs with the correct environment
+		IInstallFeatureOperation[] operations =	new IInstallFeatureOperation[selectedJobs.length];
+		for (int i = 0; i < selectedJobs.length; i++) {
+			IInstallFeatureOperation job = selectedJobs[i];
+			IFeature[] unconfiguredOptionalFeatures = null;
+			IFeatureReference[] optionalFeatures = null;
+			if (UpdateUtils.hasOptionalFeatures(job.getFeature())) {
+				optionalFeatures = optionalFeaturesPage.getCheckedOptionalFeatures(job);
+				unconfiguredOptionalFeatures = optionalFeaturesPage.getUnconfiguredOptionalFeatures(job, job.getTargetSite());
+			}
+			IInstallFeatureOperation op =
+				OperationsManager
+					.getOperationFactory()
+					.createInstallOperation(
+					job.getTargetSite(),
+					job.getFeature(),
+					optionalFeatures,
+					unconfiguredOptionalFeatures,
+					verificationListener);
+			operations[i] = op;
+		}
+		return OperationsManager.getOperationFactory().createBatchInstallOperation(operations);
+	}
+
+
+
+	private void launchInBackground() {
+		// Downloads the feature content in the background.
+		// The job listener will then install the feature when download is finished.
+		
+		// TODO: should we cancel existing jobs?
+		Platform.getJobManager().removeJobChangeListener(jobListener);
+		Platform.getJobManager().cancel(job);
+		jobListener = new UpdateJobChangeListener();
+		Platform.getJobManager().addJobChangeListener(jobListener);
+		
+		job = new Job(UpdateUI.getString("InstallWizard.jobName")) { //$NON-NLS-1$	
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					if (download(monitor))
+						return Status.OK_STATUS;
+					else
+						return Status.CANCEL_STATUS;
+				} finally {
+					isRunning = false;
+				}
+			}
+			public boolean belongsTo(Object family) {
+				return InstallWizard.jobFamily == family;
+			}
+		};
+
+		job.setUser(true);
+		job.setPriority(Job.INTERACTIVE);
+//		if (wait) {
+//			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
+//		}
+		job.schedule();
+	}
+	
+	private void install(IProgressMonitor monitor) {
+		// Installs the (already downloaded) features and prompts for restart
+		try {
+			needsRestart = installOperation.execute(monitor, InstallWizard.this);
+			UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
+				public void run() {
+					UpdateUI.requestRestart(InstallWizard.this.isRestartNeeded());
+				}
+			});
+		} catch (final InvocationTargetException e) {
+			final Throwable targetException = e.getTargetException();
+			if (!(targetException instanceof InstallAbortedException)){
+				UpdateUI.getStandardDisplay().syncExec(new Runnable() {
+					public void run() {
+						UpdateUI.logException(targetException);
+					}
+				});
+			}
+		} catch (CoreException e) {
+		} 
+	}
+	
+	private boolean download(final IProgressMonitor monitor) {
+		// Downloads the feature content.
+		// This method is called from a background job.
+		// If download fails, the user is prompted to retry.
+		try {
+			IFeatureOperation[] ops = installOperation.getOperations();
+			monitor.beginTask(UpdateUI.getString("InstallWizard.download"), 3*ops.length);
+			for (int i=0; i<ops.length; i++) {
+				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
+				IFeatureReference[] optionalFeatures = op.getOptionalFeatures();
+				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
+				try {
+					UpdateUtils.downloadFeatureContent(op.getFeature(), subMonitor);
+				} catch (final CoreException e) {
+					if(e instanceof FeatureDownloadException){
+						boolean retry = retryDownload((FeatureDownloadException)e);
+						if (retry) {
+							// redownload current feature
+							i--;
+							continue;
+						}
+					} 
+					return false;
+				}
+			}
+			return true;
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	private boolean retryDownload(final FeatureDownloadException e) {
+
+		final boolean retry[] = new boolean[1];
+		UpdateUI.getStandardDisplay().syncExec(new Runnable() {
+			public void run() {
+				retry[0] =	MessageDialog.openQuestion(
+					UpdateUI.getActiveWorkbenchShell(),
+					UpdateUI.getString("InstallWizard.retryTitle"), //$NON-NLS-1$
+					e.getMessage()+"\n" //$NON-NLS-1$
+						+ UpdateUI.getString("InstallWizard.retry")); //$NON-NLS-1$
+			}
+		});
+		return retry[0];
 	}
 }
