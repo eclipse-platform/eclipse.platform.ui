@@ -388,6 +388,13 @@ public class ProgressManager extends ProgressProvider
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void scheduled(IJobChangeEvent event) {
+				updateFor(event);
+			}
+			/**
+			 * Update the listeners for the receiver for the event.
+			 * @param event
+			 */
+			private void updateFor(IJobChangeEvent event) {
 				if (isNeverDisplayedJob(event.getJob()))
 					return;
 				if (jobs.containsKey(event.getJob()))
@@ -395,6 +402,20 @@ public class ProgressManager extends ProgressProvider
 				else {
 					addJobInfo(new JobInfo(event.getJob()));
 				}
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#awake(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void awake(IJobChangeEvent event) {
+				updateFor(event);
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void sleeping(IJobChangeEvent event) {
+				updateFor(event);
 			}
 		};
 	}
