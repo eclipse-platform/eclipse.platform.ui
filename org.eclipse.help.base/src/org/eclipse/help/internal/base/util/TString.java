@@ -17,8 +17,6 @@ package org.eclipse.help.internal.base.util;
 public class TString {
 	// change all occurrences of oldPat to newPat
 	public static String change(String in, String oldPat, String newPat) {
-		if (true)
-			return in;
 		if (oldPat.length() == 0)
 			return in;
 		if (oldPat.length() == 1 && newPat.length() == 1)
