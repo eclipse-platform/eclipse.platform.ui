@@ -182,6 +182,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private IStructuredSelection fValueSelection = null;
 	
 	/**
+	 * The last value for which the detail has been requested.	 */
+	private IValue fLastValueDetail= null;
+	
+	/**
 	 * Iterator for multi-selection details computation
 	 */
 	private Iterator fSelectionIterator = null;	
@@ -761,6 +765,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				fValueSelection = selection;
 				fSelectionIterator = selection.iterator();
 				fSelectionIterator.next();
+				fLastValueDetail= val;
 				getModelPresentation().computeDetail(val, this);
 			} 
 		} catch (DebugException de) {
@@ -772,19 +777,25 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	/**
 	 * @see IValueDetailListener#detailComputed(IValue, String)
 	 */
-	public void detailComputed(IValue value, final String result) {
+	public void detailComputed(final IValue value, final String result) {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					String insert = result;
-					int length = getDetailDocument().get().length();
-					if (length > 0) {
-						insert = "\n" + result; //$NON-NLS-1$
-					}
-					try {
-						getDetailDocument().replace(length, 0,insert);
-					} catch (BadLocationException e) {
-						DebugUIPlugin.log(e);
+					// bug 24862
+					// don't display the result if an other detail has been
+					// requested
+					if (value == fLastValueDetail) {
+						String insert = result;
+						int length = getDetailDocument().get().length();
+						if (length > 0) {
+							insert = "\n" + result; //$NON-NLS-1$
+						}
+						try {
+							getDetailDocument().replace(length, 0,insert);
+						} catch (BadLocationException e) {
+							DebugUIPlugin.log(e);
+						}
+						fLastValueDetail= null;
 					}
 					
 					if (fSelectionIterator != null && fSelectionIterator.hasNext()) {
@@ -795,7 +806,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 								val = ((IVariable)obj).getValue();
 							} else if (obj instanceof IExpression) {
 								val = ((IExpression)obj).getValue();
-							}	
+							}
+							fLastValueDetail= val;
 							getModelPresentation().computeDetail(val, VariablesView.this);
 						} catch (DebugException e) {
 							DebugUIPlugin.log(e);
