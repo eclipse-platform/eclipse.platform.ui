@@ -961,7 +961,8 @@ public class TextViewer extends Viewer implements
 	};
 	
 	/**
-	 * A position reflecting a viewer selecting and its achor, i.e. the caret location.
+	 * A position reflecting a viewer selection and the selection anchor.
+	 * The anchor is represnted by the caret.
 	 * 
 	 * @since 2.1
 	 */

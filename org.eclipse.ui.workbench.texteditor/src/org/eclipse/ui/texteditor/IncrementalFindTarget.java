@@ -171,7 +171,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * Sets the direction for the next search.
 	 * This can be called before <code>beginSession</code> to set the initial search direction.
 	 * @param forward <code>true</code> if the next search should be forward
-	 * @see beginSession
+	 * @see #beginSession
 	 * @since 2.1
 	 */
 	public void setDirection(boolean forward) {

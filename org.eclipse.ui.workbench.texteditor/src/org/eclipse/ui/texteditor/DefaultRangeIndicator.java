@@ -142,7 +142,7 @@ public class DefaultRangeIndicator extends Annotation {
 	 * Creates and returns a new color palette data.
 	 * 
 	 * @param display
-	 * @return
+	 * @return the new color palette data
 	 */
 	private static PaletteData createPalette(Display display) {
 		Color c1;

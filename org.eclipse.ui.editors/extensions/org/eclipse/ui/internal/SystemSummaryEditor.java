@@ -68,7 +68,7 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 	/**
 	 * Allow save so that "save as" is enabled.
 	 * 
-	 * @see AbstractTextEditor#isSaveAllowed()
+	 * @see AbstractTextEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;

@@ -247,7 +247,7 @@ class DeleteLineTarget {
 	 * @param position	the position
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
-	 * @return
+	 * @return the document's delete region
 	 * @throws BadLocationException
 	 */
 	private static IRegion getDeleteRegion(IDocument document, int position, int type) throws BadLocationException {

@@ -368,8 +368,8 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Joins the first tow fragments that represent neighboring regions of the parent document.
-	 * @return
+	 * Joins the first two fragments that represent neighboring regions of the parent document.
+	 * @return <code>true</code> if two segments have been joined, <code>false</code> otherwise
 	 * @throws BadPositionCategoryException
 	 */
 	private boolean joinTwoFragments() throws BadPositionCategoryException {
