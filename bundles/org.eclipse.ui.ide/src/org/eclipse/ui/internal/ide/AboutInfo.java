@@ -8,22 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.ide;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.CRC32;
+import java.util.zip.CheckedInputStream;
 
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.ui.internal.BundleGroupProperties;
+import org.eclipse.ui.internal.ProductProperties;
 
 /**
  * The information within this object is obtained from the about INI file.
@@ -34,82 +35,64 @@ import org.eclipse.jface.util.Assert;
  * </p>
  */
 public final class AboutInfo {
-	private final static int BYTE_ARRAY_SIZE = 2048;
+	private ProductProperties productProperties;
+	private BundleGroupProperties bundleGroupProperties;
 
-	private String featureId;
-	private String versionId = ""; //$NON-NLS-1$
-	private String featurePluginLabel;
-	private String providerName;
-	private String appName;
-	private ImageDescriptor[] windowImages;
-	private ImageDescriptor aboutImage;
-	private ImageDescriptor featureImage;
-	private String aboutText;
-	private URL welcomePageURL;
-	private String welcomePerspective;
-	private String tipsAndTricksHref;
-	private URL featureImageURL;
 	private Long featureImageCRC;
 	private boolean calculatedImageCRC = false;
 
-	/*
-	 * Create a new about info for a feature with the given id.
+	/**
+	 * The information contained in this info will apply to only the argument product.
 	 */
-	/* package */ AboutInfo(String featureId) {
-		super();
-		this.featureId = featureId;
+	public AboutInfo(IProduct product) {
+	    this.productProperties = new ProductProperties(product);
 	}
 
 	/**
-	 * Returns the configuration information for the feature with the 
-	 * given id.
-	 * 
-	 * @param featureId the feature id
-	 * @param versionId the version id (of the feature)
-	 * @param pluginId the plug-in id
-	 * @return the configuration information for the feature
+	 * This info object will apply to the argument bundle group.
 	 */
-	public static AboutInfo readFeatureInfo(String featureId, String versionId, String pluginId) {
+	public AboutInfo(IBundleGroup bundleGroup) {
+	    this.bundleGroupProperties = new BundleGroupProperties(bundleGroup);
+	}
+
+	/**
+     * Returns the configuration information for the feature with the given id.
+     * 
+     * @param featureId
+     *            the feature id
+     * @param versionId
+     *            the version id (of the feature)
+     * @return the configuration information for the feature
+     */
+	public static AboutInfo readFeatureInfo(String featureId, String versionId) {
 		Assert.isNotNull(featureId);
 		Assert.isNotNull(versionId);
-		Assert.isNotNull(pluginId);
 
+		// first see if the id matches the product
 		IProduct product = Platform.getProduct();
-		IBundleGroup bundleGroup = getBundleGroup(featureId);
-		if (product == null || bundleGroup == null)
-		    return null;
+		if (product != null && featureId.equals(ProductProperties.getProductId(product)))
+		    return new AboutInfo(product);
 
-		AboutInfo info = new AboutInfo(featureId);
-		info.versionId = versionId;
+		// then check the bundle groups
+		IBundleGroup bundleGroup = getBundleGroup(featureId, versionId);
+		if (bundleGroup != null)
+		    return new AboutInfo(bundleGroup);
 
-		info.appName = ProductProperties.getAppName(product);
-		info.aboutText = ProductProperties.getAboutText(product);
-		info.aboutImage = ProductProperties.getAboutImage(product);
-		info.windowImages = ProductProperties.getWindowImages(product);
-
-		info.featurePluginLabel = bundleGroup.getName();
-		info.providerName = bundleGroup.getProviderName();
-		info.featureImage = BundleGroupProperties.getFeatureImage(bundleGroup);
-		info.featureImageURL = BundleGroupProperties.getFeatureImageUrl(bundleGroup);
-		info.welcomePageURL = BundleGroupProperties.getWelcomePageUrl(bundleGroup);
-		info.welcomePerspective = BundleGroupProperties.getWelcomePerspective(bundleGroup);
-		info.tipsAndTricksHref = BundleGroupProperties.getTipsAndTricksHref(bundleGroup);
-
-		return info;
+		return null;
 	}
-	
-	private static IBundleGroup getBundleGroup(String id) {
-	    if(id == null)
+
+	private static IBundleGroup getBundleGroup(String id, String versionId) {
+	    if(id == null || versionId == null)
 	        return null;
 
 	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 	    for(int p = 0; p < providers.length; ++p) {
 	        IBundleGroup[] groups = providers[p].getBundleGroups();
 	        for(int g = 0; g < groups.length; ++g)
-	            if(id.equals(groups[g].getIdentifier()))
+	            if(id.equals(groups[g].getIdentifier()) && versionId.equals(groups[g].getVersion()))
 	                return groups[g];
 	    }
-	    
+
 	    return null;
 	}
 	
@@ -121,7 +104,7 @@ public final class AboutInfo {
 	 * @return the descriptor for an about image, or <code>null</code> if none
 	 */
 	public ImageDescriptor getAboutImage() {
-		return aboutImage;
+	    return productProperties == null ? null : productProperties.getAboutImage();
 	}
 
 	/**
@@ -131,7 +114,7 @@ public final class AboutInfo {
 	 * @return the descriptor for a feature image, or <code>null</code> if none
 	 */
 	public ImageDescriptor getFeatureImage() {
-		return featureImage;
+	    return bundleGroupProperties == null ? null : bundleGroupProperties.getFeatureImage();
 	}
 
 	/**
@@ -141,12 +124,11 @@ public final class AboutInfo {
 	 * or <code>null</code> if none
 	 */
 	public String getFeatureImageName() {
-		if (featureImageURL != null) {
-			IPath path = new Path(featureImageURL.getPath());
-			return path.lastSegment();
-		} else {
-			return null;
-		}
+	    if (bundleGroupProperties == null)
+	        return null;
+
+	    URL url = bundleGroupProperties.getFeatureImageUrl();
+	    return url == null ? null : new Path(url.getPath()).lastSegment();
 	}
 
 	/**
@@ -155,38 +137,36 @@ public final class AboutInfo {
 	 * @return the CRC of the feature image, or <code>null</code> if none
 	 */
 	public Long getFeatureImageCRC() {
-		if (!calculatedImageCRC && featureImageURL != null) {
-			featureImageCRC = calculateFeatureImageCRC();
-			calculatedImageCRC = true;
-		}
-		return featureImageCRC;
+	    if (bundleGroupProperties == null)
+	        return null;
+
+	    if (!calculatedImageCRC) {
+            featureImageCRC = calculateImageCRC(bundleGroupProperties.getFeatureImageUrl());
+            calculatedImageCRC = featureImageCRC != null;
+        }
+
+	    return featureImageCRC;
 	}
 
 	/**
 	 * Calculate a CRC for the feature image
 	 */
-	private Long calculateFeatureImageCRC() {
-		if (featureImageURL == null)
+	private static Long calculateImageCRC(URL url) {
+	    if (url == null)
 			return null;
 			
-		// Get the image bytes
 		InputStream in = null;
-		ByteArrayOutputStream out = null;
 		try {
-			in = featureImageURL.openStream();	
-			out = new ByteArrayOutputStream();
-			byte[] buffer = new byte[BYTE_ARRAY_SIZE];
-			int readResult = BYTE_ARRAY_SIZE;
-			while (readResult == BYTE_ARRAY_SIZE) {
-				readResult = in.read(buffer);
-				if (readResult > 0) 
-					out.write(buffer, 0, readResult);
-			}
-			byte[] contents = out.toByteArray();
-			// Calculate the crc
-			CRC32 crc = new CRC32();
-			crc.update(contents);
-			return new Long(crc.getValue());
+		    CRC32 checksum = new CRC32();
+		    in = new CheckedInputStream(url.openStream(), checksum);
+
+		    // the contents don't matter, the read just needs a place to go
+		    byte[] sink = new byte[2048];
+		    while(true)
+		        if(in.read(sink) <= 0)
+		            break;
+
+			return new Long(checksum.getValue());
 		} catch (IOException e) {
 			return null;
 		} finally {
@@ -194,13 +174,7 @@ public final class AboutInfo {
 				try {
 					in.close();
 				} catch (IOException e) {
-					// ignore errors on close
-				}
-			if (out != null)
-				try {
-					out.close();
-				} catch (IOException e) {
-					// ignore errors on close
+					// do nothing
 				}
 		}
 	}	
@@ -209,7 +183,11 @@ public final class AboutInfo {
 	 * Returns a label for the feature plugn, or <code>null</code>.
 	 */
 	public String getFeatureLabel() {
-		return featurePluginLabel;
+	    if (productProperties != null)
+	        return productProperties.getProductName();
+	    if (bundleGroupProperties != null)
+	        return bundleGroupProperties.getFeatureLabel();
+	    return null;
 	}
 
 	/**
@@ -218,9 +196,14 @@ public final class AboutInfo {
 	 * @return the feature id
 	 */
 	public String getFeatureId() {
-		return featureId;
+	    String id = null;
+	    if (productProperties != null)
+	        id = productProperties.getProductId();
+	    else if (bundleGroupProperties != null)
+	        id = bundleGroupProperties.getFeatureId();
+	    return id != null ? id : ""; //$NON-NLS-1$ 
 	}
-	
+
 	/**
 	 * Returns the text to show in an "about" dialog for this product.
 	 * Products designed to run "headless" typically would not have such text.
@@ -228,7 +211,7 @@ public final class AboutInfo {
 	 * @return the about text, or <code>null</code> if none
 	 */
 	public String getAboutText() {
-		return aboutText;
+	    return productProperties == null ? null : productProperties.getAboutText();
 	}
 
 	/**
@@ -245,7 +228,7 @@ public final class AboutInfo {
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public String getAppName() {
-		return appName;
+	    return productProperties == null ? null : productProperties.getAppName();
 	}
 
 	/**
@@ -255,7 +238,7 @@ public final class AboutInfo {
 	 * @return the product name, or <code>null</code>
 	 */
 	public String getProductName() {
-		return featurePluginLabel;
+	    return productProperties == null ? null : productProperties.getProductName();
 	}
 
 	/**
@@ -264,7 +247,7 @@ public final class AboutInfo {
 	 * @return the provider name, or <code>null</code>
 	 */
 	public String getProviderName() {
-		return providerName;
+	    return bundleGroupProperties == null ? null : bundleGroupProperties.getProviderName();
 	}
 
 	/**
@@ -273,7 +256,7 @@ public final class AboutInfo {
 	 * @return the version id of the feature
 	 */
 	public String getVersionId() {
-		return versionId;
+	    return bundleGroupProperties == null ? "" : bundleGroupProperties.getFeatureVersion(); //$NON-NLS-1$
 	}
 
 	/**
@@ -283,7 +266,11 @@ public final class AboutInfo {
 	 * @return the welcome page, or <code>null</code> if none
 	 */
 	public URL getWelcomePageURL() {
-		return welcomePageURL;
+	    if (productProperties != null)
+	        return productProperties.getWelcomePageUrl();
+	    if (bundleGroupProperties != null)
+	        return bundleGroupProperties.getWelcomePageUrl();
+	    return null;
 	}
 
 	/**
@@ -293,7 +280,7 @@ public final class AboutInfo {
 	 * @return the welcome page perspective id, or <code>null</code> if none
 	 */
 	public String getWelcomePerspectiveId() {
-		return welcomePerspective;
+	    return bundleGroupProperties == null ? null : bundleGroupProperties.getWelcomePerspective();
 	}
 
 	/**
@@ -302,7 +289,7 @@ public final class AboutInfo {
 	 * @return the tips and tricks href, or <code>null</code> if none
 	 */
 	public String getTipsAndTricksHref() {
-		return tipsAndTricksHref;
+	    return bundleGroupProperties == null ? null : bundleGroupProperties.getTipsAndTricksHref();
 	}
 
 	/**
@@ -316,6 +303,6 @@ public final class AboutInfo {
 	 * @since 3.0
 	 */
 	public ImageDescriptor[] getWindowImages() {
-		return windowImages;
+	    return productProperties == null ? null : productProperties.getWindowImages();
 	}
 }

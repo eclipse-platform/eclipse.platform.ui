@@ -13,12 +13,10 @@ package org.eclipse.ui.internal.ide;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -64,7 +62,6 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
@@ -110,10 +107,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private String workspaceLocation = null;
 
 	/**
-	 * Ordered set of versioned feature ids new for this session; <code>null</code>
-	 * if uninitialized. Element type: <code>String</code>
-	 */
-	private Set newlyAddedFeatures = null;
+     * Ordered map of versioned feature ids -> info that are new for this
+     * session; <code>null</code> if uninitialized. Key type:
+     * <code>String</code>, Value type: <code>AboutInfo</code>.
+     */
+	private Map newlyAddedBundleGroups;
 	
 	/**
 	 * List of <code>AboutInfo</code> for all new installed
@@ -185,16 +183,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// support old welcome perspectives if intro plugin is not present
 		if (!hasIntro()) {
-			Set s = getNewlyAddedFeatures();
-			welcomePerspectiveInfos = new ArrayList(s.size());
-			for (Iterator it = s.iterator(); it.hasNext(); ) {
-				String versionedId = (String) it.next();
-				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
-				String featureVersionId = versionedId.substring(versionedId.indexOf(':')+1);
-				AboutInfo info = AboutInfo.readFeatureInfo(featureId, featureVersionId, featureId);
-				if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
-					welcomePerspectiveInfos.add(info);
-				}
+		    Map m = getNewlyAddedBundleGroups();
+			welcomePerspectiveInfos = new ArrayList(m.size());
+			for (Iterator i = m.values().iterator(); i.hasNext(); ) {
+			    AboutInfo info = (AboutInfo)i.next();
+				if (info != null && info.getWelcomePerspectiveId() != null
+                        && info.getWelcomePageURL() != null)
+				    welcomePerspectiveInfos.add(info);
 			}
 		}
 		
@@ -554,32 +549,27 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private void openWelcomeEditors(IWorkbenchWindow window) {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.WELCOME_DIALOG)) {
-			// Show the welcome page for the primary feature the first time the workbench opens.
-			AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-			if (primaryInfo == null) {
-				return;
-			}
-			URL url = primaryInfo.getWelcomePageURL();
-			if (url == null) {
-				return;
-			}
+			// show the welcome page for the product the first time the workbench opens
+		    IProduct product = Platform.getProduct();
+		    if (product == null)
+		        return;
+
+		    AboutInfo productInfo = new AboutInfo(product);
+		    URL url = productInfo.getWelcomePageURL();
+		    if (url == null)
+		        return;
+
 			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.WELCOME_DIALOG, false);
-			openWelcomeEditor(window, new WelcomeEditorInput(primaryInfo), null);
+			openWelcomeEditor(window, new WelcomeEditorInput(productInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features
 			List welcomeFeatures = new ArrayList();
-			for (Iterator it = getNewlyAddedFeatures().iterator(); it.hasNext(); ) {
-				String versionedId = (String) it.next();
+			for (Iterator it = getNewlyAddedBundleGroups().entrySet().iterator(); it.hasNext(); ) {
+			    Map.Entry entry = (Map.Entry)it.next();
+			    String versionedId = (String)entry.getKey();
 				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
-				// find the info for this feature
-				AboutInfo info = null;
-				AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
-				for (int i = 0; i < infos.length; i++) {
-					if (featureId.equals(infos[i].getFeatureId())) {
-						info = infos[i];
-						break;
-					}
-				}
+			    AboutInfo info = (AboutInfo)entry.getValue();
+
 				if (info != null && info.getWelcomePageURL() != null) {
 					welcomeFeatures.add(info);
 					// activate the feature plug-in so it can run some install code
@@ -607,28 +597,31 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 	
 	/**
-	 * Returns the set of versioned feature ids of all installed features.
-	 * The format of the ids are featureId + ":" + versionId.
-	 * The feature set excludes features that do not have their own
-	 * feature plug-in.
-	 * 
-	 * @return set of versioned feature ids (element type: <code>String</code>)
-	 * @since 3.0
-	 */
-	private Set computeFeatureSet() {
-	    Set ids = new HashSet();
+     * Returns the map of versioned feature ids -> info object for all installed
+     * features. The format of the versioned feature id (the key of the map) is
+     * featureId + ":" + versionId.
+     * 
+     * @return map of versioned feature ids -> info object (key type:
+     *         <code>String</code>, value type: <code>AboutInfo</code>)
+     * @since 3.0
+     */
+	private Map computeBundleGroupMap() {
+	    // use tree map to get predicable order
+	    Map ids = new TreeMap();
 
 	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 	    for (int i = 0; i < providers.length; ++i) {
 	        IBundleGroup[] groups = providers[i].getBundleGroups();
 	        for (int j = 0; j < groups.length; ++j) {
 	            IBundleGroup group = groups[j];
+	            AboutInfo info = new AboutInfo(group);
 
-				String version = group.getVersion();
-				String normalizedVersion = version == null ? "0.0.0" //$NON-NLS-1$
+	            String version = info.getVersionId();
+				version = version == null ? "0.0.0" //$NON-NLS-1$
                         : new PluginVersionIdentifier(version).toString();
+				String versionedFeature = group.getIdentifier() + ":" + version; //$NON-NLS-1$
 
-				ids.add(group.getIdentifier() + ":" + normalizedVersion); //$NON-NLS-1$
+				ids.put(versionedFeature, info);
 	        }
 	    }
 
@@ -636,42 +629,41 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 	
 	/**
-	 * Returns the ordered set of versioned feature ids new for this session.
-	 * 
-	 * @return ordered set of versioned feature ids (element type: <code>String</code>)
-	 */
-	private Set getNewlyAddedFeatures() {
-	    if (newlyAddedFeatures == null)
-	        newlyAddedFeatures = createNewFeaturesSet();
-		return newlyAddedFeatures;
+     * Returns the ordered map of versioned feature ids -> AboutInfo that are
+     * new for this session.
+     * 
+     * @return ordered map of versioned feature ids (key type:
+     *         <code>String</code>) -> infos (value type:
+     *         <code>AboutInfo</code>).
+     */
+	private Map getNewlyAddedBundleGroups() {
+	    if (newlyAddedBundleGroups == null)
+	        newlyAddedBundleGroups = createNewBundleGroupsMap();
+		return newlyAddedBundleGroups;
 	}
-	
+
 	/**
-	 * Initializes the old, current, and newly added features.
+	 * Updates the old features setting and returns a map of new features.
 	 */
-	private Set createNewFeaturesSet() {
-		// retrieve list of installed feature from last session	
+	private Map createNewBundleGroupsMap() {
+		// retrieve list of installed bundle groups from last session	
 		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		String[] previousFeaturesArray = settings.getArray(INSTALLED_FEATURES);
-		Set previousFeatures = null;
-		if (previousFeaturesArray != null) {
-			previousFeatures = new HashSet(Arrays.asList(previousFeaturesArray));
-		} else {
-			previousFeatures = new HashSet(0);
-		}
 
-		// store list of installed features for next session
-		Set currentFeatures = computeFeatureSet();
-		String[] currentFeaturesArray = new String[currentFeatures.size()];
-		currentFeatures.toArray(currentFeaturesArray);
+	    // get a map of currently installed bundle groups and store it for next session
+	    Map bundleGroups = computeBundleGroupMap();
+		String[] currentFeaturesArray = new String[bundleGroups.size()];
+		bundleGroups.keySet().toArray(currentFeaturesArray);
 		settings.put(INSTALLED_FEATURES, currentFeaturesArray);
-		
-		// compute recently installed features - use TreeSet to get predictable order
-		Set newFeatures = new TreeSet(currentFeatures);
-		newFeatures.removeAll(previousFeatures);
-		return newFeatures;
-	}
 
+		// remove the previously known from the current set
+		if (previousFeaturesArray != null)
+			for (int i = 0; i < previousFeaturesArray.length; ++i)
+			    bundleGroups.remove(previousFeaturesArray[i]);
+
+		return bundleGroups;
+	}
+	
 	/*
 	 * Open a welcome editor for the given input
 	 */

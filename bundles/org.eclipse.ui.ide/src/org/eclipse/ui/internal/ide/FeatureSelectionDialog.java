@@ -29,8 +29,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
@@ -69,7 +67,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
 	 * 
 	 * @param shell  the parent shell
 	 * @param features  the features to display
-	 * @param primaryFeature  the primary feature
+	 * @param primaryFeatureId  the id of the primary feature or null if none
 	 * @param shellTitle  shell title
 	 * @param shellMessage  shell message
 	 * @param helpContextId  help context id
@@ -77,7 +75,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
 	public FeatureSelectionDialog(
 		Shell shell,
 		AboutInfo[] features,
-		AboutInfo primaryFeature,
+		String primaryFeatureId,
 		String shellTitle,
 		String shellMessage,
 		String helpContextId) {
@@ -110,21 +108,15 @@ public class FeatureSelectionDialog extends SelectionDialog {
 			});
 
 		// Find primary feature
-		int index = -1;
-		if (primaryFeature != null) {
-			for (int i = 0; i < features.length; i++) {
-				if (features[i].getFeatureId().equals(primaryFeature.getFeatureId())) {
-					index = i;
-					break;
-				}
+		for (int i = 0; i < features.length; i++) {
+			if (features[i].getFeatureId().equals(primaryFeatureId)) {
+				setInitialSelections(new Object[] { features[i] });
+				return;
 			}
-		}	
-		
-		// Set the intitial selection		
-		if (index >= 0 && index < features.length)
-			setInitialSelections(new Object[] { features[index] });
-		else
-			setInitialSelections(new Object[0]);
+		}
+
+		// set a safe default		
+		setInitialSelections(new Object[0]);
 	}
 
 	/* (non-Javadoc)

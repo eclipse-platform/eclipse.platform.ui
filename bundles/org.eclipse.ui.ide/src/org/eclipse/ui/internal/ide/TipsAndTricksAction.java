@@ -12,15 +12,15 @@ package org.eclipse.ui.internal.ide;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
@@ -82,21 +82,11 @@ public class TipsAndTricksAction
 		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
 
-		AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-		if (primaryInfo == null) {
-			// @issue illegal to pass null status
-			ErrorDialog.openError(
-				workbenchWindow.getShell(), 
-				IDEWorkbenchMessages.getString("TipsAndTricks.errorDialogTitle"),  //$NON-NLS-1$
-				IDEWorkbenchMessages.getString("TipsAndTricks.infoReadError"),  //$NON-NLS-1$
-				null);
-			return;
-		}
-		
+		IProduct product = Platform.getProduct();
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell, 
 			features, 
-			primaryInfo, 
+			product == null ? null : product.getId(), 
 			IDEWorkbenchMessages.getString("TipsAndTricksPageSelectionDialog.title"), //$NON-NLS-1$
 			IDEWorkbenchMessages.getString("TipsAndTricksPageSelectionDialog.message"), //$NON-NLS-1$
 			IHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);

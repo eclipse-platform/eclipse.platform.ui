@@ -11,10 +11,9 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.runtime.IAdaptable;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.ide.AboutInfo;
 
 /**
  * A simple factory for the welcome editor
@@ -55,7 +54,7 @@ public IAdaptable createElement(IMemento memento) {
 	String featureId = versionedFeatureId.substring(0, colonPos);
 	String versionId = versionedFeatureId.substring(colonPos+1);
 	// @issue using feature id for plug-in id
-	AboutInfo info = AboutInfo.readFeatureInfo(featureId, versionId, featureId);
+	AboutInfo info = AboutInfo.readFeatureInfo(featureId, versionId);
 	if (info == null) {
 		return null;
 	}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IProductConstants;
@@ -24,8 +26,119 @@ import org.eclipse.ui.branding.IProductConstants;
  * @see org.eclipse.ui.branding.IProductConstants
  * @since 3.0
  */
-public abstract class ProductProperties extends BrandingProperties implements
+public class ProductProperties extends BrandingProperties implements
         IProductConstants {
+
+    private final IProduct product;
+
+    private String appName;
+    private String aboutText;
+    private ImageDescriptor aboutImageDescriptor;
+    private ImageDescriptor[] windowImageDescriptors;
+    private URL welcomePageUrl;
+    private String productName;
+    private String productId;
+
+    /**
+     * This instance will return properties from the given product.  The properties are
+     * retrieved in a lazy fashion and cached for later retrieval.
+     * @param product must not be null
+     */
+    public ProductProperties(IProduct product) {
+        if (product == null)
+            throw new IllegalArgumentException();
+        this.product = product;
+    }
+
+	/**
+	 * The application name, used to initialize the SWT Display.  This
+	 * value is distinct from the string displayed in the application
+	 * title bar.
+	 * <p>
+	 * E.g., On motif, this can be used to set the name used for
+	 * resource lookup.
+	 * </p>
+	 * @see org.eclipse.swt.widgets.Display#setAppName
+	 */
+	public String getAppName() {
+	    if (appName == null)
+	        appName = getAppName(product);
+	    return appName;
+	}
+
+	/**
+	 * The text to show in an "about" dialog for this product.
+	 * Products designed to run "headless" typically would not
+	 * have such text.
+	 */
+	public String getAboutText() {
+	    if (aboutText == null)
+	        aboutText = getAboutText(product);
+	    return aboutText;
+	}
+
+	/**
+	 * An image which can be shown in an "about" dialog for this
+	 * product. Products designed to run "headless" typically would not 
+	 * have such an image.
+	 * <p>
+     * A full-sized product image (no larger than 500x330 pixels) is
+     * shown without the "aboutText" blurb.  A half-sized product image
+     * (no larger than 250x330 pixels) is shown with the "aboutText"
+     * blurb beside it.
+     */
+	public ImageDescriptor getAboutImage() {
+	    if (aboutImageDescriptor == null)
+	        aboutImageDescriptor = getAboutImage(product);
+	    return aboutImageDescriptor;
+	}
+
+	/**
+	 * An array of one or more images to be used for this product.  The
+	 * expectation is that the array will contain the same image rendered
+	 * at different sizes (16x16 and 32x32).  
+	 * Products designed to run "headless" typically would not have such images.
+	 * <p>
+	 * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
+	 * </p>
+	 */
+	public ImageDescriptor[] getWindowImages() {
+	    if (windowImageDescriptors == null)
+	        windowImageDescriptors = getWindowImages(product);
+	    return windowImageDescriptors;
+	}
+
+    /**
+     * Location of the product's welcome page (special XML-based format), either
+     * a fully qualified valid URL or a path relative to the product's defining
+     * bundle. Products designed to run "headless" typically would not have such
+     * a page. Use of this property is discouraged in 3.0, the new
+     * org.eclipse.ui.intro extension point should be used instead.
+     */
+    public URL getWelcomePageUrl() {
+        if (welcomePageUrl == null)
+            welcomePageUrl = getWelcomePageUrl(product);
+        return welcomePageUrl;
+    }
+
+    /**
+	 * Returns the product name or <code>null</code>.
+	 * This is shown in the window title and the About action.
+	 */
+    public String getProductName() {
+        if (productName == null)
+            productName = getProductName(product);
+        return productName;
+    }
+    
+    /**
+     * Returns the id for the product or <code>null</code> if none.
+     */
+    public String getProductId() {
+        if (productId == null)
+            productId = getProductId(product);
+        return productId;
+    }
 
 	/**
 	 * The application name, used to initialize the SWT Display.  This
@@ -84,4 +197,30 @@ public abstract class ProductProperties extends BrandingProperties implements
 
 	    return getImages(property, product.getDefiningBundle());
 	}
+
+    /**
+     * Location of the product's welcome page (special XML-based format), either
+     * a fully qualified valid URL or a path relative to the product's defining
+     * bundle. Products designed to run "headless" typically would not have such
+     * a page. Use of this property is discouraged in 3.0, the new
+     * org.eclipse.ui.intro extension point should be used instead.
+     */
+    public static URL getWelcomePageUrl(IProduct product) {
+        return getUrl(product.getProperty(WELCOME_PAGE), null);
+    }
+
+    /**
+	 * Returns the product name or <code>null</code>.
+	 * This is shown in the window title and the About action.
+	 */
+    public static String getProductName(IProduct product) {
+        return product.getName();
+    }
+    
+    /**
+     * Returns the id for the product.
+     */
+    public static String getProductId(IProduct product) {
+        return product.getId();
+    }
 }

@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -20,8 +23,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.swt.widgets.Shell;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -29,6 +30,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ProductProperties;
+import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.FeatureSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -107,10 +110,19 @@ public class QuickStartAction
 	 */
 	private AboutInfo promptForFeature() throws WorkbenchException {
 		// Ask the user to select a feature
-		AboutInfo[] features = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		ArrayList welcomeFeatures = new ArrayList();
+		
+		URL productUrl = null;
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+		    productUrl = ProductProperties.getWelcomePageUrl(product);
+		    welcomeFeatures.add(new AboutInfo(product));
+		}
+
+		AboutInfo[] features = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		for (int i = 0; i < features.length; i++) {
-			if (features[i].getWelcomePageURL() != null)
+		    URL url = features[i].getWelcomePageURL();
+			if (url != null && ! url.equals(productUrl))
 				welcomeFeatures.add(features[i]);
 		}
 
@@ -126,12 +138,11 @@ public class QuickStartAction
 
 		features = new AboutInfo[welcomeFeatures.size()];
 		welcomeFeatures.toArray(features);
-		AboutInfo primaryFeature = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell,
 			features,
-			primaryFeature,
+			product == null ? null : product.getId(),
 			IDEWorkbenchMessages.getString("WelcomePageSelectionDialog.title"),  //$NON-NLS-1$
 			IDEWorkbenchMessages.getString("WelcomePageSelectionDialog.message"), //$NON-NLS-1$
 			IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);

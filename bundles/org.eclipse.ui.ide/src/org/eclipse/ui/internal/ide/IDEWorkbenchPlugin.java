@@ -13,19 +13,21 @@ package org.eclipse.ui.internal.ide;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IBundleGroup;
+import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
@@ -83,11 +85,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 */	
 	private CapabilityRegistry capabilityRegistry;
 
-	/**
-	 * List of about info for all know features; lazily initialized.
-	 */
-	private AboutInfo[] cachedAboutInfos = null;
-	
 	/**
 	 * Create an instance of the IDEWorkbenchPlugin.
 	 * The workbench plugin is effectively the "application" for the workbench UI.
@@ -284,43 +281,25 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the about information of all known features, omitting any
-	 * features which are missing this infomration.
-	 * 
-	 * @return a possibly empty list of about infos
-	 */
-	private AboutInfo[] readFeatureInfos() {
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.IFeatureEntry[] entries = conf.getConfiguredFeatureEntries();
-		List infos = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			String featureId = entries[i].getFeatureIdentifier();
-			String versionId = entries[i].getFeatureVersion();
-			String pluginId = entries[i].getFeaturePluginIdentifier();
-			AboutInfo info = null;
-			if (versionId != null && pluginId != null) {
-				info = AboutInfo.readFeatureInfo(featureId, versionId, pluginId);
-			}
-			if (info != null) {
-				infos.add(info);
-			}
-		}
-		AboutInfo[] result = new AboutInfo[infos.size()];
-		infos.toArray(result);
-		return result;
-	}
-
-	/**
 	 * Returns the about information of all known features,
 	 * omitting any features which are missing this information.
 	 * 
 	 * @return a possibly empty list of about infos
 	 */
 	public AboutInfo[] getFeatureInfos() {
-		if (cachedAboutInfos == null) {
-			cachedAboutInfos = readFeatureInfos();
-		}
-		return cachedAboutInfos;
+	    // cannot be cached since bundle groups come and go
+        List infos = new ArrayList();
+
+        // add an entry for each bundle group
+        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+        if (providers != null)
+		    for (int i = 0; i < providers.length; ++i) {
+	            IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
+	            for (int j = 0; j < bundleGroups.length; ++j)
+	                infos.add(new AboutInfo(bundleGroups[j]));
+		    }
+
+	    return (AboutInfo[])infos.toArray(new AboutInfo[infos.size()]);
 	}
 
 	/**
@@ -330,22 +309,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * is no primary feature or if this information is unavailable
 	 */
 	public AboutInfo getPrimaryInfo() {
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		String featureId = conf.getPrimaryFeatureIdentifier();
-		if (featureId == null) {
-			return null;
-		}
-		if (cachedAboutInfos == null) {
-			cachedAboutInfos = readFeatureInfos();
-		}
-		for (int i = 0; i < cachedAboutInfos.length; i++) {
-			if (featureId.equals(cachedAboutInfos[i].getFeatureId())) {
-				return cachedAboutInfos[i];
-			}
-		}
-		return null;
+	    IProduct product = Platform.getProduct();
+	    return product == null ? null : new AboutInfo(product);
 	}
-	
-	
-	
 }
