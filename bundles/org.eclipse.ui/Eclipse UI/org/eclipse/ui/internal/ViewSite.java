@@ -30,4 +30,11 @@ public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
 public IViewPart getViewPart() {
 	return (IViewPart)getPart();
 }
+/*
+ * @see IViewSite#getDecoratorManager()
+ */
+public DecoratorManager getDecoratorManager() {
+	return WorkbenchPlugin.getDefault().getDecoratorManager();
+}
+
 }

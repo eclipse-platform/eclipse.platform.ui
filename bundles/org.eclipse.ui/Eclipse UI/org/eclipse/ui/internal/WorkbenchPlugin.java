@@ -45,6 +45,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager that maps project nature ids to images
 	private ProjectImageRegistry projectImageRegistry;
+	//Manager for the DecoratorManager
+	private DecoratorManager decoratorManager;
 
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
@@ -420,5 +422,15 @@ public static void log(String message, IStatus status) {
 }
 public void setWorkbench(IWorkbench aWorkbench) {
 	this.workbench = aWorkbench;
+}
+
+/**
+ * Get the decorator manager for the receiver
+ */
+
+public DecoratorManager getDecoratorManager(){
+	if(decoratorManager == null)
+		decoratorManager = new DecoratorManager();
+	return decoratorManager;
 }
 }
