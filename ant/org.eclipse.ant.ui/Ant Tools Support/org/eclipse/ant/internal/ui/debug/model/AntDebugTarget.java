@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.debug.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.core.internal.variables.StringVariableManager;
@@ -22,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
@@ -307,10 +307,14 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	
 	/**
 	 * Install breakpoints that are already registered with the breakpoint
-	 * manager.
+	 * manager if the breakpoint manager is enabled.
 	 */
 	private void installDeferredBreakpoints() {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		if (!manager.isEnabled()) {
+			return;
+		}
+		IBreakpoint[] breakpoints = manager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakpointAdded(breakpoints[i]);
 		}
@@ -428,6 +432,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
     /**
      * When the breakpoint manager disables, remove all registered breakpoints
      * requests from the VM. When it enables, reinstall them.
+     *
+     * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
      */
     public void breakpointManagerEnablementChanged(boolean enabled) {
         IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
