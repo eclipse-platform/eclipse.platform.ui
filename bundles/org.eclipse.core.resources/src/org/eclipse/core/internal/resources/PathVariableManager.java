@@ -55,6 +55,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		checkIsValidName(varName);
+		//if the location doesn't have a device, see if the OS will assign one
+		if (newValue != null && newValue.isAbsolute() && newValue.getDevice() == null)
+			newValue = new Path(newValue.toFile().getAbsolutePath());
 		checkIsValidValue(newValue);
 		int eventType;
 		// read previous value and set new value atomically in order to generate the right event		

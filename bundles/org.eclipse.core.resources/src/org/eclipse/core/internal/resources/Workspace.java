@@ -2012,8 +2012,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			location = new Path(location.toFile().getAbsolutePath());
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
-		if (defaultDefaultLocation.getDevice() == null)
-			defaultDefaultLocation = new Path(defaultDefaultLocation.toFile().getAbsolutePath());
 		if (isOverlapping(location, defaultDefaultLocation, true)) {
 			message = Policy.bind("resources.overlapLocal", location.toString(), defaultDefaultLocation.toString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
@@ -2030,8 +2028,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// if the project uses the default location then continue
 			if (definedLocalLocation == null)
 				continue;
-			if (definedLocalLocation.getDevice() == null)
-				definedLocalLocation = new Path(definedLocalLocation.toFile().getAbsolutePath());
 			//tolerate locations being the same if this is the project being tested
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
@@ -2053,8 +2049,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				for (int i = 0; i < children.length; i++) {
 					if (children[i].isLinked()) {
 						IPath testLocation = children[i].getLocation();
-						if (testLocation.getDevice() == null)
-							testLocation = new Path(testLocation.toFile().getAbsolutePath());
 						if (testLocation != null && isOverlapping(testLocation, location, false)) {
 							message = Policy.bind("links.locationOverlapsLink", location.toOSString()); //$NON-NLS-1$
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);

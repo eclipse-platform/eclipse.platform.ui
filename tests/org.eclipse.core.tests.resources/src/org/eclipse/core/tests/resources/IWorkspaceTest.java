@@ -48,11 +48,8 @@ protected IProjectNatureDescriptor findNature(IProjectNatureDescriptor[] descrip
 }
 
 public static Test suite() {
-	return new TestSuite(IWorkspaceTest.class);
-
-//	TestSuite suite = new TestSuite();
-//	suite.addTest(new IWorkspaceTest("testValidateProjectLocation"));
-//	return suite;
+	TestSuite suite = new TestSuite(IWorkspaceTest.class);
+	return suite;
 }
 protected void setUp() throws Exception {
 	super.setUp();
@@ -861,6 +858,7 @@ public void testValidateEdit() {
 	file.setReadOnly(true);
 	result = getWorkspace().validateEdit(new IFile[] {file}, null);
 	assertEquals("1.1", IStatus.ERROR, result.getSeverity());
+//	assertEquals("1.2", IResourceStatus.READ_ONLY_LOCAL, result.getCode());
 	// remove the read-only status so test cleanup will work ok
 	file.setReadOnly(false);
 }

@@ -552,6 +552,9 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		ISchedulingRule rule = getProject();
 		try {
 			workspace.prepareOperation(rule, monitor);
+			//if the location doesn't have a device, see if the OS will assign one
+			if (localLocation.isAbsolute() && localLocation.getDevice() == null)
+				localLocation = new Path(localLocation.toFile().getAbsolutePath());
 			assertLinkRequirements(localLocation, updateFlags);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 			workspace.beginOperation(true);
@@ -563,8 +566,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 			monitor.worked(Policy.opWork * 5 / 100);
 			//save the location in the project description
 			Project project = (Project)getProject();
-			project.internalGetDescription().setLinkLocation(getName(), 
-				new LinkDescription(this,localLocation));
+			project.internalGetDescription().setLinkLocation(getName(), new LinkDescription(this,localLocation));
 			project.writeDescription(IResource.NONE);
 			monitor.worked(Policy.opWork * 5 / 100);
 

@@ -127,6 +127,8 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
 		status.merge(workspace.validateProjectLocation(project, location));
 	if (!status.isOK())
 		throw new ResourceException(status);
+	//try infer the device if there isn't one (windows)
+	desc.setLocation(new Path(location.toFile().getAbsolutePath()));
 }
 /**
  * @see IProject#close
@@ -790,6 +792,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			workspace.prepareOperation(this, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
+			checkDescription(this, description, false);
 			//If we're out of sync and !FORCE, then fail.
 			//If the file is missing, we want to write the new description then throw an exception.
 			boolean hadSavedDescription = true;

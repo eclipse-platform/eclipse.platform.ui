@@ -188,6 +188,8 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	public void testGetSetValue() {
 		IPath pathOne = new Path("c:\\temp");
 		IPath pathTwo = new Path("/tmp/backup");
+		//add device if neccessary
+		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 		IPath pathOneEdit = new Path("d:/foobar");
 
 		// nothing to begin with	
@@ -285,6 +287,8 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	public void testResolvePath() {
 		IPath pathOne = new Path("c:/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
+		//add device if neccessary
+		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 
 		try {
 			manager.setValue("one", pathOne);
@@ -306,6 +310,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		// another substitution
 		path = new Path("two/myworld");
 		expected = new Path("/tmp/backup/myworld");
+		expected = new Path(expected.toFile().getAbsolutePath());
 		actual = manager.resolvePath(path);
 		assertEquals("2.0", expected, actual);
 
@@ -364,7 +369,9 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		PathVariableChangeVerifier listener = new PathVariableChangeVerifier();
 		manager.addChangeListener(listener);
 		IPath pathOne = new Path("/tmp/foobar");
-		IPath pathOneEdit = new Path("/tmp/foobar/myworld");
+		//add device if neccessary
+		pathOne = new Path(pathOne.toFile().getAbsolutePath());
+		IPath pathOneEdit = pathOne.append("myworld");
 
 		try {
 
