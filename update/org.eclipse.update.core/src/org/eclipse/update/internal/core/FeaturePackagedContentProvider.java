@@ -75,7 +75,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			// we need to unpack archive locally for UI browser references to be resolved correctly
 			localFeatureFiles = featureJarReference.unpack(getWorkingDirectory(), null, monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, getURL(), e); //$NON-NLS-1$ 
+			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, e); //$NON-NLS-1$ 
 		}
 
 		// find the manifest in the unpacked feature files
@@ -142,7 +142,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, getFeature().getURL(), e); //$NON-NLS-1$
+			throw errorRetrieving(archiveID, currentReference, e); //$NON-NLS-1$
 		}
 		return references;
 	}
@@ -163,7 +163,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		try {
 			references[0] = asLocalReference(new JarContentReference(archiveID, url), monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, references[0], getFeature().getURL(), e);
+			throw errorRetrieving(archiveID, references[0], e);
 		}
 		return references;
 	}
@@ -190,7 +190,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			references[0] = currentReference;
 
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, getFeature().getURL(), e);
+			throw errorRetrieving(archiveID, currentReference, e);
 		}
 
 		return references;
@@ -233,7 +233,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			validatePermissions(pluginReferences);
 
 		} catch (IOException e) {
-			throw errorRetrieving(pluginEntry.getVersionedIdentifier().toString(), references[0], getFeature().getURL(), e);
+			throw errorRetrieving(pluginEntry.getVersionedIdentifier().toString(), references[0], e);
 		}
 		return pluginReferences;
 	}
@@ -262,7 +262,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	/*
 	 * 
 	 */
-	private CoreException errorRetrieving(String obj, ContentReference archive, URL url, Exception e) {
+	private CoreException errorRetrieving(String obj, ContentReference archive, Exception e) {
 
 		String[] values = new String[] { obj };
 
