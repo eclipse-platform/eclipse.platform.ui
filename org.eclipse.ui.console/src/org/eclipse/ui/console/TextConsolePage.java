@@ -55,6 +55,13 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IUpdate;
 
+/**
+ * A page for a text console.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.1
+ */
 public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
     private IPageSite fSite;
     private TextConsole fConsole;

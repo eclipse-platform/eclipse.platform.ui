@@ -40,7 +40,9 @@ import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 
 /**
  * Viewer used to display a TextConsole
- * 
+ * <p>
+ * Clients may subclass this class.
+ * </p>
  * @since 3.1
  */
 public class TextConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
