@@ -265,10 +265,14 @@ protected void constrainShellSize() {
 	Point size = shell.getSize();
 	Rectangle bounds = shell.getDisplay().getClientArea();
 	
+	
 	// move the shell origin as required
 	Point loc = shell.getLocation();
-	int x = Math.max(bounds.x, Math.min(loc.x, bounds.width - size.x));
-	int y = Math.max(bounds.y, Math.min(loc.y, bounds.height - size.y));
+	
+	//Choose the position between the origin of the client area and 
+	//the bottom right hand corner
+	int x = Math.max(bounds.x, Math.min(loc.x, bounds.x + bounds.width - size.x));
+	int y = Math.max(bounds.y, Math.min(loc.y, bounds.y + bounds.height - size.y));
 	shell.setLocation(x, y);
 }
 /**
