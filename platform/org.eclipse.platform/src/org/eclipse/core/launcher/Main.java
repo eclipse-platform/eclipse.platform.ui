@@ -101,6 +101,8 @@ public class Main {
 	private static final String ECLIPSE_PROPERTIES = "eclipse.properties"; //$NON-NLS-1$
 	private static final String FILE_SCHEME = "file:"; //$NON-NLS-1$	
 
+	private static final String DEFAULT_JRE_REQUIRED = "1.4.1"; //$NON-NLS-1$
+	
 	// constants: configuration file location
 	private static final String CONFIG_DIR = "configuration/"; //$NON-NLS-1$
 	private static final String CONFIG_FILE = "config.ini"; //$NON-NLS-1$
@@ -126,6 +128,7 @@ public class Main {
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_EXTENSIONS = "osgi.framework.extensions"; //$NON-NLS-1$
 	private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
+	private static final String PROP_REQUIRED_JAVA_VERSION = "osgi.requiredJavaVersion"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
@@ -151,6 +154,68 @@ public class Main {
 	protected File logFile = null;
 	protected BufferedWriter log = null;
 	protected boolean newSession = true;
+	
+	/**
+	 * A structured form for a version identifier.
+	 * 
+	 * @see http://java.sun.com/j2se/versioning_naming.html for information on valid version strings
+	 */
+	static class Identifier {
+		private static final String DELIM = ". _-"; //$NON-NLS-1$
+		private int major, minor, service;
+		Identifier(int major, int minor, int service) {
+			super();
+			this.major = major;
+			this.minor = minor;
+			this.service = service;
+		}
+		/**
+		 * @throws NumberFormatException if cannot parse the major and minor version components
+		 */
+		Identifier(String versionString) {
+			super();
+			StringTokenizer tokenizer = new StringTokenizer(versionString, DELIM);
+
+			// major
+			if (tokenizer.hasMoreTokens())
+				major = Integer.parseInt(tokenizer.nextToken());
+
+			// minor
+			if (tokenizer.hasMoreTokens())
+				minor = Integer.parseInt(tokenizer.nextToken());
+
+			try {
+				// service
+				if (tokenizer.hasMoreTokens())
+					service = Integer.parseInt(tokenizer.nextToken());
+			} catch (NumberFormatException nfe) {
+				// ignore the service qualifier in that case and default to 0
+				// this will allow us to tolerate other non-conventional version numbers 
+			}
+		}
+		/**
+		 * Returns true if this id is considered to be greater than or equal to the given baseline.
+		 * e.g. 
+		 * 1.2.9 >= 1.3.1 -> false
+		 * 1.3.0 >= 1.3.1 -> false
+		 * 1.3.1 >= 1.3.1 -> true
+		 * 1.3.2 >= 1.3.1 -> true
+		 * 2.0.0 >= 1.3.1 -> true
+		 */
+		boolean isGreaterEqualTo(Identifier minimum) {
+			if (major < minimum.major)
+				return false;
+			if (major > minimum.major)
+				return true;
+			// major numbers are equivalent so check minor
+			if (minor < minimum.minor)
+				return false;
+			if (minor > minimum.minor)
+				return true;
+			// minor numbers are equivalent so check service
+			return service >= minimum.service;
+		}
+	}	
 
 	/**
 	 * Executes the launch.
@@ -159,12 +224,17 @@ public class Main {
 	 * @param args command-line arguments
 	 * @exception Exception thrown if a problem occurs during the launch
 	 */
-	protected Object basicRun(String[] args) throws Exception {
+	protected void basicRun(String[] args) throws Exception {
 		System.getProperties().setProperty("eclipse.startTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
 		commands = args;
 		String[] passThruArgs = processCommandLine(args);
 		setupVMProperties();
 		processConfiguration();
+		
+		//ensure minimum Java version
+		if (!checkVersion(System.getProperty("java.version"), System.getProperty(PROP_REQUIRED_JAVA_VERSION, DEFAULT_JRE_REQUIRED))) //$NON-NLS-1$
+			return;
+		
 		// need to ensure that getInstallLocation is called at least once to initialize the value.
 		// Do this AFTER processing the configuration to allow the configuration to set
 		// the install location.  
@@ -182,7 +252,7 @@ public class Main {
 		Class clazz = loader.loadClass(STARTER);
 		Method method = clazz.getDeclaredMethod("run", new Class[] {String[].class, Runnable.class}); //$NON-NLS-1$
 		try {
-			return method.invoke(clazz, new Object[] {passThruArgs, endSplashHandler});
+			method.invoke(clazz, new Object[] {passThruArgs, endSplashHandler});
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof Error)
 				throw (Error) e.getTargetException();
@@ -194,6 +264,37 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Checks whether the given available version is greater or equal to the 
+	 * given required version.
+	 * <p>Will set PROP_EXITCODE/PROP_EXITDATA accordingly if check fails.</p>
+	 *   
+	 * @return a boolean indicating whether the checking passed 
+	 */
+	private boolean checkVersion(String availableVersion, String requiredVersion) {
+		if (requiredVersion == null || availableVersion == null)
+			return true;
+		try {
+			Identifier required = new Identifier(requiredVersion);
+			Identifier available = new Identifier(availableVersion);
+			boolean compatible = available.isGreaterEqualTo(required);
+			if (!compatible) {
+				// any non-zero value should do it - 14 used to be used for version incompatibility in Eclipse 2.1 
+				System.getProperties().put(PROP_EXITCODE, "14"); //$NON-NLS-1$
+				System.getProperties().put(PROP_EXITDATA, "Required Java version: "+ requiredVersion + ". Available: " + availableVersion + '.'); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return compatible;
+		} catch (SecurityException e) {
+			// If the security manager won't allow us to get the system property, continue for
+			// now and let things fail later on their own if necessary.
+			return true;
+		} catch (NumberFormatException e) {
+			// If the version string was in a format that we don't understand, continue and
+			// let things fail later on their own if necessary.
+			return true;
+		}
+	}
+	
 	/**
 	 * Returns a string representation of the given URL String.  This converts
 	 * escaped sequences (%..) in the URL into the appropriate characters.
@@ -715,8 +816,6 @@ public class Main {
 				result = 17;
 			}
 		} catch (Throwable e) {
-			// try and take down the splash screen.
-			takeDownSplash();
 			// only log the exceptions if they have not been caught by the 
 			// EclipseStarter (i.e., if the exitCode is not 13) 
 			if (!"13".equals(System.getProperty(PROP_EXITCODE))) { //$NON-NLS-1$
@@ -733,6 +832,9 @@ public class Main {
 			// this constant and display a message to the user telling them that
 			// there is information in their log file.
 			result = 13;
+		} finally {
+			// always try putting down the splash screen just in case the application failed to do so
+			takeDownSplash();			
 		}
 		// Return an int exit code and ensure the system property is set.
 		System.getProperties().put(PROP_EXITCODE, Integer.toString(result));
