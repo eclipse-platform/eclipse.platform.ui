@@ -45,7 +45,6 @@ public class ExternalProjectImportWizard
 	extends Wizard
 	implements IImportWizard {
 	private WizardExternalProjectImportPage mainPage;
-	private IWorkbench workbench;
 
 	/**
 	 * Constructor for ExternalProjectImportWizard.
@@ -82,7 +81,6 @@ public class ExternalProjectImportWizard
 	 * Method declared on IWorkbenchWizard.
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		this.workbench = workbench;
 		setWindowTitle(DataTransferMessages.getString("DataTransfer.importTitle")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif")); //$NON-NLS-1$
 		
