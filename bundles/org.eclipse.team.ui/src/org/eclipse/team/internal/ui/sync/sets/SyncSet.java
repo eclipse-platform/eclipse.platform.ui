@@ -52,20 +52,26 @@ public class SyncSet {
 		resetChanges();
 	}
 	
-	protected void resetChanges() {
+	private void resetChanges() {
 		changes = new SyncSetChangedEvent(this);
 	}
 
-	protected void fireChanges() {
+	private void fireChanges() {
 		// Use a synchronized block to ensure that the event we send is static
 		SyncSetChangedEvent event;
 		synchronized(this) {
 			event = changes;
 			resetChanges();
 		}
+		// Ensure that the list of listeners is not changed while events are fired.
+		// Copy the listeners so that addition/removal is not blocked by event listeners
+		ISyncSetChangedListener[] allListeners;
+		synchronized(listeners) {
+			allListeners = (ISyncSetChangedListener[]) listeners.toArray(new ISyncSetChangedListener[listeners.size()]);
+		}
 		// Fire the events
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			ISyncSetChangedListener listener = (ISyncSetChangedListener) iter.next();
+		for (int i = 0; i < allListeners.length; i++) {
+			ISyncSetChangedListener listener = allListeners[i];
 			listener.syncSetChanged(event);
 		}
 	}
@@ -75,7 +81,9 @@ public class SyncSet {
 	 * @param provider
 	 */
 	public void addSyncSetChangedListener(ISyncSetChangedListener listener) {
-		listeners.add(listener);
+		synchronized(listeners) {
+			listeners.add(listener);
+		}
 	}
 
 	/**
@@ -83,7 +91,9 @@ public class SyncSet {
 	 * @param provider
 	 */
 	public void removeSyncSetChangedListener(ISyncSetChangedListener listener) {
-		listeners.remove(listener);
+		synchronized(listeners) {
+			listeners.remove(listener);
+		}
 	}
 
 	public synchronized void add(SyncInfo info) {
@@ -124,7 +134,7 @@ public class SyncSet {
 		statistics.clear();
 	}
 	
-	protected boolean addToParents(IResource resource, IResource parent) {
+	private boolean addToParents(IResource resource, IResource parent) {
 		if (parent.getType() == IResource.ROOT) {
 			return false;
 		}
@@ -150,7 +160,7 @@ public class SyncSet {
 		return addedParent;
 	}
 
-	protected boolean removeFromParents(IResource resource, IResource parent) {
+	private boolean removeFromParents(IResource resource, IResource parent) {
 		if (parent.getType() == IResource.ROOT) {
 			return false;
 		}
@@ -183,12 +193,12 @@ public class SyncSet {
 	 * @param container
 	 * @return
 	 */
-	public IResource[] members(IResource resource) {
+	public synchronized IResource[] members(IResource resource) {
 		if (resource.getType() == IResource.FILE) return new IResource[0];
 		IContainer parent = (IContainer)resource;
 		if (parent.getType() == IResource.ROOT) return getRoots(parent);
-		// TODO: must be optimized so that we don't traverse all the deep children to find
-		// the immediate ones.
+		// OPTIMIZE: could be optimized so that we don't traverse all the deep 
+		// children to find the immediate ones.
 		Set children = new HashSet();
 		IPath path = parent.getFullPath();
 		Set possibleChildren = (Set)parents.get(path);
@@ -220,7 +230,7 @@ public class SyncSet {
 	 * @param container
 	 * @return
 	 */
-	public SyncInfo[] getOutOfSyncDescendants(IResource resource) {
+	public synchronized SyncInfo[] getOutOfSyncDescendants(IResource resource) {
 		if (resource.getType() == IResource.FILE) {
 			SyncInfo info = getSyncInfo(resource);
 			if (info == null) {
@@ -259,15 +269,11 @@ public class SyncSet {
 		return (IResource[]) children.toArray(new IResource[children.size()]);
 	}
 
-	protected boolean hasMembers(IContainer container) {
-		return parents.containsKey(container.getFullPath());
-	}
-
 	/**
 	 * Return an array of all the resources that are known to be out-of-sync
 	 * @return
 	 */
-	public SyncInfo[] allMembers() {
+	public synchronized SyncInfo[] allMembers() {
 		return (SyncInfo[]) resources.values().toArray(new SyncInfo[resources.size()]);
 	}
 
@@ -281,7 +287,7 @@ public class SyncSet {
 		}
 	}
 
-	public SyncInfo getSyncInfo(IResource resource) {
+	public synchronized SyncInfo getSyncInfo(IResource resource) {
 		return (SyncInfo)resources.get(resource.getFullPath());
 	}
 
@@ -290,7 +296,9 @@ public class SyncSet {
 	 * provider is starting to provide new input to the SyncSet
 	 */
 	/* package */ void beginInput() {
-		resetChanges();
+		synchronized(this) {
+			resetChanges();
+		}
 	}
 	
 	/**
