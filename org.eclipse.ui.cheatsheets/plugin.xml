@@ -30,7 +30,7 @@
    <extension-point
       id="cheatSheetContent"
       name="%CHEAT_SHEET_CONTENT"
-      schema="schema/org.eclipse.ui.cheatsheets.cheatSheetContent.exsd"/>
+      schema="schema/cheatSheetContent.exsd"/>
       
    <!-- =============================================================================== -->
    <!-- Extension point: org.eclipse.ui.cheatsheets.cheatSheetItemExtension             -->
@@ -40,7 +40,7 @@
    <extension-point
       id="cheatSheetItemExtension"
       name="%CHEAT_SHEET_ITEM_EXTENSION"
-      schema="schema/org.eclipse.ui.cheatsheets.cheatSheetItemExtension.exsd"/>
+      schema="schema/cheatSheetItemExtension.exsd"/>
 
 <!-- ========== Extensions ================= -->
 
