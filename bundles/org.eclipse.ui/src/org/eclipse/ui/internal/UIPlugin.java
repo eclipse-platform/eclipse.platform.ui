@@ -16,7 +16,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in class for the org.eclipse.ui plug-in.
@@ -105,13 +104,4 @@ public final class UIPlugin extends AbstractUIPlugin {
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
-
-	
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-        // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
-        // Force the prefs to get initialized so that they can be accessed
-        // from the workbench plugin.
-        getPluginPreferences().getString(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
-    }
 }
