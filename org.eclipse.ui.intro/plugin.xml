@@ -8,10 +8,11 @@
    class="org.eclipse.ui.internal.intro.impl.IntroPlugin">
 
    <runtime>
-      <library name="intro.jar">
+      <library name=".">
          <export name="*"/>
       </library>
-   </runtime>
+   </runtime> 
+
    <requires>
       <import plugin="org.eclipse.core.runtime"/> 
       <import plugin="org.eclipse.ui"/>
