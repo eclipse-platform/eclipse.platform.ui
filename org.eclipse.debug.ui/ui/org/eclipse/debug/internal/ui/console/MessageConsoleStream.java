@@ -35,13 +35,32 @@ public class MessageConsoleStream {
 	}
 	
 	/**
-	 * Appends the given message to this stream.
+	 * Appends the specified message to this stream.
 	 * 
-	 * @param message text to append
+	 * @param message message to append
 	 */
-	public void write(String message) {
+	public void print(String message) {
 		fConsole.appendToDocument(message, this);
 	}
+	
+	
+	/**
+	 * Appends a line separator string to this stream.
+	 */
+	public void println() {
+		print("\n");
+	}	
+	
+	/**
+	 * Appends the specified message to this stream, followed by a line
+	 * separator string.
+	 * 
+	 * @param message message to print
+	 */
+	public void println(String message) {
+		print(message);
+		println();
+	}	
 	
 	/**
 	 * Sets the color of this message stream
