@@ -17,6 +17,7 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 public class BufferedResourceNode extends ResourceNode {
 	
 	private boolean fDirty= false;
+	private IFile fDeleteFile;
 		
 	/**
 	 * Creates a <code>ResourceNode</code> for the given resource.
@@ -41,6 +42,12 @@ public class BufferedResourceNode extends ResourceNode {
 	 */
 	public void commit(IProgressMonitor pm) throws CoreException {
 		if (fDirty) {
+			
+			if (fDeleteFile != null) {
+				fDeleteFile.delete(true, true, pm);
+				return;
+			}
+			
 			IResource resource= getResource();
 			if (resource instanceof IFile) {
 				ByteArrayInputStream is= new ByteArrayInputStream(getContent());
@@ -64,7 +71,7 @@ public class BufferedResourceNode extends ResourceNode {
 	
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
 		
-		if (child == null) {
+		if (child == null) {	// add resource
 			// create a node without a resource behind it!
 			IResource resource= getResource();
 			if (resource instanceof IFolder) {
@@ -72,6 +79,19 @@ public class BufferedResourceNode extends ResourceNode {
 				IFile file= folder.getFile(other.getName());
 				child= new BufferedResourceNode(file);
 			}
+		}
+		
+		if (other == null) {	// delete resource
+			IResource resource= getResource();
+			if (resource instanceof IFolder) {
+				IFolder folder= (IFolder) resource;
+				IFile file= folder.getFile(child.getName());
+				if (file != null && file.exists()) {
+					fDeleteFile= file;
+					fDirty= true;
+				}
+			}
+			return null;
 		}
 		
 		if (other instanceof IStreamContentAccessor && child instanceof IEditableContent) {

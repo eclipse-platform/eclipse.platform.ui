@@ -298,7 +298,8 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 					setRight(dst);
 				else
 					setLeft(dst);
-				setKind(Differencer.NO_CHANGE);
+				
+				//setKind(Differencer.NO_CHANGE);
 				
 				fireChange();
 			}

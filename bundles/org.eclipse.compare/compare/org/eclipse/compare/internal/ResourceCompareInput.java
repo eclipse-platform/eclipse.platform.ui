@@ -7,7 +7,10 @@ package org.eclipse.compare.internal;
 import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -31,15 +34,41 @@ class ResourceCompareInput extends CompareEditorInput {
 	private IResource fAncestorResource;
 	private IResource fLeftResource;
 	private IResource fRightResource;
+	private DiffTreeViewer fDiffViewer;
 	
 	
 	private class MyDiffNode extends DiffNode {
+		
+		private boolean fDirty= false;
+		private ITypedElement fLastId;
+		private String fLastName;
+		
+		
 		public MyDiffNode(IDiffContainer parent, int description, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
 			super(parent, description, ancestor, left, right);
 		}
 		protected void fireChange() {
 			super.fireChange();
 			setDirty(true);
+			fDirty= true;
+			if (fDiffViewer != null)
+				fDiffViewer.refresh(this);
+		}
+		
+		public String getName() {
+			if (fLastName == null)
+				fLastName= super.getName();
+			if (fDirty)
+				return fLastName + " *";	//$NON-NLS-1$
+			return fLastName;
+		}
+		
+		public ITypedElement getId() {
+			ITypedElement id= super.getId();
+			if (id == null)
+				return fLastId;
+			fLastId= id;
+			return id;
 		}
 	}
 	
@@ -50,6 +79,13 @@ class ResourceCompareInput extends CompareEditorInput {
 		super(config);
 	}
 		
+	public Viewer createDiffViewer(Composite parent) {
+		Viewer v= super.createDiffViewer(parent);
+		if (v instanceof DiffTreeViewer)
+			fDiffViewer= (DiffTreeViewer) v;
+		return v;
+	}
+
 	/**
 	 * Returns true if compare can be executed for the given selection.
 	 */

@@ -36,14 +36,33 @@ public interface IEditableContent {
 
 	/**
 	 * This method is called on a parent to
-	 * - add a child,
-	 * - remove a child,
-	 * - copy the contents of a child
+	 * <UL>
+	 * <LI>
+	 * add a child,
+	 * <LI>
+	 * remove a child,
+	 * <LI>
+	 * copy the contents of a child
+	 * </UL>
 	 * 
 	 * What to do is encoded in the two arguments as follows:
-	 * add:	child == null		other != null
-	 * remove:	child != null		other == null
-	 * copy:	child != null		other != null
+	 * <TABLE>
+	 * <TR>
+	 * 	<TD>add:</TD>
+	 *  <TD>child == null</TD>
+	 *  <TD>other != null</TD>
+	 * </TR>
+	 * <TR>
+	 * 	<TD>remove:</TD>
+	 *  <TD>child != null</TD>
+	 *  <TD>other == null</TD>
+	 * </TR>
+	 * <TR>
+	 * 	<TD>copy:</TD>
+	 *  <TD>child != null</TD>
+	 *  <TD>other != null</TD>
+	 * </TR>
+	 * </TABLE>
 	 */
 	ITypedElement replace(ITypedElement child, ITypedElement other);
 }
