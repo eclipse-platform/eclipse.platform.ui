@@ -28,9 +28,12 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -311,7 +314,33 @@ public class BasicStackPresentation extends StackPresentation {
 			tabHeight = 20;
 		}
 		tabFolder.setTabHeight(tabHeight);
+				
+		final Color darkShadowColour = tabFolder.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW); 
+		final Color lightShadowColour = tabFolder.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		
+		tabFolder.addPaintListener(new PaintListener() {
+
+			public void paintControl(PaintEvent e) {
+				GC gc = e.gc;
+				
+				gc.setForeground(darkShadowColour);
+
+				Rectangle clientBounds = Geometry.copy(layout.getClientBounds());
+				Rectangle bounds = tabFolder.getBounds();
+				clientBounds.x -= bounds.x;
+				clientBounds.y -= bounds.y;
+				
+				if (activeState) {	
+					if (layout.isAnyTrimBelow()) {
+						gc.drawLine(clientBounds.x, clientBounds.y - 1, clientBounds.x + clientBounds.width - 1, clientBounds.y - 1);
+					}
+				} else {
+					gc.drawLine(1, clientBounds.y - 1, bounds.width - 1, clientBounds.y - 1);
+				}
+			}
+		
+		});
+
 		populateSystemMenu(systemMenuManager);		
 	}
 
@@ -510,7 +539,7 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		String currentTitle = getCurrentTitle();
 		
-		if (!currentTitle.equals("")) {
+		if (!currentTitle.equals(Util.ZERO_LENGTH_STRING)) {
 			titleLabel.moveAbove(currentTop);
 			currentTop = titleLabel;
 			topRight.add(titleLabel);

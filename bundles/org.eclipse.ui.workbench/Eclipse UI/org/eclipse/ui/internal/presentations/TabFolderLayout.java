@@ -118,6 +118,16 @@ public class TabFolderLayout {
 	}
 	
 	/**
+	 * Returns true iff there are any trim controls being placed within the tab
+	 * folder's client area.
+	 * 
+	 * @return
+	 */
+	public boolean isAnyTrimBelow() {
+		return !isTrimOnTop() || leftAligned > 0;
+	}
+	
+	/**
 	 * Returns true iff the trim widgets were positioned on the title bar in the
 	 * last call to layout(). Returns false if the widgets were positioned within
 	 * the client area.
@@ -164,8 +174,6 @@ public class TabFolderLayout {
 		if (trimOnTop) {
 						
 			trimStart = align(leftAligned, topControls.length - leftAligned, trimRegion, true) - bounds.x;
-
-			centerArea = clientBounds;
 			
 			lastBottomControl = leftAligned;
 		}
@@ -213,6 +221,12 @@ public class TabFolderLayout {
 		
 		centerArea = new Rectangle(clientBounds.x, currentRect.y, clientBounds.width, 
 					clientBounds.height + clientBounds.y - currentRect.y);
+		
+		// Allocate space for a separator if there is any trim that didn't fit on the title bar
+		if (isAnyTrimBelow()) {
+			centerArea.y += 1;
+			centerArea.height -= 1;
+		}
 	}
 	
 	/**
