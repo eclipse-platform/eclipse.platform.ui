@@ -115,7 +115,7 @@ public class AntFoldingStructureProvider {
 		}
 	}
 
-	protected void setDocument(IDocument document) {
+	public void setDocument(IDocument document) {
 		fDocument= document;
 	}
 }

@@ -26,6 +26,7 @@ import org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
+import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
 import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
@@ -306,8 +307,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent)
 		 */
 		public void documentModelChanged(DocumentModelChangeEvent event) {
-			if (event.isPreferenceChange()) {
-				updateEditorImage();
+			if (event.getModel() == getAntModel()) {
+				if (event.isPreferenceChange()) {
+					updateEditorImage();
+				}
+				if (fFoldingStructureProvider != null) {
+					fFoldingStructureProvider.updateFoldingRegions(event.getModel());
+				}
 			}
 		}
 	};
@@ -330,12 +336,18 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	private EditorSelectionChangedListener fEditorSelectionChangedListener;
 
 	private ProjectionSupport fProjectionSupport;
+	
+	private AntFoldingStructureProvider fFoldingStructureProvider;
   
     public AntEditor() {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
 		XMLCore.getDefault().addDocumentModelListener(fDocumentModelListener);
+		
+		if (isFoldingEnabled()) {
+			fFoldingStructureProvider= new AntFoldingStructureProvider(this);
+		}
     }
 
 
@@ -521,6 +533,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		setOutlinePageInput(input);
+		if (fFoldingStructureProvider != null) {
+			fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(input));
+		}
 	}
 
 	private void setOutlinePageInput(IEditorInput input) {
@@ -666,7 +681,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer(); 
 
-        if (isFoldingEnabled()) { 
+        if (isFoldingEnabled()) {
         	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors()); 
             fProjectionSupport.install();
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);

@@ -32,11 +32,8 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 
 	private AntEditor fEditor;
 
-	private AntFoldingStructureProvider fFoldingStructureProvider;
-
 	public XMLReconcilingStrategy(AntEditor editor) {
 		fEditor= editor;
-		fFoldingStructureProvider= new AntFoldingStructureProvider(editor);
 	}
 
 	private void internalReconcile(DirtyRegion dirtyRegion) {
@@ -47,9 +44,6 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 				AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
 				if (model != null) {
 					model.reconcile(dirtyRegion);
-					if (fEditor.isFoldingEnabled()) {
-						fFoldingStructureProvider.updateFoldingRegions(model);
-					}
 				}
 			}
 		} catch (Exception e) {
@@ -82,7 +76,6 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
-		fFoldingStructureProvider.setDocument(document);
 	}
 
 	/*
