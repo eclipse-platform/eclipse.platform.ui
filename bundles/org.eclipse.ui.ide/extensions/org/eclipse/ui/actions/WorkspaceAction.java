@@ -33,10 +33,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 /**
- * The abstract superclass for actions whose only role in life is to invoke 
- * core commands on a set of selected resources.
- * When the action is run, all the work is done within a modal progress
- * dialog. It iterates over all selected resources; errors are collected and
+ * The abstract superclass for actions which invoke commands 
+ * implemented in org.eclipse.core.* on a set of selected resources.
+ * 
+ * It iterates over all selected resources; errors are collected and
  * displayed to the user via a problems dialog at the end of the operation.
  * User requests to cancel the operation are passed along to the core.
  * <p>
