@@ -101,5 +101,17 @@ public abstract class TargetProvider {
 		return true;
 	}
 	
+	/**
+	 * Answers true if the base identifier of the given resource is different to the
+	 * current released state of the resource.
+	 */
+	public abstract boolean isOutOfDate(IResource resource);
+	
+	/**
+	 * Answer if the local resource currently has a different timestamp to the
+	 * base timestamp for this resource.
+	 */
+	public abstract boolean isDirty(IResource resource);
+
 	public abstract void deregister(IProject project);
 }

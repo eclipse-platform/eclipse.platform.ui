@@ -241,11 +241,10 @@ public abstract class ResourceState {
 	 */
 	public boolean isDirty(IResource resource) {
 		if (!hasLocal())
-			return true; // by API definition.
-		File localFile = resource.getLocation().toFile();
+			return false; // by API definition.
 		if (localBaseTimestamp == EMPTY_LOCALBASETS)
 			return false; // by API definition.
-		return localBaseTimestamp != localFile.lastModified();
+		return localBaseTimestamp != resource.getModificationStamp();
 	}
 
 	/**

@@ -108,6 +108,12 @@
             id="org.eclipse.team.target.putAction"
             label="Put">
       </action>
+      <action      
+            menubarPath="team.target/group1"
+            class="org.eclipse.team.internal.ui.target.SyncAction"
+            id="org.eclipse.team.target.SyncAction"
+            label="Synchronize with Target...">
+      </action>
 	</objectContribution>	
 	
     <objectContribution
@@ -138,7 +144,7 @@
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
-	<!--
+
 	<category 
 		id="org.eclipse.team.ui.target"
 		name="Deployment">
@@ -151,7 +157,7 @@
             class="org.eclipse.team.internal.ui.target.SiteExplorerView"
             id="org.eclipse.team.ui.target.SiteExplorerView">
       </view>
-      -->
+
 </extension>	
 
 <!-- ****************** Import Wizards ********************* -->
