@@ -207,6 +207,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		super.shutdown();
 		disposeImages();
 	}
 
