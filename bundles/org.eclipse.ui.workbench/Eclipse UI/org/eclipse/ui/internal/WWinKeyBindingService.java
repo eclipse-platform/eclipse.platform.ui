@@ -21,9 +21,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.GC;
@@ -36,11 +38,10 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.KeyBindingMatch;
-import org.eclipse.ui.internal.commands.Machine;
-import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
+import org.eclipse.ui.internal.commands.Machine;
+import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -107,34 +108,34 @@ public class WWinKeyBindingService {
 	}
 	
 	public void pressed(KeyStroke keyStroke, Event event) { 
-		//System.out.println("pressed(" + keyStroke.getAccelerator() + ")");
 		Manager keyManager = Manager.getInstance();
-		Machine keyMachine = keyManager.getKeyMachine();
-		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
-		KeySequence mode = keyMachine.getMode();
-		List keyStrokes = new ArrayList(mode.getKeyStrokes());
-		keyStrokes.add(keyStroke);
-		KeySequence keySequence = KeySequence.create(keyStrokes);
-		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
+		Machine keyMachine = keyManager.getKeyMachine();		
 		
-		if (matchSet != null && matchSet.size() == 1) {
+		KeySequence mode = keyMachine.getMode();			
+		
+		List keyStrokes = new ArrayList(keyMachine.getMode().getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		KeySequence childMode = KeySequence.create(keyStrokes);
+		
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();		
+		
+		keyMachine.setMode(childMode);
+		Map childKeySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+
+		if (childKeySequenceMapForMode.isEmpty()) {
 			clear();
-			KeyBindingMatch match = (KeyBindingMatch) matchSet.iterator().next();				
-			invoke(match.getKeyBinding().getCommand(), event);					
-		} else {
-			keyMachine.setMode(keySequence);
-			setStatusLineMessage(keySequence);
-			keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
-			
-			if (keySequenceMapForMode.isEmpty())
-				clear();	
-			else
-				updateAccelerators();
+			String command = (String) keySequenceMapForMode.get(childMode);
+
+			if (command != null)
+				invoke(command, event);					
+		}
+		else {
+			setStatusLineMessage(childMode);
+			updateAccelerators();
 		}
 	}
 
 	public void invoke(String action, Event event) {		
-		//System.out.println("invoke(" + action + ")");
 		if (activeService != null) {
 			IAction a = activeService.getAction(action);
 			
@@ -296,22 +297,15 @@ public class WWinKeyBindingService {
     public String getDefinitionId(int accelerator) {
     	if (activeService == null) 
     		return null;
-
+ 
 		Manager keyManager = Manager.getInstance();
 		Machine keyMachine = keyManager.getKeyMachine();        
 		KeySequence mode = keyMachine.getMode();
 		List keyStrokes = new ArrayList(mode.getKeyStrokes());
 		keyStrokes.add(KeyStroke.create(accelerator));
-    	KeySequence keySequence = KeySequence.create(keyStrokes);    		
+		KeySequence childMode = KeySequence.create(keyStrokes);    		
 		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
-		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
-
-		if (matchSet != null && matchSet.size() == 1) {
-			KeyBindingMatch match = (KeyBindingMatch) matchSet.iterator().next();				
-			return match.getKeyBinding().getCommand();
-		}
-		
-		return null;
+		return (String) keySequenceMapForMode.get(childMode);
     }
 
 	/**

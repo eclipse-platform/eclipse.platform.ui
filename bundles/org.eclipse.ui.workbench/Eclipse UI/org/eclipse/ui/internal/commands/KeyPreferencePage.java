@@ -256,17 +256,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private List coreActiveKeyConfigurations;
 	private List coreKeyBindings;
 	private List coreKeyConfigurations;
-	private List coreRegionalKeyBindings;
 
 	private List localActiveKeyConfigurations;
 	private List localKeyBindings;
 	private List localKeyConfigurations;
-	private List localRegionalKeyBindings;
 
 	private List preferenceActiveKeyConfigurations;
 	private List preferenceKeyBindings;
 	private List preferenceKeyConfigurations;
-	private List preferenceRegionalKeyBindings;
 
 	private ActiveKeyConfiguration activeKeyConfiguration;	
 	private List activeKeyConfigurations;
@@ -296,7 +293,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
 		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
 		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
-		preferenceRegionalKeyBindings = new ArrayList(preferenceRegistry.getRegionalKeyBindings());
 	}
 
 	public boolean performOk() {
@@ -305,7 +301,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		preferenceRegistry.setActiveKeyConfigurations(preferenceActiveKeyConfigurations);
 		preferenceRegistry.setKeyBindings(preferenceKeyBindings);
 		preferenceRegistry.setKeyConfigurations(preferenceKeyConfigurations);
-		preferenceRegistry.setRegionalKeyBindings(preferenceRegionalKeyBindings);
 		
 		try {
 			preferenceRegistry.save();
@@ -399,12 +394,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			coreActiveKeyConfigurations = new ArrayList(coreRegistry.getActiveKeyConfigurations());
 			coreKeyBindings = new ArrayList(coreRegistry.getKeyBindings());
 			coreKeyConfigurations = new ArrayList(coreRegistry.getKeyConfigurations());
-			coreRegionalKeyBindings = new ArrayList(coreRegistry.getRegionalKeyBindings());
 
 			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
 			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
 			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
-			localRegionalKeyBindings = new ArrayList(localRegistry.getRegionalKeyBindings());
 	
 			copyToUI();
 			update();
@@ -432,7 +425,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			preferenceActiveKeyConfigurations = new ArrayList();
 			preferenceKeyBindings = new ArrayList();
 			preferenceKeyConfigurations = new ArrayList();
-			preferenceRegionalKeyBindings = new ArrayList();
 			copyToUI();
 		}
 	}
@@ -449,7 +441,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		preferenceKeyBindings = new ArrayList(solve(tree));
-		preferenceRegionalKeyBindings = new ArrayList();
 	}
 
 	private void copyToUI() {	
@@ -494,23 +485,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			comboActiveKeyConfiguration.deselectAll();
 		}
 
-		SortedSet coreKeyBindingSet = new TreeSet();
-		coreKeyBindingSet.addAll(coreKeyBindings);		
-		coreKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(coreRegionalKeyBindings, state));
-
-		SortedSet localKeyBindingSet = new TreeSet();
-		localKeyBindingSet.addAll(localKeyBindings);			
-		localKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(localRegionalKeyBindings, state));
-
-		SortedSet preferenceKeyBindingSet = new TreeSet();
-		preferenceKeyBindingSet.addAll(preferenceKeyBindings);			
-		preferenceKeyBindingSet.addAll(Manager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindings, state));
-
 		tree = new TreeMap();
 		SortedSet keyBindingSet = new TreeSet();
-		keyBindingSet.addAll(coreKeyBindingSet);
-		keyBindingSet.addAll(localKeyBindingSet);
-		keyBindingSet.addAll(preferenceKeyBindingSet);
+		keyBindingSet.addAll(coreKeyBindings);
+		keyBindingSet.addAll(localKeyBindings);
+		keyBindingSet.addAll(preferenceKeyBindings);
 		Iterator iterator = keyBindingSet.iterator();
 		
 		while (iterator.hasNext()) {
@@ -1000,12 +979,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			CommandRecord commandRecord = getSelectedCommandRecord();
 		
 			if (commandRecord == null)
-				set(tree, KeyBinding.create(commandId, keyConfigurationId, keySequence, null, 0, scopeId), true);			 
+				set(tree, KeyBinding.create(commandId, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
 			else {
 				if (!commandRecord.customSet.isEmpty())
 					clear(tree, keySequence, scopeId, keyConfigurationId);
 				else
-					set(tree, KeyBinding.create(null, keyConfigurationId, keySequence, null, 0, scopeId), true);			 
+					set(tree, KeyBinding.create(null, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
 			}
 
 			commandRecords.clear();

@@ -30,14 +30,16 @@ public final class Machine {
 
 	private Map commandMap;
 	private Map commandMapForMode;
+	
 	private SortedSet keyBindingSet;
 	private String keyConfiguration;
 	private SortedMap keyConfigurationMap;
-	private Map keySequenceMap;
-	private Map keySequenceMapForMode;
-	private SortedSet matchSet;	
-	private SortedSet matchSetForMode;
+	
+	private SortedMap keySequenceMap;
+	private SortedMap keySequenceMapForMode;
+
 	private KeySequence mode;
+	
 	private SortedMap scopeMap;
 	private String[] scopes;
 	private boolean solved;
@@ -53,16 +55,25 @@ public final class Machine {
 		mode = KeySequence.create();	
 	}
 
-	public Map getActionMap() {
-		if (commandMap == null)
-			commandMap = Collections.unmodifiableMap(KeyNode.toActionMap(getMatchSet()));				
+	public Map getCommandMap() {
+		if (commandMap == null) {
+			solve();
+			commandMap = Collections.unmodifiableMap(KeyNode.toCommandMap(getKeySequenceMap()));				
+		}
 		
 		return commandMap;
 	}
 	
-	public Map getActionMapForMode() {
-		if (commandMapForMode == null)
-			commandMapForMode = Collections.unmodifiableMap(KeyNode.toActionMap(getMatchSetForMode()));				
+	public Map getCommandMapForMode() {
+		if (commandMapForMode == null) {
+			solve();
+			SortedMap tree = KeyNode.find(this.tree, mode);
+	
+			if (tree == null)
+				tree = new TreeMap();
+
+			commandMapForMode = Collections.unmodifiableMap(KeyNode.toCommandMap(getKeySequenceMapForMode()));				
+		}
 		
 		return commandMapForMode;
 	}
@@ -79,47 +90,27 @@ public final class Machine {
 		return keyConfigurationMap;	
 	}
 
-	public Map getKeySequenceMap() {
-		if (keySequenceMap == null)
-			keySequenceMap = Collections.unmodifiableMap(KeyNode.toKeySequenceMap(getMatchSet()));				
+	public SortedMap getKeySequenceMap() {
+		if (keySequenceMap == null) {
+			solve();
+			keySequenceMap = Collections.unmodifiableSortedMap(KeyNode.toKeySequenceMap(tree, KeySequence.create()));				
+		}
 		
 		return keySequenceMap;
 	}
 
-	public Map getKeySequenceMapForMode() {
-		if (keySequenceMapForMode == null)
-			keySequenceMapForMode = Collections.unmodifiableMap(KeyNode.toKeySequenceMap(getMatchSetForMode()));				
+	public SortedMap getKeySequenceMapForMode() {
+		if (keySequenceMapForMode == null) {
+			solve();
+			SortedMap tree = KeyNode.find(this.tree, mode);
+	
+			if (tree == null)
+				tree = new TreeMap();
+							
+			keySequenceMapForMode = Collections.unmodifiableSortedMap(KeyNode.toKeySequenceMap(tree, mode));				
+		}
 		
 		return keySequenceMapForMode;
-	}
-
-	public SortedSet getMatchSet() {
-		if (matchSet == null) {
-			solve();
-			SortedSet matchSet = new TreeSet();			
-			KeyNode.toMatchSet(tree, matchSet);
-			this.matchSet = Collections.unmodifiableSortedSet(matchSet);
-		}
-		
-		return matchSet;
-	}
-
-	public SortedSet getMatchSetForMode() {
-		if (matchSetForMode == null) {
-			SortedSet matchSetForMode = new TreeSet();
-			Iterator iterator = getMatchSet().iterator();
-			
-			while (iterator.hasNext()) {
-				KeyBindingMatch keyBindingMatch = (KeyBindingMatch) iterator.next();
-
-				if (keyBindingMatch.getKeyBinding().getKeySequence().isChildOf(mode, false))
-					matchSetForMode.add(keyBindingMatch);				
-			}
-
-			this.matchSetForMode = Collections.unmodifiableSortedSet(matchSetForMode);
-		}
-		
-		return matchSetForMode;
 	}
 
 	public KeySequence getMode() {
@@ -246,7 +237,7 @@ public final class Machine {
 
 	private void build() {
 		if (tree == null) {		
-			tree = new TreeMap();		
+			tree = new TreeMap();
 			Iterator iterator = keyBindingSet.iterator();
 		
 			while (iterator.hasNext()) {
@@ -260,11 +251,16 @@ public final class Machine {
 					
 				if (keyConfiguration == null)
 					continue;
-	
-				List listPaths = new ArrayList();
-				listPaths.add(scope);
-				listPaths.add(keyConfiguration);					
-				KeyNode.add(tree, keyBinding, State.create(listPaths));
+
+				List pathItems = new ArrayList();
+				pathItems.add(scope);
+				pathItems.add(keyConfiguration);
+				State scopeKeyConfiguration = State.create(pathItems);						
+				pathItems = new ArrayList();
+				pathItems.add(Manager.pathForPlatform(keyBinding.getPlatform()));
+				pathItems.add(Manager.pathForLocale(keyBinding.getLocale()));
+				State platformLocale = State.create(pathItems);		
+				KeyNode.add(tree, keyBinding, scopeKeyConfiguration, platformLocale);
 			}
 		}
 	}
@@ -272,14 +268,12 @@ public final class Machine {
 	private void invalidateMode() {
 		commandMapForMode = null;
 		keySequenceMapForMode = null;
-		matchSetForMode = null;
 	}
 
 	private void invalidateSolution() {
 		solved = false;
 		commandMap = null;	
 		keySequenceMap = null;
-		matchSet = null;
 		invalidateMode();
 	}
 	
@@ -291,7 +285,7 @@ public final class Machine {
 	private void solve() {
 		if (!solved) {
 			build();
-			State[] states = new State[scopes.length];
+			State[] scopeKeyConfigurations = new State[scopes.length];
 			Path keyConfiguration = (Path) keyConfigurationMap.get(this.keyConfiguration);
 			
 			if (keyConfiguration == null)
@@ -303,13 +297,17 @@ public final class Machine {
 				if (scope == null)
 					scope = Path.create();
 
-				List paths = new ArrayList();
-				paths.add(scope);			
-				paths.add(keyConfiguration);					
-				states[i] = State.create(paths);
+				List pathItems = new ArrayList();
+				pathItems.add(scope);
+				pathItems.add(keyConfiguration);		
+				scopeKeyConfigurations[i] = State.create(pathItems);
 			}
 			
-			KeyNode.solve(tree, states);
+			List pathItems = new ArrayList();
+			pathItems.add(Manager.systemPlatform());
+			pathItems.add(Manager.systemLocale());
+			State platformLocale = State.create(pathItems);			
+			KeyNode.solve(tree, scopeKeyConfigurations, new State[] { platformLocale } );
 			solved = true;
 		}
 	}

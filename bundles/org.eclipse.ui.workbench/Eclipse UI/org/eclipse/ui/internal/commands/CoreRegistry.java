@@ -42,6 +42,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		private final static String DEPRECATED_TAG_CONFIGURATION_ID = "configurationId"; //$NON-NLS-1$		
 		private final static String DEPRECATED_TAG_KEY = "key"; //$NON-NLS-1$
 		private final static String DEPRECATED_TAG_SCOPE_ID = "scopeId"; //$NON-NLS-1$	
+		private final static int RANK_CORE = 2;
 		private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 		
 		private List activeGestureConfigurations;
@@ -53,8 +54,6 @@ public final class CoreRegistry extends AbstractRegistry {
 		private List keyBindings;
 		private String keyConfiguration;
 		private List keyConfigurations;
-		private List regionalGestureBindings;
-		private List regionalKeyBindings;
 		private String scope;
 		private List scopes;
 	
@@ -68,8 +67,6 @@ public final class CoreRegistry extends AbstractRegistry {
 			gestureConfigurations = new ArrayList();
 			keyBindings = new ArrayList();
 			keyConfigurations = new ArrayList();
-			regionalGestureBindings = new ArrayList();
-			regionalKeyBindings = new ArrayList();
 			scopes = new ArrayList();
 
 			if (pluginRegistry != null) {
@@ -88,8 +85,6 @@ public final class CoreRegistry extends AbstractRegistry {
 			CoreRegistry.this.gestureConfigurations = Collections.unmodifiableList(gestureConfigurations);
 			CoreRegistry.this.keyBindings = Collections.unmodifiableList(keyBindings);
 			CoreRegistry.this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
-			CoreRegistry.this.regionalGestureBindings = Collections.unmodifiableList(regionalGestureBindings);
-			CoreRegistry.this.regionalKeyBindings = Collections.unmodifiableList(regionalKeyBindings);
 			CoreRegistry.this.scopes = Collections.unmodifiableList(scopes);
 		}
 
@@ -172,12 +167,6 @@ public final class CoreRegistry extends AbstractRegistry {
 
 			if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
 				return readKeyConfiguration(element);
-
-			if (Persistence.TAG_REGIONAL_GESTURE_BINDING.equals(name))
-				return readRegionalGestureBinding(element);
-
-			if (Persistence.TAG_REGIONAL_KEY_BINDING.equals(name))
-				return readRegionalKeyBinding(element);
 
 			if (Persistence.TAG_SCOPE.equals(name))
 				return readScope(element);
@@ -275,8 +264,7 @@ public final class CoreRegistry extends AbstractRegistry {
 				
 					while (iterator.hasNext()) {
 						KeySequence keySequence = (KeySequence) iterator.next();			
-						KeyBinding keyBinding = KeyBinding.create(id, keyConfiguration, keySequence, plugin, 0, scope);	
-						regionalKeyBindings.add(RegionalKeyBinding.create(keyBinding, locale, platform));
+						keyBindings.add(KeyBinding.create(id, keyConfiguration, keySequence, locale, platform, plugin, 0, scope));	
 					}
 				}
 			}
@@ -297,7 +285,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}	
 
 		private boolean readGestureBinding(IConfigurationElement element) {
-			GestureBinding gestureBinding = Persistence.readGestureBinding(ConfigurationElementMemento.create(element), getPlugin(element));
+			GestureBinding gestureBinding = Persistence.readGestureBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (gestureBinding != null)
 				gestureBindings.add(gestureBinding);
@@ -315,7 +303,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readKeyBinding(IConfigurationElement element) {
-			KeyBinding keyBinding = Persistence.readKeyBinding(ConfigurationElementMemento.create(element), getPlugin(element));
+			KeyBinding keyBinding = Persistence.readKeyBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (keyBinding != null)
 				keyBindings.add(keyBinding);
@@ -329,24 +317,6 @@ public final class CoreRegistry extends AbstractRegistry {
 			if (keyConfiguration != null)
 				keyConfigurations.add(keyConfiguration);	
 			
-			return true;
-		}
-
-		private boolean readRegionalGestureBinding(IConfigurationElement element) {
-			RegionalGestureBinding regionalGestureBinding = Persistence.readRegionalGestureBinding(ConfigurationElementMemento.create(element), getPlugin(element));
-
-			if (regionalGestureBinding != null)
-				regionalGestureBindings.add(regionalGestureBinding);
-
-			return true;
-		}
-
-		private boolean readRegionalKeyBinding(IConfigurationElement element) {
-			RegionalKeyBinding regionalKeyBinding = Persistence.readRegionalKeyBinding(ConfigurationElementMemento.create(element), getPlugin(element));
-
-			if (regionalKeyBinding != null)
-				regionalKeyBindings.add(regionalKeyBinding);
-
 			return true;
 		}
 

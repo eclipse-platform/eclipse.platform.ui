@@ -16,28 +16,32 @@ public final class GestureBinding implements Comparable {
 	private final static int HASH_INITIAL = 37;
 	private final static int HASH_FACTOR = 47;
 	
-	public static GestureBinding create(String command, String gestureConfiguration, GestureSequence gestureSequence, String plugin, int rank, String scope)
+	public static GestureBinding create(String command, String gestureConfiguration, GestureSequence gestureSequence, String locale, String platform, String plugin, int rank, String scope)
 		throws IllegalArgumentException {
-		return new GestureBinding(command, gestureConfiguration, gestureSequence, plugin, rank, scope);
+		return new GestureBinding(command, gestureConfiguration, gestureSequence, locale, platform, plugin, rank, scope);
 	}
 
 	private String command;
 	private String gestureConfiguration;
 	private GestureSequence gestureSequence;
+	private String locale;
+	private String platform;	
 	private String plugin;
 	private int rank;
 	private String scope;
 
-	private GestureBinding(String command, String gestureConfiguration, GestureSequence gestureSequence, String plugin, int rank, String scope)
+	private GestureBinding(String command, String gestureConfiguration, GestureSequence gestureSequence, String locale, String platform, String plugin, int rank, String scope)
 		throws IllegalArgumentException {
 		super();
 		
-		if (gestureConfiguration == null || gestureSequence == null || gestureSequence.getGestureStrokes().size() == 0 || rank < 0 || scope == null)
+		if (gestureConfiguration == null || gestureSequence == null || locale == null || platform == null || gestureSequence.getGestureStrokes().size() == 0 || rank < 0 || scope == null)
 			throw new IllegalArgumentException();	
 		
 		this.command = command;	
 		this.gestureConfiguration = gestureConfiguration;
 		this.gestureSequence = gestureSequence;
+		this.locale = locale;
+		this.platform = platform;
 		this.plugin = plugin;
 		this.rank = rank;
 		this.scope = scope;
@@ -54,13 +58,21 @@ public final class GestureBinding implements Comparable {
 				compareTo = gestureSequence.compareTo(gestureBinding.gestureSequence);
 
 				if (compareTo == 0) {		
-					compareTo = Util.compare(plugin, gestureBinding.plugin);
+					compareTo = locale.compareTo(gestureBinding.locale);
 
-					if (compareTo == 0) {
-						compareTo = rank - gestureBinding.rank;
+					if (compareTo == 0) {		
+						compareTo = platform.compareTo(gestureBinding.platform);
 
-						if (compareTo == 0)
-							compareTo = scope.compareTo(gestureBinding.scope);
+						if (compareTo == 0) {		
+							compareTo = Util.compare(plugin, gestureBinding.plugin);
+		
+							if (compareTo == 0) {
+								compareTo = rank - gestureBinding.rank;
+		
+								if (compareTo == 0)
+									compareTo = scope.compareTo(gestureBinding.scope);
+							}
+						}
 					}
 				}
 			}
@@ -74,8 +86,9 @@ public final class GestureBinding implements Comparable {
 			return false;
 		
 		GestureBinding gestureBinding = (GestureBinding) object;
-		return Util.equals(command, gestureBinding.command) && gestureConfiguration.equals(gestureBinding.gestureConfiguration) && gestureSequence.equals(gestureBinding.gestureSequence) && 
-			Util.equals(plugin, gestureBinding.plugin) && rank == gestureBinding.rank && scope.equals(gestureBinding.scope);
+		return Util.equals(command, gestureBinding.command) && gestureConfiguration.equals(gestureBinding.gestureConfiguration) && gestureSequence.equals(gestureBinding.gestureSequence) &&
+			locale.equals(gestureBinding.locale) && platform.equals(gestureBinding.platform) && Util.equals(plugin, gestureBinding.plugin) && rank == gestureBinding.rank && 
+			scope.equals(gestureBinding.scope);
 	}
 
 	public String getCommand() {
@@ -88,6 +101,14 @@ public final class GestureBinding implements Comparable {
 	
 	public GestureSequence getGestureSequence() {
 		return gestureSequence;	
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+	
+	public String getPlatform() {
+		return platform;
 	}
 
 	public String getPlugin() {
@@ -107,6 +128,8 @@ public final class GestureBinding implements Comparable {
 		result = result * HASH_FACTOR + Util.hashCode(command);		
 		result = result * HASH_FACTOR + gestureConfiguration.hashCode();
 		result = result * HASH_FACTOR + gestureSequence.hashCode();		
+		result = result * HASH_FACTOR + locale.hashCode();
+		result = result * HASH_FACTOR + platform.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(plugin);	
 		result = result * HASH_FACTOR + rank;	
 		result = result * HASH_FACTOR + scope.hashCode();

@@ -63,16 +63,6 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 		this.keyConfigurations = Util.safeCopy(keyConfigurations, KeyConfiguration.class);		
 	}
 	
-	public void setRegionalGestureBindings(List regionalGestureBindings)
-		throws IllegalArgumentException {
-		this.regionalGestureBindings = Util.safeCopy(regionalGestureBindings, RegionalGestureBinding.class);	
-	}
-	
-	public void setRegionalKeyBindings(List regionalKeyBindings)
-		throws IllegalArgumentException {
-		this.regionalKeyBindings = Util.safeCopy(regionalKeyBindings, RegionalKeyBinding.class);	
-	}
-	
 	public void setScopes(List scopes)
 		throws IllegalArgumentException {
 		this.scopes = Util.safeCopy(scopes, Scope.class);	

@@ -42,8 +42,6 @@ final class Persistence {
 	final static String TAG_PARENT = "parent"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$		
 	final static String TAG_PLUGIN = "plugin"; //$NON-NLS-1$
-	final static String TAG_REGIONAL_GESTURE_BINDING = "regionalGestureBinding"; //$NON-NLS-1$
-	final static String TAG_REGIONAL_KEY_BINDING = "regionalKeyBinding"; //$NON-NLS-1$
 	final static String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	final static String TAG_VALUE = "value"; //$NON-NLS-1$
 	final static Integer ZERO = new Integer(0);
@@ -192,7 +190,7 @@ final class Persistence {
 		return list;				
 	}
 
-	static GestureBinding readGestureBinding(IMemento memento, String pluginOverride)
+	static GestureBinding readGestureBinding(IMemento memento, String pluginOverride, int rank)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -220,6 +218,16 @@ final class Persistence {
 		
 		if (gestureSequence == null)
 			gestureSequence = ZERO_LENGTH_GESTURE_SEQUENCE;
+
+		String locale = memento.getString(TAG_LOCALE);
+
+		if (locale == null)
+			locale = ZERO_LENGTH_STRING;
+
+		String platform = memento.getString(TAG_PLATFORM);
+
+		if (platform == null)
+			platform = ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
 		String scope = memento.getString(TAG_SCOPE);
@@ -227,10 +235,10 @@ final class Persistence {
 		if (scope == null)
 			scope = ZERO_LENGTH_STRING;
 
-		return GestureBinding.create(command, gestureConfiguration, gestureSequence, plugin, 0, scope);
+		return GestureBinding.create(command, gestureConfiguration, gestureSequence, locale, platform, plugin, rank, scope);
 	}
 
-	static List readGestureBindings(IMemento memento, String name, String pluginOverride)
+	static List readGestureBindings(IMemento memento, String name, String pluginOverride, int rank)
 		throws IllegalArgumentException {		
 		if (memento == null || name == null)
 			throw new IllegalArgumentException();			
@@ -243,7 +251,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readGestureBinding(mementos[i], pluginOverride));
+			list.add(readGestureBinding(mementos[i], pluginOverride, rank));
 	
 		return list;				
 	}
@@ -318,7 +326,7 @@ final class Persistence {
 		return GestureStroke.create(value.intValue());
 	}
 
-	static KeyBinding readKeyBinding(IMemento memento, String pluginOverride)
+	static KeyBinding readKeyBinding(IMemento memento, String pluginOverride, int rank)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -346,6 +354,16 @@ final class Persistence {
 		
 		if (keySequence == null)
 			keySequence = ZERO_LENGTH_KEY_SEQUENCE;
+
+		String locale = memento.getString(TAG_LOCALE);
+	
+		if (locale == null)
+			locale = ZERO_LENGTH_STRING;
+
+		String platform = memento.getString(TAG_PLATFORM);
+
+		if (platform == null)
+			platform = ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
 		String scope = memento.getString(TAG_SCOPE);
@@ -353,10 +371,10 @@ final class Persistence {
 		if (scope == null)
 			scope = ZERO_LENGTH_STRING;
 
-		return KeyBinding.create(command, keyConfiguration, keySequence, plugin, 0, scope);
+		return KeyBinding.create(command, keyConfiguration, keySequence, locale, platform, plugin, rank, scope);
 	}
 
-	static List readKeyBindings(IMemento memento, String name, String pluginOverride)
+	static List readKeyBindings(IMemento memento, String name, String pluginOverride, int rank)
 		throws IllegalArgumentException {		
 		if (memento == null || name == null)
 			throw new IllegalArgumentException();			
@@ -369,7 +387,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readKeyBinding(mementos[i], pluginOverride));
+			list.add(readKeyBinding(mementos[i], pluginOverride, rank));
 	
 		return list;				
 	}
@@ -442,94 +460,6 @@ final class Persistence {
 			value = ZERO;
 		
 		return KeyStroke.create(value.intValue());
-	}
-
-	static RegionalGestureBinding readRegionalGestureBinding(IMemento memento, String pluginOverride)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-
-		IMemento mementoGestureBinding = memento.getChild(TAG_GESTURE_BINDING);
-		GestureBinding gestureBinding = null;
-		
-		if (mementoGestureBinding == null)
-			gestureBinding = GestureBinding.create(null, ZERO_LENGTH_STRING, ZERO_LENGTH_GESTURE_SEQUENCE, null, 0, ZERO_LENGTH_STRING);
-		else
-			gestureBinding = readGestureBinding(mementoGestureBinding, pluginOverride);	
-
-		String locale = memento.getString(TAG_LOCALE);
-	
-		if (locale == null)
-			locale = ZERO_LENGTH_STRING;
-
-		String platform = memento.getString(TAG_PLATFORM);
-
-		if (platform == null)
-			platform = ZERO_LENGTH_STRING;
-
-		return RegionalGestureBinding.create(gestureBinding, locale, platform);
-	}
-
-	static List readRegionalGestureBindings(IMemento memento, String name, String pluginOverride)
-		throws IllegalArgumentException {		
-		if (memento == null || name == null)
-			throw new IllegalArgumentException();			
-	
-		IMemento[] mementos = memento.getChildren(name);
-	
-		if (mementos == null)
-			throw new IllegalArgumentException();
-	
-		List list = new ArrayList(mementos.length);
-	
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readRegionalGestureBinding(mementos[i], pluginOverride));
-	
-		return list;				
-	}
-
-	static RegionalKeyBinding readRegionalKeyBinding(IMemento memento, String pluginOverride)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-
-		IMemento mementoKeyBinding = memento.getChild(TAG_KEY_BINDING);
-		KeyBinding keyBinding = null;
-		
-		if (mementoKeyBinding == null)
-			keyBinding = KeyBinding.create(null, ZERO_LENGTH_STRING, ZERO_LENGTH_KEY_SEQUENCE, null, 0, ZERO_LENGTH_STRING);
-		else
-			keyBinding = readKeyBinding(mementoKeyBinding, pluginOverride);	
-
-		String locale = memento.getString(TAG_LOCALE);
-	
-		if (locale == null)
-			locale = ZERO_LENGTH_STRING;
-
-		String platform = memento.getString(TAG_PLATFORM);
-
-		if (platform == null)
-			platform = ZERO_LENGTH_STRING;
-
-		return RegionalKeyBinding.create(keyBinding, locale, platform);
-	}
-
-	static List readRegionalKeyBindings(IMemento memento, String name, String pluginOverride)
-		throws IllegalArgumentException {		
-		if (memento == null || name == null)
-			throw new IllegalArgumentException();			
-	
-		IMemento[] mementos = memento.getChildren(name);
-	
-		if (mementos == null)
-			throw new IllegalArgumentException();
-	
-		List list = new ArrayList(mementos.length);
-	
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readRegionalKeyBinding(mementos[i], pluginOverride));
-	
-		return list;				
 	}
 
 	static Scope readScope(IMemento memento, String pluginOverride)
@@ -692,6 +622,8 @@ final class Persistence {
 		memento.putString(TAG_COMMAND, gestureBinding.getCommand());
 		memento.putString(TAG_GESTURE_CONFIGURATION, gestureBinding.getGestureConfiguration());
 		writeGestureSequence(memento.createChild(TAG_GESTURE_SEQUENCE), gestureBinding.getGestureSequence());		
+		memento.putString(TAG_LOCALE, gestureBinding.getLocale());
+		memento.putString(TAG_PLATFORM, gestureBinding.getPlatform());
 		memento.putString(TAG_PLUGIN, gestureBinding.getPlugin());
 		memento.putString(TAG_SCOPE, gestureBinding.getScope());
 	}	
@@ -771,6 +703,8 @@ final class Persistence {
 		memento.putString(TAG_COMMAND, keyBinding.getCommand());
 		memento.putString(TAG_KEY_CONFIGURATION, keyBinding.getKeyConfiguration());
 		writeKeySequence(memento.createChild(TAG_KEY_SEQUENCE), keyBinding.getKeySequence());		
+		memento.putString(TAG_LOCALE, keyBinding.getLocale());
+		memento.putString(TAG_PLATFORM, keyBinding.getPlatform());
 		memento.putString(TAG_PLUGIN, keyBinding.getPlugin());
 		memento.putString(TAG_SCOPE, keyBinding.getScope());
 	}	
@@ -840,62 +774,6 @@ final class Persistence {
 			throw new IllegalArgumentException();
 			
 		memento.putInteger(TAG_VALUE, keyStroke.getValue());
-	}
-
-	static void writeRegionalGestureBinding(IMemento memento, RegionalGestureBinding regionalGestureBinding)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-
-		writeGestureBinding(memento.createChild(TAG_GESTURE_BINDING), regionalGestureBinding.getGestureBinding());
-		memento.putString(TAG_LOCALE, regionalGestureBinding.getLocale());
-		memento.putString(TAG_PLATFORM, regionalGestureBinding.getPlatform());
-	}
-
-	static void writeRegionalGestureBindings(IMemento memento, String name, List regionalGestureBindings)
-		throws IllegalArgumentException {
-		if (memento == null || name == null || regionalGestureBindings == null)
-			throw new IllegalArgumentException();
-		
-		regionalGestureBindings = new ArrayList(regionalGestureBindings);
-		Iterator iterator = regionalGestureBindings.iterator();
-		
-		while (iterator.hasNext()) 
-			if (!(iterator.next() instanceof RegionalGestureBinding))
-				throw new IllegalArgumentException();
-
-		iterator = regionalGestureBindings.iterator();
-
-		while (iterator.hasNext()) 
-			writeRegionalGestureBinding(memento.createChild(name), (RegionalGestureBinding) iterator.next());
-	}
-
-	static void writeRegionalKeyBinding(IMemento memento, RegionalKeyBinding regionalKeyBinding)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-
-		writeKeyBinding(memento.createChild(TAG_KEY_BINDING), regionalKeyBinding.getKeyBinding());
-		memento.putString(TAG_LOCALE, regionalKeyBinding.getLocale());
-		memento.putString(TAG_PLATFORM, regionalKeyBinding.getPlatform());
-	}
-
-	static void writeRegionalKeyBindings(IMemento memento, String name, List regionalKeyBindings)
-		throws IllegalArgumentException {
-		if (memento == null || name == null || regionalKeyBindings == null)
-			throw new IllegalArgumentException();
-		
-		regionalKeyBindings = new ArrayList(regionalKeyBindings);
-		Iterator iterator = regionalKeyBindings.iterator();
-		
-		while (iterator.hasNext()) 
-			if (!(iterator.next() instanceof RegionalKeyBinding))
-				throw new IllegalArgumentException();
-
-		iterator = regionalKeyBindings.iterator();
-
-		while (iterator.hasNext()) 
-			writeRegionalKeyBinding(memento.createChild(name), (RegionalKeyBinding) iterator.next());
 	}
 
 	static void writeScope(IMemento memento, Scope scope)

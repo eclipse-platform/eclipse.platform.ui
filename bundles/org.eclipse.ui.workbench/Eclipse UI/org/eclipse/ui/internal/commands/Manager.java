@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -146,7 +145,7 @@ public class Manager {
 		return path;			
 	}
 
-	private static Path pathForLocale(String locale) {
+	static Path pathForLocale(String locale) {
 		Path path = null;
 
 		if (locale != null) {
@@ -170,7 +169,7 @@ public class Manager {
 		return path;		
 	}
 
-	private static Path pathForPlatform(String platform) {
+	static Path pathForPlatform(String platform) {
 		Path path = null;
 
 		if (platform != null) {
@@ -211,8 +210,9 @@ public class Manager {
 		return path;			
 	}	
 
-	static SortedSet solveRegionalKeyBindingSet(Collection regionalKeyBindingSet, State state) {
-		
+	/*
+	static SortedSet solveRegionalKeyBindings(Collection regionalKeyBindings, State state) {
+
 		class Key implements Comparable {		
 		
 			private final static int HASH_INITIAL = 17;
@@ -254,7 +254,7 @@ public class Manager {
 		}
 
 		Map map = new TreeMap();
-		Iterator iterator = regionalKeyBindingSet.iterator();
+		Iterator iterator = regionalKeyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			RegionalKeyBinding regionalKeyBinding = (RegionalKeyBinding) iterator.next();
@@ -316,6 +316,7 @@ public class Manager {
 
 		return keyBindingSet;
 	}
+	*/
 
 	/*
 	private SortedSet solveRegionalBindingSet(SortedSet regionalBindingSet, State[] states) {
@@ -364,23 +365,19 @@ public class Manager {
 		return keyMachine;
 	}
 
-	public String getTextForAction(String action)
+	public String getTextForAction(String command)
 		throws IllegalArgumentException {
-		if (action == null)
+		if (command == null)
 			throw new IllegalArgumentException();					
 
 		String text = null;
-		Map actionMap = getKeyMachine().getActionMap();		
-		SortedSet matchSet = (SortedSet) actionMap.get(action);
+		Map commandMap = getKeyMachine().getCommandMap();
+		SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
 		
-		if (matchSet != null && !matchSet.isEmpty()) {
-			KeyBindingMatch match = (KeyBindingMatch) matchSet.first();
+		if (keySequenceSet != null && !keySequenceSet.isEmpty())
+			text = ((KeySequence) keySequenceSet.first()).toString();
 		
-			if (match != null)
-				text = match.getKeyBinding().getKeySequence().toString();
-		}
-		
-		return text;
+		return text != null ? text : ""; //$NON-NLS-1$
 	}
 
 	public void update() {
@@ -421,22 +418,11 @@ public class Manager {
 		registryScopes.addAll(preferenceRegistry.getScopes());
 		SortedMap registryScopeMap = Scope.sortedMapById(registryScopes);
 		SortedMap scopeMap = buildPathMapForScopeMap(registryScopeMap);
-
-		SortedSet coreRegistryKeyBindingSet = new TreeSet();
-		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
-		coreRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(coreRegistry.getRegionalKeyBindings(), state));
-
-		SortedSet localRegistryKeyBindingSet = new TreeSet();
-		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
-		localRegistryKeyBindingSet.addAll(solveRegionalKeyBindingSet(localRegistry.getRegionalKeyBindings(), state));
-		
-		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
-		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
 		
 		SortedSet keyBindingSet = new TreeSet();		
-		keyBindingSet.addAll(coreRegistryKeyBindingSet);
-		keyBindingSet.addAll(localRegistryKeyBindingSet);
-		keyBindingSet.addAll(preferenceRegistryKeyBindingSet);
+		keyBindingSet.addAll(coreRegistry.getKeyBindings());
+		keyBindingSet.addAll(localRegistry.getKeyBindings());
+		keyBindingSet.addAll(preferenceRegistry.getKeyBindings());
 
 		keyMachine.setKeyConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
 		keyMachine.setScopeMap(Collections.unmodifiableSortedMap(scopeMap));

@@ -76,7 +76,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.KeyBindingMatch;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
 import org.eclipse.ui.internal.commands.Manager;
@@ -661,20 +660,16 @@ protected MenuManager createMenuManager() {
 						return null;
 				}
 			} else if ("carbon".equals(SWT.getPlatform())) { 			
-				Map actionMap = Manager.getInstance().getKeyMachine().getActionMap();		
-				SortedSet matchSet = (SortedSet) actionMap.get(commandId);
+				Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
+				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		
-				if (matchSet != null && !matchSet.isEmpty()) {
-					KeyBindingMatch match = (KeyBindingMatch) matchSet.first();
-		
-					if (match != null) {
-						KeySequence keySequence = match.getKeyBinding().getKeySequence();
-						List keyStrokes = keySequence.getKeyStrokes();
+				if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
+					KeySequence keySequence = (KeySequence) keySequenceSet.first();
+					List keyStrokes = keySequence.getKeyStrokes();
 							
-						if (keyStrokes.size() == 1) {
-							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-							return new Integer(keyStroke.getValue());
-						}
+					if (keyStrokes.size() == 1) {
+						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+						return new Integer(keyStroke.getValue());
 					}
 				}
 			}
@@ -700,41 +695,37 @@ protected MenuManager createMenuManager() {
 						return null;
 				}
 			} else if ("carbon".equals(SWT.getPlatform())) {
-				Map actionMap = Manager.getInstance().getKeyMachine().getActionMap();		
-				SortedSet matchSet = (SortedSet) actionMap.get(commandId);
+				Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
+				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		
-				if (matchSet != null && !matchSet.isEmpty()) {
-					KeyBindingMatch match = (KeyBindingMatch) matchSet.first();
-		
-					if (match != null) {
-						StringBuffer stringBuffer = new StringBuffer();
-						KeySequence keySequence = match.getKeyBinding().getKeySequence();
-						List keyStrokes = keySequence.getKeyStrokes();
+				if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
+					KeySequence keySequence = (KeySequence) keySequenceSet.first();
+					List keyStrokes = keySequence.getKeyStrokes();
+					StringBuffer stringBuffer = new StringBuffer();
 						
-						for (int i = 0; i < keyStrokes.size(); i++) {
-							if (i >= 1)
-								stringBuffer.append(' ');
+					for (int i = 0; i < keyStrokes.size(); i++) {
+						if (i >= 1)
+							stringBuffer.append(' ');
+						
+						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
+						int value = keyStroke.getValue();
+						
+						if ((value & SWT.SHIFT) != 0)
+							stringBuffer.append('\u21E7');
 							
-							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-							int value = keyStroke.getValue();
+						if ((value & SWT.CTRL) != 0)
+							stringBuffer.append('\u2303');
+					
+						if ((value & SWT.ALT) != 0)
+							stringBuffer.append('\u2325');
 							
-							if ((value & SWT.SHIFT) != 0)
-								stringBuffer.append('\u21E7');
-								
-							if ((value & SWT.CTRL) != 0)
-								stringBuffer.append('\u2303');
-						
-							if ((value & SWT.ALT) != 0)
-								stringBuffer.append('\u2325');
-								
-							if ((value & SWT.COMMAND) != 0)
-								stringBuffer.append('\u2318');
-								
-							stringBuffer.append(Action.findKeyString(value));
-						}
-						
-						return stringBuffer.toString();
+						if ((value & SWT.COMMAND) != 0)
+							stringBuffer.append('\u2318');
+							
+						stringBuffer.append(Action.findKeyString(value));
 					}
+						
+					return stringBuffer.toString();
 				}
 			} else {
 				String acceleratorText = Manager.getInstance().getTextForAction(commandId);
@@ -1606,7 +1597,7 @@ private void showShortcutBarPopup(MouseEvent e) {
 					if (toolItem != null && !toolItem.isDisposed()) {
 						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
 						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
-						action.getPage().close();
+						action.getPage().closeAllPerspectives(true);
 					}
 				}
 			});

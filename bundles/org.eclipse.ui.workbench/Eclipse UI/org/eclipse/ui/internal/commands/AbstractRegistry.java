@@ -25,8 +25,6 @@ abstract class AbstractRegistry {
 	protected List gestureConfigurations = Collections.EMPTY_LIST;
 	protected List keyBindings = Collections.EMPTY_LIST;
 	protected List keyConfigurations = Collections.EMPTY_LIST;
-	protected List regionalGestureBindings = Collections.EMPTY_LIST;
-	protected List regionalKeyBindings = Collections.EMPTY_LIST;
 	protected List scopes = Collections.EMPTY_LIST; 
 
 	protected AbstractRegistry() {
@@ -63,14 +61,6 @@ abstract class AbstractRegistry {
 
 	public List getKeyConfigurations() {
 		return keyConfigurations;
-	}
-
-	public List getRegionalGestureBindings() {
-		return regionalGestureBindings;
-	}
-
-	public List getRegionalKeyBindings() {
-		return regionalKeyBindings;
 	}
 
 	public List getScopes() {
