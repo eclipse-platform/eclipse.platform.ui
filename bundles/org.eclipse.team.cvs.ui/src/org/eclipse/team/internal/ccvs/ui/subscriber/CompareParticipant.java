@@ -12,15 +12,20 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 
-public class CompareParticipant extends CVSParticipant {
+public class CompareParticipant extends CVSParticipant implements IPropertyChangeListener {
 	
 	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
 		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
@@ -39,7 +44,10 @@ public class CompareParticipant extends CVSParticipant {
 	 */
 	protected void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
-		setSyncInfoFilter(contentComparison);
+		if (CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
+			setSyncInfoFilter(contentComparison);
+		}
+		CVSUIPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
@@ -70,5 +78,27 @@ public class CompareParticipant extends CVSParticipant {
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		CVSUIPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
+			if (CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
+				setSyncInfoFilter(contentComparison);
+			} else {
+				setSyncInfoFilter(new FastSyncInfoFilter());
+			}
+		}
+		
 	}
 }
