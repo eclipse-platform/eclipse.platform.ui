@@ -147,8 +147,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		initializeSourceLocator(launch);
 		try {
+			initializeSourceLocator(launch);
 			delegate.launch(this, mode, launch, monitor);
 		} catch (CoreException e) {
 			// if there was an exception, and the launch is empty, remove it
