@@ -184,7 +184,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * The console document manager de-registers as a 
 	 * launch listener and kills all existing console documents.
 	 */
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {

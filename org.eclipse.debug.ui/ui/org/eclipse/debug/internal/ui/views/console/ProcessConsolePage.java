@@ -55,7 +55,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
@@ -130,7 +129,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
 	 */
-	public void init(IPageSite site) throws PartInitException {
+	public void init(IPageSite site) {
 		fSite = site;
 		
 	}

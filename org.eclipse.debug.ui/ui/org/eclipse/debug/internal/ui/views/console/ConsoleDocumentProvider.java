@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -30,7 +29,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
 	 */
-	protected IDocument createDocument(Object element) throws CoreException {
+	protected IDocument createDocument(Object element) {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
 			IConsoleColorProvider colorProvider = getColorProvider(process);
@@ -49,20 +48,14 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel(java.lang.Object)
 	 */
-	protected IAnnotationModel createAnnotationModel(Object element)
-		throws CoreException {
+	protected IAnnotationModel createAnnotationModel(Object element) {
 		return null;
 	}
 
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSaveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
-	protected void doSaveDocument(
-		IProgressMonitor monitor,
-		Object element,
-		IDocument document,
-		boolean overwrite)
-		throws CoreException {
+	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) {
 	}
 
 	/**

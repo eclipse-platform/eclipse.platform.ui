@@ -183,10 +183,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	/**
 	 * @see ILaunchConfigurationType#newInstance(IContainer, String)
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(
-		IContainer container,
-		String name)
-		throws CoreException {
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) {
 			return new LaunchConfigurationWorkingCopy(container, name, this);
 	}
 	

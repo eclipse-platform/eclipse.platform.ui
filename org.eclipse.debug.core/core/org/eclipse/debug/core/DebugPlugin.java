@@ -385,12 +385,7 @@ public class DebugPlugin extends Plugin {
 	public IStatusHandler getStatusHandler(IStatus status) {
 		StatusHandlerKey key = new StatusHandlerKey(status.getPlugin(), status.getCode());
 		if (fStatusHandlers == null) {
-			try {
-				initializeStatusHandlers();
-			} catch (CoreException exception) {
-				log(exception);
-				return null;
-			}
+			initializeStatusHandlers();
 		}
 		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
 		if (config != null) {
@@ -513,12 +508,7 @@ public class DebugPlugin extends Plugin {
 		if (processFactoryID != null) {
 			DebugPlugin plugin= DebugPlugin.getDefault();
 			if (plugin.fProcessFactories == null) {
-				try {
-					plugin.initializeProcessFactories();
-				} catch (CoreException exception) {
-					log(exception);
-					return null;
-				}
+				plugin.initializeProcessFactories();
 			}
 			IConfigurationElement element= (IConfigurationElement) plugin.fProcessFactories.get(processFactoryID);
 			if (element == null) {
@@ -717,10 +707,8 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Register status handlers.
 	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
 	 */
-	private void initializeStatusHandlers() throws CoreException {
+	private void initializeStatusHandlers() {
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_STATUS_HANDLERS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
@@ -748,10 +736,8 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Register process factories.
 	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
 	 */
-	private void initializeProcessFactories() throws CoreException {
+	private void initializeProcessFactories() {
 		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(EXTENSION_POINT_PROCESS_FACTORIES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fProcessFactories = new HashMap(infos.length);

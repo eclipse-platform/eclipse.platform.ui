@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -25,7 +24,7 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 	/**
 	 * @see IStatusHandler#handleStatus(IStatus, Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(IStatus status, Object source) {
 		final boolean[] result = new boolean[1];
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {

@@ -137,7 +137,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		return false;
 	}
 	
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		if (fLaunchHistories != null) {
