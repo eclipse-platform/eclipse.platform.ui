@@ -12,14 +12,8 @@ package org.eclipse.ui;
 
 
 /**
- * WARNING: EXPERIMENTAL! THIS OBJECT IS STILL UNDER DEVELOPMENT AND MAY BE REMOVED. IT HAS BEEN
- * INCLUDED HERE IN ORDER TO OBTAIN FEEDBACK, BUT CLIENTS SHOULD NOT RELY ON THIS INTERFACE
- * UNTIL THIS TEXT IS REMOVED.
- * 
  * Interface implemented by objects that are capable of computing 
  * a preferred size
- * 
- * Not intended to be implemented by clients.
  * 
  * @since 3.1
  */
@@ -32,10 +26,6 @@ public interface ISizeProvider {
     public static final int INFINITE = Integer.MAX_VALUE;
     
     /**
-     * WARNING: EXPERIMENTAL! THIS METHOD IS STILL UNDER DEVELOPMENT AND MAY BE REMOVED. IT HAS BEEN
-     * INCLUDED HERE IN ORDER TO OBTAIN FEEDBACK, BUT CLIENTS SHOULD NOT CALL OR IMPLEMENT THIS METHOD
-     * UNTIL THIS TEXT IS REMOVED.
-     * 
      * Returns a bitwise combination of flags indicating how and when computePreferredSize should
      * be used. When called with horizontal=true, this indicates the usage of computePreferredSize(true,...)
      * for computing widths. When called with horizontal=false, this indicates the usage of computeSize(false,...)
@@ -67,16 +57,10 @@ public interface ISizeProvider {
      * widths or heights respectively. That is, getSizeFlags(true) will be used when calling 
      * computePreferredSize(true,...)
      * @return any bitwise combination of SWT.MAX, SWT.MIN, SWT.WRAP, and SWT.FILL
-     * 
-     * @since 3.1
      */
     public int getSizeFlags(boolean width);
     
     /**
-     * WARNING: EXPERIMENTAL! THIS METHOD IS STILL UNDER DEVELOPMENT AND MAY BE REMOVED. IT HAS BEEN
-     * INCLUDED HERE IN ORDER TO OBTAIN FEEDBACK, BUT CLIENTS SHOULD NOT CALL OR IMPLEMENT THIS METHOD
-     * UNTIL THIS TEXT IS REMOVED.
-     * 
      * <p>
      * Returns the best size for this part, given the available width and height and the workbench's
      * preferred size for the part. Parts can overload this to enforce a minimum size, maximum size,
@@ -138,18 +122,16 @@ public interface ISizeProvider {
      * @param availablePerpendicular available space perpendicular to the direction being measured
      * or INFINITE if unbounded (pixels). This
      * is a height if width == true, or a height if width == false. Implementations will generally ignore this
-     * argument unless they contain wrapping widgets.
+     * argument unless they contain wrapping widgets. Note this argument will only contain meaningful information
+     * if the part returns the SWT.WRAP flag from getSizeFlags(width)
      * @param preferredResult preferred size of the control (pixels, <= availableParallel). Set to 
-     * INFINITE if unknown or unbounded. Note this argument will only contain meaningful information
-     * if the part returns the SWT.WRAP flag from getSizeFlags(width);
+     * INFINITE if unknown or unbounded.
      * @return returns the preferred size of the control (pixels). This is a width if width == true or a height 
      * if width == false. Callers are responsible for rounding down the return value if it is larger than
      * availableParallel. If availableParallel is INFINITE, then a return value of INFINITE
      * is permitted, indicating that the preferred size of the control is unbounded.  
      * 
-     * @see ISizeProvider#getSizeFlags(boolean)
-     * 
-     * @since 3.1 
+     * @see ISizeProvider#getSizeFlags(boolean) 
      */
     public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult);
 }
