@@ -308,7 +308,7 @@ public void transferStreams(InputStream source, OutputStream destination, String
 				try {
 					bytesRead = source.read(buffer);
 				} catch (IOException e) {
-					String msg = Policy.bind("localStore.failedReadDuringWrite", new String[] {path}); //$NON-NLS-1$
+					String msg = Policy.bind("localstore.failedReadDuringWrite", new String[] {path}); //$NON-NLS-1$
 					IPath p = path == null ? null : new Path(path);
 					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, p, msg, e);
 				}
@@ -355,7 +355,6 @@ public void write(File target, InputStream content, boolean append, IProgressMon
 		}
 	}
 }
-
 public void writeFolder(File target) throws CoreException {
 	if (!target.exists())
 		target.mkdirs();
@@ -369,9 +368,9 @@ public void writeFolder(File target) throws CoreException {
 		if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
 			message = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
 			code = IResourceStatus.PARENT_READ_ONLY;
-		}		    
-		throw new ResourceException(code, new Path(path), message, null);
 	}
+		throw new ResourceException(code, new Path(path), message, null);
+}
 }
 
 }

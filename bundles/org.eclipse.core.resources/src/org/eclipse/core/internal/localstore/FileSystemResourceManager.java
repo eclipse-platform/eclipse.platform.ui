@@ -189,6 +189,11 @@ public int getEncoding(File target) throws CoreException {
 	IPath location = locationFor(target);
 	if (location == null)
 		 ((Project) target.getProject()).checkExists(NULL_FLAG, true);
+	//location can be null if based on an undefined variable
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+	}
 	java.io.File localFile = location.toFile();
 	if (!localFile.exists()) {
 		String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath()); //$NON-NLS-1$
@@ -313,6 +318,10 @@ public void link(Resource target, IPath localLocation) {
 	updateLocalSync(info, lastModified);
 }
 
+/**
+ * Returns the resolved, absolute file system location of the given resource.
+ * Returns null if the location could not be resolved.
+ */
 public IPath locationFor(IResource target) {
 	//note: this method is a critical performance path,
 	//code may be inlined to prevent method calls
@@ -324,7 +333,7 @@ public IPath locationFor(IResource target) {
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null && description.getLocation() != null) {
 				IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
-				//if location is still relative then the variable was not defined
+				//if path is still relative then path variable could not be resolved
 				return resolved != null && resolved.isAbsolute() ? resolved : null;
 			}
 			return getProjectDefaultLocation(project);
@@ -343,7 +352,7 @@ public IPath locationFor(IResource target) {
 				//location may have been deleted from the project description between sessions
 				if (location != null) {
 					location = workspace.getPathVariableManager().resolvePath(location);
-					//if location is still relative then the variable was not defined
+					//if path is still relative then path variable could not be resolved
 					if (!location.isAbsolute())
 						return null;
 					return location.append(targetPath.removeFirstSegments(2));
@@ -352,7 +361,7 @@ public IPath locationFor(IResource target) {
 			//not a linked resource -- get location of project
 			if (description != null && description.getLocation() != null) {
 				IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
-				//if location is still relative then the variable was not defined
+				//if path is still relative then path variable could not be resolved
 				if (!resolved.isAbsolute())
 					return null;
 				return resolved.append(target.getProjectRelativePath());
@@ -363,51 +372,16 @@ public IPath locationFor(IResource target) {
 }
 
 
-public void move(IResource target, IPath destination, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		monitor.beginTask(Policy.bind("localstore.moving", target.getFullPath().toString()), Policy.totalWork); //$NON-NLS-1$
-		IResource resource = null;
-		switch (target.getType()) {
-			case IResource.PROJECT :
-				return; // do nothing
-			case IResource.FOLDER :
-				resource = getWorkspace().getRoot().getFolder(destination);
-				break;
-			case IResource.FILE :
-				resource = getWorkspace().getRoot().getFile(destination);
-				break;
-		}
-		IPath sourceLocation = locationFor(target);
-		IPath destinationLocation = locationFor(resource);
-		if (keepHistory) {
-			if (target.getType() == IResource.FOLDER) {
-				// don't keep history for team private members.
-				IResource[] children = ((IFolder) target).members();
-				destinationLocation.toFile().mkdirs();
-				int work = Policy.totalWork / Math.max(children.length, 1);
-				for (int i = 0; i < children.length; i++)
-					move(children[i], destination.append(children[i].getName()), keepHistory, Policy.subMonitorFor(monitor, work));
-				if (!sourceLocation.toFile().delete()) {
-					String message = Policy.bind("localstore.couldnotDelete", sourceLocation.toString()); //$NON-NLS-1$
-					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, sourceLocation, message, null);
-				}
-			} else {
-				long lastModified = target.getLocation().toFile().lastModified();
-				getHistoryStore().addState(target.getFullPath(), sourceLocation, lastModified, false);
-				getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, Policy.totalWork));
-			}
-		} else
-			getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, Policy.totalWork));
-	} finally {
-		monitor.done();
-	}
-}
 public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
 	// thread safety: (the location can be null if the project for this file does not exist)
 	IPath location = locationFor(target);
 	if (location == null)
 		 ((Project) target.getProject()).checkExists(NULL_FLAG, true);
+	//location can be null if based on an undefined variable
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+	}
 	java.io.File localFile = location.toFile();
 	if (!localFile.exists()) {
 		String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath()); //$NON-NLS-1$
@@ -623,6 +597,11 @@ public void updateLocalSync(ResourceInfo info, long localSyncInfo) {
 public void write(IFile target, IPath location, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(null);
 	try {
+		//location can be null if based on an undefined variable
+		if (location == null) {
+			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
+		}
 		java.io.File localFile = location.toFile();
 		long stat = CoreFileSystemLibrary.getStat(localFile.getAbsolutePath());
 		if (CoreFileSystemLibrary.isReadOnly(stat)) {
@@ -680,7 +659,13 @@ public void write(IFile target, IPath location, InputStream content, boolean for
  * target's location.
  */
 public void write(IFolder target, boolean force, IProgressMonitor monitor) throws CoreException {
-	java.io.File file = locationFor(target).toFile();
+	IPath location = locationFor(target);
+	//location can be null if based on an undefined variable
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
+	}
+	java.io.File file = location.toFile();
 	if (!force)
 		if (file.isDirectory()) {
 			String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$

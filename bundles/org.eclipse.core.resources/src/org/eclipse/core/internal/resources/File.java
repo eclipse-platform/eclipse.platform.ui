@@ -106,6 +106,11 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 
 			workspace.beginOperation(true);
 			IPath location = getLocalManager().locationFor(this);
+			//location can be null if based on an undefined variable
+			if (location == null) {
+				message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
+			}
 			java.io.File localFile = location.toFile();
 			if (force) {
 				if (!CoreFileSystemLibrary.isCaseSensitive()) {
@@ -116,8 +121,8 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 						} else {
 							// The file system is not case sensitive and there is already a file
 							// under this location.
-							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
-							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
+							message = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 						}
 					}
 				}
@@ -127,12 +132,12 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 					if (!CoreFileSystemLibrary.isCaseSensitive()) {
 						String name = getLocalManager().getLocalName(localFile);
 						if (name != null && !localFile.getName().equals(name)) {
-							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
-							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
+							message =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 						}
 					}
-					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
-					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+					message = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 				}
 			}
 			monitor.worked(Policy.opWork * 40 / 100);

@@ -103,7 +103,7 @@ protected void assertLinkRequirements(IPath localLocation, int updateFlags) thro
 	} else {
 		//relative paths are considered to be variable-relative paths
 		if (!allowMissingLocal) {
-			String msg = Policy.bind("links.variableNotDefined", getFullPath().toString());//$NON-NLS-1$
+			String msg = Policy.bind("links.pathNotAbsolute", getFullPath().toString());//$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.VARIABLE_NOT_DEFINED, getFullPath(), msg, null);
 		}
 	}
@@ -1063,24 +1063,6 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 	}
 }
 
-protected void moveInFileSystem(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
-		monitor.beginTask(message, 100);
-		message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
-		CollectSyncStatusVisitor visitor = new CollectSyncStatusVisitor(message, monitor);
-		UnifiedTree tree = new UnifiedTree(this);
-		tree.accept(visitor, DEPTH_INFINITE);
-		/* if force is false and resources were not in sync, throw an exception */
-		if (!force)
-			if (!visitor.getSyncStatus().isOK())
-				throw new ResourceException(visitor.getSyncStatus());
-		getLocalManager().move(this, destination, keepHistory, Policy.subMonitorFor(monitor, 70));
-	} finally {
-		monitor.done();
-	}
-}
 /**
  * @see IResource#refreshLocal
  */
