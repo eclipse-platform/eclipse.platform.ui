@@ -3,6 +3,20 @@
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+	
+	// Obtain searchWord from query
+	// request.getParameter() returns incorrect string
+	// for non ASCII queries encoded from UTF-8 bytes
+	String searchWord="";
+	if(request.getParameter("searchWord")!=null){
+		String query=request.getQueryString();
+		int start=query.indexOf("searchWord=")+"searchWord=".length();
+		int end=query.indexOf("&", start);
+		if(end<=0)
+			end=query.length();
+		searchWord=query.substring(start, end);
+		searchWord=URLCoder.decode(searchWord);
+	}
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -134,7 +148,7 @@ function doSearch()
 		<table cellspacing=0 cellpading=0 border=0 style="margin-bottom:10px;">
 			<tr>
 			<td width="100%" >
-					<input type="text" id="searchWord" name="searchWord" value="<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value="<%=searchWord%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 			</td>
 			<td>
 					<input type="submit"  value='<%=WebappResources.getString("Go", request)%>'  id="go" alt='<%=WebappResources.getString("Go", request)%>'>
