@@ -346,16 +346,16 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		ObjectActionContributorReader oReader = new ObjectActionContributorReader();
 		oReader.setManager(oMan);
 		IConfigurationElement[] elements = ext.getConfigurationElements();
-		boolean restartNeeded = false;
+		boolean clearPopups = false;
 		// takes care of object contributions
 		for (int i = 0; i < elements.length; i++) {
 			oReader.readElement(elements[i]);
 			if (elements[i].getName().equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE))
-				restartNeeded = true;	
+				clearPopups = true;	
 		}
 
-		if (restartNeeded) 
-			restartPrompt(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_view_contributions")); //$NON-NLS-1$
+		if (clearPopups) 
+			PopupMenuExtender.getManager().clearCaches();
 	}
 
 	private void revoke(IExtensionPoint extPt, IExtension ext) {
@@ -1022,18 +1022,6 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 						((WorkbenchPage)pages[j]).hideActionSet(id);
 				}
 			}
-		}
-	}
-	
-	private void restartPrompt(String message) {
-		Shell parentShell = null;
-		IWorkbenchWindow window =workbench.getActiveWorkbenchWindow();
-		if (window != null)
-			parentShell = window.getShell();
-
-		message +=  ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_restart"); //$NON-NLS-1$
-		if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.restart_workbench"), message)) { //$NON-NLS-1$
-			workbench.restart();
 		}
 	}
 }

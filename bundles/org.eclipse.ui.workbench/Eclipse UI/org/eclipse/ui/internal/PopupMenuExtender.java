@@ -12,6 +12,10 @@
 package org.eclipse.ui.internal;
 
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,6 +30,34 @@ import org.eclipse.ui.IWorkbenchPart;
  * This class extends a single popup menu
  */
 public class PopupMenuExtender implements IMenuListener {
+	
+	//for dynamic UI
+	public static final class PopupMenuExtenderManager {
+		
+		private Set extenders = new HashSet();
+		
+		public void clearCaches() {
+			for (Iterator i = extenders.iterator(); i.hasNext();) {
+				PopupMenuExtender extender = (PopupMenuExtender) i.next();
+				extender.readStaticActions();
+			}
+		}
+		
+		private void addExtender(PopupMenuExtender extender) {
+			extenders.add(extender);
+		}
+		
+		private void removeExtender(PopupMenuExtender extender) {
+			extenders.remove(extender);
+		}
+	}
+	
+	private static final PopupMenuExtenderManager manager = new PopupMenuExtenderManager();
+	
+	public static final PopupMenuExtenderManager getManager() {
+		return manager;
+	}
+	
 	private String menuID;
 	private MenuManager menu;
 	private SubMenuManager menuWrapper;
@@ -47,6 +79,7 @@ public class PopupMenuExtender implements IMenuListener {
 			menuWrapper = new SubMenuManager(menu);
 			menuWrapper.setVisible(true);
 		}
+		getManager().addExtender(this);
 		readStaticActions();
 	}
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
@@ -119,5 +152,6 @@ public class PopupMenuExtender implements IMenuListener {
 		if (staticActionBuilder != null) {
 			staticActionBuilder.dispose();
 		}
+		getManager().removeExtender(this);
 	}
 }
