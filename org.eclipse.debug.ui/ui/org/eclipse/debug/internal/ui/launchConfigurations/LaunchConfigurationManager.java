@@ -943,7 +943,21 @@ class ShortcutComparator implements Comparator {
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(Object a, Object b) {
-		return ((LaunchShortcutExtension)a).getLabel().compareToIgnoreCase(((LaunchShortcutExtension)b).getLabel());
+		String labelA = ((LaunchShortcutExtension)a).getLabel();
+		String labelB = ((LaunchShortcutExtension)b).getLabel();
+		
+		// null labels sort last (i.e. highest)
+		if (labelA == labelB) {
+			return 0;
+		}
+		if (labelA == null) {
+			return 1;
+		}
+		if (labelB == null) {
+			return -1;
+		}
+		
+		return labelA.compareToIgnoreCase(labelB);
 	}
 
 }
