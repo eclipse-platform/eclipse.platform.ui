@@ -75,13 +75,14 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
 	
 	/**
-	 * Opertion created by the document provider and to be executed by the providers runnable context.
+	 * Operation created by the document provider and to be executed by the providers runnable context.
 	 */
 	protected static abstract class DocumentProviderOperation implements IRunnableWithProgress, ISchedulingRuleProvider {
 		
 		/**
 		 * The actual functionality of this operation.
 		 * 
+		 * @param monitor the progress monitor
 		 * @throws CoreException
 		 */
 		protected abstract void execute(IProgressMonitor monitor) throws CoreException;
@@ -369,6 +370,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	/**
 	 * Returns the runnable context for this document provider.
 	 * 
+	 * @param monitor the progress monitor
 	 * @return the runnable context for this document provider
 	 */
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
@@ -425,8 +427,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 	
 	/**
-	 * Updates the file buffer map with a new releation between the file buffer
-	 * of the given info and the given element;
+	 * Updates the file buffer map with a new relation between the file buffer
+	 * of the given info and the given element.
 	 * 
 	 * @param element the element
 	 * @param info the element info
