@@ -10,8 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.AntNode;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.DependencyNode;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.ExecutionPathNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
@@ -83,16 +81,6 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 			return ((RootNode) element).getProjects();
 		} else if (element instanceof ProjectNode) {
 			return ((ProjectNode) element).getTargets();
-		} else if (element instanceof TargetNode) {
-			TargetNode target= (TargetNode) element;
-			if (target.isErrorNode()) {
-				return null;
-			}
-			return new Object[] {target.getDependencies(), target.getExecutionPath()};
-		} else if (element instanceof DependencyNode) {
-			return ((DependencyNode) element).getDependencies();
-		} else if (element instanceof ExecutionPathNode) {
-			return ((ExecutionPathNode) element).getTargets();
 		}
 		return null;
 	}
@@ -112,7 +100,7 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(Object element) {
 		if (element instanceof TargetNode) {
-			return !((TargetNode) element).isErrorNode();
+			return false;
 		}
 		return true;
 	}

@@ -10,8 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.DependencyNode;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.ExecutionPathNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -43,10 +41,6 @@ public class AntViewLabelProvider implements ILabelProvider {
 			} else {
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET);
 			}
-		} else if (element instanceof DependencyNode || element instanceof ExecutionPathNode) {
-			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS);
-		} else if (element instanceof String) {
-			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT);
 		}
 		return null;
 	}

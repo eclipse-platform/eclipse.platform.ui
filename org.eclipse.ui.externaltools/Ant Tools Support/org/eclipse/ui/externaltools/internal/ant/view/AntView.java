@@ -393,7 +393,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
 		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateActions();
+				handleViewerSelectionChanged(event);
 			}
 		});
 		
@@ -469,7 +469,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleProjectViewerSelectionChanged(event);
+				handleViewerSelectionChanged(event);
 			}
 		});
 		
@@ -524,7 +524,11 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		}
 	}
 	
-	private void handleProjectViewerSelectionChanged(SelectionChangedEvent event) {
+	/**
+	 * Updates the actions and status line for selection change in one of the
+	 * viewers.
+	 */
+	private void handleViewerSelectionChanged(SelectionChangedEvent event) {
 		updateActions();
 		Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
 		Object selection = null;
@@ -533,29 +537,46 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		}
 		String messageString= null;
 		if (!selectionIter.hasNext()) { 
-			if (selection instanceof ProjectNode) {
-				ProjectNode project = (ProjectNode) selection;
-				StringBuffer message= new StringBuffer(project.getBuildFileName());
-				String description= project.getDescription();
-				if (description != null) {
-					message.append(": "); //$NON-NLS-1$
-					message.append(description);
-				}
-				messageString= message.toString();
-			} else if (selection instanceof TargetNode){
-				TargetNode target = (TargetNode) selection;
-				StringBuffer message= new StringBuffer(target.getName());
-				message.append(": "); //$NON-NLS-1$
-				String description= target.getDescription();
-				if (description == null) {
-					description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
-				}
-				message.append(description);
-				messageString= message.toString();
-			}
+			messageString= getStatusLineText(selection);
 		} 
-	
 		AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
+	}
+	
+	/**
+	 * Returns text appropriate for display in the workbench status line for the
+	 * given node.
+	 */
+	private static String getStatusLineText(Object node) {
+		if (node instanceof ProjectNode) {
+			ProjectNode project = (ProjectNode) node;
+			StringBuffer message= new StringBuffer(project.getBuildFileName());
+			String description= project.getDescription();
+			if (description != null) {
+				message.append(": "); //$NON-NLS-1$
+				message.append(description);
+			}
+			return message.toString();
+		} else if (node instanceof TargetNode) {
+			TargetNode target = (TargetNode) node;
+			StringBuffer message= new StringBuffer("Name: ");
+			message.append(target.getName());
+			String[] depends= target.getDependencies();
+			if (depends.length > 0 ) {
+				message.append(" Dependencies: ");
+				message.append(depends[0]); // Unroll the loop to avoid trailing comma
+				for (int i = 1; i < depends.length; i++) {
+					message.append(", ").append(depends[i]);
+				}
+			}
+			message.append(" Description: ");
+			String description= target.getDescription();
+			if (description == null || description.length() == 0) {
+				description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
+			}
+			message.append(description);
+			return message.toString();
+		}
+		return null;
 	}
 
 	/**
