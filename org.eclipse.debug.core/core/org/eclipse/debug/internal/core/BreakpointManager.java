@@ -58,10 +58,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private final static String CLASS = "class"; //$NON-NLS-1$
 
 	/**
-	 * A collection of breakpoint registered with this manager.
-	 *
+	 * A collection of breakpoints registered with this manager.
 	 */
 	private Vector fBreakpoints= null;
+	
+	/**
+	 * Indicates whether this manager is in the process of 
+	 * deleting the non-persisted breakpoints at startup.  If this flag
+	 * is true, this breakpoint manager will ignore notifications that breakpoints
+	 * have been removed.
+	 */
+	private boolean fDeletingNonPersistedBreakpoints= false;
 	
 	/**
 	 * A table of breakpoint extension points, keyed by
@@ -152,6 +159,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		// delete any markers that are not to be restored
 		if (!delete.isEmpty()) {
+			setDeletingNonPersistedBreakpoints(true);
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
 					ResourcesPlugin.getWorkspace().deleteMarkers((IMarker[])delete.toArray(new IMarker[delete.size()]));
@@ -430,6 +438,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 							handleAddBreakpoint(delta, markerDelta.getMarker(), markerDelta);
 							break;
 						case IResourceDelta.REMOVED :
+							if (isDeletingNonPersistedBreakpoints()) {
+								setDeletingNonPersistedBreakpoints(false);
+								return false;
+							}
 							handleRemoveBreakpoint(markerDelta.getMarker(), markerDelta);
 							break;
 						case IResourceDelta.CHANGED :
@@ -541,5 +553,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		};
 		new Thread(runnable).start();
 	}	
+	
+	/**
+	 * Returns whether this manager is in the process of 
+	 * deleting the non-persisted breakpoints at startup.
+	 */
+	protected boolean isDeletingNonPersistedBreakpoints() {
+		return fDeletingNonPersistedBreakpoints;
+	}
+
+	/**
+	 * Sets whether this manager is in the process of 
+	 * deleting the non-persisted breakpoints at startup.
+	 */
+	protected void setDeletingNonPersistedBreakpoints(boolean deletingNonPersistedBreakpoints) {
+		fDeletingNonPersistedBreakpoints = deletingNonPersistedBreakpoints;
+	}
 }
 
