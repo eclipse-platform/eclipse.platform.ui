@@ -14,9 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -29,26 +27,16 @@ import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
  * the selected resource, unless a build is in progress - in which case
  * the context is based on the project being built..
  */
-public class VariableContextManager implements IWindowListener, ISelectionListener {
+public class VariableContextManager {
 
 	// singleton
 	private static VariableContextManager fgDefault;
-	
-	private IResource fSelectedResource = null;
 	
 	private boolean fBuilding = false;
 	private IProject fProject = null;
 	private int fKind;
 	
 	private VariableContextManager() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench != null) { //may be running headless
-			workbench.addWindowListener(this);
-			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			if (activeWindow != null) {
-				windowActivated(activeWindow);
-			}
-		} 
 	}
 	
 	/**
@@ -62,69 +50,41 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 		return fgDefault;
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowActivated(IWorkbenchWindow window) {
-		fSelectedResource = null;
-		ISelectionService service = window.getSelectionService(); 
-		service.addSelectionListener(this);
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
+	private IResource getSelectedResource() {
+		IResource selectedResource= null;
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) { //may be running headless
+			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			if (activeWindow == null) {
+				return null;
+			}
+			ISelectionService service = activeWindow.getSelectionService();
+			IWorkbenchPage page = activeWindow.getActivePage();
+			if (page == null) {
+				return null;
+			}
 			IWorkbenchPart part = page.getActivePart();
-			if (part != null) {				
-				ISelection selection = service.getSelection();
-				if (selection != null) {
-					selectionChanged(part, selection);
+			if (part == null) {
+				return null;
+			}
+			ISelection selection = service.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				Object result = ((IStructuredSelection)selection).getFirstElement();
+				if (result instanceof IResource) {
+					selectedResource = (IResource) result;
+				} else if (result instanceof IAdaptable) {
+					selectedResource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
 				}
 			}
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowClosed(IWorkbenchWindow window) {
-		window.getSelectionService().removeSelectionListener(this);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowDeactivated(IWorkbenchWindow window) {
-		window.getSelectionService().removeSelectionListener(this);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowOpened(IWorkbenchWindow window) {
-	}
-
-	/**
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		IResource selectedResource = null;
-		if (selection instanceof IStructuredSelection) {
-			Object result = ((IStructuredSelection)selection).getFirstElement();
-			if (result instanceof IResource) {
-				selectedResource = (IResource) result;
-			} else if (result instanceof IAdaptable) {
-				selectedResource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
+			if (selectedResource == null && part instanceof IEditorPart) {
+					// If the active part is an editor, get the file resource used as input.
+					IEditorPart editorPart = (IEditorPart) part;
+					IEditorInput input = editorPart.getEditorInput();
+					selectedResource = (IResource) input.getAdapter(IResource.class);
+				}
 			}
-		}
-		
-		if (selectedResource == null) {
-			// If the active part is an editor, get the file resource used as input.
-			if (part instanceof IEditorPart) {
-				IEditorPart editorPart = (IEditorPart) part;
-				IEditorInput input = editorPart.getEditorInput();
-				selectedResource = (IResource) input.getAdapter(IResource.class);
-			} 
-		}
-		
-		fSelectedResource = selectedResource;
+			
+		return selectedResource;
 	}
 	
 	/**
@@ -136,7 +96,7 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 		if (fBuilding) {
 			return new ExpandVariableContext(fProject, fKind);
 		} else {
-			return new ExpandVariableContext(fSelectedResource);
+			return new ExpandVariableContext(getSelectedResource());
 		}
 	}
 	

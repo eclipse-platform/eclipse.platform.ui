@@ -175,14 +175,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @see org.eclipse.core.runtime.Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-		VariableContextManager.getDefault();
-	}
-
-	/**
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
@@ -196,5 +188,4 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public static Color getPreferenceColor(String pref) {
 		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), pref));
 	}
-
 }
