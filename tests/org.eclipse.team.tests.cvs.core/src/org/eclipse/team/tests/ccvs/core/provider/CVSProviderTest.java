@@ -7,6 +7,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -385,12 +387,12 @@ public class CVSProviderTest extends EclipseTest {
 	}
 	public static String getFileContents(IFile file) throws CoreException, IOException {
 		StringBuffer buf = new StringBuffer();
-		InputStream is = new BufferedInputStream(file.getContents());
+		Reader reader = new InputStreamReader(new BufferedInputStream(file.getContents()));
 		try {
 			int c;
-			while ((c = is.read()) != -1) buf.append((char)c);
+			while ((c = reader.read()) != -1) buf.append((char) c);
 		} finally {
-			is.close();
+			reader.close();
 		}
 		return buf.toString();
 	}
@@ -405,8 +407,7 @@ public class CVSProviderTest extends EclipseTest {
 		IFile file = container.getFile(new Path(filename));
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 		ResourceSyncInfo info = cvsFile.getSyncInfo();
-		KSubstOption other = KSubstOption.fromMode(info.getKeywordMode());
-		assertEquals(ksubst, other);
+		assertEquals(ksubst, info.getKeywordMode());
 	}
 }
 

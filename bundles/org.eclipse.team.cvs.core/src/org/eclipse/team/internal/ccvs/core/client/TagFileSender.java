@@ -42,7 +42,7 @@ class TagFileSender extends FileStructureVisitor {
 			}
 			if (!info.isAdded()) {
 				session.sendEntry(info.getServerEntryLine(mFile.getTimeStamp()));
-				boolean binary = info != null && KSubstOption.fromMode(info.getKeywordMode()).isBinary();
+				boolean binary = info != null && info.getKeywordMode().isBinary();
 				session.sendIsModified(mFile, binary, monitor);
 			}
 		}

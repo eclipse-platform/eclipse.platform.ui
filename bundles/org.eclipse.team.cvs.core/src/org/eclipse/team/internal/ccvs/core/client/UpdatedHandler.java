@@ -86,7 +86,7 @@ class UpdatedHandler extends ResponseHandler {
 		Assert.isTrue(mParent.exists());
 		ICVSFile mFile = mParent.getFile(fileName);
 		
-		boolean binary = KSubstOption.fromMode(info.getKeywordMode()).isBinary();
+		boolean binary = info.getKeywordMode().isBinary();
 		boolean readOnly = info.getPermissions().indexOf(READ_ONLY_FLAG) == -1;
 		
 		// The file may have been set as read-only by a previous checkout/update

@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import java.util.Date;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
@@ -18,7 +16,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
@@ -66,7 +63,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			
 			// Keyword Mode
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode"));
-			createLabel(composite, KSubstOption.fromMode(syncInfo.getKeywordMode()).getLongDisplayText());
+			createLabel(composite, syncInfo.getKeywordMode().getLongDisplayText());
 			
 			// Tag
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag"));

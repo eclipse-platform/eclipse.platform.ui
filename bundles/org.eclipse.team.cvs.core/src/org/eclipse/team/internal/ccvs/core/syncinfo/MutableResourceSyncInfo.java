@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.util.Date;
 
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -40,6 +41,13 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 		this.isDirectory = info.isDirectory();
 		this.keywordMode = info.getKeywordMode();
 		this.isDeleted = info.isDeleted();
+		if(info.isMergedWithConflicts()) {
+			setSyncType(TYPE_MERGED_WITH_CONFLICTS);
+		} else if(info.isMerged()) {
+			setSyncType(TYPE_MERGED);
+		} else {
+			setSyncType(TYPE_REGULAR);
+		}
 	}
 	
 	public MutableResourceSyncInfo(String name, String revision) {
@@ -73,7 +81,7 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	 * Sets the keywordMode.
 	 * @param keywordMode The keywordMode to set
 	 */
-	public void setKeywordMode(String keywordMode) {
+	public void setKeywordMode(KSubstOption keywordMode) {
 		this.keywordMode = keywordMode;
 	}
 

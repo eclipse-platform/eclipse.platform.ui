@@ -351,7 +351,7 @@ public class KSubstWizard extends Wizard {
 										classification = KSubstChangeElement.UNCHANGED_FILE;
 									}
 									// determine the to/from substitution modes
-									KSubstOption fromKSubst = KSubstOption.fromMode(info.getKeywordMode());
+									KSubstOption fromKSubst = info.getKeywordMode();
 									KSubstOption toKSubst = ksubst;
 									if (ksubst == null) {
 										toKSubst = KSubstOption.fromFile(file);

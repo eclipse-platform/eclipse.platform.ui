@@ -192,8 +192,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		final SortedSet folders = new TreeSet();
 		// Sets are required for the files to ensure that files will not appear twice if there parent was added as well
 		// and the depth isn't zero
-		final Set textfiles = new HashSet(resources.length);
-		final Set binaryfiles = new HashSet(resources.length);
+		final Map /* from KSubstOption to Set */ files = new HashMap();
 		final TeamException[] eHolder = new TeamException[1];
 		for (int i=0; i<resources.length; i++) {
 			
@@ -220,13 +219,16 @@ public class CVSTeamProvider extends RepositoryProvider {
 						if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
 							String name = resource.getProjectRelativePath().toString();
 							if (resource.getType() == IResource.FILE) {
-								if (Team.getType((IFile)resource) == Team.TEXT) {
-									textfiles.add(name);
-								} else {
-									binaryfiles.add(name);
+								KSubstOption ksubst = KSubstOption.fromFile((IFile) resource);
+								Set set = (Set) files.get(ksubst);
+								if (set == null) {
+									set = new HashSet();
+									files.put(ksubst, set);
 								}
-							} else
+								set.add(name);
+							} else {
 								folders.add(name);
+							}
 						}
 						// Always return true and let the depth determine if children are visited
 						return true;
@@ -245,9 +247,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// Add the folders, followed by files!
 		IStatus status;
 		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-		progress.beginTask(null, 100);
+		progress.beginTask(null, 10 + files.size() * 10 + (folders.isEmpty() ? 0 : 10));
 		try {
-			// Opening the session takes 10% of the time
+			// Opening the session takes 10 units of time
 			s.open(Policy.subMonitorFor(progress, 10));
 			if (!folders.isEmpty()) {
 				status = Command.ADD.execute(s,
@@ -255,29 +257,21 @@ public class CVSTeamProvider extends RepositoryProvider {
 					Command.NO_LOCAL_OPTIONS,
 					(String[])folders.toArray(new String[folders.size()]),
 					null,
-					Policy.subMonitorFor(progress, 30));
+					Policy.subMonitorFor(progress, 10));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
-			if (!textfiles.isEmpty()) {
+			for (Iterator it = files.entrySet().iterator(); it.hasNext();) {
+				Map.Entry entry = (Map.Entry) it.next();
+				KSubstOption ksubst = (KSubstOption) entry.getKey();
+				Set set = (Set) entry.getValue();
 				status = Command.ADD.execute(s,
 					Command.NO_GLOBAL_OPTIONS,
-					Command.NO_LOCAL_OPTIONS,
-					(String[])textfiles.toArray(new String[textfiles.size()]),
+					new LocalOption[] { ksubst },
+					(String[])set.toArray(new String[set.size()]),
 					null,
-					Policy.subMonitorFor(progress, 30));
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					throw new CVSServerException(status);
-				}
-			}
-			if (!binaryfiles.isEmpty()) {
-				status = Command.ADD.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					new LocalOption[] { Command.KSUBST_BINARY },
-					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
-					null,
-					Policy.subMonitorFor(progress, 30));
+					Policy.subMonitorFor(progress, 10));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
@@ -964,13 +958,13 @@ public class CVSTeamProvider extends RepositoryProvider {
 					
 					// only set keyword substitution if new differs from actual
 					ResourceSyncInfo info = mFile.getSyncInfo();
-					KSubstOption fromKSubst = KSubstOption.fromMode(info.getKeywordMode());
+					KSubstOption fromKSubst = info.getKeywordMode();
 					if (toKSubst.equals(fromKSubst)) continue;
 					
 					// change resource sync info immediately for an outgoing addition
 					if (info.isAdded()) {
 						MutableResourceSyncInfo newInfo = info.cloneMutable();
-						newInfo.setKeywordMode(toKSubst.toMode());
+						newInfo.setKeywordMode(toKSubst);
 						mFile.setSyncInfo(newInfo);
 						continue;
 					}
@@ -1040,7 +1034,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 							result[0] = Command.ADMIN.execute(s, Command.NO_GLOBAL_OPTIONS,
 								new LocalOption[] { toKSubst },
 								(String[]) list.toArray(new String[list.size()]),
-								new AdminKSubstListener(toKSubst.toMode()),
+								new AdminKSubstListener(toKSubst),
 								Policy.subMonitorFor(monitor, list.size()));
 							// if errors were encountered, abort
 							if (! result[0].isOK()) return;

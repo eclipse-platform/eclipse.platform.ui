@@ -54,5 +54,12 @@ public class CVSEntryLineTag extends CVSTag {
 		if (!(obj instanceof CVSEntryLineTag)) return false;
 		return (type == ((CVSEntryLineTag)obj).type) && name.equals(((CVSEntryLineTag)obj).name);
 	}
+	
+	/*
+	 * For debugging purposes.
+	 */
+	public String toString() {
+		return toEntryLineFormat(false);
+	}
 }
 

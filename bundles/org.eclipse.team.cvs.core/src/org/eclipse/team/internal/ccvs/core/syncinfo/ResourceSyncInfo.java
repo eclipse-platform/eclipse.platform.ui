@@ -8,15 +8,10 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.text.ParseException;
 import java.util.Date;
 
-import javax.swing.text.MutableAttributeSet;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
@@ -49,10 +44,6 @@ public class ResourceSyncInfo {
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
 	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
-
-	// use the server's default keyword substitution mode
-	public static final String USE_SERVER_MODE = ""; //$NON-NLS-1$
-	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
 	// XXX Should this be private
@@ -87,16 +78,14 @@ public class ResourceSyncInfo {
 	protected String name;
 	protected String revision;
 	protected Date timeStamp;
-	protected String keywordMode;
+	protected KSubstOption keywordMode;
 	protected CVSEntryLineTag tag;
 	protected String permissions;
 	
 	// type of sync
 	protected int syncType = TYPE_REGULAR;
-
 	protected ResourceSyncInfo() {
 	}
-
 	/**
 	 * Constructor to create a sync object from entry line formats. The entry lines are parsed by this class.
 	 * The constructor can handle parsing entry lines from the server or from an entry file.
@@ -109,7 +98,6 @@ public class ResourceSyncInfo {
 	 */
 	public ResourceSyncInfo(String entryLine, String permissions, Date timestamp) throws CVSException {
 		Assert.isNotNull(entryLine);
-
 		setEntryLine(entryLine);
 		
 		if (permissions != null)  {
@@ -132,7 +120,6 @@ public class ResourceSyncInfo {
 		this.name = name;
 		this.isDirectory = true;
 	}
-
 	/**
 	 * Answers if this sync information is for a folder in which case only a name is
 	 * available.
@@ -268,7 +255,6 @@ public class ResourceSyncInfo {
 			}
 		}
 	}
-
 	/**
 	 * Gets the tag or <code>null</code> if a tag is not available.
 	 * 
@@ -277,7 +263,6 @@ public class ResourceSyncInfo {
 	public CVSTag getTag() {
 		return tag;
 	}
-
 	/**
 	 * Gets the timeStamp or <code>null</code> if a timestamp is not available.
 	 * 
@@ -286,7 +271,6 @@ public class ResourceSyncInfo {
 	public Date getTimeStamp() {
 		return timeStamp;
 	}
-
 	/**
 	 * Gets the version or <code>null</code> if this is a folder sync info. The returned
 	 * revision will never include the DELETED_PREFIX. To found out if this sync info is
@@ -298,7 +282,6 @@ public class ResourceSyncInfo {
 		return revision;
 	}
 	
-
 	/**
 	 * Gets the name.
 	 * 
@@ -307,13 +290,11 @@ public class ResourceSyncInfo {
 	public String getName() {
 		return name;
 	}
-
 	/**
-	 * Gets the keyword mode or <code>null</code> if a keyword mode is available.
-	 * 
-	 * @return 
+	 * Gets the keyword mode.
+	 * @return the keyword substitution option
 	 */
-	public String getKeywordMode() {
+	public KSubstOption getKeywordMode() {
 		return keywordMode;
 	}
 	
@@ -341,13 +322,10 @@ public class ResourceSyncInfo {
 	public String toString() {
 		return getEntryLine(true, null /*no timestamp override*/);
 	}
-
 	public MutableResourceSyncInfo cloneMutable() {
 		MutableResourceSyncInfo newSync = new MutableResourceSyncInfo(this);
-		newSync.setResourceInfoType(syncType);
 		return newSync;
 	}
-
 	/**
 	 * Sets the tag for the resource.
 	 */
@@ -358,7 +336,14 @@ public class ResourceSyncInfo {
 			this.tag = null;
 		}					
 	}
-
+	
+		
+	/*
+	 * Sets the sync type
+	 */
+	protected void setSyncType(int syncType) {
+		this.syncType = syncType;
+	}
 	/**
 	 * Sets the version and decides if the revision is for a deleted resource the revision field
 	 * will not include the deleted prefix '-'.
@@ -390,9 +375,7 @@ public class ResourceSyncInfo {
 		} else {
 			isDirectory = false;
 		}
-
 		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPERATOR);
-
 		if(tokenizer.countTokens() != 5) {
 			throw new CVSException(Policy.bind("Malformed_entry_line___11") + entryLine); //$NON-NLS-1$
 		}
@@ -451,8 +434,7 @@ public class ResourceSyncInfo {
 				timeStamp = DUMMY_DATE;
 			}
 		}
-
-		keywordMode = tokenizer.nextToken();
+		keywordMode = KSubstOption.fromMode(tokenizer.nextToken());
 		String tagEntry = tokenizer.nextToken();
 						
 		if(tagEntry.length()>0) {
@@ -476,10 +458,8 @@ public class ResourceSyncInfo {
 			if(isDeleted){
 				result.append(DELETED_PREFIX); 
 			}
-
 			result.append(revision);
 			result.append(SEPERATOR);
-
 			if(includeTimeStamp) {
 				String entryLineTimestamp = ""; //$NON-NLS-1$
 				if(timestampOverride!=null) {
@@ -501,7 +481,7 @@ public class ResourceSyncInfo {
 				result.append(entryLineTimestamp);
 			}
 			result.append(SEPERATOR);
-			result.append(keywordMode == null ? "" : keywordMode); //$NON-NLS-1$
+			if (keywordMode != null) result.append(keywordMode.toMode());
 			result.append(SEPERATOR);
 			if (tag != null) {
 				result.append(tag.toEntryLineFormat(true));

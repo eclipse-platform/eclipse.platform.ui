@@ -14,6 +14,7 @@ import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -29,9 +30,9 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  *   done
  */
 public class AdminKSubstListener implements ICommandOutputListener {
-	private String ksubstMode;
+	private KSubstOption ksubstMode;
 	
-	public AdminKSubstListener(String ksubstMode) {
+	public AdminKSubstListener(KSubstOption ksubstMode) {
 		this.ksubstMode = ksubstMode;
 	}
 	

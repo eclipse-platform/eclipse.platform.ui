@@ -180,7 +180,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 								ResourceSyncInfo info = cvsFile.getSyncInfo();
 								KSubstOption option = info != null && info.getKeywordMode() != null ?
-									KSubstOption.fromMode(info.getKeywordMode()) :
+									info.getKeywordMode() :
 									KSubstOption.fromFile((IFile)resource);
 								postfix.append("(" + option.getShortDisplayText() + ")");
 							} else if (resource instanceof IContainer) {

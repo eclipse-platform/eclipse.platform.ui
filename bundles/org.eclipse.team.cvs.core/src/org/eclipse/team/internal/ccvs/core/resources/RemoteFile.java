@@ -34,13 +34,13 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -124,7 +124,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		this(parent, workspaceSyncState, null);
 		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);
 		newInfo.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
-		newInfo.setKeywordMode(ResourceSyncInfo.USE_SERVER_MODE);
+		newInfo.setKeywordMode(Command.KSUBST_TEXT_EXPAND); // FIXME: is this right?
 		newInfo.setTag(tag);
 		newInfo.setPermissions(ResourceSyncInfo.DEFAULT_PERMISSIONS);
 		info = newInfo;

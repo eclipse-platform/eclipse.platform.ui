@@ -45,11 +45,11 @@ class DiffStructureVisitor extends FileStructureVisitor {
 				ksubst = Command.KSUBST_BINARY;
 			}
 			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);	
-			newInfo.setKeywordMode(ksubst.toMode());
+			newInfo.setKeywordMode(ksubst);
 			info = newInfo;
 		} else {
 			// existing file
-			ksubst = KSubstOption.fromMode(info.getKeywordMode());
+			ksubst = info.getKeywordMode();
 		}
 		session.sendEntry(info.getServerEntryLine(null));
 		

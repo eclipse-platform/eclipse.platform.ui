@@ -193,7 +193,7 @@ public class CVSDecorationRunnable implements Runnable {
 							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
 						}
 						KSubstOption option = fileInfo.getKeywordMode() != null ?
-							KSubstOption.fromMode(fileInfo.getKeywordMode()) :
+							fileInfo.getKeywordMode() :
 							KSubstOption.fromFile((IFile) resource);
 						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 						if (tag != null && (tag.getType() != CVSTag.HEAD)) {
