@@ -92,7 +92,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			Object source= event.getSource();
 			switch (event.getKind()) {
 				case DebugEvent.CREATE :
-					insert(source);
+					refresh(source);
 					if (source instanceof IDebugTarget) {
 						getLaunchView().autoExpand(source, true);
 					}
