@@ -36,7 +36,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -83,23 +82,16 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 * @param composite
 	 */
 	private void createViewTrackingOptions(Composite composite) {
-		Group group= new Group(composite, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-		fTrackViewsButton= new Button(group, SWT.CHECK);
+		fTrackViewsButton= new Button(composite, SWT.CHECK);
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTrackViewsButton.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.3")); //$NON-NLS-1$
 		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
 		
-		Label label= new Label(group, SWT.WRAP);
+		Label label= new Label(composite, SWT.WRAP);
 		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.4")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		//fResetViewsButton= new Button(group, SWT.PUSH);
-		//fResetViewsButton.setLayoutData(new GridData());
-		//fResetViewsButton.setText("Reset");
-		fResetViewsButton= SWTUtil.createPushButton(group, DebugPreferencesMessages.getString("ViewManagementPreferencePage.5"), null); //$NON-NLS-1$
+		fResetViewsButton= SWTUtil.createPushButton(composite, DebugPreferencesMessages.getString("ViewManagementPreferencePage.5"), null); //$NON-NLS-1$
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
 		fResetViewsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
