@@ -16,12 +16,25 @@ class CSSEmbedProcessor implements OutputProcessor {
 	private static final byte[] headTagBegin = "<head".getBytes();
 	private static final byte[] headTagBeginCaps = "<HEAD".getBytes();
 	private static final char headTagEnd = '>';
-	private static final String href =
-		PluginURL.getPrefix() +"/org.eclipse.help/" + Resources.getString("CSS_location");
-	private static final byte[] cssLink =
-		("\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" + href + "\">")
-			.getBytes();
-	public CSSEmbedProcessor() {
+	private static final byte[] cssLinkPart1 =
+		("\n<link rel=\"stylesheet\" type=\"text/css\" href=\"")
+		.getBytes();
+	private static final byte[] cssLinkPart2 =
+		("org.eclipse.help/" + Resources.getString("CSS_location") + "\">")
+		.getBytes();
+	private byte[] cssLink;	
+		
+	public CSSEmbedProcessor(HelpURL url) {
+		// We assume the entire path is does not have special characters.
+		byte[] relativePath = getRelativePath(url).getBytes();
+		// Build the css link bytes
+		int offset = 0;
+		cssLink = new byte[cssLinkPart1.length + relativePath.length + cssLinkPart2.length];
+		System.arraycopy(cssLinkPart1, 0, cssLink, offset, cssLinkPart1.length);
+		offset += cssLinkPart1.length;
+		System.arraycopy(relativePath, 0, cssLink, offset, relativePath.length);
+		offset += relativePath.length;
+		System.arraycopy(cssLinkPart2, 0, cssLink, offset, cssLinkPart2.length);
 	}
 	public byte[] processOutput(byte[] input) {
 		// Create new buffer
@@ -63,5 +76,20 @@ class CSSEmbedProcessor implements OutputProcessor {
 		}
 		return buffer;
 
+	}
+	
+	/**
+	 * Returns relative path of the url so we can
+	 * properly link the help css file
+	 */
+	private String getRelativePath(HelpURL url)
+	{
+		String path = url.getPath();
+		// The path starts with "/"
+		path = path.substring(1);
+		StringBuffer relativePath = new StringBuffer();
+		for (int i=path.indexOf('/'); i !=-1; i=path.indexOf('/',i+1))
+			relativePath.append("../");
+		return relativePath.toString();
 	}
 }

@@ -25,7 +25,7 @@ import org.eclipse.help.internal.util.TString;
  */
 public class HTMLHelpViewer implements ISelectionChangedListener {
 	private final static String defaultSplash = 
-		PluginURL.getPrefix()+"/org.eclipse.help/" + Resources.getString("splash_location");
+		"/org.eclipse.help/" + Resources.getString("splash_location");
 	private IBrowser webBrowser;
 	/**
 	 * HelpViewer constructor comment.

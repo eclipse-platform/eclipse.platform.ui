@@ -28,7 +28,7 @@ public class HelpContentManager {
 			processors.add(new HighlightProcessor(url));
 
 		// add the CSS to all html files
-		processors.add(new CSSEmbedProcessor());
+		processors.add(new CSSEmbedProcessor(url));
 		
 		return processors;
 	}

@@ -4,7 +4,7 @@ package org.eclipse.help.internal.server;
  * All Rights Reserved.
  */
 
-
+
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -88,10 +88,6 @@ public class PluginURL extends HelpURL {
 		
 		
 		
-	/** Returns the path prefix that identifies the URL. */
-	public static String getPrefix() {
-		return "";
-	}
 	public boolean isCacheable() {
 		if (getValue("resultof") != null)
 			return false;

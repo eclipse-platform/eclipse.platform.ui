@@ -30,17 +30,15 @@ public class HelpURLFactory {
 		} else
 			url = url.substring(1);
 
-		if (url.startsWith(TempURL.getPrefix())) // "/working"
+		if (url.startsWith(TempURL.getPrefix())) // "/temp"
 			return new TempURL(url.substring(TempURL.getPrefix().length() + 1), query);
 
 		else
 			if (url.startsWith(SearchURL.getPrefix()))
-				return new SearchURL(
-				//request.substring(URLResolver.getSearchContext().length() + 1),
-				"", query);
+				return new SearchURL("", query);
 
-			else ////if (url.startsWith(PluginURL.getPrefix())) 
-				return new PluginURL(url.substring(PluginURL.getPrefix().length()), query);
+			else 
+				return new PluginURL(url, query);
 
 	}
 }
