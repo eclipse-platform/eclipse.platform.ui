@@ -95,6 +95,7 @@ public class BranchWizardPage extends CVSWizardPage {
 			public void handleEvent(Event event) {
 				doVersion = specifyVersion.getSelection();
 				versionText.setEnabled(doVersion);
+				updateEnablement();
 			}
 		});
 		
