@@ -178,7 +178,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			File cacheFile = null;
 			try {
 				manager.lookup(".registry", true); //$NON-NLS-1$
-				cacheFile = File.createTempFile("registry", ".new", manager.getBase()); //$NON-NLS-1$
+				cacheFile = File.createTempFile("registry", ".new", manager.getBase()); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
 				registry = null;
 				return; //Ignore the exception since we can recompute the cache

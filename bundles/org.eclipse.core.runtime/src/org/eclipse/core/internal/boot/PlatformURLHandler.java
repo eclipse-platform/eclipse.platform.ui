@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.*;
 import java.util.Hashtable;
+import org.eclipse.core.internal.runtime.Policy;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 
 /**
@@ -42,28 +43,19 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 		if (spec.startsWith("/")) //$NON-NLS-1$
 			spec = spec.substring(1);
 		int ix = spec.indexOf("/"); //$NON-NLS-1$
-		if (ix == -1) {
-			//TODO need to create message in catalog and use Policy to retrieve it 
-			String message = "url.invalidURL";
-			throw new MalformedURLException(message);
-		}
+		if (ix == -1)
+			throw new MalformedURLException(Policy.bind("url.invalidURL", url.toExternalForm())); //$NON-NLS-1$
 
 		String type = spec.substring(0, ix);
 		Constructor construct = (Constructor) connectionType.get(type);
-		if (construct == null) {
-			//TODO need to use Policy to retrieve it (message already defined in catalog)
-			String message = "url.badVariant";
-			throw new MalformedURLException(message);
-		}
+		if (construct == null)
+			throw new MalformedURLException(Policy.bind("url.badVariant", type)); //$NON-NLS-1$
 
 		PlatformURLConnection connection = null;
 		try {
 			connection = (PlatformURLConnection) construct.newInstance(new Object[] {url});
 		} catch (Exception e) {
-			//TODO original exception is lost - consider wrapping it into the IOException
-			//TODO need to create message in catalog and use Policy to retrieve it
-			String message = "url.createConnection";
-			throw new IOException(message);
+			throw new IOException(Policy.bind("url.createConnection", e.getMessage())); //$NON-NLS-1$
 		}
 		connection.setResolvedURL(connection.resolve());
 		return connection;
