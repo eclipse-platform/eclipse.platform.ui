@@ -95,7 +95,7 @@ public class Bug44460Test extends UITestCase {
 		ctrlShiftT.keyCode = 't';
 		List keyStrokes = WorkbenchKeyboard.generatePossibleKeyStrokes(ctrlShiftT);
 		Workbench workbench = (Workbench) window.getWorkbench();
-		workbench.getKeyboard().press(keyStrokes, null, false);
+		workbench.getCommandSupport().getKeyboard().press(keyStrokes, null, false);
 
 		// Test that only two child shells are open (default).
 		Shell windowShell = window.getShell();

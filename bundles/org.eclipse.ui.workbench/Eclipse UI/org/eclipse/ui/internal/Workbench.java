@@ -33,6 +33,19 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -53,17 +66,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -90,22 +93,22 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.progress.IProgressService;
+
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.colors.ColorDefinition;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -287,35 +290,6 @@ public final class Workbench implements IWorkbench {
 			testableObject = new WorkbenchTestable();
 		}
 		return testableObject;
-	}
-
-	private volatile boolean keyFilterDisabled;
-	private final Object keyFilterMutex = new Object();
-
-	public final void disableKeyFilter() {
-		synchronized (keyFilterMutex) {
-			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getKeyDownFilter();
-			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
-			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-			keyFilterDisabled = true;
-		}
-	}
-
-	public final void enableKeyFilter() {
-		synchronized (keyFilterMutex) {
-			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getKeyDownFilter();
-			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
-			currentDisplay.addFilter(SWT.Traverse, keyFilter);
-			keyFilterDisabled = false;
-		}
-	}
-
-	public final boolean isKeyFilterEnabled() {
-		synchronized (keyFilterMutex) {
-			return !keyFilterDisabled;
-		}
 	}
 
 	/*
@@ -533,7 +507,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
 		windowManager.add(newWindow);
-		registerForKeyBindings(newWindow.getShell(), false);
+		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 		// Create the initial page.
 		try {
@@ -765,7 +739,7 @@ public final class Workbench implements IWorkbench {
 		// mangers
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
-		workbenchCommandSupport = new WorkbenchCommandSupport();
+		workbenchCommandSupport = new WorkbenchCommandSupport(this);
 		workbenchContextSupport = new WorkbenchContextSupport();
 
 		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
@@ -842,11 +816,6 @@ public final class Workbench implements IWorkbench {
 		});
 
 		workbenchCommandsAndContexts.updateActiveContextIds();
-		keyboard = new WorkbenchKeyboard(this);
-		Listener keyFilter = keyboard.getKeyDownFilter();
-		display.addFilter(SWT.Traverse, keyFilter);
-		display.addFilter(SWT.KeyDown, keyFilter);
-		display.addFilter(SWT.FocusOut, keyFilter);
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
 		workbenchCommandsAndContexts.updateActiveIds();
 
@@ -1176,7 +1145,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 		windowManager.add(newWindow);
-		registerForKeyBindings(newWindow.getShell(), false);
+		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 		// Create the initial page.
 		try {
@@ -1352,7 +1321,7 @@ public final class Workbench implements IWorkbench {
 			childMem = children[x];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
-			registerForKeyBindings(newWindow.getShell(), false);
+			getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
@@ -1914,18 +1883,6 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * An accessor for the keyboard interface this workbench is using. This can
-	 * be used by external class to get a reference with which they can
-	 * simulate key presses in the key binding architecture. This is used for
-	 * testing purposes currently.
-	 * 
-	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
-	 */
-	public WorkbenchKeyboard getKeyboard() {
-		return keyboard;
-	}
-
-	/**
 	 * Returns the id of the preference page that should be presented most
 	 * prominently.
 	 * 
@@ -1975,7 +1932,6 @@ public final class Workbench implements IWorkbench {
 	/* TODO: reduce visibility, or better - get rid of entirely */
 	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
 		new WorkbenchCommandsAndContexts(this);
-	private WorkbenchKeyboard keyboard;
 	private ActivityPersistanceHelper activityHelper;
 
 	public Object getAdapter(Class adapter) {
@@ -1999,50 +1955,5 @@ public final class Workbench implements IWorkbench {
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		getActivitySupport().setEnabledActivityIds(enabledActivityIds);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbench#registerForKeyBindings(org.eclipse.swt.widgets.Shell,
-	 *      boolean)
-	 */
-	public void registerForKeyBindings(Shell shell, boolean dialogOnly) {
-		if (keyboard != null) {
-			keyboard.register(shell, dialogOnly);
-		} else {
-			String message = "registerForKeyBindings: Global key bindings are not available."; //$NON-NLS-1$
-			WorkbenchPlugin.log(
-				message,
-				new Status(
-					IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH,
-					0,
-					message,
-					new Exception()));
-
-		}
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#deregisterFromKeyBindings(org.eclipse.swt.widgets.Shell)
-	 */
-	public void deregisterFromKeyBindings(Shell shell) {
-		if (keyboard != null) {
-			keyboard.deregister(shell);
-		} else {
-			String message = "deregisterFromKeyBindings: Global key bindings are not available."; //$NON-NLS-1$
-			WorkbenchPlugin.log(
-					message,
-					new Status(
-							IStatus.ERROR,
-							WorkbenchPlugin.PI_WORKBENCH,
-							0,
-							message,
-							new Exception()));
-
-		}
-		
 	}
 }

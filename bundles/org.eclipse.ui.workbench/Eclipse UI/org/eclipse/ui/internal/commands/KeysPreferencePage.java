@@ -160,6 +160,7 @@ public class KeysPreferencePage
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 	private final static RGB RGB_MINUS = new RGB(160, 160, 160);
+	
 	private Map assignmentsByContextIdByKeySequence;
 	private Button buttonAdd;
 	private Button buttonAddKey;
@@ -177,7 +178,6 @@ public class KeysPreferencePage
 	private Map commandIdsByUniqueName;
 	private CommandManager commandManager;
 	private Map commandUniqueNamesById;
-
 	private Map contextIdsByCommandId;
 	private Map contextIdsByUniqueName;
 	private IContextManager contextManager;
@@ -197,6 +197,8 @@ public class KeysPreferencePage
 	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;
 	private Menu menuButtonAddKey;
+	private Button radioFormatNative;
+	private Button radioFormat;
 	private Table tableAssignmentsForCommand;
 	private Table tableAssignmentsForKeySequence;
 	private Text textKeySequence;
@@ -418,7 +420,7 @@ public class KeysPreferencePage
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// The multi key assit button.
+		// The multi   -key assist button.
 		checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
 		checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
 		checkBoxMultiKeyAssist.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$

@@ -15,7 +15,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -442,33 +441,4 @@ public interface IWorkbench {
 	 * @since 3.0
 	 */
 	void setEnabledActivityIds(Set enabledActivityIds);
-
-	/**
-	 * Indicates that the given <code>shell</code> wishes to participate in
-	 * the global key binding architecture. This means that key and traversal
-	 * events might be intercepted before reaching any of the widgets on the
-	 * shell.
-	 * 
-	 * @param shell
-	 *            The shell to register for key bindings; may be <code>null</code>.
-	 * @param dialogOnly
-	 *            Whether the shell only wants the restricted set of key
-	 *            bindings normally used in dialogs (e.g., text editing
-	 *            commands). All workbench windows say <code>false</code>
-	 *            here.
-	 * 
-	 * @since 3.0
-	 */
-	public void registerForKeyBindings(Shell shell, boolean dialogOnly);
-
-	/**
-	 * Deregisters the given <code>shell</code> from the global key bindings.
-	 * This is not strictly necessary (as the internal storage uses a weak hash
-	 * map), but is good for cleanliness.
-	 * 
-	 * @param shell
-	 *            The shell to deregister; may be <code>null</code>.
-	 * @since 3.0
-	 */
-	public void deregisterFromKeyBindings(Shell shell);
 }

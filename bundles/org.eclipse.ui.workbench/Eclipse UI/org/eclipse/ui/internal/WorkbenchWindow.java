@@ -79,6 +79,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
@@ -1431,7 +1432,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
-		final boolean keyFilterEnabled = getWorkbenchImpl().isKeyFilterEnabled();
+		IWorkbenchCommandSupport commandSupport = getWorkbench().getCommandSupport();
+		final boolean keyFilterEnabled = commandSupport.isKeyFilterEnabled();
 
 		ToolBarManager shortcutBar = getShortcutBar();
 		Control shortcutBarControl = null;
@@ -1446,7 +1448,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				shortcutBarControl.setEnabled(false);
 
 			if (keyFilterEnabled)
-				getWorkbenchImpl().disableKeyFilter();
+				commandSupport.disableKeyFilter();
 
 			super.run(fork, cancelable, runnable);
 		} finally {
@@ -1454,7 +1456,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
 
 			if (keyFilterEnabled)
-				getWorkbenchImpl().enableKeyFilter();
+				commandSupport.enableKeyFilter();
 		}
 	}
 	/**

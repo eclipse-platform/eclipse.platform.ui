@@ -283,11 +283,16 @@ public class WorkbenchKeyboard {
 	 * @param associatedWorkbench
 	 *            The workbench with which this keyboard interface should work;
 	 *            must not be <code>null</code>.
+	 * @param associatedCommandManager
+	 *            The command manager to be used by this keyboard interface;
+	 *            must not be <code>null</code>.
 	 */
-	public WorkbenchKeyboard(Workbench associatedWorkbench) {
+	public WorkbenchKeyboard(
+		Workbench associatedWorkbench,
+		ICommandManager associatedCommandManager) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
-		commandManager = workbench.getCommandManager();
+		commandManager = associatedCommandManager;
 
 		workbench.addWindowListener(windowListener);
 	}
@@ -425,10 +430,10 @@ public class WorkbenchKeyboard {
 			} else if (dialog.booleanValue()) {
 				// The window is managed, but requested partial management.
 				dialogOnly = true;
-				
+
 			} else {
 				// The window is fully-managed; leave dialogOnly=false.
-				
+
 			}
 		}
 
