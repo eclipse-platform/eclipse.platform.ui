@@ -13,11 +13,12 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -26,12 +27,10 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -41,12 +40,11 @@ import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.tasklist.TaskList;
 
 
 /**
@@ -112,19 +110,35 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public void run() {
 		
 		IMarker marker= chooseMarker(fMarkers);
-		if (MarkerUtilities.isMarkerType(marker, IMarker.TASK) || MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM)) {
+		boolean isProblemMarker= MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM);
+		boolean isTaskMarker= MarkerUtilities.isMarkerType(marker, IMarker.TASK);
+		if (isProblemMarker || isTaskMarker) {
 			IWorkbenchPage page= fTextEditor.getSite().getPage();
-			IViewPart view= view= page.findView("org.eclipse.ui.views.TaskList"); //$NON-NLS-1$
-			if (view instanceof TaskList) {
-				StructuredSelection ss= new StructuredSelection(marker);
-				((TaskList) view).setSelection(ss, true);
-			} else {
-				int offset= MarkerUtilities.getCharStart(marker);
-				int endOffset= MarkerUtilities.getCharEnd(marker);
-				if (offset > -1 && endOffset > -1)
-					fTextEditor.selectAndReveal(offset, endOffset - offset);
+			IViewPart view= page.findView(isProblemMarker ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); //$NON-NLS-1$  //$NON-NLS-2$
+			if (view != null) {
+				boolean selectionSet= false;
+				try {
+					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
+					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
+					selectionSet= true;
+				} catch (NoSuchMethodException x) {
+					selectionSet= false;
+				} catch (IllegalAccessException x) {
+					selectionSet= false;
+				} catch (InvocationTargetException x) {
+					selectionSet= false;
+				}
+				
+				if (selectionSet)
+					return;
 			}
 		}
+		// Select and reveal in editor
+		int offset= MarkerUtilities.getCharStart(marker);
+		int endOffset= MarkerUtilities.getCharEnd(marker);
+		if (offset > -1 && endOffset > -1)
+			fTextEditor.selectAndReveal(offset, endOffset - offset);
+
 	}
 
 	/**
