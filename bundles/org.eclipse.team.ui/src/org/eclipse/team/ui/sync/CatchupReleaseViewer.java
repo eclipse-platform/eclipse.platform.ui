@@ -282,7 +282,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 				diffModel.setSyncGranularity(isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
 			}
 		};
-		toggleGranularity.setChecked(false);
+		toggleGranularity.setChecked(diffModel.getSyncGranularity() == IRemoteSyncElement.GRANULARITY_CONTENTS);
 		
 		removeFromTree = new Action(Policy.bind("CatchupReleaseViewer.removeFromView"), null) { //$NON-NLS-1$
 			public void run() {
