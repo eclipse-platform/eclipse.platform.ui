@@ -347,9 +347,9 @@ public class ReplaceDialog extends Dialog {
 	private void restoreAutoBuildState() {
 		if (!fAutobuild)
 			return;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription description= workspace.getDescription();
-		description.setAutoBuilding(fAutobuild);
+		description.setAutoBuilding(true);
 		try {
 			workspace.setDescription(description);
 		} catch (CoreException e) {
