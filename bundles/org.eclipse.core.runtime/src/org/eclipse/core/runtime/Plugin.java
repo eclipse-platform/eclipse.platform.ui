@@ -245,7 +245,7 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor
-	 * @deprecated The new runtime no longer uses <code>IPluginDescriptors</code> or manages the instances
+	 * @deprecated The new runtime no longer uses <code>IPluginDescriptor</code>s or manages the instances
 	 * of the plug-in runtime classes.  Legacy plug-ins using the compatibility layer can continue to implement 
 	 * this method but new runtime plug-ins need not implement it as it will never be called.  Instead they should 
 	 * implement one of @link #Plugin() Plugin() or @link #Plugin(BundleContext) Plugin(BundleContext).
@@ -403,7 +403,6 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @see Preferences#load
 	 * @since 2.0
-	 * @deprecated Use @link BundleHelper#loadPluginPreferences() BundleHelper#loadPluginPreferences() 
 	 */
 	private void loadPluginPreferences() {
 		// the preferences file is located in the plug-in's state area at a well-known name
@@ -538,7 +537,6 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * 
 	 * @since 2.0
-	 * @deprecated Use @link BundleHelper#initializeDefaultPluginPreferences() BundleHelper#initializeDefaultPluginPreferences()
 	 */
 	protected void initializeDefaultPluginPreferences() {
 		// default implementation of this method - spec'd to do nothing
@@ -875,18 +873,6 @@ public abstract class Plugin implements BundleActivator {
 		bundle = null;
 	}
 	
-	// TODO do we really want to support this?  What are the usecases?  Could the function just
-	// be on Platform?
-	public EnvironmentInfo getEnvironmentService() {
-		ServiceTracker tracker = null;
-		try {
-			tracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-			tracker.open();
-			return (EnvironmentInfo) tracker.getService();
-		} finally {
-			tracker.close();
-		}
-	}
 	/**
 	 * Returns the bundle
 	 * 

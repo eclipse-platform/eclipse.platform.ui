@@ -1216,4 +1216,19 @@ public final class InternalPlatform implements IPlatform {
 		//TODO
 		throw new NoSuchMethodError("getResourceBundleString");
 	}
+	public String getOSArch() {
+		return getEnvironmentInfoService().getOSArch();
+	}
+	public String getNL() {
+		return getEnvironmentInfoService().getNL();
+	}
+	public String getOS() {
+		return getEnvironmentInfoService().getOS();
+	}
+	public String getWS() {
+		return getEnvironmentInfoService().getWS();
+	}
+	public String[] getApplicationArgs() {
+		return getEnvironmentInfoService().getApplicationArgs();
+	}
 }

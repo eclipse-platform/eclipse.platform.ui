@@ -19,7 +19,7 @@ package org.eclipse.core.runtime;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Use {@link org.eclipse.core.runtime.registry.IExtensionRegistry IExtensionRegistry} for all information relative to extension-points and extensions. 
+ * @deprecated Use {@link org.eclipse.core.runtime.IExtensionRegistry IExtensionRegistry} for all information relative to extension-points and extensions. 
  * For the information plugins being installed, go to the OSGi framework. For further information about this reorganisation please refer to the porting guide.
  */
 public interface IPluginRegistry {
