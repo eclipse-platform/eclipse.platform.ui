@@ -237,6 +237,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				getContainer().setPerformActionEnabled(fPattern.getText().length() > 0);
 			}
 		});
+		
+		// 1GF90TL: ITPJUI:ALL - Search dialog is missing a width hint
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(30);
 		fPattern.setLayoutData(gd);
@@ -341,7 +343,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		label.setText(SearchPlugin.getResourceString("SearchPage.extensions"));
 		
 		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
-		
+
+		// 1GF90TL: ITPJUI:ALL - Search dialog is missing a width hint
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(30);
 		fExtensions.setLayoutData(gd);
