@@ -231,6 +231,10 @@ public class CharsetManager implements IManager {
 		// be careful looking up for our node so not to create any nodes as side effect
 		Preferences node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 		try {
+			//TODO once bug 90500 is fixed, should be as simple as this:
+			//			String path = project.getName() + IPath.SEPARATOR + ResourcesPlugin.PI_RESOURCES + IPath.SEPARATOR + ENCODING_PREF_NODE;
+			//			return node.nodeExists(path) ? node.node(path) : null;
+			// for now, take the long way
 			if (!node.nodeExists(project.getName()))
 				return null;
 			node = node.node(project.getName());
