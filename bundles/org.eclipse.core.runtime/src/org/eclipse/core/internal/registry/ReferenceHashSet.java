@@ -318,7 +318,7 @@ public class ReferenceHashSet {
         if (result.length == resultSize)
             return result;
         Object[] finalResult = new Object[resultSize];
-        System.arraycopy(result, 0, finalResult, 0, result.length);
+        System.arraycopy(result, 0, finalResult, 0, resultSize);
         return finalResult;
     }
 }
