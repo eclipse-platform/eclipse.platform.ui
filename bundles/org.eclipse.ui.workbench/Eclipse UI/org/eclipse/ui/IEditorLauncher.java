@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * An editor launcher is used to launch external editors on an
- * <code>IFile</code>input.
+ * file in the local file system.
  * <p>
  * Clients should implement this interface to define a new type of editor
  * launcher.  Each new launcher must be registered as an editor in the 
@@ -42,11 +42,12 @@ import org.eclipse.core.resources.IFile;
  * </p>
  */
 public interface IEditorLauncher{
+
 /**
- * Launches this external editor to edit the given file.
+ * Launches this external editor to edit the file at the given 
+ * location in the local file system.
  *
- * @param file the file to edit
- * @issue This should really be an IPath instead of an IFile
+ * @param file the local file system path of the file to edit
  */
-public void open(IFile file);
+public void open(IPath file);
 }

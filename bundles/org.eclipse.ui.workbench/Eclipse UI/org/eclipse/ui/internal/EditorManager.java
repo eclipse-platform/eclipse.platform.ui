@@ -534,7 +534,7 @@ public class EditorManager {
 					if (desc.getLauncher() != null) {
 						// Open using launcher
 						Object launcher = WorkbenchPlugin.createExtension(desc.getConfigurationElement(), "launcher"); //$NON-NLS-1$
-						 ((IEditorLauncher) launcher).open(fileInput.getFile());
+						 ((IEditorLauncher) launcher).open(fileInput.getLocation());
 					} else {
 						// Open using command
 						ExternalEditor oEditor = new ExternalEditor(fileInput.getFile(), desc);
