@@ -6,11 +6,8 @@
  */
 package org.eclipse.update.internal.ui.search;
 
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import java.util.StringTokenizer;
 import java.io.File;
-import java.util.Vector;
+import java.util.*;
 /**
  * @version 	1.0
  * @author

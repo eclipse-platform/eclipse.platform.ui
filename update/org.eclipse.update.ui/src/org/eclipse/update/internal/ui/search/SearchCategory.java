@@ -1,8 +1,8 @@
 package org.eclipse.update.internal.ui.search;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import java.util.Map;
+
+import org.eclipse.swt.widgets.Control;
 
 public abstract class SearchCategory implements ISearchCategory {
 	private Control control;

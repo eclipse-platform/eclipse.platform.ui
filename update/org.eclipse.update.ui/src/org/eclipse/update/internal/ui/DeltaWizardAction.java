@@ -8,10 +8,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.wizards.InstallDeltaWizard;
 
 /**
  * Insert the type's description here.

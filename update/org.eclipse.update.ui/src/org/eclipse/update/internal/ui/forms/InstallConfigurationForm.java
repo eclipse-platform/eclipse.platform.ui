@@ -4,7 +4,6 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
-import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.*;

@@ -7,8 +7,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.IVerificationResult;
@@ -238,7 +237,7 @@ public class JarVerificationPage extends BannerPage {
 		// Icon
 		//-----
 		Label label = new Label(compositeCaution,SWT.LEFT);
-		label.setImage(JFaceResources.getImage(_Dialog.DLG_IMG_MESSAGE_WARNING));
+		label.setImage(JFaceResources.getImage(TitleAreaDialog.DLG_IMG_MESSAGE_WARNING));
 		
 		// Text
 		//-----

@@ -4,10 +4,8 @@ package org.eclipse.update.internal.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.internal.SetPagePerspectiveAction;
-import org.eclipse.update.internal.ui.model.BookmarkFolder;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.Wizard;
 
 public class NewWizard extends Wizard {
 	protected BaseNewWizardPage page;

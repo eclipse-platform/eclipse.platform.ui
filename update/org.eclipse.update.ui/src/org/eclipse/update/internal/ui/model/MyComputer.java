@@ -4,21 +4,17 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
-import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.search.*;
-
-import java.io.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.update.configuration.IVolume;
-import org.eclipse.update.configuration.LocalSystemInfo;
 
 public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	private static final String KEY_LABEL = "MyComputer.label";

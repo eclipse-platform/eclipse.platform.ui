@@ -5,15 +5,12 @@ package org.eclipse.update.internal.ui.search;
  */
 
 import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
-import org.eclipse.update.internal.ui.model.ISiteAdapter;
-import org.eclipse.update.internal.ui.model.UIModelObject;
-import org.eclipse.core.runtime.*;
+import java.util.Vector;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.internal.ui.model.*;
 
 public class SearchResultSite
 	extends UIModelObject

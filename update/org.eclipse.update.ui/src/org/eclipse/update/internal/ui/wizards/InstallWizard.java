@@ -5,21 +5,16 @@ package org.eclipse.update.internal.ui.wizards;
  */
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
-import org.eclipse.update.internal.ui.model.PendingChange;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class InstallWizard extends Wizard {

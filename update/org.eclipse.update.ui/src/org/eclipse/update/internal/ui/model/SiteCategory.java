@@ -3,12 +3,12 @@ package org.eclipse.update.internal.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
-import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import java.net.URL;
-import org.eclipse.core.runtime.PlatformObject;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class SiteCategory extends UIModelObject {
 private static final String KEY_OTHER_LABEL= "SiteCategory.other.label";

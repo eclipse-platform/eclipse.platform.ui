@@ -6,7 +6,6 @@ package org.eclipse.update.internal.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 public class UpdatePerspective implements IPerspectiveFactory {
 	private static final String PREFIX = "org.eclipse.update.ui.";

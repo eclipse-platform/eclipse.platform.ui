@@ -9,13 +9,11 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
 
 public class PropertyWebForm extends UpdateWebForm {

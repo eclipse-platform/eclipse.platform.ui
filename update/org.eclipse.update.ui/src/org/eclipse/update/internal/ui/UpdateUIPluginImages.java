@@ -4,15 +4,11 @@ package org.eclipse.update.internal.ui;
  * All Rights Reserved.
  */
 
-import java.net.MalformedURLException;
-import org.eclipse.core.runtime.*;
-import java.io.File;
+import java.net.*;
+
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import java.net.URL;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
 
 /**
  * Bundle of all images used by the PDE plugin.

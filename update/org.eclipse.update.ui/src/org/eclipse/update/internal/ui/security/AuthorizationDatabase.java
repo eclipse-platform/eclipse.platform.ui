@@ -9,8 +9,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -98,7 +97,7 @@ public class AuthorizationDatabase extends Authenticator {
 		ui.setBlockOnOpen(true);
 		ui.open();
 
-		if (ui.getReturnCode() != ui.CANCEL) {
+		if (ui.getReturnCode() != UserValidationDialog.CANCEL) {
 			info.put(INFO_USERNAME, ui.getUserid());
 			info.put(INFO_PASSWORD, ui.getPassword());
 		}

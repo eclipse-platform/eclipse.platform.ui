@@ -3,12 +3,11 @@ package org.eclipse.update.internal.ui.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import java.util.*;
-import org.eclipse.update.internal.ui.model.*;
 import java.net.*;
+
+import org.eclipse.ui.views.properties.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
 
 public class SiteBookmarkPropertySource implements IPropertySource {
 	private static final String KEY_URL_LABEL =

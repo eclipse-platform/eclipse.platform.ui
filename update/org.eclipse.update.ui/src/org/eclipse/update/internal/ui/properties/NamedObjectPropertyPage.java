@@ -3,15 +3,14 @@ package org.eclipse.update.internal.ui.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import java.net.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @see PropertyPage

@@ -3,28 +3,23 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import java.util.*;
+import java.io.File;
+import java.net.URL;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.core.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import java.net.URL;
-import java.io.*;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.update.internal.ui.model.PendingChange;
+import org.eclipse.update.internal.ui.parts.*;
 
 public class TargetPage extends BannerPage {
 	// NL keys

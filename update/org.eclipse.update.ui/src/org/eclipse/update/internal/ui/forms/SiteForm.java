@@ -4,25 +4,22 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import java.net.URL;
-import java.net.MalformedURLException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+import java.net.*;
+
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.update.internal.ui.views.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.ISiteAdapter;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.views.DetailsView;
+import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 public class SiteForm extends UpdateWebForm {
 	private static final String KEY_DESC = "SitePage.desc";

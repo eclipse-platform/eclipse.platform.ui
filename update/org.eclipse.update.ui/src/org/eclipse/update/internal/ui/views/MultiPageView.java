@@ -4,17 +4,15 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.*;
-import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
-import org.eclipse.update.ui.forms.internal.*;
 import java.util.*;
+
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
+import org.eclipse.update.ui.forms.internal.*;
 public abstract class MultiPageView extends ViewPart implements ISelectionListener {
 	protected IFormWorkbook formWorkbook;
 	private Vector pages;

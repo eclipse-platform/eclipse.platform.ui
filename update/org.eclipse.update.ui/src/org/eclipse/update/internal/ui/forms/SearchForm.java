@@ -22,7 +22,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.SearchResultView;
@@ -331,7 +330,7 @@ public class SearchForm extends UpdateWebForm {
 		td.align = TableData.FILL;
 		td.heightHint = 1;
 		td.colspan = 2;
-		sep.setBackground(factory.getColor(factory.COLOR_BORDER));
+		sep.setBackground(factory.getColor(FormWidgetFactory.COLOR_BORDER));
 		sep.setLayoutData(td);
 
 		Composite searchContainer = factory.createComposite(parent);

@@ -6,7 +6,6 @@
  */
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 
 /**

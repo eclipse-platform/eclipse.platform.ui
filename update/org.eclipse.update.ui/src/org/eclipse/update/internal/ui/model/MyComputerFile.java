@@ -4,17 +4,11 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
-import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.*;
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
-import org.eclipse.update.internal.ui.*;
-import java.io.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class MyComputerFile extends UIModelObject implements IWorkbenchAdapter {
 	private UIModelObject parent;

@@ -4,22 +4,18 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.views.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
-import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.model.SiteCategory;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.views.DetailsView;
+import org.eclipse.update.ui.forms.internal.*;
 
 
 public class CategoryForm extends UpdateWebForm {

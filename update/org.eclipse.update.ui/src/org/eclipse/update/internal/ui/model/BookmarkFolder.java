@@ -2,8 +2,6 @@ package org.eclipse.update.internal.ui.model;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IPath;
-
 public class BookmarkFolder extends NamedModelObject {
 	protected ArrayList children= new ArrayList();
 	public BookmarkFolder() {

@@ -7,7 +7,6 @@ package org.eclipse.update.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
-import java.net.Authenticator;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -15,7 +14,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -26,9 +24,7 @@ import org.eclipse.update.internal.model.SiteLocalModel;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
-import org.eclipse.update.internal.ui.parts.SWTUtil;
-import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.update.internal.ui.preferences.UpdateColors;
+import org.eclipse.update.internal.ui.preferences.*;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 
 /**

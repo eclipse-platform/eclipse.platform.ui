@@ -6,7 +6,6 @@
  */
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.update.core.*;
 
 /**
  * @version 	1.0

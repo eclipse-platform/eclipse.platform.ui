@@ -3,14 +3,12 @@ package org.eclipse.update.internal.ui.forms;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.update.core.*;
-import org.eclipse.swt.layout.*;
 import java.net.URL;
-import org.eclipse.swt.SWT;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.views.*;
+
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.ui.views.DetailsView;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class InfoLink extends HyperlinkAdapter {
 	private IURLEntry info;

@@ -5,9 +5,8 @@ package org.eclipse.update.internal.ui.model;
  */
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;

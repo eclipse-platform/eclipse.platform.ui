@@ -5,9 +5,7 @@ package org.eclipse.update.internal.ui.model;
  */
 
 import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.core.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.IFeature;
 
 
 public class PendingChange extends SimpleFeatureAdapter {

@@ -5,13 +5,11 @@ package org.eclipse.update.internal.ui.model;
  */
 
 import java.net.URL;
-import org.eclipse.update.core.*;
+import java.util.Vector;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
-import java.util.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {

@@ -3,18 +3,14 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import java.util.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.internal.ui.*;
 import java.net.URL;
+
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 
 public abstract class BannerPage extends WizardPage {
 	private Image bannerImage;
