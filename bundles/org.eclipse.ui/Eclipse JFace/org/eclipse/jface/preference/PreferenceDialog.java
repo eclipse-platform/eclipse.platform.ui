@@ -230,6 +230,13 @@ protected void configureShell(Shell newShell) {
 			}	
 		}
 	});
+	
+	newShell.addShellListener(new ShellAdapter() {
+		public void shellActivated(ShellEvent e) {
+			if (lastShellSize == null)
+				lastShellSize = getShell().getSize();
+		}
+	});
 }
 /*(non-Javadoc)
  * Method declared on Window.
@@ -842,8 +849,8 @@ public void setPreferenceStore(IPreferenceStore store) {
  * @param height the shell height
  */
 private void setShellSize(int width, int height) {
-	Rectangle bounds = getShell().getDisplay().getBounds();
-	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+	getShell().setSize(width, height);
+	constrainShellSize();	
 }
 /**
  * Show the new message
@@ -927,7 +934,6 @@ protected boolean showPage(IPreferenceNode node) {
 			hdiff= Math.max(0, hdiff);
 			vdiff= Math.max(0, vdiff);
 			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-			constrainShellSize();
 			lastShellSize = shell.getSize();
 		}
 	}
