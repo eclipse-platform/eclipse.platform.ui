@@ -52,19 +52,19 @@ public final class ExecutionEvent {
 	private final Object trigger;
 
 	/**
-	 * Constructs a new instance of <code>ExecutionEvent</code>.
-	 * 
-	 * @param parameters
-	 *            The parameters to qualify the execution; must not be
-	 *            <code>null</code>. This must be a map of parameter names (<code>String</code>)
-	 *            to parameter values (<code>String</code>).
-	 * @param trigger
-	 *            The object that triggered the execution; may be
-	 *            <code>null</code>.
-	 * @param applicationContext
-	 *            The state of the application at the time the execution was
-	 *            triggered; may be <code>null</code>.
-	 */
+     * Constructs a new instance of <code>ExecutionEvent</code>.
+     * 
+     * @param parameters
+     *            The parameters to qualify the execution; must not be
+     *            <code>null</code>. This must be a map of parameter names (<code>String</code>)
+     *            to parameter values (<code>String</code>).
+     * @param trigger
+     *            The object that triggered the execution; may be
+     *            <code>null</code>.
+     * @param applicationContext
+     *            The state of the application at the time the execution was
+     *            triggered; may be <code>null</code>.
+     */
 	public ExecutionEvent(final Map parameters, final Object trigger,
 			final Object applicationContext) {
 		if (parameters == null) {

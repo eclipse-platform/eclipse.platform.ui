@@ -290,21 +290,21 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * Executes this command by delegating to the current handler, if any. If
-	 * the debugging flag is set, then this print information about which
-	 * handler is selected for performing this command.
-	 * 
-	 * @param event
-	 *            An event containing all the information about the current
-	 *            state of the application; must not be <code>null</code>.
-	 * @return The result of the execution; may be <code>null</code>. This
-	 *         result will be available to the client executing the command, and
-	 *         execution listeners.
-	 * @throws ExecutionException
-	 *             If the handler has problems executing this command.
-	 * @throws NotHandledException
-	 *             If there is no handler.
-	 */
+     * Executes this command by delegating to the current handler, if any. If
+     * the debugging flag is set, then this method prints information about
+     * which handler is selected for performing this command.
+     * 
+     * @param event
+     *            An event containing all the information about the current
+     *            state of the application; must not be <code>null</code>.
+     * @return The result of the execution; may be <code>null</code>. This
+     *         result will be available to the client executing the command, and
+     *         execution listeners.
+     * @throws ExecutionException
+     *             If the handler has problems executing this command.
+     * @throws NotHandledException
+     *             If there is no handler.
+     */
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException, NotHandledException {
 		firePreExecute(event);

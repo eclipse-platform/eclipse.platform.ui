@@ -24,7 +24,7 @@ public abstract class CommandException extends Exception {
      * Creates a new instance of this class with the specified detail message.
      * 
      * @param message
-     *            the detail message.
+     *            the detail message; may be <code>null</code>.
      */
     public CommandException(final String message) {
         super(message);
@@ -35,9 +35,9 @@ public abstract class CommandException extends Exception {
      * and cause.
      * 
      * @param message
-     *            the detail message.
+     *            the detail message; may be <code>null</code>.
      * @param cause
-     *            the cause.
+     *            the cause; may be <code>null</code>.
      */
     public CommandException(final String message, final Throwable cause) {
         super(message, cause);

@@ -45,7 +45,8 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 	 * Creates a new instance of this class.
 	 * 
 	 * @param handler
-	 *            the instance of the interface that changed.
+	 *            the instance of the interface that changed; must not be
+     *            <code>null</code>.
 	 * @param enabledChanged
 	 *            Whether the enabled state of the handler has changed.
 	 * @param handledChanged

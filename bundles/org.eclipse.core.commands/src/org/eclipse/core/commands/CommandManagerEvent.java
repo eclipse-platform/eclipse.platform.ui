@@ -29,11 +29,11 @@ public final class CommandManagerEvent {
 	private static final int CHANGED_CATEGORY_DEFINED = 1;
 
 	/**
-	 * The bit used to represent whether the given command has become defined.If
-	 * this bit is not set and there is no command id, then no command has
-	 * become defined nor undefined. If this bit is not set and there is a
-	 * command id, then the command has become undefined.
-	 */
+     * The bit used to represent whether the given command has become defined.
+     * If this bit is not set and there is no command id, then no command has
+     * become defined nor undefined. If this bit is not set and there is a
+     * command id, then the command has become undefined.
+     */
 	private static final int CHANGED_COMMAND_DEFINED = 1 << 1;
 
 	/**
@@ -53,7 +53,7 @@ public final class CommandManagerEvent {
 	/**
 	 * The command identifier that was added or removed from the list of defined
 	 * command identifiers. This value is <code>null</code> if the list of
-	 * defined category identifiers did not change.
+	 * defined command identifiers did not change.
 	 */
 	private final String commandId;
 
@@ -70,7 +70,7 @@ public final class CommandManagerEvent {
 	 *            <code>null</code>.
 	 * @param commandId
 	 *            The command identifier that was added or removed; must not be
-	 *            <code>null</code>.
+	 *            <code>null</code> if commandIdChanged is <code>true</code>.
 	 * @param commandIdAdded
 	 *            Whether the command identifier became defined (otherwise, it
 	 *            became undefined).
@@ -78,7 +78,7 @@ public final class CommandManagerEvent {
 	 *            Whether the list of defined command identifiers has changed.
 	 * @param categoryId
 	 *            The category identifier that was added or removed; must not be
-	 *            <code>null</code>.
+	 *            <code>null</code> if categoryIdChanged is <code>true</code>.
 	 * @param categoryIdAdded
 	 *            Whether the category identifier became defined (otherwise, it
 	 *            became undefined).
@@ -121,7 +121,7 @@ public final class CommandManagerEvent {
 	/**
 	 * Returns the category identifier that was added or removed.
 	 * 
-	 * @return The category identifier that was added or removed; never
+	 * @return The category identifier that was added or removed; may be
 	 *         <code>null</code>.
 	 */
 	public final String getCategoryId() {
@@ -131,7 +131,7 @@ public final class CommandManagerEvent {
 	/**
 	 * Returns the command identifier that was added or removed.
 	 * 
-	 * @return The command identifier that was added or removed; never
+	 * @return The command identifier that was added or removed; may be
 	 *         <code>null</code>.
 	 */
 	public final String getCommandId() {

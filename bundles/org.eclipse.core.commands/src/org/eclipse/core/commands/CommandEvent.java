@@ -50,15 +50,15 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
-	 *            true, iff the category property changed.
+	 *            <code>true</code>, iff the category property changed.
 	 * @param definedChanged
-	 *            true, iff the defined property changed.
+	 *            <code>true</code>, iff the defined property changed.
 	 * @param descriptionChanged
-	 *            true, iff the description property changed.
+	 *            <code>true</code>, iff the description property changed.
 	 * @param handledChanged
-	 *            true, iff the handled property changed.
+	 *            <code>true</code>, iff the handled property changed.
 	 * @param nameChanged
-	 *            true, iff the name property changed.
+	 *            <code>true</code>, iff the name property changed.
 	 * @param parametersChanged
 	 *            <code>true</code> if the parameters have changed;
 	 *            <code>false</code> otherwise.
@@ -97,7 +97,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * Returns whether or not the category property changed.
 	 * 
-	 * @return true, iff the category property changed.
+	 * @return <code>true</code>, iff the category property changed.
 	 */
 	public final boolean isCategoryChanged() {
 		return ((changedValues & CHANGED_CATEGORY) != 0);
@@ -106,7 +106,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * Returns whether or not the handled property changed.
 	 * 
-	 * @return true, iff the handled property changed.
+	 * @return <code>true</code>, iff the handled property changed.
 	 */
 	public final boolean isHandledChanged() {
 		return ((changedValues & CHANGED_HANDLED) != 0);
@@ -115,7 +115,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * Returns whether or not the parameters have changed.
 	 * 
-	 * @return true, iff the parameters property changed.
+	 * @return <code>true</code>, iff the parameters property changed.
 	 */
 	public final boolean isParametersChanged() {
 		return ((changedValues & CHANGED_PARAMETERS) != 0);

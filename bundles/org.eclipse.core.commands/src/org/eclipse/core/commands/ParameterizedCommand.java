@@ -256,6 +256,9 @@ public final class ParameterizedCommand implements Comparable {
 		this.parameterizations = parameterizations;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public final int compareTo(final Object object) {
 		final ParameterizedCommand command = (ParameterizedCommand) object;
 		final boolean thisDefined = this.command.isDefined();
@@ -272,6 +275,9 @@ public final class ParameterizedCommand implements Comparable {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public final boolean equals(final Object object) {
 		if (this == object) {
 			return true;
@@ -391,6 +397,9 @@ public final class ParameterizedCommand implements Comparable {
 				applicationContext));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);

@@ -74,7 +74,7 @@ public interface IHandler {
 	public boolean isHandled();
 
 	/**
-	 * Unregisters an instance of <code>IPropertyListener</code> listening for
+	 * Unregisters an instance of <code>IHandlerListener</code> listening for
 	 * changes to properties of this instance.
 	 * 
 	 * @param handlerListener

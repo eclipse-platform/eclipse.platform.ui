@@ -279,7 +279,7 @@ public final class CommandManager implements ICategoryListener,
 
 	/**
 	 * Gets the command with the given identifier. If no such command currently
-	 * exists, then the command will be created (but be undefined).
+	 * exists, then the command will be created (but will be undefined).
 	 * 
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code> and

@@ -45,11 +45,11 @@ public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 	 * Constructs a new instance of <code>AbstractHandleObjectEvent</code>.
 	 * 
 	 * @param definedChanged
-	 *            true, iff the defined property changed.
+	 *            <code>true</code>, iff the defined property changed.
 	 * @param descriptionChanged
-	 *            true, iff the description property changed.
+	 *            <code>true</code>, iff the description property changed.
 	 * @param nameChanged
-	 *            true, iff the name property changed.
+	 *            <code>true</code>, iff the name property changed.
 	 */
 	protected AbstractNamedHandleEvent(final boolean definedChanged,
 			final boolean descriptionChanged, final boolean nameChanged) {
@@ -68,7 +68,7 @@ public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 	/**
 	 * Returns whether or not the defined property changed.
 	 * 
-	 * @return true, iff the defined property changed.
+	 * @return <code>true</code>, iff the defined property changed.
 	 */
 	public final boolean isDefinedChanged() {
 		return ((changedValues & CHANGED_DEFINED) != 0);
@@ -77,7 +77,7 @@ public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 	/**
 	 * Returns whether or not the description property changed.
 	 * 
-	 * @return true, iff the description property changed.
+	 * @return <code>true</code>, iff the description property changed.
 	 */
 	public final boolean isDescriptionChanged() {
 		return ((changedValues & CHANGED_DESCRIPTION) != 0);
@@ -86,7 +86,7 @@ public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 	/**
 	 * Returns whether or not the name property changed.
 	 * 
-	 * @return true, iff the name property changed.
+	 * @return <code>true</code>, iff the name property changed.
 	 */
 	public final boolean isNameChanged() {
 		return ((changedValues & CHANGED_NAME) != 0);
