@@ -49,12 +49,12 @@ public class TaskView extends MarkerView {
 
     private static final String COMPLETION = "completion"; //$NON-NLS-1$
 
-    private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
+    private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
             new ColumnPixelData(19, false), new ColumnPixelData(19, false),
             new ColumnWeightData(200), new ColumnWeightData(75),
             new ColumnWeightData(150), new ColumnWeightData(60) };
 
-    private final static IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
+    private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
     private final static String[] ROOT_TYPES = { IMarker.TASK };
 
@@ -66,7 +66,7 @@ public class TaskView extends MarkerView {
 
     private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.task"; //$NON-NLS-1$
 
-    private final static IField[] VISIBLE_FIELDS = { new FieldDone(),
+    private final IField[] VISIBLE_FIELDS = { new FieldDone(),
             new FieldPriority(), new FieldMessage(), new FieldResource(),
             new FieldFolder(), new FieldLineNumber() };
 

@@ -33,7 +33,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ProblemView extends MarkerView {
 
-    private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
+    private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
             new ColumnPixelData(19, false), new ColumnWeightData(200),
             new ColumnWeightData(75), new ColumnWeightData(150),
             new ColumnWeightData(60) };
@@ -43,11 +43,11 @@ public class ProblemView extends MarkerView {
 
     private final static int DESCENDING = TableSorter.DESCENDING;
 
-    private final static IField[] VISIBLE_FIELDS = { new FieldSeverity(),
+    private final IField[] VISIBLE_FIELDS = { new FieldSeverity(),
             new FieldMessage(), new FieldResource(), new FieldFolder(),
             new FieldLineNumber() };
 
-    private final static IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
+    private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
     // Field Tags
     // These tags MUST occur in the same order as the VISIBLE_FIELDS +

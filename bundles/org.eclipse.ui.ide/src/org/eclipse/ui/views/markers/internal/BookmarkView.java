@@ -37,11 +37,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class BookmarkView extends MarkerView {
 
-    private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
+    private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
             new ColumnWeightData(200), new ColumnWeightData(75),
             new ColumnWeightData(150), new ColumnWeightData(60) };
 
-    private final static IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
+    private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
     private final static String[] ROOT_TYPES = { IMarker.BOOKMARK };
 
@@ -53,7 +53,7 @@ public class BookmarkView extends MarkerView {
 
     private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
 
-    private final static IField[] VISIBLE_FIELDS = { new FieldMessage(),
+    private final IField[] VISIBLE_FIELDS = { new FieldMessage(),
             new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
     private ICellModifier cellModifier = new ICellModifier() {
