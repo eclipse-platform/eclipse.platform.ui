@@ -70,6 +70,14 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 				files[i].accept(this);
 			}
 		}
+		// Also delete ignored child files that start with .#
+		ICVSResource[] ignoredFiles = folder.members(ICVSFolder.FILE_MEMBERS | ICVSFolder.IGNORED_MEMBERS);
+		for (int i = 0; i < ignoredFiles.length; i++) {
+			ICVSResource cvsResource = ignoredFiles[i];
+			if (cvsResource.getName().startsWith(".#")) {
+				cvsResource.delete();
+			}
+		}
 		monitor.worked(1);
 	}
 	
