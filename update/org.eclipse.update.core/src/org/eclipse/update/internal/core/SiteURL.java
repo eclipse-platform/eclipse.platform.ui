@@ -43,7 +43,7 @@ public class SiteURL extends Site {
 			if (contentURL==null) {
 				String protocol = getURL().getProtocol();
 				String host = getURL().getHost();
-				String path = UpdateManagerUtils.getPath(getURL())+DEFAULT_PLUGIN_PATH;			
+				String path = UpdateManagerUtils.getPath(getURL());			
 				contentURL = new URL(protocol,host,path+archiveId);
 			}
 		} catch (MalformedURLException e){

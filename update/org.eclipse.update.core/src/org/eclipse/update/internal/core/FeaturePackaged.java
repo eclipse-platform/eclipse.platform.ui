@@ -161,7 +161,7 @@ public class FeaturePackaged extends Feature {
 	 * return the archive ID for a plugin
 	 */
 	private String getArchiveID(IPluginEntry entry) {
-		return entry.getIdentifier().toString() + JAR_EXTENSION;
+		return Site.DEFAULT_PLUGIN_PATH+entry.getIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	/**

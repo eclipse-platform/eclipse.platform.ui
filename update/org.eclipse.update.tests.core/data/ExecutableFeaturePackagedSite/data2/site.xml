@@ -14,7 +14,7 @@
   <feature url="install/features/feature3/">
     <category name="eclipse"/>
   </feature>
-  <archive id="org.eclipse.help_1.0.0.jar" url="plugins/help.jar"/>
-  <archive id="org.eclipse.pde.core_1.0.0.jar" url="plugins/Pde_core.jar"/>
-  <archive id="org.junit_3.5.0.jar" url="plugins/junit_3.7.jar"/>
+  <archive path="plugins/org.eclipse.help_1.0.0.jar" url="plugins/help.jar"/>
+  <archive path="plugins/org.eclipse.pde.core_1.0.0.jar" url="plugins/Pde_core.jar"/>
+  <archive path="plugins/org.junit_3.5.0.jar" url="plugins/junit_3.7.jar"/>
 </site>

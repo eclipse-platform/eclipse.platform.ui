@@ -72,6 +72,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 
 	}
 	
+	
 	/**
 	 * Without site.xml
 	 */

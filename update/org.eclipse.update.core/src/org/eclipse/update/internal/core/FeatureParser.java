@@ -30,14 +30,16 @@ public class FeatureParser extends DefaultHandler {
 	private SAXParser parser;
 	//private InputStream featureStream;
 	private Feature feature;
-	private static final String FEATURE			= "feature";	
+	private static final String FEATURE				= "feature";	
 	private static final String DESCRIPTION		= "description";
-	private static final String COPYRIGHT		= "copyright";	
-	private static final String LICENSE 			= "license";	
-	private static final String UPDATE				= "update";
-	private static final String DISCOVERY		= "discovery";
-	private static final String IMPORT				= "import";	
-	private static final String PLUGIN				= "plugin";	
+	private static final String COPYRIGHT			= "copyright";	
+	private static final String LICENSE 				= "license";	
+	private static final String UPDATE					= "update";
+	private static final String DISCOVERY			= "discovery";
+	private static final String IMPORT					= "import";	
+	private static final String PLUGIN					= "plugin";	
+	private static final String DATA						= "data";	
+	private static final String GROUP					= "group";			
 	
 	private String text;
 	private ResourceBundle	bundle;
@@ -117,6 +119,11 @@ public class FeatureParser extends DefaultHandler {
 		if (tag.equalsIgnoreCase(PLUGIN)){
 			processPlugin(attributes);
 		}
+
+		if (tag.equalsIgnoreCase(DATA)){
+			processData(attributes);
+		}
+
 
 		} catch (MalformedURLException e){
 			throw new SAXException("error processing URL. Check the validity of the URLs.",e);
@@ -245,7 +252,7 @@ public class FeatureParser extends DefaultHandler {
 	}	
 	
 	/** 
-	 * process the Category Def info
+	 * process the Plugin info
 	 */
 	private void processPlugin(Attributes attributes) {
 		String id  = attributes.getValue("id");
@@ -306,6 +313,52 @@ public class FeatureParser extends DefaultHandler {
 
 	
 		feature.addPluginEntry(pluginEntry);
+	}
+
+	/** 
+	 * process the Data info
+	 */
+	private void processData(Attributes attributes) {
+		String id  = attributes.getValue("id");
+		DataEntry dataEntry = new DataEntry(id);
+		
+		// download size
+		int download_size = -1;
+		String download = attributes.getValue("download-size");
+		if (download!=null && !download.trim().equals("")){
+		try {
+			download_size = Integer.valueOf(download).intValue();
+		} catch (NumberFormatException e){
+			String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,pluginId,IStatus.OK,"Invalid download Size:"+download+"  for plugin:"+id,e);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+		}
+		}
+		dataEntry.setDownloadSize(download_size);
+		
+		
+		// install size	
+		int install_size = -1;
+		String install = attributes.getValue("install-size");
+		if (install!=null && !install.trim().equals("")){
+			try{
+				install_size = Integer.valueOf(install).intValue();
+			} catch (NumberFormatException e){
+			String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,pluginId,IStatus.OK,"Invalid install size:"+install+"  for plugin:"+id,e);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			}
+		}
+		dataEntry.setInstallSize(install_size);				
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getPlugin().debug("Processed Data: id:"+id);
+			UpdateManagerPlugin.getPlugin().debug("Processed Data: download size:"+download_size+" install size:"+install_size);
+		}
+
+	
+		feature.addDataEntry(dataEntry);
 	}
 
 

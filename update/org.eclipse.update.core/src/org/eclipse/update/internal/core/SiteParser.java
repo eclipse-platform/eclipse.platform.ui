@@ -169,7 +169,7 @@ public class SiteParser extends DefaultHandler {
 	 * process the Archive info
 	 */
 	private void processArchive(Attributes attributes) throws MalformedURLException {
-		String id = attributes.getValue("id");
+		String id = attributes.getValue("path");
 		String urlString = attributes.getValue("url");
 		URL url = UpdateManagerUtils.getURL(site.getURL(), urlString, null);
 		site.addArchive(new Info(id, url));

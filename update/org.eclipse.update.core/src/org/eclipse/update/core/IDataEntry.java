@@ -15,7 +15,7 @@ public interface IDataEntry {
 	 * 
 	 * @return the identifier of the data entry
 	 */
-	VersionedIdentifier getIdentifier();
+	String getIdentifier();
 	
 	/**
 	 * Returns the downloadSize

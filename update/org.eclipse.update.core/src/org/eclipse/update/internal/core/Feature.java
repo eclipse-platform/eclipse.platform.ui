@@ -62,7 +62,7 @@ public abstract class Feature implements IFeature {
 	 * Url and label of site where other informations related to this feature can be found
 	 */
 	private List discoveryInfos;
-	
+
 	/**
 	 * The primary application 
 	 */
@@ -104,6 +104,12 @@ public abstract class Feature implements IFeature {
 	private List pluginEntries;
 
 	/**
+	 * List of data entries the feature contains
+	 * read from the xml file
+	 */
+	private List dataEntries;
+
+	/**
 	 * List of plugin the feature require
 	 * to be installed in the site before this feature
 	 * can be installed
@@ -132,7 +138,9 @@ public abstract class Feature implements IFeature {
 	 * Copy constructor
 	 */
 	public Feature(IFeature sourceFeature, ISite targetSite) throws CoreException {
-		this(sourceFeature.getURL(), targetSite);
+		// do not call other ctr as we do not want t parse XML file
+		this.site = targetSite;
+		this.url = sourceFeature.getURL();
 		this.versionIdentifier = sourceFeature.getIdentifier();
 		this.label = sourceFeature.getLabel();
 		this.url = sourceFeature.getURL();
@@ -233,7 +241,7 @@ public abstract class Feature implements IFeature {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * @see IFeature#getApplication()
 	 */
@@ -475,11 +483,11 @@ public abstract class Feature implements IFeature {
 	public long getDownloadSize(ISite site) throws CoreException {
 		int result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-		if (site!=null){
+		if (site != null) {
 			IPluginEntry[] siteEntries = site.getPluginEntries();
 			entriesToInstall = intersection(entriesToInstall, siteEntries);
 		}
-			
+
 		if (entriesToInstall == null || entriesToInstall.length == 0) {
 			result = -1;
 		} else {
@@ -506,7 +514,7 @@ public abstract class Feature implements IFeature {
 	public long getInstallSize(ISite site) throws CoreException {
 		int result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-		if (site!=null){
+		if (site != null) {
 			IPluginEntry[] siteEntries = site.getPluginEntries();
 			entriesToInstall = intersection(entriesToInstall, siteEntries);
 		}
@@ -557,7 +565,14 @@ public abstract class Feature implements IFeature {
 		// map the list of plugins to install
 		String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
 
-		try {
+	try {
+			// download and install data bundles
+			// before we set the site of teh feature to the TEMP site
+			IDataEntry[] dataEntries = getDataEntries();
+			if (dataEntries.length > 0) {
+				downloadDataLocally(targetFeature, dataEntries, monitor);
+			}
+		
 			// optmization, may be private to implementation
 			// copy *blobs/content references/archives/bundles* in TEMP space
 			if (((Site) getSite()).optimize()) {
@@ -663,10 +678,12 @@ public abstract class Feature implements IFeature {
 			} finally {
 				try {
 					featureStream.close();
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 				try {
 					closeFeature();
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
@@ -678,6 +695,7 @@ public abstract class Feature implements IFeature {
 		URL sourceURL;
 		String newFile;
 		URL newURL;
+
 		if (monitor != null) {
 			monitor.beginTask("Download archives bundles to Temporary Space", archiveIDToInstall.length);
 		}
@@ -691,7 +709,7 @@ public abstract class Feature implements IFeature {
 			// the name of the file in the temp directory
 			// should be the regular plugins/pluginID_ver as the Temp site is OUR site
 			newFile = Site.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
-			newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile,monitor);
+			newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile, monitor);
 
 			// transfer the possible mapping to the temp site						
 			 ((Site) tempSite).addArchive(new Info(archiveIDToInstall[i], newURL));
@@ -714,207 +732,272 @@ public abstract class Feature implements IFeature {
 	}
 
 	/**
-	 * Logs that an attempt to read a non initialize variable has been made
 	 */
-	private void logNotInitialized() {
-		Exception trace = new Exception("Attempt to read uninitialized variable");
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "the program is reading a variable of Feature before loading it", trace);
-		UpdateManagerPlugin.getPlugin().getLog().log(status);
-	}
+	private void downloadDataLocally(IFeature targetFeature, IDataEntry[] dataToInstall, IProgressMonitor monitor) throws CoreException, IOException {
 
-	/**
-	 * Returns the intersection between two array of PluginEntries.
-	 */
-	private IPluginEntry[] intersection(IPluginEntry[] array1, IPluginEntry[] array2) {
-		if (array1 == null || array1.length == 0) {
-			return array2;
-		}
-		if (array2 == null || array2.length == 0) {
-			return array1;
-		}
-
-		List list1 = Arrays.asList(array1);
-		List result = new ArrayList(0);
-		for (int i = 0; i < array2.length; i++) {
-			if (!list1.contains(array2[i]))
-				result.add(array2[i]);
-		}
-		return (IPluginEntry[]) result.toArray();
-	}
-
-	/**
-	 * @see IPluginContainer#getPluginEntries()
-	 */
-	public IPluginEntry[] getPluginEntries() {
-		IPluginEntry[] result = new IPluginEntry[0];
-		if (pluginEntries == null && !isInitialized)
-			logNotInitialized();
-		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
-			result = new IPluginEntry[pluginEntries.size()];
-			pluginEntries.toArray(result);
-		}
-		return result;
-	}
-
-	/**
-	 * @see IPluginContainer#getPluginEntryCount()
-	 */
-	public int getPluginEntryCount() {
-		return getPluginEntries().length;
-	}
-
-	/**
-	 * @see IFeature#getImports()
-	 */
-	public IImport[] getImports() {
-		IImport[] result = new IImport[0];
-		if (!(requires == null || requires.isEmpty())) {
-			result = new IImport[requires.size()];
-			requires.toArray(result);
-		}
-		return result;
-	}
-
-	/**
-	 * Sets the pluginEntries
-	 * @param pluginEntries The pluginEntries to set
-	 */
-	public void setPluginEntries(IPluginEntry[] pluginEntries) {
-		if (pluginEntries != null) {
-			for (int i = 0; i < pluginEntries.length; i++) {
-				addPluginEntry(pluginEntries[i]);
+		URL sourceURL;
+		// any other data
+		InputStream inStream = null;
+		IDataEntry[] entries = getDataEntries();
+		if (entries != null) {
+			if (monitor != null) {
+				monitor.beginTask("Installing Other Data information", dataToInstall.length);
+				if (monitor.isCanceled()) {
+					throw CANCEL_EXCEPTION;
+				}
 			}
-		}
-	}
 
-	/**
-	 * Sets the import
-	 * @param imports The imports to set
-	 */
-	public void setImports(IImport[] imports) {
-		if (imports != null) {
-			for (int i = 0; i < imports.length; i++) {
-				addImport(imports[i]);
+			for (int j = 0; j < entries.length; j++) {
+				String name = dataToInstall[j].getIdentifier();
+				if (monitor != null) {
+					monitor.subTask("..." + name);
+				}
+
+				// the id is URL format with "/"
+				String dataEntryId = Site.DEFAULT_FEATURE_PATH + getIdentifier().toString() + "/" + name;
+				// transform the id by asking the site to map them to real URL inside the SITE	
+				sourceURL = ((Site) getSite()).getURL(dataEntryId);
+				((Site) targetFeature.getSite()).storeFeatureInfo(getIdentifier(), name, sourceURL.openStream());
+				if (monitor != null) {
+					monitor.worked(1);
+					if (monitor.isCanceled()) {
+						throw CANCEL_EXCEPTION;
+					}
+				}
 			}
+
 		}
 	}
 
-	/**
-	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
-	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-		if (pluginEntries == null)
-			pluginEntries = new ArrayList(0);
-		pluginEntries.add(pluginEntry);
-	}
-
-	/**
-	 * Adds an import
-	 * @param anImport The import to add
-	 */
-	public void addImport(IImport anImport) {
-		if (this.requires == null)
-			this.requires = new ArrayList(0);
-		this.requires.add(anImport);
-	}
-
-	/**
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
-	 */
-	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
-		// check if pluginEntry already exists before passing to the site
-		// anything else ?
-		boolean found = false;
-		int i = 0;
-		IPluginEntry[] entries = getPluginEntries();
-		while (i < entries.length && !found) {
-			if (entries[i].equals(pluginEntry)) {
-				found = true;
-			}
-			i++;
-		}
-		if (!found) {
+		/**
+		 * Logs that an attempt to read a non initialize variable has been made
+		 */
+		private void logNotInitialized() {
+			Exception trace = new Exception("Attempt to read uninitialized variable");
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The plugin:" + pluginEntry.getIdentifier().toString() + " is not part of the plugins of the feature:" + this.getIdentifier().toString(), null);
-			throw new CoreException(status);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "the program is reading a variable of Feature before loading it", trace);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
-		getSite().store(pluginEntry, contentKey, inStream);
-	}
 
-	/**
-	 * perform pre processing before opening a plugin archive
-	 * @param entry the plugin about to be opened
-	 */
-	protected void open(IPluginEntry entry) {};
+		/**
+		 * Returns the intersection between two array of PluginEntries.
+		 */
+		private IPluginEntry[] intersection(IPluginEntry[] array1, IPluginEntry[] array2) {
+			if (array1 == null || array1.length == 0) {
+				return array2;
+			}
+			if (array2 == null || array2.length == 0) {
+				return array1;
+			}
 
-	/**
-	 * perform post processing to close a plugin archive
-	 * @param entry the plugin about to be closed
-	 */
-	protected void close(IPluginEntry entry) throws IOException {};
+			List list1 = Arrays.asList(array1);
+			List result = new ArrayList(0);
+			for (int i = 0; i < array2.length; i++) {
+				if (!list1.contains(array2[i]))
+					result.add(array2[i]);
+			}
+			return (IPluginEntry[]) result.toArray();
+		}
 
-	/**
-	 * perform pre processing before opening the feature archive
-	 */
-	protected void openFeature() {};
+		/**
+		 * @see IPluginContainer#getPluginEntries()
+		 */
+		public IPluginEntry[] getPluginEntries() {
+			IPluginEntry[] result = new IPluginEntry[0];
+			if (pluginEntries == null && !isInitialized)
+				logNotInitialized();
+			if (!(pluginEntries == null || pluginEntries.isEmpty())) {
+				result = new IPluginEntry[pluginEntries.size()];
+				pluginEntries.toArray(result);
+			}
+			return result;
+		}
 
-	/**
-	 * perform post processing to close a feature archive
-	 */
-	public void closeFeature() throws IOException {};
+		/**
+		 * @see IFeature#getDataEntries()
+		 */
+		public IDataEntry[] getDataEntries() {
+			IDataEntry[] result = new IDataEntry[0];
+			if (dataEntries == null && !isInitialized)
+				logNotInitialized();
+			if (!(dataEntries == null || dataEntries.isEmpty())) {
+				result = new IDataEntry[dataEntries.size()];
+				dataEntries.toArray(result);
+			}
+			return result;
+		}
 
-	/**
-	 * return the appropriate resource bundle for this feature
-	 */
-	public ResourceBundle getResourceBundle() throws IOException, CoreException {
-		ResourceBundle bundle = null;
-		try {
-			ClassLoader l = new URLClassLoader(new URL[] { this.getURL()}, null);
-			bundle = ResourceBundle.getBundle(FEATURE_FILE, Locale.getDefault(), l);
-		} catch (MissingResourceException e) {
-			//ok, there is no bundle, keep it as null
-			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + this.getURL().toExternalForm());
+		/**
+		 * @see IPluginContainer#getPluginEntryCount()
+		 */
+		public int getPluginEntryCount() {
+			return getPluginEntries().length;
+		}
+
+		/**
+		 * @see IFeature#getImports()
+		 */
+		public IImport[] getImports() {
+			IImport[] result = new IImport[0];
+			if (!(requires == null || requires.isEmpty())) {
+				result = new IImport[requires.size()];
+				requires.toArray(result);
+			}
+			return result;
+		}
+
+		/**
+		 * Sets the pluginEntries
+		 * @param pluginEntries The pluginEntries to set
+		 */
+		public void setPluginEntries(IPluginEntry[] pluginEntries) {
+			if (pluginEntries != null) {
+				for (int i = 0; i < pluginEntries.length; i++) {
+					addPluginEntry(pluginEntries[i]);
+				}
 			}
 		}
-		return bundle;
+
+		/**
+		 * Sets the import
+		 * @param imports The imports to set
+		 */
+		public void setImports(IImport[] imports) {
+			if (imports != null) {
+				for (int i = 0; i < imports.length; i++) {
+					addImport(imports[i]);
+				}
+			}
+		}
+
+		/**
+		 * @see IPluginContainer#addPluginEntry(IPluginEntry)
+		 */
+		public void addPluginEntry(IPluginEntry pluginEntry) {
+			if (pluginEntries == null)
+				pluginEntries = new ArrayList(0);
+			pluginEntries.add(pluginEntry);
+		}
+
+		/**
+		 * @see IFeature#addDataEntry(IDataEntry)
+		 */
+		public void addDataEntry(IDataEntry dataEntry) {
+			if (dataEntries == null)
+				dataEntries = new ArrayList(0);
+			dataEntries.add(dataEntry);
+		}
+
+		/**
+		 * Adds an import
+		 * @param anImport The import to add
+		 */
+		public void addImport(IImport anImport) {
+			if (this.requires == null)
+				this.requires = new ArrayList(0);
+			this.requires.add(anImport);
+		}
+
+		/**
+		 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
+		 */
+		public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
+			// check if pluginEntry already exists before passing to the site
+			// anything else ?
+			boolean found = false;
+			int i = 0;
+			IPluginEntry[] entries = getPluginEntries();
+			while (i < entries.length && !found) {
+				if (entries[i].equals(pluginEntry)) {
+					found = true;
+				}
+				i++;
+			}
+			if (!found) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The plugin:" + pluginEntry.getIdentifier().toString() + " is not part of the plugins of the feature:" + this.getIdentifier().toString(), null);
+				throw new CoreException(status);
+			}
+			getSite().store(pluginEntry, contentKey, inStream);
+		}
+
+		/**
+		 * perform pre processing before opening a plugin archive
+		 * @param entry the plugin about to be opened
+		 */
+		protected void open(IPluginEntry entry) {
+		};
+
+		/**
+		 * perform post processing to close a plugin archive
+		 * @param entry the plugin about to be closed
+		 */
+		protected void close(IPluginEntry entry) throws IOException {
+		};
+
+		/**
+		 * perform pre processing before opening the feature archive
+		 */
+		protected void openFeature() {
+		};
+
+		/**
+		 * perform post processing to close a feature archive
+		 */
+		public void closeFeature() throws IOException {
+		};
+
+		/**
+		 * return the appropriate resource bundle for this feature
+		 */
+		public ResourceBundle getResourceBundle() throws IOException, CoreException {
+			ResourceBundle bundle = null;
+			try {
+				ClassLoader l = new URLClassLoader(new URL[] { this.getURL()}, null);
+				bundle = ResourceBundle.getBundle(FEATURE_FILE, Locale.getDefault(), l);
+			} catch (MissingResourceException e) {
+				//ok, there is no bundle, keep it as null
+				//DEBUG:
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+					UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + this.getURL().toExternalForm());
+				}
+			}
+			return bundle;
+		}
+
+		/**
+		 * @see IFeature#getArchives()
+		 * Private implementation of the feature. return the list of ID.
+		 * Call the site with the ID to get the URL of the contentReference of the Site
+		 */
+		public abstract String[] getArchives();
+
+		/**
+		 * return the list of FILE to be transfered for a Plugin
+		 */
+		protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException;
+
+		/**
+		 * return the list of FILE to be transfered from within the Feature
+		 */
+		protected abstract String[] getStorageUnitNames() throws CoreException;
+
+		/**
+		 * return the Stream of the FILE to be transfered for a Plugin
+		 */
+		protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry, String name) throws CoreException;
+
+		/**
+		 * return the Stream of FILE to be transfered from within the Feature
+		 */
+		protected abstract InputStream getInputStreamFor(String name) throws IOException, CoreException;
+
+		/**
+		 * returns the list of archive to transfer/install
+		 * in order to install the list of plugins
+		 * 
+		 * @param pluginsToInstall list of plugin to install 
+		 */
+		protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
+
 	}
-
-	/**
-	 * @see IFeature#getArchives()
-	 * Private implementation of the feature. return the list of ID.
-	 * Call the site with the ID to get the URL of the contentReference of the Site
-	 */
-	public abstract String[] getArchives();
-
-	/**
-	 * return the list of FILE to be transfered for a Plugin
-	 */
-	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException;
-
-	/**
-	 * return the list of FILE to be transfered from within the Feature
-	 */
-	protected abstract String[] getStorageUnitNames() throws CoreException;
-
-	/**
-	 * return the Stream of the FILE to be transfered for a Plugin
-	 */
-	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry, String name) throws CoreException;
-
-	/**
-	 * return the Stream of FILE to be transfered from within the Feature
-	 */
-	protected abstract InputStream getInputStreamFor(String name) throws IOException, CoreException;
-
-	/**
-	 * returns the list of archive to transfer/install
-	 * in order to install the list of plugins
-	 * 
-	 * @param pluginsToInstall list of plugin to install 
-	 */
-	protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
-
-}

@@ -225,10 +225,25 @@ public interface IFeature extends IPluginContainer {
 	 * Returns an array of archives identifier that compose the feature.
 	 * 
 	 * @return 
+	 * @deprecated seems nobody uses it
 	 */
 	// FIXME: javadoc	
 	String[] getArchives();
 	
+	/**
+	 * Returns an array of archives identifier that compose the feature.
+	 * 
+	 * @return 
+	 */
+	// FIXME: javadoc	
+	IDataEntry[] getDataEntries();
+	
+	/**
+	 * Adds a dataEntry to the list of managed dataEntry
+	 * 
+	 * @param entry the data entry
+	 */	
+	void addDataEntry(IDataEntry dataEntry);
 	
 	/**
 	 * returns the download size

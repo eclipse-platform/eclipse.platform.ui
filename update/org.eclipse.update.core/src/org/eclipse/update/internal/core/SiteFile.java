@@ -72,6 +72,7 @@ public class SiteFile extends SiteURL {
 
 	/**
 	 * store Feature files
+	 * Store the inputStream into a file named contentKey in the install feature path of the feature
 	 */
 	public void storeFeatureInfo(VersionedIdentifier featureIdentifier, String contentKey, InputStream inStream) throws CoreException {
 
@@ -304,7 +305,8 @@ public class SiteFile extends SiteURL {
 							models = registryModel.getFragments();
 						}
 						for (int index = 0; index < models.length; index++) {
-							String pluginID = new VersionedIdentifier(models[index].getId(), models[index].getVersion()).toString() + FeaturePackaged.JAR_EXTENSION;
+							// the id is plugins\<pluginid>_<ver> as per the specs
+							String pluginID = Site.DEFAULT_PLUGIN_PATH+new VersionedIdentifier(models[index].getId(), models[index].getVersion()).toString() + FeaturePackaged.JAR_EXTENSION;
 							URL url = new URL("file",null,file.getAbsolutePath());
 							IInfo info = new Info(pluginID, url);
 							this.addArchive(info);
