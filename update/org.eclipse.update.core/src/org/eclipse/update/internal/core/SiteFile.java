@@ -13,7 +13,7 @@ import org.eclipse.update.core.*;
 /**
  * Site on the File System
  */
-public class FileSite extends URLSite {
+public class SiteFile extends SiteURL {
 
 	private String path;
 	public static final String INSTALL_FEATURE_PATH = "install/features/";
@@ -21,15 +21,15 @@ public class FileSite extends URLSite {
 	/**
 	 * Constructor for FileSite
 	 */
-	public FileSite(URL siteReference) throws CoreException {
+	public SiteFile(URL siteReference) throws CoreException {
 		super(siteReference);
 	}
 
 	/**
 	 * @see AbstractSite#createExecutableFeature(IFeature)
 	 */
-	public AbstractFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
-		return new DefaultExecutableFeature(sourceFeature, this);
+	public Feature createExecutableFeature(IFeature sourceFeature) throws CoreException {
+		return new FeatureExecutable(sourceFeature, this);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class FileSite extends URLSite {
 	/**
 	 * store Feature files
 	 */
-	public void storeFeatureInfo(	VersionedIdentifier featureIdentifier, String contentKey,InputStream inStream) throws CoreException {
+	public void storeFeatureInfo(	VersionedIdentifier featureIdentifier, String contentKey,InputStream inStream)  throws CoreException {
 
 		String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
    		featurePath += featurePath.endsWith(File.separator)?contentKey:File.separator+contentKey;			
@@ -81,7 +81,7 @@ public class FileSite extends URLSite {
 	 * @see AbstractSite#getDefaultFeature(URL)
 	 */
 	public IFeature getDefaultFeature(URL featureURL) {
-		return new DefaultExecutableFeature(featureURL,this);
+		return new FeatureExecutable(featureURL,this);
 	}
 
 	/**

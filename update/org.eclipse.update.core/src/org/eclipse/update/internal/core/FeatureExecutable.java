@@ -20,7 +20,7 @@ import org.eclipse.update.core.*;
  * Default implementation of an Executable Feature
  */
 
-public class DefaultExecutableFeature extends AbstractFeature {
+public class FeatureExecutable extends Feature {
 
 	/**
 	 * URL of the feature, used to create other URLs
@@ -30,14 +30,14 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultExecutableFeature
 	 */
-	public DefaultExecutableFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
+	public FeatureExecutable(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		super(sourceFeature, targetSite);
 	}
 
 	/**
 	 * Constructor for DefaultExecutableFeature
 	 */
-	public DefaultExecutableFeature(URL url, ISite targetSite) {
+	public FeatureExecutable(URL url, ISite targetSite) {
 		super(url, targetSite);
 	}
 
@@ -104,7 +104,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 		String result = null;
 				
  		// get the URL of the Archive file that contains the plugin entry
-		URL fileURL = ((AbstractSite) getSite()).getURL(getArchiveID(pluginEntry));
+		URL fileURL = ((Site) getSite()).getURL(getArchiveID(pluginEntry));
 		result = fileURL.getPath();
 
 		// return the list of all subdirectories

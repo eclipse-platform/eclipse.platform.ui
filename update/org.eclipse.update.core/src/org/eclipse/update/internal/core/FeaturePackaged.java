@@ -16,7 +16,7 @@ import org.eclipse.update.core.*;
 /**
  * Parse the default feature.xml
  */
-public class DefaultPackagedFeature extends AbstractFeature {
+public class FeaturePackaged extends Feature {
 
 	private JarFile currentOpenJarFile = null;
 
@@ -36,9 +36,28 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	 * You have to transfrom the URL
 	 * 
 	 */
-	public URL getRootURL() throws MalformedURLException {
+	public URL getRootURL() throws MalformedURLException, IOException, CoreException {
+		
+		// Extract the JAR file in the TEMP drive
+		// and return the URL
+		
 		if (rootURL == null) {
-			rootURL = new URL("jar", null, getURL().toExternalForm() + "!/");
+			// install the Feature info into the TEMP drive
+			SiteFile tempSite = (SiteFile)SiteManager.getTempSite();
+			
+			InputStream inStream = null;
+			String[] names = getStorageUnitNames();
+			if (names != null) {
+				openFeature();
+				for (int j = 0; j < names.length; j++) {
+					if ((inStream = getInputStreamFor(names[j])) != null)
+						 tempSite.storeFeatureInfo(getIdentifier(), names[j], inStream);
+				}
+				closeFeature();
+			}
+			//rootURL = new URL("jar", null, getURL().toExternalForm() + "!/");
+			// get the path to the Feature
+			rootURL = UpdateManagerUtils.getURL(tempSite.getURL(),SiteFile.INSTALL_FEATURE_PATH+getIdentifier().toString(),null);
 		}
 		return rootURL;
 	}
@@ -46,14 +65,14 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
-	public DefaultPackagedFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
+	public FeaturePackaged(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		super(sourceFeature, targetSite);
 	}
 
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
-	public DefaultPackagedFeature(URL url, ISite targetSite) {
+	public FeaturePackaged(URL url, ISite targetSite) {
 		super(url, targetSite);
 	}
 
@@ -81,7 +100,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		try {
 			// check if the site.xml had a coded URL for this plugin or if we
 			// should look in teh default place to find it: <site>+/plugins/+archiveId
-			String filePath = ((AbstractSite) getSite()).getURL(getArchiveID(pluginEntry)).getPath();
+			String filePath = ((Site) getSite()).getURL(getArchiveID(pluginEntry)).getPath();
 			open(filePath);
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
@@ -104,7 +123,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		String[] result = null;
 		// try to obtain the URL of the JAR file that contains the plugin entry from teh site.xml
 		// if it doesn't exist, use the default one
-		URL jarURL = ((AbstractSite) getSite()).getURL(getArchiveID(pluginEntry));
+		URL jarURL = ((Site) getSite()).getURL(getArchiveID(pluginEntry));
 		result = getJAREntries(jarURL.getPath());
 
 		return result;

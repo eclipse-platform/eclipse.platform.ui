@@ -40,8 +40,8 @@ public class InternalSiteManager {
 
 		// sites types
 		sitesTypes = new HashMap();
-		sitesTypes.put("http", "org.eclipse.update.internal.core.URLSite");
-		sitesTypes.put("file", "org.eclipse.update.internal.core.FileSite");
+		sitesTypes.put("http", "org.eclipse.update.internal.core.SiteURL");
+		sitesTypes.put("file", "org.eclipse.update.internal.core.SiteFile");
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class InternalSiteManager {
 			}
 			URL newURL = null;
 			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),resolvedURL.getPath().substring(0,index));
-			localSite = new LocalSite(newURL);
+			localSite = new SiteLocal(newURL);
 			} catch (Exception e){
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create the Local Site Object",e);
@@ -120,7 +120,7 @@ public class InternalSiteManager {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
-				TEMP_SITE =	new FileSite(new URL("file",null,tempDir+TEMP_NAME+File.separator));
+				TEMP_SITE =	new SiteFile(new URL("file",null,tempDir+TEMP_NAME+File.separator));
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create TEmporary Site",e);

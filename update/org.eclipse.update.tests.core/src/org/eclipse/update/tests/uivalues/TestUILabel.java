@@ -6,7 +6,6 @@ package org.eclipse.update.tests.uivalues;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.URLSite;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestUILabel extends UpdateManagerTestCase {
@@ -25,7 +24,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 */
 	public void testHTTPSite() throws Exception{ 
 		
-		ISite remoteSite = new URLSite(new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2")));
+		ISite remoteSite = SiteManager.getSite(new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2")));
 		ICategory[] categories = remoteSite.getCategories();
 		for (int i =0; i<categories.length; i++){
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());

@@ -9,14 +9,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ILocalSite;
 
-public class LocalSite extends FileSite implements ILocalSite {
+public class SiteLocal extends SiteFile implements ILocalSite {
 	
 	private InstallConfiguration config = new InstallConfiguration();
 
 	/*
 	 * Constructor for LocalSite
 	 */
-	public LocalSite(URL siteReference) throws CoreException {
+	public SiteLocal(URL siteReference) throws CoreException {
 		super(siteReference);
 	}
 

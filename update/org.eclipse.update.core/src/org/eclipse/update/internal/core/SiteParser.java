@@ -24,11 +24,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * parse the default site.xml
  */
 
-public class DefaultSiteParser extends DefaultHandler {
+public class SiteParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private InputStream siteStream;
-	private AbstractSite site;
+	private Site site;
 	private static final String SITE = "site";
 	private static final String FEATURE = "feature";
 	private static final String ARCHIVE = "archive";
@@ -44,21 +44,21 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public DefaultSiteParser(InputStream siteStream, ISite site) throws IOException, SAXException, CoreException {
+	public SiteParser(InputStream siteStream, ISite site) throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(site instanceof AbstractSite);
-		this.site = (AbstractSite) site;
+		Assert.isTrue(site instanceof Site);
+		this.site = (Site) site;
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.getPlugin().debug("Start parsing site:" + site.getURL().toExternalForm());
 		}
 
-		bundle = ((AbstractSite)site).getResourceBundle();
+		bundle = ((Site)site).getResourceBundle();
 		
 		parser.parse(new InputSource(this.siteStream));
 	}
@@ -194,7 +194,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		String name = attributes.getValue("name");
 		String label = attributes.getValue("label");
 		label = UpdateManagerUtils.getResourceString(label, bundle);
-		ICategory category = new DefaultCategory(name, label);
+		ICategory category = new Category(name, label);
 		site.addCategory(category);
 
 		// DEBUG:		

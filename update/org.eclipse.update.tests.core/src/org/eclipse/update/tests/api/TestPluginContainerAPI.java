@@ -14,16 +14,16 @@ import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
-	private AbstractSite site;
-	private AbstractFeature feature;
+	private Site site;
+	private Feature feature;
 
 	/**
 	 * the Site to test
 	 */
-	private AbstractSite getSite() throws CoreException {
+	private Site getSite() throws CoreException {
 		if (site == null) {
 
-			site = (AbstractSite)SiteManager.getSite(SOURCE_FILE_SITE);
+			site = (Site)SiteManager.getSite(SOURCE_FILE_SITE);
 
 		}
 		return site;
@@ -32,11 +32,11 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private AbstractFeature getFeature() throws MalformedURLException, CoreException {
+	private Feature getFeature() throws MalformedURLException, CoreException {
 		if (feature == null) {
 			ISite site = getSite();
 			URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);						
-			feature = new DefaultPackagedFeature(id, site);
+			feature = new FeaturePackaged(id, site);
 		}
 		return feature;
 	}
@@ -50,7 +50,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
 	public void testAbstractFeature() throws CoreException, MalformedURLException {
 		PluginEntry pluginEntry = new PluginEntry("id", "ver");
-		AbstractFeature _feature = getFeature();
+		Feature _feature = getFeature();
 		_feature.addPluginEntry(pluginEntry);
 		assertEquals(_feature.getPluginEntryCount(), 1);
 		assertEquals(_feature.getPluginEntries()[0], pluginEntry);
@@ -59,7 +59,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
 	public void testAbstactSite() throws CoreException {
 		PluginEntry pluginEntry = new PluginEntry("id", "ver");
-		AbstractSite _site = getSite();
+		Site _site = getSite();
 		_site.addPluginEntry(pluginEntry);
 		assertEquals(_site.getPluginEntryCount(), 1);
 		assertEquals(_site.getPluginEntries()[0], pluginEntry);

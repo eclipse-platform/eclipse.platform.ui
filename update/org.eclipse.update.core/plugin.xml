@@ -12,6 +12,8 @@
 </requires>
 
 <runtime>
-   <library name="updatecore.jar"/>
+   <library name="updatecore.jar">
+      <export name="*"/>
+   </library>
 </runtime>
 </plugin>

@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.*;
@@ -23,18 +24,22 @@ import org.xml.sax.SAXException;
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
  */
-public abstract class AbstractFeature implements IFeature {
+public abstract class Feature implements IFeature {
 
+	/**
+	 * 
+	 */
+	private static CoreException CANCEL_EXCEPTION;
 
 	/**
 	 * 
 	 */
 	public static final String FEATURE_FILE = "feature";
-	
+
 	/**
 	 * 
 	 */
-	public static final String FEATURE_XML = FEATURE_FILE+".xml";
+	public static final String FEATURE_XML = FEATURE_FILE + ".xml";
 
 	/**
 	 * Identifier of the Feature
@@ -117,10 +122,23 @@ public abstract class AbstractFeature implements IFeature {
 	 */
 	private boolean isInitialized = false;
 
+
+	/**
+	 * Static block to initialize the possible CANCEL ERROR
+	 * thrown when the USER cancels teh operation
+	 */
+	static {
+		//	in case we throw a cancel exception
+		String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, "Install has been Cancelled", null);
+		CANCEL_EXCEPTION = new CoreException(cancelStatus);
+	}
+	
+
 	/**
 	 * Copy constructor
 	 */
-	public AbstractFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
+	public Feature(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		this(sourceFeature.getURL(), targetSite);
 		this.versionIdentifier = sourceFeature.getIdentifier();
 		this.label = sourceFeature.getLabel();
@@ -138,7 +156,7 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * Constructor
 	 */
-	public AbstractFeature(URL url, ISite targetSite) {
+	public Feature(URL url, ISite targetSite) {
 		this.site = targetSite;
 		this.url = url;
 	}
@@ -195,7 +213,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * 
 	 * Can be overriden 
 	 */
-	public URL getRootURL() throws MalformedURLException {
+	public URL getRootURL() throws MalformedURLException, IOException, CoreException {
 		return url;
 	}
 
@@ -293,7 +311,6 @@ public abstract class AbstractFeature implements IFeature {
 		return ws;
 	}
 
-	
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -498,14 +515,18 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
-	 * @see IFeature#install(IFeature)
-	 * 
+	 * Method install.
+	 * @param targetFeature
+	 * @param monitor
+	 * @throws CoreException
 	 */
-	public void install(IFeature targetFeature) throws CoreException {
-		try {
-			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
-			IPluginEntry[] targetSitePluginEntries = targetFeature.getSite().getPluginEntries();
-			AbstractSite tempSite = (AbstractSite) SiteManager.getTempSite();
+	public void install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException {
+	
+		IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
+		IPluginEntry[] targetSitePluginEntries = targetFeature.getSite().getPluginEntries();
+		Site tempSite = (Site) SiteManager.getTempSite();
+
+
 
 			// determine list of plugins to install
 			// find the intersection between the two arrays of IPluginEntry...
@@ -516,41 +537,32 @@ public abstract class AbstractFeature implements IFeature {
 			// map the list of plugins to install
 			String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
 
+
+		try {
 			// optmization, may be private to implementation
 			// copy *blobs/content references/archives/bundles* in TEMP space
-			if (((AbstractSite) getSite()).optimize()) {
+			if (((Site) getSite()).optimize()) {
 				if (archiveIDToInstall != null) {
-					URL sourceURL;
-					String newFile;
-					URL newURL;
-					for (int i = 0; i < archiveIDToInstall.length; i++) {
-
-						// transform the id by asking the site to map them to real URL inside the SITE	
-						sourceURL = ((AbstractSite) getSite()).getURL(archiveIDToInstall[i]);
-						// the name of the file in the temp directory
-						// should be the regular plugins/pluginID_ver as the Temp site is OUR site
-						newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
-						newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
-
-						// transfer the possible mapping to the temp site						
-						tempSite.addArchive(new Info(archiveIDToInstall[i], newURL));
-					}
+					downloadArchivesLocally(tempSite,archiveIDToInstall,monitor);
 				}
-
-				// the site of this feature now becomes the TEMP directory
-				// FIXME: make sure there is no other issue
-				// like asking for stuff that hasn't been copied
-				// or reusing this feature
-				// of having an un-manageable temp site
-
-				this.setSite(tempSite);
 			}
 
 			// obtain the list of *Streamable Storage Unit*
 			// from the archive
+			if (monitor != null) {
+				int total = pluginsToInstall == null ? 1 : pluginsToInstall.length + 1;
+				monitor.beginTask("Install feature " + getLabel(),total);
+			}
 			if (pluginsToInstall != null) {
 				InputStream inStream = null;
 				for (int i = 0; i < pluginsToInstall.length; i++) {
+					if (monitor != null) {
+						monitor.subTask("Installing plug-in: " + pluginsToInstall[i]);
+						if (monitor.isCanceled()) {
+							throw CANCEL_EXCEPTION;
+						}
+					}
+
 					open(pluginsToInstall[i]);
 					String[] names = getStorageUnitNames(pluginsToInstall[i]);
 					if (names != null) {
@@ -560,6 +572,13 @@ public abstract class AbstractFeature implements IFeature {
 						}
 					}
 					close(pluginsToInstall[i]);
+					if (monitor != null) {
+						monitor.worked(1);
+						if (monitor.isCanceled()) {
+							throw CANCEL_EXCEPTION;
+						}
+					}
+
 				}
 			}
 
@@ -568,20 +587,34 @@ public abstract class AbstractFeature implements IFeature {
 			String[] names = getStorageUnitNames();
 			if (names != null) {
 				openFeature();
+				if (monitor != null) {
+					monitor.subTask("Installing Feature information");
+					if (monitor.isCanceled()) {
+						throw CANCEL_EXCEPTION;
+					}
+				}
+
 				for (int j = 0; j < names.length; j++) {
 					if ((inStream = getInputStreamFor(names[j])) != null)
-						 ((AbstractSite) targetFeature.getSite()).storeFeatureInfo(getIdentifier(), names[j], inStream);
+						 ((Site) targetFeature.getSite()).storeFeatureInfo(getIdentifier(), names[j], inStream);
 				}
 				closeFeature();
-			}
+				if (monitor != null) {
+					monitor.worked(1);
+					if (monitor.isCanceled()) {
+						throw CANCEL_EXCEPTION;
+					}
+				}
 
-			//Everything went fine, clean up TEMP drive
-			UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
+			}
 
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
 			throw new CoreException(status);
+		} finally {
+			// clean up TEMP drive
+			UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
 		}
 	}
 
@@ -592,7 +625,7 @@ public abstract class AbstractFeature implements IFeature {
 		InputStream featureStream = null;
 		try {
 			featureStream = getInputStreamFor(FEATURE_XML);
-			new DefaultFeatureParser(featureStream, this);
+			new FeatureParser(featureStream, this);
 		} catch (IOException e) {
 			//FIXME: if we cannot find the feature and or the feature.xml
 			// is it an error or a warning ???
@@ -614,6 +647,49 @@ public abstract class AbstractFeature implements IFeature {
 			} catch (Exception e) {}
 		}
 	}
+
+	/**
+	 */
+	private void downloadArchivesLocally(ISite tempSite, String[] archiveIDToInstall,IProgressMonitor monitor) throws CoreException, IOException{
+
+					URL sourceURL;
+					String newFile;
+					URL newURL;
+					if (monitor != null) {
+						monitor.beginTask("Download archives bundles to Temporary Space", archiveIDToInstall.length);
+					}
+					for (int i = 0; i < archiveIDToInstall.length; i++) {
+
+						// transform the id by asking the site to map them to real URL inside the SITE	
+						sourceURL = ((Site) getSite()).getURL(archiveIDToInstall[i]);
+						if (monitor != null) {
+							monitor.subTask("..." + archiveIDToInstall[i]);
+						}
+						// the name of the file in the temp directory
+						// should be the regular plugins/pluginID_ver as the Temp site is OUR site
+						newFile = Site.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
+						newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
+
+						// transfer the possible mapping to the temp site						
+						((Site)tempSite).addArchive(new Info(archiveIDToInstall[i], newURL));
+						if (monitor != null) {
+							monitor.worked(1);
+							if (monitor.isCanceled()) {
+								throw CANCEL_EXCEPTION;
+							}
+						}
+					}
+
+				// the site of this feature now becomes the TEMP directory
+				// FIXME: make sure there is no other issue
+				// like asking for stuff that hasn't been copied
+				// or reusing this feature
+				// of having an un-manageable temp site
+
+				this.setSite(tempSite);
+		
+	}
+
 
 	/**
 	 * Logs that an attempt to read a non initialize variable has been made
@@ -690,7 +766,6 @@ public abstract class AbstractFeature implements IFeature {
 		}
 	}
 
-
 	/**
 	 * Sets the import
 	 * @param imports The imports to set
@@ -711,8 +786,6 @@ public abstract class AbstractFeature implements IFeature {
 			pluginEntries = new ArrayList(0);
 		pluginEntries.add(pluginEntry);
 	}
-
-
 
 	/**
 	 * Adds an import
@@ -772,10 +845,10 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * return the appropriate resource bundle for this feature
 	 */
-	public ResourceBundle getResourceBundle()  throws IOException, CoreException {
+	public ResourceBundle getResourceBundle() throws IOException, CoreException {
 		ResourceBundle bundle = null;
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] {this.getURL()}, null);
+			ClassLoader l = new URLClassLoader(new URL[] { this.getURL()}, null);
 			bundle = ResourceBundle.getBundle(FEATURE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null

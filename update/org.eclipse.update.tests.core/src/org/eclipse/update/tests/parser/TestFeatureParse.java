@@ -6,9 +6,8 @@ package org.eclipse.update.tests.parser;
 import java.net.URL;
 
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.DefaultExecutableFeature;
-import org.eclipse.update.internal.core.URLSite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.FeatureExecutable;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -25,10 +24,10 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	
 		String xmlFile = "xmls/feature_1.0.0/";
 		try {		
-			ISite remoteSite = new URLSite(SOURCE_FILE_SITE);
+			ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 			URL id = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
 			
-			DefaultExecutableFeature feature = new DefaultExecutableFeature(id,remoteSite);
+			FeatureExecutable feature = new FeatureExecutable(id,remoteSite);
 			feature.initializeFeature();
 			
 			String prov = feature.getProvider();

@@ -22,7 +22,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	private IFeature getFeature1(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/org.eclipse.update.core.tests.feature1_1.0.4.jar", null);
-		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id, site);
+		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
 		remoteFeature.initializeFeature();
 		return remoteFeature;
 	}
@@ -39,10 +39,10 @@ public class TestInstall extends UpdateManagerTestCase {
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 		String pluginName = entries[0].getIdentifier().toString();
-		File pluginFile = new File(site, AbstractSite.DEFAULT_PLUGIN_PATH + pluginName);
+		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, FileSite.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
@@ -50,7 +50,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 	private IFeature getFeature2(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/features2.jar", null);
-		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id, site);
+		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
 		remoteFeature.initializeFeature();
 		return remoteFeature;
 	}
@@ -80,10 +80,10 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
 		String pluginName = entries[0].getIdentifier().toString();
-		File pluginFile = new File(site, AbstractSite.DEFAULT_PLUGIN_PATH + pluginName);
+		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, FileSite.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
@@ -123,10 +123,10 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
 		String pluginName = entries[0].getIdentifier().toString();
-		File pluginFile = new File(site, AbstractSite.DEFAULT_PLUGIN_PATH + pluginName);
+		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, FileSite.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup

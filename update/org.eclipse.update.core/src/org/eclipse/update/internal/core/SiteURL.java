@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 
-public class URLSite extends AbstractSite {
+public class SiteURL extends Site {
 
 	/**
 	 * plugin entries
@@ -22,7 +22,7 @@ public class URLSite extends AbstractSite {
 	/**
 	 * Constructor for HTTPSite
 	 */
-	public URLSite(URL siteReference) throws CoreException {
+	public SiteURL(URL siteReference) throws CoreException {
 		super(siteReference);
 	}
 
@@ -57,7 +57,7 @@ public class URLSite extends AbstractSite {
 	/**
 	 * @see AbstractSite#createExecutableFeature(IFeature)
 	 */
-	public AbstractFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
+	public Feature createExecutableFeature(IFeature sourceFeature) throws CoreException {
 		return null;
 	}
 
@@ -123,7 +123,7 @@ public class URLSite extends AbstractSite {
 	 * @see AbstractSite#getDefaultFeature(URL)
 	 */
 	public IFeature getDefaultFeature(URL featureURL) {
-		return new DefaultPackagedFeature(featureURL,this);
+		return new FeaturePackaged(featureURL,this);
 	}
 
 }

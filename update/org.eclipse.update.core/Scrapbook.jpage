@@ -27,7 +27,8 @@ file
 java.io.File f =  new java.io.File("c:\\temp\\xtf\\file.jar");
 f.mkdirs()
 
-
+java.util.Locale.getDefault()
+java.util.ResourceBundle
 
 
 

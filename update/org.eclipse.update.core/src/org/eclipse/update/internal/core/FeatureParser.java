@@ -24,12 +24,12 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 
-public class DefaultFeatureParser extends DefaultHandler {
+public class FeatureParser extends DefaultHandler {
 
 
 	private SAXParser parser;
 	//private InputStream featureStream;
-	private AbstractFeature feature;
+	private Feature feature;
 	private static final String FEATURE			= "feature";	
 	private static final String DESCRIPTION		= "description";
 	private static final String COPYRIGHT		= "copyright";	
@@ -47,20 +47,20 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultFeatureParser
 	 */
-	public DefaultFeatureParser(InputStream featureStream,IFeature feature) throws IOException,SAXException, CoreException {
+	public FeatureParser(InputStream featureStream,IFeature feature) throws IOException,SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
 		
-		Assert.isTrue(feature instanceof AbstractFeature);
-		this.feature = (AbstractFeature)feature;
+		Assert.isTrue(feature instanceof Feature);
+		this.feature = (Feature)feature;
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("Start parsing:"+feature.getURL().toExternalForm());
 		}
 
-		bundle = ((AbstractFeature)feature).getResourceBundle();
+		bundle = ((Feature)feature).getResourceBundle();
 		
 		parser.parse(new InputSource(featureStream));
 	}
@@ -119,7 +119,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 
 		} catch (MalformedURLException e){
-			throw new SAXException("error processing URL. Check the validity of the URLs",e);
+			throw new SAXException("error processing URL. Check the validity of the URLs.",e);
+		} catch (Exception e){
+			throw new SAXException("error creating temporary feature on the local file system.",e);
 		}
 
 	}
@@ -128,7 +130,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the Feature info
 	 */
-	private void processFeature(Attributes attributes) throws MalformedURLException {
+	private void processFeature(Attributes attributes) throws MalformedURLException, IOException, CoreException {
 		// if the type doesn't exist ask the site for default type
 		String id = attributes.getValue("id");
 		String ver= attributes.getValue("version");
@@ -169,7 +171,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the info
 	 */
-	private IInfo processInfo(Attributes attributes) throws MalformedURLException {
+	private IInfo processInfo(Attributes attributes) throws MalformedURLException, IOException, CoreException {
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);
@@ -186,7 +188,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/** 
 	 * process the info
 	 */
-	private IInfo processURLInfo(Attributes attributes) throws MalformedURLException {
+	private IInfo processURLInfo(Attributes attributes) throws MalformedURLException, IOException, CoreException {
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getRootURL(),infoURL,null);

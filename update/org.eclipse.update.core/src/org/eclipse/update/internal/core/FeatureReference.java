@@ -75,7 +75,7 @@ public class FeatureReference implements IFeatureReference {
 			if (categoriesAsString != null && !categoriesAsString.isEmpty()) {
 				Iterator iter = categoriesAsString.iterator();
 				while (iter.hasNext()) {
-					categories.add( ((AbstractSite)site).getCategory((String) iter.next()));
+					categories.add( ((Site)site).getCategory((String) iter.next()));
 				}
 			}
 		}
@@ -96,11 +96,11 @@ public class FeatureReference implements IFeatureReference {
 	 */
 	public IFeature getFeature() throws CoreException {
 		
-		AbstractFeature feature = null;
+		Feature feature = null;
 		
 		if (featureType == null || featureType.equals("")) {
 				// ask the Site for the default type 
-				feature = (AbstractFeature) ((AbstractSite) site).getDefaultFeature(url);
+				feature = (Feature) ((Site) site).getDefaultFeature(url);
 				feature.initializeFeature();
 		} else {
 				Assert.isTrue(false, "Not implemented Yet... do not use 'type' in the feature tag of site.xml");

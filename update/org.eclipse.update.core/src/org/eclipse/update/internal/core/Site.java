@@ -11,7 +11,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
-public abstract class AbstractSite implements ISite {
+public abstract class Site implements ISite {
 
 	/**
 	 * default path under the site where plugins will be installed
@@ -27,7 +27,7 @@ public abstract class AbstractSite implements ISite {
 	public static final String SITE_XML= SITE_FILE+".xml";
 	private boolean isManageable = true;
 	private boolean isInitialized = false;
-	private DefaultSiteParser parser;
+	private SiteParser parser;
 	
 	/**
 	 * the tool will create the directories on the file 
@@ -45,7 +45,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * Constructor for AbstractSite
 	 */
-	public AbstractSite(URL siteReference) throws CoreException {
+	public Site(URL siteReference) throws CoreException {
 		super();
 		this.siteURL = siteReference;
 		// FIXME: not lazy... upfront loading
@@ -60,7 +60,7 @@ public abstract class AbstractSite implements ISite {
 		
 		try {
 			URL siteXml = new URL(siteURL,SITE_XML);
-			parser = new DefaultSiteParser(siteXml.openStream(),this);
+			parser = new SiteParser(siteXml.openStream(),this);
 			isManageable = true;		 	
 		} catch (FileNotFoundException e){
 			// log not manageable site
@@ -109,8 +109,8 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public void install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
 		// should start Unit Of Work and manage Progress Monitor
-		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
-		((AbstractFeature)sourceFeature).install(localFeature);
+		Feature localFeature = createExecutableFeature(sourceFeature);
+		((Feature)sourceFeature).install(localFeature,monitor);
 		this.addFeatureReference(new FeatureReference(this,localFeature.getURL()));
 		
 		// notify listeners
@@ -136,7 +136,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * 
 	 */
-	public abstract AbstractFeature createExecutableFeature(IFeature sourceFeature)throws CoreException ;
+	public abstract Feature createExecutableFeature(IFeature sourceFeature)throws CoreException ;
 	
 	/**
 	 * store Feature files/ Fetaures info into the Site
@@ -335,7 +335,7 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public void addCategory(ICategory category) {
 		if (this.categories==null){
-			this.categories = new TreeSet(DefaultCategory.getComparator());
+			this.categories = new TreeSet(Category.getComparator());
 		}
 		this.categories.add(category);
 	}	

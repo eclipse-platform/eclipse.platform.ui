@@ -9,7 +9,7 @@ import org.eclipse.update.core.ICategory;
 /**
  * Default Implementation of ICategory
  */
-public class DefaultCategory implements ICategory {
+public class Category implements ICategory {
 	
 	private String name;
 	private String label;
@@ -18,12 +18,12 @@ public class DefaultCategory implements ICategory {
 	/**
 	 * Default Constructor
 	 */
-	public DefaultCategory(){}
+	public Category(){}
 	
 	/**
 	 * Constructor
 	 */
-	public DefaultCategory(String name, String label){
+	public Category(String name, String label){
 		this.name = name;
 		this.label = label;
 	}

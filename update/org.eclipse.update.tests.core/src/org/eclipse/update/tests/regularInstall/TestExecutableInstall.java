@@ -25,7 +25,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
-		ISite localSite = new FileSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature,null);
 		
 		// verify
@@ -33,13 +33,13 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
 		String pluginName= entries[0].getIdentifier().toString();
-		File pluginFile = new File(site,AbstractSite.DEFAULT_PLUGIN_PATH+pluginName);
+		File pluginFile = new File(site,Site.DEFAULT_PLUGIN_PATH+pluginName);
 		assertTrue("plugin files not installed locally",pluginFile.exists());
 
-		File featureFile = new File(site,FileSite.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier().toString());
+		File featureFile = new File(site,SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally",featureFile.exists());
 		
-		File featureFileXML = new File(site,FileSite.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier().toString()+File.separator+"feature.xml");
+		File featureFileXML = new File(site,SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier().toString()+File.separator+"feature.xml");
 		assertTrue("feature info not installed locally: no feature.xml",featureFileXML.exists());
 	}
 }

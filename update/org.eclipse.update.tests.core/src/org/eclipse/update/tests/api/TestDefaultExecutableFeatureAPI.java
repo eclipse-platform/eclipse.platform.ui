@@ -15,7 +15,7 @@ import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	
-	private	AbstractFeature remoteFeature=null;
+	private Feature remoteFeature=null;
 	
 	/**
 	 * Test the testFeatures()
@@ -27,12 +27,12 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private AbstractFeature getFeature() throws MalformedURLException, CoreException {
+	private Feature getFeature() throws MalformedURLException, CoreException {
 		if (remoteFeature == null){
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);
-		remoteFeature = new DefaultExecutableFeature(id,site);
+		remoteFeature = new FeatureExecutable(id,site);
 
 		}
 		return remoteFeature;
@@ -51,12 +51,12 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			
 			URL url1 = UpdateManagerUtils.getURL(site.getURL(),id1,null);			
-			remoteFeature = new DefaultExecutableFeature(url1,site);
+			remoteFeature = new FeatureExecutable(url1,site);
 			remoteFeature.setIdentifier(ident1);
 			assertEquals(ident1.toString(),remoteFeature.getIdentifier().toString());
 		
 			 URL url2 = UpdateManagerUtils.getURL(site.getURL(),id2,null);		
-			remoteFeature = new DefaultExecutableFeature(url2,site);
+			remoteFeature = new FeatureExecutable(url2,site);
 			remoteFeature.setIdentifier(ident2);
 			assertEquals(ident2.toString(),remoteFeature.getIdentifier().toString());
 		
@@ -73,7 +73,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			
 			URL id = UpdateManagerUtils.getURL(site.getURL(),ident1,null);			
-			remoteFeature = new DefaultExecutableFeature(id,site);
+			remoteFeature = new FeatureExecutable(id,site);
 			assertEquals(site,remoteFeature.getSite());
 
 	}
@@ -84,7 +84,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testLabel() throws CoreException,MalformedURLException {
 		String label = "dummy label";
-		AbstractFeature feature = getFeature();
+		Feature feature = getFeature();
 		feature.setLabel(label);
 		assertEquals(label,feature.getLabel());
 	}
@@ -100,7 +100,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			url = new URL("http://www.oti.com/");
 			
 		} catch (java.net.MalformedURLException e){} // impossible eh !
-		AbstractFeature feature = getFeature();
+		Feature feature = getFeature();
 		feature.setUpdateInfo(new Info(label, url));
 		assertEquals(url,feature.getUpdateInfo().getURL());
 		assertEquals(label,feature.getUpdateInfo().getText());
@@ -122,7 +122,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			label[0] = "OTI Site";
 			label[1] = "Eclipse Site";
 		} catch (java.net.MalformedURLException e){} // impossible eh !
-		AbstractFeature feature = getFeature();
+		Feature feature = getFeature();
 		for (int i=0;i<2;i++){
 				urlInfo[i] = new Info(label[i],url[i]);
 		}
@@ -139,8 +139,8 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testProvider() throws CoreException,MalformedURLException {
 		String provider = "not so dummy provider";
-		AbstractFeature feature = getFeature();
-		feature.setProvider(provider);
+		IFeature feature = getFeature();
+		((Feature)feature).setProvider(provider);
 		assertEquals(provider,feature.getProvider());
 	}
 
@@ -151,8 +151,8 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	public void testDescription() throws CoreException,MalformedURLException {
 		String desc = "pretty long description as a string with \r\n and \t and \n";
 		IInfo info = new Info(desc);
-		AbstractFeature feature = getFeature();
-		feature.setDescription(info);
+		IFeature feature = getFeature();
+		((Feature)feature).setDescription(info);
 		assertEquals(desc,feature.getDescription().getText());
 	}
 	
@@ -165,8 +165,8 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			desc = new URL("http://www.oti.com");
 		} catch (MalformedURLException e){/*pretty impossible*/}
 		IInfo info = new Info(desc);
-		AbstractFeature feature = getFeature();
-		feature.setDescription(info);
+		IFeature feature = getFeature();
+		((Feature)feature).setDescription(info);
 		assertEquals(desc,feature.getDescription().getURL());
 	}	
 	
@@ -180,8 +180,8 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		} catch (MalformedURLException e){/*pretty impossible*/}
 		String desc = "pretty long description as a string with \r\n and \t and \n";
 		IInfo info = new Info(desc,url);
-		AbstractFeature feature = getFeature();
-		feature.setDescription(info);
+		IFeature feature = getFeature();
+		((Feature)feature).setDescription(info);
 		assertEquals(desc,feature.getDescription().getText());
 		assertEquals(url,feature.getDescription().getURL());
 	}	

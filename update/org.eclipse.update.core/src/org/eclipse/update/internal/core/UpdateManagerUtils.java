@@ -77,7 +77,7 @@ public class UpdateManagerUtils {
 			InputStream sourceContentReferenceStream = remoteURL.openStream();
 			if (sourceContentReferenceStream != null) {
 
-				AbstractSite tempSite = (AbstractSite) SiteManager.getTempSite();
+				Site tempSite = (Site) SiteManager.getTempSite();
 				String newFile = tempSite.getURL().getPath();
 				if (localName == null || localName.trim().equals("")) {
 					newFile = newFile + getLocalRandomIdentifier("");
