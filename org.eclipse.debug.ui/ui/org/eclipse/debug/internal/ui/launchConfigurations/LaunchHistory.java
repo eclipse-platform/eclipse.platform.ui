@@ -256,6 +256,9 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	 * @return boolean
 	 */
 	public boolean accepts(ILaunchConfiguration configuration) {
+		if (configuration.isWorkingCopy()) {
+			return false;
+		}
 		try {
 			if (configuration.getType().supportsMode(getLaunchGroup().getMode())) {
 				String launchCategory = null;

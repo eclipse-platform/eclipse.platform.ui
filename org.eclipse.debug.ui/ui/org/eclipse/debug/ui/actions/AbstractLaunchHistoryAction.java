@@ -227,7 +227,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		}		
 		
 		// Separator between favorites and history
-		if (favoriteList.length > 0 && historyList.length > 0) {
+		if (favoriteList.length > 0) {
 			addSeparator(menu);
 		}
 		
