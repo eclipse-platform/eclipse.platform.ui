@@ -140,6 +140,32 @@ protected List addContributorsFor(Class objectClass){
 	return result;
 }
 
+/**
+ * Get the contributors for object including those it adapts
+ * to.
+ * @return List or null if there are none.
+ */
+
+protected List getContributors(Object object){
+	
+	List contributors = null;
+	Class objectClass = object.getClass();
+	
+	//No need for adapted checks if there is already a lookup
+	if(lookup != null)
+		 contributors = (List) lookup.get(objectClass);
+		
+	//Nothing is found or no lookup so do the search
+	if(contributors == null){
+		IResource adapted = getAdaptedResource(object);
+		if(adapted == null)
+			return getContributors(objectClass);
+		else
+			return  getContributors(objectClass, adapted.getClass());
+	}
+	else
+		return contributors;
+}
 
 /**
  * Returns true if contributors exist in the manager for
@@ -147,23 +173,9 @@ protected List addContributorsFor(Class objectClass){
  */
 public boolean hasContributorsFor(Object object) {
 	
-	List contributors = null;
-	Class objectClass = object.getClass();
+	List contributors = getContributors(object);	
 	
-	//No need for adapted checks if there is already a lookup
-	if(lookup != null)
-		contributors = (List) lookup.get(objectClass);
-		
-	//Nothing is found or no lookup so do the search
-	if(contributors == null){
-		IResource adapted = getAdaptedResource(object);
-		if(adapted == null)
-			contributors  = getContributors(objectClass);
-		else
-			contributors = getContributors(objectClass, adapted.getClass());
-	}
-	
-	return (contributors!=null && contributors.size()>0);
+	return (contributors != null && contributors.size()>0);
 }
 /**
  * Add interface Class objects to the result list based

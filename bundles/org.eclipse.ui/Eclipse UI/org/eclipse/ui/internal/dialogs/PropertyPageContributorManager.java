@@ -69,13 +69,8 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 	// Lazy initialize
 	if (!contributorsLoaded)
 		loadContributors();
-		
-	Object adaptedObject = getAdaptedResource(object);
-	List result;
-	if(adaptedObject == null)
-		result = getContributors(object.getClass());
-	else
-		result = getContributors(object.getClass(),adaptedObject.getClass());
+	
+	List result = getContributors(object);	
 	
 	if (result == null || result.size() == 0)
 		return false;
