@@ -79,8 +79,9 @@ public class DecoratorTestCase
 	 * Test enabling the contributor
 	 */
 	public void testEnableDecorator() throws CoreException{
+		getDecoratorManager().clearCaches();
 		definition.setEnabled(true);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 		
 	}
 
@@ -88,8 +89,9 @@ public class DecoratorTestCase
 	 * Test disabling the contributor
 	 */
 	public void testDisableDecorator() throws CoreException{
+		getDecoratorManager().clearCaches();
 		definition.setEnabled(false);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 	}
 
 	/**
@@ -98,8 +100,9 @@ public class DecoratorTestCase
 	public void testRefreshContributor() throws CoreException{
 
 		updated = false;
+		getDecoratorManager().clearCaches();
 		definition.setEnabled(true);
-		getDecoratorManager().reset();
+		getDecoratorManager().updateForEnablementChange();
 
 		assertTrue("Got an update", updated);
 		updated = false;
